@@ -165,8 +165,6 @@
     <Reference Include="CsvHelper">
       <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="MySql.Data, Version=6.9.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
@@ -207,10 +205,14 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Checks\ProjectChecker.cs" />
+    <Compile Include="Checks\SelectedDatasetsChecker.cs" />
+    <Compile Include="Checks\SupportingSQLTableChecker.cs" />
     <Compile Include="CohortCreationPipeline\CohortCreationRequest.cs" />
     <Compile Include="CohortCreationPipeline\CohortRefreshEngine.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\BasicCohortDestination.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\CustomCohortDataDestination.cs" />
+    <Compile Include="CohortCreationPipeline\Sources\AggregateConfigurationTableSource.cs" />
+    <Compile Include="CohortCreationPipeline\Sources\PatientIdentifierColumnSource.cs" />
     <Compile Include="CohortCreationPipeline\Sources\PatientIndexTableSource.cs" />
     <Compile Include="CohortCreationPipeline\Sources\CohortIdentificationConfigurationSource.cs" />
     <Compile Include="CohortDatabaseWizard\CreateNewCohortDatabaseWizard.cs" />
@@ -236,16 +238,17 @@
     <Compile Include="DataRelease\ReleasePipeline\ReleaseData.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseState.cs" />
     <Compile Include="Data\ConfigurationProperties.cs" />
-    <Compile Include="Data\DataTables\CohortCustomColumn.cs" />
     <Compile Include="Data\DataTables\CohortDefinition.cs" />
     <Compile Include="Data\DataTables\CumulativeExtractionResults.cs" />
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackageContents.cs" />
     <Compile Include="Data\DataTables\DeployedExtractionFilterFactory.cs" />
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackage.cs" />
+    <Compile Include="Data\DataTables\SelectedDatasetsForcedJoin.cs" />
     <Compile Include="Data\Hierarchy\DataExportFilterHierarchy.cs" />
     <Compile Include="Data\ProjectCohortIdentificationConfigurationAssociation.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollection.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollectionFactory.cs" />
+    <Compile Include="ExtractionTime\Commands\ExtractGlobalsCommand.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteFullExtractionToDatabaseMSSql.cs" />
     <Compile Include="DataRelease\FlatFileReleasePotential.cs" />
     <Compile Include="DataRelease\MsSqlExtractionReleasePotential.cs" />
@@ -253,7 +256,6 @@
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />
-    <Compile Include="ExtractionTime\Commands\ExtractCohortCustomTableCommand.cs" />
     <Compile Include="Data\DataTables\DataUser.cs" />
     <Compile Include="Data\DataTables\ExternalCohortTable.cs" />
     <Compile Include="Data\DataTables\ExtractableCohort.cs" />
@@ -295,17 +297,16 @@
     <Compile Include="Providers\DataExportChildProvider.cs" />
     <Compile Include="Providers\DataExportProblemProvider.cs" />
     <Compile Include="Providers\Nodes\AllCohortsNode.cs" />
-    <Compile Include="Providers\Nodes\CustomDataTableNode.cs" />
     <Compile Include="Providers\Nodes\ExtractionConfigurationsNode.cs" />
     <Compile Include="Providers\Nodes\ExtractionDirectoryNode.cs" />
     <Compile Include="Providers\Nodes\FrozenExtractionConfigurationsNode.cs" />
     <Compile Include="Providers\Nodes\LinkedCohortNode.cs" />
     <Compile Include="Providers\Nodes\PackageContentNode.cs" />
+    <Compile Include="Providers\Nodes\ProjectCataloguesNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
-    <Compile Include="Providers\Nodes\UsedByProject\CustomDataTableNodeUsedByProjectNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\ExtractableCohortUsedByProjectNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\IObjectUsedByProjectNode.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />

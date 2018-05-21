@@ -42,7 +42,7 @@ namespace CachingEngine.DataRetrievers
         public PermissionWindowCacheDownloader(IPermissionWindow permissionWindow, ICatalogueRepository repository, IMultiPipelineEngineExecutionStrategy pipelineEngineExecutionStrategy)
         {
             _permissionWindow = permissionWindow;
-            _cacheProgressItems = _permissionWindow.GetAllCacheProgresses().ToList();
+            _cacheProgressItems = _permissionWindow.CacheProgresses.ToList();
             _repository = repository;
             _pipelineEngineExecutionStrategy = pipelineEngineExecutionStrategy;
         }
@@ -73,7 +73,7 @@ namespace CachingEngine.DataRetrievers
 
             //return true only if the permission window is not locked and the time is currently within the window
             return
-                !_permissionWindow.LockedBecauseRunning && _permissionWindow.CurrentlyWithinPermissionWindow();
+                !_permissionWindow.LockedBecauseRunning && _permissionWindow.WithinPermissionWindow();
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace CachingEngine.DataRetrievers
                     }
 
                     // Now can check to see if we are finished (we have passed outside the permission window)
-                    if (_permissionWindow != null && !_permissionWindow.CurrentlyWithinPermissionWindow())
+                    if (_permissionWindow != null && !_permissionWindow.WithinPermissionWindow())
                     {
                         executionCancellationTokenSource.Abort();
                         _listener.OnNotify(this,
@@ -237,7 +237,7 @@ namespace CachingEngine.DataRetrievers
         {
             var cachingPipelineEngineFactory = new CachingPipelineUseCase(cacheProgress);
             var engine = cachingPipelineEngineFactory.GetEngine(_listener);
-            _engineMap.Add(engine, cacheProgress.GetLoadProgress());
+            _engineMap.Add(engine, cacheProgress.LoadProgress);
             return engine;
         }
 
@@ -245,7 +245,7 @@ namespace CachingEngine.DataRetrievers
         {
             var cachingPipelineEngineFactory = new CachingPipelineUseCase(cacheProgress, true,new FailedCacheFetchRequestProvider(cacheProgress));
             var engine = cachingPipelineEngineFactory.GetEngine(_listener);
-            _engineMap.Add(engine, cacheProgress.GetLoadProgress());
+            _engineMap.Add(engine, cacheProgress.LoadProgress);
             return engine;
         }
 
@@ -260,7 +260,7 @@ namespace CachingEngine.DataRetrievers
                 }
                 else if (cacheProgress.PermissionWindow_ID != _permissionWindow.ID)
                 {
-                    var progressPermissionWindow = cacheProgress.GetPermissionWindow();
+                    var progressPermissionWindow = cacheProgress.PermissionWindow;
                     throw new Exception("Configuration error, CacheProgress with ID=" + cacheProgress.ID +
                                         " does not have its permissions specified by Permission Window '" +
                                         _permissionWindow.Name +

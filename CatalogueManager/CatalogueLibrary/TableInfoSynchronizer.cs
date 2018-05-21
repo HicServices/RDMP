@@ -157,6 +157,8 @@ namespace CatalogueLibrary
                 }
             }
 
+            _tableToSync.ClearAllInjections();
+
             if (IsSynched)
                 IsSynched = SynchronizeTypes(notifier,liveColumns);
 
@@ -165,6 +167,8 @@ namespace CatalogueLibrary
 
             if (IsSynched && _tableToSync.IsTableValuedFunction)
                 IsSynched = SynchronizeParameters((TableValuedFunctionImporter)importer,notifier);
+
+            _tableToSync.ClearAllInjections();
 
             //get list of primary keys from underlying table
             return IsSynched;

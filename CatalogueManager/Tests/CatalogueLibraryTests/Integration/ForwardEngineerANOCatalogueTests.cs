@@ -21,7 +21,6 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using Sharing.Sharing;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -369,6 +368,8 @@ namespace CatalogueLibraryTests.Integration
             eiDescription.Order = orderToInsertDescriptionFieldAt +1;
             eiDescription.ExtractionCategory = ExtractionCategory.Supplemental;
             eiDescription.SaveToDatabase();
+
+            bulk.catalogue.ClearAllInjections();
 
             //check it worked
             QueryBuilder qb = new QueryBuilder(null,null);

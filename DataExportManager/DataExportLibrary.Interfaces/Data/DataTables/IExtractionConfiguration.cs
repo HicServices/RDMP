@@ -21,6 +21,8 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         string Description { get; set; }
         bool IsReleased { get; set; }
         int? ClonedFrom_ID { get; set; }
+
+        IExtractableCohort Cohort { get;}
         
         int? DefaultPipeline_ID { get; set; }
         int? CohortIdentificationConfiguration_ID { get; set; }

@@ -16,7 +16,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsRemoteRDMP:RDMPCommandExecutionProposal<RemoteRDMP>
+    class ProposeExecutionWhenTargetIsRemoteRDMP:RDMPCommandExecutionProposal<RemoteRDMP>
     {
         public ProposeExecutionWhenTargetIsRemoteRDMP(IActivateItems itemActivator) : base(itemActivator)
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,11 +13,11 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableLibraryCode;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.ChecksUI;
 
@@ -59,6 +58,8 @@ namespace CatalogueManager.Menus
             var clearShortcutFilterContainer = new ToolStripMenuItem("Clear Shortcut", GetImage(aggregate, OverlayKind.Shortcut), (s, e) => ClearShortcut());
             clearShortcutFilterContainer.Enabled = aggregate.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null;
             Items.Add(clearShortcutFilterContainer);
+
+            Add(new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator).SetTarget(aggregate));
         }
 
         private void ViewDatasetSample(object sender,EventArgs e)

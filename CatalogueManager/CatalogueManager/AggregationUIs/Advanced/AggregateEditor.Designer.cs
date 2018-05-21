@@ -254,6 +254,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.olvJoin.IsSimpleDropSink = true;
             this.olvJoin.Location = new System.Drawing.Point(4, 303);
             this.olvJoin.Name = "olvJoin";
+            this.olvJoin.RowHeight = 19;
             this.olvJoin.Size = new System.Drawing.Size(689, 106);
             this.olvJoin.TabIndex = 12;
             this.olvJoin.UseCompatibleStateImageBehavior = false;

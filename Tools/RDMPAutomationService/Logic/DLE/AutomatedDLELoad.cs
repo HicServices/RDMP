@@ -59,7 +59,7 @@ namespace RDMPAutomationService.Logic.DLE
                 p.Check(new AutomatedAcceptAllCheckNotifier(_task));
 
                 IExternalDatabaseServer serverChosen;
-                var loggingServer = currentMetadata.GetDistinctLoggingDatabaseSettings(out serverChosen, false);
+                var loggingServer = currentMetadata.GetDistinctLoggingDatabaseSettings(out serverChosen);
                 var logManager = new LogManager(loggingServer);
 
                 //Create a callback with the log manager that will set the known logging data load run id and server ID (if logging does actually happen - sometimes a load run will decide nothing requires done and therefore will not log)

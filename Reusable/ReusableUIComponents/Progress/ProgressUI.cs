@@ -161,7 +161,14 @@ namespace ReusableUIComponents.Progress
         {
             if (InvokeRequired)
             {
-                Invoke(new MethodInvoker(() => ShowRunning(isRunning)));
+                try
+                {
+                    Invoke(new MethodInvoker(() => ShowRunning(isRunning)));
+                }
+                catch (Exception e)
+                {
+                    ExceptionViewer.Show(e);
+                }
                 return;
             }
 

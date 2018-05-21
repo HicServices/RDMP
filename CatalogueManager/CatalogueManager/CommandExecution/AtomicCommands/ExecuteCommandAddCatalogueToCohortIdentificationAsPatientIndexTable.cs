@@ -38,12 +38,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if (_catalogue == null)
             {
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues(),false,false);
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    _catalogue = new CatalogueCommand((Catalogue) dialog.Selected);
-                else
+                Catalogue cata;
+                if(!SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues(), out cata))
                     return;
+                
+                _catalogue = new CatalogueCommand(cata);
             }
+            
             AggregateConfigurationCommand aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(_configuration);
 
             var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(Activator, aggregateCommand, _configuration);

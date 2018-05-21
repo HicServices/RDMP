@@ -10,6 +10,11 @@ namespace ReusableLibraryCode.DataAccess
     /// </summary>
     public interface IHasQuerySyntaxHelper
     {
+        /// <summary>
+        /// Returns a <see cref="IQuerySyntaxHelper"/> of the correct <see cref="DatabaseType"/> depending on what remote database the declaring
+        /// class is pointed at.
+        /// </summary>
+        /// <returns></returns>
         IQuerySyntaxHelper GetQuerySyntaxHelper();
     }
 }

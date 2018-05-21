@@ -36,6 +36,7 @@ namespace CatalogueManager.Collections
             this.cbShowDeprecated = new System.Windows.Forms.CheckBox();
             this.cbShowColdStorage = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.cbProjectSpecific = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).BeginInit();
             this.gbColdStorage.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -62,7 +63,6 @@ namespace CatalogueManager.Collections
             this.tlvCatalogues.UseFiltering = true;
             this.tlvCatalogues.View = System.Windows.Forms.View.Details;
             this.tlvCatalogues.VirtualMode = true;
-            this.tlvCatalogues.ItemActivate += new System.EventHandler(this.tlvCatalogues_ItemActivate);
             // 
             // olvColumn1
             // 
@@ -120,12 +120,13 @@ namespace CatalogueManager.Collections
             // gbColdStorage
             // 
             this.gbColdStorage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gbColdStorage.Controls.Add(this.cbProjectSpecific);
             this.gbColdStorage.Controls.Add(this.cbShowInternal);
             this.gbColdStorage.Controls.Add(this.cbShowDeprecated);
             this.gbColdStorage.Controls.Add(this.cbShowColdStorage);
             this.gbColdStorage.Location = new System.Drawing.Point(3, 435);
             this.gbColdStorage.Name = "gbColdStorage";
-            this.gbColdStorage.Size = new System.Drawing.Size(265, 36);
+            this.gbColdStorage.Size = new System.Drawing.Size(360, 36);
             this.gbColdStorage.TabIndex = 174;
             this.gbColdStorage.TabStop = false;
             this.gbColdStorage.Text = "Show";
@@ -175,6 +176,17 @@ namespace CatalogueManager.Collections
             this.panel1.Size = new System.Drawing.Size(500, 405);
             this.panel1.TabIndex = 175;
             // 
+            // cbProjectSpecific
+            // 
+            this.cbProjectSpecific.AutoSize = true;
+            this.cbProjectSpecific.Location = new System.Drawing.Point(260, 15);
+            this.cbProjectSpecific.Name = "cbProjectSpecific";
+            this.cbProjectSpecific.Size = new System.Drawing.Size(100, 17);
+            this.cbProjectSpecific.TabIndex = 157;
+            this.cbProjectSpecific.Text = "Project Specific";
+            this.cbProjectSpecific.UseVisualStyleBackColor = true;
+            this.cbProjectSpecific.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
+            // 
             // CatalogueCollectionUI
             // 
             this.Controls.Add(this.panel1);
@@ -205,5 +217,6 @@ namespace CatalogueManager.Collections
         private CheckBox cbShowDeprecated;
         private CheckBox cbShowColdStorage;
         private Panel panel1;
+        private CheckBox cbProjectSpecific;
     }
 }

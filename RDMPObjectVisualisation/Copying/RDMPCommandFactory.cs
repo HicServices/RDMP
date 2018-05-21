@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
@@ -136,6 +138,10 @@ namespace RDMPObjectVisualisation.Copying
             if (processTask != null)
                 return new ProcessTaskCommand(processTask);
 
+            var cacheProgress = modelObject as CacheProgress;
+            if (cacheProgress != null)
+                return new CacheProgressCommand(cacheProgress);
+
             var cic = modelObject as CohortIdentificationConfiguration;
             var cicAssociation = modelObject as ProjectCohortIdentificationConfigurationAssociation;
             if (cic != null || cicAssociation != null)
@@ -174,5 +180,4 @@ namespace RDMPObjectVisualisation.Copying
             return toReturn.ToArray();
         }
     }
-
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
@@ -14,7 +15,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
+    class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
     {
         public ProposeExecutionWhenTargetIsProjectSavedCohortsNode(IActivateItems itemActivator) : base(itemActivator)
         {
@@ -42,6 +43,16 @@ namespace DataExportManager.CommandExecution.Proposals
             var fileCommand = cmd as FileCollectionCommand;
             if(fileCommand != null && fileCommand.Files.Length == 1)
                 return new ExecuteCommandImportFileAsNewCohort(ItemActivator,fileCommand.Files[0]).SetTarget(target.Project);
+
+            //drop a Project Specific Catalogue onto it
+            var catalogueCommand = cmd as CatalogueCommand;
+            if (catalogueCommand != null)
+                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCommand.Catalogue).SetTarget(target.Project);
+
+            var columnCommand = cmd as ColumnCommand;
+
+            if (columnCommand != null && columnCommand.Column is ExtractionInformation)
+                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
 
             return null;
         }

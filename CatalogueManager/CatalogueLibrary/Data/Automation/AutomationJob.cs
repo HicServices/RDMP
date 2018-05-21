@@ -162,7 +162,7 @@ namespace CatalogueLibrary.Data.Automation
         /// <summary>
         /// Defines that a new caching job associated with the specified <see cref="PermissionWindow"/> has been started by the process with the lock on the specified <see cref="AutomationServiceSlot"/>
         /// </summary>
-        public AutomationJob(ICatalogueRepository repository, AutomationServiceSlot parent, PermissionWindow cachePermissionWindow)
+        public AutomationJob(ICatalogueRepository repository, AutomationServiceSlot parent, IPermissionWindow cachePermissionWindow)
             : this(repository, parent, AutomationJobType.Cache, GetCacheJobNameFor(cachePermissionWindow))
         {
 
@@ -251,7 +251,7 @@ namespace CatalogueLibrary.Data.Automation
             return CacheProgressJobDescriptionPrefix + cacheProgress.ID;
         }
 
-        private static string GetCacheJobNameFor(PermissionWindow permissionWindow)
+        private static string GetCacheJobNameFor(IPermissionWindow permissionWindow)
         {
             return CachePermissionWindowJobDescriptionPrefix + permissionWindow.ID;
         }

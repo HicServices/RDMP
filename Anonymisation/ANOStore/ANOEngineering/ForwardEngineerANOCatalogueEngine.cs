@@ -12,7 +12,6 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using Sharing.Refactoring;
-using Sharing.Sharing;
 
 namespace ANOStore.ANOEngineering
 {
@@ -46,6 +45,10 @@ namespace ANOStore.ANOEngineering
         
         public void Execute()
         {
+
+            if(_planManager.TargetDatabase == null)
+                throw new Exception("PlanManager has no TargetDatabase set");
+
             using (_catalogueRepository.BeginNewTransactedConnection())
             {
                 try
@@ -171,7 +174,10 @@ namespace ANOStore.ANOEngineering
 
                         //and rewire it's ColumnInfo to the cloned child one
                         newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
-                        newCatalogueItem.Name = newColumnInfo.GetRuntimeName();
+
+                        //If the old CatalogueItem had the same name as it's underlying ColumnInfo then we should use the new one otherwise just copy the old name whatever it was
+                        newCatalogueItem.Name = oldCatalogueItem.Name.Equals(oldColumnInfo.Name) ? newColumnInfo.GetRuntimeName() : oldCatalogueItem.Name;
+
                         newCatalogueItem.SaveToDatabase();
 
                         var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;
@@ -205,7 +211,6 @@ namespace ANOStore.ANOEngineering
 
                                     //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
                                     refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)(kvpOtherCols.Value)).Name,false);
-                                
                                 }
                             
                                 //make the new one exactly as extractable
@@ -359,6 +364,20 @@ namespace ANOStore.ANOEngineering
 
             var columns = _catalogueRepository.GetColumnInfosWithNameExactly(expectedNewName);
 
+            bool failedANOToo = false;
+
+            //maybe it was anonymised in the other configuration?
+            if (columns.Length == 0 && !expectedName.StartsWith("ANO"))
+                try
+                {
+                    return FindNewColumnNamed(syntaxHelper,col,"ANO" + expectedName);
+                }
+                catch (Exception)
+                {
+                    //oh well couldnt find it
+                    failedANOToo = true;
+                }
+
             if (columns.Length == 1)
                 return columns[0];
 
@@ -372,7 +391,7 @@ namespace ANOStore.ANOEngineering
             if (columnsFromCorrectServerThatAreaAlsoLocalImports.Length == 1)
                 return columnsFromCorrectServerThatAreaAlsoLocalImports[0];
 
-            throw new Exception("Found '" + columns.Length + "' ColumnInfos called '" + expectedName +"'");
+            throw new Exception("Found '" + columns.Length + "' ColumnInfos called '" + expectedNewName + "'" + (failedANOToo ? " (Or 'ANO" + expectedName + "')" : ""));
         }
 
         Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable>();
@@ -381,7 +400,7 @@ namespace ANOStore.ANOEngineering
         private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)
         {
             //make it shareable
-            var export = _shareManager.GetExportFor(parent);
+            var export = _shareManager.GetNewOrExistingExportFor(parent);
 
             //share it to yourself where the child is the realisation of the share (this creates relationship in database)
             var import = _shareManager.GetImportAs(export.SharingUID, child);

@@ -27,17 +27,7 @@ namespace CatalogueManager.Menus
             _cacheProgress = cacheProgress;
             
             Add(new ExecuteCommandExecuteCacheProgress(_activator).SetTarget(cacheProgress));
-
-            var setWindow = new ToolStripMenuItem("Set PermissionWindow", null);
-
-            foreach (var window in _activator.CoreChildProvider.AllPermissionWindows)
-                Add(new ExecuteCommandSetPermissionWindow(_activator, cacheProgress, window));
-
-            setWindow.DropDownItems.Add(new ToolStripSeparator());
-            
-            setWindow.DropDownItems.Add("Create New Permission Window",_activator.CoreIconProvider.GetImage(RDMPConcept.PermissionWindow,OverlayKind.Add),AddNewPermissionWindow);
-
-            Items.Add(setWindow);
+            Add(new ExecuteCommandSetPermissionWindow(_activator,cacheProgress));
 
             //this will be used as design time fetch request date, set it to min dt to avoid issues around caches not having progress dates etc
             var fetchRequest = new SingleDayCacheFetchRequestProvider(new CacheFetchRequest(RepositoryLocator.CatalogueRepository,DateTime.MinValue));
@@ -55,24 +45,5 @@ namespace CatalogueManager.Menus
                 _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not assemble CacheProgress Pipeline Options", CheckResult.Fail, e));
             }
         }
-
-        private void AddNewPermissionWindow(object sender, EventArgs e)
-        {
-
-            TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Permission Window Name","Enter name for the PermissionWindow e.g. 'Nightly Loads'",1000);
-
-            if(dialog.ShowDialog() == DialogResult.OK)
-            {
-                
-                string windowText = dialog.ResultText;
-                var newWindow = new PermissionWindow(_activator.RepositoryLocator.CatalogueRepository);
-                newWindow.Name = windowText;
-                newWindow.SaveToDatabase();
-
-                new ExecuteCommandSetPermissionWindow(_activator, _cacheProgress, newWindow).Execute();
-            }
-        }
     }
-
-    
 }

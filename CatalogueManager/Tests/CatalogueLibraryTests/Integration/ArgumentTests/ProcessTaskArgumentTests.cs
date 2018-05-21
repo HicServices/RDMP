@@ -2,6 +2,7 @@
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
@@ -18,7 +19,9 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
     public class ProcessTaskArgumentTests:DatabaseTests
     {
         [Test]
-        public void TypeOfTableInfo()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TypeOfTableInfo(bool declareAsInterface)
         {
             string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
 
@@ -34,7 +37,11 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
                 var pt = new ProcessTask(CatalogueRepository, loadMetadata, LoadStage.AdjustStaging);
                 var pta = new ProcessTaskArgument(CatalogueRepository, pt);
 
-                pta.SetType(typeof (TableInfo));
+                if(declareAsInterface)
+                    pta.SetType(typeof(ITableInfo));
+                else
+                    pta.SetType(typeof (TableInfo));
+
                 var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
                 try
                 {
@@ -293,6 +300,35 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             var destInstance = factory.CreateDestinationIfExists(pipe);
 
             Assert.AreEqual(true, ((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess);
+        }
+
+
+        [Test]
+        public void TestArgumentWithTypeThatIsEnum()
+        {
+            var pipe = new Pipeline(CatalogueRepository, "p");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
+                "c");
+
+            var arg = new PipelineComponentArgument(CatalogueRepository, pc);
+            
+            try
+            {
+                arg.SetType(typeof(ExitCodeType));
+                arg.SetValue(ExitCodeType.OperationNotRequired);
+
+                //should have set Value string to the ID of the object
+                Assert.AreEqual(arg.Value, ExitCodeType.OperationNotRequired.ToString());
+
+                arg.SaveToDatabase();
+
+                //but as system Type should return the server
+                Assert.AreEqual(arg.GetValueAsSystemType(), ExitCodeType.OperationNotRequired);
+            }
+            finally
+            {
+                pipe.DeleteInDatabase();
+            }
         }
 
         [Test]

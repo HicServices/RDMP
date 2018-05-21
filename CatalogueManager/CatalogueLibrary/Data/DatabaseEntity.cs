@@ -88,12 +88,13 @@ namespace CatalogueLibrary.Data
             return Repository.AreEqual(this, obj);
         }
 
+        /// <inheritdoc/>
         public virtual void SaveToDatabase()
         {
             Repository.SaveToDatabase(this);
         }
 
-
+        /// <inheritdoc/>
         public virtual void DeleteInDatabase()
         {
             Repository.DeleteFromDatabase(this);

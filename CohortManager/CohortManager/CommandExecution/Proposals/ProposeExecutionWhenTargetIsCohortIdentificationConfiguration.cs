@@ -13,18 +13,12 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CohortManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsCohortIdentificationConfiguration:RDMPCommandExecutionProposal<CohortIdentificationConfiguration>
+    class ProposeExecutionWhenTargetIsCohortIdentificationConfiguration:RDMPCommandExecutionProposal<CohortIdentificationConfiguration>
     {
         public ProposeExecutionWhenTargetIsCohortIdentificationConfiguration(IActivateItems itemActivator) : base(itemActivator)
         {
         }
-
-        //todo integrate this CohortIdentificationConfigurationUI into ExecuteCohortIdentificationConfigurationUI as single UI
-/*        public void ActivateCohortIdentificationConfiguration(object sender, CohortIdentificationConfiguration cic)
-        {
-            Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
-        }*/
-
+        
         public override bool CanActivate(CohortIdentificationConfiguration target)
         {
             return true;

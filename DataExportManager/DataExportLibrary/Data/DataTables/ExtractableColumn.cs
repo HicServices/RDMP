@@ -10,6 +10,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using ReusableLibraryCode.Annotations;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -58,7 +59,9 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
         
         #region Relationships
-        
+
+        /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
+        [CanBeNull]
         /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation CatalogueExtractionInformation
@@ -69,6 +72,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        [CanBeNull]
         [NoMappingToDatabase]
         public override ColumnInfo ColumnInfo
         {
@@ -159,12 +163,7 @@ namespace DataExportLibrary.Data.DataTables
             if(!string.IsNullOrWhiteSpace(Alias))
                 return Alias;
 
-            //the ExtractionInformation has been deleted in the Catalogue!
-            if (_knownCatalogueItem.Value == null)
-                return SelectSQL;
-
-            //it hasn't, copy down the name of it
-            return _knownCatalogueItem.Value.Name;
+            return SelectSQL;
         }
 
         public int CompareTo(object obj)

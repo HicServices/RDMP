@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data

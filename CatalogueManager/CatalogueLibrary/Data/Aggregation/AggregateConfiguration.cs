@@ -246,6 +246,13 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         /// <summary>
+        /// Only populated if the AggregateConfiguration is acting as a patient index table.  Returns the <see cref="JoinableCohortAggregateConfiguration"/> object
+        /// which makes this a fact.
+        /// </summary>
+        [NoMappingToDatabase]
+        public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration { get { return _knownJoinableCohortAggregateConfiguration.Value;} }
+
+        /// <summary>
         /// An AggregateConfiguration is a Group By statement.  This will return all the SELECT columns for the query (including any count(*) / sum(*) etc columns).
         /// </summary>
         [NoMappingToDatabase]
@@ -299,10 +306,10 @@ namespace CatalogueLibrary.Data.Aggregation
                     ReFetchOrder();
                     orderFetchAttempted = true;
                 }
-
-
+                
+                //not within any containers
                 if (_orderWithinKnownContainer == null)
-                    throw new NotSupportedException(this + " is not part of any known containers");
+                    return 0;
 
                 return (int)_orderWithinKnownContainer;
             }
@@ -571,7 +578,7 @@ namespace CatalogueLibrary.Data.Aggregation
         ///  JoinableCohortAggregateConfiguration object</returns>
         public bool IsJoinablePatientIndexTable()
         {
-            return _knownJoinableCohortAggregateConfiguration.Value != null;
+            return JoinableCohortAggregateConfiguration != null;
         }
 
         /// <summary>

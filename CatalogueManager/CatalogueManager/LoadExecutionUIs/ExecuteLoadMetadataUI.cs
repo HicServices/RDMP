@@ -273,7 +273,7 @@ namespace CatalogueManager.LoadExecutionUIs
 
         private ILogManager CreateLogManager(ILoadMetadata loadMetadata)
         {
-            return new LogManager(loadMetadata.GetDistinctLoggingDatabaseSettings(false));
+            return new LogManager(loadMetadata.GetDistinctLoggingDatabaseSettings());
         }
 
         private static string TranslateExitCode(ExitCodeType exitCode)

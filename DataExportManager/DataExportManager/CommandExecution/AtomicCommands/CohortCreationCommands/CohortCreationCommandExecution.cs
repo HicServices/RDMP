@@ -44,26 +44,24 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             if (!dataExport.CohortSources.Any())
                 SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
         }
-        protected CohortCreationRequest GetCohortCreationRequest()
+        protected CohortCreationRequest GetCohortCreationRequest(string cohortInitialDescription)
         {
             //user wants to create a new cohort
 
             //do we know where it's going to end up?
             if (ExternalCohortTable == null)
-                ExternalCohortTable =
-                    SelectIMapsDirectlyToDatabaseTableDialog.ShowDialogSelectOne(
-                    Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>());
-
-            //user didn't select one and cancelled dialog
-            if (ExternalCohortTable == null)
-                return null;
-
+                if (!SelectOne(Activator.RepositoryLocator.DataExportRepository, out ExternalCohortTable)) //not yet, get user to pick one
+                    return null;//user didn't select one and cancelled dialog
+            
             //and document the request
 
             //Get a new request for the source they are trying to populate
             CohortCreationRequestUI requestUI = new CohortCreationRequestUI(ExternalCohortTable, Project);
             requestUI.RepositoryLocator = Activator.RepositoryLocator;
             requestUI.Activator = Activator;
+
+            if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
+                requestUI.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
 
             if (requestUI.ShowDialog() != DialogResult.OK)
                 return null;

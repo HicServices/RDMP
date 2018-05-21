@@ -61,7 +61,7 @@ namespace CachingEngineTests.Integration
 
             var loadProgress = MockRepository.GenerateStub<ILoadProgress>();
             loadProgress.OriginDate = new DateTime(2001,01,01);
-            loadProgress.Expect(m => m.GetLoadMetadata()).Return(lmd);
+            loadProgress.Expect(m => m.LoadMetadata).Return(lmd);
 
             var cacheProgress = MockRepository.GenerateStub<ICacheProgress>();
             cacheProgress.Pipeline_ID = -123;
@@ -69,7 +69,7 @@ namespace CachingEngineTests.Integration
             cacheProgress.ChunkPeriod = new TimeSpan(1, 0, 0, 0);
             cacheProgress.LoadProgress_ID = -1;
             cacheProgress.Repository = CatalogueRepository;
-            cacheProgress.Expect(m => m.GetLoadProgress()).Return(loadProgress);
+            cacheProgress.Expect(m => m.LoadProgress).Return(loadProgress);
             cacheProgress.CacheFillProgress = new DateTime(2020, 1, 1);
 
             var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueRepository);

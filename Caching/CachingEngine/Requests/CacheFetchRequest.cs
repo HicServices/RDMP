@@ -49,7 +49,7 @@ namespace CachingEngine.Requests
             Start = cacheFetchFailure.FetchRequestStart;
             CacheProgress = cacheProgress;
             ChunkPeriod = cacheFetchFailure.FetchRequestEnd.Subtract(cacheFetchFailure.FetchRequestStart);
-            PermissionWindow = cacheProgress.GetPermissionWindow();
+            PermissionWindow = cacheProgress.PermissionWindow;
             PreviousFailure = cacheFetchFailure;
         }
 

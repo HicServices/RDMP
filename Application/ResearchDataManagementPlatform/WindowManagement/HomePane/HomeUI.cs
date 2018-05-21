@@ -81,6 +81,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                     _windowManager.ContentManager.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
+
+            AddCommand(new ExecuteCommandCreateNewCohortFromCatalogue(_windowManager.ContentManager),
+                _windowManager.ContentManager.CoreChildProvider.AllCatalogues,
+                c=>c.Name,
+tlpCohortCreation);
             
             /////////////////////////////////////Data Export/////////////////////////////////
             
@@ -93,10 +98,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                         cic => cic.Name,
                         tlpDataExport);
 
-                AddCommand(new ExecuteCommandImportFileAsCustomDataForCohort(_windowManager.ContentManager), 
-                        dataExportChildProvider.Cohorts,
-                        c => c.ToString(),
-                        tlpDataExport);
+                AddCommand(new ExecuteCommandMakeCatalogueProjectSpecific(_windowManager.ContentManager),
+                    dataExportChildProvider.AllCatalogues.Where(c=>!c.IsProjectSpecific(null)).ToArray(),
+                    c=>c.Name,tlpDataExport );
             }
 
             //////////////////////////////////Data Loading////////////////////////////////////

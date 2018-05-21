@@ -175,9 +175,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
     </Reference>
-    <Reference Include="DiffieHellman">
-      <HintPath>..\..\..\..\libs\SharpSSH\DiffieHellman.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -186,8 +183,6 @@
       <HintPath>..\..\..\..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="MySql.Data, Version=6.9.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
@@ -195,9 +190,6 @@
     <Reference Include="Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\Oracle.ManagedDataAccess.12.1.2400\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-    </Reference>
-    <Reference Include="Org.Mentalis.Security">
-      <HintPath>..\..\..\..\libs\SharpSSH\Org.Mentalis.Security.dll</HintPath>
     </Reference>
     <Reference Include="Renci.SshNet">
       <HintPath>..\..\..\..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
@@ -229,6 +221,7 @@
     <Compile Include="DataFlowOperations\Aliases\AliasHandler.cs" />
     <Compile Include="DataFlowOperations\Aliases\AliasResolutionStrategy.cs" />
     <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasTableFetchException.cs" />
+    <Compile Include="DataFlowOperations\TableVersionNamer.cs" />
     <Compile Include="DataFlowSources\DoNothingCacheSource.cs" />
     <Compile Include="DataProvider\FlatFileManipulation\ExcelToCSVFilesConverter.cs" />
     <Compile Include="DataProvider\ImportFilesDataProvider.cs" />

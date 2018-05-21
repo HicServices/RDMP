@@ -65,6 +65,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         private bool _firstTime = true;
 
+        private const int AlterTimeout = 300;
+
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             //work out the table name for the table we are going to create
@@ -199,7 +201,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     string sql = column.Helper.GetAlterColumnToSql(column, newSqlTypeRequired, column.AllowNulls);
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Executing SQL '" + sql + "'"));
                     var cmd = tbl.Database.Server.GetCommand(sql, _managedConnection);
-
+                    cmd.CommandTimeout = AlterTimeout;
                     cmd.ExecuteNonQuery();
                 }
             }

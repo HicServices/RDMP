@@ -11,7 +11,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsProcessTask:RDMPCommandExecutionProposal<ProcessTask>
+    class ProposeExecutionWhenTargetIsProcessTask:RDMPCommandExecutionProposal<ProcessTask>
     {
         public ProposeExecutionWhenTargetIsProcessTask(IActivateItems itemActivator) : base(itemActivator)
         {

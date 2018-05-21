@@ -155,7 +155,7 @@ namespace DataLoadEngineTests.Integration
         public void KVPAttacherCheckTest_TableNameMissing()
         {
             var ex = Assert.Throws<Exception>(() => new KVPAttacher().Check(new ThrowImmediatelyCheckNotifier()));
-            Assert.IsTrue(ex.Message.StartsWith("Argument TableName has not been set"));
+            Assert.AreEqual("Either argument TableName or TableToLoad must be set LoadModules.Generic.Attachers.KVPAttacher, you should specify this value.",ex.Message);
         }
 
         [Test]

@@ -17,6 +17,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
+using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
@@ -31,7 +32,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
     /// gives multiple results (white blood cell count, red blood cell count etc) then you will obviously want to store it as two separate tables.
     /// 
     /// <para>Configuring join logic in RDMP enables the QueryBuilder to write an SQL SELECT query including a LEFT JOIN / RIGHT JOIN / INNER JOIN over two or more tables.  If you don't
-    /// understand what an SQL Join is then you should research this before using this window.  Unlike a Lookup (See ConfigureLookups) it doesn't really matter which table contains
+    /// understand what an SQL Join is then you should research this before using this window.  Unlike a Lookup (See LookupConfiguration) it doesn't really matter which table contains
     /// the ForeignKey and which contains the PrimaryKey since changing the Join direction effectively inverts this logic anyway (i.e. Header RIGHT JOIN Results is the same as Results
     /// LEFT JOIN Header).  Configuring join logic in the RDMP database does not affect your data repository in any way (i.e. it doesn't mean we will suddenly start putting referential
     /// integrity constraints into your database!).</para>
@@ -188,6 +189,55 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         private void rb_CheckedChanged(object sender, EventArgs e)
         {
             UpdateValidityAssesment();
+        }
+
+        public void SetOtherTableInfo(TableInfo otherTableInfo)
+        {
+            SetRightTableInfo(otherTableInfo);
+        }
+
+        private void olvRightColumns_DragEnter(object sender, DragEventArgs e)
+        {
+            var tableInfo = GetTableInfoOrNullFromDrag(e);
+
+            if (tableInfo != null)
+                e.Effect = DragDropEffects.Copy;
+        }
+
+        private void olvRightColumns_DragDrop(object sender, DragEventArgs e)
+        {
+            var tableInfo = GetTableInfoOrNullFromDrag(e);
+            
+            if(tableInfo != null)
+                SetRightTableInfo(tableInfo);
+        }
+
+        private TableInfo GetTableInfoOrNullFromDrag(DragEventArgs e)
+        {
+            var data = e.Data as OLVDataObject;
+
+            if (data == null)
+                return null;
+
+            if (data.ModelObjects.Count != 1)
+                return null;
+
+            var ti = data.ModelObjects[0] as TableInfo;
+            var ticmd = data.ModelObjects[0] as TableInfoCommand;
+
+            if (ti != null)
+                return ti;
+
+            if (ticmd != null)
+                return ticmd.TableInfo;
+
+            return null;
+        }
+
+        private void tbCollation_Leave(object sender, EventArgs e)
+        {
+            if (tbCollation.Text != null && tbCollation.Text.StartsWith("collate", StringComparison.CurrentCultureIgnoreCase))
+                tbCollation.Text = tbCollation.Text.Substring("collate".Length).Trim();
         }
     }
 

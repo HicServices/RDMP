@@ -11,7 +11,7 @@ namespace MapsDirectlyToDatabaseTable
     /// classes must follow strict rules e.g. all public properties must directly match columns in the database table holding them (See DatabaseEntity).  This is
     /// done in order to prevent corruption / race conditions / data loass etc in a multi user environment.</para>
     /// </summary>
-    public interface IMapsDirectlyToDatabaseTable
+    public interface IMapsDirectlyToDatabaseTable : IDeleteable
     {
         int ID { get; set; }
         

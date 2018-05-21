@@ -38,6 +38,11 @@ namespace CatalogueLibrary.Spontaneous
             return _value.GetType();
         }
 
+        public Type GetConcreteSystemType()
+        {
+            return _value.GetType();
+        }
+
         public void SetType(Type t)
         {
             throw new NotImplementedException();

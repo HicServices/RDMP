@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 
 namespace Sharing.Dependency.Gathering
@@ -17,34 +21,100 @@ namespace Sharing.Dependency.Gathering
     /// </summary>
     public class GatheredObject : IHasDependencies, IMasqueradeAs
     {
-        public List<GatheredObject> Dependencies { get; private set; }
-        public Dictionary<Type,GatheredType> DependencyTypes { get; private set; }
+        public IMapsDirectlyToDatabaseTable Object { get; set; } 
+        public List<GatheredObject> Children { get; private set; }
 
         public GatheredObject(IMapsDirectlyToDatabaseTable o)
         {
             Object = o;
-            Dependencies = new List<GatheredObject>();
-            DependencyTypes = new Dictionary<Type, GatheredType>();
+            Children = new List<GatheredObject>();
         }
-
-        public bool Contains(Type t)
-        {
-            return DependencyTypes.ContainsKey(t);
-        }
-        public void Add(GatheredType gatheredType)
-        {
-            DependencyTypes.Add(gatheredType.Type, gatheredType);
-        }
-
-        public IMapsDirectlyToDatabaseTable Object { get; set; }
-
-        public bool TenousRelationship { get; set; }
 
         /// <summary>
         /// True if the gathered object is a data export object (e.g. it is an ExtractableColumn or DeployedExtractionFilter) and it is part of a frozen (released)
         /// ExtractionConfiguration 
         /// </summary>
         public bool IsReleased { get; set; }
+        
+        /// <summary>
+        /// Creates a sharing export (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and then serializes it as a <see cref="ShareDefinition"/>.  
+        /// This includes mapping any [<see cref="RelationshipAttribute"/>] properties on the <see cref="GatheredObject.Object"/> to the relevant Share Guid (which must
+        /// exist in branchParents).
+        /// 
+        /// <para>ToShareDefinitionWithChildren if you want a full list of shares for the whole tree</para>
+        /// </summary>
+        /// <param name="shareManager"></param>
+        /// <param name="branchParents"></param>
+        /// <returns></returns>
+        public ShareDefinition ToShareDefinition(ShareManager shareManager,List<ShareDefinition> branchParents)
+        {
+            var export = shareManager.GetNewOrExistingExportFor(Object);
+
+            Dictionary<string,object> properties = new Dictionary<string, object>();
+            Dictionary<RelationshipAttribute,Guid> relationshipProperties = new Dictionary<RelationshipAttribute, Guid>();
+
+            AttributePropertyFinder<RelationshipAttribute> relationshipFinder = new AttributePropertyFinder<RelationshipAttribute>(Object);
+            AttributePropertyFinder<NoMappingToDatabase> noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(Object);
+
+            
+            //for each property in the Object class
+            foreach (PropertyInfo property in Object.GetType().GetProperties())
+            {
+                //if it's the ID column skip it
+                if(property.Name == "ID")
+                    continue;
+                
+                //skip [NoMapping] columns
+                if(noMappingFinder.GetAttribute(property) != null)
+                    continue;
+
+                //skip IRepositories (these tell you where the object came from)
+                if (typeof(IRepository).IsAssignableFrom(property.PropertyType))
+                    continue;
+
+                RelationshipAttribute attribute = relationshipFinder.GetAttribute(property);
+
+                //if it's a relationship
+                if (attribute != null)
+                {
+                    var idOfParent = property.GetValue(Object);
+                    Type typeOfParent = attribute.Cref;
+
+                    var parent = branchParents.Single(d => d.Type == typeOfParent && d.ID.Equals(idOfParent));
+                    relationshipProperties.Add(attribute, parent.SharingGuid);
+                }
+                else
+                    properties.Add(property.Name, property.GetValue(Object));
+            }
+
+            return new ShareDefinition(export.SharingUIDAsGuid,Object.ID,Object.GetType(),properties,relationshipProperties);
+        }
+
+        /// <summary>
+        /// Creates sharing exports (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and all <see cref="GatheredObject.Children"/> and 
+        /// then serializes them as <see cref="ShareDefinition"/>
+        /// </summary>
+        /// <param name="shareManager"></param>
+        /// <returns></returns>
+        public List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager)
+        {
+            return ToShareDefinitionWithChildren(shareManager, new List<ShareDefinition>());
+        }
+
+        private List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager, List<ShareDefinition> branchParents)
+        {
+            var me = ToShareDefinition(shareManager, branchParents);
+            
+            var toReturn = new List<ShareDefinition>();
+            var parents = new List<ShareDefinition>(branchParents);
+            parents.Add(me);
+            toReturn.Add(me);
+
+            foreach (GatheredObject child in Children)
+                toReturn.AddRange(child.ToShareDefinitionWithChildren(shareManager, parents));
+
+            return toReturn;
+        }
 
         #region Equality
         protected bool Equals(GatheredObject other)
@@ -88,8 +158,7 @@ namespace Sharing.Dependency.Gathering
 
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
-            return Dependencies.Cast<IHasDependencies>().Union(DependencyTypes.Values).ToArray();
+            return Children.ToArray();
         }
-
     }
 }

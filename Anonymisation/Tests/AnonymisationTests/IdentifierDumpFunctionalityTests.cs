@@ -13,7 +13,6 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using Diagnostics.TestData;
-using MapsDirectlyToDatabaseTable.Relationships;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -59,6 +58,7 @@ namespace AnonymisationTests
 
             tableInfoCreated.ColumnInfos.Single(c => c.GetRuntimeName().Equals("surname")).DeleteInDatabase();
             tableInfoCreated.ColumnInfos.Single(c => c.GetRuntimeName().Equals("forename")).DeleteInDatabase();
+            tableInfoCreated.ClearAllInjections();
         }
 
 

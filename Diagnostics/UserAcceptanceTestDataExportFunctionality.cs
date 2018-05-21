@@ -278,7 +278,7 @@ GO
 
             try
             {
-                 var lm = _catalogue.GetLogManager(true);
+                 var lm = _catalogue.GetLogManager();
 
                 string[] tasks = lm.ListDataTasks();
 
@@ -542,7 +542,6 @@ GO
                     DefinitionTableName = "CohortDefinition",
                     ReleaseIdentifierField = "ReleaseID",
                     PrivateIdentifierField = _identifierIsANOVersion ? "ANOCHI" : "CHI",
-                    CustomTablesTableName = "CohortCustomData",
                     DefinitionTableForeignKeyField = "cohortDefinition_id"
                 };
 
@@ -601,8 +600,7 @@ GO
                 return true;
             }
 
-            int whoCares;
-            _extractableCohort = new ExtractableCohort(repository, _externalCohortTable, _cohortForcedIdentity,out whoCares);
+            _extractableCohort = new ExtractableCohort(repository, _externalCohortTable, _cohortForcedIdentity);
 
             notifier.OnCheckPerformed(new CheckEventArgs("Imported Cohort into DataExportManager",CheckResult.Success));
             return true;

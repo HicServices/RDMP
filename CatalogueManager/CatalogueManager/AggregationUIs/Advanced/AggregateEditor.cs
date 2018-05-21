@@ -86,14 +86,18 @@ namespace CatalogueManager.AggregationUIs.Advanced
             QueryHaving.TextChanged += HavingTextChanged;
             aggregateContinuousDateAxisUI1.AxisSaved += ReloadUIFromDatabase;
 
-            olvJoin.SetNativeBackgroundWatermark(Images.DropHere);
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
+            olvJoinTableName.ImageGetter += ImageGetter;
 
             olvJoin.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
         }
 
-
+        private object ImageGetter(object rowObject)
+        {
+            return _activator.CoreIconProvider.GetImage(rowObject);
+        }
+        
         private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
         { 
             var ti = rowobject as TableInfo;

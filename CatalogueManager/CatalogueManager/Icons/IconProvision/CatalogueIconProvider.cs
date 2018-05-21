@@ -114,7 +114,7 @@ namespace CatalogueManager.Icons.IconProvision
                 return GetImage(RDMPConcept.PatientIndexTable,OverlayKind.Link);
 
             if (concept is PermissionWindowUsedByCacheProgressNode)
-                return GetImage(((PermissionWindowUsedByCacheProgressNode)concept).PermissionWindow, OverlayKind.Link);
+                return GetImage(((PermissionWindowUsedByCacheProgressNode)concept).GetImageObject(), OverlayKind.Link);
 
             if (ConceptIs(typeof (DashboardObjectUse),concept))
                 return GetImage(RDMPConcept.DashboardControl, OverlayKind.Link);

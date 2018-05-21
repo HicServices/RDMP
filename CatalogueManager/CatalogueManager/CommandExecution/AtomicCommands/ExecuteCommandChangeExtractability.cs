@@ -15,21 +15,23 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         private readonly Catalogue _catalogue;
         private bool _isExtractable;
 
-        public ExecuteCommandChangeExtractability(IActivateItems activator, Catalogue catalogue,bool setExplictExtractability):this(activator,catalogue)
-        {
-            _isExtractable = setExplictExtractability;
-        }
-
         public ExecuteCommandChangeExtractability(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _catalogue = catalogue;
-            if(!catalogue.GetIsExtractabilityKnown())
+            var status = catalogue.GetExtractabilityStatus(activator.RepositoryLocator.DataExportRepository);
+            if (status == null)
             {
                 SetImpossible("We don't know whether Catalogue is extractable or not (possibly no Data Export database is available)");
                 return;
             }
 
-            _isExtractable = catalogue.GetIsExtractable();
+            if(status.IsProjectSpecific)
+            {
+                SetImpossible("Cannot change the extractability because it is configured as a 'Project Specific Catalogue'");
+                return;
+            }
+
+            _isExtractable = status.IsExtractable;
         }
 
         public override string GetCommandName()

@@ -227,7 +227,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
       <Private>True</Private>
@@ -310,12 +309,6 @@
     <Compile Include="CohortUI\ExtractableCohortUI.Designer.cs">
       <DependentUpon>ExtractableCohortUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="CohortUI\ImportCustomData\ImportCustomDataFileUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CohortUI\ImportCustomData\ImportCustomDataFileUI.Designer.cs">
-      <DependentUpon>ImportCustomDataFileUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="Collections\DataExportCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -329,6 +322,7 @@
       <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\CohortCreationCommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortFromCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportFileAsNewCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneConfiguration.cs" />
@@ -338,7 +332,6 @@
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionConfiguration.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportFileAsCustomDataForCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReleaseProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetProjectExtractionDirectory.cs" />
@@ -350,7 +343,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractableCohort.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProject.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociation.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCataloguesNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectSavedCohortsNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSelectedDataSets.cs" />
@@ -391,8 +384,6 @@
     <Compile Include="ChangesSavedHandler.cs" />
     <Compile Include="Menus\AllCataloguesUsedByLoadMetadataNodeMenu.cs" />
     <Compile Include="Menus\CohortSourceUsedByProjectNodeMenu.cs" />
-    <Compile Include="Menus\CustomDataTableNodeMenu.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportPatientIndexTableAsCustomData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortDatabaseUsingWizard.cs" />
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
@@ -413,15 +404,16 @@
     <Compile Include="ProjectUI\ChooseExtractablesUI.Designer.cs">
       <DependentUpon>ChooseExtractablesUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProjectUI\ConfigureDatasetUI.cs">
+    <Compile Include="ProjectUI\Datasets\ConfigureDatasetUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ProjectUI\ConfigureDatasetUI.Designer.cs">
+    <Compile Include="ProjectUI\Datasets\ConfigureDatasetUI.Designer.cs">
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ProjectUI\DataGridViewWithBackgroundImage.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ProjectUI\Datasets\Node\AvailableForceJoinNode.cs" />
     <Compile Include="ProjectUI\DataUsers\DataUserManagement.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -470,7 +462,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CustomDataTableNodeStateBasedIconProvider.cs" />
     <Compile Include="SimpleDialogs\ConfigureDisclaimer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -524,10 +515,6 @@
       <DependentUpon>ExtractableCohortUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="CohortUI\ImportCustomData\ImportCustomDataFileUI.resx">
-      <DependentUpon>ImportCustomDataFileUI.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Collections\DataExportCollectionUI.resx">
       <DependentUpon>DataExportCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -557,7 +544,7 @@
     <EmbeddedResource Include="ProjectUI\ChooseExtractablesUI.resx">
       <DependentUpon>ChooseExtractablesUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProjectUI\ConfigureDatasetUI.resx">
+    <EmbeddedResource Include="ProjectUI\Datasets\ConfigureDatasetUI.resx">
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

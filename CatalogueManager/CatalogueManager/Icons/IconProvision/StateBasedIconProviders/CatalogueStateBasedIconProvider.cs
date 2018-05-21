@@ -8,20 +8,17 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
     public class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly Bitmap _basic;
-        private readonly Bitmap _deprecated;
-        private readonly Bitmap _deprecatedAndInternal;
-        private readonly Bitmap _internal;
+        private Bitmap _projectSpecific;
         private IconOverlayProvider _overlayProvider;
 
 
         public CatalogueStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             _basic = CatalogueIcons.Catalogue;
+            _projectSpecific = CatalogueIcons.ProjectCatalogue;
 
             _overlayProvider = overlayProvider;
-            _deprecated = overlayProvider.GetOverlayNoCache(_basic, OverlayKind.Deprecated);
-            _deprecatedAndInternal = overlayProvider.GetOverlayNoCache(_deprecated, OverlayKind.Internal);
-            _internal = overlayProvider.GetOverlayNoCache(_basic, OverlayKind.Internal);
+
         }
 
         public Bitmap GetImageIfSupportedObject(object o)
@@ -31,18 +28,21 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
             if (c == null)
                 return null;
 
-            Bitmap img = _basic;
+            var status = c.GetExtractabilityStatus(null);
 
-            if (c.IsDeprecated && c.IsInternalDataset)
-                img = _deprecatedAndInternal;
-            
+            Bitmap img;
+            if (status != null && status.IsExtractable && status.IsProjectSpecific)
+                img = _projectSpecific;
+            else
+                img = _basic;
+
             if (c.IsDeprecated)
-                img = _deprecated;
+                img = _overlayProvider.GetOverlay(img, OverlayKind.Deprecated);
             
             if (c.IsInternalDataset)
-                img = _internal;
-
-            if (c.GetIsExtractabilityKnown() && c.GetIsExtractable())
+                img = _overlayProvider.GetOverlay(img, OverlayKind.Internal);
+            
+            if (status != null && status.IsExtractable)
                 img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
 
             return img;

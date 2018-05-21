@@ -16,11 +16,13 @@ namespace CatalogueLibrary.Data
         DateTime? DataLoadProgress { get; set; }
         int LoadMetadata_ID { get; set; }
 
+        bool AllowAutomation { get; }
+
         TimeSpan GetLoadPeriodicity();
         void SetLoadPeriodicity(TimeSpan loadPeriod);
-        ICacheProgress GetCacheProgress();
-
-        ILoadMetadata GetLoadMetadata();
+        
+        ILoadMetadata LoadMetadata { get; }
+        ICacheProgress CacheProgress { get; }
 
         //Dictionary<DateTime, FileInfo> GetDataLoadWorkload(IHICProjectDirectory root, int batchSize);
 

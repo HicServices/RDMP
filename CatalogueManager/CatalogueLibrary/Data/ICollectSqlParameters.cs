@@ -8,6 +8,11 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public interface ICollectSqlParameters
     {
+        /// <summary>
+        /// Returns all parameters declared directly against2 the current object.  This does not normally include sub objects existing below the current
+        /// object which might have their own <see cref="ISqlParameter"/>.
+        /// </summary>
+        /// <returns></returns>
         ISqlParameter[] GetAllParameters();
     }
 }

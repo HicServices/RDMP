@@ -55,7 +55,7 @@ namespace CatalogueManager.Menus
 
             Items.Add(new ToolStripSeparator());
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo));
-            Items.Add(new AddJoinInfoMenuItem(_activator, tableInfo));
+            Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo));
             Items.Add(new ToolStripSeparator());
 
             Items.Add("Synchronize TableInfo ", CatalogueIcons.Sync, delegate { TableInfo_Click(tableInfo); });

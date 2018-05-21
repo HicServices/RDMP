@@ -20,12 +20,18 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
     {
         #region Database Properties
 
+        /// <summary>
+        /// ID of the <see cref="CohortIdentificationConfiguration"/> for which the <see cref="AggregateConfiguration_ID"/> acts as a patient index table
+        /// </summary>
         public int CohortIdentificationConfiguration_ID
         {
             get { return _cohortIdentificationConfigurationID; }
             set { SetField(ref  _cohortIdentificationConfigurationID, value); }
         }
 
+        /// <summary>
+        /// ID of the <see cref="AggregateConfiguration_ID"/> which this class is making act as a patient index table
+        /// </summary>
         public int AggregateConfiguration_ID
         {
             get { return _aggregateConfigurationID; }
@@ -36,6 +42,11 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
 
         #region Relationships
 
+        /// <summary>
+        /// Gets all the users of the patient index table, these <see cref="AggregateConfiguration"/> will be joined against the patient index table at query generation time.
+        /// <para>The returned objects are <see cref="JoinableCohortAggregateConfigurationUse"/> which is the mandate to link against us.  Use 
+        /// <see cref="JoinableCohortAggregateConfigurationUse.AggregateConfiguration"/> to fetch the actual <see cref="AggregateConfiguration"/></para>
+        /// </summary>
         [NoMappingToDatabase]
         public JoinableCohortAggregateConfigurationUse[] Users
         {
@@ -68,6 +79,13 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
             AggregateConfiguration_ID = Convert.ToInt32(r["AggregateConfiguration_ID"]);
         }
 
+        /// <summary>
+        /// Declares that the passed <see cref="AggregateConfiguration"/> should act as a patient index table and be joinable with other <see cref="AggregateConfiguration"/>s in
+        /// the <see cref="CohortIdentificationConfiguration"/>.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="cic"></param>
+        /// <param name="aggregate"></param>
         public JoinableCohortAggregateConfiguration(ICatalogueRepository repository, CohortIdentificationConfiguration cic, AggregateConfiguration aggregate)
         {
             int extractionIdentifiers = aggregate.AggregateDimensions.Count(d => d.IsExtractionIdentifier);
@@ -85,6 +103,12 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
             });
         }
 
+        /// <summary>
+        /// Mandates that the passed <see cref="AggregateConfiguration"/> should join with this patient index table at query generation time.  The <see cref="user"/> must 
+        /// be part of the same <see cref="CohortIdentificationConfiguration"/> as the patient index table (<see cref="CohortIdentificationConfiguration_ID"/>)
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public JoinableCohortAggregateConfigurationUse AddUser(AggregateConfiguration user)
         {
             if(user.ID == AggregateConfiguration_ID)
@@ -99,6 +123,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
         private int _cohortIdentificationConfigurationID;
         private int _aggregateConfigurationID;
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return _toStringName ?? GetCachedName();

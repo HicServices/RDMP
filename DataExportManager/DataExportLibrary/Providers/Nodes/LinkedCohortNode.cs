@@ -5,7 +5,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Providers.Nodes
 {
-    public class LinkedCohortNode:IMasqueradeAs, IDeleteable
+    public class LinkedCohortNode : IMasqueradeAs, IDeletableWithCustomMessage
     {
         public ExtractionConfiguration Configuration { get; set; }
         public IExtractableCohort Cohort { get; set; }
@@ -51,6 +51,11 @@ namespace DataExportLibrary.Providers.Nodes
         {
             Configuration.Cohort_ID = null;
             Configuration.SaveToDatabase();
+        }
+
+        public string GetDeleteMessage()
+        {
+            return "clear the cohort for ExtractionConfiguration '" + Configuration + "'";
         }
     }
 }

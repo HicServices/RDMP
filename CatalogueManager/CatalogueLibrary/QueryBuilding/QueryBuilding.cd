@@ -6,7 +6,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>QCAAAEGEABAiBJABAKExggUEQARgIAAERBUaEEAAaAA=</HashCode>
+      <HashCode>QCAAAEGEEBEiBJABAKExggUEQARgIAAETBUYEEAA6Ag=</HashCode>
       <FileName>QueryBuilding\QueryBuilder.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -15,7 +15,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CatalogueLibrary.QueryBuilding.QueryTimeColumn">
-    <Position X="7" Y="4" Width="2" />
+    <Position X="6.75" Y="4.75" Width="2" />
     <TypeIdentifier>
       <HashCode>CCAAAAAACAAAAAwAiAEAAAAAAABAAIACAAABgAAAAIA=</HashCode>
       <FileName>QueryBuilding\QueryTimeColumn.cs</FileName>
@@ -29,7 +29,7 @@
   <Class Name="CatalogueLibrary.Data.Lookup" Collapsed="true">
     <Position X="11.25" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAABAAgAAAAgAAAEAQAAgAAIBCIQAAAAAAAIYQICgAQ=</HashCode>
+      <HashCode>ABABAAgAAAggEAAEQQAAggAIBCKQAAAAAAAMYYICgAQ=</HashCode>
       <FileName>Data\Lookup.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -37,7 +37,7 @@
   <Class Name="CatalogueLibrary.Data.ColumnInfo" Collapsed="true">
     <Position X="11.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAIAAAgEIgykAAQEgAABBAQIARgAAIOCIABIQAAQEAA=</HashCode>
+      <HashCode>BUIAIIgEAkykAAQUgCABBFQIIRwAAIOCIABIQQAYEEg=</HashCode>
       <FileName>Data\ColumnInfo.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -45,21 +45,21 @@
   <Class Name="CatalogueLibrary.QueryBuilding.SqlQueryBuilderHelper">
     <Position X="6.75" Y="8.5" Width="3.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAQAAAFAACQgACAAACAAAAAAAAAAAAAAAIA=</HashCode>
+      <HashCode>AAAAAAAAAAQAABFBACwgAKAAAKAAAAQAAAAAAAAAAIA=</HashCode>
       <FileName>QueryBuilding\SqlQueryBuilderHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="CatalogueLibrary.Data.IContainer">
     <Position X="8" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAACEAAAAAAAQAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <HashCode>AgACAAgAAQACEAAAAAAAQAAAIQAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>Data\IContainer.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="CatalogueLibrary.Data.IFilter" Collapsed="true">
     <Position X="9.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAYAAAgACAAAAAAAAQAAAIAAAAAAAAAASAAAAA=</HashCode>
+      <HashCode>AIAAAAAAAAAgACAIAAEAAAAAAIIAAAAAAAAAASAAAAA=</HashCode>
       <FileName>Data\IFilter.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -71,7 +71,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="CatalogueLibrary.Data.IColumn">
-    <Position X="11.5" Y="2" Width="2" />
+    <Position X="13" Y="2.25" Width="2" />
     <TypeIdentifier>
       <HashCode>BAEAAAAAAAJAgAAAAAAAAAACABAAAAAAAAAAQAAAAAA=</HashCode>
       <FileName>Data\IColumn.cs</FileName>
@@ -80,7 +80,7 @@
   <Interface Name="CatalogueLibrary.QueryBuilding.ISqlQueryBuilder">
     <Position X="0.5" Y="1.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>QCAAAAEAAAAiAAAAAIAxAAQEAAQAIAAARBAAEAAAaAA=</HashCode>
+      <HashCode>QCAAAAEAAAAiAAAAAIAxAAQEAAQAIAAATBQAEAAAaAA=</HashCode>
       <FileName>QueryBuilding\ISqlQueryBuilder.cs</FileName>
     </TypeIdentifier>
   </Interface>

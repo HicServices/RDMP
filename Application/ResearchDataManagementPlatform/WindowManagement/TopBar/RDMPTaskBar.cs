@@ -25,6 +25,7 @@ using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
+using ReusableUIComponents;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 {
@@ -38,6 +39,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
         private readonly List<DashboardLayoutUI> _visibleLayouts = new List<DashboardLayoutUI>();
         private DashboardLayoutUI _lastPoppedDashboard;
+
+        private const string CreateNewDashboard = "<<Create New Dashboard>>";
 
         public RDMPTaskBar()
         {
@@ -64,6 +67,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnLoad.BackgroundImage = provider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
             
             btnFavourites.Image = CatalogueIcons.Favourite;
+
         }
 
         public void SetWindowManager(ToolboxWindowManager manager)
@@ -71,7 +75,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             _manager = manager;
             btnDataExport.Enabled = manager.RepositoryLocator.DataExportRepository != null;
             
-            btnAddDashboard.Image = manager.ContentManager.CoreIconProvider.GetImage(RDMPConcept.DashboardLayout,OverlayKind.Add);
             ReCreateDashboardsDropDown();
 
             SetupToolTipText();
@@ -127,6 +130,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             cbxDashboards.DropDownWidth = Math.Min(400, proposedComboBoxWidth + xPaddingForComboText);
             cbxDashboards.ComboBox.SelectedItem = "";
+
+            cbxDashboards.Items.Add(CreateNewDashboard);
         }
 
         private void btnHome_Click(object sender, EventArgs e)
@@ -193,6 +198,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         {
             var layoutToOpen = cbxDashboards.SelectedItem as DashboardLayout;
 
+            if (ReferenceEquals(cbxDashboards.SelectedItem, CreateNewDashboard))
+            {
+                AddNewDashboard();
+                return;
+            }
+
             //if the ui selection hasn't changed from the last one the user selected and that ui is still open
             if (_lastPoppedDashboard != null && _lastPoppedDashboard.DatabaseObject.Equals(layoutToOpen) && _visibleLayouts.Any(ui => ui.DatabaseObject.Equals(layoutToOpen)))
                 return;
@@ -207,15 +218,19 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             }
         }
 
-        private void btnAddDashboard_Click(object sender, EventArgs e)
+        private void AddNewDashboard()
         {
-            var layout = new DashboardLayout(_manager.RepositoryLocator.CatalogueRepository, "NewLayout " + Guid.NewGuid());
-            var ui = _manager.ContentManager.ActivateDashboard(this, layout);
+            var dialog = new TypeTextOrCancelDialog("Dashboard Name", "Name", 100, null, false);
+            if(dialog.ShowDialog() == DialogResult.OK)
+            {
+                var layout = new DashboardLayout(_manager.RepositoryLocator.CatalogueRepository, dialog.ResultText);
+                var ui = _manager.ContentManager.ActivateDashboard(this, layout);
 
-            _visibleLayouts.Add(ui);
-            ui.ParentForm.FormClosed += (s,ev)=>OnFormClosed(ui,ev);
+                _visibleLayouts.Add(ui);
+                ui.ParentForm.FormClosed += (s,ev)=>OnFormClosed(ui,ev);
 
-            ReCreateDashboardsDropDown();
+                ReCreateDashboardsDropDown();
+            }
         }
 
         public void InjectButton(ToolStripButton button)

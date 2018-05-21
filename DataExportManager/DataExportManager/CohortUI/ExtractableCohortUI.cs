@@ -91,26 +91,6 @@ namespace DataExportManager.CohortUI
                 toShow += "/*Cohort is stored in Server " + location.Server.Name + " Database " + location.GetRuntimeName() +"*/" + Environment.NewLine;
                 toShow += Environment.NewLine;
 
-
-                //tell user about custom data
-                string[] customTablesExtractionSQL = ExtractableCohort.GetCustomTableExtractionSQLs().ToArray();
-
-                if (!customTablesExtractionSQL.Any())
-                    toShow += "/*No Custom Data:*/" + Environment.NewLine;
-                else
-                {
-                    foreach (string customTableSql in customTablesExtractionSQL)
-                    {
-                        toShow += "/*Custom Data Extraction SQL:*/" + Environment.NewLine;
-                        toShow += customTableSql;
-                        toShow += Environment.NewLine;
-                        toShow += Environment.NewLine;
-                    }
-
-
-                }
-
-
                 IExternalCohortTable externalCohortTable = ExtractableCohort.ExternalCohortTable;
                 
                 string sql = "SELECT * FROM " + externalCohortTable.TableName +

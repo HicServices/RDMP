@@ -27,8 +27,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             var newAggregate = new AggregateConfiguration(_activator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_catalogue));
-            new ExecuteCommandActivate(_activator,newAggregate).Execute();
+            Publish(_catalogue);
+            Activate(newAggregate);
         }
 
         public Image GetImage(IIconProvider iconProvider)

@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Data.Common;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data.ImportExport
 {
@@ -17,15 +18,15 @@ namespace CatalogueLibrary.Data.ImportExport
     /// </summary>
     public class ShareManager
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        public readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
         private readonly ICatalogueRepository _catalogueRepository;
 
         private const string PersistenceSeparator = "|";
 
         public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            _repositoryLocator = repositoryLocator;
-            _catalogueRepository = _repositoryLocator.CatalogueRepository;
+            RepositoryLocator = repositoryLocator;
+            _catalogueRepository = RepositoryLocator.CatalogueRepository;
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace CatalogueLibrary.Data.ImportExport
             sb.Append(PersistenceSeparator);
 
             if (IsExportedObject(o))
-                sb.Append(GetExportFor(o).SharingUID);
+                sb.Append(GetNewOrExistingExportFor(o).SharingUID);
 
             return sb.ToString();
         }
@@ -71,11 +72,11 @@ namespace CatalogueLibrary.Data.ImportExport
 
                 //which was imported as a local object
                 if (localImport != null)
-                    return localImport.GetLocalObject(_repositoryLocator); //get the local object
+                    return localImport.GetLocalObject(RepositoryLocator); //get the local object
             }
 
             //otherwise get the existing master object
-            var o = _repositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1]));
+            var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1]));
 
             if(o == null)
                 throw new Exception("Could not find object for persistenceString:" + persistenceString);
@@ -101,22 +102,50 @@ namespace CatalogueLibrary.Data.ImportExport
             return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").Any();
         }
 
-        public ObjectExport GetExportFor(IMapsDirectlyToDatabaseTable o)
+        public ObjectExport GetNewOrExistingExportFor(IMapsDirectlyToDatabaseTable o)
         {
-            var existing = _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
+            var existingExport = _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
 
-            return existing ?? new ObjectExport(_catalogueRepository, o);
+            if (existingExport != null)
+                return existingExport;
+
+            var existingImport = _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsImportedObject(o));
+            
+            if (existingImport != null)
+                return new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid);
+            
+            return new ObjectExport(_catalogueRepository, o,Guid.NewGuid());
         }
 
-        public IMapsDirectlyToDatabaseTable GetExistingImport(string sharingUID, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public IMapsDirectlyToDatabaseTable GetExistingImportObject(string sharingUID)
         {
             var import = GetExistingImport(sharingUID);
 
             if (import == null)
                 return null;
 
-            return import.GetLocalObject(repositoryLocator);
+            return import.GetLocalObject(RepositoryLocator);
         }
+        public object GetExistingImportObject(Guid sharingGuid)
+        {
+            return GetExistingImportObject(sharingGuid.ToString());
+        }
+
+        public IMapsDirectlyToDatabaseTable GetExistingExportObject(string sharingUID)
+        {
+            var export = GetExistingExport(sharingUID);
+
+            if (export == null)
+                return null;
+
+            return export.GetLocalObject(RepositoryLocator);
+        }
+        public object GetExistingExportObject(Guid sharingGuid)
+        {
+            return GetExistingExportObject(sharingGuid.ToString());
+        }
+
+
         /// <summary>
         /// Returns a matching ObjectImport for the provided sharingUID or null if the UID has never been imported
         /// </summary>
@@ -125,6 +154,28 @@ namespace CatalogueLibrary.Data.ImportExport
         public ObjectImport GetExistingImport(string sharingUID)
         {
             return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").SingleOrDefault();
+        }
+
+        /// <inheritdoc cref="GetExistingImport(string)"/>
+        public ObjectImport GetExistingImport(Guid sharingUID)
+        {
+            return GetExistingImport(sharingUID.ToString());
+        }
+
+        /// <summary>
+        /// Returns a matching ObjectExport for the provided sharingUID or null if the UID has never been imported
+        /// </summary>
+        /// <param name="sharingUID"></param>
+        /// <returns></returns>
+        public ObjectExport GetExistingExport(string sharingUID)
+        {
+            return _catalogueRepository.GetAllObjects<ObjectExport>("WHERE SharingUID = '" + sharingUID + "'").SingleOrDefault();
+        }
+
+        /// <inheritdoc cref="GetExistingExport(string)"/>
+        public ObjectExport GetExistingExport(Guid sharingUID)
+        {
+            return GetExistingExport(sharingUID.ToString());
         }
 
         public ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o)
@@ -151,8 +202,75 @@ namespace CatalogueLibrary.Data.ImportExport
         public void DeleteAllOrphanImportDefinitions()
         {
             foreach (var import in GetAllImports())
-                if (!import.LocalObjectStillExists(_repositoryLocator))
+                if (!import.LocalObjectStillExists(RepositoryLocator))
                     import.DeleteInDatabase();
+        }
+
+        /// <summary>
+        /// Reads and deserializes the .so file into objects in the database
+        /// </summary>
+        /// <param name="sharedObjectsFile"></param>
+        /// <returns></returns>
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(Stream sharedObjectsFile, bool deleteExisting = false)
+        {
+            var sr = new StreamReader(sharedObjectsFile);
+            var text = sr.ReadToEnd();
+
+            return ImportSharedObject(text);
+        }
+
+        /// <summary>
+        /// Creates imported objects from a serialized list of <see cref="ShareDefinition"/> - usually loaded from a .so file (See <see cref="Gatherer"/>)
+        /// </summary>
+        /// <param name="sharedObjectsFileText"></param>
+        /// <returns></returns>
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText, bool deleteExisting = false)
+        {
+            var toImport = (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(sharedObjectsFileText, typeof(List<ShareDefinition>), RepositoryLocator);
+
+            return ImportSharedObject(toImport);
+        }
+
+        /// <summary>
+        /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
+        /// </summary>
+        /// <param name="toImport"></param>
+        /// <returns></returns>
+        public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport)
+        {
+            return ImportSharedObject(toImport, false);
+        }
+
+        /// <summary>
+        /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
+        /// </summary>
+        /// <param name="toImport"></param>
+        /// <param name="deleteExisting"></param>
+        /// <returns></returns>
+        internal IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport, bool deleteExisting)
+        {
+            List<IMapsDirectlyToDatabaseTable> created = new List<IMapsDirectlyToDatabaseTable>();
+
+            foreach (ShareDefinition sd in toImport)
+            {
+                try
+                {
+                    if (deleteExisting)
+                    {
+                        var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
+                        if (actual != null)
+                            actual.DeleteInDatabase();
+                    }
+                    var objectConstructor = new ObjectConstructor();
+                    created.Add((IMapsDirectlyToDatabaseTable)objectConstructor.ConstructIfPossible(sd.Type, this, sd));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error constructing " + sd.Type, e);
+                }
+            }
+
+            return created;
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using CatalogueLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
@@ -47,7 +48,6 @@ namespace CatalogueLibrary.Data.DataLoad
     /// </summary>
     public class LoadMetadata : VersionedDatabaseEntity, IDeleteable, ILoadMetadata, IHasDependencies, IRevertable, INamed
     {
-
 
         #region Database Properties
         private string _locationOfFlatFiles;
@@ -165,9 +165,9 @@ namespace CatalogueLibrary.Data.DataLoad
             return ProcessTasks.Where(pt => pt.IsDisabled == false);
         }
 
-        public DiscoveredServer GetDistinctLoggingDatabaseSettings(out IExternalDatabaseServer serverChosen,bool testserver = false)
+        public DiscoveredServer GetDistinctLoggingDatabaseSettings(out IExternalDatabaseServer serverChosen)
         {
-            var loggingServers = GetLoggingServers(testserver);
+            var loggingServers = GetLoggingServers();
 
             var loggingServer = loggingServers.FirstOrDefault();
 
@@ -178,20 +178,20 @@ namespace CatalogueLibrary.Data.DataLoad
             return toReturn;
         }
 
-        public DiscoveredServer GetDistinctLoggingDatabaseSettings(bool testserver = false)
+        public DiscoveredServer GetDistinctLoggingDatabaseSettings()
         {
             IExternalDatabaseServer whoCares;
-            return GetDistinctLoggingDatabaseSettings(out whoCares, testserver);
+            return GetDistinctLoggingDatabaseSettings(out whoCares);
         }
 
-        private IDataAccessPoint[] GetLoggingServers(bool testServer)
+        private IDataAccessPoint[] GetLoggingServers()
         {
             ICatalogue[] catalogue = GetAllCatalogues().ToArray();
 
             if (!catalogue.Any())
                 throw new NotSupportedException("LoadMetaData '" + ToString() + " (ID=" + ID + ") does not have any Catalogues associated with it so it is not possible to fetch it's LoggingDatabaseSettings");
 
-            return catalogue.Select(c => c.GetLoggingServer(testServer)).ToArray();
+            return catalogue.Select(c => c.LiveLoggingServer).ToArray();
         }
 
         public string GetDistinctLoggingTask()

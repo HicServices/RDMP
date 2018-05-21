@@ -8,7 +8,7 @@ FK_CacheProgress_LoadSchedule:Prevents you deleting a LoadProgress that has a Ca
 FK_CacheProgress_PermissionWindow: Prevents you from deleting a PermissionWindow that is in use by one or more CacheProgress.
 FK_CohortAggregateSubContainer_CohortAggregateContainer_ParentID: Prevents deleting a container that is part of a subcontainer relationship.  Deleting containers must be done programatically from the bottom up or by nuking all subcontainer relationships and then nuking all containers
 FK_CohortAggregateContainer_AggregateConfiguration_AggregateConfiguration:Prevents deleting an AggregateConfiguration which is part of a CohortIdentificationConfiguration in CohortManager
-FK_ANOTable_ExternalDatabaseServer:Prevents deleting an ExternalDatabaseServer that configured as an ANOTable endpoint i.e. the server contains anonymous/identifiable DLE value substitutions so deleting it would result in unreachable data and orphan ANOTables
+FK_ANOTable_ExternalDatabaseServer:Prevents deleting an ExternalDatabaseServer that is configured as an ANOTable endpoint i.e. the server contains anonymous/identifiable DLE value substitutions so deleting it would result in unreachable data and orphan ANOTables
 FK_AggregateConfiguration_AggregateDimension: Prevents you deleting the AggregateDimension that is configured as the pivot column of it's parent AggregateConfiguration
 FK_GovernanceDocument_GovernancePeriod:Prevents you deleting GovernancePeriods which have one or more GovernanceDocument configured on them.
 FK_GovernancePeriod_Catalogue_GovernancePeriod:Prevents you deleting GovernancePeriods which are configured to provide Governance for one or more Catalogues
@@ -54,6 +54,7 @@ FK_ExtractionConfiguration_Cohort: Prevents you deleting an ExtractableCohort wh
 FK_AutomationJob_ExternalDatabaseServer: Prevents you deleting an ExternalDatabaseServer which is the logging server of an ongoing AutomationJob on the Automation server.
 FK_LoadSchedule_LoadMetadata:Prevents you deleting a LoadMetadata that has one or more LoadProgress records configured for it.  These LoadProgress store how far you are through loading your dataset, vital irrecoverable information you do not want to orphan/erase.
 FK_AutomationLockedCatalogues_Catalogue:Prevents you deleting a Catalogue which is currently locked by the AutomationServer as part of some activity it is undertaking (e.g. it might be running the DQE on the Catalogue or loading it etc).  The lock will expire when the AutomationJob completes (or if it is crashed, when the user resolves the crash and deletes the crash recorded AutomationJob).
+FK_ExtractableDataSet_Project:Prevents you deleting a Project which has a 'Project Specific Catalogue' associated with it
 ix_LoadProgressRelationshipIs0To1:Prevents you from configuring two or more CacheProgress on a LoadProgress
 idx_CanOnlyBeOneActiveTicketingSystemConfiguration: Restricts you to having a single system wide TicketingSystem configured
 idxGovernancePeriodNameMustBeUnique:Prevents you creating two or more GovernancePeriods with the same name
@@ -78,3 +79,4 @@ ix_NoCicProjectDuplicates:Prevents you associating the same CohortIdentification
 IX_RemoteRDMP_NameMustBeUnique: Prevents you giving two RemoteRDMP endpoints the same name
 ix_YouCanImportEachObjectOnlyOnce: Prevents you from importing two or more copies of the same shared object (identified by it's sharing SharingUID)
 ix_YouCanExportEachObjectOnlyOnce: Prevents you from exporting the same object twice (with different SharingUID)
+ix_SelectedDatasetsForceJoinsMustBeUnique: Prevents you from declaring that the same TableInfo should be forced joined when extracting the SelectedDatasets multiple times

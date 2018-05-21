@@ -16,6 +16,7 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -25,7 +26,6 @@ using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
 using Newtonsoft.Json;
 using ReusableUIComponents;
-using Sharing.Sharing;
 
 namespace CatalogueManager.ANOEngineeringUIs
 {
@@ -36,7 +36,6 @@ namespace CatalogueManager.ANOEngineeringUIs
     /// </summary>
     public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogueUI_Design
     {
-
         private bool _setup = false;
         private RDMPCollectionCommonFunctionality tlvANOTablesCommonFunctionality;
         private RDMPCollectionCommonFunctionality tlvTableInfoMigrationsCommonFunctionality;
@@ -561,8 +560,15 @@ namespace CatalogueManager.ANOEngineeringUIs
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 var fi = new FileInfo(sfd.FileName);
+                
+                var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
+
+                if (!cmdAnoTablesToo.IsImpossible)
+                    cmdAnoTablesToo.Execute();
+
                 var json = JsonConvertExtensions.SerializeObject(_planManager, _activator.RepositoryLocator);
                 File.WriteAllText(fi.FullName,json);
+
             }
         }
 

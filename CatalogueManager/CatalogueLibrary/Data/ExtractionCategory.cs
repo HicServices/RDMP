@@ -31,6 +31,12 @@ namespace CatalogueLibrary.Data
         Deprecated,
 
         /// <summary>
+        /// This column is part of a 'Project Specific Catalogue'.  If a <see cref="Catalogue"/> is for use only with a specific data export Project then all 
+        /// <see cref="ExtractionInformation"/> in that <see cref="Catalogue"/> must have this <see cref="ExtractionCategory"/>
+        /// </summary>
+        ProjectSpecific,
+
+        /// <summary>
         /// Value can only be used for fetching ExtractionInformations.  This means that all will be returned.  You cannot set a column to have an ExtractionCategory of Any
         /// </summary>
         Any

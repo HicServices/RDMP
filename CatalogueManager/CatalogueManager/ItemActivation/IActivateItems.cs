@@ -120,16 +120,11 @@ namespace CatalogueManager.ItemActivation
         /// <returns></returns>
         T Activate<T>(IPersistableObjectCollection collection) where T : IObjectCollectionControl, new();
 
-        bool DeleteWithConfirmation(object sender, IDeleteable deleteable,string overrideConfirmationText=null);
-        bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete);
-
+        bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
+        
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
-        void ActivateCatalogueItemIssue(object sender, CatalogueItemIssue catalogueItemIssue);
-
+        
         void ActivateConvertColumnInfoIntoANOColumnInfo(ColumnInfo columnInfo);
-        void ActivateSupportingDocument(object sender, SupportingDocument supportingDocument);
-        void ActivateSupportingSqlTable(object sender, SupportingSQLTable supportingSQLTable);
-        void ActivateDataAccessCredentials(object sender, DataAccessCredentials dataAccessCredentials);
         
         void ViewDataSample(IViewSQLAndResultsCollection collection);
 
@@ -143,8 +138,7 @@ namespace CatalogueManager.ItemActivation
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
         
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
-        void ActivateJoinInfoConfiguration(object sender, TableInfo tableInfo);
-
+        
         void ActivateReOrderCatalogueItems(Catalogue catalogue);
 
         void ActivateConfigureValidation(object sender, Catalogue catalogue);
@@ -154,10 +148,7 @@ namespace CatalogueManager.ItemActivation
         void ActivateViewLog(ExternalDatabaseServer loggingServer, int dataLoadRunID);
 
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
-        void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer);
-        void ActivateTableInfo(object sender, TableInfo tableInfo);
-        void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn);
-        void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow);
+        
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);

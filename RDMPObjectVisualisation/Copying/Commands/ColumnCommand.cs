@@ -6,16 +6,16 @@ namespace RDMPObjectVisualisation.Copying.Commands
 {
     public class ColumnCommand : ICommand
     {
-        private readonly IColumn _c;
+        public readonly IColumn Column;
 
-        public ColumnCommand(IColumn c)
+        public ColumnCommand(IColumn column)
         {
-            _c = c;
+            Column = column;
         }
 
         public string GetSqlString()
         {
-            return _c.SelectSQL;
+            return Column.SelectSQL;
         }
     }
 }

@@ -63,6 +63,36 @@ namespace RDMPObjectVisualisation {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BigCohort {
+            get {
+                object obj = ResourceManager.GetObject("BigCohort", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap BigGraph {
+            get {
+                object obj = ResourceManager.GetObject("BigGraph", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap BigPatientIndexTable {
+            get {
+                object obj = ResourceManager.GetObject("BigPatientIndexTable", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DragFrom {
             get {
                 object obj = ResourceManager.GetObject("DragFrom", resourceCulture);

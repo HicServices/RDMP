@@ -243,6 +243,8 @@
     <Compile Include="Automation\AutomationJobTests.cs" />
     <Compile Include="Automation\AutomationServiceSlotTests.cs" />
     <Compile Include="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
+    <Compile Include="ImportTests\GatherAndShareTests.cs" />
+    <Compile Include="ImportTests\PluginClassTests.cs" />
     <Compile Include="ImportTests\TestImportingAnObject.cs" />
     <Compile Include="Integration\AllKeywordsDescribedTest.cs" />
     <Compile Include="Integration\AllObjectsHaveImages.cs" />
@@ -271,7 +273,6 @@
     <Compile Include="Integration\PipelineTests.cs" />
     <Compile Include="Integration\ArgumentTests\ProcessTaskArgumentTests.cs" />
     <Compile Include="Integration\ArgumentTests\ProcessTaskTests.cs" />
-    <Compile Include="Integration\Dependencies\RelationshipTests.cs" />
     <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\AggregateBuilderTestsBase.cs" />
     <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\AggregateDataBasedTests.cs" />
     <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\MicrosoftAggregateBuilderTests.cs" />

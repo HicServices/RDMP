@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
+﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class CatalogueUsedByLoadMetadataNode
+    public class CatalogueUsedByLoadMetadataNode:IDeletableWithCustomMessage
     {
         public LoadMetadata LoadMetadata { get; private set; }
         public Catalogue Catalogue { get; private set; }
@@ -24,6 +20,7 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
             return Catalogue.ToString();
         }
 
+        #region Equality Members
         protected bool Equals(CatalogueUsedByLoadMetadataNode other)
         {
             return Equals(LoadMetadata, other.LoadMetadata) && Equals(Catalogue, other.Catalogue);
@@ -43,6 +40,18 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
             {
                 return ((LoadMetadata != null ? LoadMetadata.GetHashCode() : 0)*397) ^ (Catalogue != null ? Catalogue.GetHashCode() : 0);
             }
+        }
+        #endregion
+
+        public void DeleteInDatabase()
+        {
+            Catalogue.LoadMetadata_ID = null;
+            Catalogue.SaveToDatabase();
+        }
+
+        public string GetDeleteMessage()
+        {
+            return "disassociate Catalogue '" + Catalogue +"' from it's Load logic";
         }
     }
 }

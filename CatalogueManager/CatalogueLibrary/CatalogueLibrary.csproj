@@ -386,6 +386,8 @@
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowPipelineContext.cs" />
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
+    <Compile Include="Data\CatalogueExtractabilityStatus.cs" />
+    <Compile Include="Data\Cohort\SetOperation.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
     <Compile Include="Data\ContainerHelper.cs" />
     <Compile Include="Data\Dashboarding\DashboardControl.cs" />
@@ -416,10 +418,11 @@
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
     <Compile Include="Data\Remoting\RemoteRDMP.cs" />
     <Compile Include="Data\Serialization\DatabaseEntityJsonConverter.cs" />
-    <Compile Include="Data\Serialization\ILazyConstructorFinishedCallback.cs" />
+    <Compile Include="Data\Serialization\IPickAnyConstructorFinishedCallback.cs" />
     <Compile Include="Data\Serialization\JsonCompatibleDictionary.cs" />
     <Compile Include="Data\Serialization\JsonConvertExtensions.cs" />
-    <Compile Include="Data\Serialization\LazyConstructorsJsonConverter.cs" />
+    <Compile Include="Data\Serialization\PickAnyConstructorJsonConverter.cs" />
+    <Compile Include="Data\Serialization\ShareDefinition.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
@@ -455,6 +458,8 @@
     <Compile Include="ExternalDatabaseServerPatching\IdentifierDumpDatabasePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
+    <Compile Include="Nodes\AllLoadMetadatasNode.cs" />
+    <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />

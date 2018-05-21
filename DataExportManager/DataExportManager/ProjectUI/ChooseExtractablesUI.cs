@@ -26,9 +26,8 @@ namespace DataExportManager.ProjectUI
     public delegate void ExtractCommandSelectedHandler(object sender, IExtractCommand command);
     
     /// <summary>
-    /// Part of ExecuteExtractionUI.  This control allows you to select which datasets, extractable attachments (See SupportingDocumentsViewer), custom data (See ImportCustomDataFileUI)
-    /// and Lookups (See ConfigureLookups) you want to execute on this pass.  You can only select datasets etc which are part of the currently executing project configuration (See 
-    /// ExecuteExtractionUI).
+    /// Part of ExecuteExtractionUI.  This control allows you to select which datasets, extractable attachments (See SupportingDocumentUI)  and Lookups (See LookupConfiguration) you want
+    /// to execute on this pass.  You can only select datasets etc which are part of the currently executing project configuration (See ExecuteExtractionUI).
     /// 
     /// <para>All artifacts are extracted in parallel into the data extraction directory of the project (in a subfolder for the configuration).  This execution will override any files it finds
     /// for previous executions of the same dataset but will not delete unticked datasets.  This allows you to run an extraction overnight of half the datasets and then do the other half
@@ -38,8 +37,7 @@ namespace DataExportManager.ProjectUI
     {
         private const string Globals = "Globals";
         private const string Bundles = "Datasets";
-        private const string CustomTables = "Custom Tables";//these are cohort custom tables - random stuff the user has uploaded for attached to a given cohort e.g. questionnaire data etc 
-
+        
         public event ExtractCommandSelectedHandler CommandSelected;
 
         private GlobalsBundle _lastDispatchedGlobalsBundle = null;
@@ -50,7 +48,7 @@ namespace DataExportManager.ProjectUI
         {
             InitializeComponent();
 
-            tlvDatasets.RowFormatter+= RowFormatter;
+            tlvDatasets.RowFormatter += RowFormatter;
         }
 
         private void RowFormatter(OLVListItem olvItem)
@@ -87,20 +85,17 @@ namespace DataExportManager.ProjectUI
             Categories.Clear();
             Categories.Add(Globals, new List<object>());
             Categories.Add(Bundles, new List<object>());
-            Categories.Add(CustomTables, new List<object>());
             
             var factory = new ExtractCommandCollectionFactory();
-            var collection = factory.Create(RepositoryLocator,configuration);
+            var collection = factory.Create(RepositoryLocator, configuration);
 
             //find all the things that are available for extraction
-            //get all the custom tables
-            Categories[CustomTables].AddRange(collection.CustomTables);
             
             //add globals to the globals category
             Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
 
             //add global SQLs to globals category
-            Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s=>s.IsGlobal && s.Extractable));
+            Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
 
             //add the bundle
             Categories[Bundles].AddRange(collection.Datasets);
@@ -365,17 +360,6 @@ namespace DataExportManager.ProjectUI
                     monitor.SaveState(cmd);
                 }
 
-                foreach (IExtractCohortCustomTableCommand cmd in Categories[CustomTables].ToArray())
-                {
-                    if (!monitor.Contains(cmd))
-                        monitor.Add(cmd);
-
-                    if(monitor.GetHasChanged(cmd))
-                        toRefresh.Add(cmd);
-
-                    monitor.SaveState(cmd);
-                }
-                
                 if(toRefresh.Any())
                     tlvDatasets.RefreshObjects(toRefresh);
                 

@@ -43,7 +43,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             var f = new SingleControlForm(barsUI);
             f.Show();
 
-            service.SendCollectionToAllRemotes(allSlots, () => barsUI.Done());
+            service.SendToAllRemotes(allSlots, barsUI.Done);
         }
     }
 }

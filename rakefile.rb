@@ -103,11 +103,6 @@ task :publishall, [:folder, :url] do |t, args|
     
     minversion = "#{major}.#{minor}.#{patch}.0"
     
-    #puts "version: #{version}"
-    #puts "minversion: #{minversion}"
-    #puts "folder: #{folder}"
-    #puts "url: #{url}"
-    
     Dir.chdir('Application/ResearchDataManagementPlatform') do
         sh "./publish.bat #{version} #{minversion} #{deployfolder}/ #{deployurl}"
     end
@@ -115,17 +110,22 @@ task :publishall, [:folder, :url] do |t, args|
     # reset symlinks, only if STABLE:
     if (!suffix)
         # delete old files
-        File.delete "#{basefolder}/Stable/RDMPAutomationService.exe" if File.exists?("#{basefolder}/Stable/RDMPAutomationService.exe")
         File.delete "#{basefolder}/Stable/ResearchDataManagementPlatform.application" if File.exists?("#{basefolder}/Stable/ResearchDataManagementPlatform.application")
         File.delete "#{basefolder}/Stable/ResearchDataManagementPlatform.exe" if File.exists?("#{basefolder}/Stable/ResearchDataManagementPlatform.exe")
         File.delete "#{basefolder}/Stable/setup.exe" if File.exists?("#{basefolder}/Stable/setup.exe")
         sh "rd \"#{basefolder}/Stable/Application Files\"" if Dir.exists?("#{basefolder}/Stable/Application Files")
         # recreate symlinks
-        sh "call mklink \"#{basefolder}/Stable/RDMPAutomationService.exe\" \"#{deployfolder}/RDMPAutomationService.exe\""
         sh "call mklink \"#{basefolder}/Stable/ResearchDataManagementPlatform.application\" \"#{deployfolder}/ResearchDataManagementPlatform.application\""
         sh "call mklink \"#{basefolder}/Stable/ResearchDataManagementPlatform.exe\" \"#{deployfolder}/ResearchDataManagementPlatform.exe\""
         sh "call mklink \"#{basefolder}/Stable/setup.exe\" \"#{deployfolder}/setup.exe\""        
         sh "call mklink /J \"#{basefolder}/Stable/Application Files\" \"#{deployfolder}/Application Files\""
+    end
+    
+    # now we build the Automation Service
+    Dir.chdir('Tools/RDMPAutomationService') do
+        sh "./build.cmd #{deployfolder}/RDMPAutomationService/"
+        File.delete "#{basefolder}/Stable/RDMPAutomationService.zip" if File.exists?("#{basefolder}/Stable/RDMPAutomationService.zip")
+        sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('#{deployfolder}/RDMPAutomationService', '#{basefolder}/Stable/RDMPAutomationService.zip'); }\""
     end
 end
 

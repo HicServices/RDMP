@@ -7,7 +7,6 @@ using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
-using Sharing.Sharing;
 
 
 namespace CatalogueManager.SimpleDialogs
@@ -150,8 +149,7 @@ namespace CatalogueManager.SimpleDialogs
                 ci.CloneCatalogueItemWithIDIntoCatalogue(_cataToImportTo);
             else
             {
-                var pp = new PropertyPopulater();
-                pp.CopyNonIDValuesAcross(ci, _overwriteTarget, true);
+                CopyNonIDValuesAcross(ci, _overwriteTarget, true);
                 this.Close();
             }
 
@@ -186,5 +184,42 @@ namespace CatalogueManager.SimpleDialogs
             if (e.KeyCode == Keys.Enter)
                 btnImport_Click(null, null);
         }
+
+        /// <summary>
+        /// Copies all properties (Description etc) from one CatalogueItem into another (except ID properties).
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="skipNameProperty"></param>
+        public void CopyNonIDValuesAcross(IMapsDirectlyToDatabaseTable from, IMapsDirectlyToDatabaseTable to, bool skipNameProperty = false)
+        {
+            var type = from.GetType();
+
+            if (to.GetType() != type)
+                throw new Exception("From and To objects must be of the same Type");
+
+            foreach (var propertyInfo in type.GetProperties())
+            {
+                if (propertyInfo.Name == "ID")
+                    continue;
+
+                if (propertyInfo.Name.EndsWith("_ID"))
+                    continue;
+
+                if (propertyInfo.Name == "Name" && skipNameProperty)
+                    continue;
+
+                if (propertyInfo.CanWrite == false || propertyInfo.CanRead == false)
+                    continue;
+
+                object value = propertyInfo.GetValue(from, null);
+                propertyInfo.SetValue(to, value, null);
+            }
+
+            var s = to as ISaveable;
+            if (s != null)
+                s.SaveToDatabase();
+        }
+
     }
 }

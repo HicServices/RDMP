@@ -35,7 +35,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         string GetDestinationDescription();
         DestinationType GetDestinationType();
 
-        void ExtractGlobals(Project project, ExtractionConfiguration configuration, GlobalsBundle globalsToExtract, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo);
         ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, ExtractableDataSet dataSet);
         FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository);
     }

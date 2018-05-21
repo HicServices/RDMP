@@ -152,8 +152,7 @@ namespace DataExportLibrary.CohortCreationPipeline
             if(NewCohortDefinition.ID == null)
                 throw new NotSupportedException("CohortCreationRequest cannot be imported because it's ID is null, it is likely that it has not been pushed to the server yet");
 
-            int whoCares;
-            var cohort = new ExtractableCohort(_repository, (ExternalCohortTable) NewCohortDefinition.LocationOfCohort, (int)NewCohortDefinition.ID, out whoCares);
+            var cohort = new ExtractableCohort(_repository, (ExternalCohortTable) NewCohortDefinition.LocationOfCohort, (int)NewCohortDefinition.ID);
             cohort.AppendToAuditLog(DescriptionForAuditLog);
 
             CohortCreatedIfAny = cohort;

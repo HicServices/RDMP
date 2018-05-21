@@ -332,7 +332,6 @@ namespace ResearchDataManagementPlatform.Menus
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             AddToNew(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator));
             AddToNew(new ExecuteCommandImportFileAsNewCohort(_activator));
-            AddToNew(new ExecuteCommandImportFileAsCustomDataForCohort(_activator));
             
             //Data export commands
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
@@ -372,7 +371,7 @@ namespace ResearchDataManagementPlatform.Menus
         
         private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PluginManagementForm dialogue = new PluginManagementForm();
+            PluginManagementForm dialogue = new PluginManagementForm(_activator);
             dialogue.RepositoryLocator = RepositoryLocator;
             dialogue.Show();
         }

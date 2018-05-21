@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
 using RDMPObjectVisualisation.Copying.Commands;
+using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
+    class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
     {
         public ProposeExecutionWhenTargetIsProject(IActivateItems itemActivator) : base(itemActivator)
         {
@@ -35,6 +37,21 @@ namespace DataExportManager.CommandExecution.Proposals
             var cicCommand = cmd as CohortIdentificationConfigurationCommand;
             if(cicCommand != null)
                 return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
+
+            var cataCommand = cmd as CatalogueCommand;
+            if (cataCommand != null)
+                return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
+
+            var file = cmd as FileCollectionCommand;
+
+            if(file != null)
+                return new ExecuteCommandCreateNewCatalogueByImportingFile(ItemActivator,file).SetTarget(project);
+
+            var aggCommand = cmd as AggregateConfigurationCommand;
+            
+            if(aggCommand != null)
+                return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator).SetTarget(project).SetTarget(aggCommand.Aggregate);
+
 
             return null;
         }

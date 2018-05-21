@@ -28,6 +28,7 @@ namespace CatalogueManager.Icons.IconProvision
         ExternalDatabaseServer,
 
         Catalogue,
+        ProjectCatalogue,
         CatalogueItemsNode,
         CatalogueItem,
         CatalogueItemIssue,
@@ -88,7 +89,6 @@ namespace CatalogueManager.Icons.IconProvision
         ProjectSavedCohortsNode,
         ExtractableDataSetsNode,
         ExtractionDirectoryNode,
-        CustomDataTableNode,
         
         CohortIdentificationConfiguration,
 
@@ -133,9 +133,12 @@ namespace CatalogueManager.Icons.IconProvision
         AllObjectImportsNode,
         AllObjectExportsNode,
 
-        CohortCustomColumn,
         ExtractableColumn,
         ProjectCohortsNode,
-        FrozenExtractionConfigurationsNode
+        FrozenExtractionConfigurationsNode,
+        ProjectCataloguesNode,
+
+        AllLoadMetadatasNode,
+        AllPermissionWindowsNode,
     }
 }

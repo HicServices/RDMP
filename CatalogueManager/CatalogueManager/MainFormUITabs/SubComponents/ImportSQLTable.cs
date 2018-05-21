@@ -109,7 +109,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
             if(_allowImportAsCatalogue)
             {
-                var ui = new ConfigureCatalogueExtractabilityUI(_activator, Importer);
+                var ui = new ConfigureCatalogueExtractabilityUI(_activator, Importer, "Existing Table", null);
                 ui.ShowDialog();
                 TableInfoCreatedIfAny = ui.TableInfoCreated;
             }

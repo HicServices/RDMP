@@ -8,6 +8,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 
 namespace DataExportLibrary.Data.DataTables
@@ -166,6 +167,16 @@ namespace DataExportLibrary.Data.DataTables
         public ProjectCohortIdentificationConfigurationAssociation AssociateWithCohortIdentification(CohortIdentificationConfiguration cic)
         {
             return new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository) Repository, this, cic);
+        }
+
+        public ICatalogue[] GetAllProjectCatalogues()
+        {
+            return Repository.GetAllObjectsWithParent<ExtractableDataSet>(this).Select(eds => eds.Catalogue).ToArray();
+        }
+
+        public ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory c)
+        {
+            return GetAllProjectCatalogues().SelectMany(pc => pc.GetAllExtractionInformation(c)).ToArray();
         }
     }
 }

@@ -53,7 +53,7 @@ namespace CatalogueLibrary.Data
             get { return _extractionCategory; }
             set
             {
-                if (_extractionCategory == ExtractionCategory.Any)
+                if (value == ExtractionCategory.Any)
                     throw new ArgumentException("Any is only usable as an extraction argument and cannot be assigned to an ExtractionInformation");
 
                 SetField(ref _extractionCategory, value);
@@ -75,6 +75,15 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// The ColumnInfo that underlies this extractable column.  ExtractionInformation allows for transforms, governance rules and indicates extractability (Core / Supplemental etc)
+        /// while the ColumnInfo is the concrete/immutable reference to the underlying column in the database from which the SelectSQL is executed.  This determines what tables are 
+        /// joined on during query generation and which servers are connected to during query execution etc.  
+        /// 
+        /// <para>This field can be null only if the <see cref="ColumnInfo"/> has been deleted rendering this an orphan and broken.  This is considered a problem by 
+        /// <see cref="CatalogueLibrary.Providers.CatalogueProblemProvider"/> and as such it is the users responsibility to fix it, you shouldn't worry too much about null
+        /// checking this field.</para> 
+        /// </summary>
         [NoMappingToDatabase]
         public override ColumnInfo ColumnInfo
         {
@@ -185,7 +194,7 @@ namespace CatalogueLibrary.Data
 
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
-            return new IHasDependencies[] {ColumnInfo};
+            return ColumnInfo != null? new IHasDependencies[] {ColumnInfo}: new IHasDependencies[0];
         }
 
         public IHasDependencies[] GetObjectsDependingOnThis()
