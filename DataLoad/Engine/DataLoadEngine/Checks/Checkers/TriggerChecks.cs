@@ -3,6 +3,7 @@ using System.Linq;
 using CachingEngine.DataRetrievers;
 using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Exceptions;
+using CatalogueLibrary.Triggers.Implementations;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -41,16 +42,8 @@ namespace DataLoadEngine.Checks.Checkers
                     return;
             }
 
-
-            TriggerImplementer trigger;
-
-            if(_server.DatabaseType == DatabaseType.MicrosoftSQLServer)
-                trigger = new TriggerImplementer(_table);
-            else
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Triggers only supported on Microsoft SQL Servers currently", CheckResult.Warning));
-                return;
-            }
+            var factory = new TriggerImplementerFactory(_server.DatabaseType);
+            var implementer = factory.Create(_table);
 
             bool present;
 
@@ -61,7 +54,7 @@ namespace DataLoadEngine.Checks.Checkers
                 try
                 {
                     //see if it exists
-                    present = trigger.GetTriggerStatus() == TriggerStatus.Enabled;
+                    present = implementer.GetTriggerStatus() == TriggerStatus.Enabled;
                 }
                 catch (TriggerMissingException)
                 {
@@ -73,7 +66,7 @@ namespace DataLoadEngine.Checks.Checkers
                 try
                 {
                     //we do know the primary keys
-                    present = trigger.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
+                    present = implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
                 }
                 catch (IrreconcilableColumnDifferencesInArchiveException e)
                 {
@@ -85,7 +78,7 @@ namespace DataLoadEngine.Checks.Checkers
                 }
                 catch (Exception e)
                 {
-                    NotifyFail(e, notifier, trigger);
+                    NotifyFail(e, notifier, implementer);
                     return;
                 }
             }
@@ -99,7 +92,7 @@ namespace DataLoadEngine.Checks.Checkers
 
                 //we expected it to be there
                 if(_expectedPresence)
-                    NotifyFail(null,notifier,trigger); //try creating it
+                    NotifyFail(null, notifier, implementer); //try creating it
                 else
                     //we did not expect it to be there but it was, just fail and don't offer anything crazy like nuking it
                     notifier.OnCheckPerformed(new CheckEventArgs("Trigger presence/intactness for table " + _table + " did not match expected presence (" + _expectedPresence + ")", CheckResult.Fail, null));
@@ -137,7 +130,7 @@ namespace DataLoadEngine.Checks.Checkers
             return passed;
         }
 
-        private void NotifyFail(Exception e, ICheckNotifier notifier,TriggerImplementer trigger)
+        private void NotifyFail(Exception e, ICheckNotifier notifier,ITriggerImplementer microsoftSQLTrigger)
         {
             //if they expected it not to be there then it shouldn't be crashing trying to find it
             if (!_expectedPresence)
@@ -152,7 +145,7 @@ namespace DataLoadEngine.Checks.Checkers
                 string problemsDroppingTrigger;
                 string thingsThatWorkedDroppingTrigger;
 
-                trigger.DropTrigger(out problemsDroppingTrigger,out thingsThatWorkedDroppingTrigger);
+                microsoftSQLTrigger.DropTrigger(out problemsDroppingTrigger,out thingsThatWorkedDroppingTrigger);
 
                 if (!string.IsNullOrWhiteSpace(thingsThatWorkedDroppingTrigger))
                     notifier.OnCheckPerformed(new CheckEventArgs(thingsThatWorkedDroppingTrigger, CheckResult.Success, null));
@@ -160,7 +153,7 @@ namespace DataLoadEngine.Checks.Checkers
                 if (!string.IsNullOrWhiteSpace(problemsDroppingTrigger))
                     notifier.OnCheckPerformed(new CheckEventArgs(problemsDroppingTrigger, CheckResult.Warning, null));
 
-                trigger.CreateTrigger(notifier);
+                microsoftSQLTrigger.CreateTrigger(notifier);
                 TriggerCreated = true;
             }
         }

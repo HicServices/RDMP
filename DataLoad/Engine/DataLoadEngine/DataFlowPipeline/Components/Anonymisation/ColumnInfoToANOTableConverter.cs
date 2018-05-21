@@ -7,9 +7,11 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Triggers;
+using CatalogueLibrary.Triggers.Implementations;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
@@ -91,9 +93,12 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
         {
             var database = _dataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
 
-            TriggerImplementer trigger = new TriggerImplementer(database.ExpectTable(_tableInfo.GetRuntimeName()));
+            var triggerFactory = new TriggerImplementerFactory(database.Server.DatabaseType);
+            
 
-            if (trigger.GetTriggerStatus() != TriggerStatus.Missing)
+            var triggerImplementer = triggerFactory.Create(database.ExpectTable(_tableInfo.GetRuntimeName()));
+
+            if (triggerImplementer.GetTriggerStatus() != TriggerStatus.Missing)
                 throw new NotSupportedException("Table " + _tableInfo + " has a backup trigger on it, this will destroy performance and break when we add the ANOColumn, dropping the trigger is not an option because of the _Archive table still containing identifiable data (and other reasons)");
         }
 
@@ -218,4 +223,5 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
 
         }
     }
+
 }

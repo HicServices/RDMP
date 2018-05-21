@@ -1,5 +1,6 @@
 ﻿using System.Data.SqlClient;
 using CatalogueLibrary.Triggers;
+using CatalogueLibrary.Triggers.Implementations;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
@@ -31,7 +32,9 @@ namespace DataLoadEngineTests.Integration
 
             var dbInfo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName);
 
-            var triggerImplementer = new TriggerImplementer(table);
+            var factory = new TriggerImplementerFactory(dbInfo.Server.DatabaseType);
+            
+            var triggerImplementer = factory.Create(table);
             var isEnabled = triggerImplementer.GetTriggerStatus();
             Assert.AreEqual(TriggerStatus.Enabled, isEnabled);
 

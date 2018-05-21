@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Triggers.Exceptions;
@@ -12,24 +11,8 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Exceptions;
 
-namespace CatalogueLibrary.Triggers
+namespace CatalogueLibrary.Triggers.Implementations
 {
-
-    public enum TriggerStatus
-    {
-        Enabled,
-        Disabled,
-        Missing
-    }
-
-    public interface ITriggerImplementer
-    {
-
-        void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger);
-        void CreateTrigger(DiscoveredColumn[] primaryKeys, ICheckNotifier notifier, int createArchiveIndexTimeout = 30);
-        TriggerStatus GetTriggerStatus();
-    }
-
     /// <summary>
     /// Creates an _Archive table to match a live table and a Database Trigger On Update which moves old versions of records to the _Archive table when the main table
     /// is UPDATEd.  An _Archive table is an exact match of columns as the live table (which must have primary keys) but also includes several audit fields (date it 
@@ -42,28 +25,13 @@ namespace CatalogueLibrary.Triggers
     /// <para>Also contains methods for confirming that a trigger exists on a given table, that the primary keys still match when it was created and the _Archive table hasn't
     /// got a different schema to the live table (e.g. if you made a change to the live table this would pick up that the _Archive wasn't updated).</para>
     /// </summary>
-    public class TriggerImplementer
+    internal class MicrosoftSQLTriggerImplementer:TriggerImplementer
     {
-        private readonly bool _createDataLoadRunIdAlso;
-        
-        private DiscoveredServer _server;
-        private DiscoveredTable _table;
-        private DiscoveredTable _archiveTable;
-        private DiscoveredColumn[] _columns;
-        private DiscoveredColumn[] _primaryKeys;
-
-        public TriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true)
+        public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
-            _server = table.Database.Server;
-            _table = table;
-            _archiveTable = _table.Database.ExpectTable(table.GetRuntimeName() + "_Archive");
-            _columns = table.DiscoverColumns();
-            _primaryKeys = _columns.Where(c => c.IsPrimaryKey).ToArray();
-            
-            _createDataLoadRunIdAlso = createDataLoadRunIDAlso;
         }
 
-        public void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
+        public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
         {
             using (var con = _server.GetConnection())
             {
@@ -111,94 +79,94 @@ namespace CatalogueLibrary.Triggers
             }
         }
 
-        public void CreateTrigger(ICheckNotifier notifier, int createArchiveIndexTimeout= 30)
+        public override void CreateTrigger(ICheckNotifier notifier, int createArchiveIndexTimeout = 30)
         {
 
-                //if _Archive exists skip creating it
-                bool skipCreatingArchive = _archiveTable.Exists();
+            //if _Archive exists skip creating it
+            bool skipCreatingArchive = _archiveTable.Exists();
             
-                //check _Archive does not already exist
-                foreach (string forbiddenColumnName in new[] { "hic_validTo", "hic_userID", "hic_status" })
-                    if (_columns.Any(c=>c.GetRuntimeName().Equals(forbiddenColumnName)))
-                        throw new Exception("Table " + _table + " already contains a column called " + forbiddenColumnName + " this column is reserved for Archiving");
+            //check _Archive does not already exist
+            foreach (string forbiddenColumnName in new[] { "hic_validTo", "hic_userID", "hic_status" })
+                if (_columns.Any(c=>c.GetRuntimeName().Equals(forbiddenColumnName)))
+                    throw new Exception("Table " + _table + " already contains a column called " + forbiddenColumnName + " this column is reserved for Archiving");
 
-                bool b_mustCreate_validFrom = !_columns.Any(c=>c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom));
-                bool b_mustCreate_dataloadRunId = !_columns.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID)) && _createDataLoadRunIdAlso;
+            bool b_mustCreate_validFrom = !_columns.Any(c=>c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom));
+            bool b_mustCreate_dataloadRunId = !_columns.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID)) && _createDataLoadRunIdAlso;
 
-                //forces column order dataloadrunID then valid from (doesnt prevent these being in the wrong place in the record but hey ho - possibly not an issue anyway since probably the 3 values in the archive are what matters for order - see the Trigger which populates *,X,Y,Z where * is all columns in mane table
-                if(b_mustCreate_dataloadRunId && !b_mustCreate_validFrom)
-                    throw new Exception("Cannot create trigger because table contains "+SpecialFieldNames.ValidFrom+" but not " + SpecialFieldNames.DataLoadRunID + " (ID must be placed before valid from in column order)");
+            //forces column order dataloadrunID then valid from (doesnt prevent these being in the wrong place in the record but hey ho - possibly not an issue anyway since probably the 3 values in the archive are what matters for order - see the Trigger which populates *,X,Y,Z where * is all columns in mane table
+            if(b_mustCreate_dataloadRunId && !b_mustCreate_validFrom)
+                throw new Exception("Cannot create trigger because table contains "+SpecialFieldNames.ValidFrom+" but not " + SpecialFieldNames.DataLoadRunID + " (ID must be placed before valid from in column order)");
                 
-                using(var con = _server.GetConnection())
+            using(var con = _server.GetConnection())
+            {
+                con.Open();
+
+                //must add validFrom outside of transaction if we want SMO to pick it up
+                if (b_mustCreate_dataloadRunId)
                 {
-                    con.Open();
-
-                    //must add validFrom outside of transaction if we want SMO to pick it up
-                    if (b_mustCreate_dataloadRunId)
-                    {
-                        var cmdAlterToAddDataLoadRunID = _server.GetCommand("ALTER TABLE " + _table + " ADD " + SpecialFieldNames.DataLoadRunID + " int null", con);
-                        cmdAlterToAddDataLoadRunID.ExecuteNonQuery();
-                    }
-
-                    //must add validFrom outside of transaction if we want SMO to pick it up
-                    if (b_mustCreate_validFrom)
-                    {
-                        var cmdAlterToAddValidTo = _server.GetCommand("ALTER TABLE " + _table + " ADD " + SpecialFieldNames.ValidFrom + " datetime DEFAULT getdate() ", con);
-                        cmdAlterToAddValidTo.ExecuteNonQuery();
-                    }
-
-                    string createArchiveTableSQL = WorkOutArchiveTableCreationSQL();
-                        
-                    if (!skipCreatingArchive)
-                    {
-
-                        //select top 0 into _Archive
-                        var cmdCreateArchive = _server.GetCommand(createArchiveTableSQL, con);
-
-                        cmdCreateArchive.ExecuteNonQuery();
-                        
-
-                        //alter to add columns
-                        var cmdAlterToAddRequiredColumns = _server.GetCommand(
-                            "ALTER TABLE " + _archiveTable+ " ADD hic_validTo datetime;" +
-                            "ALTER TABLE " + _archiveTable+ " ADD hic_userID varchar(128);" +
-                            "ALTER TABLE " + _archiveTable+ " ADD hic_status char(1);", con); 
-                                             
-                        cmdAlterToAddRequiredColumns.ExecuteNonQuery();
-                    }
-
-                    string trigger = GetCreateTriggerSQL();
-                    var cmdAddTrigger = _server.GetCommand(trigger, con);
-                    cmdAddTrigger.ExecuteNonQuery();
-                    
-                    //Add key so that we can more easily do comparisons on primary key between main table and archive
-                    string idxCompositeKeyBody = "";
-
-                    foreach (var key in _primaryKeys)
-                        idxCompositeKeyBody += "[" + key.GetRuntimeName() + @"] ASC,";
-
-                    //remove trailing comma
-                    idxCompositeKeyBody = idxCompositeKeyBody.TrimEnd(',');
-
-                    string createIndexSQL = @"CREATE NONCLUSTERED INDEX [PKsIndex] ON [dbo].[" + _archiveTable.GetRuntimeName() + "](" +idxCompositeKeyBody + ")";
-                    var cmdCreateIndex = _server.GetCommand(createIndexSQL, con);
-
-                    try
-                    {
-                        cmdCreateIndex.CommandTimeout = createArchiveIndexTimeout;
-                        cmdCreateIndex.ExecuteNonQuery();
-                    }
-                    catch (SqlException e)
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            "Could not create index on archive table because of timeout, possibly your _Archive table has a lot of data in it",
-                            CheckResult.Fail, e));
-                            
-                        return;
-                    }
-
-                    CreateViewOldVersionsTableValuedFunction( createArchiveTableSQL,con);
+                    var cmdAlterToAddDataLoadRunID = _server.GetCommand("ALTER TABLE " + _table + " ADD " + SpecialFieldNames.DataLoadRunID + " int null", con);
+                    cmdAlterToAddDataLoadRunID.ExecuteNonQuery();
                 }
+
+                //must add validFrom outside of transaction if we want SMO to pick it up
+                if (b_mustCreate_validFrom)
+                {
+                    var cmdAlterToAddValidTo = _server.GetCommand("ALTER TABLE " + _table + " ADD " + SpecialFieldNames.ValidFrom + " datetime DEFAULT getdate() ", con);
+                    cmdAlterToAddValidTo.ExecuteNonQuery();
+                }
+
+                string createArchiveTableSQL = WorkOutArchiveTableCreationSQL();
+                        
+                if (!skipCreatingArchive)
+                {
+
+                    //select top 0 into _Archive
+                    var cmdCreateArchive = _server.GetCommand(createArchiveTableSQL, con);
+
+                    cmdCreateArchive.ExecuteNonQuery();
+                        
+
+                    //alter to add columns
+                    var cmdAlterToAddRequiredColumns = _server.GetCommand(
+                        "ALTER TABLE " + _archiveTable+ " ADD hic_validTo datetime;" +
+                        "ALTER TABLE " + _archiveTable+ " ADD hic_userID varchar(128);" +
+                        "ALTER TABLE " + _archiveTable+ " ADD hic_status char(1);", con); 
+                                             
+                    cmdAlterToAddRequiredColumns.ExecuteNonQuery();
+                }
+
+                string trigger = GetCreateTriggerSQL();
+                var cmdAddTrigger = _server.GetCommand(trigger, con);
+                cmdAddTrigger.ExecuteNonQuery();
+                    
+                //Add key so that we can more easily do comparisons on primary key between main table and archive
+                string idxCompositeKeyBody = "";
+
+                foreach (var key in _primaryKeys)
+                    idxCompositeKeyBody += "[" + key.GetRuntimeName() + @"] ASC,";
+
+                //remove trailing comma
+                idxCompositeKeyBody = idxCompositeKeyBody.TrimEnd(',');
+
+                string createIndexSQL = @"CREATE NONCLUSTERED INDEX [PKsIndex] ON [dbo].[" + _archiveTable.GetRuntimeName() + "](" +idxCompositeKeyBody + ")";
+                var cmdCreateIndex = _server.GetCommand(createIndexSQL, con);
+
+                try
+                {
+                    cmdCreateIndex.CommandTimeout = createArchiveIndexTimeout;
+                    cmdCreateIndex.ExecuteNonQuery();
+                }
+                catch (SqlException e)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        "Could not create index on archive table because of timeout, possibly your _Archive table has a lot of data in it",
+                        CheckResult.Fail, e));
+                            
+                    return;
+                }
+
+                CreateViewOldVersionsTableValuedFunction( createArchiveTableSQL,con);
+            }
         }
 
         private string GetCreateTriggerSQL()
@@ -230,7 +198,7 @@ namespace CatalogueLibrary.Triggers
             string dDotColList = string.Join(",", _columns.Select(c => "d." + c.GetRuntimeName()).Union(new String[] { "d."+SpecialFieldNames.DataLoadRunID, "d."+SpecialFieldNames.ValidFrom }));
 
             return
-            @"
+                @"
 CREATE TRIGGER " + triggerName + " ON [dbo].[" + _table + @"]
 AFTER UPDATE, DELETE
 AS BEGIN
@@ -241,13 +209,13 @@ declare @isPrimaryKeyChange bit = 0
 IF exists ( select 1 FROM deleted d RIGHT " + InsertedToDeletedJoin + @" WHERE d.[" + _primaryKeys.First().GetRuntimeName() + @"] is null)
 begin
 	UPDATE " + _table + @" SET " + SpecialFieldNames.ValidFrom + " = GETDATE() FROM inserted where " +
-            equalsSqlTableToInserted + @"
+                equalsSqlTableToInserted + @"
 	set @isPrimaryKeyChange = 1
 end
 else
 begin
 	UPDATE " + _table + @" SET " + SpecialFieldNames.ValidFrom + " = GETDATE() FROM deleted where " +
-            equalsSqlTableToDeleted + @"
+                equalsSqlTableToDeleted + @"
 	set @isPrimaryKeyChange = 0
 end
 
@@ -256,8 +224,8 @@ SET NOCOUNT ON
 " + updateValidToWhere + @"
 
 INSERT INTO " + _archiveTable.GetRuntimeName() + @" (" + colList + @",hic_validTo,hic_userID,hic_status) SELECT " + dDotColList +
-            ", GETDATE(), SYSTEM_USER, CASE WHEN @isPrimaryKeyChange = 1 then 'K' WHEN i.[" + _primaryKeys.First().GetRuntimeName() +
-            "] IS NULL THEN 'D' WHEN d.[" + _primaryKeys.First().GetRuntimeName() + @"] IS NULL THEN 'I' ELSE 'U' END
+                ", GETDATE(), SYSTEM_USER, CASE WHEN @isPrimaryKeyChange = 1 then 'K' WHEN i.[" + _primaryKeys.First().GetRuntimeName() +
+                "] IS NULL THEN 'D' WHEN d.[" + _primaryKeys.First().GetRuntimeName() + @"] IS NULL THEN 'I' ELSE 'U' END
 FROM deleted d 
 LEFT " + InsertedToDeletedJoin + @"
 
@@ -377,7 +345,7 @@ END
             return createTableSQL;
         }
 
-        public TriggerStatus GetTriggerStatus()
+        public override TriggerStatus GetTriggerStatus()
         {
             var updateTriggerName = _table + "_OnUpdate";
             var queryTriggerIsItDisabledOrMissing = "USE [" + _table.Database.GetRuntimeName()+ @"]; 
@@ -413,7 +381,7 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
             }
         }
 
-        public bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
+        public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
         {
             
             //check server has trigger and it is on 

@@ -544,13 +544,18 @@
     <Compile Include="Ticketing\TicketingSystemFactory.cs" />
     <Compile Include="Triggers\DiffDatabaseDataFetcher.cs" />
     <Compile Include="Triggers\Exceptions\IrreconcilableColumnDifferencesInArchiveException.cs" />
+    <Compile Include="Triggers\Implementations\MicrosoftSQLTriggerImplementer.cs" />
+    <Compile Include="Triggers\Implementations\MySqlTriggerImplementer.cs" />
+    <Compile Include="Triggers\Implementations\TriggerImplementerFactory.cs" />
+    <Compile Include="Triggers\ITriggerImplementer.cs" />
     <Compile Include="Triggers\SpecialFieldNames.cs" />
-    <Compile Include="Triggers\TriggerImplementer.cs" />
+    <Compile Include="Triggers\Implementations\TriggerImplementer.cs" />
     <Compile Include="Reports\DatabaseAccessPrivileges\WordAccessRightsByDatabase.cs" />
     <Compile Include="Reports\DatabaseAccessPrivileges\WordAccessRightsByUser.cs" />
     <Compile Include="TableInfoSynchronizer.cs" />
     <Compile Include="SimpleStringValueEncryption.cs" />
     <Compile Include="Triggers\Exceptions\TriggerMissingException.cs" />
+    <Compile Include="Triggers\TriggerStatus.cs" />
     <Compile Include="WordCatalogueExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
