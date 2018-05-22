@@ -104,7 +104,7 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                 sqlLines.Add(new CustomLine(string.Join(",", columnsToMigrate.FieldsToUpdate.Where(c=>!c.IsPrimaryKey).Select(c=>string.Format("t1.{0} = t2.{0}",c.GetRuntimeName()))), QueryComponent.SET));
                 
                 //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
-                sqlLines.Add(new CustomLine(string.Join(" OR ",columnsToMigrate.FieldsToDiff.Where(c=>!c.IsPrimaryKey).Select(c=>string.Format("(t1.{0} <> t2.{0})", c.GetRuntimeName()))), QueryComponent.WHERE));
+                sqlLines.Add(new CustomLine(string.Join(" OR ",columnsToMigrate.FieldsToDiff.Where(c=>!c.IsPrimaryKey).Select(GetORLine)), QueryComponent.WHERE));
                 
                 //the join
                 sqlLines.AddRange(columnsToMigrate.PrimaryKeys.Select(p => new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()), QueryComponent.JoinInfoJoin)));
@@ -141,6 +141,11 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to migrate " + columnsToMigrate.SourceTable + " to " + columnsToMigrate.DestinationTable, e));
                 throw new Exception("Failed to migrate " + columnsToMigrate.SourceTable + " to " + columnsToMigrate.DestinationTable + ": " + e);
             }
+        }
+
+        private string GetORLine(DiscoveredColumn c)
+        {
+            return string.Format("(t1.{0} <> t2.{0} OR (t1.{0} is null AND t2.{0} is not null) OR (t2.{0} is null AND t1.{0} is not null))", c.GetRuntimeName());
         }
     }
 }

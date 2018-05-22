@@ -36,25 +36,33 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             dt.Columns.Add(colAge);
             dt.Columns.Add("Postcode");
 
+            //Data in live awaiting to be updated
             dt.Rows.Add(new object[]{"Dave",18,"DD3 1AB"});
             dt.Rows.Add(new object[] {"Dave", 25, "DD1 1XS" });
             dt.Rows.Add(new object[] {"Mango", 32, DBNull.Value});
+            dt.Rows.Add(new object[] { "Filli", 32,"DD3 78L" });
+            dt.Rows.Add(new object[] { "Mandrake", 32, DBNull.Value });
 
             dt.PrimaryKey = new[]{colName,colAge};
 
-            var from = dbFrom.CreateTable("CrossDatabaseMergeCommandTo_ToTable_STAGING", dt);
+            var to = dbTo.CreateTable("ToTable", dt);
 
-            Assert.IsTrue(from.DiscoverColumn("Name").IsPrimaryKey);
-            Assert.IsTrue(from.DiscoverColumn("Age").IsPrimaryKey);
-            Assert.IsFalse(from.DiscoverColumn("Postcode").IsPrimaryKey);
+            Assert.IsTrue(to.DiscoverColumn("Name").IsPrimaryKey);
+            Assert.IsTrue(to.DiscoverColumn("Age").IsPrimaryKey);
+            Assert.IsFalse(to.DiscoverColumn("Postcode").IsPrimaryKey);
 
             dt.Rows.Clear();
             
-            dt.Rows.Add(new object[] { "Dave", 25, "DD1 1PS" });//update
-            dt.Rows.Add(new object[] { "Chutney", 32, DBNull.Value }); //new
+            //new data being loaded
+            dt.Rows.Add(new object[] { "Dave", 25, "DD1 1PS" }); //update to change postcode to "DD1 1PS"
+            dt.Rows.Add(new object[] { "Chutney", 32, DBNull.Value }); //new insert Chutney
             dt.Rows.Add(new object[] { "Mango", 32, DBNull.Value }); //ignored because already present in dataset
-
-            var to = dbTo.CreateTable("ToTable", dt);
+            dt.Rows.Add(new object[] { "Filli", 32, DBNull.Value }); //update from "DD3 78L" null
+            dt.Rows.Add(new object[] { "Mandrake", 32, "DD1 1PS" }); //update from null to "DD1 1PS"
+            dt.Rows.Add(new object[] { "Mandrake", 31, "DD1 1PS" }); // insert because Age is unique (and part of pk)
+            
+            var from = dbFrom.CreateTable("CrossDatabaseMergeCommandTo_ToTable_STAGING", dt);
+            
 
             //import the to table as a TableInfo
             var importer = new TableInfoImporter(CatalogueRepository, to);
@@ -83,14 +91,33 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             migrationHost.Migrate(job, new GracefulCancellationToken());
             
             var resultantDt = to.GetDataTable();
-            Assert.AreEqual(4,resultantDt.Rows.Count);
+            Assert.AreEqual(7,resultantDt.Rows.Count);
+
+            AssertRowEquals(resultantDt, "Dave", 25, "DD1 1PS");
+            AssertRowEquals(resultantDt, "Chutney", 32, DBNull.Value);
+            AssertRowEquals(resultantDt, "Mango", 32, DBNull.Value);
+            
+            AssertRowEquals(resultantDt,"Filli",32,DBNull.Value);
+            AssertRowEquals(resultantDt, "Mandrake", 32, "DD1 1PS");
+            AssertRowEquals(resultantDt, "Mandrake", 31, "DD1 1PS");
+            
+            AssertRowEquals(resultantDt, "Dave", 18, "DD3 1AB");
+
 
             var archival = logManager.GetArchivalLoadInfoFor("CrossDatabaseMergeCommandTest", new CancellationToken());
             var log = archival.First();
 
+
             Assert.AreEqual(dli.ID,log.ID);
-            Assert.AreEqual(1,log.TableLoadInfos.Single().Inserts);
-            Assert.AreEqual(1, log.TableLoadInfos.Single().Updates);
+            Assert.AreEqual(2,log.TableLoadInfos.Single().Inserts);
+            Assert.AreEqual(3, log.TableLoadInfos.Single().Updates);
+        }
+
+        private void AssertRowEquals(DataTable resultantDt,string name,int age, object postcode)
+        {
+            Assert.AreEqual(
+                1, resultantDt.Rows.Cast<DataRow>().Count(r => Equals(r["Name"], name) && Equals(r["Age"], age) && Equals(r["Postcode"], postcode)),
+                "Did not find expected record:" + string.Join(",",name,age,postcode));
         }
     }
 }
