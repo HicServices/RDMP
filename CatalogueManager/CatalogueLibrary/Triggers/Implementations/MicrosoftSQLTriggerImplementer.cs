@@ -157,6 +157,8 @@ CREATE TRIGGER " + triggerName + " ON [dbo].[" + _table + @"]
 AFTER UPDATE, DELETE
 AS BEGIN
 
+SET NOCOUNT ON
+
 declare @isPrimaryKeyChange bit = 0
 
 --it will be a primary key change if deleted and inserted do not agree on primary key values
@@ -172,8 +174,6 @@ begin
                 equalsSqlTableToDeleted + @"
 	set @isPrimaryKeyChange = 0
 end
-
-SET NOCOUNT ON
 
 " + updateValidToWhere + @"
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
@@ -9,6 +11,7 @@ using CatalogueLibrary.Triggers.Implementations;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration;
 using HIC.Logging;
+using HIC.Logging.PastEvents;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -81,6 +84,13 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             
             var resultantDt = to.GetDataTable();
             Assert.AreEqual(4,resultantDt.Rows.Count);
+
+            var archival = logManager.GetArchivalLoadInfoFor("CrossDatabaseMergeCommandTest", new CancellationToken());
+            var log = archival.First();
+
+            Assert.AreEqual(dli.ID,log.ID);
+            Assert.AreEqual(1,log.TableLoadInfos.Single().Inserts);
+            Assert.AreEqual(1, log.TableLoadInfos.Single().Updates);
         }
     }
 }

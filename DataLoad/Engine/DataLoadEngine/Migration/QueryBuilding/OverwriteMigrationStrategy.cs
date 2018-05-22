@@ -1,8 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Text;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.Job;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Migration.QueryBuilding
@@ -23,41 +29,93 @@ namespace DataLoadEngine.Migration.QueryBuilding
         {
             var server = columnsToMigrate.DestinationTable.Database.Server;
 
-            var queryHelper = new LiveMigrationQueryHelper(columnsToMigrate, dataLoadInfoID);
-            string mergeQuery;
-            try
-            {
-                mergeQuery = queryHelper.BuildMergeQuery();
-            }
-            catch (InvalidOperationException e)
-            {
-                throw new InvalidOperationException(String.Format("Could not build merge query to migrate from {0} to {1}", columnsToMigrate.SourceTable, columnsToMigrate.DestinationTable), e);
-            }
+            //see CrossDatabaseMergeCommandTest
+
+            /*          ------------MIGRATE NEW RECORDS (novel by primary key)--------
+             *
+            
+INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoadRunID)  
+ SELECT 
+ [CrossDatabaseMergeCommandFrom]..CrossDatabaseMergeCommandTo_ToTable_STAGING.Name,
+ [CrossDatabaseMergeCommandFrom]..CrossDatabaseMergeCommandTo_ToTable_STAGING.Age,
+ [CrossDatabaseMergeCommandFrom]..CrossDatabaseMergeCommandTo_ToTable_STAGING.Postcode,
+ 1 
+ FROM 
+ [CrossDatabaseMergeCommandFrom]..CrossDatabaseMergeCommandTo_ToTable_STAGING 
+ left join
+ CrossDatabaseMergeCommandTo..ToTable
+ on
+ [CrossDatabaseMergeCommandFrom]..CrossDatabaseMergeCommandTo_ToTable_STAGING.Age = CrossDatabaseMergeCommandTo..ToTable.Age 
+ AND
+ [CrossDatabaseMergeCommandFrom]..CrossDatabaseMergeCommandTo_ToTable_STAGING.Name = CrossDatabaseMergeCommandTo..ToTable.Name
+ WHERE 
+ CrossDatabaseMergeCommandTo..ToTable.Age is null
+ */
+
+            StringBuilder sbInsert = new StringBuilder();
+            
+            sbInsert.AppendLine(string.Format("INSERT INTO {0} ({1},{2})",
+                columnsToMigrate.DestinationTable.GetFullyQualifiedName(),
+                string.Join(",", columnsToMigrate.FieldsToUpdate.Select(c => c.GetRuntimeName())),
+                SpecialFieldNames.DataLoadRunID));
+
+            sbInsert.AppendLine("SELECT");
+
+            foreach (var col in columnsToMigrate.FieldsToUpdate)
+                sbInsert.AppendLine(col.GetFullyQualifiedName() + ",");
+
+            sbInsert.AppendLine(dataLoadInfoID.ToString());
+
+            sbInsert.AppendLine("FROM");
+            sbInsert.AppendLine(columnsToMigrate.SourceTable.GetFullyQualifiedName());
+            sbInsert.AppendLine("LEFT JOIN");
+            sbInsert.AppendLine(columnsToMigrate.DestinationTable.GetFullyQualifiedName());
+            sbInsert.AppendLine("ON");
+            
+            sbInsert.AppendLine(
+                string.Join(" AND " + Environment.NewLine,
+                    columnsToMigrate.PrimaryKeys.Select(
+                        pk =>
+                            string.Format("{0}.{1}={2}.{1}", columnsToMigrate.SourceTable.GetFullyQualifiedName(),
+                                pk.GetRuntimeName(), columnsToMigrate.DestinationTable.GetFullyQualifiedName()))));
+
+            sbInsert.AppendLine("WHERE");
+            sbInsert.AppendLine(string.Format("{0}.{1} IS NULL",
+                columnsToMigrate.DestinationTable.GetFullyQualifiedName(),
+                columnsToMigrate.PrimaryKeys.First().GetRuntimeName()));
+            
+            string insertSql = sbInsert.ToString();
+            
+            var cmd = server.GetCommand(insertSql, _managedConnection);
+            cmd.CommandTimeout = Timeout;
+
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "INSERT query: " + Environment.NewLine + insertSql));
 
             cancellationToken.ThrowIfCancellationRequested();
 
 
-            var cmd = server.GetCommand(mergeQuery, _managedConnection);
-            cmd.CommandTimeout = Timeout;
-
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Merge query: " + Environment.NewLine + mergeQuery));
-
             try
             {
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    switch (reader[0].ToString())
-                    {
-                        case "INSERT":
-                            inserts++;
-                            break;
-                            // we ignore updates here, these require separate logic
-                    }
-                }
-                reader.Close();
+                inserts = cmd.ExecuteNonQuery();
 
-                var updateQuery = CreateUpdateQuery(columnsToMigrate, dataLoadInfoID);
+                List<CustomLine> sqlLines = new List<CustomLine>();
+
+                //t1.Name = t2.Name, t1.Age=T2.Age etc
+                sqlLines.Add(new CustomLine(string.Join(",", columnsToMigrate.FieldsToUpdate.Where(c=>!c.IsPrimaryKey).Select(c=>string.Format("t1.{0} = t2.{0}",c.GetRuntimeName()))), QueryComponent.SET));
+                
+                //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
+                sqlLines.Add(new CustomLine(string.Join(" OR ",columnsToMigrate.FieldsToDiff.Where(c=>!c.IsPrimaryKey).Select(c=>string.Format("(t1.{0} <> t2.{0})", c.GetRuntimeName()))), QueryComponent.WHERE));
+                
+                //the join
+                sqlLines.AddRange(columnsToMigrate.PrimaryKeys.Select(p => new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()), QueryComponent.JoinInfoJoin)));
+
+                var updateHelper = columnsToMigrate.DestinationTable.Database.Server.GetQuerySyntaxHelper().UpdateHelper;
+
+                var updateQuery = updateHelper.BuildUpdate(
+                    columnsToMigrate.DestinationTable,
+                    columnsToMigrate.SourceTable,
+                    sqlLines);
+
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Update query:" + Environment.NewLine + updateQuery));
 
                 var updateCmd = server.GetCommand(updateQuery, _managedConnection);
@@ -66,7 +124,7 @@ namespace DataLoadEngine.Migration.QueryBuilding
 
                 try
                 {
-                    updates = (int) updateCmd.ExecuteScalar();
+                    updates = updateCmd.ExecuteNonQuery();
                 }
                 catch (SqlException e)
                 {

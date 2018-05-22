@@ -44,15 +44,6 @@ namespace DataLoadEngine.Migration.QueryBuilding
                 McsQueryHelper.BuildJoinClause(joinTableName, "prod"));
         }
 
-        public virtual string BuildMergeQuery()
-        {
-            return "MERGE " + ColumnsToMigrate.DestinationTable.GetFullyQualifiedName() + " AS dest " +
-                   "USING " + ColumnsToMigrate.SourceTable.GetFullyQualifiedName() + " " +
-                   "AS source " + McsQueryHelper.BuildJoinClause() + " " +
-                   "WHEN NOT MATCHED BY TARGET THEN " +
-                   BuildInsertClause() + " " +
-                   "OUTPUT $action, inserted.*;";
-        }
         
         public abstract string BuildUpdateClauseForRow(string sourceAlias, string destAlias);
         public abstract string BuildInsertClause();

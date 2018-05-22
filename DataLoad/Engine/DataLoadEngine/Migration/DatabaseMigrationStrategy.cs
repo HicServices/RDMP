@@ -53,13 +53,7 @@ namespace DataLoadEngine.Migration
                 cancellationToken.ThrowIfCancellationRequested();
             }
         }
-
-        protected string CreateUpdateQuery(MigrationColumnSet columnsToMigrate, int dataLoadRunID)
-        {
-            var queryHelper = new LiveMigrationQueryHelper(columnsToMigrate, dataLoadRunID);
-            return queryHelper.CreateUpdateQuery();
-        }
-
+        
         public event TableMigrationComplete TableMigrationCompleteHandler;
 
         protected virtual void OnTableMigrationCompleteHandler(string tableName, int numInserts, int numUpdates)
