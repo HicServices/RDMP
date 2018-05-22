@@ -251,6 +251,8 @@
     <Compile Include="Integration\Cache\TestDataWriterChunk.cs" />
     <Compile Include="Integration\CheckingTests\ProcessTaskCheckingTests.cs" />
     <Compile Include="Integration\CoalescerTests.cs" />
+    <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseDataLoadTests.cs" />
+    <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseMergeCommand.cs" />
     <Compile Include="Integration\DatabaseClonerTests.cs" />
     <Compile Include="Integration\DataLoadProgressUpdateInfoTests.cs" />
     <Compile Include="Integration\DataTableUploadDestinationTests.cs" />

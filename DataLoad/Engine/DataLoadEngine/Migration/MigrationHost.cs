@@ -22,34 +22,29 @@ namespace DataLoadEngine.Migration
     /// </summary>
     public class MigrationHost 
     {
-        private readonly List<ICatalogue> _cataloguesToLoad;  
         private readonly DiscoveredDatabase _sourceDbInfo;
         private readonly DiscoveredDatabase _destinationDbInfo;
-        private readonly HICDatabaseConfiguration _databaseConfiguration;
-        private OverwriteMigrationStrategy _migrationStrategy;
         private readonly MigrationConfiguration _migrationConfig;
+        private OverwriteMigrationStrategy _migrationStrategy;
 
-        public MigrationHost(List<ICatalogue> cataloguesToLoad, DiscoveredDatabase sourceDbInfo, DiscoveredDatabase destinationDbInfo, HICDatabaseConfiguration databaseConfiguration, MigrationConfiguration migrationConfig)
+        public MigrationHost(DiscoveredDatabase sourceDbInfo, DiscoveredDatabase destinationDbInfo, MigrationConfiguration migrationConfig)
         {
             _sourceDbInfo = sourceDbInfo;
             _destinationDbInfo = destinationDbInfo;
-            _databaseConfiguration = databaseConfiguration;
             _migrationConfig = migrationConfig;
-            _cataloguesToLoad = cataloguesToLoad;
         }
 
-        public void Migrate(HICLoadConfigurationFlags loadConfigurationFlags, IDataLoadJob job, GracefulCancellationToken cancellationToken)
+        public void Migrate(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             if (_sourceDbInfo.DiscoverTables(false).All(t=>t.IsEmpty()))
                 throw new Exception("The source database '" + _sourceDbInfo.GetRuntimeName()+ "' on " + _sourceDbInfo.Server.Name + " is empty. There is nothing to migrate.");
 
             using (var managedConnectionToDestination = _destinationDbInfo.Server.BeginNewTransactedConnection())
             {
-                
                 try
                 {
                     // This will eventually be provided by factory/externally based on LoadMetadata (only one strategy for now)
-                    _migrationStrategy = new OverwriteMigrationStrategy(_sourceDbInfo.GetRuntimeName(), managedConnectionToDestination);
+                    _migrationStrategy = new OverwriteMigrationStrategy(managedConnectionToDestination);
                     _migrationStrategy.TableMigrationCompleteHandler += (name, inserts, updates) =>
                         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Migrate table "+ name +" from STAGING to " + _destinationDbInfo.GetRuntimeName() + ": " + inserts + " inserts, " + updates + " updates"));
 

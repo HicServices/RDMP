@@ -19,13 +19,11 @@ namespace DataLoadEngine.LoadExecution.Components.Standard
     /// </summary>
     public class MigrateStagingToLive : DataLoadComponent
     {
-        private readonly IList<ICatalogue> _cataloguesToLoad;
         private readonly HICDatabaseConfiguration _databaseConfiguration;
         private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
         
-        public MigrateStagingToLive(IList<ICatalogue> cataloguesToLoad, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
+        public MigrateStagingToLive(HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
         {
-            _cataloguesToLoad = cataloguesToLoad;
             _databaseConfiguration = databaseConfiguration;
             _loadConfigurationFlags = loadConfigurationFlags;
             
@@ -47,8 +45,8 @@ namespace DataLoadEngine.LoadExecution.Components.Standard
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Migrating '" + stagingDbInfo + "' to '" + liveDbInfo + "'"));
 
             var migrationConfig = new MigrationConfiguration(stagingDbInfo, LoadBubble.Staging, LoadBubble.Live, _databaseConfiguration.DatabaseNamer);
-            var migrationHost = new MigrationHost(_cataloguesToLoad.ToList(), stagingDbInfo, liveDbInfo, _databaseConfiguration, migrationConfig);
-            migrationHost.Migrate(_loadConfigurationFlags, job, cancellationToken);
+            var migrationHost = new MigrationHost(stagingDbInfo, liveDbInfo, migrationConfig);
+            migrationHost.Migrate(job, cancellationToken);
 
             return ExitCodeType.Success;
         }

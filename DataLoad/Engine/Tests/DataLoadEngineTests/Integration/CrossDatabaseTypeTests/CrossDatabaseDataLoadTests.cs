@@ -20,10 +20,9 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
-namespace DataExportLibrary.Tests.CrossDatabaseTypeTests
+namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 {
     public class CrossDatabaseDataLoadTests :DatabaseTests
     {
@@ -142,5 +141,6 @@ MrMurder,2001-01-01,Yella");
                 ti.DeleteInDatabase();
             }
         }
+
     }
 }

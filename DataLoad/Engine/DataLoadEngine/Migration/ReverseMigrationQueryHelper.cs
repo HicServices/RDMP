@@ -20,7 +20,7 @@ namespace DataLoadEngine.Migration
             return String.Join(", ", parts);
         }
 
-        public override string BuildMergeQuery(string sourceTable, string destinationTable)
+        public override string BuildMergeQuery()
         {
             throw new NotImplementedException("Do not attempt to perform a full merge with the ReverseMigrationQueryHelper.");
         }

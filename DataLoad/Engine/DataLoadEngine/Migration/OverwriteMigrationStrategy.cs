@@ -15,25 +15,22 @@ namespace DataLoadEngine.Migration
     /// </summary>
     public class OverwriteMigrationStrategy : DatabaseMigrationStrategy
     {
-        public OverwriteMigrationStrategy(string sourceDatabaseName, IManagedConnection managedConnection)
-            : base(sourceDatabaseName, managedConnection)
+        public OverwriteMigrationStrategy(IManagedConnection managedConnection)
+            : base(managedConnection)
         {
         }
 
         public override void MigrateTable(IDataLoadJob job, MigrationColumnSet columnsToMigrate, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates)
         {
-            var sourceTable = String.Format("[{0}]..[{1}]", _sourceDatabaseName, columnsToMigrate.SourceTableName);
-            var destTable = String.Format("[{0}]..[{1}]", columnsToMigrate.DestinationDatabase, columnsToMigrate.DestinationTableName);
-
             var queryHelper = new LiveMigrationQueryHelper(columnsToMigrate, dataLoadInfoID);
             string mergeQuery;
             try
             {
-                mergeQuery = queryHelper.BuildMergeQuery(sourceTable, destTable);
+                mergeQuery = queryHelper.BuildMergeQuery();
             }
             catch (InvalidOperationException e)
             {
-                throw new InvalidOperationException(String.Format("Could not build merge query to migrate from {0} to {1}", sourceTable, destTable), e);
+                throw new InvalidOperationException(String.Format("Could not build merge query to migrate from {0} to {1}", columnsToMigrate.SourceTable, columnsToMigrate.DestinationTable), e);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -87,8 +84,8 @@ namespace DataLoadEngine.Migration
             }
             catch (Exception e)
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to migrate " + sourceTable + " to " + destTable, e));
-                throw new Exception("Failed to migrate " + sourceTable + " to " + destTable + ": " + e);
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to migrate " + columnsToMigrate.SourceTable + " to " + columnsToMigrate.DestinationTable, e));
+                throw new Exception("Failed to migrate " + columnsToMigrate.SourceTable + " to " + columnsToMigrate.DestinationTable + ": " + e);
             }
         }
     }

@@ -17,10 +17,10 @@ namespace DataLoadEngine.Migration
     /// </summary>
     public class MigrationColumnSet
     {
-        public string SourceTableName { get; set; }
-        public string DestinationTableName { get; set; }
+        public DiscoveredTable SourceTable { get; set; }
+        public DiscoveredTable DestinationTable { get; set; }
 
-        public List<string> PrimaryKeys { get; set; }
+        public DiscoveredColumn[] PrimaryKeys { get; private set; }
 
         public static List<string> GetStandardColumnNames()
         {
@@ -31,56 +31,47 @@ namespace DataLoadEngine.Migration
         /// Fields that will have their values compared for change, to decide whether to overwrite destination data with source data. (some fields might not matter
         /// if they are different e.g. dataLoadRunID)
         /// </summary>
-        public List<string> FieldsToDiff { get; set; }
+        public List<DiscoveredColumn> FieldsToDiff { get; set; }
 
         /// <summary>
         /// Fields that will have their values copied across to the new table (this is a superset of fields to diff, and also includes all primary keys).  Note
         /// that the non-standard columns (data load run and valid from do not appear in this list, you are intended to handle their update yourself)
         /// </summary>
-        public List<string> FieldsToUpdate { get; set; }
+        public List<DiscoveredColumn> FieldsToUpdate { get; set; }
 
-        public string DestinationDatabase { get; set; }
-
-        public MigrationColumnSet(string destinationDatabase, string sourceTableName, string destinationTableName, string[] sourceFields, string[] destinationFields, IEnumerable<IColumnInfo> columns, IMigrationFieldProcessor migrationFieldProcessor)
+        public MigrationColumnSet(DiscoveredTable from, DiscoveredTable to, IMigrationFieldProcessor migrationFieldProcessor)
         {
-            migrationFieldProcessor.ValidateFields(sourceFields, destinationFields);
+            var fromCols = from.DiscoverColumns();
+            var toCols = to.DiscoverColumns();
 
-            DestinationDatabase = destinationDatabase;
-            SourceTableName = sourceTableName;
-            DestinationTableName = destinationTableName;
+            migrationFieldProcessor.ValidateFields(fromCols, toCols);
 
-            PrimaryKeys = new List<string>();
-            FieldsToDiff = new List<string>();
-            FieldsToUpdate = new List<string>();
+            SourceTable = from;
+            DestinationTable = to;
 
-            ExtractPrimaryKeys(sourceFields, destinationFields, columns);
+            PrimaryKeys = fromCols.Where(c=>c.IsPrimaryKey).ToArray();
+            FieldsToDiff = new List<DiscoveredColumn>();
+            FieldsToUpdate = new List<DiscoveredColumn>();
 
+            foreach (DiscoveredColumn pk in PrimaryKeys)
+                if(!toCols.Any(f=>f.GetRuntimeName().Equals(pk.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)))
+                    throw new MissingFieldException("Column " + pk + " is missing from either the destination table");
+
+            if(!PrimaryKeys.Any())
+                throw new Exception("There are no primary keys declared in table " + from);
+            
             //figure out things to migrate and whether they matter to diffing
-            foreach (string field in sourceFields)
+            foreach (DiscoveredColumn field in fromCols)
             {
-                if (field.Equals(SpecialFieldNames.DataLoadRunID) || field.Equals(SpecialFieldNames.ValidFrom))
+                if (
+                    field.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID,StringComparison.CurrentCultureIgnoreCase) ||
+                    field.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom,StringComparison.CurrentCultureIgnoreCase))
                     continue;
 
-                if (!destinationFields.Contains(field))
+                if (!toCols.Any(c=>c.GetRuntimeName().Equals(field.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)))
                     throw new MissingFieldException("Field " + field + " is missing from destination table");
 
                 migrationFieldProcessor.AssignFieldsForProcessing(field, FieldsToDiff, FieldsToUpdate);
-            }
-        }
-
-        private void ExtractPrimaryKeys(string[] sourceFields, string[] destinationFields, IEnumerable<IColumnInfo> columns)
-        {
-            // figure out all the primary keys
-            foreach (IColumnInfo col in columns)
-            {
-                string colName = col.GetRuntimeName();
-                //found something
-                if (col.IsPrimaryKey)
-                    if (!destinationFields.Contains(colName) || !sourceFields.Contains(colName))
-                        throw new MissingFieldException("Column " + colName +
-                                                        " is missing from either the source or the destination table");
-                    else
-                        PrimaryKeys.Add(col.GetRuntimeName());
             }
         }
     }

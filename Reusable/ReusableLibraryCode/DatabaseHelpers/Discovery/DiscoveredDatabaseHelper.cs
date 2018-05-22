@@ -44,7 +44,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 {
                     //no, work out the column definition using a datatype computer
                     DataTypeComputer computer = new DataTypeComputer(column);
-                    columns.Add(new DatabaseColumnRequest(column.ColumnName, computer.GetTypeRequest(), column.AllowDBNull));
+                    columns.Add(new DatabaseColumnRequest(column.ColumnName, computer.GetTypeRequest(), column.AllowDBNull) { IsPrimaryKey = dt.PrimaryKey.Contains(column)});
                 }
             }
 

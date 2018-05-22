@@ -15,16 +15,14 @@ namespace DataLoadEngine.Migration
     /// </summary>
     abstract public class DatabaseMigrationStrategy
     {
-        protected string _sourceDatabaseName;
         protected IDataLoadInfo _dataLoadInfo;
         protected IManagedConnection _managedConnection;
         protected const int Timeout = 60000;
 
         abstract public void MigrateTable(IDataLoadJob toMigrate, MigrationColumnSet columnsToMigrate, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates);
 
-        protected DatabaseMigrationStrategy( string sourceDatabaseName, IManagedConnection connection)
+        protected DatabaseMigrationStrategy(IManagedConnection connection)
         {
-            _sourceDatabaseName = sourceDatabaseName;
             _managedConnection = connection;
         }
 
@@ -37,11 +35,11 @@ namespace DataLoadEngine.Migration
             {
                 var inserts = 0;
                 var updates = 0;
-                var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", columnsToMigrate.DestinationDatabase + "." + columnsToMigrate.DestinationTableName, new[] { new DataSource(_sourceDatabaseName + "." + columnsToMigrate.SourceTableName, DateTime.Now) }, 0);
+                var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", columnsToMigrate.DestinationTable.GetFullyQualifiedName(), new[] { new DataSource(columnsToMigrate.SourceTable.GetFullyQualifiedName(), DateTime.Now) }, 0);
                 try
                 {
                     MigrateTable(job,columnsToMigrate, dataLoadInfo.ID, cancellationToken, ref inserts, ref updates);
-                    OnTableMigrationCompleteHandler(columnsToMigrate.DestinationTableName, inserts, updates);
+                    OnTableMigrationCompleteHandler(columnsToMigrate.DestinationTable.GetFullyQualifiedName(), inserts, updates);
                     tableLoadInfo.Inserts = inserts;
                     tableLoadInfo.Updates = updates;
                     tableLoadInfo.Notes = "Part of Transaction";
@@ -57,11 +55,8 @@ namespace DataLoadEngine.Migration
 
         protected string CreateUpdateQuery(MigrationColumnSet columnsToMigrate, int dataLoadRunID)
         {
-            var sourceTable = "[" + _sourceDatabaseName + "]..[" + columnsToMigrate.SourceTableName + "]";
-            var destTable = "[" + columnsToMigrate.DestinationDatabase + "]..[" + columnsToMigrate.DestinationTableName + "]";
-
             var queryHelper = new LiveMigrationQueryHelper(columnsToMigrate, dataLoadRunID);
-            return queryHelper.CreateUpdateQuery(sourceTable, destTable);
+            return queryHelper.CreateUpdateQuery();
         }
 
         public event TableMigrationComplete TableMigrationCompleteHandler;

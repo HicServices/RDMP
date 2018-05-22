@@ -277,7 +277,7 @@ namespace DataLoadEngine.Checks.Checkers
 
             try
             {
-                new MigrationColumnSet(tableInfo.GetDatabaseRuntimeName(),nameOfTableInSourceDatabase, nameOfTableInDestinationDatabase, stagingCols, liveCols, columnInfos, new StagingToLiveMigrationFieldProcessor());
+                new MigrationColumnSet(staging.ExpectTable(nameOfTableInSourceDatabase), live.ExpectTable(nameOfTableInDestinationDatabase), new StagingToLiveMigrationFieldProcessor());
                 notifier.OnCheckPerformed(new CheckEventArgs("TableInfo " + tableInfo.Name + " passed " + typeof(MigrationColumnSet).Name + " check ", CheckResult.Success, null));
             }
             catch (Exception e)
