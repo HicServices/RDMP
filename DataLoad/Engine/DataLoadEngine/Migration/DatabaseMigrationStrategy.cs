@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
+using DataLoadEngine.Migration.QueryBuilding;
 using HIC.Logging;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 

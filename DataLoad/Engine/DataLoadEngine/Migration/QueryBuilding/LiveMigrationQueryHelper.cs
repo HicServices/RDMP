@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Triggers;
 
-namespace DataLoadEngine.Migration
+namespace DataLoadEngine.Migration.QueryBuilding
 {
     /// <summary>
     /// See MigrationQueryHelper

@@ -305,14 +305,14 @@
     <Compile Include="LoadExecution\Components\Standard\MigrateStagingToLive.cs" />
     <Compile Include="Migration\IMigrationFieldProcessor.cs" />
     <Compile Include="Migration\MigrationColumnSet.cs" />
-    <Compile Include="Migration\MigrationColumnSetQueryHelper.cs" />
+    <Compile Include="Migration\QueryBuilding\MigrationColumnSetQueryHelper.cs" />
     <Compile Include="Migration\MigrationConfiguration.cs" />
     <Compile Include="Migration\DatabaseMigrationStrategy.cs" />
     <Compile Include="Migration\StagingToLiveMigrationFieldProcessor.cs" />
     <Compile Include="Migration\MigrationHost.cs" />
-    <Compile Include="Migration\LiveMigrationQueryHelper.cs" />
-    <Compile Include="Migration\MigrationQueryHelper.cs" />
-    <Compile Include="Migration\OverwriteMigrationStrategy.cs" />
+    <Compile Include="Migration\QueryBuilding\LiveMigrationQueryHelper.cs" />
+    <Compile Include="Migration\QueryBuilding\MigrationQueryHelper.cs" />
+    <Compile Include="Migration\QueryBuilding\OverwriteMigrationStrategy.cs" />
     <Compile Include="DataFlowPipeline\Components\Anonymisation\ANOTableInfoSynchronizer.cs" />
     <Compile Include="DataFlowPipeline\Components\Anonymisation\ANOTransformer.cs" />
     <Compile Include="DataFlowPipeline\Components\Anonymisation\BasicAnonymisationEngine.cs" />
@@ -335,7 +335,7 @@
     <Compile Include="LoadExecution\Components\Runtime\StoredProcedureRuntimeTask.cs" />
     <Compile Include="LoadProcess\IDataLoadOperation.cs" />
     <Compile Include="Migration\BackfillMigrationFieldProcessor.cs" />
-    <Compile Include="Migration\ReverseMigrationQueryHelper.cs" />
+    <Compile Include="Migration\QueryBuilding\ReverseMigrationQueryHelper.cs" />
     <Compile Include="Mutilators\IMutilateDataTables.cs" />
     <Compile Include="Mutilators\IPluginMutilateDataTables.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

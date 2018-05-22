@@ -9,6 +9,7 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess;
+using DataLoadEngine.Migration.QueryBuilding;
 using HIC.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;

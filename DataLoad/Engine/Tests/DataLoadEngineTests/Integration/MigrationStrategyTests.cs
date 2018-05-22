@@ -3,6 +3,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration;
+using DataLoadEngine.Migration.QueryBuilding;
 using HIC.Logging;
 using NUnit.Framework;
 using ReusableLibraryCode;

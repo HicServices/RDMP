@@ -1,12 +1,11 @@
 using System;
-using System.Data;
 using System.Data.SqlClient;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Migration
+namespace DataLoadEngine.Migration.QueryBuilding
 {
     /// <summary>
     /// Migrates from STAGING to LIVE a single table (with a MigrationColumnSet).  This is an UPSERT (new replaces old) operation achieved (in SQL) with MERGE and 
@@ -22,6 +21,8 @@ namespace DataLoadEngine.Migration
 
         public override void MigrateTable(IDataLoadJob job, MigrationColumnSet columnsToMigrate, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates)
         {
+            var server = columnsToMigrate.DestinationTable.Database.Server;
+
             var queryHelper = new LiveMigrationQueryHelper(columnsToMigrate, dataLoadInfoID);
             string mergeQuery;
             try
@@ -34,11 +35,11 @@ namespace DataLoadEngine.Migration
             }
 
             cancellationToken.ThrowIfCancellationRequested();
-            
-            var con = (SqlConnection) _managedConnection.ManagedTransaction.Connection;
-            var trans = (SqlTransaction)_managedConnection.ManagedTransaction.Transaction;
 
-            var cmd = new SqlCommand(mergeQuery, con,trans ) { CommandType = CommandType.Text, CommandTimeout = Timeout };
+
+            var cmd = server.GetCommand(mergeQuery, _managedConnection);
+            cmd.CommandTimeout = Timeout;
+
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Merge query: " + Environment.NewLine + mergeQuery));
 
             try
@@ -59,18 +60,13 @@ namespace DataLoadEngine.Migration
                 var updateQuery = CreateUpdateQuery(columnsToMigrate, dataLoadInfoID);
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Update query:" + Environment.NewLine + updateQuery));
 
-                var updateCmd = new SqlCommand(updateQuery, con, trans)
-                {
-                    CommandType = CommandType.Text,
-                    CommandTimeout = Timeout
-                };
+                var updateCmd = server.GetCommand(updateQuery, _managedConnection);
+                updateCmd.CommandTimeout = Timeout;
                 cancellationToken.ThrowIfCancellationRequested();
+
                 try
                 {
                     updates = (int) updateCmd.ExecuteScalar();
-                    //var updateTask = updateCmd.ExecuteScalarAsync(cancellationToken.CreateLinkedSource().Token);
-                    //updateTask.Wait();
-                    //updates = (int) updateTask.Result;
                 }
                 catch (SqlException e)
                 {

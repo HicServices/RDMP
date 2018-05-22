@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
-namespace DataLoadEngine.Migration
+namespace DataLoadEngine.Migration.QueryBuilding
 {
     /// <summary>
     /// Helper class for generating SQL fragments that relate to columns in a MigrationColumnSet.  This is used by MigrationQueryHelper to generate SQL

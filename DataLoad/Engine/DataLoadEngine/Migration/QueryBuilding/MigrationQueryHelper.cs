@@ -1,7 +1,6 @@
 using System;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
-namespace DataLoadEngine.Migration
+namespace DataLoadEngine.Migration.QueryBuilding
 {
     /// <summary>
     /// Generates the MERGE and UPDATE SQL queries responsible for migrating records from STAGING to LIVE as part of a data load.
