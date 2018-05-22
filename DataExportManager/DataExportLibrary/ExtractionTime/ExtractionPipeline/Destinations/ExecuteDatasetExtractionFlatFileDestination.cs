@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
@@ -146,6 +147,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     sw.Stop();
                     job.OnProgress(this,new ProgressEventArgs("Lookup "+ lookup,new ProgressMeasurement(linesWritten,ProgressType.Records),sw.Elapsed));
 
+                    var command = (ExtractDatasetCommand)_request;
+                    var result = command.Configuration.CumulativeExtractionResults.FirstOrDefault(cer => cer.ExtractableDataSet_ID == command.SelectedDataSets.ExtractableDataSet_ID);
+                    if (result != null)
+                    {
+                        var supplemental = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup);
+                        supplemental.CompleteAudit(GetDestinationDescription(), linesWritten);
+                    }
+                    
                     datasetBundle.States[lookup] = ExtractCommandState.Completed;
                 }
                 catch (Exception e)
@@ -324,13 +333,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 string target = Path.Combine(directory.FullName, sql.Name + ".csv");
                 var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", target, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
 
-                int sqlLinesWritten = new ExtractTableVerbatim(sql.GetServer(),
-                    sql.SQL, sql.Name,
-                    directory,
-                    configuration
-                        .Separator,
-                    DateFormat)
-                    .DoExtraction();
+                int sqlLinesWritten = new ExtractTableVerbatim(sql.GetServer(), sql.SQL, sql.Name,
+                                                               directory, configuration.Separator, DateFormat)
+                                          .DoExtraction();
 
                 sw.Stop();
 
@@ -340,6 +345,23 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                 listener.OnProgress(this, new ProgressEventArgs("Extract " + sql, new ProgressMeasurement(sqlLinesWritten, ProgressType.Records), sw.Elapsed));
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Extracted " + sqlLinesWritten + " records from SupportingSQL " + sql + " into directory " + directory.FullName));
+
+                if (_request is ExtractGlobalsCommand)
+                {
+                    var result = new SupplementalExtractionResults(configuration.Repository, _request.Configuration, sql.SQL);
+                    result.CompleteAudit(GetDestinationDescription(), sqlLinesWritten);
+                }
+                if (_request is ExtractDatasetCommand)
+                {
+                    var command = (ExtractDatasetCommand)_request;
+                    var result = configuration.CumulativeExtractionResults.FirstOrDefault(cer => cer.ExtractableDataSet_ID == command.SelectedDataSets.ExtractableDataSet_ID);
+                    if (result != null)
+                    {
+                        var supplemental = result.AddSupplementalExtractionResult(sql.SQL);
+                        supplemental.CompleteAudit(GetDestinationDescription(), sqlLinesWritten);
+                    }
+                }
+
                 return true;
             }
             catch (Exception e)

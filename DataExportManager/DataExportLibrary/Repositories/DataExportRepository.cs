@@ -46,6 +46,11 @@ namespace DataExportLibrary.Repositories
             return GetAllObjects<CumulativeExtractionResults>("WHERE ExtractionConfiguration_ID=" + configuration.ID + "AND ExtractableDataSet_ID=" + dataset.ID);
         }
 
+        public IEnumerable<ISupplementalExtractionResults> GetAllGlobalExtractionResultsFor(IExtractionConfiguration configuration)
+        {
+            return GetAllObjects<SupplementalExtractionResults>("WHERE ExtractionConfiguration_ID=" + configuration.ID + "AND ExtractableDataSet_ID IS NULL");
+        }
+
         readonly ObjectConstructor _constructor = new ObjectConstructor();
         protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
         {

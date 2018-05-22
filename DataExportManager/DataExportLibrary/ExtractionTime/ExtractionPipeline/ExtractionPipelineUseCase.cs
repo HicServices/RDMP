@@ -97,7 +97,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                 }
                 catch (Exception e)
                 {
-                    if (Source.CumulativeExtractionResults != null)
+                    if (Source.ExtractionResults != null)
                     {
                         //audit to logging architecture
                         FatalErrorLogging.GetInstance()
@@ -105,7 +105,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                                 ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
                         //audit to extraction results
-                        var audit = Source.CumulativeExtractionResults;
+                        var audit = Source.ExtractionResults;
                         audit.Exception = ExceptionHelper.ExceptionToListOfInnerMessages(e, true);
                         audit.SaveToDatabase();
                     }
@@ -119,25 +119,21 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                                         "?!");
 
                 //Deal with finishing off the Cumulative Extraction Results (only applies to IExtractCommand objects of type IExtractDatasetCommand)
-                var successAudit = Source.CumulativeExtractionResults;
+                var successAudit = (ICumulativeExtractionResults)Source.ExtractionResults;
 
                 if (successAudit == null)
                     return;
 
-                successAudit.DestinationType = Destination.GetType().FullName;
-                successAudit.DestinationDescription = Destination.GetDestinationDescription();
-                successAudit.DistinctReleaseIdentifiersEncountered = Source.UniqueReleaseIdentifiersEncountered.Count;
-                successAudit.RecordsExtracted = Destination.TableLoadInfo.Inserts;
-
                 if (Source.WasCancelled)
                 {
                     successAudit.Exception = "User Cancelled Extraction";
-                    FatalErrorLogging.GetInstance()
-                        .LogFatalError(Destination.TableLoadInfo.DataLoadInfoParent, this.GetType().Name,
-                            "User Cancelled Extraction");
+                                    FatalErrorLogging.GetInstance()
+                                        .LogFatalError(Destination.TableLoadInfo.DataLoadInfoParent, this.GetType().Name,
+                                            "User Cancelled Extraction");
                 }
 
-                successAudit.SaveToDatabase();
+                successAudit.CompleteAudit(Destination.GetType(), Destination.GetDestinationDescription(),
+                                           Source.UniqueReleaseIdentifiersEncountered.Count, Destination.TableLoadInfo.Inserts);
             }
             catch (Exception ex)
             {

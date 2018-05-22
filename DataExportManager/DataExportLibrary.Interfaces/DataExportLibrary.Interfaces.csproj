@@ -140,10 +140,12 @@
     <Compile Include="Data\DataTables\IExtractableCohort.cs" />
     <Compile Include="Data\DataTables\IExtractableDataSet.cs" />
     <Compile Include="Data\DataTables\IExtractionConfiguration.cs" />
+    <Compile Include="Data\DataTables\IExtractionResults.cs" />
     <Compile Include="Data\DataTables\IProject.cs" />
     <Compile Include="Data\DataTables\IReleaseLogEntry.cs" />
     <Compile Include="Data\DataTables\ISelectedDataSets.cs" />
     <Compile Include="Data\DataTables\ISelectedDatasetsForcedJoin.cs" />
+    <Compile Include="Data\DataTables\ISupplementalExtractionResults.cs" />
     <Compile Include="Data\IExternalCohortDefinitionData.cs" />
     <Compile Include="Data\IHICProjectSalt.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandState.cs" />

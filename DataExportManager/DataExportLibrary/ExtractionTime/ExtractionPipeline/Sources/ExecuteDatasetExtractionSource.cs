@@ -51,7 +51,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public ExtractionTimeTimeCoverageAggregator ExtractionTimeTimeCoverageAggregator { get; set; }
 
-        public ICumulativeExtractionResults CumulativeExtractionResults { get; protected set; }
+        public IExtractionResults ExtractionResults { get; protected set; }
         
         [DemandsInitialization("Determines the systems behaviour when an extraction query returns 0 rows.  Default (false) is that an error is reported.  If set to true (ticked) then instead a DataTable with 0 rows but all the correct headers will be generated usually resulting in a headers only 0 line/empty extract file")]
         public bool AllowEmptyExtractions { get; set; }
@@ -132,6 +132,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             // so we can trigger the destination to extract the globals docs and sql
             if (GlobalsRequest != null)
             {
+                //unless we are checking, start auditing
+                if (!_testMode)
+                {
+                    StartAuditGlobals();
+                }
+
                 if (firstGlobalChunk)
                 {
                     firstGlobalChunk = false;
@@ -148,7 +154,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             {
                //unless we are checking, start auditing
                if(!_testMode)
-                    StartAudit(Request.QueryBuilder.SQL);
+               {
+                   StartAudit(Request.QueryBuilder.SQL);
+               }
 
                if(Request.DatasetBundle.DataSet.DisableExtraction)
                    throw new Exception("Cannot extract " + Request.DatasetBundle.DataSet + " because DisableExtraction is set to true");
@@ -311,7 +319,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             }
         }
 
-        private string GetCommandSQL( IDataLoadEventListener listener)
+        private string GetCommandSQL(IDataLoadEventListener listener)
         {
             string sql = Request.QueryBuilder.SQL;
 
@@ -338,12 +346,25 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             foreach (var audit in previousAudit)
                 audit.DeleteInDatabase();
 
-            CumulativeExtractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
+            var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
 
             string filterDescriptions = RecursivelyListAllFilterNames(Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
 
-            CumulativeExtractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
-            CumulativeExtractionResults.SaveToDatabase();
+            extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
+            extractionResults.SaveToDatabase();
+
+            ExtractionResults = extractionResults;
+        }
+
+        private void StartAuditGlobals()
+        {
+            var dataExportRepo = ((DataExportRepository)Request.RepositoryLocator.DataExportRepository);
+
+            var previousAudit = dataExportRepo.GetAllGlobalExtractionResultsFor(Request.Configuration);
+
+            //delete old audit records
+            foreach (var audit in previousAudit)
+                audit.DeleteInDatabase();
         }
 
         private string RecursivelyListAllFilterNames(IContainer filterContainer)

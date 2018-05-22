@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 
@@ -7,23 +9,23 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
     /// <summary>
     /// See CumulativeExtractionResults
     /// </summary>
-    public interface ICumulativeExtractionResults : IDeleteable, IRevertable
+    public interface ICumulativeExtractionResults : IExtractionResults, IRevertable
     {
         int ExtractionConfiguration_ID { get; set; }
-        int ExtractableDataSet_ID { get; set; }
+        int ExtractableDataSet_ID { get; }
 
-        DateTime DateOfExtraction { get; set; }
-        string DestinationDescription { get; set; }
+        DateTime DateOfExtraction { get; }
         string DestinationType { get; }
-        int RecordsExtracted { get; set; }
         int DistinctReleaseIdentifiersEncountered { get; set; }
         string FiltersUsed { get; set; }
-        string Exception { get; set; }
-        string SQLExecuted { get; set; }
-        int CohortExtracted { get; set; }
-        IExtractableDataSet ExtractableDataSet { get;}
-        IReleaseLogEntry GetReleaseLogEntryIfAny();
+        int CohortExtracted { get; }
+        IExtractableDataSet ExtractableDataSet { get; }
 
+        IReleaseLogEntry GetReleaseLogEntryIfAny();
         Type GetDestinationType();
+        void CompleteAudit(Type destinationType, string destinationDescription, int distinctIdentifiers, int recordsExtracted);
+
+        List<ISupplementalExtractionResults> SupplementalExtractionResults { get; }
+        ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted);
     }
 }
