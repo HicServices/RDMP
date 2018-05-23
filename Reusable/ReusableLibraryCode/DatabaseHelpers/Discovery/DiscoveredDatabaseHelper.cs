@@ -44,7 +44,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 {
                     //no, work out the column definition using a datatype computer
                     DataTypeComputer computer = new DataTypeComputer(column);
-                    columns.Add(new DatabaseColumnRequest(column.ColumnName, computer.GetTypeRequest(), column.AllowDBNull));
+                    columns.Add(new DatabaseColumnRequest(column.ColumnName, computer.GetTypeRequest(), column.AllowDBNull) { IsPrimaryKey = dt.PrimaryKey.Contains(column)});
                 }
             }
 
@@ -59,28 +59,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns)
         {
-            string bodySql = "";
+            string bodySql = GetCreateTableSql(database, tableName, columns);
 
             var server = database.Server;
-            var syntaxHelper = server.GetQuerySyntaxHelper();
-
-            bodySql += "CREATE TABLE " + tableName + "(" + Environment.NewLine;
-
-            foreach (var col in columns)
-            {
-                var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
-                
-                //add the column name and accompanying datatype
-                bodySql += syntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL") + "," + Environment.NewLine;
-            }
-
-            var pks = columns.Where(c => c.IsPrimaryKey).ToArray();
-            if (pks.Any())
-                bodySql += GetPrimaryKeyDeclarationSql(tableName,pks);
-
-            bodySql = bodySql.TrimEnd('\r', '\n', ',');
-
-            bodySql += ")" + Environment.NewLine;
 
             using(var con = server.GetConnection())
             {
@@ -91,7 +72,37 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return database.ExpectTable(tableName);
         }
 
+        public string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns)
+        {
+            string bodySql = "";
+
+            var server = database.Server;
+            var syntaxHelper = server.GetQuerySyntaxHelper();
+
+            bodySql += "CREATE TABLE " + tableName + "(" + Environment.NewLine;
+
+            foreach (var col in columns)
+            {
+                var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
+
+                //add the column name and accompanying datatype
+                bodySql += syntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL") + "," + Environment.NewLine;
+            }
+
+            var pks = columns.Where(c => c.IsPrimaryKey).ToArray();
+            if (pks.Any())
+                bodySql += GetPrimaryKeyDeclarationSql(tableName, pks);
+
+            bodySql = bodySql.TrimEnd('\r', '\n', ',');
+
+            bodySql += ")" + Environment.NewLine;
+
+            return bodySql;
+        }
+
         public abstract DirectoryInfo Detach(DiscoveredDatabase database);
+
+        public abstract void CreateBackup(DiscoveredDatabase discoveredDatabase, string backupName);
 
         protected virtual string GetPrimaryKeyDeclarationSql(string tableName, DatabaseColumnRequest[] pks)
         {

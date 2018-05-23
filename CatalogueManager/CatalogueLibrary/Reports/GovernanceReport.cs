@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Repositories;
-using Microsoft.SqlServer.Management.Smo.Agent;
 
 namespace CatalogueLibrary.Reports
 {

@@ -30,6 +30,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             return UsefulStuff.BulkInsertWithBetterErrorMessages(_bulkcopy, dt, _discoveredTable.Database.Server);
         }
 
+        public int Timeout
+        {
+            get { return _bulkcopy.BulkCopyTimeout; } 
+            set { _bulkcopy.BulkCopyTimeout = value; }
+        }
+
         public void Dispose()
         {
             _connection.Dispose();

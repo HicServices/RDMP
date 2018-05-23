@@ -33,9 +33,10 @@ namespace CatalogueLibraryTests.Integration
             cata.SaveToDatabase();
             Assert.AreEqual("fish2", ci.Catalogue.Name);
 
+            //now thanks to lazy this works... but it's ambiguous (it works if the property is referenced via IInjectKnown<T>)
             ci.Catalogue.Name = "fish";
             ci.Catalogue.SaveToDatabase();
-            Assert.AreNotEqual("fish",ci.Catalogue.Name);
+            Assert.AreEqual("fish",ci.Catalogue.Name);
 
             c.DeleteInDatabase();
         }

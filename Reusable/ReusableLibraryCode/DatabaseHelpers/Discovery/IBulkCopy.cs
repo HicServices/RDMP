@@ -10,5 +10,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     public interface IBulkCopy : IDisposable
     {
         int Upload(DataTable dt);
+        int Timeout { get; set; }
     }
 }

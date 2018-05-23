@@ -5,7 +5,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.Job;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;

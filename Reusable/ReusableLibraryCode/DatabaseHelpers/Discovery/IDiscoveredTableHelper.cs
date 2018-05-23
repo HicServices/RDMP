@@ -24,7 +24,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop);
         void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop);
 
-        void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls);
+        void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls,int timeout);
 
         int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null);
 
@@ -34,5 +34,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         
         void TruncateTable(DiscoveredTable discoveredTable);
         void MakeDistinct(DiscoveredTable discoveredTable);
+        string ScriptTableCreation(DiscoveredTable constraints, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt);
+        bool IsEmpty(DbConnection connection, DiscoveredTable discoveredTable, DbTransaction transaction);
+        void RenameTable(DiscoveredTable discoveredTable, string newName, IManagedConnection connection);
+        void CreatePrimaryKey(DiscoveredTable columns, DiscoveredColumn[] discoverColumns, IManagedConnection connection);
     }
 }

@@ -6,7 +6,6 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers;

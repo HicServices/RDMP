@@ -178,6 +178,10 @@ namespace ANOStore.ANOEngineering
                         //If the old CatalogueItem had the same name as it's underlying ColumnInfo then we should use the new one otherwise just copy the old name whatever it was
                         newCatalogueItem.Name = oldCatalogueItem.Name.Equals(oldColumnInfo.Name) ? newColumnInfo.GetRuntimeName() : oldCatalogueItem.Name;
 
+                        //add ANO to the front if the underlying column was annoed
+                        if (newColumnInfo.GetRuntimeName().StartsWith("ANO") && !newCatalogueItem.Name.StartsWith("ANO"))
+                            newCatalogueItem.Name = "ANO" + newCatalogueItem.Name;
+
                         newCatalogueItem.SaveToDatabase();
 
                         var oldExtractionInformation = oldCatalogueItem.ExtractionInformation;

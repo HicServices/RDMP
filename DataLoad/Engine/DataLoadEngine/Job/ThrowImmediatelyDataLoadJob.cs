@@ -27,13 +27,13 @@ namespace DataLoadEngine.Job
 
 
         public string Description { get; private set; }
-        public IDataLoadInfo DataLoadInfo { get; private set; }
+        public IDataLoadInfo DataLoadInfo { get; set; }
         public IHICProjectDirectory HICProjectDirectory { get; set; }
         public int JobID { get; set; }
         public ILoadMetadata LoadMetadata { get; private set; }
         public bool DisposeImmediately { get; private set; }
         public string ArchiveFilepath { get; private set; }
-        public List<TableInfo> RegularTablesToLoad { get; private set; }
+        public List<TableInfo> RegularTablesToLoad { get; set; }
         public List<TableInfo> LookupTablesToLoad { get; private set; }
         public void StartLogging()
         {
