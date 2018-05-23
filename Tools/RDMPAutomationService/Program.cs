@@ -4,54 +4,49 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
+using CommandLine;
+using RDMPAutomationService.Options;
 using RDMPStartup;
 
 namespace RDMPAutomationService
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             if (Environment.UserInteractive)
             {
-                if (args.Length > 0)
-                {
-                    switch (args[0])
-                    {
-                        case "-install":
-                            {
-                                if (ServiceController.GetServices().Any(s => s.ServiceName == "RDMPAutomationService"))
-                                {
-                                    ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
-                                }
-                                ManagedInstallerClass.InstallHelper(new string[] { Assembly.GetExecutingAssembly().Location });
-                                break;
-                            }
-                        case "-uninstall":
-                            {
-                                ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
-                                break;
-                            }
-                        default:
-                        {
-                            Console.WriteLine("Use -install to install or -uninstall to uninstall" +
-                                              "\r\n" +
-                                              "No command line options will run in console.");
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    var autoRDMP = new AutoRDMP();
-                    autoRDMP.Start();
-                }
+
+                return 
+                    Parser.Default.ParseArguments<ServiceOptions>(args).MapResult(
+                    RunServiceAndReturnExitCode, errs => 1);
+
             }
-            else
+            
+            var servicesToRun = new ServiceBase[] { new RDMPAutomationService() };
+            ServiceBase.Run(servicesToRun);
+            return 0;
+        }
+
+        private static int RunServiceAndReturnExitCode(ServiceOptions serviceOptions)
+        {
+            if (serviceOptions.Install)
             {
-                var servicesToRun = new ServiceBase[] { new RDMPAutomationService() };
-                ServiceBase.Run(servicesToRun);
+                if (ServiceController.GetServices().Any(s => s.ServiceName == "RDMPAutomationService"))
+                {
+                    ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
+                }
+                ManagedInstallerClass.InstallHelper(new string[] { Assembly.GetExecutingAssembly().Location });
+                return 0;
             }
+
+            if (serviceOptions.Uninstall)
+            {
+                ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
+                return 0;
+            }
+
+            return -1;
         }
     }
 }

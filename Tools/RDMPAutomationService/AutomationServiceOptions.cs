@@ -29,16 +29,6 @@ namespace RDMPAutomationService
         [Option('f', "ForceSlot", Required = false, HelpText = "Force the ID of the Slot to use")]
         public int ForceSlot { get; set; }
 
-        [ParserState]
-        public IParserState LastParserState { get; set; }
-
-        [HelpOption]
-        public string GetUsage()
-        {
-            return HelpText.AutoBuild(this,
-              (HelpText current) => HelpText.DefaultParsingErrorsHandler(this, current));
-        }
-
         public AutomationServiceOptions()
         {
             ServerName = Settings.Default.ServerName;
