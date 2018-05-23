@@ -36,22 +36,19 @@ namespace RDMPAutomationService
             Job = job;
             CancellationTokenSource = new CancellationTokenSource();
             Task = new Task(() =>
+                {
+                    try
+                    {
+                        automateable.RunTask(this);
+                    }
+                    catch (Exception e)
+                    {
+                        job.SetLastKnownStatus(AutomationJobStatus.Crashed);
+                        new AutomationServiceException((ICatalogueRepository) Repository, e);
+                    }
+                }
+            );
 
-            {
-                try
-                {
-                    automateable.RunTask(this);
-                }
-                catch (Exception e)
-                {
-                    
-                    job.SetLastKnownStatus(AutomationJobStatus.Crashed);
-                    new AutomationServiceException((ICatalogueRepository)Repository, e);
-                }
-            }
-                
-                
-                );
             Repository = job.Repository;
         }
     }

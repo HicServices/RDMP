@@ -42,10 +42,6 @@ namespace RDMPAutomationService.Logic.DLE
                 _slottedService.AddNewJob(AutomationJobType.DLE, "Loading Cache Based LoadProgress " + _cacheBasedLoadWeCanRun),
                 this);
             
-            //lock the permission window too which prevents caching happening (I don't like that idea)
-            if (_cache.PermissionWindow_ID != null)
-                _cache.PermissionWindow.Lock();
-            
             //Lock all the catalogues for automation use
             toReturn.Job.LockCatalogues(_cacheBasedLoadWeCanRun.LoadMetadata.GetAllCatalogues().Cast<Catalogue>().ToArray());
 

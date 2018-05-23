@@ -79,7 +79,7 @@ namespace RDMPAutomationService.Logic.Cache
                 else if(!kvp.Value.Any())//if there are no catalogues
                 {
                     _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                        String.Format("Cache Progress  {0} has no associated catalogues... skipping.", kvp.Key)));
+                        String.Format("Cache Progress {0} has no associated catalogues... skipping.", kvp.Key)));
                     toDiscard.Add(kvp.Key);
                 }
                 else if (IsAlreadyUnderway(kvp.Key))

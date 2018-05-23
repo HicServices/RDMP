@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using CachingEngine.BasicCache;
 using CachingEngine.Layouts;
 using CachingEngine.PipelineExecution.Destinations;
 using CachingEngine.Requests;
 using CatalogueLibrary.DataFlowPipeline;
+using LoadModules.Generic.DataFlowSources;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -23,8 +26,25 @@ namespace LoadModules.Generic.DataFlowDestinations
     {
         public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
-            if(toProcess != null)
-                throw new NotSupportedException("Expected only to be passed null chunks or never to get called, this destination is not valid for use when sources are actually sending/reading data");
+            //if(toProcess != null)
+            //    throw new NotSupportedException("Expected only to be passed null chunks or never to get called, this destination is not valid for use when sources are actually sending/reading data");
+
+            var chunk = toProcess as DoNothingCacheChunk;
+
+            int run = 0;
+            if (chunk != null)
+            {
+                run = chunk.RunIteration;
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                File.WriteAllText(Path.Combine(CacheDirectory.FullName, "run " + run + " - loop " + i + ".txt"), DateTime.Now.ToString("O"));
+                if (cancellationToken.IsCancellationRequested)
+                    return null;
+
+                Thread.Sleep(60000);
+            }
 
             return null;
         }
