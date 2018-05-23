@@ -185,5 +185,21 @@ WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FU
 
             return new DirectoryInfo(dataFolder);
         }
+
+        public override void CreateBackup(DiscoveredDatabase discoveredDatabase,string backupName)
+        {
+            var server = discoveredDatabase.Server;
+            using(var con = server.GetConnection())
+            {
+                con.Open();
+
+                string sql = string.Format(
+                    "BACKUP DATABASE {0} TO  DISK = '{0}.bak' WITH  INIT ,  NOUNLOAD ,  NAME = N'{1}',  NOSKIP ,  STATS = 10,  NOFORMAT",
+                    discoveredDatabase.GetRuntimeName(),backupName);
+
+                var cmd = server.GetCommand(sql,con);
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

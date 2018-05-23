@@ -7,7 +7,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
 using LoadModules.Generic.Mutilators.QueryBuilders;
-using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using Rhino.Mocks.Constraints;
 using Tests.Common;

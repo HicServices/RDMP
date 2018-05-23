@@ -254,6 +254,7 @@
     <Compile Include="Integration\CatalogueTests.cs" />
     <Compile Include="Integration\ColumnInfoTests.cs" />
     <Compile Include="Integration\CredentialsTests.cs" />
+    <Compile Include="Integration\CrossDatabaseTriggerTests.cs" />
     <Compile Include="Integration\DataAccess\SuperMultiThreadedVolumeAccess.cs" />
     <Compile Include="Integration\DataAccess\TestDataAccess.cs" />
     <Compile Include="Integration\Dependencies\DependencyTests.cs" />

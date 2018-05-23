@@ -17,10 +17,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     {
        public abstract string DatabaseTableSeparator { get; }
 
+        /// <summary>
+        /// Symbols (for all database types) which denote wrapped entity names e.g. [dbo].[mytable] contains qualifiers '[' and ']'
+        /// </summary>
+        public static char[] TableNameQualifiers = { '[',']','`'};
+        
         public ITypeTranslater TypeTranslater { get; private set; }
         public IAggregateHelper AggregateHelper { get; private set; }
         public IUpdateHelper UpdateHelper { get; set; }
-
 
         protected virtual Regex GetAliasRegex()
         {

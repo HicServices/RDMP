@@ -1,7 +1,9 @@
 ﻿using System;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
+using DataLoadEngine.Job;
 using DataLoadEngine.Migration;
+using DataLoadEngine.Migration.QueryBuilding;
 using HIC.Logging;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -16,23 +18,17 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void OverwriteMigrationStrategy_NoPrimaryKey()
         {
-            var databaseName = DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName();
+            var from = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("Bob",new[] {new DatabaseColumnRequest("Field", "int")});
+            var to = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
+
             var connection = MockRepository.GenerateStub<IManagedConnection>();
-            var logManager = MockRepository.GenerateStub<ILogManager>();
-            var strategy = new OverwriteMigrationStrategy(databaseName, connection);
+            var job = MockRepository.GenerateStub<IDataLoadJob>();
+            var strategy = new OverwriteMigrationStrategy(connection);
 
-            var sourceFields = new[] {"Field"};
-            var destinationFields = new[] { "Field" };
-            var column = MockRepository.GenerateStub<IColumnInfo>();
             var migrationFieldProcessor = MockRepository.GenerateStub<IMigrationFieldProcessor>();
-            
-            var columnsToMigrate = new MigrationColumnSet(databaseName, "SourceTable", "DestinationTable", sourceFields, destinationFields, new [] {column}, migrationFieldProcessor);
-            var cts = new GracefulCancellationTokenSource();
-            var inserts = 0;
-            var updates = 0;
 
-            var ex = Assert.Throws<InvalidOperationException>(() => strategy.MigrateTable(columnsToMigrate, logManager, 1, cts.Token, ref inserts, ref updates));
-            Assert.IsTrue(ex.InnerException.Message.Contains("None of the columns to be migrated are configured as a Primary Key"));
+            var ex = Assert.Throws<Exception>(() => new MigrationColumnSet(from, to, migrationFieldProcessor));
+            Assert.AreEqual("There are no primary keys declared in table Bob", ex.Message);
         }
     }
 

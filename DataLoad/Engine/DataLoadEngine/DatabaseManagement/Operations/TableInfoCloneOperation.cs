@@ -7,7 +7,6 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -29,9 +28,7 @@ namespace DataLoadEngine.DatabaseManagement.Operations
         public bool DropHICColumns { get; set; }
         public bool DropIdentityColumns { get; set; }
         public bool AllowNulls { get; set; }
-
-        public ScriptingOptions ScriptingOptions { get; set; }
-
+        
         private bool _operationSucceeded = false;
 
         public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo, LoadBubble copyToBubble)
@@ -52,12 +49,10 @@ namespace DataLoadEngine.DatabaseManagement.Operations
             var liveDb = DataAccessPortal.GetInstance().ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
             var destTableName = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
 
-            var smoTypeLookup = new SMOTypeLookup();
 
-            Dictionary<string, DataType> dilutionDictionary = _tableInfo.PreLoadDiscardedColumns.Where(c => c.Destination == DiscardedColumnDestination.Dilute)
-                .ToDictionary(c => c.RuntimeColumnName, v =>smoTypeLookup.GetSMODataTypeForSqlStringDataType(v.SqlDataType));
+            var discardedColumns = _tableInfo.PreLoadDiscardedColumns.Where(c => c.Destination == DiscardedColumnDestination.Dilute).ToArray();
 
-            DatabaseOperations.CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble],  _tableInfo.GetRuntimeName(), destTableName, DropHICColumns, DropIdentityColumns, AllowNulls, ScriptingOptions,dilutionDictionary);
+            DatabaseOperations.CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble], _tableInfo.GetRuntimeName(), destTableName, DropHICColumns, DropIdentityColumns, AllowNulls, discardedColumns);
 
             
             _operationSucceeded = true;

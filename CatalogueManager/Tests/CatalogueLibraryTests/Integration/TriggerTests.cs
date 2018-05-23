@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Triggers;
+using CatalogueLibrary.Triggers.Exceptions;
+using CatalogueLibrary.Triggers.Implementations;
 using DataLoadEngine.Checks.Checkers;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
@@ -15,7 +17,6 @@ namespace CatalogueLibraryTests.Integration
 {
     public class TriggerTests :DatabaseTests
     {
-        private TriggerImplementer _implementer;
         private DiscoveredTable _table;
         private DiscoveredTable _archiveTable;
 
@@ -23,8 +24,7 @@ namespace CatalogueLibraryTests.Integration
         public void CreateTable()
         {
             RunSQL("CREATE TABLE TriggerTests(name varchar(30) not null,bubbles int)");
-            
-            _implementer = new TriggerImplementer(DiscoveredDatabaseICanCreateRandomTablesIn, "TriggerTests");
+
             _table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TriggerTests");
             _archiveTable = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TriggerTests_Archive");
         }
@@ -32,13 +32,13 @@ namespace CatalogueLibraryTests.Integration
         [Test]
         public void NoTriggerExists()
         {
-            Assert.AreEqual(TriggerImplementer.TriggerStatus.Missing, _implementer.CheckUpdateTriggerIsEnabledOnServer());
+            Assert.AreEqual(TriggerStatus.Missing, new MicrosoftSQLTriggerImplementer(_table).GetTriggerStatus());
         }
 
         [Test]
         public void CreateWithNoPks_Complain()
         {
-            var ex = Assert.Throws<Exception>(()=>_implementer.CreateTrigger(_table.DiscoverColumns().Where(c=>c.IsPrimaryKey).Select(k=>k.GetRuntimeName()).ToArray(),new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<TriggerException>(() => new MicrosoftSQLTriggerImplementer(_table).CreateTrigger(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("There must be at least 1 primary key", ex.Message);
         }
 
@@ -46,12 +46,11 @@ namespace CatalogueLibraryTests.Integration
         public void CreateWithPks_Valid()
         {
             RunSQL("Alter TABLE TriggerTests ADD PRIMARY KEY (name)");
-            _implementer.CreateTrigger(
-                _table.DiscoverColumns().Where(c => c.IsPrimaryKey).Select(k => k.GetRuntimeName()).ToArray(),
-                new ThrowImmediatelyCheckNotifier());
+            var implementer = new MicrosoftSQLTriggerImplementer(_table);
+            implementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
 
-            Assert.AreEqual(TriggerImplementer.TriggerStatus.Enabled,_implementer.CheckUpdateTriggerIsEnabledOnServer());
-            Assert.AreEqual(true, _implementer.CheckUpdateTriggerIsEnabled_Advanced(new[] {"name"}));
+            Assert.AreEqual(TriggerStatus.Enabled, implementer.GetTriggerStatus());
+            Assert.AreEqual(true, implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
         }
 
         [Test]
@@ -61,9 +60,11 @@ namespace CatalogueLibraryTests.Integration
 
             RunSQL("ALTER TABLE TriggerTests add fish int");
             RunSQL("ALTER TABLE TriggerTests_Archive add fish int");
-            
+
+            var implementer = new MicrosoftSQLTriggerImplementer(_table);
+
             //still not valid because trigger SQL is missing it in the column list
-            var ex = Assert.Throws<Exception>(()=> _implementer.CheckUpdateTriggerIsEnabled_Advanced(new[] { "name" }));
+            var ex = Assert.Throws<Exception>(() => implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
             Assert.IsTrue(ex.InnerException.Message.Equals(@"Trigger TriggerTests_OnUpdate is corrupt
 Strings differ at index 915
 EXPECTED:RunID,hic_validFrom,fish,hic_v...
@@ -72,10 +73,10 @@ ACTUAL  :RunID,hic_validFrom,hic_validT...
 
             
             string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
-            _implementer.DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
-            _implementer.CreateTrigger(new[] {"name"},new ThrowImmediatelyCheckNotifier());
+            implementer.DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
+            implementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
 
-            Assert.AreEqual(true, _implementer.CheckUpdateTriggerIsEnabled_Advanced(new[] { "name" }));
+            Assert.AreEqual(true, implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
         }
 
         [Test]
@@ -110,11 +111,10 @@ ACTUAL  :RunID,hic_validFrom,hic_validT...
             
             RunSQL("Alter TABLE TriggerTests ADD myident int identity(1,1) PRIMARY KEY");
 
-            _implementer.CreateTrigger(new[] { "myident" },new ThrowImmediatelyCheckNotifier());
-            _implementer.CheckUpdateTriggerIsEnabled_Advanced(new[] {"myident"});
+            var implementer = new MicrosoftSQLTriggerImplementer(_table);
 
-            
-
+            implementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
+            implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
         }
 
         private object ExecuteScalar(string sql)
@@ -141,7 +141,7 @@ ACTUAL  :RunID,hic_validFrom,hic_validT...
         public void DropTable()
         {
             string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
-            _implementer.DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
+            new MicrosoftSQLTriggerImplementer(_table).DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
 
             if(_archiveTable.Exists())
                 _archiveTable.Drop();

@@ -59,9 +59,6 @@
             this.codeGenerationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showPerformanceCounterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.indexesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mi_CatalogueDatabaseIndexRebuild = new System.Windows.Forms.ToolStripMenuItem();
-            this.mi_DataExportDatabaseIndexRebuild = new System.Windows.Forms.ToolStripMenuItem();
             this.openExeDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userManualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -231,7 +228,7 @@
             this.serverSpecReportToolStripMenuItem,
             this.dITAExtractionToolStripMenuItem});
             this.generateReportToolStripMenuItem.Name = "generateReportToolStripMenuItem";
-            this.generateReportToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.generateReportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.generateReportToolStripMenuItem.Text = "Generate...";
             // 
             // databaseAccessComplexToolStripMenuItem
@@ -277,7 +274,6 @@
             this.pluginsToolStripMenuItem,
             this.toolStripSeparator1,
             this.showPerformanceCounterToolStripMenuItem,
-            this.indexesToolStripMenuItem,
             this.openExeDirectoryToolStripMenuItem});
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             this.testsToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
@@ -334,29 +330,6 @@
             this.showPerformanceCounterToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
             this.showPerformanceCounterToolStripMenuItem.Text = "Show Performance Counter...";
             this.showPerformanceCounterToolStripMenuItem.Click += new System.EventHandler(this.showPerformanceCounterToolStripMenuItem_Click);
-            // 
-            // indexesToolStripMenuItem
-            // 
-            this.indexesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mi_CatalogueDatabaseIndexRebuild,
-            this.mi_DataExportDatabaseIndexRebuild});
-            this.indexesToolStripMenuItem.Name = "indexesToolStripMenuItem";
-            this.indexesToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
-            this.indexesToolStripMenuItem.Text = "Rebuild Indexes";
-            // 
-            // mi_CatalogueDatabaseIndexRebuild
-            // 
-            this.mi_CatalogueDatabaseIndexRebuild.Name = "mi_CatalogueDatabaseIndexRebuild";
-            this.mi_CatalogueDatabaseIndexRebuild.Size = new System.Drawing.Size(270, 22);
-            this.mi_CatalogueDatabaseIndexRebuild.Text = "Rebuild Catalogue Database Indexes";
-            this.mi_CatalogueDatabaseIndexRebuild.Click += new System.EventHandler(this.miIndexRebuild_Click);
-            // 
-            // mi_DataExportDatabaseIndexRebuild
-            // 
-            this.mi_DataExportDatabaseIndexRebuild.Name = "mi_DataExportDatabaseIndexRebuild";
-            this.mi_DataExportDatabaseIndexRebuild.Size = new System.Drawing.Size(270, 22);
-            this.mi_DataExportDatabaseIndexRebuild.Text = "Rebuild Data Export Database Indexes";
-            this.mi_DataExportDatabaseIndexRebuild.Click += new System.EventHandler(this.miIndexRebuild_Click);
             // 
             // openExeDirectoryToolStripMenuItem
             // 
@@ -466,9 +439,6 @@
         private System.Windows.Forms.ToolStripMenuItem generateTestDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem showPerformanceCounterToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem indexesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem mi_CatalogueDatabaseIndexRebuild;
-        private System.Windows.Forms.ToolStripMenuItem mi_DataExportDatabaseIndexRebuild;
         private System.Windows.Forms.ToolStripMenuItem openExeDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem userManualToolStripMenuItem;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Triggers;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Migration
 {
@@ -10,20 +11,20 @@ namespace DataLoadEngine.Migration
     /// </summary>
     public class BackfillMigrationFieldProcessor : IMigrationFieldProcessor
     {
-        public void ValidateFields(string[] sourceFields, string[] destinationFields)
+        public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
         {
-            if (!sourceFields.Contains(SpecialFieldNames.DataLoadRunID))
+            if (!sourceFields.Any(c=>c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID,StringComparison.CurrentCultureIgnoreCase)))
                 throw new MissingFieldException(SpecialFieldNames.DataLoadRunID);
 
-            if (!sourceFields.Contains(SpecialFieldNames.ValidFrom))
+
+            if (!sourceFields.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom, StringComparison.CurrentCultureIgnoreCase)))
                 throw new MissingFieldException(SpecialFieldNames.ValidFrom);
         }
 
-        public void AssignFieldsForProcessing(string field, List<string> fieldsToDiff, List<string> fieldsToUpdate)
+        public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
         {
-            // todo: CHECK should the if clause be removed here, would we want to update a hic_ field in staging? Why would we not want to do that?
             //it is a hic internal field but not one of the overwritten, standard ones
-            if (field.StartsWith("hic_"))
+            if (field.GetRuntimeName().StartsWith("hic_"))
                 fieldsToUpdate.Add(field);
             else
             {

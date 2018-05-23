@@ -34,6 +34,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
             
             loader.FileName = tempFile;
+            loader.Timeout = Timeout;
             try
             {
                 return loader.Load();
@@ -43,6 +44,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 File.Delete(tempFile);
             }
         }
+
+        public int Timeout { get; set; }
 
         public void Dispose()
         {

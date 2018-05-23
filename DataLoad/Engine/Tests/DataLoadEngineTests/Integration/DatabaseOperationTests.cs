@@ -7,15 +7,12 @@ using CatalogueLibrary.DataHelper;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Common;
-using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
-using Column = Microsoft.SqlServer.Management.Smo.Column;
 
 namespace DataLoadEngineTests.Integration
 {
@@ -44,12 +41,8 @@ namespace DataLoadEngineTests.Integration
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(testLiveDatabaseName);
             Assert.IsTrue(testDb.Exists());
 
-            Server smoServer = new Server(new ServerConnection(new SqlConnection(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString)));
-            Database smoDatabase = smoServer.Databases[testLiveDatabaseName];
+            testDb.CreateTable("Table_1", new[] {new DatabaseColumnRequest("Id", "int")});
             
-            var smoTable = new Table(smoDatabase, "Table_1");
-            smoTable.Columns.Add(new Column(smoTable, "Id", DataType.Int));
-            smoTable.Create();
 
             //clone the builder
             var builder = new SqlConnectionStringBuilder(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString)
@@ -62,7 +55,7 @@ namespace DataLoadEngineTests.Integration
             var cloner = new DatabaseCloner(dbConfiguration);
             try
             {
-                cloner.CreateDatabaseForStage(LoadBubble.Raw);
+                var cloneDb = cloner.CreateDatabaseForStage(LoadBubble.Raw);
 
                 //confirm database appeared
                 Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testLiveDatabaseName + "_RAW").Exists());
@@ -92,8 +85,6 @@ namespace DataLoadEngineTests.Integration
                         //always clean up everything 
                         Console.WriteLine(e);
                     }
-
-                smoServer.KillDatabase(smoDatabase.Name);
             }
         }
 

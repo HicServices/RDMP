@@ -17,7 +17,6 @@ using CatalogueManager.Refreshing;
 using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Microsoft.SqlServer.Management.Smo;
 using Sharing.Dependency.Gathering;
 
 namespace CatalogueManager.FindAndReplace

@@ -66,7 +66,6 @@ namespace DataLoadEngine.Checks.Checkers
                         "Catalogue " + catalogue.Name + " does not have any TableInfos", CheckResult.Fail, null));
 
                 tablesFound.AddRange(tableInfos.Where(tableInfo => !tablesFound.Contains(tableInfo)));
-
             }
 
             
@@ -95,7 +94,8 @@ namespace DataLoadEngine.Checks.Checkers
             DiscoveredDatabase staging = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
             DiscoveredDatabase live = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
 
-            var liveCols = live.ExpectTable(tableInfo.GetRuntimeName()).DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
+            var liveTable = live.ExpectTable(tableInfo.GetRuntimeName());
+            var liveCols = liveTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
 
             CheckTableInfoSynchronization(tableInfo,notifier);
 
@@ -106,7 +106,7 @@ namespace DataLoadEngine.Checks.Checkers
 
                 //if trigger is created as part of this check then it is likely to have resulted in changes to the underlying table (e.g. added hic_validFrom field) in which case we should resynch the TableInfo to pickup these new columns
                 bool runSynchronizationAgain;
-                CheckTriggerIntact(live, tableInfo, columnInfosWhichArePrimaryKeys,notifier,out runSynchronizationAgain);
+                CheckTriggerIntact(liveTable,notifier,out runSynchronizationAgain);
 
                 if(runSynchronizationAgain)
                     CheckTableInfoSynchronization(tableInfo, notifier);
@@ -209,9 +209,9 @@ namespace DataLoadEngine.Checks.Checkers
 
         }
 
-        private void CheckTriggerIntact(DiscoveredDatabase live, TableInfo tableInfo, ColumnInfo[] primaryKeys, ICheckNotifier notifier, out bool runSynchronizationAgain)
+        private void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier, out bool runSynchronizationAgain)
         {
-            TriggerChecks checker = new TriggerChecks(live, tableInfo.GetRuntimeName(), true, primaryKeys.Select(pk=>pk.GetRuntimeName()).ToArray());
+            TriggerChecks checker = new TriggerChecks(table, true);
             checker.Check(notifier);
 
             runSynchronizationAgain = checker.TriggerCreated;
@@ -277,7 +277,7 @@ namespace DataLoadEngine.Checks.Checkers
 
             try
             {
-                new MigrationColumnSet(tableInfo.GetDatabaseRuntimeName(),nameOfTableInSourceDatabase, nameOfTableInDestinationDatabase, stagingCols, liveCols, columnInfos, new StagingToLiveMigrationFieldProcessor());
+                new MigrationColumnSet(staging.ExpectTable(nameOfTableInSourceDatabase), live.ExpectTable(nameOfTableInDestinationDatabase), new StagingToLiveMigrationFieldProcessor());
                 notifier.OnCheckPerformed(new CheckEventArgs("TableInfo " + tableInfo.Name + " passed " + typeof(MigrationColumnSet).Name + " check ", CheckResult.Success, null));
             }
             catch (Exception e)

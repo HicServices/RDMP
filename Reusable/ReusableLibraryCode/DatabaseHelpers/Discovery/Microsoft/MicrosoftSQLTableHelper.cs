@@ -187,6 +187,16 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             return new MicrosoftSQLBulkCopy(discoveredTable,connection);
         }
 
+        protected override string GetRenameTableSql(DiscoveredTable discoveredTable, string newName)
+        {
+            string oldName = "["+discoveredTable.GetRuntimeName() +"]";
+
+            if (!string.IsNullOrWhiteSpace(discoveredTable.Schema))
+                oldName = "[" + discoveredTable.Schema + "]." + oldName;
+
+            return string.Format("exec sp_rename '{0}', '{1}'", oldName, newName);
+        }
+
         public override void MakeDistinct(DiscoveredTable discoveredTable)
         {
             string sql = 

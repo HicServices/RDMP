@@ -156,7 +156,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             base.RevertToDatabaseState();
             //clear the cached knowledge
-            _catalogue = null;
+            ClearAllInjections();
         }
 
         public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus()

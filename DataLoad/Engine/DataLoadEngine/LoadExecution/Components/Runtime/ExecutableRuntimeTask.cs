@@ -11,7 +11,6 @@ using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution.Components.Arguments;
-using log4net;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -27,8 +26,6 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
         public string ErrorText { get; set; }
         private Process _currentProcess;
 
-        private readonly ILog Log = LogManager.GetLogger(typeof(ExecutableRuntimeTask));
-        
         public ExecutableRuntimeTask(IProcessTask processTask, RuntimeArgumentCollection args) : base(processTask, args)
         {
             ExeFilepath = processTask.Path;
@@ -51,7 +48,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Starting '" + info.FileName + "' with args '" + info.Arguments + "'"));
 
             _currentProcess = new Process {StartInfo = info};
-            _currentProcess.OutputDataReceived += (sender, eventArgs) => Log.Info(eventArgs.Data);
+            _currentProcess.OutputDataReceived += (sender, eventArgs) => job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, eventArgs.Data));
 
             try
             {

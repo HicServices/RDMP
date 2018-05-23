@@ -6,7 +6,6 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Attachers;
-using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
