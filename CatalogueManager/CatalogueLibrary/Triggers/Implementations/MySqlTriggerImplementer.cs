@@ -42,9 +42,9 @@ namespace CatalogueLibrary.Triggers.Implementations
             }
         }
 
-        public override string CreateTrigger(ICheckNotifier notifier, int createArchiveIndexTimeout = 30)
+        public override string CreateTrigger(ICheckNotifier notifier, int timeout = 30)
         {
-            string creationSql = base.CreateTrigger(notifier, createArchiveIndexTimeout);
+            string creationSql = base.CreateTrigger(notifier, timeout);
 
             var sql = string.Format(@"CREATE TRIGGER {0} BEFORE UPDATE ON {1} FOR EACH ROW
 {2};", 

@@ -79,9 +79,9 @@ namespace CatalogueLibrary.Triggers.Implementations
             }
         }
 
-        public override string CreateTrigger(ICheckNotifier notifier, int createArchiveIndexTimeout = 30)
+        public override string CreateTrigger(ICheckNotifier notifier, int timeout = 30)
         {
-            var createArchiveTableSQL = base.CreateTrigger(notifier, createArchiveIndexTimeout);
+            var createArchiveTableSQL = base.CreateTrigger(notifier, timeout);
 
             using(var con = _server.GetConnection())
             {
@@ -105,7 +105,7 @@ namespace CatalogueLibrary.Triggers.Implementations
 
                 try
                 {
-                    cmdCreateIndex.CommandTimeout = createArchiveIndexTimeout;
+                    cmdCreateIndex.CommandTimeout = timeout;
                     cmdCreateIndex.ExecuteNonQuery();
                 }
                 catch (SqlException e)

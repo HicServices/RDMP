@@ -24,7 +24,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop);
         void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop);
 
-        void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls);
+        void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls,int timeout);
 
         int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null);
 

@@ -132,16 +132,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 return Helper.IsEmpty(connection.Connection, this, connection.Transaction);
         }
 
-        public void AddColumn(string name, DatabaseTypeRequest type,bool allowNulls)
+        public void AddColumn(string name, DatabaseTypeRequest type,bool allowNulls,int timeout)
         {
-            AddColumn(name, Database.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(type),allowNulls);
+            AddColumn(name, Database.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(type),allowNulls,timeout);
         }
 
-        public void AddColumn(string name, string databaseType, bool allowNulls)
+        public void AddColumn(string name, string databaseType, bool allowNulls,int timeout)
         {
             using (IManagedConnection connection = Database.Server.GetManagedConnection())
             {
-                Helper.AddColumn(this, connection.Connection, name, databaseType, allowNulls);
+                Helper.AddColumn(this, connection.Connection, name, databaseType, allowNulls,timeout);
             }
         }
 

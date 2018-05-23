@@ -87,12 +87,12 @@ namespace CatalogueLibraryTests.Integration
             //do the strict check too
             Assert.IsTrue(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody()); 
 
-            tbl.AddColumn("amagad",new DatabaseTypeRequest(typeof(float),null,new Tuple<int, int>(2,2)),true);
+            tbl.AddColumn("amagad",new DatabaseTypeRequest(typeof(float),null,new Tuple<int, int>(2,2)),true,30);
             implementer = factory.Create(tbl);
 
             Assert.Throws<IrreconcilableColumnDifferencesInArchiveException>(() => implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
 
-            archiveTable.AddColumn("amagad", new DatabaseTypeRequest(typeof(float), null, new Tuple<int, int>(2, 2)), true);
+            archiveTable.AddColumn("amagad", new DatabaseTypeRequest(typeof(float), null, new Tuple<int, int>(2, 2)), true,30);
 
             var checks = new TriggerChecks(tbl, true);
             checks.Check(new AcceptAllCheckNotifier());

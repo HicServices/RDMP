@@ -19,9 +19,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public abstract void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop);
         public abstract void DropColumn(DbConnection connection, DiscoveredColumn columnToDrop);
 
-        public virtual void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls)
+        public virtual void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls,int timeout)
         {
-            table.Database.Server.GetCommand("ALTER TABLE " + table + " ADD " + name + " " + dataType + " " + (allowNulls ? "NULL" : "NOT NULL"), connection).ExecuteNonQuery();
+            var cmd = table.Database.Server.GetCommand("ALTER TABLE " + table + " ADD " + name + " " + dataType + " " + (allowNulls ? "NULL" : "NOT NULL"), connection);
+            cmd.CommandTimeout = timeout;
+            cmd.ExecuteNonQuery();
         }
 
         public abstract int GetRowCount(DbConnection connection, IHasFullyQualifiedNameToo table, DbTransaction dbTransaction = null);

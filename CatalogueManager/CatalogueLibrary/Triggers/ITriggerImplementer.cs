@@ -6,7 +6,7 @@ namespace CatalogueLibrary.Triggers
     {
 
         void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger);
-        string CreateTrigger(ICheckNotifier notifier, int createArchiveIndexTimeout = 30);
+        string CreateTrigger(ICheckNotifier notifier, int timeout = 30);
         TriggerStatus GetTriggerStatus();
         bool CheckUpdateTriggerIsEnabledAndHasExpectedBody();
     }

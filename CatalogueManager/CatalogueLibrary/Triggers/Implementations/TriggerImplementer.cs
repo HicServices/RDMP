@@ -33,8 +33,7 @@ namespace CatalogueLibrary.Triggers.Implementations
 
         public abstract void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger);
 
-
-        public virtual string CreateTrigger(ICheckNotifier notifier, int createArchiveIndexTimeout = 30)
+        public virtual string CreateTrigger(ICheckNotifier notifier, int timeout = 30)
         {
             if (!_primaryKeys.Any())
                 throw new TriggerException("There must be at least 1 primary key");
@@ -56,7 +55,7 @@ namespace CatalogueLibrary.Triggers.Implementations
 
             //must add validFrom outside of transaction if we want SMO to pick it up
             if (b_mustCreate_dataloadRunId)
-                _table.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof (int)), true);
+                _table.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), true, timeout);
 
             var syntaxHelper = _server.GetQuerySyntaxHelper();
             var dateTimeDatatype = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (DateTime)));
@@ -64,7 +63,7 @@ namespace CatalogueLibrary.Triggers.Implementations
 
             //must add validFrom outside of transaction if we want SMO to pick it up
             if (b_mustCreate_validFrom)
-                _table.AddColumn(SpecialFieldNames.ValidFrom,string.Format(" {0} DEFAULT {1}",dateTimeDatatype,nowFunction), true);
+                _table.AddColumn(SpecialFieldNames.ValidFrom, string.Format(" {0} DEFAULT {1}", dateTimeDatatype, nowFunction), true, timeout);
 
             string sql = WorkOutArchiveTableCreationSQL(); 
             
@@ -77,13 +76,15 @@ namespace CatalogueLibrary.Triggers.Implementations
 
                     cmdCreateArchive.ExecuteNonQuery();
 
-                    _archiveTable.AddColumn("hic_validTo",new DatabaseTypeRequest(typeof(DateTime)),true);
-                    _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string),128), true);
-                    _archiveTable.AddColumn("hic_status", new DatabaseTypeRequest(typeof(string),1), true);
+                    _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, timeout);
+                    _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, timeout);
+                    _archiveTable.AddColumn("hic_status", new DatabaseTypeRequest(typeof(string), 1), true, timeout);
                 }
 
             return sql;
         }
+
+        
 
         private string WorkOutArchiveTableCreationSQL()
         {
