@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using CachingEngine.PipelineExecution.Sources;
 using CachingEngine.Requests;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -59,16 +58,5 @@ namespace LoadModules.Generic.DataFlowSources
                     "This Cache Source will never find new data available since it is there only for testing purposes and so you can set up a valid Caching pipeline configuration even if it doesn't do anything (e.g. for use in a hacky manner with DoNothingCacheDestination)",
                     CheckResult.Warning));
         }
-    }
-
-    public class DoNothingCacheChunk : ICacheChunk
-    {
-        public DoNothingCacheChunk(ICatalogueRepository catalogueRepository)
-        {
-            Request = new CacheFetchRequest(catalogueRepository);
-        }
-
-        public int RunIteration { get; set; }
-        public ICacheFetchRequest Request { get; private set; }
     }
 }
