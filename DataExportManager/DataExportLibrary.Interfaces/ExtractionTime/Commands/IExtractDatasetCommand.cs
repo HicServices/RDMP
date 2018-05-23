@@ -22,5 +22,6 @@ namespace DataExportLibrary.Interfaces.ExtractionTime.Commands
 
         ISqlQueryBuilder QueryBuilder { get; set; }
 
+        ICumulativeExtractionResults CumulativeExtractionResults { get; }
     }
 }

@@ -62,7 +62,9 @@ namespace DataExportLibrary.ExtractionTime.Commands
         public ICatalogue Catalogue { get; private set; }
 
         public ISqlQueryBuilder QueryBuilder { get; set; }
+        public ICumulativeExtractionResults CumulativeExtractionResults { get; private set; }
         public List<ReleaseIdentifierSubstitution> ReleaseIdentifierSubstitutions { get; private set; }
+        public List<IExtractionResults> ExtractionResults { get; private set; }
 
         public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableCohort extractableCohort, IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt, string limitationSql, IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
         {
@@ -119,6 +121,8 @@ namespace DataExportLibrary.ExtractionTime.Commands
                 throw new Exception("Could not find 1 ISelectedDataSets for ExtractionConfiguration '" + configuration + "' | Dataset '" + dataset +"'");
 
             SelectedDataSets = selectedDataSets[0];
+
+            ExtractionResults = new List<IExtractionResults>();
         }
 
         public void GenerateQueryBuilder()

@@ -51,8 +51,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public ExtractionTimeTimeCoverageAggregator ExtractionTimeTimeCoverageAggregator { get; set; }
 
-        public IExtractionResults ExtractionResults { get; protected set; }
-        
         [DemandsInitialization("Determines the systems behaviour when an extraction query returns 0 rows.  Default (false) is that an error is reported.  If set to true (ticked) then instead a DataTable with 0 rows but all the correct headers will be generated usually resulting in a headers only 0 line/empty extract file")]
         public bool AllowEmptyExtractions { get; set; }
 
@@ -209,6 +207,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             if (chunk == null)
             {
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Data exhausted after reading " + _rowsRead + " rows of data ("+UniqueReleaseIdentifiersEncountered.Count + " unique release identifiers seen)"));
+                if (Request != null)
+                    Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered = UniqueReleaseIdentifiersEncountered.Count;
                 return null;
             }
 
@@ -353,18 +353,27 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
             extractionResults.SaveToDatabase();
 
-            ExtractionResults = extractionResults;
+            Request.ExtractionResults.Add(extractionResults);
         }
 
         private void StartAuditGlobals()
         {
-            var dataExportRepo = ((DataExportRepository)Request.RepositoryLocator.DataExportRepository);
+            var dataExportRepo = ((DataExportRepository)GlobalsRequest.RepositoryLocator.DataExportRepository);
 
-            var previousAudit = dataExportRepo.GetAllGlobalExtractionResultsFor(Request.Configuration);
+            var previousAudit = dataExportRepo.GetAllGlobalExtractionResultsFor(GlobalsRequest.Configuration);
 
             //delete old audit records
             foreach (var audit in previousAudit)
                 audit.DeleteInDatabase();
+
+            foreach (var supportingSql in GlobalsRequest.Globals.SupportingSQL)
+            {
+                GlobalsRequest.ExtractionResults.Add(new SupplementalExtractionResults(dataExportRepo, GlobalsRequest.Configuration, supportingSql.SQL));
+            }
+            foreach (var document in GlobalsRequest.Globals.Documents)
+            {
+                GlobalsRequest.ExtractionResults.Add(new SupplementalExtractionResults(dataExportRepo, GlobalsRequest.Configuration, "Document: " + document.Name));
+            }
         }
 
         private string RecursivelyListAllFilterNames(IContainer filterContainer)

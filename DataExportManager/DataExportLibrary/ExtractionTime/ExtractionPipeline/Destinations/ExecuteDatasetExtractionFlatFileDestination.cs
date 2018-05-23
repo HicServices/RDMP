@@ -147,14 +147,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     sw.Stop();
                     job.OnProgress(this,new ProgressEventArgs("Lookup "+ lookup,new ProgressMeasurement(linesWritten,ProgressType.Records),sw.Elapsed));
 
-                    var command = (ExtractDatasetCommand)_request;
-                    var result = command.Configuration.CumulativeExtractionResults.FirstOrDefault(cer => cer.ExtractableDataSet_ID == command.SelectedDataSets.ExtractableDataSet_ID);
-                    if (result != null)
-                    {
-                        var supplemental = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup);
-                        supplemental.CompleteAudit(GetDestinationDescription(), linesWritten);
-                    }
-                    
                     datasetBundle.States[lookup] = ExtractCommandState.Completed;
                 }
                 catch (Exception e)
@@ -197,6 +189,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 //close audit object - unless it was prematurely closed e.g. by a failure somewhere
                 if (!TableLoadInfo.IsClosed)
                     TableLoadInfo.CloseAndArchive();
+
+                // also close off the cumulative extraction result
+                var result = _request.ExtractionResults.OfType<CumulativeExtractionResults>().FirstOrDefault();
+                result.CompleteAudit(GetDestinationType(), GetDestinationDescription(), );
             }
             catch (Exception e)
             {
@@ -345,22 +341,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                 listener.OnProgress(this, new ProgressEventArgs("Extract " + sql, new ProgressMeasurement(sqlLinesWritten, ProgressType.Records), sw.Elapsed));
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Extracted " + sqlLinesWritten + " records from SupportingSQL " + sql + " into directory " + directory.FullName));
-
-                if (_request is ExtractGlobalsCommand)
-                {
-                    var result = new SupplementalExtractionResults(configuration.Repository, _request.Configuration, sql.SQL);
-                    result.CompleteAudit(GetDestinationDescription(), sqlLinesWritten);
-                }
-                if (_request is ExtractDatasetCommand)
-                {
-                    var command = (ExtractDatasetCommand)_request;
-                    var result = configuration.CumulativeExtractionResults.FirstOrDefault(cer => cer.ExtractableDataSet_ID == command.SelectedDataSets.ExtractableDataSet_ID);
-                    if (result != null)
-                    {
-                        var supplemental = result.AddSupplementalExtractionResult(sql.SQL);
-                        supplemental.CompleteAudit(GetDestinationDescription(), sqlLinesWritten);
-                    }
-                }
 
                 return true;
             }
