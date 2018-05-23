@@ -232,6 +232,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return destinationTypeTranslater.GetSQLDBTypeForCSharpType(requested);
         }
 
+        public virtual bool IsIdentity(string sqlType)
+        {
+            if (string.IsNullOrWhiteSpace(sqlType))
+                return false;
+
+            var s = sqlType.ToLower();
+
+            var identityTypes = new []
+            {
+                "autoincrement",
+                "identity",
+                "auto_increment"
+            };
+
+            return identityTypes.Any(s.Contains);
+        }
+
 
         /// <summary>
         /// Return the number of characters required to not truncate/loose any data when altering a column from time (e.g. TIME etc) to varchar(x).  Return

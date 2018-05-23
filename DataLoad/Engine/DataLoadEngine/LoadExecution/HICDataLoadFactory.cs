@@ -66,7 +66,7 @@ namespace DataLoadEngine.LoadExecution
             
             var adjustStaging = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustStaging, "Adjust Staging");
 
-            var migrateStagingToLive = new MigrateStagingToLive(_cataloguesToLoad, _databaseConfiguration,_loadConfigurationFlags, _logManager);
+            var migrateStagingToLive = new MigrateStagingToLive(_databaseConfiguration,_loadConfigurationFlags);
 
             var postLoad = factory.CreateCompositeDataLoadComponentFor(LoadStage.PostLoad, "Post Load");
 

@@ -9,7 +9,6 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Checks.Checkers;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;

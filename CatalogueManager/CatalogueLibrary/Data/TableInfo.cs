@@ -221,7 +221,7 @@ namespace CatalogueLibrary.Data
 
         public string GetDatabaseRuntimeName()
         {
-            return Database.Trim(new[] { '[', ']' });
+            return Database.Trim(QuerySyntaxHelper.TableNameQualifiers);
         }
 
         public string GetDatabaseRuntimeName(LoadStage loadStage,INameDatabasesAndTablesDuringLoads namer = null)

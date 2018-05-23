@@ -50,7 +50,8 @@ namespace DataLoadEngine.DataFlowPipeline.Sources
                 _con = DatabaseCommandHelper.GetConnection(_builder);
                 _con.Open();
 
-                
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Running SQL:" +Environment.NewLine + _sql));
+
                 cmd = DatabaseCommandHelper.GetCommand(_sql, _con);
                 cmd.CommandTimeout = _timeout;
                 

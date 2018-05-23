@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Triggers;
 
-namespace DataLoadEngine.Migration
+namespace DataLoadEngine.Migration.QueryBuilding
 {
     /// <summary>
     /// See MigrationQueryHelper
@@ -28,10 +28,7 @@ namespace DataLoadEngine.Migration
         public override string BuildInsertClause()
         {
             var inserts = GetListOfInsertColumnFields(ColumnsToMigrate, _dataLoadRunID);
-            
-            return String.Format("INSERT ({0}) VALUES ({1})", 
-                String.Join(", ", inserts.Select(pair => pair.Key)),
-                String.Join(", ", inserts.Select(pair => pair.Value)));
+            throw new NotImplementedException();
         }
 
         public List<KeyValuePair<string, string>> GetListOfInsertColumnFields(MigrationColumnSet columnsToMigrate, int dataLoadRunID)

@@ -11,7 +11,6 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using HIC.Logging;
 using HIC.Logging.Listeners;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -98,7 +97,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     tableAlreadyExistsButEmpty = true;
                     
                     if(!AllowLoadingPopulatedTables)
-                        if (discoveredTable.GetRowCount() == 0)
+                        if (discoveredTable.IsEmpty())
                             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found table " + TargetTableName + " already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
                         else
                             throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);

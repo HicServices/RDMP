@@ -65,12 +65,9 @@ namespace DataLoadEngine.DatabaseManagement.Operations
 
             var destDbInfo = _hicDatabaseConfiguration.DeployInfo[copyToStage];
 
-            var scriptingOptions = DatabaseOperations.GetScriptingOptionsForDeploymentStage(copyToStage);
-
             var cloneOperation = new TableInfoCloneOperation(_hicDatabaseConfiguration,tableInfo, copyToStage)
             {
                 DropHICColumns = copyToStage == LoadBubble.Raw,//don't drop columns like hic_sourceID, these are optional for population (and don't get Diff'ed) but should still be there
-                ScriptingOptions = scriptingOptions,
                 AllowNulls = copyToStage == LoadBubble.Raw
             };
 

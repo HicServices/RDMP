@@ -1,14 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using HIC.Logging;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Versioning;
-using Microsoft.SqlServer.Management.Smo;
+
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {

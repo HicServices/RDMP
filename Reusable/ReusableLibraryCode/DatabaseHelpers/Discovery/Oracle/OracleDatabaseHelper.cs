@@ -37,6 +37,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             throw new NotImplementedException();
         }
 
+        public override void CreateBackup(DiscoveredDatabase discoveredDatabase, string backupName)
+        {
+            throw new NotImplementedException();
+        }
+
         public override IEnumerable<DiscoveredTable> ListTables(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, bool includeViews, DbTransaction transaction = null)
         {
             List<DiscoveredTable> tables = new List<DiscoveredTable>();

@@ -90,7 +90,8 @@ namespace DataLoadEngine.LoadExecution.Components
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "The Mounting stage has not created the " + raw.GetRuntimeName() + " database."));
 
             var rawDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Raw];
-            if (DatabaseOperations.CheckTablesAreEmptyInDatabaseOnServer(rawDbInfo))
+            
+            if (rawDbInfo.DiscoverTables(false).All(t=>t.IsEmpty()))
             {
                 var message = "The Mounting stage has not populated the RAW database (" + rawDbInfo + ") with any data";
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, message));

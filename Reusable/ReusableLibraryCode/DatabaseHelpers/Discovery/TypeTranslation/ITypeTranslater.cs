@@ -42,5 +42,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// <param name="destinationTypeTranslater"></param>
         /// <returns></returns>
         string TranslateSQLDBType(string sqlType, ITypeTranslater destinationTypeTranslater);
+
+        bool IsIdentity(string sqlType);
     }
 }

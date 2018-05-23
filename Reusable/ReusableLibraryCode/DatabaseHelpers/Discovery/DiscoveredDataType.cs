@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlTypes;
-using System.Text.RegularExpressions;
-using Microsoft.SqlServer.Management.Smo;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -135,7 +132,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             if (obj.GetType() != this.GetType()) return false;
             return Equals((DiscoveredDataType)obj);
         }
-
-       
+        
+        public bool IsIdentity()
+        {
+            return Column.Table.Database.Server.Helper.GetQuerySyntaxHelper().TypeTranslater.IsIdentity(SQLType);
+        }
     }
 }

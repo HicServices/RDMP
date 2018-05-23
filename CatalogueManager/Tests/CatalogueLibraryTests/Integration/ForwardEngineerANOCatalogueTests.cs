@@ -247,7 +247,9 @@ namespace CatalogueLibraryTests.Integration
                 if (!tableInfoAlreadyExistsForSkippedTable)
                 {
                     var ex = Assert.Throws<Exception>(engine.Execute);
-                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called 'SpineColor'"));
+                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called"));
+                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "[Necks].[SpineColor]"));
+                    
                     return;
                 }
                 else
