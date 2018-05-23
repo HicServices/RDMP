@@ -72,7 +72,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AutomationMEFLoadingCheckNotifier.cs" />
-    <Compile Include="AutomationServiceOptions.cs" />
+    <Compile Include="Options\RunOptions.cs" />
     <Compile Include="AutoRDMP.cs" />
     <Compile Include="EventHandlers\ToLocalFileDataLoadEventsListener.cs" />
     <Compile Include="Logic\Cache\AutomatedCacheRun.cs" />

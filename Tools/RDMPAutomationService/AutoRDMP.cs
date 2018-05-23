@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data.Automation;
 using CommandLine;
+using RDMPAutomationService.Options;
 using Timer = System.Timers.Timer;
 
 namespace RDMPAutomationService
@@ -21,16 +22,18 @@ namespace RDMPAutomationService
 
         private readonly Action<EventLogEntryType, string> logAction;
         private bool hostStarted;
+        private RunOptions _options;
 
-        public AutoRDMP()
+        public AutoRDMP(RunOptions options = null)
         {
+            _options = options??new RunOptions();
             logAction = (et, msg) => OnLogEvent(new ServiceEventArgs() { EntryType = et, Message = msg });
             InitialiseAutomationLoop();
         }
 
         private void InitialiseAutomationLoop()
         {
-            host = new RDMPAutomationLoop(new AutomationServiceOptions(), logAction);
+            host = new RDMPAutomationLoop(_options, logAction);
             host.Failed += OnHostServiceFailure;
             host.StartCompleted += OnHostStarted;
         }

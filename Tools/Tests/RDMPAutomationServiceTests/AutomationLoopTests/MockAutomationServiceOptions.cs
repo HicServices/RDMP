@@ -1,9 +1,10 @@
 ﻿using CatalogueLibrary.Repositories;
 using RDMPAutomationService;
+using RDMPAutomationService.Options;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
-    public class MockAutomationServiceOptions : AutomationServiceOptions
+    public class MockAutomationServiceOptions : RunOptions
     {
         private readonly IRDMPPlatformRepositoryServiceLocator mockRepositoryLocator;
         

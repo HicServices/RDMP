@@ -10,6 +10,7 @@ using CatalogueLibrary.Data.Automation;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using RDMPAutomationService.Options;
 using RDMPAutomationService.Pipeline;
 using RDMPStartup;
 using RDMPStartup.Events;
@@ -37,7 +38,7 @@ namespace RDMPAutomationService
         private readonly IRDMPPlatformRepositoryServiceLocator _locator;
         private AutomationServiceSlot _serviceSlot;
         private AutomationPipelineEngineCollection _collection;
-        private AutomationServiceOptions _options;
+        private RunOptions _options;
         
         private Thread t;
         private readonly Action<EventLogEntryType, string> _log;
@@ -45,7 +46,7 @@ namespace RDMPAutomationService
         
         private bool lockEstablished;
         
-        public RDMPAutomationLoop(AutomationServiceOptions options, Action<EventLogEntryType, string> logAction)
+        public RDMPAutomationLoop(RunOptions options, Action<EventLogEntryType, string> logAction)
         {
             _log = logAction;
             _options = options;

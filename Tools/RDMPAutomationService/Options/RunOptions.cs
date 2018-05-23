@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.SqlClient;
 using CatalogueLibrary.Repositories;
 using CommandLine;
-using CommandLine.Text;
 using RDMPAutomationService.Properties;
 using RDMPStartup;
 
-namespace RDMPAutomationService
+namespace RDMPAutomationService.Options
 {
-    /// <summary>
-    /// Handles parsing command line arguments to the AutomationService executable
-    /// </summary>
-    public class AutomationServiceOptions
+    [Verb("run", HelpText = "Runs the Automation Service as an executable until you exit")]
+    public class RunOptions
     {
-        [Option('s', @"localhost\sqlexpress", Required = true, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
+        [Option('s', @"localhost\sqlexpress", Required = false, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
         public string ServerName { get; set; }
 
-        [Option('c', "Catalogue", Required = true, HelpText = "Name of the Catalogue database e.g. RDMP_Catalogue")]
+        [Option('c', "Catalogue", Required = false, HelpText = "Name of the Catalogue database e.g. RDMP_Catalogue")]
         public string CatalogueDatabaseName { get; set; }
 
         [Option('e', "DataExport", Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
@@ -29,7 +21,7 @@ namespace RDMPAutomationService
         [Option('f', "ForceSlot", Required = false, HelpText = "Force the ID of the Slot to use")]
         public int ForceSlot { get; set; }
 
-        public AutomationServiceOptions()
+        public RunOptions()
         {
             ServerName = Settings.Default.ServerName;
             CatalogueDatabaseName = Settings.Default.CatalogueDB;

@@ -18,13 +18,22 @@ namespace RDMPAutomationService
             {
 
                 return 
-                    Parser.Default.ParseArguments<ServiceOptions>(args).MapResult(
-                    RunServiceAndReturnExitCode, errs => 1);
-
+                    Parser.Default.ParseArguments<ServiceOptions,RunOptions>(args)
+                    .MapResult(
+                     (ServiceOptions opts) => RunServiceAndReturnExitCode(opts),
+                      (RunOptions opts) => RunRunOptionsAndReturnExitCode(opts),
+                    errs => 1);
             }
             
             var servicesToRun = new ServiceBase[] { new RDMPAutomationService() };
             ServiceBase.Run(servicesToRun);
+            return 0;
+        }
+
+        private static int RunRunOptionsAndReturnExitCode(RunOptions runOptions)
+        {
+            var autoRDMP = new AutoRDMP(runOptions);
+            autoRDMP.Start();
             return 0;
         }
 
