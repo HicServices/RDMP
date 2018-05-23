@@ -14,7 +14,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
 
         DateTime DateOfExtraction { get; set; }
         string DestinationDescription { get; set; }
-        string DestinationType { get; }
+        string DestinationType { get; set;  }
         int RecordsExtracted { get; set; }
         int DistinctReleaseIdentifiersEncountered { get; set; }
         string FiltersUsed { get; set; }
