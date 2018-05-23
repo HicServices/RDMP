@@ -7,6 +7,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Triggers
 {
+    /// <summary>
+    /// Checks that the specified table has a backup trigger <see cref="ITriggerImplementer"/> on it.  Also inspects the _Archive table schema and compares it
+    /// to the live schema to make sure they are compatible.
+    /// </summary>
     public class TriggerChecks : ICheckable
     {
         private readonly bool _expectedPresence;
@@ -25,7 +29,7 @@ namespace CatalogueLibrary.Triggers
             _expectedPresence = expectedPresence;
         }
 
-
+        ///<inheritdoc/>
         public void Check(ICheckNotifier notifier)
         {
             if (_table.Exists() && _archiveTable.Exists())

@@ -4,6 +4,9 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Triggers.Implementations
 {
+    /// <summary>
+    /// Handles the creation of the appropriate <see cref="ITriggerImplementer"/> for any given <see cref="DatabaseType"/>
+    /// </summary>
     public class TriggerImplementerFactory
     {
         private readonly DatabaseType _databaseType;
