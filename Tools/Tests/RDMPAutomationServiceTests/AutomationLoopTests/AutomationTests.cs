@@ -17,7 +17,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
     {
         protected Action<EventLogEntryType, string> logAction = ((type, s) => { Console.WriteLine("{0}: {1}", type.ToString().ToUpper(), s); });
 
-        protected MockAutomationServiceOptions mockOptions;
+        internal MockAutomationServiceOptions mockOptions;
 
         [TestFixtureSetUp]
         public void ClearSlotsAndJobs()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Automation;
@@ -16,24 +17,37 @@ using DataLoadEngine.LoadProcess.Scheduling.Strategy;
 using HIC.Logging;
 using RDMPAutomationService.EventHandlers;
 using RDMPAutomationService.Interfaces;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Logic.DLE
 {
     /// <summary>
     /// Automation task that runs a single data load (LoadMetadata) that is due according to it's routine execution schedule (LoadPeriodically).
     /// </summary>
-    public class AutomatedDLELoad : IAutomateable
+    internal class AutomatedDLELoad : IAutomateable
     {
         private readonly AutomationServiceSlot _slottedService;
         private readonly LoadPeriodically _loadPeriodically;
         private readonly LoadMetadata _rootLoadMetadata;
         private OnGoingAutomationTask _task;
+        private CatalogueRepository _repository;
+        private CancellationToken _cancellationToken;
 
         public AutomatedDLELoad(AutomationServiceSlot slottedService, LoadPeriodically loadPeriodically)
         {
             _slottedService = slottedService;
             _loadPeriodically = loadPeriodically;
             _rootLoadMetadata = _loadPeriodically.LoadMetadata;
+        }
+        
+        /// <summary>
+        /// Starts a new one off load of the specified load metadata
+        /// </summary>
+        /// <param name="lmd"></param>
+        public AutomatedDLELoad(LoadMetadata lmd)
+        {
+            _rootLoadMetadata = lmd;
         }
 
         public OnGoingAutomationTask GetTask()
@@ -48,29 +62,42 @@ namespace RDMPAutomationService.Logic.DLE
         public void RunTask(OnGoingAutomationTask task)
         {
             _task = task;
+            _cancellationToken = _task.CancellationTokenSource.Token;
+            _repository = (CatalogueRepository) _task.Repository;
             LaunchLoad(_rootLoadMetadata,_loadPeriodically);
         }
+
+        public void RunTask(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            _repository = repositoryLocator.CatalogueRepository;
+            _cancellationToken = new CancellationToken();
+            LaunchLoad(_rootLoadMetadata,_loadPeriodically);
+        }
+
 
         private void LaunchLoad(LoadMetadata currentMetadata, LoadPeriodically dueLoad)
         {
             try
             {
                 PreExecutionChecker p = new PreExecutionChecker(currentMetadata, null);
-                p.Check(new AutomatedAcceptAllCheckNotifier(_task));
 
+                p.Check(_task == null?(ICheckNotifier) new IgnoreAllErrorsCheckNotifier(): new AutomatedAcceptAllCheckNotifier(_task));
+                
                 IExternalDatabaseServer serverChosen;
                 var loggingServer = currentMetadata.GetDistinctLoggingDatabaseSettings(out serverChosen);
                 var logManager = new LogManager(loggingServer);
 
                 //Create a callback with the log manager that will set the known logging data load run id and server ID (if logging does actually happen - sometimes a load run will decide nothing requires done and therefore will not log)
-                logManager.DataLoadInfoCreated += (s, d) => _task.Job.SetLoggingInfo(serverChosen, d.ID);
+                if (_task != null)
+                    logManager.DataLoadInfoCreated += (s, d) => _task.Job.SetLoggingInfo(serverChosen, d.ID);
 
                 var databaseConfiguration = new HICDatabaseConfiguration(currentMetadata);
 
                 // Create the pipeline to pass into the DataLoadProcess object
                 var dataLoadFactory = new HICDataLoadFactory(currentMetadata, databaseConfiguration,
-                    new HICLoadConfigurationFlags(), (CatalogueRepository) _task.Repository, logManager);
-                var listener = new AutomatedThrowImmediatelyDataLoadEventsListener(_task);
+                    new HICLoadConfigurationFlags(),_repository, logManager);
+                
+                var listener = _task == null? (IDataLoadEventListener) new ThrowImmediatelyDataLoadEventListener(): new AutomatedThrowImmediatelyDataLoadEventsListener(_task);
 
                 IDataLoadExecution execution = dataLoadFactory.Create(listener);
 
@@ -90,11 +117,10 @@ namespace RDMPAutomationService.Logic.DLE
                     dataLoadProcess = new DataLoadProcess(currentMetadata, p, logManager, listener, execution);
 
                 var exitCode =
-                    dataLoadProcess.Run(new GracefulCancellationToken(_task.CancellationTokenSource.Token,
-                        _task.CancellationTokenSource.Token));
+                    dataLoadProcess.Run(new GracefulCancellationToken(_cancellationToken,_cancellationToken));
 
-                _task.Job.SetLastKnownStatus(GetStatusForExitCode(exitCode));
-
+                SetLastKnownStatus(GetStatusForExitCode(exitCode));
+                
                 //is never null the first time, is only null if there is an OnSuccessLaunchLoadMetadata_ID followon LoadMetadata which itself has no children LoadPeriodicallies
                 if (dueLoad != null)
                 {
@@ -119,31 +145,45 @@ namespace RDMPAutomationService.Logic.DLE
                     else //there is no chained load so we are definetly done!
                     {
                         //we are done now
-                        _task.Job.SetLastKnownStatus(AutomationJobStatus.Finished);
+                        SetLastKnownStatus(AutomationJobStatus.Finished);
                     }
                 }
                 else if (exitCode == ExitCodeType.OperationNotRequired)
-                    _task.Job.SetLastKnownStatus(AutomationJobStatus.Finished);
+                   SetLastKnownStatus(AutomationJobStatus.Finished);
                         //exit code was not required so we are finished but also don't launch any chained loads
                 else
                     throw new Exception("Chained load " + currentMetadata.Name + " ended with exit code " + exitCode);
             }
             catch (Exception e)
             {
-                new AutomationServiceException((ICatalogueRepository) _task.Repository, e);
-                _task.Job.SetLastKnownStatus(AutomationJobStatus.Crashed);
+                if (_task != null)
+                {
+                    new AutomationServiceException(_repository, e);
+                    SetLastKnownStatus(AutomationJobStatus.Crashed);
+                }
+                else
+                    throw;
             }
             finally
             {
                 //if we are at base level of recursion
                 if (_rootLoadMetadata.Equals(currentMetadata))
                 {
-                    _task.Job.RevertToDatabaseState();
-                    if (_task.Job.LastKnownStatus == AutomationJobStatus.Finished)//and we are at status Finished delete it to free up space for the next load
-                        _task.Job.DeleteInDatabase();
+                    if(_task != null)
+                    {
+                        _task.Job.RevertToDatabaseState();
+
+                        if (_task.Job.LastKnownStatus == AutomationJobStatus.Finished)//and we are at status Finished delete it to free up space for the next load
+                            _task.Job.DeleteInDatabase();
+                    }
                 }
             }
+        }
 
+        private void SetLastKnownStatus(AutomationJobStatus status)
+        {
+            if(_task != null)
+                _task.Job.SetLastKnownStatus(status);
         }
 
         private AutomationJobStatus GetStatusForExitCode(ExitCodeType exitCode)

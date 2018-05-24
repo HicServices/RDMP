@@ -421,6 +421,12 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingDocument.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingSQLTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsTableInfo.cs" />
+    <Compile Include="SimpleControls\ExecuteInAutomationServerUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleControls\ExecuteInAutomationServerUI.Designer.cs">
+      <DependentUpon>ExecuteInAutomationServerUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="FindAndReplace\FindAndReplaceNode.cs" />
     <Compile Include="FindAndReplace\FindAndReplaceUI.cs">
       <SubType>UserControl</SubType>
@@ -1584,6 +1590,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleControls\ExecuteInAutomationServerUI.resx">
+      <DependentUpon>ExecuteInAutomationServerUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FindAndReplace\FindAndReplaceUI.resx">
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>

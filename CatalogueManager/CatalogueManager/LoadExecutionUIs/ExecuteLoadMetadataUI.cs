@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.Checks;
 using DataLoadEngine.Checks.Checkers;
@@ -66,6 +68,8 @@ namespace CatalogueManager.LoadExecutionUIs
 
             btnUnlockAll.Image = FamFamFamIcons.lock_break;
             AssociatedCollection = RDMPCollection.DataLoad;
+
+            executeInAutomationServerUI1.CommandGetter = AutomationCommandGetter;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
@@ -136,6 +140,7 @@ namespace CatalogueManager.LoadExecutionUIs
                 //and disable everything else
                 gbLoadProgresses.Enabled = false;
                 btnExecute.Enabled = false;
+                executeInAutomationServerUI1.Enabled = false;
                 btnAbortLoad.Enabled = false;
                 gbDebugOptions.Enabled = false;
 
@@ -150,6 +155,7 @@ namespace CatalogueManager.LoadExecutionUIs
                 //leave checks enabled and enable execute
                 btnRunChecks.Enabled = true;
                 btnExecute.Enabled = true;
+                executeInAutomationServerUI1.Enabled = true;
 
                 //also enable load progress selection if it's a LoadProgress based load
                 gbLoadProgresses.Enabled = true;
@@ -159,6 +165,7 @@ namespace CatalogueManager.LoadExecutionUIs
             {
                 //load is underway!
                 btnExecute.Enabled = false;
+                executeInAutomationServerUI1.Enabled = false;
                 btnRunChecks.Enabled = false;
 
                 //only thing we can do is abort
@@ -270,6 +277,23 @@ namespace CatalogueManager.LoadExecutionUIs
 
             SetButtonStates();
         }
+
+        private string AutomationCommandGetter()
+        {
+            if (_loadMetadata.LoadProgresses.Any())
+            {
+                var loadProgressToRun = GetLoadProgressIfAny();
+
+                if (cbRunIteratively.Checked)
+                    return ExecuteInAutomationServerUI.AutomationServiceExecutable + " dle " + _loadMetadata.ID + " -LoadProgress " + loadProgressToRun + " -iterative";
+
+                return ExecuteInAutomationServerUI.AutomationServiceExecutable + " dle " + _loadMetadata.ID + " -LoadProgress " + loadProgressToRun;
+            }
+
+            return ExecuteInAutomationServerUI.AutomationServiceExecutable + " dle " + _loadMetadata.ID;
+            
+        }
+
 
         private ILogManager CreateLogManager(ILoadMetadata loadMetadata)
         {
@@ -432,13 +456,21 @@ namespace CatalogueManager.LoadExecutionUIs
 
         private ILoadProgressSelectionStrategy CreateLoadProgressSelectionStrategy()
         {
+            var loadProgress = GetLoadProgressIfAny();
+             
+            if(loadProgress == null)
+                return new AnyAvailableLoadProgressSelectionStrategy(_loadMetadata);
+            
+            return new SingleLoadProgressSelectionStrategy(loadProgress);
+        }
+
+        private LoadProgress GetLoadProgressIfAny()
+        {
             var scheduleItem = (KeyValuePair<int, string>)ddLoadProgress.SelectedItem;
             if (scheduleItem.Key == 0)
-                return new AnyAvailableLoadProgressSelectionStrategy(_loadMetadata);
+                return null;
 
-            var loadProgress = RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
-
-            return new SingleLoadProgressSelectionStrategy(loadProgress);
+            return RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
         }
 
         private IDataLoadExecution CreateLoadPipeline(ILogManager logManager)
@@ -460,17 +492,16 @@ namespace CatalogueManager.LoadExecutionUIs
         
         private void ddLoadProgress_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var scheduleItem = (KeyValuePair<int, string>)ddLoadProgress.SelectedItem;
-            if (scheduleItem.Key == 0)
+            var loadprogress = GetLoadProgressIfAny();
+
+            if (loadprogress == null)
             {
                 var progresses = _loadMetadata.LoadProgresses.ToArray();
                 if (progresses.Length == 1)
                     udDaysPerJob.Value = progresses[0].DefaultNumberOfDaysToLoadEachTime;
             }
             else
-                udDaysPerJob.Value =
-                    RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key)
-                        .DefaultNumberOfDaysToLoadEachTime;
+                udDaysPerJob.Value = loadprogress.DefaultNumberOfDaysToLoadEachTime;
         }
 
         public override string GetTabName()
@@ -499,6 +530,7 @@ namespace CatalogueManager.LoadExecutionUIs
         {
             SetLoadProgressGroupBoxState();
         }
+
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DatasetLoadControl_Design, UserControl>))]

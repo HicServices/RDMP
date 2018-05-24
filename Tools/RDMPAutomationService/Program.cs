@@ -4,7 +4,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
+using CatalogueLibrary.Data.DataLoad;
 using CommandLine;
+using RDMPAutomationService.Logic.DLE;
 using RDMPAutomationService.Options;
 using RDMPStartup;
 
@@ -17,16 +19,40 @@ namespace RDMPAutomationService
             if (Environment.UserInteractive)
             {
 
-                return 
-                    Parser.Default.ParseArguments<ServiceOptions,RunOptions>(args)
-                    .MapResult(
-                     (ServiceOptions opts) => RunServiceAndReturnExitCode(opts),
-                      (RunOptions opts) => RunRunOptionsAndReturnExitCode(opts),
+                return
+                    Parser.Default.ParseArguments<ServiceOptions, RunOptions, DleOptions>(args)
+                        .MapResult(
+                            (ServiceOptions opts) => RunServiceAndReturnExitCode(opts),
+                            (RunOptions opts) => RunRunOptionsAndReturnExitCode(opts),
+                            (DleOptions opts) => RunDleOptionsAndReturnExitCode(opts),
                     errs => 1);
             }
             
             var servicesToRun = new ServiceBase[] { new RDMPAutomationService() };
             ServiceBase.Run(servicesToRun);
+            return 0;
+        }
+
+        private static int RunDleOptionsAndReturnExitCode(DleOptions opts)
+        {
+            var locator = opts.DoStartup();
+
+            if (opts.Command == DLECommands.list)
+            {
+
+                Console.WriteLine(string.Format("[ID] - Name"));
+                foreach (LoadMetadata lmd in locator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+                    Console.WriteLine("[{0}] - {1}", lmd.ID, lmd.Name);
+            }
+
+            if (opts.Command == DLECommands.run)
+            {
+                var lmd = locator.CatalogueRepository.GetObjectByID<LoadMetadata>(opts.LoadMetadata);
+                var load = new AutomatedDLELoad(lmd);
+                load.RunTask(locator);
+            }
+
+            
             return 0;
         }
 

@@ -1,11 +1,6 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using CatalogueLibrary.Data.Automation;
-using CommandLine;
 using RDMPAutomationService.Options;
-using Timer = System.Timers.Timer;
 
 namespace RDMPAutomationService
 {
@@ -13,7 +8,7 @@ namespace RDMPAutomationService
     /// Host container for an RDMPAutomationLoop which handles ressurecting it if it crashes and recording starting/stopping events to the console / windows
     /// logs (when running as a windows service).
     /// </summary>
-    public class AutoRDMP
+    class AutoRDMP
     {
         public event EventHandler<ServiceEventArgs> LogEvent;
         public event EventHandler<ServiceEventArgs> HostStarted;
@@ -24,7 +19,7 @@ namespace RDMPAutomationService
         private bool hostStarted;
         private RunOptions _options;
 
-        public AutoRDMP(RunOptions options = null)
+        internal AutoRDMP(RunOptions options = null)
         {
             _options = options??new RunOptions();
             logAction = (et, msg) => OnLogEvent(new ServiceEventArgs() { EntryType = et, Message = msg });

@@ -22,7 +22,7 @@ namespace RDMPAutomationService
     /// <summary>
     /// The main Automation loop class.  Manages running all Automation Pipelines, picking an available AutomationServiceSlot, shutting down cleanly etc.
     /// </summary>
-    public class RDMPAutomationLoop
+    class RDMPAutomationLoop
     {
         /// <summary>
         /// Manages all the OnGoingAutomationTasks, will be null until a lock has been successfully established on an AutomationServiceSlot
@@ -45,8 +45,8 @@ namespace RDMPAutomationService
         private readonly string mySelf = Environment.UserName + " (" + Environment.MachineName + ")";
         
         private bool lockEstablished;
-        
-        public RDMPAutomationLoop(RunOptions options, Action<EventLogEntryType, string> logAction)
+
+        internal RDMPAutomationLoop(RunOptions options, Action<EventLogEntryType, string> logAction)
         {
             _log = logAction;
             _options = options;

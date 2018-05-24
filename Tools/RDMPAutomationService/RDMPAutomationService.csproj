@@ -72,6 +72,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AutomationMEFLoadingCheckNotifier.cs" />
+    <Compile Include="Options\DleOptions.cs" />
     <Compile Include="Options\RunOptions.cs" />
     <Compile Include="AutoRDMP.cs" />
     <Compile Include="EventHandlers\ToLocalFileDataLoadEventsListener.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Interfaces\IAutomateable.cs" />
     <Compile Include="EventHandlers\LoggingStartedEventHandler.cs" />
     <Compile Include="Options\InstallOptions.cs" />
+    <Compile Include="Options\StartupOptions.cs" />
     <Compile Include="Pipeline\PipelineRunStatus.cs" />
     <Compile Include="Pipeline\Sources\CacheAutomationSource.cs" />
     <Compile Include="Pipeline\Sources\DLEAutomationSource.cs" />
