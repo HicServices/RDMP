@@ -18,8 +18,5 @@ namespace DataExportLibrary.Interfaces.ExtractionTime.Commands
 
         ExtractCommandState State { get; set; }
         string Name { get; }
-
-        IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
-        List<IExtractionResults> ExtractionResults { get; }
     }
 }

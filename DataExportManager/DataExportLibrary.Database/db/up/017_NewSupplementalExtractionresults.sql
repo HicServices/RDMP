@@ -8,9 +8,11 @@ begin
 	    [CumulativeExtractionResults_ID] [int] NULL,
 	    [ExtractionConfiguration_ID] [int] NULL,
 	    [DestinationDescription] [varchar](max) NULL,
-	    [RecordsExtracted] [int] NOT NULL,
+	    [RecordsExtracted] [int] NULL,
 	    [Exception] [varchar](max) NULL,
 	    [SQLExecuted] [varchar](max) NULL,
+	    [ExtractedType] [varchar](max) NULL,
+	    [ExtractedId] [int] NULL,
      CONSTRAINT [PK_SupplementalExtractionResults] PRIMARY KEY CLUSTERED 
     (
 	    [ID] ASC
@@ -23,6 +25,7 @@ if not exists (select 1 from sys.foreign_keys where name = 'FK_SupplementalExtra
 begin
     ALTER TABLE [dbo].[SupplementalExtractionResults]  WITH CHECK ADD  CONSTRAINT [FK_SupplementalExtractionResults_CumulativeExtractionResults] FOREIGN KEY([CumulativeExtractionResults_ID])
     REFERENCES [dbo].[CumulativeExtractionResults] ([ID])
+    ON DELETE CASCADE
 end
 GO
 
@@ -32,5 +35,6 @@ begin
 	REFERENCES [dbo].[ExtractionConfiguration] ([ID])
 end
 GO
+
 
 

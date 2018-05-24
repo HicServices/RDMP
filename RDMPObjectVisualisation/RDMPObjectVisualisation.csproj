@@ -138,6 +138,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
+    <Compile Include="Copying\Commands\CacheProgressCommand.cs" />
     <Compile Include="Copying\Commands\CatalogueCommand.cs" />
     <Compile Include="Copying\Commands\CohortAggregateContainerCommand.cs" />
     <Compile Include="Copying\Commands\CohortCommandHelper.cs" />
@@ -173,15 +174,23 @@
     <Compile Include="DataObjects\CohortCreationRequestVisualisation.Designer.cs">
       <DependentUpon>CohortCreationRequestVisualisation.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataObjects\ExtractionInformationVisualisation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataObjects\ExtractionInformationVisualisation.Designer.cs">
+      <DependentUpon>ExtractionInformationVisualisation.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataObjects\UnknownVisualisation.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DataObjects\UnknownVisualisation.Designer.cs">
       <DependentUpon>UnknownVisualisation.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataObjects\PatientIndexTableVisualisation.cs" />
-    <Compile Include="DataObjects\PatientIndexTableVisualisation.Designer.cs">
-      <DependentUpon>PatientIndexTableVisualisation.cs</DependentUpon>
+    <Compile Include="DataObjects\AggregateConfigurationVisualisation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataObjects\AggregateConfigurationVisualisation.Designer.cs">
+      <DependentUpon>AggregateConfigurationVisualisation.cs</DependentUpon>
     </Compile>
     <Compile Include="DataObjects\PipelineComponentVisualisation.cs">
       <SubType>UserControl</SubType>
@@ -321,11 +330,14 @@
     <EmbeddedResource Include="DataObjects\CohortCreationRequestVisualisation.resx">
       <DependentUpon>CohortCreationRequestVisualisation.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DataObjects\ExtractionInformationVisualisation.resx">
+      <DependentUpon>ExtractionInformationVisualisation.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DataObjects\UnknownVisualisation.resx">
       <DependentUpon>UnknownVisualisation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataObjects\PatientIndexTableVisualisation.resx">
-      <DependentUpon>PatientIndexTableVisualisation.cs</DependentUpon>
+    <EmbeddedResource Include="DataObjects\AggregateConfigurationVisualisation.resx">
+      <DependentUpon>AggregateConfigurationVisualisation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataObjects\PipelineComponentVisualisation.resx">
       <DependentUpon>PipelineComponentVisualisation.cs</DependentUpon>
@@ -434,6 +446,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\ExtractableCohort.png" />
+    <None Include="Resources\BigPatientIndexTable.png" />
+    <None Include="Resources\BigGraph.png" />
+    <None Include="Resources\BigCohort.png" />
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Pipelines\Pipelines.cd" />

@@ -143,7 +143,6 @@ namespace DataExportManager.ProjectUI
 
                         if (request is ExtractDatasetCommand)
                             WriteMetadata(request);
-                        // TODO: add metadata for Globals?
                     }
         }
 

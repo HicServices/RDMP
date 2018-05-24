@@ -23,9 +23,9 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
 
         IReleaseLogEntry GetReleaseLogEntryIfAny();
         Type GetDestinationType();
-        void CompleteAudit(Type destinationType, string destinationDescription, int distinctIdentifiers, int recordsExtracted);
+        void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted);
 
         List<ISupplementalExtractionResults> SupplementalExtractionResults { get; }
-        ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted);
+        ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, Type extractedType, int extractedId);
     }
 }

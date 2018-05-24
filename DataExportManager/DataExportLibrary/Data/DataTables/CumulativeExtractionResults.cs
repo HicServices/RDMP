@@ -111,9 +111,9 @@ namespace DataExportLibrary.Data.DataTables
             get { return new List<ISupplementalExtractionResults>(Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this)); }
         }
 
-        public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted)
+        public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, Type extractedType, int extractedId)
         {
-            var result = new SupplementalExtractionResults(Repository, this, sqlExecuted);
+            var result = new SupplementalExtractionResults(Repository, this, sqlExecuted, extractedType, extractedId);
             SupplementalExtractionResults.Add(result);
             return result;
         }
@@ -171,14 +171,13 @@ namespace DataExportLibrary.Data.DataTables
         {
             return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(_destinationType);
         }
-
-        public void CompleteAudit(Type destinationType, string destinationDescription, int distinctIdentifiers, int recordsExtracted)
+        
+        public void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted)
         {
             DestinationType = destinationType.FullName;
             DestinationDescription = destinationDescription;
-            DistinctReleaseIdentifiersEncountered = distinctIdentifiers;
             RecordsExtracted = recordsExtracted;
-            
+
             SaveToDatabase();
         }
     }

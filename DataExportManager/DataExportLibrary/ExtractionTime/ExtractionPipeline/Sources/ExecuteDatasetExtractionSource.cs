@@ -130,14 +130,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             // so we can trigger the destination to extract the globals docs and sql
             if (GlobalsRequest != null)
             {
-                //unless we are checking, start auditing
-                if (!_testMode)
-                {
-                    StartAuditGlobals();
-                }
-
                 if (firstGlobalChunk)
                 {
+                    //unless we are checking, start auditing
+                    if (!_testMode)
+                    {
+                        StartAuditGlobals();
+                    }
                     firstGlobalChunk = false;
                     return new DataTable("Globals");
                 }
@@ -353,7 +352,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
             extractionResults.SaveToDatabase();
 
-            Request.ExtractionResults.Add(extractionResults);
+            Request.CumulativeExtractionResults = extractionResults;
         }
 
         private void StartAuditGlobals()
@@ -365,15 +364,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             //delete old audit records
             foreach (var audit in previousAudit)
                 audit.DeleteInDatabase();
-
-            foreach (var supportingSql in GlobalsRequest.Globals.SupportingSQL)
-            {
-                GlobalsRequest.ExtractionResults.Add(new SupplementalExtractionResults(dataExportRepo, GlobalsRequest.Configuration, supportingSql.SQL));
-            }
-            foreach (var document in GlobalsRequest.Globals.Documents)
-            {
-                GlobalsRequest.ExtractionResults.Add(new SupplementalExtractionResults(dataExportRepo, GlobalsRequest.Configuration, "Document: " + document.Name));
-            }
         }
 
         private string RecursivelyListAllFilterNames(IContainer filterContainer)

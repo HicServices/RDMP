@@ -62,7 +62,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
         public ICatalogue Catalogue { get; private set; }
 
         public ISqlQueryBuilder QueryBuilder { get; set; }
-        public ICumulativeExtractionResults CumulativeExtractionResults { get; private set; }
+        public ICumulativeExtractionResults CumulativeExtractionResults { get; set; }
         public List<ReleaseIdentifierSubstitution> ReleaseIdentifierSubstitutions { get; private set; }
         public List<IExtractionResults> ExtractionResults { get; private set; }
 

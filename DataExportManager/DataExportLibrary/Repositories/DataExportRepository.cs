@@ -48,7 +48,7 @@ namespace DataExportLibrary.Repositories
 
         public IEnumerable<ISupplementalExtractionResults> GetAllGlobalExtractionResultsFor(IExtractionConfiguration configuration)
         {
-            return GetAllObjects<SupplementalExtractionResults>("WHERE ExtractionConfiguration_ID=" + configuration.ID + "AND ExtractableDataSet_ID IS NULL");
+            return GetAllObjects<SupplementalExtractionResults>("WHERE ExtractionConfiguration_ID=" + configuration.ID + "AND CumulativeExtractionResults_ID IS NULL");
         }
 
         readonly ObjectConstructor _constructor = new ObjectConstructor();
