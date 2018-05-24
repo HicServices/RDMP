@@ -128,7 +128,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                 if (Source.WasCancelled)
                 {
                     FatalErrorLogging.GetInstance()
-                                     .LogFatalError(Destination.TableLoadInfo.DataLoadInfoParent, this.GetType().Name, "User Cancelled Extraction");
+                        .LogFatalError(Destination.TableLoadInfo.DataLoadInfoParent, this.GetType().Name,
+                            "User Cancelled Extraction");
 
                     if (ExtractCommand is ExtractDatasetCommand)
                     {
