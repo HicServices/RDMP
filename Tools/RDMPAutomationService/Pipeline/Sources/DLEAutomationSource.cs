@@ -42,21 +42,25 @@ namespace RDMPAutomationService.Pipeline.Sources
                 }
                 else
                 {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No Load periodic jobs ready to run, trying with Cache Based LoadProgress"));
                     //no periodical loads are available, how about a cache loading DLE job?
                     var cacheBasedLoadWeCanRun = _dleRunFinder.SuggestLoadBecauseCacheAvailable();
 
-                    if (cacheBasedLoadWeCanRun == null)
-                        return null;
+                    if (cacheBasedLoadWeCanRun != null)
+                    {
+                        string msg = "Started cache based load ID = " + cacheBasedLoadWeCanRun.ID;
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, msg));
 
-                    string msg = "Started cache based load ID = " + cacheBasedLoadWeCanRun.ID;
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, msg));
-                    
-                    var toReturn = new AutomatedDLELoadFromCache(_serviceSlot, cacheBasedLoadWeCanRun).GetTask();
+                        var toReturn = new AutomatedDLELoadFromCache(_serviceSlot, cacheBasedLoadWeCanRun).GetTask();
 
-                    msg = "Automation Job ID is " + toReturn.Job.ID;
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, msg));
-                    
-                    return toReturn;
+                        msg = "Automation Job ID is " + toReturn.Job.ID;
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, msg));
+
+                        return toReturn;
+                    }
+
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No Cache Based LoadProgress found."));
+                    return null;
                 }
             }
 

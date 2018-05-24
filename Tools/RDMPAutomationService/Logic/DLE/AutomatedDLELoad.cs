@@ -38,7 +38,7 @@ namespace RDMPAutomationService.Logic.DLE
 
         public OnGoingAutomationTask GetTask()
         {
-            var toReturn = new OnGoingAutomationTask(_slottedService.AddNewJob(AutomationJobType.DLE,"Loading " + _rootLoadMetadata.Name), this);
+            var toReturn = new OnGoingAutomationTask(_slottedService.AddNewJob(AutomationJobType.DLE, "Loading " + _rootLoadMetadata.Name), this);
             
             toReturn.Job.LockCatalogues((Catalogue[]) _rootLoadMetadata.GetAllCatalogues());
 

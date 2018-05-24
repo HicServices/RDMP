@@ -168,6 +168,7 @@
     <Compile Include="Requests\BackfillCacheFetchRequest.cs" />
     <Compile Include="Requests\CacheFetchRequest.cs" />
     <Compile Include="Layouts\CacheLayout.cs" />
+    <Compile Include="Requests\DoNothingCacheChunk.cs" />
     <Compile Include="Requests\FetchRequestProvider\CacheFetchRequestProvider.cs" />
     <Compile Include="Requests\FetchRequestProvider\FailedCacheFetchRequestProvider.cs" />
     <Compile Include="Requests\FetchRequestProvider\ICacheFetchRequestProvider.cs" />
