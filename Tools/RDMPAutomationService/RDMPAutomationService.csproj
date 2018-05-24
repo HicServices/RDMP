@@ -72,6 +72,8 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AutomationMEFLoadingCheckNotifier.cs" />
+    <Compile Include="OptionRunners\DleOptionsRunner.cs" />
+    <Compile Include="OptionRunners\ServiceOptionsRunner.cs" />
     <Compile Include="Options\DleOptions.cs" />
     <Compile Include="Options\ServiceOptions.cs" />
     <Compile Include="AutoRDMP.cs" />
