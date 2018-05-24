@@ -9,6 +9,7 @@ using CommandLine;
 using RDMPAutomationService.Logic.DLE;
 using RDMPAutomationService.Options;
 using RDMPStartup;
+using ReusableLibraryCode;
 
 namespace RDMPAutomationService
 {
@@ -18,14 +19,20 @@ namespace RDMPAutomationService
         {
             if (Environment.UserInteractive)
             {
-
-                return
-                    Parser.Default.ParseArguments<ServiceOptions, RunOptions, DleOptions>(args)
-                        .MapResult(
-                            (ServiceOptions opts) => RunServiceAndReturnExitCode(opts),
-                            (RunOptions opts) => RunRunOptionsAndReturnExitCode(opts),
-                            (DleOptions opts) => RunDleOptionsAndReturnExitCode(opts),
-                    errs => 1);
+                try
+                {
+                    return
+                        Parser.Default.ParseArguments<ServiceOptions, DleOptions>(args)
+                            .MapResult(
+                                (ServiceOptions opts) => RunServiceAndReturnExitCode(opts),
+                                (DleOptions opts) => RunDleOptionsAndReturnExitCode(opts),
+                                errs => 1);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(e));
+                    return -1;
+                }
             }
             
             var servicesToRun = new ServiceBase[] { new RDMPAutomationService() };
@@ -37,51 +44,48 @@ namespace RDMPAutomationService
         {
             var locator = opts.DoStartup();
 
-            if (opts.Command == DLECommands.list)
+            switch (opts.Command)
             {
+                case DLECommands.run:
+                    
+                    var lmd = locator.CatalogueRepository.GetObjectByID<LoadMetadata>(opts.LoadMetadata);
+                    var load = new AutomatedDLELoad(lmd);
+                    load.RunTask(locator);
 
-                Console.WriteLine(string.Format("[ID] - Name"));
-                foreach (LoadMetadata lmd in locator.CatalogueRepository.GetAllObjects<LoadMetadata>())
-                    Console.WriteLine("[{0}] - {1}", lmd.ID, lmd.Name);
+                    return 0;
+                case DLECommands.list:
+                    
+                    Console.WriteLine(string.Format("[ID] - Name"));
+                    foreach (LoadMetadata l in locator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+                        Console.WriteLine("[{0}] - {1}", l.ID, l.Name);
+
+                    return 0;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            if (opts.Command == DLECommands.run)
-            {
-                var lmd = locator.CatalogueRepository.GetObjectByID<LoadMetadata>(opts.LoadMetadata);
-                var load = new AutomatedDLELoad(lmd);
-                load.RunTask(locator);
-            }
-
-            
-            return 0;
         }
 
-        private static int RunRunOptionsAndReturnExitCode(RunOptions runOptions)
-        {
-            var autoRDMP = new AutoRDMP(runOptions);
-            autoRDMP.Start();
-            return 0;
-        }
 
         private static int RunServiceAndReturnExitCode(ServiceOptions serviceOptions)
         {
-            if (serviceOptions.Install)
+            switch (serviceOptions.Command)
             {
-                if (ServiceController.GetServices().Any(s => s.ServiceName == "RDMPAutomationService"))
-                {
+                case ServiceCommands.run:
+                    var autoRDMP = new AutoRDMP(serviceOptions);
+                    autoRDMP.Start();
+                    return 0;
+                case ServiceCommands.install:
+                    if (ServiceController.GetServices().Any(s => s.ServiceName == "RDMPAutomationService"))
+                        ManagedInstallerClass.InstallHelper(new string[] {"/u", Assembly.GetExecutingAssembly().Location});
+
+                    ManagedInstallerClass.InstallHelper(new string[] { Assembly.GetExecutingAssembly().Location });
+                return 0;
+                case ServiceCommands.uninstall:
                     ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
-                }
-                ManagedInstallerClass.InstallHelper(new string[] { Assembly.GetExecutingAssembly().Location });
-                return 0;
+                    return 0;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            if (serviceOptions.Uninstall)
-            {
-                ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
-                return 0;
-            }
-
-            return -1;
         }
     }
 }

@@ -17,11 +17,11 @@ namespace RDMPAutomationService
 
         private readonly Action<EventLogEntryType, string> logAction;
         private bool hostStarted;
-        private RunOptions _options;
+        private ServiceOptions _options;
 
-        internal AutoRDMP(RunOptions options = null)
+        internal AutoRDMP(ServiceOptions options = null)
         {
-            _options = options??new RunOptions();
+            _options = options ?? new ServiceOptions();
             logAction = (et, msg) => OnLogEvent(new ServiceEventArgs() { EntryType = et, Message = msg });
             InitialiseAutomationLoop();
         }

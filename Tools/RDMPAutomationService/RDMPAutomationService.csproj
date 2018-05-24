@@ -13,6 +13,8 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
+    <NuGetPackageImportStamp>773357c9</NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,8 +29,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
-    <NuGetPackageImportStamp>773357c9</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -73,7 +73,7 @@
     </Compile>
     <Compile Include="AutomationMEFLoadingCheckNotifier.cs" />
     <Compile Include="Options\DleOptions.cs" />
-    <Compile Include="Options\RunOptions.cs" />
+    <Compile Include="Options\ServiceOptions.cs" />
     <Compile Include="AutoRDMP.cs" />
     <Compile Include="EventHandlers\ToLocalFileDataLoadEventsListener.cs" />
     <Compile Include="Logic\Cache\AutomatedCacheRun.cs" />
@@ -83,7 +83,6 @@
     <Compile Include="EventHandlers\AutomatedThrowImmediatelyDataLoadEventsListener.cs" />
     <Compile Include="Interfaces\IAutomateable.cs" />
     <Compile Include="EventHandlers\LoggingStartedEventHandler.cs" />
-    <Compile Include="Options\InstallOptions.cs" />
     <Compile Include="Options\StartupOptions.cs" />
     <Compile Include="Pipeline\PipelineRunStatus.cs" />
     <Compile Include="Pipeline\Sources\CacheAutomationSource.cs" />

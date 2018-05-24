@@ -4,7 +4,7 @@ using RDMPAutomationService.Options;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
-    internal class MockAutomationServiceOptions : RunOptions
+    internal class MockAutomationServiceOptions : ServiceOptions
     {
         private readonly IRDMPPlatformRepositoryServiceLocator mockRepositoryLocator;
         

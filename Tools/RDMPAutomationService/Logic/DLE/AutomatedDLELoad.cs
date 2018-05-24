@@ -97,7 +97,7 @@ namespace RDMPAutomationService.Logic.DLE
                 var dataLoadFactory = new HICDataLoadFactory(currentMetadata, databaseConfiguration,
                     new HICLoadConfigurationFlags(),_repository, logManager);
                 
-                var listener = _task == null? (IDataLoadEventListener) new ThrowImmediatelyDataLoadEventListener(): new AutomatedThrowImmediatelyDataLoadEventsListener(_task);
+                var listener = _task == null? (IDataLoadEventListener) new ThrowImmediatelyDataLoadEventListener(){WriteToConsole = false}: new AutomatedThrowImmediatelyDataLoadEventsListener(_task);
 
                 IDataLoadExecution execution = dataLoadFactory.Create(listener);
 

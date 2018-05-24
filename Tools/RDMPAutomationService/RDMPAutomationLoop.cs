@@ -38,7 +38,7 @@ namespace RDMPAutomationService
         private readonly IRDMPPlatformRepositoryServiceLocator _locator;
         private AutomationServiceSlot _serviceSlot;
         private AutomationPipelineEngineCollection _collection;
-        private RunOptions _options;
+        private ServiceOptions _options;
         
         private Thread t;
         private readonly Action<EventLogEntryType, string> _log;
@@ -46,7 +46,7 @@ namespace RDMPAutomationService
         
         private bool lockEstablished;
 
-        internal RDMPAutomationLoop(RunOptions options, Action<EventLogEntryType, string> logAction)
+        internal RDMPAutomationLoop(ServiceOptions options, Action<EventLogEntryType, string> logAction)
         {
             _log = logAction;
             _options = options;
