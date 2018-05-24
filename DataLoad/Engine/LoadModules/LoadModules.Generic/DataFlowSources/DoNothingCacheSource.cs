@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CachingEngine.PipelineExecution.Sources;
 using CachingEngine.Requests;
 using CatalogueLibrary.DataFlowPipeline;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -18,9 +19,20 @@ namespace LoadModules.Generic.DataFlowSources
     /// </summary>
     public class DoNothingCacheSource:CacheSource<ICacheChunk>
     {
+        private int runs;
+
         public override void DoGetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             //Data is never available for download
+            if (runs < 10)
+            {
+                runs++;
+                Chunk = new DoNothingCacheChunk(CatalogueRepository)
+                {
+                    RunIteration = runs
+                };
+                return;
+            }
             Chunk = null;
         }
 
