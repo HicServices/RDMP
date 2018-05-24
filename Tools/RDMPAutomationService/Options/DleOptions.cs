@@ -13,7 +13,7 @@ namespace RDMPAutomationService.Options
     {
        
         [Value(0, HelpText = 
-            @"Commands: 'run' - Execute DLE for the specified load metadata,'list' - List load metadata by name/id")]
+            @"Commands: 'run' the dle, 'list' available loads",Required = true)]
         public DLECommands Command { get; set; }
         
         [Value(1,HelpText = "The ID of the LoadMetadata you want to run")]
@@ -24,7 +24,8 @@ namespace RDMPAutomationService.Options
         {
             get
             {
-                yield return new Example("Run the DLE to load LoadMetadata with ID 30",new DleOptions(){Command = DLECommands.run,LoadMetadata = 30}); 
+                yield return new Example("Run the DLE to load LoadMetadata with ID 30",new DleOptions(){Command = DLECommands.run,LoadMetadata = 30});
+                yield return new Example("Override for RDMP platform databases in .config", new DleOptions() { Command = DLECommands.run, LoadMetadata = 30,ServerName =@"localhost\sqlexpress",CatalogueDatabaseName = "RDMP_Catalogue",DataExportDatabaseName =  "RDMP_DataExport"}); 
                 
             }
         }
@@ -32,6 +33,7 @@ namespace RDMPAutomationService.Options
 
     public enum DLECommands
     {
+        NONE,
         run,
         list
     }

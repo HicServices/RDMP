@@ -42,6 +42,7 @@ namespace RDMPAutomationService
 
         private static int RunDleOptionsAndReturnExitCode(DleOptions opts)
         {
+            opts.LoadFromAppConfig();
             var locator = opts.DoStartup();
 
             switch (opts.Command)
@@ -71,6 +72,7 @@ namespace RDMPAutomationService
             switch (serviceOptions.Command)
             {
                 case ServiceCommands.run:
+                    serviceOptions.LoadFromAppConfig();
                     var autoRDMP = new AutoRDMP(serviceOptions);
                     autoRDMP.Start();
                     return 0;

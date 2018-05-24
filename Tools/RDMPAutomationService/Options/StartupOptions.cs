@@ -14,7 +14,7 @@ namespace RDMPAutomationService.Options
 {
     class StartupOptions
     {
-        [Option('s', @"localhost\sqlexpress", Required = false, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
+        [Option('s', "Server", Required = false, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
         public string ServerName { get; set; }
 
         [Option('c', "Catalogue", Required = false, HelpText = "Name of the Catalogue database e.g. RDMP_Catalogue")]
@@ -23,13 +23,17 @@ namespace RDMPAutomationService.Options
         [Option('e', "DataExport", Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
         public string DataExportDatabaseName { get; set; }
 
-        public StartupOptions()
+        public void LoadFromAppConfig()
         {
-            ServerName = Settings.Default.ServerName;
-            CatalogueDatabaseName = Settings.Default.CatalogueDB;
-            DataExportDatabaseName = Settings.Default.DataExportDB;
-        }
+            if (ServerName == null)
+                ServerName = Settings.Default.ServerName;
 
+            if(CatalogueDatabaseName == null)
+                CatalogueDatabaseName = Settings.Default.CatalogueDB;
+
+            if(DataExportDatabaseName == null)
+                DataExportDatabaseName = Settings.Default.DataExportDB;
+        }
         public IRDMPPlatformRepositoryServiceLocator DoStartup()
         {
             Startup startup = new Startup(GetRepositoryLocator());

@@ -6,10 +6,10 @@ using RDMPStartup;
 
 namespace RDMPAutomationService.Options
 {
-    [Verb("service", HelpText = "Runs the Automation Service as an executable until you exit")]
+    [Verb("service", HelpText = "Runs/Installs the Automation Service as in job polling mode")]
     class ServiceOptions:StartupOptions
     {
-        [Value(0,Required = true,HelpText = "Command to run e.g. install, uninstall etc")]
+        [Value(0, Required = true, HelpText = @"Commands: 'run' the service manually, 'install' as a windows service, 'uninstall' windows service")]
         public ServiceCommands Command { get; set; }
 
         [Option('f', "ForceSlot", Required = false, HelpText = "Force the ID of the Slot to use")]
@@ -23,6 +23,7 @@ namespace RDMPAutomationService.Options
 
     internal enum ServiceCommands
     {
+        NONE,
         run,
         install,
         uninstall
