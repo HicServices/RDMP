@@ -222,6 +222,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             if (_request is ExtractGlobalsCommand)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Request is for the extraction of Globals."));
+                OutputFile = _request.GetExtractionDirectory().FullName;
                 return;
             }
 
