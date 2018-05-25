@@ -17,6 +17,7 @@ using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
@@ -33,11 +34,9 @@ namespace CatalogueManager.Menus
             : base(args, loadMetadata)
         {
             _loadMetadata = loadMetadata;
+            Items.Add("Edit description", null,(s, e) => _activator.Activate<LoadMetadataUI, LoadMetadata>(loadMetadata));
 
             Add(new ExecuteCommandCreateNewLoadMetadata(_activator));
-
-            Add(new ExecuteCommandExecuteLoadMetadata(_activator).SetTarget(loadMetadata));
-            
             Items.Add("View Load Diagram", CatalogueIcons.LoadBubble, (s, e) => _activator.ActivateViewLoadMetadataDiagram(this, loadMetadata));
 
         }
