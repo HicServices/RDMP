@@ -73,7 +73,7 @@
             this.ragSmiley1.Location = new System.Drawing.Point(17, 252);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 46;
+            this.ragSmiley1.TabIndex = 13;
             this.ragSmiley1.Visible = false;
             // 
             // btnClearKnownType
@@ -81,7 +81,7 @@
             this.btnClearKnownType.Location = new System.Drawing.Point(553, 190);
             this.btnClearKnownType.Name = "btnClearKnownType";
             this.btnClearKnownType.Size = new System.Drawing.Size(65, 23);
-            this.btnClearKnownType.TabIndex = 45;
+            this.btnClearKnownType.TabIndex = 8;
             this.btnClearKnownType.Text = "Clear";
             this.btnClearKnownType.UseVisualStyleBackColor = true;
             this.btnClearKnownType.Click += new System.EventHandler(this.btnClearKnownType_Click);
@@ -92,7 +92,7 @@
             this.ddSetKnownType.Location = new System.Drawing.Point(96, 189);
             this.ddSetKnownType.Name = "ddSetKnownType";
             this.ddSetKnownType.Size = new System.Drawing.Size(423, 21);
-            this.ddSetKnownType.TabIndex = 44;
+            this.ddSetKnownType.TabIndex = 7;
             this.ddSetKnownType.SelectedIndexChanged += new System.EventHandler(this.ddSetKnownType_SelectedIndexChanged);
             // 
             // label15
@@ -102,7 +102,7 @@
             this.label15.Location = new System.Drawing.Point(7, 213);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(617, 13);
-            this.label15.TabIndex = 43;
+            this.label15.TabIndex = 10;
             this.label15.Text = "(Only choose if you are sure the database is of an RDMP known type, it\'s ok to no" +
     "t have one e.g. for RAW or untyped databases)";
             // 
@@ -121,7 +121,7 @@
             this.label8.Location = new System.Drawing.Point(626, 189);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(130, 13);
-            this.label8.TabIndex = 41;
+            this.label8.TabIndex = 9;
             this.label8.Text = "*Indicates Required Fields";
             // 
             // lblPasswordError
@@ -148,7 +148,7 @@
             this.lblState.Location = new System.Drawing.Point(48, 262);
             this.lblState.Name = "lblState";
             this.lblState.Size = new System.Drawing.Size(35, 13);
-            this.lblState.TabIndex = 38;
+            this.lblState.TabIndex = 14;
             this.lblState.Text = "State:";
             // 
             // btnCheckState
@@ -156,7 +156,7 @@
             this.btnCheckState.Location = new System.Drawing.Point(176, 231);
             this.btnCheckState.Name = "btnCheckState";
             this.btnCheckState.Size = new System.Drawing.Size(82, 23);
-            this.btnCheckState.TabIndex = 31;
+            this.btnCheckState.TabIndex = 12;
             this.btnCheckState.Text = "Check State";
             this.btnCheckState.UseVisualStyleBackColor = true;
             this.btnCheckState.Click += new System.EventHandler(this.btnCheckState_Click);
@@ -167,7 +167,7 @@
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(660, 20);
-            this.tbPassword.TabIndex = 29;
+            this.tbPassword.TabIndex = 6;
             this.tbPassword.TextChanged += new System.EventHandler(this.tbPassword_TextChanged);
             // 
             // label2
@@ -184,7 +184,7 @@
             this.tbUsername.Location = new System.Drawing.Point(96, 137);
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(660, 20);
-            this.tbUsername.TabIndex = 28;
+            this.tbUsername.TabIndex = 5;
             this.tbUsername.TextChanged += new System.EventHandler(this.tbUsername_TextChanged);
             // 
             // label1
@@ -201,7 +201,7 @@
             this.tbDatabaseName.Location = new System.Drawing.Point(96, 111);
             this.tbDatabaseName.Name = "tbDatabaseName";
             this.tbDatabaseName.Size = new System.Drawing.Size(660, 20);
-            this.tbDatabaseName.TabIndex = 27;
+            this.tbDatabaseName.TabIndex = 4;
             this.tbDatabaseName.TextChanged += new System.EventHandler(this.tbDatabaseName_TextChanged);
             // 
             // label4
@@ -219,7 +219,7 @@
             this.tbID.Name = "tbID";
             this.tbID.ReadOnly = true;
             this.tbID.Size = new System.Drawing.Size(660, 20);
-            this.tbID.TabIndex = 24;
+            this.tbID.TabIndex = 0;
             // 
             // label7
             // 
@@ -235,7 +235,7 @@
             this.tbName.Location = new System.Drawing.Point(96, 33);
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(660, 20);
-            this.tbName.TabIndex = 25;
+            this.tbName.TabIndex = 1;
             this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
             // label5
@@ -252,7 +252,7 @@
             this.tbServerName.Location = new System.Drawing.Point(96, 59);
             this.tbServerName.Name = "tbServerName";
             this.tbServerName.Size = new System.Drawing.Size(660, 20);
-            this.tbServerName.TabIndex = 26;
+            this.tbServerName.TabIndex = 2;
             this.tbServerName.TextChanged += new System.EventHandler(this.tbServerName_TextChanged);
             // 
             // label3
@@ -270,14 +270,14 @@
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(57, 28);
-            this.objectSaverButton1.TabIndex = 48;
+            this.objectSaverButton1.TabIndex = 11;
             // 
             // tbMappedDataPath
             // 
             this.tbMappedDataPath.Location = new System.Drawing.Point(96, 85);
             this.tbMappedDataPath.Name = "tbMappedDataPath";
             this.tbMappedDataPath.Size = new System.Drawing.Size(660, 20);
-            this.tbMappedDataPath.TabIndex = 49;
+            this.tbMappedDataPath.TabIndex = 3;
             this.tbMappedDataPath.TextChanged += new System.EventHandler(this.tbMappedDataPath_TextChanged);
             // 
             // label6

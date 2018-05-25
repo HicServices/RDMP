@@ -74,7 +74,7 @@
             this.cbxTable.Location = new System.Drawing.Point(64, 119);
             this.cbxTable.Name = "cbxTable";
             this.cbxTable.Size = new System.Drawing.Size(471, 21);
-            this.cbxTable.TabIndex = 8;
+            this.cbxTable.TabIndex = 6;
             this.cbxTable.SelectedIndexChanged += new System.EventHandler(this.cbxTable_SelectedIndexChanged);
             // 
             // label43
@@ -99,7 +99,7 @@
             this.cbxDatabase.Name = "cbxDatabase";
             this.cbxDatabase.Size = new System.Drawing.Size(471, 21);
             this.cbxDatabase.Sorted = true;
-            this.cbxDatabase.TabIndex = 3;
+            this.cbxDatabase.TabIndex = 4;
             this.cbxDatabase.SelectedIndexChanged += new System.EventHandler(this.cbxDatabase_SelectedIndexChanged);
             this.cbxDatabase.TextChanged += new System.EventHandler(this.cbxDatabase_TextChanged);
             // 
@@ -158,7 +158,7 @@
             this.cbxTableValueFunctions.Location = new System.Drawing.Point(64, 157);
             this.cbxTableValueFunctions.Name = "cbxTableValueFunctions";
             this.cbxTableValueFunctions.Size = new System.Drawing.Size(514, 21);
-            this.cbxTableValueFunctions.TabIndex = 11;
+            this.cbxTableValueFunctions.TabIndex = 8;
             this.cbxTableValueFunctions.SelectedIndexChanged += new System.EventHandler(this.cbxTableValueFunctions_SelectedIndexChanged);
             // 
             // label1
@@ -205,7 +205,7 @@
             this.ddDatabaseType.Location = new System.Drawing.Point(434, 54);
             this.ddDatabaseType.Name = "ddDatabaseType";
             this.ddDatabaseType.Size = new System.Drawing.Size(121, 21);
-            this.ddDatabaseType.TabIndex = 12;
+            this.ddDatabaseType.TabIndex = 3;
             this.ddDatabaseType.SelectedIndexChanged += new System.EventHandler(this.ddDatabaseType_SelectedIndexChanged);
             // 
             // llLoading
@@ -238,7 +238,7 @@
             this.btnRefreshDatabases.Location = new System.Drawing.Point(541, 78);
             this.btnRefreshDatabases.Name = "btnRefreshDatabases";
             this.btnRefreshDatabases.Size = new System.Drawing.Size(22, 24);
-            this.btnRefreshDatabases.TabIndex = 4;
+            this.btnRefreshDatabases.TabIndex = 5;
             this.btnRefreshDatabases.UseVisualStyleBackColor = true;
             this.btnRefreshDatabases.Click += new System.EventHandler(this.btnRefreshDatabases_Click);
             // 
@@ -249,7 +249,7 @@
             this.btnRefreshTables.Location = new System.Drawing.Point(541, 119);
             this.btnRefreshTables.Name = "btnRefreshTables";
             this.btnRefreshTables.Size = new System.Drawing.Size(22, 24);
-            this.btnRefreshTables.TabIndex = 9;
+            this.btnRefreshTables.TabIndex = 7;
             this.btnRefreshTables.UseVisualStyleBackColor = true;
             this.btnRefreshTables.Click += new System.EventHandler(this.btnRefreshTables_Click);
             // 
