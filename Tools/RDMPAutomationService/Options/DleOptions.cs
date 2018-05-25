@@ -9,12 +9,8 @@ using CommandLine.Text;
 namespace RDMPAutomationService.Options
 {
     [Verb("dle", HelpText = "Runs the Data Load Engine")]
-    class DleOptions : StartupOptions
+    public class DleOptions : RDMPCommandLineOptions
     {
-       
-        [Value(0, HelpText = @"Commands: 'run' the dle, 'list' available loads",Required = true)]
-        public DLECommands Command { get; set; }
-        
         [Option('l',"LoadMetadata",HelpText = "The ID of the LoadMetadata you want to run", Required = false, Default = 0)]
         public int LoadMetadata { get; set; }
 
@@ -29,16 +25,9 @@ namespace RDMPAutomationService.Options
         {
             get
             {
-                yield return new Example("Run load LoadMetadata with ID 30",new DleOptions(){Command = DLECommands.run,LoadMetadata = 30});
-                yield return new Example("Override for RDMP platform databases (specified in .config)", new DleOptions() { Command = DLECommands.run, LoadMetadata = 30,ServerName =@"localhost\sqlexpress",CatalogueDatabaseName = "RDMP_Catalogue",DataExportDatabaseName =  "RDMP_DataExport"});
+                yield return new Example("Run load LoadMetadata with ID 30",new DleOptions(){Command = CommandLineActivity.run,LoadMetadata = 30});
+                yield return new Example("Override for RDMP platform databases (specified in .config)", new DleOptions() { Command = CommandLineActivity.run, LoadMetadata = 30, ServerName = @"localhost\sqlexpress", CatalogueDatabaseName = "RDMP_Catalogue", DataExportDatabaseName = "RDMP_DataExport" });
             }
         }
-    }
-    
-    public enum DLECommands
-    {
-        None,
-        run,
-        list
     }
 }

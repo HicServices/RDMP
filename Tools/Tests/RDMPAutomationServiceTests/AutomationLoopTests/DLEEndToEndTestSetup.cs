@@ -6,6 +6,7 @@ using System.Threading;
 using CatalogueLibrary.Data;
 
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using Diagnostics;
 using HIC.Logging;
@@ -14,10 +15,12 @@ using NUnit.Framework;
 using RDMPAutomationService;
 using RDMPAutomationService.Logic.DLE;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Runners;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
@@ -75,8 +78,8 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         {
             
             //start an automation loop in the slot, it should pickup the load
-            var auto = new AutomatedDLELoad(new DleOptions() { LoadMetadata = _stage1_setupCatalogue.DemographyCatalogue.LoadMetadata.ID});
-            auto.RunTask(RepositoryLocator);
+            var auto = new DleRunner(new DleOptions() { LoadMetadata = _stage1_setupCatalogue.DemographyCatalogue.LoadMetadata.ID});
+            auto.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
 
             //also shouldn't be any logged errors
             var lm = new LogManager(_testCatalogue.LiveLoggingServer);

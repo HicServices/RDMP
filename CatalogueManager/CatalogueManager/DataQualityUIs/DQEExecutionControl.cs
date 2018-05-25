@@ -42,9 +42,9 @@ namespace CatalogueManager.DataQualityUIs
             executeInAutomationServerUI1.CommandGetter = CommandGetter;
         }
 
-        private StartupOptions CommandGetter()
+        private RDMPCommandLineOptions CommandGetter()
         {
-            return new DqeOptions(){Catalogue = _catalogue.ID, Command = DQECommands.run};
+            return new DqeOptions(){Catalogue = _catalogue.ID,Command = CommandLineActivity.run};
         }
 
         private void ReloadUIFromDatabase()

@@ -322,6 +322,10 @@
       <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
       <Name>ReusableUIComponents</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
+      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
+      <Name>RDMPAutomationService</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

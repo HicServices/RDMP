@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.ItemActivation;
+using HIC.Logging;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Runners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -12,21 +15,19 @@ namespace CatalogueManager.SimpleControls
     public partial class CheckAndExecuteUI : UserControl
     {
         //things you have to set for it to work
-        public Func<ICheckable> CheckableGetter;
-        public Action<IDataLoadEventListener,GracefulCancellationToken> ExecuteHandler;
         public event EventHandler StateChanged;
-
-        public Func<StartupOptions> CommandGetter 
-        { 
-            get { return executeInAutomationServerUI1.CommandGetter; } 
-            set {executeInAutomationServerUI1.CommandGetter = value; } 
-        }
+        public Func<CommandLineActivity, RDMPCommandLineOptions> CommandGetter;
 
         public bool ChecksPassed { get; private set; }
         public bool IsExecuting { get { return _runningTask != null && !_runningTask.IsCompleted; } }
 
+        private RunnerFactory _factory;
+        private IActivateItems _activator;
+
         public void SetItemActivator(IActivateItems activator)
         {
+            _factory = new RunnerFactory();
+            _activator = activator;
             executeInAutomationServerUI1.SetItemActivator(activator);
         }
         
@@ -41,12 +42,17 @@ namespace CatalogueManager.SimpleControls
         private GracefulCancellationTokenSource _cancellationTokenSource;
         private Task _runningTask;
         
+
+
         private void btnRunChecks_Click(object sender, EventArgs e)
         {
-            ICheckable checker = null;
+            
+            IRunner runner;
+
             try
             {
-                checker = CheckableGetter();
+                var command = CommandGetter(CommandLineActivity.check);    
+                runner = _factory.CreateRunner(command);
             }
             catch (Exception ex)
             {
@@ -67,7 +73,7 @@ namespace CatalogueManager.SimpleControls
             //create a to memory that passes the events to checksui since that's the only one that can respond to proposed fixes
             var toMemory = new ToMemoryCheckNotifier(checksUI1);
 
-            Task.Factory.StartNew(() => checker.Check(toMemory)).ContinueWith(
+            Task.Factory.StartNew(() => runner.Run(_activator.RepositoryLocator, new FromCheckNotifierToDataLoadEventListener(toMemory), toMemory, new GracefulCancellationToken())).ContinueWith(
                 t=>
                 {
                     //once Thread completes do this on the main UI Thread
@@ -94,9 +100,34 @@ namespace CatalogueManager.SimpleControls
 
             loadProgressUI1.ShowRunning(true);
 
+            IRunner runner;
+
+            try
+            {
+                var command = CommandGetter(CommandLineActivity.run);
+                runner = _factory.CreateRunner(command);
+            }
+            catch (Exception ex)
+            {
+                ragChecks.Fatal(ex);
+                return;
+            }
+
             _runningTask =
                 //run the data load in a Thread
-                Task.Factory.StartNew(() => ExecuteHandler(loadProgressUI1,_cancellationTokenSource.Token))
+                Task.Factory.StartNew(() =>
+
+                {
+                    try
+                    {
+                        runner.Run(_activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
+                    }
+                    catch (Exception ex)
+                    {
+                        loadProgressUI1.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Fatal Error",ex));
+                    }
+                    
+                })
                 //then on the main UI thread (after load completes with success/error
                 .ContinueWith((t) =>
                 {

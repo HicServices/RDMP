@@ -13,6 +13,8 @@ using DataLoadEngine.LoadExecution;
 using NUnit.Framework;
 using RDMPAutomationService.Logic.DLE;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Runners;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -34,8 +36,8 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             LoadMetadata lmd;
             setup.SetUp(timeoutInMilliseconds,out lmd);
 
-            var auto = new AutomatedDLELoad(new DleOptions() { LoadMetadata = lmd.ID });
-            auto.RunTask(RepositoryLocator);
+            var auto = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID });
+            auto.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
 
             setup.VerifyNoErrorsAfterExecutionThenCleanup(timeoutInMilliseconds);
         }

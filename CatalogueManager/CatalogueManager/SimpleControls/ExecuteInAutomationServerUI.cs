@@ -14,7 +14,7 @@ namespace CatalogueManager.SimpleControls
         private IActivateItems _activator;
         public const string AutomationServiceExecutable = "RDMPAutomationService.exe";
 
-        public Func<StartupOptions> CommandGetter { get; set; }
+        public Func<RDMPCommandLineOptions> CommandGetter { get; set; }
 
         public ExecuteInAutomationServerUI()
         {
@@ -53,7 +53,7 @@ namespace CatalogueManager.SimpleControls
             return AutomationServiceExecutable + " " + p.FormatCommandLine(options);
         }
 
-        private void PopulateConnectionStringOptions(StartupOptions options)
+        private void PopulateConnectionStringOptions(RDMPCommandLineOptions options)
         {
             if(_activator == null)
                 return;

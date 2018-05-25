@@ -46,6 +46,7 @@ using DataExportLibrary.Providers;
 using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using RDMPAutomationService.Runners;
 using RDMPObjectVisualisation.Copying;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
@@ -98,7 +99,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _toolboxWindowManager = toolboxWindowManager;
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
             RepositoryLocator = repositoryLocator;
-
+            
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
 
@@ -398,6 +399,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return objectToEmphasise;
         }
+
+        
 
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {

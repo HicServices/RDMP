@@ -67,8 +67,6 @@ namespace CatalogueManager.LoadExecutionUIs
             AssociatedCollection = RDMPCollection.DataLoad;
 
             checkAndExecuteUI1.CommandGetter = AutomationCommandGetter;
-            checkAndExecuteUI1.CheckableGetter = CheckableGetter;
-            checkAndExecuteUI1.ExecuteHandler = ExecuteHandler;
             checkAndExecuteUI1.StateChanged += SetButtonStates;
         }
         
@@ -85,28 +83,6 @@ namespace CatalogueManager.LoadExecutionUIs
 
         }
 
-        public ICheckable CheckableGetter()
-        {
-            try
-            {
-                TryToCreateHICProjectDirectory();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("There was a problem with the LoadMetadata's Project Directory", ex);
-            }
-            try
-            {
-                _databaseLoadConfiguration = new HICDatabaseConfiguration(_loadMetadata);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Could not resolve LoadMetadata into a valid HICDatabaseConfiguration", ex);
-            }
-
-            //run the checks into toMemory / checksUI in a Thread
-            return new CheckEntireDataLoadProcess(_loadMetadata, _databaseLoadConfiguration, GetLoadConfigurationFlags(), RepositoryLocator.CatalogueRepository.MEF);
-        }
 
         private void SetLoadProgressGroupBoxState()
         {
@@ -156,13 +132,13 @@ namespace CatalogueManager.LoadExecutionUIs
             RunDataLoadProcess(_dataLoadProcess, listener, token);
         }
 
-        private StartupOptions AutomationCommandGetter()
+        private RDMPCommandLineOptions AutomationCommandGetter(CommandLineActivity activityRequested)
         {
             var lp = GetLoadProgressIfAny();
 
             var options = new DleOptions
             {
-                Command = DLECommands.run,
+                Command = activityRequested,
                 LoadMetadata = _loadMetadata.ID,
                 Iterative = cbRunIteratively.Checked
             };

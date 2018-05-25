@@ -11,10 +11,10 @@ namespace DataLoadEngine.Checks.Checkers
 {
     class MetadataLoggingConfigurationChecks : ICheckable
     {
-        private readonly LoadMetadata _loadMetadata;
+        private readonly ILoadMetadata _loadMetadata;
 
 
-        public MetadataLoggingConfigurationChecks(LoadMetadata loadMetadata)
+        public MetadataLoggingConfigurationChecks(ILoadMetadata loadMetadata)
         {
             _loadMetadata = loadMetadata;
         }

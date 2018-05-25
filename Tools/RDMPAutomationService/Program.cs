@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using CatalogueLibrary.DataFlowPipeline;
 using CommandLine;
-using RDMPAutomationService.OptionRunners;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Runners;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService
 {
@@ -13,16 +16,13 @@ namespace RDMPAutomationService
         {
            try
             {
-                //people who will handle the various Verbs
-                var dle = new DleOptionsRunner();
-                var dqe = new DqeOptionsRunner();
                
                return
                     Parser.Default.ParseArguments<DleOptions,DqeOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
-                            (DleOptions opts) => dle.Run(opts),
-                            (DqeOptions opts)=> dqe.Run(opts),
+                            (DleOptions opts) => Run(opts),
+                            (DqeOptions opts)=> Run(opts),
                             errs => 1);
             }
             catch (Exception e)
@@ -30,6 +30,17 @@ namespace RDMPAutomationService
                 Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(e,true));
                 return -1;
             }
+        }
+
+        private static int Run(RDMPCommandLineOptions opts)
+        {
+            var factory = new RunnerFactory();
+
+            opts.LoadFromAppConfig();
+            opts.DoStartup();
+
+            var runner = factory.CreateRunner(opts);
+            return runner.Run(opts.GetRepositoryLocator(),new ThrowImmediatelyDataLoadEventListener(){WriteToConsole = false},new ThrowImmediatelyCheckNotifier(),new GracefulCancellationToken());
         }
     }
 }

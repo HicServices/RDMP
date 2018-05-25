@@ -12,7 +12,7 @@ using ReusableLibraryCode.Checks;
 
 namespace RDMPAutomationService.Options
 {
-    public class StartupOptions
+    public class RDMPCommandLineOptions
     {
         private LinkedRepositoryProvider _repositoryLocator;
 
@@ -24,6 +24,9 @@ namespace RDMPAutomationService.Options
 
         [Option( Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
         public string DataExportDatabaseName { get; set; }
+
+        [Value(0, HelpText = @"Command to run on the engine: 'run', 'list' or 'check' ", Required = true)]
+        public CommandLineActivity Command { get; set; }
 
         public void LoadFromAppConfig()
         {

@@ -29,7 +29,7 @@ namespace DataLoadEngine.Checks
         private ICheckNotifier _notifier;
 
 
-        public CheckEntireDataLoadProcess(LoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags, MEF mef)
+        public CheckEntireDataLoadProcess(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags, MEF mef)
         {
             _databaseConfiguration = databaseConfiguration;
             _loadConfigurationFlags = loadConfigurationFlags;
