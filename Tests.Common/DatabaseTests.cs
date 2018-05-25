@@ -269,12 +269,6 @@ delete from {0}..ExtractionInformation
 delete from {0}..CatalogueItemIssue
 delete from {0}..IssueSystemUser
 
-delete from {0}..AutomationLockedCatalogues
-delete from {0}..AutomationJob
-delete from {0}..AutomateablePipeline
-delete from {0}..AutomationServiceSlot
-delete from {0}..AutomationServiceException
-
 delete from {0}..SupportingDocument
 delete from {0}..SupportingSQLTable
 
