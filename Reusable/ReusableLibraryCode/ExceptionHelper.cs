@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Reflection;
 
 namespace ReusableLibraryCode
@@ -7,7 +8,7 @@ namespace ReusableLibraryCode
     /// <summary>
     /// Helper for unwrapping Exception.InnerExceptions and ReflectionTypeLoadExceptions.LoaderExceptions into a single flat message string of all errors.
     /// </summary>
-    public class ExceptionHelper
+    public static class ExceptionHelper
     {
         [Pure]
         public static string ExceptionToListOfInnerMessages(Exception e, bool includeStackTrace=false)
@@ -24,6 +25,12 @@ namespace ReusableLibraryCode
                 message += Environment.NewLine + ExceptionToListOfInnerMessages(e.InnerException, includeStackTrace);
 
             return message;
+        }
+
+        [Pure]
+        public static T GetExceptionIfExists<T>(this AggregateException e) where T:Exception
+        {
+            return e.Flatten().InnerExceptions.OfType<T>().FirstOrDefault();
         }
     }
 }

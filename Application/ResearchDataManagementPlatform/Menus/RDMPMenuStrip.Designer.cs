@@ -161,22 +161,22 @@
             // changeCatalogueToolStripMenuItem
             // 
             this.changeCatalogueToolStripMenuItem.Name = "changeCatalogueToolStripMenuItem";
-            this.changeCatalogueToolStripMenuItem.Size = new System.Drawing.Size(295, 22);
+            this.changeCatalogueToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
             this.changeCatalogueToolStripMenuItem.Text = "Change Catalogue Connection String...";
             this.changeCatalogueToolStripMenuItem.Click += new System.EventHandler(this.changeCatalogueToolStripMenuItem_Click);
             // 
             // configureExternalServersToolStripMenuItem
             // 
             this.configureExternalServersToolStripMenuItem.Name = "configureExternalServersToolStripMenuItem";
-            this.configureExternalServersToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.configureExternalServersToolStripMenuItem.Size = new System.Drawing.Size(295, 22);
-            this.configureExternalServersToolStripMenuItem.Text = "Manage Known External Servers...";
+            this.configureExternalServersToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
+            this.configureExternalServersToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
+            this.configureExternalServersToolStripMenuItem.Text = "Default Servers...";
             this.configureExternalServersToolStripMenuItem.Click += new System.EventHandler(this.configureExternalServersToolStripMenuItem_Click);
             // 
             // setTicketingSystemToolStripMenuItem
             // 
             this.setTicketingSystemToolStripMenuItem.Name = "setTicketingSystemToolStripMenuItem";
-            this.setTicketingSystemToolStripMenuItem.Size = new System.Drawing.Size(295, 22);
+            this.setTicketingSystemToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
             this.setTicketingSystemToolStripMenuItem.Text = "Set Ticketing System...";
             this.setTicketingSystemToolStripMenuItem.Click += new System.EventHandler(this.setTicketingSystemToolStripMenuItem_Click);
             // 

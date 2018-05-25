@@ -11,6 +11,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 
 namespace CachingEngine
@@ -134,16 +135,16 @@ namespace CachingEngine
             {
                 Task.WaitAll(tasks);
             }
-            catch (OperationCanceledException e)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Operation cancelled", e));
-                throw;
-            }
             catch (AggregateException e)
             {
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Error, "Exception in downloader task whilst caching data", e));
-                throw;
+                var operationCanceledException = e.GetExceptionIfExists<OperationCanceledException>();
+                if (operationCanceledException != null)
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Operation cancelled", e));
+                else
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Exception in downloader task whilst caching data", e));
+                    throw;
+                }
             }
         }
 
