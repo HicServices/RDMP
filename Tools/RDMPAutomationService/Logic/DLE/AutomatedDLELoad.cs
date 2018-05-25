@@ -41,8 +41,8 @@ namespace RDMPAutomationService.Logic.DLE
         {
             _repository = options.GetRepositoryLocator().CatalogueRepository;
 
-            if(options.LoadProgress != 0)
-            _loadMetadata = _repository.GetObjectByID<LoadMetadata>(options.LoadMetadata);
+            if (options.LoadMetadata != 0)
+                _loadMetadata = _repository.GetObjectByID<LoadMetadata>(options.LoadMetadata);
 
             if(options.LoadProgress != 0)
             {

@@ -1,0 +1,169 @@
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using CatalogueLibrary.DataFlowPipeline;
+using CatalogueManager.ItemActivation;
+using RDMPAutomationService.Options;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
+
+namespace CatalogueManager.SimpleControls
+{
+    public partial class CheckAndExecuteUI : UserControl
+    {
+        //things you have to set for it to work
+        public Func<ICheckable> CheckableGetter;
+        public Action<IDataLoadEventListener,GracefulCancellationToken> ExecuteHandler;
+        public event EventHandler StateChanged;
+
+        public Func<StartupOptions> CommandGetter 
+        { 
+            get { return executeInAutomationServerUI1.CommandGetter; } 
+            set {executeInAutomationServerUI1.CommandGetter = value; } 
+        }
+
+        public bool ChecksPassed { get; private set; }
+        public bool IsExecuting { get { return _runningTask != null && !_runningTask.IsCompleted; } }
+
+        public void SetItemActivator(IActivateItems activator)
+        {
+            executeInAutomationServerUI1.SetItemActivator(activator);
+        }
+        
+        //constructor
+        public CheckAndExecuteUI()
+        {
+            InitializeComponent();
+            ChecksPassed = false;
+            SetButtonStates();
+        }
+
+        private GracefulCancellationTokenSource _cancellationTokenSource;
+        private Task _runningTask;
+        
+        private void btnRunChecks_Click(object sender, EventArgs e)
+        {
+            ICheckable checker = null;
+            try
+            {
+                checker = CheckableGetter();
+            }
+            catch (Exception ex)
+            {
+                ragChecks.Fatal(ex);
+                return;
+            }
+
+            btnRunChecks.Enabled = false;
+            
+            //reset the visualisations
+            ragChecks.Reset();
+            checksUI1.Clear();
+
+            //ensure the checks are visible over the load
+            loadProgressUI1.Visible = false;
+            checksUI1.Visible = true;
+
+            //create a to memory that passes the events to checksui since that's the only one that can respond to proposed fixes
+            var toMemory = new ToMemoryCheckNotifier(checksUI1);
+
+            Task.Factory.StartNew(() => checker.Check(toMemory)).ContinueWith(
+                t=>
+                {
+                    //once Thread completes do this on the main UI Thread
+
+                    //find the worst check state
+                    var worst = toMemory.GetWorst();
+                    //update the rag smiley to reflect whether it has passed
+                    ragChecks.OnCheckPerformed(new CheckEventArgs("Checks resulted in " + worst ,worst));
+                    //update the bit flag
+                    ChecksPassed = worst <= CheckResult.Warning;
+                
+                    //enable other buttons now based on the new state
+                    SetButtonStates();
+
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+
+            _runningTask = null;
+            ChecksPassed = true;
+        }
+
+        private void btnExecute_Click(object sender, EventArgs e)
+        {
+            _cancellationTokenSource = new GracefulCancellationTokenSource();
+
+            loadProgressUI1.ShowRunning(true);
+
+            _runningTask =
+                //run the data load in a Thread
+                Task.Factory.StartNew(() => ExecuteHandler(loadProgressUI1,_cancellationTokenSource.Token))
+                //then on the main UI thread (after load completes with success/error
+                .ContinueWith((t) =>
+                {
+                    //reset the system state because the execution has completed
+                    ChecksPassed = false;
+
+                    loadProgressUI1.ShowRunning(false);
+                    //adjust the buttons accordingly
+                    SetButtonStates();
+                }
+                , TaskScheduler.FromCurrentSynchronizationContext());
+
+            SetButtonStates();
+        }
+        
+        private void SetButtonStates()
+        {
+            if (StateChanged != null)
+                StateChanged(this,new EventArgs());
+
+            if (!ChecksPassed)
+            {
+                //tell user he must run checks
+                if (ragChecks.IsGreen())
+                    ragChecks.Warning(new Exception("Checks have not been run yet"));
+
+                btnRunChecks.Enabled = true;
+                
+                btnExecute.Enabled = false;
+                executeInAutomationServerUI1.Enabled = false;
+                btnAbortLoad.Enabled = false;
+                return;
+            }
+
+            if (_runningTask != null)
+            {
+                checksUI1.Visible = false;
+                loadProgressUI1.Visible = true;
+                loadProgressUI1.Clear();
+            }
+            
+            //checks have passed is there a load underway already?
+            if (_runningTask == null || _runningTask.IsCompleted)
+            {
+                //no load underway!
+
+                //leave checks enabled and enable execute
+                btnRunChecks.Enabled = true;
+                btnExecute.Enabled = true;
+                executeInAutomationServerUI1.Enabled = true;
+            }
+            else
+            {
+                //load is underway!
+                btnExecute.Enabled = false;
+                executeInAutomationServerUI1.Enabled = false;
+                btnRunChecks.Enabled = false;
+
+                //only thing we can do is abort
+                btnAbortLoad.Enabled = true;
+            }
+        }
+
+        private void btnAbortLoad_Click(object sender, EventArgs e)
+        {
+            _cancellationTokenSource.Abort();
+            loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"Abort request issued"));
+        }
+    }
+}

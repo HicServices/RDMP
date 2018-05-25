@@ -9,6 +9,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Reports;
+using RDMPAutomationService.Options;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
@@ -25,16 +26,7 @@ namespace CatalogueManager.DataQualityUIs
     public partial class DQEExecutionControl : DQEExecutionControl_Design
     {
         private Catalogue _catalogue;
-        public Catalogue Catalogue
-        {
-            get { return _catalogue; }
-            private set
-            {
-                _catalogue = value;
-                ReloadUIFromDatabase();
-            }
-        }
-        
+
         public DQEExecutionControl()
         {
             InitializeComponent();
@@ -47,6 +39,12 @@ namespace CatalogueManager.DataQualityUIs
             };
 
             AssociatedCollection = RDMPCollection.Catalogue;
+            executeInAutomationServerUI1.CommandGetter = CommandGetter;
+        }
+
+        private StartupOptions CommandGetter()
+        {
+            return new DqeOptions(){Catalogue = _catalogue.ID, Command = DQECommands.run};
         }
 
         private void ReloadUIFromDatabase()
@@ -117,7 +115,8 @@ namespace CatalogueManager.DataQualityUIs
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-            Catalogue = databaseObject;
+            _catalogue = databaseObject;
+            executeInAutomationServerUI1.SetItemActivator(activator);
         }
 
         public override string GetTabName()

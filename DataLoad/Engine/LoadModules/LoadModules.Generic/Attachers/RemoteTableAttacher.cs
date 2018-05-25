@@ -391,10 +391,10 @@ namespace LoadModules.Generic.Attachers
             var declareEndDateParameter = syntaxHelper.GetParameterDeclaration(EndDateParameter,new DatabaseTypeRequest(typeof (DateTime)));
             
             string startSql = declareStartDateParameter + Environment.NewLine;
-            startSql += "SET "+StartDateParameter+" = '" + min.ToString("yyyy-MM-dd HH:mm:ss") + "'" + Environment.NewLine;
+            startSql += "SET "+StartDateParameter+" = '" + min.ToString("yyyy-MM-dd HH:mm:ss") + "';" + Environment.NewLine;
 
             string endSQL = declareEndDateParameter + Environment.NewLine;
-            endSQL += "SET " + EndDateParameter + " = '" + max.ToString("yyyy-MM-dd HH:mm:ss") + "'" + Environment.NewLine;
+            endSQL += "SET " + EndDateParameter + " = '" + max.ToString("yyyy-MM-dd HH:mm:ss") + "';" + Environment.NewLine;
 
             if(min > DateTime.Now)
                 throw new Exception(FutureLoadMessage + " (min is " + min +")");

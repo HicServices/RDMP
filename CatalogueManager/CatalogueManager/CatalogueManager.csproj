@@ -422,6 +422,12 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingDocument.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingSQLTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsTableInfo.cs" />
+    <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleControls\CheckAndExecuteUI.Designer.cs">
+      <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="SimpleControls\ExecuteInAutomationServerUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1566,6 +1572,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleControls\CheckAndExecuteUI.resx">
+      <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleControls\ExecuteInAutomationServerUI.resx">
       <DependentUpon>ExecuteInAutomationServerUI.cs</DependentUpon>

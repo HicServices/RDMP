@@ -30,18 +30,19 @@
         {
             this.executionProgressUI1 = new ReusableUIComponents.Progress.ProgressUI();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnExecute = new System.Windows.Forms.Button();
             this.gbLoadChecks = new System.Windows.Forms.GroupBox();
             this.btnRerunChecks = new System.Windows.Forms.Button();
             this.dqePreRunCheckerUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.dlgFilePicker = new System.Windows.Forms.OpenFileDialog();
-            this.btnExecute = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.executeInAutomationServerUI1 = new CatalogueManager.SimpleControls.ExecuteInAutomationServerUI();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.gbLoadChecks.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.gbLoadChecks.SuspendLayout();
             this.SuspendLayout();
             // 
             // executionProgressUI1
@@ -71,6 +72,30 @@
             this.splitContainer1.Size = new System.Drawing.Size(1376, 716);
             this.splitContainer1.SplitterDistance = 698;
             this.splitContainer1.TabIndex = 47;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.executeInAutomationServerUI1);
+            this.groupBox3.Controls.Add(this.btnExecute);
+            this.groupBox3.Location = new System.Drawing.Point(10, 527);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(681, 67);
+            this.groupBox3.TabIndex = 54;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Execute";
+            // 
+            // btnExecute
+            // 
+            this.btnExecute.Enabled = false;
+            this.btnExecute.Location = new System.Drawing.Point(6, 19);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(137, 23);
+            this.btnExecute.TabIndex = 49;
+            this.btnExecute.Text = "Start Execution";
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
             // gbLoadChecks
             // 
@@ -105,28 +130,13 @@
             this.dqePreRunCheckerUI1.Size = new System.Drawing.Size(676, 488);
             this.dqePreRunCheckerUI1.TabIndex = 0;
             // 
-            // btnExecute
+            // executeInAutomationServerUI1
             // 
-            this.btnExecute.Enabled = false;
-            this.btnExecute.Location = new System.Drawing.Point(6, 19);
-            this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(137, 23);
-            this.btnExecute.TabIndex = 49;
-            this.btnExecute.Text = "Start Execution";
-            this.btnExecute.UseVisualStyleBackColor = true;
-            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.btnExecute);
-            this.groupBox3.Location = new System.Drawing.Point(10, 527);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(681, 67);
-            this.groupBox3.TabIndex = 54;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Execute";
+            this.executeInAutomationServerUI1.CommandGetter = null;
+            this.executeInAutomationServerUI1.Location = new System.Drawing.Point(149, 9);
+            this.executeInAutomationServerUI1.Name = "executeInAutomationServerUI1";
+            this.executeInAutomationServerUI1.Size = new System.Drawing.Size(155, 52);
+            this.executeInAutomationServerUI1.TabIndex = 50;
             // 
             // DQEExecutionControl
             // 
@@ -139,8 +149,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.gbLoadChecks.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.gbLoadChecks.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -155,6 +165,7 @@
         private System.Windows.Forms.OpenFileDialog dlgFilePicker;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button btnExecute;
+        private SimpleControls.ExecuteInAutomationServerUI executeInAutomationServerUI1;
 
     }
 }

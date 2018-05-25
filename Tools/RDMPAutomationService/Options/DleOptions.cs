@@ -12,17 +12,16 @@ namespace RDMPAutomationService.Options
     class DleOptions : StartupOptions
     {
        
-        [Value(0, HelpText = 
-            @"Commands: 'run' the dle, 'list' available loads",Required = true)]
+        [Value(0, HelpText = @"Commands: 'run' the dle, 'list' available loads",Required = true)]
         public DLECommands Command { get; set; }
         
-        [Option('l',"LoadMetadata",HelpText = "The ID of the LoadMetadata you want to run")]
+        [Option('l',"LoadMetadata",HelpText = "The ID of the LoadMetadata you want to run", Required = false, Default = 0)]
         public int LoadMetadata { get; set; }
 
-        [Option('p', "LoadProgress", HelpText = "If your LoadMetadata has multiple LoadProgresses, you can run only one of them by specifying the ID of the LoadProgress to run here")]
+        [Option('p', "LoadProgress", HelpText = "If your LoadMetadata has multiple LoadProgresses, you can run only one of them by specifying the ID of the LoadProgress to run here", Required = false, Default = 0)]
         public int LoadProgress { get; set; }
 
-        [Option('i', "Iterative", HelpText = "If the LoadMetadata has LoadProgress(es) then they will be run until available data is exhausted (if false then only one batch will be loaded e.g. 5 days)")]
+        [Option('i', "Iterative", HelpText = "If the LoadMetadata has LoadProgress(es) then they will be run until available data is exhausted (if false then only one batch will be loaded e.g. 5 days)",Required = false,Default = false)]
         public bool Iterative { get; set; }
 
         [Usage]
@@ -34,13 +33,11 @@ namespace RDMPAutomationService.Options
                 yield return new Example("Override for RDMP platform databases (specified in .config)", new DleOptions() { Command = DLECommands.run, LoadMetadata = 30,ServerName =@"localhost\sqlexpress",CatalogueDatabaseName = "RDMP_Catalogue",DataExportDatabaseName =  "RDMP_DataExport"});
             }
         }
-
-        
     }
-
+    
     public enum DLECommands
     {
-        NONE,
+        None,
         run,
         list
     }

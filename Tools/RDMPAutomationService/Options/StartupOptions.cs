@@ -12,17 +12,17 @@ using ReusableLibraryCode.Checks;
 
 namespace RDMPAutomationService.Options
 {
-    class StartupOptions
+    public class StartupOptions
     {
         private LinkedRepositoryProvider _repositoryLocator;
 
-        [Option('s', "Server", Required = false, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
+        [Option(Required = false, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
         public string ServerName { get; set; }
 
-        [Option('c', "Catalogue", Required = false, HelpText = "Name of the Catalogue database e.g. RDMP_Catalogue")]
+        [Option(Required = false, HelpText = "Name of the Catalogue database e.g. RDMP_Catalogue")]
         public string CatalogueDatabaseName { get; set; }
 
-        [Option('e', "DataExport", Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
+        [Option( Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
         public string DataExportDatabaseName { get; set; }
 
         public void LoadFromAppConfig()

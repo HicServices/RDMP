@@ -56,7 +56,7 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
+    <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
@@ -71,6 +71,8 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Options\DqeOptions.cs" />
+    <Compile Include="OptionRunners\DqeOptionsRunner.cs" />
     <Compile Include="OptionRunners\DleOptionsRunner.cs" />
     <Compile Include="Options\DleOptions.cs" />
     <Compile Include="Logic\Cache\AutomatedCacheRun.cs" />

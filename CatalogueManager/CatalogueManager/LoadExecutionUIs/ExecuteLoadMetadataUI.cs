@@ -50,20 +50,15 @@ namespace CatalogueManager.LoadExecutionUIs
     /// </summary>
     public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     {
-        private IDataLoadProcess _dataLoadProcess;
         private HICDatabaseConfiguration _databaseLoadConfiguration;
         
         private Task _runningLoadProcessTask;
-        private GracefulCancellationTokenSource _cancellationTokenSource;
         
-        private bool _checksPassed = false;
-
         private LoadMetadata _loadMetadata;
         private ILoadProgress[] _allLoadProgresses;
 
         public ExecuteLoadMetadataUI()
         {
-            _cancellationTokenSource = null;
             InitializeComponent();
 
             helpIconRunRepeatedly.SetHelpText("Run Repeatedly", "By default running a scheduled load will run the number of days specified as a single load (e.g. 5 days of data).  Ticking this box means that if the load is succesful a further 5 days will be executed and again until either a data load fails or the load is up to date.");
@@ -71,20 +66,46 @@ namespace CatalogueManager.LoadExecutionUIs
 
             AssociatedCollection = RDMPCollection.DataLoad;
 
-            executeInAutomationServerUI1.CommandGetter = AutomationCommandGetter;
+            checkAndExecuteUI1.CommandGetter = AutomationCommandGetter;
+            checkAndExecuteUI1.CheckableGetter = CheckableGetter;
+            checkAndExecuteUI1.ExecuteHandler = ExecuteHandler;
+            checkAndExecuteUI1.StateChanged += SetButtonStates;
         }
-
+        
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
             _loadMetadata = databaseObject;
 
-            executeInAutomationServerUI1.SetItemActivator(activator);
+            checkAndExecuteUI1.SetItemActivator(activator);
 
-            SetButtonStates();
+            SetButtonStates(null,null);
 
             SetLoadProgressGroupBoxState();
 
+        }
+
+        public ICheckable CheckableGetter()
+        {
+            try
+            {
+                TryToCreateHICProjectDirectory();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("There was a problem with the LoadMetadata's Project Directory", ex);
+            }
+            try
+            {
+                _databaseLoadConfiguration = new HICDatabaseConfiguration(_loadMetadata);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Could not resolve LoadMetadata into a valid HICDatabaseConfiguration", ex);
+            }
+
+            //run the checks into toMemory / checksUI in a Thread
+            return new CheckEntireDataLoadProcess(_loadMetadata, _databaseLoadConfiguration, GetLoadConfigurationFlags(), RepositoryLocator.CatalogueRepository.MEF);
         }
 
         private void SetLoadProgressGroupBoxState()
@@ -110,163 +131,29 @@ namespace CatalogueManager.LoadExecutionUIs
             else
             {
                 gbLoadProgresses.Visible = false;
-                gbDebugOptions.Left = gbControls.Right + 3;
-            }
-
-
-            
-        }
-
-        private void SetButtonStates()
-        {
-            //user must run checks
-            if (!_checksPassed)
-            {
-                //tell user he must run checks
-                if (ragChecks.IsGreen())
-                    ragChecks.Warning(new Exception("Checks have not been run yet"));
-
-                btnRunChecks.Enabled = true;
-
-                //and disable everything else
-                gbLoadProgresses.Enabled = false;
-                btnExecute.Enabled = false;
-                executeInAutomationServerUI1.Enabled = false;
-                btnAbortLoad.Enabled = false;
-                gbDebugOptions.Enabled = false;
-
-                return;
-            }
-            
-            //checks have passed is there a load underway already?
-            if (_runningLoadProcessTask == null || _runningLoadProcessTask.IsCompleted)
-            {
-                //no load underway!
-
-                //leave checks enabled and enable execute
-                btnRunChecks.Enabled = true;
-                btnExecute.Enabled = true;
-                executeInAutomationServerUI1.Enabled = true;
-
-                //also enable load progress selection if it's a LoadProgress based load
-                gbLoadProgresses.Enabled = true;
-                gbDebugOptions.Enabled = true;
-            }
-            else
-            {
-                //load is underway!
-                btnExecute.Enabled = false;
-                executeInAutomationServerUI1.Enabled = false;
-                btnRunChecks.Enabled = false;
-
-                //only thing we can do is abort
-                btnAbortLoad.Enabled = true;
-                gbLoadProgresses.Enabled = false;
-                gbDebugOptions.Enabled = false;
+                gbDebugOptions.Left = 110;
             }
         }
 
-        private void btnRunChecks_Click(object sender, EventArgs e)
+        private void SetButtonStates(object sender, EventArgs e)
         {
-            _checksPassed = false;
-            btnRunChecks.Enabled = false;
-            
-            //reset the visualisations
-            ragChecks.Reset();
-            checksUI1.Clear();
-
-            //ensure the checks are visible over the load
-            loadProgressUI1.Visible = false;
-            checksUI1.Visible = true;
-
-
-            try
-            {
-                TryToCreateHICProjectDirectory();
-            }
-            catch (Exception ex)
-            {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("There was a problem with the LoadMetadata's Project Directory", CheckResult.Fail, ex));
-                ragChecks.Fatal(ex);
-                return;
-            }
-            try
-            {
-                _databaseLoadConfiguration = new HICDatabaseConfiguration(_loadMetadata);
-            }
-            catch (Exception ex)
-            {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Could not resolve LoadMetadata into a valid HICDatabaseConfiguration", CheckResult.Fail, ex));
-                ragChecks.Fatal(ex);
-                return;
-            }
-
-            //create a to memory that passes the events to checksui since that's the only one that can respond to proposed fixes
-            var toMemory = new ToMemoryCheckNotifier(checksUI1);
-
-
-            Task.Factory.StartNew(() =>
-            {
-                //run the checks into toMemory / checksUI in a Thread
-                var checker = new CheckEntireDataLoadProcess(_loadMetadata, _databaseLoadConfiguration, GetLoadConfigurationFlags(), RepositoryLocator.CatalogueRepository.MEF);
-                checker.Check(toMemory);
-                
-            }).ContinueWith(
-                t=>
-                {
-                    //once Thread completes do this on the main UI Thread
-
-                    //find the worst check state
-                    var worst = toMemory.GetWorst();
-                    //update the rag smiley to reflect whether it has passed
-                    ragChecks.OnCheckPerformed(new CheckEventArgs("Checks resulted in " + worst ,worst));
-                    //update the bit flag
-                    _checksPassed = worst <= CheckResult.Warning;
-                
-                    //enable other buttons now based on the new state
-                    SetButtonStates();
-
-
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-
-
-            _checksPassed = true;
-
+            gbLoadProgresses.Enabled = checkAndExecuteUI1.ChecksPassed;
+            gbDebugOptions.Enabled = checkAndExecuteUI1.ChecksPassed;
         }
 
-        private void btnExecute_Click(object sender, EventArgs e)
+        private void ExecuteHandler(IDataLoadEventListener listener,GracefulCancellationToken token)
         {
-            checksUI1.Visible = false;
-            loadProgressUI1.Visible = true;
-            loadProgressUI1.Clear();
+            IDataLoadProcess _dataLoadProcess;
 
             if (_loadMetadata.LoadProgresses.Any())
                 if (cbRunIteratively.Checked)
-                    _dataLoadProcess = CreateIterativeScheduledDataLoadProcess();
+                    _dataLoadProcess = CreateIterativeScheduledDataLoadProcess(listener);
                 else
-                    _dataLoadProcess = CreateSingleScheduledJobLoadProcess();
+                    _dataLoadProcess = CreateSingleScheduledJobLoadProcess(listener);
             else
-                _dataLoadProcess = CreateOnDemandDataLoadProcess();
+                _dataLoadProcess = CreateOnDemandDataLoadProcess(listener);
 
-            //create cancellation and start the run async
-            _cancellationTokenSource = new GracefulCancellationTokenSource();
-            _runningLoadProcessTask = 
-                //run the data load in a Thread
-                Task.Factory.StartNew(RunDataLoadProcess)
-                //then on the main UI thread (after load completes with success/error
-                .ContinueWith((t) =>
-                {
-                    //reset the system state because the execution has completed
-                    _checksPassed = false;
-                    
-                    //adjust the buttons accordingly
-                    SetButtonStates();
-                }
-                    
-                    
-                    , TaskScheduler.FromCurrentSynchronizationContext());
-
-            SetButtonStates();
+            RunDataLoadProcess(_dataLoadProcess, listener, token);
         }
 
         private StartupOptions AutomationCommandGetter()
@@ -331,11 +218,11 @@ namespace CatalogueManager.LoadExecutionUIs
 
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
-            if (_cancellationTokenSource == null) return;
-
-            e.Cancel = true;
-
-            MessageBox.Show("Load is running so you cannot close this window, try clicking Abort first");
+            if(checkAndExecuteUI1.IsExecuting)
+            {
+                e.Cancel = true;
+                MessageBox.Show("Load is running so you cannot close this window, try clicking Abort first");
+            }
         }
 
         private void cbMigrateRAWToStaging_CheckedChanged(object sender, EventArgs e)
@@ -360,38 +247,29 @@ namespace CatalogueManager.LoadExecutionUIs
 
         }
 
-        private void btnAbortLoad_Click(object sender, EventArgs e)
-        {
-            if (cbAbortShouldActuallyCancelInstead.Checked)
-                _cancellationTokenSource.Stop();
-            else
-                _cancellationTokenSource.Abort();
-
-            loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"Abort request issued, cross your fingers, eventually the DLE will reach a stopping point :)"));
-        }
         #region LoadProcess creation
 
-        private DataLoadProcess CreateOnDemandDataLoadProcess()
+        private DataLoadProcess CreateOnDemandDataLoadProcess(IDataLoadEventListener listener)
         {
             // Create the 'on demand' data load process, overriding the data provider if one is specified
             var logManager = CreateLogManager(_loadMetadata);
-            var pipeline = CreateLoadPipeline(logManager);
+            var pipeline = CreateLoadPipeline(listener,logManager);
             var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
-            return new DataLoadProcess(_loadMetadata, preExecutionChecker, logManager, loadProgressUI1, pipeline);
+            return new DataLoadProcess(_loadMetadata, preExecutionChecker, logManager, listener, pipeline);
         }
 
-        private SingleJobScheduledDataLoadProcess CreateSingleScheduledJobLoadProcess()
+        private SingleJobScheduledDataLoadProcess CreateSingleScheduledJobLoadProcess(IDataLoadEventListener listener)
         {
             var toAttempt = CreateLoadProgressSelectionStrategy();
             var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt);
 
             var logManager = CreateLogManager(_loadMetadata);
             var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
-            var pipeline = CreateLoadPipeline(logManager);
+            var pipeline = CreateLoadPipeline(listener, logManager);
 
             return new SingleJobScheduledDataLoadProcess(_loadMetadata, preExecutionChecker, pipeline,
                 jobDateGenerationStrategyFactory,
-                CreateLoadProgressSelectionStrategy(), GetNumDaysPerJob(), logManager, loadProgressUI1);
+                CreateLoadProgressSelectionStrategy(), GetNumDaysPerJob(), logManager, listener);
         }
 
         private int GetNumDaysPerJob()
@@ -399,50 +277,42 @@ namespace CatalogueManager.LoadExecutionUIs
             return Convert.ToInt32(udDaysPerJob.Value);
         }
 
-        private IterativeScheduledDataLoadProcess CreateIterativeScheduledDataLoadProcess()
+        private IterativeScheduledDataLoadProcess CreateIterativeScheduledDataLoadProcess(IDataLoadEventListener listener)
         {
             var toAttempt = CreateLoadProgressSelectionStrategy();
             var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt);
             var logManager = CreateLogManager(_loadMetadata);
             var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
-            var pipeline = CreateLoadPipeline(logManager);
-            return new IterativeScheduledDataLoadProcess(_loadMetadata, preExecutionChecker, pipeline, jobDateGenerationStrategyFactory, toAttempt, GetNumDaysPerJob(), logManager, loadProgressUI1);
+            var pipeline = CreateLoadPipeline(listener,logManager);
+            return new IterativeScheduledDataLoadProcess(_loadMetadata, preExecutionChecker, pipeline, jobDateGenerationStrategyFactory, toAttempt, GetNumDaysPerJob(), logManager, listener);
         }
 
         #endregion
 
-        private void RunDataLoadProcess()
+        private void RunDataLoadProcess(IDataLoadProcess dataLoadProcess,IDataLoadEventListener listener, GracefulCancellationToken token)
         {
-
-            loadProgressUI1.ShowRunning(true);
-
             try
             {
-                var exitCode = _dataLoadProcess.Run(_cancellationTokenSource.Token);
-                loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, TranslateExitCode(exitCode)));
+                var exitCode = dataLoadProcess.Run(token);
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, TranslateExitCode(exitCode)));
             }
             catch (OperationCanceledException ex)
             {
-                loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Data load operation has been cancelled.", ex));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Data load operation has been cancelled.", ex));
             }
             catch (AggregateException ex)
             {
-                loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Entire data load process crashed", ex));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Entire data load process crashed", ex));
                 ex.Handle(e =>
                 {
-                    loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
                     return true;
                 });
             }
             catch (Exception e)
             {
-                loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Entire data load process crashed", e)); 
-                loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
-            }
-            finally
-            {
-                _cancellationTokenSource = null;
-                loadProgressUI1.ShowRunning(false);
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Entire data load process crashed", e));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
             }
         }
 
@@ -458,7 +328,7 @@ namespace CatalogueManager.LoadExecutionUIs
 
         private LoadProgress GetLoadProgressIfAny()
         {
-            if (ddLoadProgress.SelectedItem == null)
+            if (ddLoadProgress.SelectedIndex == 0)
                 return null;
 
             var scheduleItem = (KeyValuePair<int, string>)ddLoadProgress.SelectedItem;
@@ -468,7 +338,7 @@ namespace CatalogueManager.LoadExecutionUIs
             return RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
         }
 
-        private IDataLoadExecution CreateLoadPipeline(ILogManager logManager)
+        private IDataLoadExecution CreateLoadPipeline(IDataLoadEventListener listener, ILogManager logManager)
         {
             try
             {
@@ -476,7 +346,7 @@ namespace CatalogueManager.LoadExecutionUIs
 
                 // Create the pipeline
                 var factory = new HICDataLoadFactory(_loadMetadata, _databaseLoadConfiguration, GetLoadConfigurationFlags(), repository, logManager);
-                var loadPipeline = factory.Create(loadProgressUI1);
+                var loadPipeline = factory.Create(listener);
                 return loadPipeline;
             }
             catch (InvalidOperationException e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
@@ -61,10 +62,10 @@ namespace CatalogueManager.SimpleControls
                 options.ServerName = _activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.Name;
 
             if (string.IsNullOrWhiteSpace(options.CatalogueDatabaseName))
-                options.ServerName = _activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+                options.CatalogueDatabaseName = _activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-            if (string.IsNullOrWhiteSpace(options.ServerName))
-                options.ServerName = _activator.RepositoryLocator.DataExportRepository.DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+            if (string.IsNullOrWhiteSpace(options.DataExportDatabaseName))
+                options.DataExportDatabaseName = _activator.RepositoryLocator.DataExportRepository.DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
         }
     }
 }
