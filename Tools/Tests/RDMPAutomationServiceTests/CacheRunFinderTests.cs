@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
@@ -24,8 +24,6 @@ namespace RDMPAutomationServiceTests
     public class CacheRunFinderTests:DatabaseTests
     {
         private Catalogue _cata;
-        private AutomationServiceSlot _slot;
-        private AutomationJob _job;
         private LoadMetadata _lmd;
         private LoadProgress _lp;
         private CacheProgress _cp;
@@ -43,16 +41,12 @@ namespace RDMPAutomationServiceTests
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
-            _slot = new AutomationServiceSlot(CatalogueRepository);
-            
             _cata = new Catalogue(CatalogueRepository, "CataCacheRunFinderTests");
             
             //create an ongoing job (for tests that have max jobs 1 )
             _lmd2 = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts2");
             _lp2 = new LoadProgress(CatalogueRepository, _lmd2);
             _cp2 = new CacheProgress(CatalogueRepository, _lp2);
-
-            _job =_slot.AddNewJob(_cp2);
 
             _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
             _hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(@"c:\temp\CacheRunFinderTests"), true);
@@ -74,9 +68,6 @@ namespace RDMPAutomationServiceTests
         [TearDown]
         public void DeleteDatabaseObjects()
         {
-            _job.DeleteInDatabase();
-            _slot.DeleteInDatabase();
-            
             _cata.DeleteInDatabase();
 
             if (_cp != null)
@@ -150,8 +141,6 @@ namespace RDMPAutomationServiceTests
             //Catalogue is not locked so should be suggesting this cache
             Assert.AreEqual(_cp, new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
                 
-            _job.LockCatalogues(new[] {_cata});
-
             //Catalogue is locked so shouldn't be suggesting this cache
             Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
         }
@@ -171,11 +160,9 @@ namespace RDMPAutomationServiceTests
         }
 
         [Test]
-        [TestCase(true, false)]
-        [TestCase(true,true)]
-        [TestCase(false, true)]
-        [TestCase(false,false)]
-        public void SuggestCache_PermissionWindow(bool windowEncompasesNow, bool windowIsLocked)
+        [TestCase(true)]
+        [TestCase(false)]
+        public void SuggestCache_PermissionWindow(bool windowEncompasesNow)
         {
             //associate the catalogue with the LoadMetadata
             _cata.LoadMetadata_ID = _lmd.ID;
@@ -196,14 +183,11 @@ namespace RDMPAutomationServiceTests
                 else
                     window.PermissionWindowPeriods.Add(new PermissionWindowPeriod((int)todayIs,oneHourHence,twoHoursHence));
                 window.SaveToDatabase();
-
-                if(windowIsLocked)
-                    window.Lock();
-
+                
                 _cp.PermissionWindow_ID = window.ID;
                 _cp.SaveToDatabase();
 
-                if(windowEncompasesNow && !windowIsLocked)
+                if(windowEncompasesNow)
                     Assert.AreEqual(_cp, new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
                 else
                     Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());

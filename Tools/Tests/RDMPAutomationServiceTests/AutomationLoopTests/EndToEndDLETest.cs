@@ -11,12 +11,13 @@ using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution;
 using NUnit.Framework;
+using RDMPAutomationService.Logic.DLE;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
-    public class EndToEndDLETest : AutomationTests
+    public class EndToEndDLETest : DatabaseTests
     {
         [Test]
         [TestCase(false)]
@@ -34,34 +35,8 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             LoadMetadata lmd;
             setup.SetUp(timeoutInMilliseconds,out lmd);
 
-            var loadPeriodically = new LoadPeriodically(CatalogueRepository, lmd, 10);//create a periodic load
-
-            //which should be due
-            Assert.IsTrue(loadPeriodically.IsLoadDue(null));
-
-
-            if (simulateLoadNotRequired)
-            {
-                string locationOfForLoadingDirectory = Path.Combine(lmd.LocationOfFlatFiles, @"Data\ForLoading");
-                var flatFile = Directory.GetFiles(locationOfForLoadingDirectory).Single();
-                File.Delete(flatFile);
-            }
-
-            setup.RecordPreExecutionState();
-
-            int newRows;
-            setup.RunAutomationServiceToCompletion(timeoutInMilliseconds,out newRows);
-            
-            if(simulateLoadNotRequired)
-                Assert.AreEqual(0, newRows);//if load was not required (file not found then the same number of rows should be there as at the start)
-            else
-                Assert.AreEqual(10, newRows);
-
-            //Check the load periodically isn't due now
-            loadPeriodically.RevertToDatabaseState();
-            Assert.IsFalse(loadPeriodically.IsLoadDue(null));
-
-            loadPeriodically.DeleteInDatabase();
+            var auto = new AutomatedDLELoad(lmd);
+            auto.RunTask(RepositoryLocator);
 
             setup.VerifyNoErrorsAfterExecutionThenCleanup(timeoutInMilliseconds);
         }

@@ -21,10 +21,11 @@ using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using Tests.Common;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
-    public class EndToEndDLECacheTest:AutomationTests
+    public class EndToEndDLECacheTest:DatabaseTests
     {
         [Test]
         public void RunEndToEndDLECacheTest()
@@ -46,7 +47,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             LoadProgress lp = new LoadProgress(CatalogueRepository,lmd);
             lp.DataLoadProgress = new DateTime(2001,1,1);
             lp.DefaultNumberOfDaysToLoadEachTime = 10;
-            lp.AllowAutomation = true;
             lp.SaveToDatabase();
 
             var cp = new CacheProgress(CatalogueRepository, lp);

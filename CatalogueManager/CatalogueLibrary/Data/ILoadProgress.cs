@@ -9,15 +9,13 @@ namespace CatalogueLibrary.Data
     /// <summary>
     /// See LoadProgress
     /// </summary>
-    public interface ILoadProgress :ISaveable, ILockable,IMapsDirectlyToDatabaseTable
+    public interface ILoadProgress :ISaveable,IMapsDirectlyToDatabaseTable
     {
         string Name { get; set; }
         DateTime? OriginDate { get; set; }
         DateTime? DataLoadProgress { get; set; }
         int LoadMetadata_ID { get; set; }
-
-        bool AllowAutomation { get; }
-
+        
         TimeSpan GetLoadPeriodicity();
         void SetLoadPeriodicity(TimeSpan loadPeriod);
         

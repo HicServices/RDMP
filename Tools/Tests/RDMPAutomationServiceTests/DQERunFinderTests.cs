@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Data;
@@ -26,14 +26,12 @@ namespace RDMPAutomationServiceTests
         [Test]
         public void TestSuggestCatalogue_NoCatalogues()
         {
-            var finder = new DQERunFinder(CatalogueRepository, AutomationDQEJobSelectionStrategy.DatasetWithMostOutOfDateDQEResults, 1, new ToMemoryDataLoadEventListener(false));
+            var finder = new DQERunFinder(CatalogueRepository, 1, new ToMemoryDataLoadEventListener(false));
             Assert.IsNull(finder.SuggestRun());
         }
 
         [Test]
-        [TestCase(AutomationDQEJobSelectionStrategy.DatasetWithMostOutOfDateDQEResults)]
-        [TestCase(AutomationDQEJobSelectionStrategy.MostRecentlyLoadedDataset)]
-        public void TestSuggestCatalogue_CatalogueReadyBecauseNeverRun(AutomationDQEJobSelectionStrategy strategy)
+        public void TestSuggestCatalogue_CatalogueReadyBecauseNeverRun()
         {
             foreach (Catalogue cataRemnant in CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name.Equals("BulkData")))
             {
@@ -57,7 +55,7 @@ namespace RDMPAutomationServiceTests
                 Assert.IsNotNull(cata);
             
                 //finder shouldn't currently be suggesting it because it's validation won't be set
-                var finder = new DQERunFinder(CatalogueRepository, strategy, 365, new ToMemoryDataLoadEventListener(false));
+                var finder = new DQERunFinder(CatalogueRepository, 365, new ToMemoryDataLoadEventListener(false));
                 Assert.IsNull(finder.SuggestRun());
 
                 testData.SetupValidationOnCatalogue();

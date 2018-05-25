@@ -66,7 +66,6 @@ namespace CatalogueManager.LoadExecutionUIs
             helpIconRunRepeatedly.SetHelpText("Run Repeatedly", "By default running a scheduled load will run the number of days specified as a single load (e.g. 5 days of data).  Ticking this box means that if the load is succesful a further 5 days will be executed and again until either a data load fails or the load is up to date.");
             helpIconAbortShouldCancel.SetHelpText("Abort Behaviour", "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
 
-            btnUnlockAll.Image = FamFamFamIcons.lock_break;
             AssociatedCollection = RDMPCollection.DataLoad;
 
             executeInAutomationServerUI1.CommandGetter = AutomationCommandGetter;
@@ -87,29 +86,16 @@ namespace CatalogueManager.LoadExecutionUIs
         {
             _allLoadProgresses = _loadMetadata.LoadProgresses;
 
-            btnUnlockAll.Enabled = _allLoadProgresses.Any(l => l.LockedBecauseRunning);
-
             if (_allLoadProgresses.Any())
             {
                 //there are some load progresses
                 gbLoadProgresses.Visible = true;
                 gbDebugOptions.Left = gbLoadProgresses.Right + 3;
                 
-                //get the unlocked ones
-                var unlockedLoadProgresses = _allLoadProgresses.Where(schedule => !schedule.LockedBecauseRunning).ToArray();
-
-                //they are all locked!!!
-                if(!unlockedLoadProgresses.Any())
-                {
-                    ragChecks.Fatal(new Exception("All LoadProgresses for '" + _loadMetadata + "' are Locked, is someone else running this load?"));
-                    ddLoadProgress.DataSource = null;
-                    return;
-                }
-
                 //give the user the dropdown options for which load progress he wants to run
                 var loadProgressData = new Dictionary<int, string> { { 0, "All available" } };
 
-                foreach (var loadProgress in unlockedLoadProgresses)
+                foreach (var loadProgress in _allLoadProgresses)
                     loadProgressData.Add(loadProgress.ID, loadProgress.Name);
 
                 ddLoadProgress.DataSource = new BindingSource(loadProgressData, null);
@@ -513,17 +499,6 @@ namespace CatalogueManager.LoadExecutionUIs
         {
             //can only cancel between runs if we are running multiple runs
             cbAbortShouldActuallyCancelInstead.Enabled = cbRunIteratively.Checked;
-        }
-
-        private void btnUnlockAll_Click(object sender, EventArgs e)
-        {
-            foreach (ILoadProgress lp in _allLoadProgresses)
-                if (lp.LockedBecauseRunning)
-                    lp.Unlock();
-            
-            SetLoadProgressGroupBoxState();
-
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_loadMetadata));
         }
 
         private void btnRefreshLoadProgresses_Click(object sender, EventArgs e)

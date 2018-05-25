@@ -28,17 +28,7 @@ namespace RDMPAutomationService.OptionRunners
                         load = new AutomatedDLELoad(lmd);
                         
                     }
-                    else if(opts.Any)
-                    {
-                        var finder = new DLERunFinder(locator.CatalogueRepository, new ToMemoryDataLoadEventListener(false));
-                        var p = finder.SuggestLoad();
-
-                        if (p != null)
-                            load = new AutomatedDLELoad(null, p);
-                        else
-                            Console.WriteLine("No loads due");
-                    }
-
+                    
                     if (load != null)
                         load.RunTask(locator);
                     else
@@ -47,24 +37,15 @@ namespace RDMPAutomationService.OptionRunners
                     return 0;
                 case DLECommands.list:
 
+                    Console.WriteLine(string.Format("[ID] - Name"));
+
                     if (opts.LoadMetadata != 0)
                     {
-                        Console.WriteLine(string.Format("[ID] - Name"));
                         var l = locator.CatalogueRepository.GetObjectByID<LoadMetadata>(opts.LoadMetadata);
                         Console.WriteLine("[{0}] - {1}", l.ID, l.Name);
                     }
                     else
-                    if (opts.Any)
                     {
-                        var finder = new DLERunFinder(locator.CatalogueRepository, new ThrowImmediatelyDataLoadEventListener(){WriteToConsole = true});
-                        var p = finder.SuggestLoad();
-
-                        if(p != null)
-                            Console.WriteLine("Due Load '" + p.LoadMetadata +"'");
-                    }
-                    else
-                    {
-                        Console.WriteLine(string.Format("[ID] - Name"));
                         foreach (LoadMetadata l in locator.CatalogueRepository.GetAllObjects<LoadMetadata>())
                             Console.WriteLine("[{0}] - {1}", l.ID, l.Name);
                     }

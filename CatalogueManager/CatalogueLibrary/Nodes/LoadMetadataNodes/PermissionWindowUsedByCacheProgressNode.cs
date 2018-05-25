@@ -11,7 +11,7 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class PermissionWindowUsedByCacheProgressNode: IDeletableWithCustomMessage,ILockable
+    public class PermissionWindowUsedByCacheProgressNode: IDeletableWithCustomMessage
     {
         public CacheProgress CacheProgress { get; set; }
         public PermissionWindow PermissionWindow { get; private set; }
@@ -39,33 +39,7 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
         {
             return "stop using a PermissionWindow with this CacheProgress";
         }
-
-        public bool LockedBecauseRunning
-        {
-            get { return PermissionWindow.LockedBecauseRunning; }
-            set { PermissionWindow.LockedBecauseRunning = value; }
-        }
-
-        public string LockHeldBy
-        {
-            get { return PermissionWindow.LockHeldBy; }
-            set { PermissionWindow.LockHeldBy = value; }
-        }
-        public void Lock()
-        {
-            PermissionWindow.Lock();
-        }
-
-        public void Unlock()
-        {
-            PermissionWindow.Unlock();
-        }
-
-        public void RefreshLockPropertiesFromDatabase()
-        {
-            PermissionWindow.RefreshLockPropertiesFromDatabase();
-        }
-
+        
         #region Equality Members
         protected bool Equals(PermissionWindowUsedByCacheProgressNode other)
         {

@@ -31,7 +31,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.nDefaultNumberOfDaysToLoadEachTime = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.cbEnableAutomation = new System.Windows.Forms.CheckBox();
             this.tbOriginDate = new System.Windows.Forms.TextBox();
             this.btnEditLoadProgress = new System.Windows.Forms.Button();
             this.tbID = new System.Windows.Forms.TextBox();
@@ -52,7 +51,6 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox1.Controls.Add(this.nDefaultNumberOfDaysToLoadEachTime);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.cbEnableAutomation);
             this.groupBox1.Controls.Add(this.tbOriginDate);
             this.groupBox1.Controls.Add(this.btnEditLoadProgress);
             this.groupBox1.Controls.Add(this.tbID);
@@ -100,17 +98,6 @@
             this.label3.Size = new System.Drawing.Size(216, 13);
             this.label3.TabIndex = 26;
             this.label3.Text = "DefaultNumber Of Days To Load Each Time";
-            // 
-            // cbEnableAutomation
-            // 
-            this.cbEnableAutomation.AutoSize = true;
-            this.cbEnableAutomation.Location = new System.Drawing.Point(646, 17);
-            this.cbEnableAutomation.Name = "cbEnableAutomation";
-            this.cbEnableAutomation.Size = new System.Drawing.Size(199, 17);
-            this.cbEnableAutomation.TabIndex = 2;
-            this.cbEnableAutomation.Text = "Enable Automation Server Execution";
-            this.cbEnableAutomation.UseVisualStyleBackColor = true;
-            this.cbEnableAutomation.CheckedChanged += new System.EventHandler(this.cbEnableAutomation_CheckedChanged);
             // 
             // tbOriginDate
             // 
@@ -241,7 +228,6 @@
         private System.Windows.Forms.NumericUpDown nDefaultNumberOfDaysToLoadEachTime;
         private System.Windows.Forms.Button btnEditLoadProgress;
         private System.Windows.Forms.TextBox tbOriginDate;
-        private System.Windows.Forms.CheckBox cbEnableAutomation;
         private Diagrams.LoadProgressDiagram loadProgressDiagram1;
         private System.Windows.Forms.Label label3;
         private SimpleControls.ObjectSaverButton objectSaverButton1;

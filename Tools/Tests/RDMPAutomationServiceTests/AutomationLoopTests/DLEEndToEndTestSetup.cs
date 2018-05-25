@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using Diagnostics;
@@ -12,6 +12,7 @@ using HIC.Logging;
 using HIC.Logging.PastEvents;
 using NUnit.Framework;
 using RDMPAutomationService;
+using RDMPAutomationService.Logic.DLE;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -39,7 +40,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         private UserAcceptanceTestEnvironment _stage1_setupCatalogue;
         private int _rowsBefore;
         private Catalogue _testCatalogue;
-        private AutomationServiceSlot _slot;
         private DirectoryInfo _testFolder;
 
         public void SetUp(int timeoutInMilliseconds,out LoadMetadata lmd)
@@ -62,17 +62,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
         public void RecordPreExecutionState()
         {
-            //List outstanding exceptions (of which there should be none
-            foreach (var ex in CatalogueRepository.GetAllObjects<AutomationServiceException>())
-            {
-                Console.WriteLine("UNEXPECTED Automation Exception:");
-                Console.WriteLine(ex.Exception);
-
-            }
-
-            //there should be no outstanding exceptions in the automation
-            Assert.IsFalse(CatalogueRepository.GetAllObjects<AutomationServiceException>().Any());
-
             //the number of rows before data is automatically loaded (hopefully below)
             _rowsBefore = DataAccessPortal.GetInstance()
                 .ExpectDatabase(_stage1_setupCatalogue.DemographyTableInfo, DataAccessContext.InternalDataProcessing)
@@ -83,59 +72,10 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
         public void RunAutomationServiceToCompletion(int timeoutInMilliseconds, out int newRows)
         {
-
-            //create a slot for the automation to run in
-            _slot = new AutomationServiceSlot(CatalogueRepository);
-            _slot.DQEMaxConcurrentJobs = 0;
-            _slot.DLEMaxConcurrentJobs = 1;
-            _slot.CacheMaxConcurrentJobs = 0;
-            _slot.SaveToDatabase();
-
+            
             //start an automation loop in the slot, it should pickup the load
-
-            var mockOptions = new MockAutomationServiceOptions(RepositoryLocator)
-            {
-                ServerName = "BLAH",
-                ForceSlot = 0
-            };
-
-            var loop = new RDMPAutomationLoop(mockOptions, (type, s) => { Console.WriteLine("{0}: {1}", type.ToString().ToUpper(), s); });
-            loop.Start();
-
-            //wait 10 seconds for the load to start
-            int timeout = timeoutInMilliseconds;
-
-            while ((timeout -= 10) > 0 && !loop.AutomationDestination.OnGoingTasks.Any())
-                Thread.Sleep(10);
-
-            if (timeout <= 0)
-                throw new Exception("Timed out waiting for AutomationDestination to accept the OnGoingTask");
-
-            Console.WriteLine("Took " + (timeoutInMilliseconds - timeout) + " ms for AutomationDestination to accept the OnGoingTask");
-
-            //task should have just appeared so it shouldn't be stoppable at this time
-            Assert.IsFalse(loop.AutomationDestination.CanStop());
-
-            //But we tell it to stop anyway, this should que up the close down operation
-            loop.Stop = true;
-
-            //wait for it to complete it's current tasks
-            timeout = timeoutInMilliseconds;
-            while ((timeout -= 10) > 0)
-                Thread.Sleep(10);
-
-            //if (timeout <= 0)
-            //    throw new Exception("Timed out waiting for Automation to finish OnGoingTasks");
-
-            //Console.WriteLine("Took " + (timeoutInMilliseconds - timeout) + " ms for Automation to finish OnGoingTasks");
-
-            var exceptions = CatalogueRepository.GetAllObjects<AutomationServiceException>();
-
-            foreach (AutomationServiceException exception in exceptions)
-                Console.WriteLine("DATA LOAD EXCEPTION:" + exception);
-
-            //shouldn't have been any exceptions
-            Assert.IsFalse(exceptions.Any());
+            var auto = new AutomatedDLELoad(_stage1_setupCatalogue.DemographyCatalogue.LoadMetadata);
+            auto.RunTask(RepositoryLocator);
 
             //also shouldn't be any logged errors
             var lm = new LogManager(_testCatalogue.LiveLoggingServer);
@@ -158,25 +98,8 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
         public void VerifyNoErrorsAfterExecutionThenCleanup(int timeoutInMilliseconds)
         {
-
             //RAW should have been cleaned up
             Assert.IsFalse(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("DMP_Test_RAW").Exists());
-            
-            int timeout = timeoutInMilliseconds;
-
-            //wait for the job to disapear
-            while ((timeout -= 100) > 0 && _slot.AutomationJobs.Length > 0)  //AutomationJobs is a Relationship property so refreshes from database each time it is interrogated
-                Thread.Sleep(100);
-
-            string errorJobs = "";
-            //Should be no jobs running but if there are any then tell user about them before throwing
-            foreach (var job in _slot.AutomationJobs)
-                errorJobs += job.ID + " " + job.Description + " " + job.LastKnownStatus;
-
-            //should be no jobs running
-            Assert.AreEqual(0, _slot.AutomationJobs.Length, "The following unexpected jobs were found:" + Environment.NewLine + errorJobs);
-
-            _slot.DeleteInDatabase();
             
             _stage1_setupCatalogue.DestroyEnvironment();
             _testFolder.Delete(true);

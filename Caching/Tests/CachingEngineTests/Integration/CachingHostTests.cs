@@ -29,7 +29,6 @@ namespace CachingEngineTests.Integration
             var cacheProgress = MockRepository.GenerateStub<ICacheProgress>();
 
             var loadProgress = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress.LockedBecauseRunning = false;
             loadProgress.IsDisabled = false;
 
             cacheProgress.Stub(progress => progress.LoadProgress).Return(loadProgress);

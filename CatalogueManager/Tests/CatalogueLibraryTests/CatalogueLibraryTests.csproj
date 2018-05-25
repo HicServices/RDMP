@@ -240,8 +240,6 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Automation\AutomationJobTests.cs" />
-    <Compile Include="Automation\AutomationServiceSlotTests.cs" />
     <Compile Include="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
     <Compile Include="ImportTests\GatherAndShareTests.cs" />
     <Compile Include="ImportTests\PluginClassTests.cs" />

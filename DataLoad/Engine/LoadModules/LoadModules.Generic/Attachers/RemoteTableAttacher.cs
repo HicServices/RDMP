@@ -202,10 +202,6 @@ namespace LoadModules.Generic.Attachers
                 if (!LoadNotRequiredIfNoRowsRead)
                     notifier.OnCheckPerformed(new CheckEventArgs("LoadNotRequiredIfNoRowsRead is false but you have a Progress '" + Progress +"', this means that when the data being loaded is fully exhausted for a given range of days you will probably get an error instead of a clean shutdown",CheckResult.Warning));
 
-                
-                if (Progress.LockedBecauseRunning)
-                    notifier.OnCheckPerformed(new CheckEventArgs("LoadProgress '" + Progress + "'  is currently locked, lock holder is listed as '" + (Progress.LockHeldBy ?? "unspecified") + "'", CheckResult.Fail, null));
-
                 if(string.IsNullOrWhiteSpace(RemoteSelectSQL))
                     notifier.OnCheckPerformed(new CheckEventArgs("A LoadProgress has been configured but the RemoteSelectSQL is empty, how are you respecting the schedule without tailoring your query?", CheckResult.Fail, null));
                 else

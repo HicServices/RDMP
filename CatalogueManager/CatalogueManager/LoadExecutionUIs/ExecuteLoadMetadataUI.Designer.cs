@@ -50,7 +50,6 @@ namespace CatalogueManager.LoadExecutionUIs
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.gbLoadProgresses = new System.Windows.Forms.GroupBox();
-            this.btnUnlockAll = new System.Windows.Forms.Button();
             this.cbRunIteratively = new System.Windows.Forms.CheckBox();
             this.cbAbortShouldActuallyCancelInstead = new System.Windows.Forms.CheckBox();
             this.btnRefreshLoadProgresses = new System.Windows.Forms.Button();
@@ -253,7 +252,6 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             // gbLoadProgresses
             // 
-            this.gbLoadProgresses.Controls.Add(this.btnUnlockAll);
             this.gbLoadProgresses.Controls.Add(this.btnRefreshLoadProgresses);
             this.gbLoadProgresses.Controls.Add(this.helpIconAbortShouldCancel);
             this.gbLoadProgresses.Controls.Add(this.helpIconRunRepeatedly);
@@ -269,16 +267,6 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbLoadProgresses.TabIndex = 57;
             this.gbLoadProgresses.TabStop = false;
             this.gbLoadProgresses.Text = "Progressable To Execute";
-            // 
-            // btnUnlockAll
-            // 
-            this.btnUnlockAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUnlockAll.Location = new System.Drawing.Point(385, 18);
-            this.btnUnlockAll.Name = "btnUnlockAll";
-            this.btnUnlockAll.Size = new System.Drawing.Size(30, 23);
-            this.btnUnlockAll.TabIndex = 59;
-            this.btnUnlockAll.UseVisualStyleBackColor = true;
-            this.btnUnlockAll.Click += new System.EventHandler(this.btnUnlockAll_Click);
             // 
             // cbRunIteratively
             // 
@@ -418,7 +406,6 @@ namespace CatalogueManager.LoadExecutionUIs
         private System.Windows.Forms.CheckBox cbRunIteratively;
         private System.Windows.Forms.CheckBox cbAbortShouldActuallyCancelInstead;
         private ReusableUIComponents.HelpIcon helpIconAbortShouldCancel;
-        private System.Windows.Forms.Button btnUnlockAll;
         private System.Windows.Forms.Button btnRefreshLoadProgresses;
         private ExecuteInAutomationServerUI executeInAutomationServerUI1;
     }

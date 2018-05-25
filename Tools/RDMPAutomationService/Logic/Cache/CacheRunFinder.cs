@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CachingEngine;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
@@ -32,8 +32,6 @@ namespace RDMPAutomationService.Logic.Cache
 
         public CacheProgress SuggestCacheProgress()
         {
-            RefreshOngoingJobs();
-
             var caches = _catalogueRepository.GetAllObjects<CacheProgress>().ToArray();
             
             if (!caches.Any())
@@ -82,24 +80,12 @@ namespace RDMPAutomationService.Logic.Cache
                         String.Format("Cache Progress  {0} has no associated catalogues... skipping.", kvp.Key)));
                     toDiscard.Add(kvp.Key);
                 }
-                else if (IsAlreadyUnderway(kvp.Key))
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                        String.Format("Cache Progress {0} is already running... skipping.", kvp.Key)));
-                    toDiscard.Add(kvp.Key);
-                }
                 else if (kvp.Value.Any(automationLockedCatalogues.Contains)) //if there are locked catalogues
                 {
                     _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                         String.Format("Cache Progress {0} contains locked catalogues ({1})... skipping.", 
                                       kvp.Key,
                                       String.Join(",", kvp.Value.Intersect(automationLockedCatalogues).Select(x => x.Name)))));
-                    toDiscard.Add(kvp.Key);
-                }
-                else if (kvp.Key.PermissionWindow_ID != null && kvp.Key.PermissionWindow.LockedBecauseRunning)
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                        String.Format("Cache Progress {0} permission window ({1}) is not defined or locked... skipping.", kvp.Key, kvp.Key.PermissionWindow.Description)));
                     toDiscard.Add(kvp.Key);
                 }
                 else
@@ -127,41 +113,6 @@ namespace RDMPAutomationService.Logic.Cache
 
             
             return cacheCatalogues.Keys.First();
-        }
-
-        private bool IsAlreadyUnderway(CacheProgress cp)
-        {
-            //if it has a permission window and that permission window is already being executed
-            if (cp.PermissionWindow_ID != null && _permissionWindowsAlreadyUnderway.Contains(cp.PermissionWindow))
-                return true;//it is already underway
-
-            //if it is a cache progress that is already underway
-            return _cacheProgressesAlreadyUnderway.Contains(cp);
-        }
-
-        private void RefreshOngoingJobs()
-        {
-            var ongoingCacheJobs = _catalogueRepository.GetAllObjects<AutomationJob>().Where(j => j.AutomationJobType == AutomationJobType.Cache).ToList();
-
-            _cacheProgressesAlreadyUnderway = new List<CacheProgress>();
-            _permissionWindowsAlreadyUnderway = new List<PermissionWindow>();
-            
-            
-            foreach (var job in ongoingCacheJobs.ToArray())
-            {
-                var permissionWindowIfAny = job.GetCachingJobsPermissionWindowObjectIfAny();
-                var cacheProgressIfAny = job.GetCachingJobsProgressObjectIfAny();
-
-                if (permissionWindowIfAny != null)
-                    _permissionWindowsAlreadyUnderway.Add(permissionWindowIfAny);
-                else
-                if(cacheProgressIfAny != null)
-                    _cacheProgressesAlreadyUnderway.Add(cacheProgressIfAny);
-                else
-                    throw new NotSupportedException("There is an AutomationJob with the description '" + job.Description + "' which is apparently not associated with either a CacheProgress or PermissionWindow");
-                                                    
-            }
-
         }
     }
 }

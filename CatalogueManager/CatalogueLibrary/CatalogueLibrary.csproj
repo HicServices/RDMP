@@ -304,9 +304,6 @@
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
     <Compile Include="FilterImporting\FilterImporter.cs" />
     <Compile Include="FilterImporting\ParameterCreator.cs" />
-    <Compile Include="Data\Automation\AutomateablePipeline.cs" />
-    <Compile Include="Data\Automation\AutomationJob.cs" />
-    <Compile Include="Data\Automation\AutomationServiceSlot.cs" />
     <Compile Include="Data\Cache\CacheLagPeriod.cs" />
     <Compile Include="Data\Cohort\Joinables\JoinableCohortAggregateConfiguration.cs" />
     <Compile Include="Data\Cohort\Joinables\JoinableCohortAggregateConfigurationUse.cs" />
@@ -345,7 +342,6 @@
     <Compile Include="IHICProjectDirectory.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\IDirectoryInfoNode.cs" />
     <Compile Include="Nodes\AggregatesNode.cs" />
-    <Compile Include="Nodes\AllAutomationServerSlotsNode.cs" />
     <Compile Include="Nodes\AllExternalServersNode.cs" />
     <Compile Include="Nodes\AllRDMPRemotesNode.cs" />
     <Compile Include="Nodes\AllANOTablesNode.cs" />
@@ -438,7 +434,6 @@
     <Compile Include="Data\DataLoad\ICustomUIDrivenClass.cs" />
     <Compile Include="Data\DataLoad\ILoadMetadata.cs" />
     <Compile Include="Data\DataLoad\IResolveDuplication.cs" />
-    <Compile Include="Data\AutomationServiceException.cs" />
     <Compile Include="DataHelper\RDMPQuerySyntaxHelper.cs" />
     <Compile Include="Data\DemandsInitializationAttribute.cs" />
     <Compile Include="Data\EncryptedPasswordHost.cs" />
@@ -453,7 +448,6 @@
     <Compile Include="Data\ICollectSqlParameters.cs" />
     <Compile Include="Data\ILoadProgress.cs" />
     <Compile Include="Data\PasswordEncryptionKeyLocation.cs" />
-    <Compile Include="Data\LoadPeriodically.cs" />
     <Compile Include="Data\PermissionWindow.cs" />
     <Compile Include="Data\PermissionWindowPeriod.cs" />
     <Compile Include="Data\Pipelines\IDataFlowPipelineEngine.cs" />

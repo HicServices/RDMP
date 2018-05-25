@@ -11,9 +11,7 @@ namespace CatalogueManager.Menus
     {
         public LoadProgressMenu(RDMPContextMenuStripArgs args,LoadProgress loadProgress) : base(args,loadProgress)
         {
-            Add(new ExecuteCommandUnlockLockable(_activator, loadProgress));
             Add(new ExecuteCommandCreateNewCacheProgress(_activator, loadProgress));
-
         }
     }
 }

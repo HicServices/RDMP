@@ -22,9 +22,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandCreateNewLoadProgress(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
             _loadMetadata = loadMetadata;
-
-            if(loadMetadata.LoadPeriodically != null)
-                SetImpossible("Cannot create a LoadProgress when there is already a LoadPeriodically");
         }
 
         public override void Execute()

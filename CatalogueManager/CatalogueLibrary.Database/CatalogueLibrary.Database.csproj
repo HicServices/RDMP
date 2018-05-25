@@ -260,6 +260,7 @@
     <EmbeddedResource Include="db\up\057_MakeLoadProgressINamed.sql" />
     <EmbeddedResource Include="db\up\058_RemoteRDMP.sql" />
     <EmbeddedResource Include="db\up\059_ObjectSharing.sql" />
+    <EmbeddedResource Include="db\up\061_NoMoreAutomationServer.sql" />
     <EmbeddedResource Include="db\up\060_MappedDataPathForExternalDbServer.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>

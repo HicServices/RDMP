@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataQualityEngine.Data;
@@ -49,7 +49,7 @@ namespace DataQualityEngine.Reports
             
         }
 
-        private void SetupLogging(CatalogueRepository repository,AutomationJob job = null)
+        private void SetupLogging(CatalogueRepository repository)
         {
             //if we have already setup logging successfully then don't worry about doing it again
             if (_loggingServer != null && _logManager != null && _loggingTask != null)
@@ -61,9 +61,6 @@ namespace DataQualityEngine.Reports
             {
                 _logManager = new LogManager(_loggingServer);
                 _loggingTask = _logManager.ListDataTasks().SingleOrDefault(task => task.ToLower().Equals("dqe"));
-
-                if (job != null)
-                    _logManager.DataLoadInfoCreated += (s, d) => job.SetLoggingInfo(_loggingServer, d.ID);
 
                 if (_loggingTask == null)
                 {
@@ -78,9 +75,9 @@ namespace DataQualityEngine.Reports
 
         private bool haveComplainedAboutNullCategories = false;
 
-        public override void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken,AutomationJob job = null)
+        public override void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken)
         {
-            SetupLogging((CatalogueRepository) c.Repository,job);
+            SetupLogging((CatalogueRepository) c.Repository);
 
             var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask, "DQE evaluation of " + c);
 
@@ -95,10 +92,7 @@ namespace DataQualityEngine.Reports
                 byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
 
                 Check(new FromDataLoadEventListenerToCheckNotifier(forker));
-
-                if (job != null)
-                    job.SetLastKnownStatus(AutomationJobStatus.Running);
-
+                
                 var sw = Stopwatch.StartNew();
                 using (var con = _server.GetConnection())
                 {
@@ -174,15 +168,8 @@ namespace DataQualityEngine.Reports
                         }
 
                         if (progress % 5000 == 0)
-                        {
                             forker.OnProgress(this, new ProgressEventArgs("Processing " + _catalogue, new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
-                            
-                            if(job != null)
-                            {
-                                job.SetLastKnownStatus(AutomationJobStatus.Running);
-                                job.TickLifeline();
-                            }
-                        }
+                        
                      }
                     //final value
                     forker.OnProgress(this, new ProgressEventArgs("Processing " + _catalogue, new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
@@ -220,20 +207,9 @@ namespace DataQualityEngine.Reports
 
                 forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CatalogueConstraintReport completed successfully  and committed results to DQE server"));
 
-                if (job != null)
-                    job.SetLastKnownStatus(AutomationJobStatus.Finished);
             }
             catch (Exception e)
             {
-                if(job != null) //Automation is on
-                {
-                    job.SetLastKnownStatus(e is OperationCanceledException ? AutomationJobStatus.Cancelled : AutomationJobStatus.Crashed); //record automation state
-
-                    //dont record cancellations at automation error level just at job level
-                    if (!(e is OperationCanceledException))
-                        new AutomationServiceException((ICatalogueRepository) job.Repository, e);//push Exception up to automation level
-                }
-
                 if (!(e is OperationCanceledException))
                     forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Fatal Crash", e));
                 else

@@ -24,34 +24,7 @@ namespace RDMPAutomationService.Logic.DLE
             _catalogueRepository = catalogueRepository;
             _listener = listener;
         }
-
-        public LoadPeriodically SuggestLoad()
-        {
-            var lockedCatalogues = _catalogueRepository.GetAllAutomationLockedCatalogues();
-
-            var allLoads = _catalogueRepository.GetAllObjects<LoadPeriodically>();
-
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Found {0} Periodic Loads to run", allLoads.Length)));
-
-            foreach (var load in allLoads)
-            {
-                if (load.IsLoadDue(lockedCatalogues))
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, String.Format("Load due for: {0}", load.LoadMetadata.Name)));
-                    return load;
-                }
-                else
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Load was NOT due for: {0}", load.LoadMetadata.Name)));
-                }
-            }
-
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No Load was due, exiting..."));
-            return null;
-            //refresh list of push jobs
-            //return _catalogueRepository.GetAllObjects<LoadPeriodically>().FirstOrDefault(p => p.IsLoadDue(lockedCatalogues));
-        }
-
+        
         public ILoadProgress SuggestLoadBecauseCacheAvailable()
         {
             var cacheProgresses = _catalogueRepository.GetAllObjects<CacheProgress>();
@@ -62,30 +35,6 @@ namespace RDMPAutomationService.Logic.DLE
                 var dtCache = cp.CacheFillProgress;
                 var loadProgress = cp.LoadProgress;
                
-                //LoadProgress isn't allowed to run through automation anyway
-                if(!loadProgress.AllowAutomation)
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Load Progress {0} is not allowed through automation", loadProgress.Name)));
-                    continue;
-                }
-
-                //It's already locked (either running or hard crashed)
-                if(loadProgress.LockedBecauseRunning)
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Load Progress {0} is already locked", loadProgress.Name)));
-                    continue;
-                }
-
-                //Permission window is locked 
-                if(cp.PermissionWindow_ID != null)
-                    if (cp.PermissionWindow.LockedBecauseRunning)
-                    {
-                        _listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Debug,
-                                String.Format("Cache Progress {0} permission window is unavailable", cp)));
-                        continue;
-                    }
-
                 //Cache has never been loaded
                 if(dtCache == null)
                 {

@@ -328,12 +328,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
-    <Compile Include="LockableUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LockableUI.Designer.cs">
-      <DependentUpon>LockableUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="NativeMethods.cs" />
     <Compile Include="LinkLabels\PathLinkLabel.cs">
       <SubType>Component</SubType>
@@ -499,9 +493,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KeywordHelpTextListbox.resx">
       <DependentUpon>KeywordHelpTextListbox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LockableUI.resx">
-      <DependentUpon>LockableUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Performance\PerformanceCounterResultsUI.resx">
       <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>

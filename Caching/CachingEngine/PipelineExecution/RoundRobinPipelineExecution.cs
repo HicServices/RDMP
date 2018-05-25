@@ -35,16 +35,8 @@ namespace CachingEngine.PipelineExecution
                         continue;
 
                     // assigned to temporary variable here to make the logic a bit more explicit
-                    EngineLockProvider.Lock(engine);
-                    try
-                    {
-                        var hasMoreData = engine.ExecuteSinglePass(cancellationToken);
-                        allComplete = !hasMoreData && allComplete;
-                    }
-                    finally
-                    {
-                        EngineLockProvider.Unlock(engine);
-                    }
+                    var hasMoreData = engine.ExecuteSinglePass(cancellationToken);
+                    allComplete = !hasMoreData && allComplete;
                 }
             }
 

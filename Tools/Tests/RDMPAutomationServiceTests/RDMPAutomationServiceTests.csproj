@@ -50,22 +50,15 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AutomationLoopTests\BasicAutomationTests.cs" />
-    <Compile Include="AutomationLoopTests\AutomationTests.cs" />
     <Compile Include="AutomationLoopTests\DLEEndToEndTestSetup.cs" />
     <Compile Include="AutomationLoopTests\EndToEndCacheTest.cs" />
     <Compile Include="AutomationLoopTests\EndToEndDLECacheTest.cs" />
-    <Compile Include="AutomationLoopTests\EndToEndPluginTest.cs" />
-    <Compile Include="AutomationLoopTests\FictionalAutomationPlugin\TestSkullWriter.cs" />
-    <Compile Include="AutomationLoopTests\FictionalAutomationPlugin\TestAutomationPluginSource.cs" />
     <Compile Include="AutomationLoopTests\FictionalCache\Reading\TestDataCacheReader.cs" />
-    <Compile Include="AutomationLoopTests\MockAutomationServiceOptions.cs" />
     <Compile Include="CacheRunFinderTests.cs" />
     <Compile Include="DLECacheRunFinderTests.cs" />
     <Compile Include="DLERunFinderTests.cs" />
     <Compile Include="DQERunFinderTests.cs" />
     <Compile Include="AutomationLoopTests\EndToEndDLETest.cs" />
-    <Compile Include="AutomationLoopTests\EndToEndDQETest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +122,6 @@
       <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
       <Name>RDMPAutomationService</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="AutomationLoopTests\FictionalAutomationPlugin\2brains.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

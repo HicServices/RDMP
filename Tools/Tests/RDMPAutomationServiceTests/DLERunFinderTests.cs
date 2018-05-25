@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.DataLoad;
 using NUnit.Framework;
 using RDMPAutomationService.Logic.DLE;
@@ -19,26 +19,29 @@ namespace RDMPAutomationServiceTests
         public void SuggestLoadMetadata_NoneExist()
         {
             DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
-            Assert.IsNull(finder.SuggestLoad());
+            Assert.IsNull(finder.SuggestLoadBecauseCacheAvailable());
         }
 
         [Test]
         public void SuggestLoadMetadata_NoCatalogues()
         {
             var lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch of coconuts");
-            var periodically = new LoadPeriodically(CatalogueRepository, lmd, 1);
+            var loadProgress = new LoadProgress(CatalogueRepository, lmd);
+            loadProgress.OriginDate = new DateTime(2001,1,1);
+            loadProgress.SaveToDatabase();
+
             try
             {
                 DLERunFinder finder = new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false));
-                Assert.IsNull(finder.SuggestLoad());
+                Assert.AreEqual(loadProgress,finder.SuggestLoadBecauseCacheAvailable());
             }
             finally
             {
-                periodically.DeleteInDatabase();
+                loadProgress.DeleteInDatabase();
                 lmd.DeleteInDatabase();
             }
         }
-
+        /*
         [Test]
         public void SuggestLoadMetadata_AlreadyLocked()
         {
@@ -191,7 +194,7 @@ namespace RDMPAutomationServiceTests
                 lmd2.DeleteInDatabase();
                 lmd3.DeleteInDatabase();
             }
-        }
+        }*/
 
     }
 }

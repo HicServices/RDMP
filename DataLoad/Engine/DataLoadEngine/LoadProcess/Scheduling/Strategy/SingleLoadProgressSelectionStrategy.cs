@@ -18,20 +18,8 @@ namespace DataLoadEngine.LoadProcess.Scheduling.Strategy
             _loadProgress = loadProgress;
         }
 
-        public List<ILoadProgress> GetAllLoadProgresses(bool respectAndAcquire=true)
+        public List<ILoadProgress> GetAllLoadProgresses()
         {
-            if (respectAndAcquire)
-            {
-                // todo: refresh the object?
-
-                //if we respect your lock and it is locked already
-                if (_loadProgress.LockedBecauseRunning)
-                    throw new Exception("Load Progress '" + _loadProgress.Name + "' (" + _loadProgress.ID + ") has been locked by another process in the time between construction and use");//complain
-
-                // acquire lock
-                _loadProgress.Lock();
-            }
-
             //here are the load progresses that exist
             return new List<ILoadProgress> { _loadProgress };
         }

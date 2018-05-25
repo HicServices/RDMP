@@ -313,8 +313,6 @@
     <Compile Include="Icons\IconProvision\OverlayKind.cs" />
     <Compile Include="ICustomSearchString.cs" />
     <Compile Include="IHasFullyQualifiedNameToo.cs" />
-    <Compile Include="ILifelineable.cs" />
-    <Compile Include="ILockable.cs" />
     <Compile Include="IManagedTransaction.cs" />
     <Compile Include="ManagedTransaction.cs" />
     <Compile Include="DatabaseType.cs" />

@@ -379,7 +379,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
@@ -405,13 +404,11 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDataAccessCredentials.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadPeriodically.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadProgress.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindow.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPreLoadDiscardedColumn.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
@@ -439,12 +436,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CatalogueIcons.resx</DependentUpon>
     </Compile>
-    <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
     <Compile Include="Menus\AllLoadMetadatasNodeMenu.cs" />
     <Compile Include="Menus\AllObjectImportsNodeMenu.cs" />
     <Compile Include="Menus\AllPermissionWindowsNodeMenu.cs" />
-    <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
     <Compile Include="Menus\AllANOTablesNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetDataAccessContextForCredentials.cs" />
     <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
@@ -454,7 +448,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadPeriodically.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPreLoadDiscardedColumn.cs" />
@@ -472,7 +465,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowKeywordHelp.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -688,12 +680,6 @@
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramDatabaseNode.cs" />
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramServerNode.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadPeriodicallyUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadPeriodicallyUI.Designer.cs">
-      <DependentUpon>LoadPeriodicallyUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -810,7 +796,6 @@
     <Compile Include="Menus\FilterMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCollapseChildNodes.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExpandAllNodes.cs" />
-    <Compile Include="Menus\LoadPeriodicallyMenu.cs" />
     <Compile Include="Menus\ParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
@@ -821,7 +806,6 @@
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs" />
     <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs" />
-    <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
     <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
     <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
     <Compile Include="Menus\RDMPContextMenuStripArgs.cs" />
@@ -981,18 +965,6 @@
     </Compile>
     <Compile Include="SimpleControls\ObjectSaverButton.Designer.cs">
       <DependentUpon>ObjectSaverButton.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.Designer.cs">
-      <DependentUpon>AutomateablePipelineCollectionUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomationServiceSlotUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomationServiceSlotUI.Designer.cs">
-      <DependentUpon>AutomationServiceSlotUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.cs">
       <SubType>Form</SubType>
@@ -1649,9 +1621,6 @@
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.resx">
       <DependentUpon>LoadMetadataUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadPeriodicallyUI.resx">
-      <DependentUpon>LoadPeriodicallyUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.resx">
       <DependentUpon>LoadProgressUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -1750,12 +1719,6 @@
     <EmbeddedResource Include="SimpleControls\ObjectSaverButton.resx">
       <DependentUpon>ObjectSaverButton.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.resx">
-      <DependentUpon>AutomateablePipelineCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Automation\AutomationServiceSlotUI.resx">
-      <DependentUpon>AutomationServiceSlotUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\BulkProcessCatalogueItems.resx">
       <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>

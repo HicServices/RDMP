@@ -61,9 +61,6 @@ namespace CatalogueManager.Icons.IconProvision
 
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
-            if(IsLockedLockable(concept) && (kind == OverlayKind.None || kind == OverlayKind.Link))
-                kind = OverlayKind.Locked;
-
             //the only valid strings are "Catalogue" etc where the value exactly maps to an RDMPConcept
             if(concept is string)
             {
@@ -181,11 +178,6 @@ namespace CatalogueManager.Icons.IconProvision
             return false;
         }
 
-        private bool IsLockedLockable(object concept)
-        {
-            var lockable = concept as ILockable;
-            return lockable != null && lockable.LockedBecauseRunning;
-        }
 
         /// <summary>
         /// Returns an image list dictionary with string keys that correspond to the names of all the RDMPConcept Enums.

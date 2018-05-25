@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
@@ -26,16 +26,21 @@ namespace RDMPAutomationService.Logic.DQE
     public class DQERunFinder
     {
         private readonly CatalogueRepository _catalogueRepository;
-        private AutomationDQEJobSelectionStrategy _strategy;
         private readonly int _dqeDaysBetweenEvaluations;
         private readonly IDataLoadEventListener _listener;
 
-        public DQERunFinder(CatalogueRepository catalogueRepository, AutomationDQEJobSelectionStrategy strategy, int dqeDaysBetweenEvaluations, IDataLoadEventListener listener)
+        public DQERunFinder(CatalogueRepository catalogueRepository, int dqeDaysBetweenEvaluations, IDataLoadEventListener listener)
         {
             _catalogueRepository = catalogueRepository;
-            _strategy = strategy;
             _dqeDaysBetweenEvaluations = dqeDaysBetweenEvaluations;
             _listener = listener;
+        }
+
+
+        enum AutomationDQEJobSelectionStrategy
+        {
+            MostRecentlyLoadedDataset,
+            DatasetWithMostOutOfDateDQEResults
         }
 
         public Catalogue SuggestRun()
@@ -59,7 +64,7 @@ namespace RDMPAutomationService.Logic.DQE
             List<Tuple<Catalogue, DateTime>> datasetsByDate;
             Tuple<Catalogue, DateTime> pairToReturn;
 
-            switch (_strategy)
+            switch (AutomationDQEJobSelectionStrategy.MostRecentlyLoadedDataset)
             {
                 case AutomationDQEJobSelectionStrategy.MostRecentlyLoadedDataset:
 
@@ -170,15 +175,10 @@ namespace RDMPAutomationService.Logic.DQE
                             "All datasets have been recently evaluated by DQE. Ending."));
                         return null;
                     }
-                    else
-                    {
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                            String.Format("Found oldest evaluated catalogue: {0}", pairToReturn.Item1)));
-                        return pairToReturn.Item1;
-                    }
-
-                default:
-                    throw new ArgumentOutOfRangeException();
+                    
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        String.Format("Found oldest evaluated catalogue: {0}", pairToReturn.Item1)));
+                    return pairToReturn.Item1;
             }
         }
 

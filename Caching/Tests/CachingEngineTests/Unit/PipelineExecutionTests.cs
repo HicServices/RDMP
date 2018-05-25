@@ -24,9 +24,7 @@ namespace CachingEngineTests.Unit
 
             // set up the engine map
             var loadProgress1 = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress1.LockedBecauseRunning = false;
             var loadProgress2 = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress2.LockedBecauseRunning = true;
             
             // set up the lock provider
             var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
@@ -72,10 +70,8 @@ namespace CachingEngineTests.Unit
 
             // set up the engine map
             var loadProgress1 = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress1.LockedBecauseRunning = false;
             var loadProgress2 = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress2.LockedBecauseRunning = false;
-
+            
             // set up the lock provider
             var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
             {

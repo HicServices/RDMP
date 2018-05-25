@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using NUnit.Framework;
@@ -41,10 +41,7 @@ namespace RDMPAutomationServiceTests
             var lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch of coconuts");
             var lp = new LoadProgress(CatalogueRepository, lmd);
             var cp = new CacheProgress(CatalogueRepository, lp);
-
-            lp.AllowAutomation = allowAutomation;
-            lp.SaveToDatabase();
-
+            
             //create a catalogue
             Catalogue c = new Catalogue(CatalogueRepository, "cata Fish");
             c.LoadMetadata_ID = lmd.ID;
@@ -79,21 +76,15 @@ namespace RDMPAutomationServiceTests
             }
         }
 
-        [TestCase(false,false,false,false,true)] //No locks, suggest run
-        [TestCase(false, true, false, false, true)] //Window but not a locked window, suggest run
-        [TestCase(true, true, false, false, false)] //Catalogue locked because DQE running on it, do not suggest
-        [TestCase(false, true, true, false, false)] //Window which is locked, do not suggest
-        [TestCase(false, true, false, true, false)] //Load Progress is locked e.g. running in DLE manually now or crashed previously or something, do not suggest
-        public void SuggestLoadMetadata_Locks(bool lockCatalogue, bool createPermissionWindow, bool lockPermissionWindow, bool lockLoadProgress, bool expectedSuggestRunning)
+        [TestCase(false,false,true)] //No locks, suggest run
+        [TestCase(false, true, true)] //Window but not a locked window, suggest run
+        public void SuggestLoadMetadata_Locks(bool lockCatalogue, bool createPermissionWindow, bool expectedSuggestRunning)
         {
             var lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch of coconuts");
             var lp = new LoadProgress(CatalogueRepository, lmd);
-            lp.AllowAutomation = true;
             lp.SaveToDatabase();
             var cp = new CacheProgress(CatalogueRepository, lp);
 
-            AutomationServiceSlot slot = null;
-            AutomationJob job = null;
             PermissionWindow window = null;
 
             //create a catalogue
@@ -114,15 +105,7 @@ namespace RDMPAutomationServiceTests
                 lp.DataLoadProgress = new DateTime(2001, 1, 1);
                 lp.DefaultNumberOfDaysToLoadEachTime = 10; //and the load size is 10
                 lp.SaveToDatabase();
-
-
-                if (lockCatalogue)
-                {
-                    slot = new AutomationServiceSlot(CatalogueRepository);
-                    job =  slot.AddNewJob( AutomationJobType.DQE, "DQE running on dataset");
-                    job.LockCatalogues(new []{c});
-                }
-
+                
                 if (createPermissionWindow)
                 {
 
@@ -131,12 +114,6 @@ namespace RDMPAutomationServiceTests
                     cp.SaveToDatabase();
                 }
 
-                if(lockPermissionWindow)
-                    window.Lock();
-
-                if(lockLoadProgress)
-                    lp.Lock();
-
                 if (expectedSuggestRunning)
                     Assert.AreEqual(lp, finder.SuggestLoadBecauseCacheAvailable());
                 else
@@ -144,12 +121,6 @@ namespace RDMPAutomationServiceTests
             }
             finally
             {
-                if (slot != null)
-                {
-                    job.DeleteInDatabase();
-                    slot.DeleteInDatabase();
-                }
-
                 c.DeleteInDatabase();
                 cp.DeleteInDatabase();
                 

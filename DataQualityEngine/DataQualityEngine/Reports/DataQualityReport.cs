@@ -1,6 +1,6 @@
 using System.Threading;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -21,6 +21,6 @@ namespace DataQualityEngine.Reports
             return checkNotifier.GetWorst() <= CheckResult.Warning;
 
         }
-        public abstract void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken,AutomationJob job = null);
+        public abstract void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken);
     }
 }

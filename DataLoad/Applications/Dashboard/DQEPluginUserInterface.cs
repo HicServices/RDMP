@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -46,13 +46,6 @@ namespace Dashboard
             if (lmd != null)
                 return GetMenuArray(
                     new ExecuteCommandViewLoadMetadataLogs(ItemActivator).SetTarget(lmd)
-                    );
-
-            var slot = o as AutomationServiceSlot;
-
-            if (slot != null)
-                return GetMenuArray(
-                    new ExecuteCommandStartAutomationServerMonitorUI(ItemActivator).SetTarget(slot)
                     );
 
             return null;

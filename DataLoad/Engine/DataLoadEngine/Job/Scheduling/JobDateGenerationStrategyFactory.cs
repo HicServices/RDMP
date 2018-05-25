@@ -37,7 +37,7 @@ namespace DataLoadEngine.Job.Scheduling
 
         {
             _typeToCreate =
-                strategy.GetAllLoadProgresses(false).Any(p => p.CacheProgress != null)//if any of the strategies you plan to use (without locking btw) have a cache progress
+                strategy.GetAllLoadProgresses().Any(p => p.CacheProgress != null)//if any of the strategies you plan to use (without locking btw) have a cache progress
                 ? typeof (SingleScheduleCacheDateTrackingStrategy) //then we should use a cache progress based strategy
                 : typeof (SingleScheduleConsecutiveDateStrategy);//otherwise we should probably use consecutive days strategy;
         }

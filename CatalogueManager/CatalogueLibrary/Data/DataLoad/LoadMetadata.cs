@@ -103,10 +103,6 @@ namespace CatalogueLibrary.Data.DataLoad
                     Repository.GetAllObjectsWithParent<ProcessTask>(this).OrderBy(pt => pt.Order);
             }
         }
-        [NoMappingToDatabase]
-        public LoadPeriodically LoadPeriodically {
-            get { return Repository.GetAllObjectsWithParent<LoadPeriodically>(this).SingleOrDefault(); }
-        }
         #endregion
 
         public LoadMetadata(ICatalogueRepository repository, string name = null)
