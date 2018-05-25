@@ -52,11 +52,11 @@ VALUES
            ,@IsPatch
            ,@ReleaseFolder)", new Dictionary<string, object>
                                {
-                                   {"CumulativeExtractionResults_ID", (_dataset.Assessments.First().Key as ICumulativeExtractionResults).ID},
+                                   {"CumulativeExtractionResults_ID", _dataset.DatasetExtractionResult.ID},
                                    {"Username", Environment.UserName},
                                    {"DateOfRelease", DateTime.Now},
                                    {"MD5OfDatasetFile", datasetFileBeingReleased == null ? "X" : UsefulStuff.MD5File(datasetFileBeingReleased.FullName)},
-                                   {"DatasetState", _dataset.Assesment.ToString()},
+                                   {"DatasetState", _dataset.DatasetExtractionResult.ToString()},
                                    {"EnvironmentState", _environment.Assesment.ToString()},
                                    {"IsPatch", isPatch},
                                    {"ReleaseFolder", releaseDirectory.FullName}

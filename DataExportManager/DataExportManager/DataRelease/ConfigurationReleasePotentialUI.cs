@@ -269,7 +269,7 @@ namespace DataExportManager.DataRelease
 
             if(environmentReady)
                 //if environment is ready and ALL datasets are also ready (or are Catalogue differences which is allowable) so permit them to release stuff
-                if(tlvDatasets.Objects.OfType<ReleasePotential>().All(rp=>rp.Assesment == Releaseability.Releaseable || rp.Assesment == Releaseability.ColumnDifferencesVsCatalogue))
+                if(tlvDatasets.Objects.OfType<ReleasePotential>().All(rp=>rp.DatasetExtractionResult == Releaseability.Releaseable || rp.DatasetExtractionResult == Releaseability.ColumnDifferencesVsCatalogue))
                     btnRelease.Enabled = true; //you can release
         }
         
@@ -332,7 +332,7 @@ namespace DataExportManager.DataRelease
                             "Original Extraction SQL:", "Current Configuration:", "SQL Desync", MessageBoxButtons.OK)
                             .Show());
 
-            if (potential.Assessments.First().Value == Releaseability.ColumnDifferencesVsCatalogue)
+            if (potential.Assessments[potential.DatasetExtractionResult] == Releaseability.ColumnDifferencesVsCatalogue)
                 RightClickMenu.Items.Add("Show Column Changes VS Catalogue", CatalogueIcons.SqlThenVSNow, (sender, args) =>
                     new SQLBeforeAndAfterViewer(
                         string.Join("\r\n",

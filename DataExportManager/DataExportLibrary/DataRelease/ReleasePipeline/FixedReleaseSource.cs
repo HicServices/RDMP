@@ -58,7 +58,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             var staleDatasets = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).Where(
-                   p => (p.Assessments.First().Key as ICumulativeExtractionResults).HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
+                   p => p.DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
 
             if (staleDatasets.Any())
                 throw new Exception(
@@ -71,8 +71,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     kvp.Value.Any(
                         p =>
                             //these are the only permissable release states
-                            p.Assesment != Releaseability.Releaseable &&
-                            p.Assesment != Releaseability.ColumnDifferencesVsCatalogue)).ToArray();
+                            p.DatasetExtractionResult != Releaseability.Releaseable &&
+                            p.DatasetExtractionResult != Releaseability.ColumnDifferencesVsCatalogue)).ToArray();
 
             if (dodgyStates.Any())
             {
@@ -81,7 +81,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 {
                     sb.AppendLine(kvp.Key + ":");
                     foreach (var releasePotential in kvp.Value)
-                        sb.AppendLine("\t" + releasePotential.Configuration.Name + " : " + releasePotential.Assesment);
+                        sb.AppendLine("\t" + releasePotential.Configuration.Name + " : " + releasePotential.DatasetExtractionResult);
 
                 }
 

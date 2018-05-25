@@ -177,7 +177,7 @@ namespace DataExportLibrary.DataRelease
             sw.WriteLine("ExtractionConfiguration.ID:" + kvp.Key.ID);
             sw.WriteLine("ExtractionConfiguration Identifier:" + extractionIdentifier);
             sw.WriteLine("CumulativeExtractionResult.ID(s):" +
-                         kvp.Value.Select(v => (v.Assessments.First().Key as ICumulativeExtractionResults).ID)
+                         kvp.Value.Select(v => v.DatasetExtractionResult.ID)
                              .Distinct()
                              .Aggregate("", (s, n) => s + n + ",")
                              .TrimEnd(','));

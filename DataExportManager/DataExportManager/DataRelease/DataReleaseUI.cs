@@ -132,7 +132,7 @@ namespace DataExportManager.DataRelease
 
         private void ConfigurationReleasePotentialUIOnRequestRelease(object sender, ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
         {
-            if (!datasetReleasePotentials.All(p => p.Assesment == Releaseability.Releaseable || p.Assesment == Releaseability.ColumnDifferencesVsCatalogue))
+            if (!datasetReleasePotentials.All(p => p.DatasetExtractionResult == Releaseability.Releaseable || p.DatasetExtractionResult == Releaseability.ColumnDifferencesVsCatalogue))
                 throw new Exception("Attempt made to release one or more datasets that are not assessed as being Releaseable (or ColumnDifferencesVsCatalogue)");
 
             if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)

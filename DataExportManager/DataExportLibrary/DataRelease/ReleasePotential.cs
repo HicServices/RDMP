@@ -17,6 +17,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Microsoft.Office.Core;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -38,7 +39,7 @@ namespace DataExportLibrary.DataRelease
         public Dictionary<ExtractableColumn, ExtractionInformation> ColumnsThatAreDifferentFromCatalogue { get; private set; }
 
         public Exception Exception { get; private set; }
-        public Releaseability Assesment { get; protected set; }
+        public ICumulativeExtractionResults DatasetExtractionResult { get; protected set; }
         public DateTime DateOfExtraction { get; private set; }
 
         /// <summary>
@@ -74,7 +75,9 @@ namespace DataExportLibrary.DataRelease
             var extractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
             if (extractionResults == null || extractionResults.DestinationDescription == null)
                 return;
-            
+
+            DatasetExtractionResult = extractionResults;
+
             Assessments = new Dictionary<IExtractionResults, Releaseability>();
             Assessments.Add(extractionResults, MakeAssesment(extractionResults));
 
@@ -206,14 +209,14 @@ namespace DataExportLibrary.DataRelease
         
         public override string ToString()
         {
-            switch (Assesment)
+            switch (DatasetExtractionResult)
             {
                 case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability:
                     return Exception.ToString();
                 default:
-                    string toReturn = "Dataset:" + DataSet;
-                    toReturn += " DateOfExtraction:" + DateOfExtraction;
-                    toReturn += " Status:" + Assesment;
+                    string toReturn = "Dataset: " + DataSet;
+                    toReturn += " DateOfExtraction: " + DateOfExtraction;
+                    toReturn += " Status: " + DatasetExtractionResult;
 
                     return toReturn;
             }
