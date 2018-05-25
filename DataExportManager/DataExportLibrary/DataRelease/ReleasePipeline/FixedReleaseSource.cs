@@ -68,11 +68,12 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             //make sure everything is releasable
             var dodgyStates = _releaseData.ConfigurationsForRelease.Where(
                 kvp =>
-                    kvp.Value.Any(
-                        p =>
-                            //these are the only permissable release states
-                            p.DatasetExtractionResult != Releaseability.Releaseable &&
-                            p.DatasetExtractionResult != Releaseability.ColumnDifferencesVsCatalogue)).ToArray();
+                    kvp.Value.Any(p =>
+                    {
+                        var dsReleasability = p.Assessments[p.DatasetExtractionResult];
+                        return dsReleasability != Releaseability.Releaseable &&
+                               dsReleasability != Releaseability.ColumnDifferencesVsCatalogue;
+                    })).ToArray();
 
             if (dodgyStates.Any())
             {
@@ -82,10 +83,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     sb.AppendLine(kvp.Key + ":");
                     foreach (var releasePotential in kvp.Value)
                         sb.AppendLine("\t" + releasePotential.Configuration.Name + " : " + releasePotential.DatasetExtractionResult);
-
                 }
 
-                throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable.  The following Release Potentials were at a dodgy state:" + sb);
+                throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable. The following Release Potentials were at a dodgy state:" + sb);
             }
 
             var projects = _releaseData.ConfigurationsForRelease.Keys.Select(cfr => cfr.Project_ID).Distinct().ToList();

@@ -209,14 +209,14 @@ namespace DataExportLibrary.DataRelease
         
         public override string ToString()
         {
-            switch (DatasetExtractionResult)
+            switch (Assessments[DatasetExtractionResult])
             {
                 case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability:
                     return Exception.ToString();
                 default:
                     string toReturn = "Dataset: " + DataSet;
                     toReturn += " DateOfExtraction: " + DateOfExtraction;
-                    toReturn += " Status: " + DatasetExtractionResult;
+                    toReturn += " Status: " + Assessments[DatasetExtractionResult];
 
                     return toReturn;
             }

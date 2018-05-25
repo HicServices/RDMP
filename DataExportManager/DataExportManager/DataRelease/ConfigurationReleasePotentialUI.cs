@@ -181,6 +181,11 @@ namespace DataExportManager.DataRelease
                 //Can expand dataset bundles and also can expand strings for which the dictionary has a key for that string (i.e. the strings "Custom Tables" etc)
                 tlvDatasets.CanExpandGetter = x => x is ReleasePotential;
                 tlvDatasets.ChildrenGetter += ChildrenGetter;
+                tlvDatasets.Invoke(new MethodInvoker(() => 
+                    {
+                        tlvDatasets.CheckAll();
+                        tlvDatasets.ExpandAll();
+                    }));
 
                 try
                 {
@@ -216,7 +221,6 @@ namespace DataExportManager.DataRelease
             finally
             {
                 SetupUIThread = null; //always remove reference so we can go again
-                OnSetupUiComplete();
             }
         }
 
@@ -269,7 +273,10 @@ namespace DataExportManager.DataRelease
 
             if(environmentReady)
                 //if environment is ready and ALL datasets are also ready (or are Catalogue differences which is allowable) so permit them to release stuff
-                if(tlvDatasets.Objects.OfType<ReleasePotential>().All(rp=>rp.DatasetExtractionResult == Releaseability.Releaseable || rp.DatasetExtractionResult == Releaseability.ColumnDifferencesVsCatalogue))
+                if(tlvDatasets.Objects.Cast<object>()
+                                      .Where(o => !(o is ReleasePotential))
+                                      .Cast<KeyValuePair<IExtractionResults, Releaseability>>()
+                                      .All(rp => rp.Value == Releaseability.Releaseable || rp.Value == Releaseability.ColumnDifferencesVsCatalogue))
                     btnRelease.Enabled = true; //you can release
         }
         
@@ -306,12 +313,6 @@ namespace DataExportManager.DataRelease
 
             Clipboard.SetText(toCopy);
             return true;
-        }
-
-        void tlvDatasets_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            
-            
         }
 
         private ContextMenuStrip ShowRightClickMenuFor(object model, OLVColumn column)
@@ -531,24 +532,11 @@ namespace DataExportManager.DataRelease
                 SetupUIThread = new Thread(() => SetupUIAsync(Configuration));
                 SetupUIThread.Name = "SetupUIAsync ConfigID " + Configuration.ID;
                 SetupUIThread.Start();
-
-                SetupUiComplete += (s,e) => tlvDatasets.Invoke(new MethodInvoker(() => {                    
-                    tlvDatasets.CheckAll();
-                    tlvDatasets.ExpandAll();
-                }));
             }
             else
             {
                 throw new NullReferenceException("Configuration null?!");
             }
-        }
-
-        private event EventHandler SetupUiComplete;
-
-        protected virtual void OnSetupUiComplete()
-        {
-            var handler = SetupUiComplete;
-            if (handler != null) handler(this, EventArgs.Empty);
         }
     }
 }
