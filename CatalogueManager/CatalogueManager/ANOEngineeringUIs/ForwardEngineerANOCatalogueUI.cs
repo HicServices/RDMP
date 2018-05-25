@@ -25,6 +25,7 @@ using LoadModules.Generic.LoadProgressUpdating;
 using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
 using Newtonsoft.Json;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.ANOEngineeringUIs
@@ -467,15 +468,16 @@ namespace CatalogueManager.ANOEngineeringUIs
             var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
             pt.ProcessTaskType = ProcessTaskType.Attacher;
             pt.Name = "Read from " + t;
-            pt.Path = typeof (RemoteSqlServerTableAttacher).FullName;
+            pt.Path = typeof(RemoteTableAttacher).FullName;
             pt.SaveToDatabase();
 
-            pt.CreateArgumentsForClassIfNotExists<RemoteSqlServerTableAttacher>();
+            pt.CreateArgumentsForClassIfNotExists<RemoteTableAttacher>();
+
 
             pt.SetArgumentValue("RemoteServer", t.Server);
             pt.SetArgumentValue("RemoteDatabaseName", t.GetDatabaseRuntimeName());
             pt.SetArgumentValue("RemoteTableName", t.GetRuntimeName());
-
+            pt.SetArgumentValue("DatabaseType", DatabaseType.MicrosoftSQLServer);
             pt.SetArgumentValue("RemoteSelectSQL", qb.SQL);
 
             pt.SetArgumentValue("RAWTableName", t.GetRuntimeName(LoadBubble.Raw));

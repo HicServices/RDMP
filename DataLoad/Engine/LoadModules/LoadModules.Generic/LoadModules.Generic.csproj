@@ -236,9 +236,6 @@
     <Compile Include="Attachers\MDFAttacher.cs" />
     <Compile Include="Attachers\MdfAttachStrategy.cs" />
     <Compile Include="Attachers\MdfFileAttachLocations.cs" />
-    <Compile Include="Attachers\RemoteMySqlTableAttacher.cs" />
-    <Compile Include="Attachers\RemoteOracleTableAttacher.cs" />
-    <Compile Include="Attachers\RemoteSqlServerTableAttacher.cs" />
     <Compile Include="Attachers\RemoteTableAttacher.cs" />
     <Compile Include="DataFlowOperations\ColumnBlacklister.cs" />
     <Compile Include="DataFlowOperations\ColumnRenamer.cs" />

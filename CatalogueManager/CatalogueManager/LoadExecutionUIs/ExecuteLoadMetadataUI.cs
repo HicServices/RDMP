@@ -79,6 +79,8 @@ namespace CatalogueManager.LoadExecutionUIs
             base.SetDatabaseObject(activator, databaseObject);
             _loadMetadata = databaseObject;
 
+            executeInAutomationServerUI1.SetItemActivator(activator);
+
             SetButtonStates();
 
             SetLoadProgressGroupBoxState();

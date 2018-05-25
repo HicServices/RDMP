@@ -92,17 +92,20 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
                 ragSmiley1.Fatal(e);
             }
 
+            olvDQERuns.ClearObjects();
+
             if (_report.DQERepositoryExists)
+            {
                 cataloguesRowCountChart.Visible = true;
+                olvDQERuns.AddObjects(_report.CataloguesWithDQERuns.Keys);
+                olvDQERuns.AddObjects(_report.CataloguesMissingDQERuns.ToArray());
+            }
             else
             {
                 ragSmiley1.Fatal(new Exception("You don't have any Default DQE server yet"));
                 cataloguesRowCountChart.Visible = false;
+                return;
             }
-
-            olvDQERuns.ClearObjects();
-            olvDQERuns.AddObjects(_report.CataloguesWithDQERuns.Keys);
-            olvDQERuns.AddObjects(_report.CataloguesMissingDQERuns.ToArray());
 
             olvDQERuns.Height = 100 + (olvDQERuns.RowHeight * olvDQERuns.GetItemCount());
             olvDQERuns.Top = splitContainer1.Panel1.Height - olvDQERuns.Height;
