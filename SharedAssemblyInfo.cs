@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Reflection;
 
@@ -11,3 +12,5 @@ using System.Reflection;
 [assembly: AssemblyVersion("2.9.0.1")]
 [assembly: AssemblyFileVersion("2.9.0.1")]
 [assembly: AssemblyInformationalVersion("2.9.0.1")]
+
+[assembly:InternalsVisibleTo("CatalogueManager")]

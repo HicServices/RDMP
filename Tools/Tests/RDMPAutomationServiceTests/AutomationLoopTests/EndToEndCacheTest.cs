@@ -19,6 +19,7 @@ using DataLoadEngineTests.Integration.PipelineTests;
 using NUnit.Framework;
 using RDMPAutomationService;
 using RDMPAutomationService.Logic.DLE;
+using RDMPAutomationService.Options;
 using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -102,8 +103,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         public void RunEndToEndCacheTest()
         {
             Assert.AreEqual(0, _hicProjectDirectory.Cache.GetFiles("*.csv").Count());
-
-            var auto = new AutomatedDLELoad(_lp, true);
+            var auto = new AutomatedDLELoad(new DleOptions { LoadProgress = _lp.ID, Iterative = true });
             auto.RunTask(RepositoryLocator);
         }
 

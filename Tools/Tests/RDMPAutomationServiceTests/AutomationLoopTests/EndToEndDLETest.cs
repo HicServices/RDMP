@@ -12,6 +12,7 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution;
 using NUnit.Framework;
 using RDMPAutomationService.Logic.DLE;
+using RDMPAutomationService.Options;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -20,9 +21,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
     public class EndToEndDLETest : DatabaseTests
     {
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
-        public void RunEndToEndDLETest(bool simulateLoadNotRequired)
+        public void RunEndToEndDLETest()
         {
             const int timeoutInMilliseconds = 120000;
 
@@ -35,7 +34,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             LoadMetadata lmd;
             setup.SetUp(timeoutInMilliseconds,out lmd);
 
-            var auto = new AutomatedDLELoad(lmd);
+            var auto = new AutomatedDLELoad(new DleOptions() { LoadMetadata = lmd.ID });
             auto.RunTask(RepositoryLocator);
 
             setup.VerifyNoErrorsAfterExecutionThenCleanup(timeoutInMilliseconds);

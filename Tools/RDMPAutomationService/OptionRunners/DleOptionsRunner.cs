@@ -22,13 +22,9 @@ namespace RDMPAutomationService.OptionRunners
                 case DLECommands.run:
 
                     AutomatedDLELoad load = null;
-                    if(opts.LoadMetadata != 0)
-                    {
-                        var lmd = locator.CatalogueRepository.GetObjectByID<LoadMetadata>(opts.LoadMetadata);
-                        load = new AutomatedDLELoad(lmd);
-                        
-                    }
-                    
+                    if (opts.LoadMetadata != 0)
+                        load = new AutomatedDLELoad(opts);
+
                     if (load != null)
                         load.RunTask(locator);
                     else

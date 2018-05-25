@@ -14,6 +14,8 @@ namespace RDMPAutomationService.Options
 {
     class StartupOptions
     {
+        private LinkedRepositoryProvider _repositoryLocator;
+
         [Option('s', "Server", Required = false, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
         public string ServerName { get; set; }
 
@@ -43,23 +45,28 @@ namespace RDMPAutomationService.Options
 
         public virtual IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()
         {
-            var c = new SqlConnectionStringBuilder();
-            c.DataSource = ServerName;
-            c.IntegratedSecurity = true;
-            c.InitialCatalog = CatalogueDatabaseName;
-
-            SqlConnectionStringBuilder d = null;
-            if (DataExportDatabaseName != null)
+            if(_repositoryLocator == null)
             {
-                d = new SqlConnectionStringBuilder();
-                d.DataSource = ServerName;
-                d.IntegratedSecurity = true;
-                d.InitialCatalog = DataExportDatabaseName;
+                var c = new SqlConnectionStringBuilder();
+                c.DataSource = ServerName;
+                c.IntegratedSecurity = true;
+                c.InitialCatalog = CatalogueDatabaseName;
+
+                SqlConnectionStringBuilder d = null;
+                if (DataExportDatabaseName != null)
+                {
+                    d = new SqlConnectionStringBuilder();
+                    d.DataSource = ServerName;
+                    d.IntegratedSecurity = true;
+                    d.InitialCatalog = DataExportDatabaseName;
+                }
+
+                CatalogueRepository.SuppressHelpLoading = true;
+
+                _repositoryLocator = new LinkedRepositoryProvider(c.ConnectionString, d != null ? d.ConnectionString : null);
             }
 
-            CatalogueRepository.SuppressHelpLoading = true;
-
-            return new LinkedRepositoryProvider(c.ConnectionString, d != null ? d.ConnectionString : null);
+            return _repositoryLocator;
         }
     }
 }

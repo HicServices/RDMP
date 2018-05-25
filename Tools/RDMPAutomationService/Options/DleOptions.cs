@@ -18,7 +18,12 @@ namespace RDMPAutomationService.Options
         
         [Option('l',"LoadMetadata",HelpText = "The ID of the LoadMetadata you want to run")]
         public int LoadMetadata { get; set; }
-        
+
+        [Option('p', "LoadProgress", HelpText = "If your LoadMetadata has multiple LoadProgresses, you can run only one of them by specifying the ID of the LoadProgress to run here")]
+        public int LoadProgress { get; set; }
+
+        [Option('i', "Iterative", HelpText = "If the LoadMetadata has LoadProgress(es) then they will be run until available data is exhausted (if false then only one batch will be loaded e.g. 5 days)")]
+        public bool Iterative { get; set; }
 
         [Usage]
         public static IEnumerable<Example> Examples
@@ -29,6 +34,8 @@ namespace RDMPAutomationService.Options
                 yield return new Example("Override for RDMP platform databases (specified in .config)", new DleOptions() { Command = DLECommands.run, LoadMetadata = 30,ServerName =@"localhost\sqlexpress",CatalogueDatabaseName = "RDMP_Catalogue",DataExportDatabaseName =  "RDMP_DataExport"});
             }
         }
+
+        
     }
 
     public enum DLECommands

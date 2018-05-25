@@ -16,6 +16,7 @@ using DataLoadEngine.LoadProcess;
 using DataLoadEngine.LoadProcess.Scheduling;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
 using HIC.Logging;
+using RDMPAutomationService.Options;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -36,20 +37,24 @@ namespace RDMPAutomationService.Logic.DLE
         /// <summary>
         /// Starts a new one off load of the specified load metadata
         /// </summary>
-        /// <param name="loadMetadata"></param>
-        public AutomatedDLELoad(LoadMetadata loadMetadata)
+        public AutomatedDLELoad(DleOptions options)
         {
-            _loadMetadata = loadMetadata;
-        }
-        /// <summary>
-        /// Starts a new one off load of the specified load metadata
-        /// </summary>
-        /// <param name="lmd"></param>
-        public AutomatedDLELoad(ILoadProgress loadProgress,bool iterative)
-        {
-            _loadMetadata = loadProgress.LoadMetadata;
-            _loadProgress = loadProgress;
-            _iterative = iterative;
+            _repository = options.GetRepositoryLocator().CatalogueRepository;
+
+            if(options.LoadProgress != 0)
+            _loadMetadata = _repository.GetObjectByID<LoadMetadata>(options.LoadMetadata);
+
+            if(options.LoadProgress != 0)
+            {
+                _loadProgress = _repository.GetObjectByID<LoadProgress>(options.LoadProgress);
+                if (_loadMetadata == null)
+                    _loadMetadata = _loadProgress.LoadMetadata;
+                else
+                    if(_loadProgress.LoadMetadata_ID != _loadMetadata.ID)
+                        throw new ArgumentException("The supplied LoadProgress does not belong to the supplied LoadMetadata load");
+            }
+
+            _iterative = options.Iterative;
         }
 
         public int RunTask(IRDMPPlatformRepositoryServiceLocator repositoryLocator)

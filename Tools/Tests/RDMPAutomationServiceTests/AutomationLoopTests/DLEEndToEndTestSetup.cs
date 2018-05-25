@@ -13,6 +13,7 @@ using HIC.Logging.PastEvents;
 using NUnit.Framework;
 using RDMPAutomationService;
 using RDMPAutomationService.Logic.DLE;
+using RDMPAutomationService.Options;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -74,7 +75,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         {
             
             //start an automation loop in the slot, it should pickup the load
-            var auto = new AutomatedDLELoad(_stage1_setupCatalogue.DemographyCatalogue.LoadMetadata);
+            var auto = new AutomatedDLELoad(new DleOptions() { LoadMetadata = _stage1_setupCatalogue.DemographyCatalogue.LoadMetadata.ID});
             auto.RunTask(RepositoryLocator);
 
             //also shouldn't be any logged errors

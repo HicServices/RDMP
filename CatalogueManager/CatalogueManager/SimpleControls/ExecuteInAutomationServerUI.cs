@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using CommandLine;
+using RDMPAutomationService.Options;
 
 namespace CatalogueManager.SimpleControls
 {
-    public partial class ExecuteInAutomationServerUI : UserControl
+    partial class ExecuteInAutomationServerUI : UserControl
     {
         public const string AutomationServiceExecutable = "RDMPAutomationService.exe";
 
-        public Func<string> CommandGetter { get; set; }
+        public Func<StartupOptions> CommandGetter { get; set; }
 
         public ExecuteInAutomationServerUI()
         {
@@ -17,12 +19,12 @@ namespace CatalogueManager.SimpleControls
 
         private void btnCopyCommandToClipboard_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(CommandGetter());
+            Clipboard.SetText(GetCommandText());
         }
 
         private void btnExecuteDetatched_Click(object sender, EventArgs e)
         {
-            string command = CommandGetter();
+            string command = GetCommandText();
 
             if(!command.StartsWith(AutomationServiceExecutable))
                 throw new Exception("Expected command to start with " + AutomationServiceExecutable);
@@ -30,6 +32,13 @@ namespace CatalogueManager.SimpleControls
             var psi = new ProcessStartInfo(AutomationServiceExecutable);
             psi.Arguments = command.Substring(AutomationServiceExecutable.Length);
             Process.Start(psi);
+        }
+
+        private string GetCommandText()
+        {
+            Parser p = new Parser();
+            var options = CommandGetter();
+            return AutomationServiceExecutable + " " + p.FormatCommandLine(options);
         }
     }
 }

@@ -17,6 +17,8 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CommandLine;
+using CommandLine.Text;
 using DataLoadEngine.Checks;
 using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
@@ -26,6 +28,7 @@ using DataLoadEngine.LoadProcess;
 using DataLoadEngine.LoadProcess.Scheduling;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
 using HIC.Logging;
+using RDMPAutomationService.Options;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
@@ -264,20 +267,21 @@ namespace CatalogueManager.LoadExecutionUIs
             SetButtonStates();
         }
 
-        private string AutomationCommandGetter()
+        private StartupOptions AutomationCommandGetter()
         {
-            if (_loadMetadata.LoadProgresses.Any())
+            var lp = GetLoadProgressIfAny();
+
+            var options = new DleOptions
             {
-                var loadProgressToRun = GetLoadProgressIfAny();
+                Command = DLECommands.run,
+                LoadMetadata = _loadMetadata.ID,
+                Iterative = cbRunIteratively.Checked
+            };
 
-                if (cbRunIteratively.Checked)
-                    return ExecuteInAutomationServerUI.AutomationServiceExecutable + " dle " + _loadMetadata.ID + " -LoadProgress " + loadProgressToRun + " -iterative";
-
-                return ExecuteInAutomationServerUI.AutomationServiceExecutable + " dle " + _loadMetadata.ID + " -LoadProgress " + loadProgressToRun;
-            }
-
-            return ExecuteInAutomationServerUI.AutomationServiceExecutable + " dle " + _loadMetadata.ID;
+            if (lp != null)
+                options.LoadProgress = lp.ID;
             
+            return options;
         }
 
 
@@ -452,6 +456,9 @@ namespace CatalogueManager.LoadExecutionUIs
 
         private LoadProgress GetLoadProgressIfAny()
         {
+            if (ddLoadProgress.SelectedItem == null)
+                return null;
+
             var scheduleItem = (KeyValuePair<int, string>)ddLoadProgress.SelectedItem;
             if (scheduleItem.Key == 0)
                 return null;
