@@ -4,6 +4,7 @@ using System.Data.Common;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Data.DataTables
@@ -20,6 +21,8 @@ namespace DataExportLibrary.Data.DataTables
         private string _sQLExecuted;
         private string _extractedType;
         private int _extractedId;
+        private string _repositoryType;
+        private string _extractedName;
 
         public int? CumulativeExtractionResults_ID
         {
@@ -56,6 +59,18 @@ namespace DataExportLibrary.Data.DataTables
             get { return _extractedType; }
             set { SetField(ref _extractedType, value); }
         }
+        public string ExtractedName
+        {
+            get { return _extractedName; }
+            set { SetField(ref _extractedName, value); }
+        }
+
+        public string RepositoryType
+        {
+            get { return _repositoryType; }
+            set { SetField(ref _repositoryType, value); }
+        }
+
         public int ExtractedId
         {
             get { return _extractedId; }
@@ -67,28 +82,46 @@ namespace DataExportLibrary.Data.DataTables
         [NoMappingToDatabase]
         public bool IsGlobal { get; private set; }
 
-        public SupplementalExtractionResults(IRepository repository, IExtractionConfiguration configuration, string sql, Type getType, int id)
+        public SupplementalExtractionResults(IRepository repository, IExtractionConfiguration configuration, string sql, IMapsDirectlyToDatabaseTable extractedObject)
         {
             Repository = repository;
+            string name = extractedObject.GetType().FullName;
+
+            if (extractedObject is INamed)
+                name = (extractedObject as INamed).Name;
+
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"ExtractionConfiguration_ID", configuration.ID},
                 {"SQLExecuted", sql},
-                {"ExtractedType", getType.FullName },
-                {"ExtractedId", id }
+                {"ExtractedType", extractedObject.GetType().FullName },
+                {"ExtractedId", extractedObject.ID },
+                {"ExtractedName", name },
+                {"RepositoryType", extractedObject.Repository.GetType().FullName }
             });
+
+            IsGlobal = true;
         }
 
-        public SupplementalExtractionResults(IRepository repository, ICumulativeExtractionResults configuration, string sql, Type getType, int id)
+        public SupplementalExtractionResults(IRepository repository, ICumulativeExtractionResults configuration, string sql, IMapsDirectlyToDatabaseTable extractedObject)
         {
             Repository = repository;
+            string name = extractedObject.GetType().FullName;
+
+            if (extractedObject is INamed)
+                name = (extractedObject as INamed).Name;
+
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"CumulativeExtractionResults_ID", configuration.ID},
                 {"SQLExecuted", sql},
-                {"ExtractedType", getType.FullName },
-                {"ExtractedId", id }
+                {"ExtractedType", extractedObject.GetType().FullName },
+                {"ExtractedId", extractedObject.ID },
+                {"ExtractedName", name },
+                {"RepositoryType", extractedObject.Repository.GetType().FullName }
             });
+
+            IsGlobal = false;
         }
 
         internal SupplementalExtractionResults(IRepository repository, DbDataReader r)
@@ -102,14 +135,28 @@ namespace DataExportLibrary.Data.DataTables
             SQLExecuted = r["SQLExecuted"] as string;
             ExtractedType = r["ExtractedType"] as string;
             ExtractedId = r["ExtractedId"] is DBNull ? 0 : Convert.ToInt32(r["ExtractedId"]);
+            ExtractedName = r["ExtractedName"] as string;
+            RepositoryType = r["RepositoryType"] as string; 
+
+            IsGlobal = CumulativeExtractionResults_ID == null && ExtractionConfiguration_ID != null;
         }
-        
+
+        public Type GetExtractedType()
+        {
+            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(ExtractedType);
+        }
+
         public void CompleteAudit(string destinationDescription, int distinctIdentifiers)
         {
             DestinationDescription = destinationDescription;
             RecordsExtracted = distinctIdentifiers;
 
             SaveToDatabase();
+        }
+
+        public override string ToString()
+        {
+            return ExtractedName;
         }
     }
 }

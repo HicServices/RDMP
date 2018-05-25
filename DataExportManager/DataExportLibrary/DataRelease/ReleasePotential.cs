@@ -35,7 +35,6 @@ namespace DataExportLibrary.DataRelease
         private List<IColumn> _columnsToExtract;
         public IExtractionConfiguration Configuration { get; set; }
         public IExtractableDataSet DataSet { get; private set; }
-        public ICumulativeExtractionResults ExtractionResults { get; private set; }
         public Dictionary<ExtractableColumn, ExtractionInformation> ColumnsThatAreDifferentFromCatalogue { get; private set; }
 
         public Exception Exception { get; private set; }
@@ -62,6 +61,8 @@ namespace DataExportLibrary.DataRelease
         /// </summary>
         public FileInfo ExtractFile { get; set; }
 
+        public Dictionary<IExtractionResults, Releaseability> Assessments { get; protected set; }
+
         protected ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet)
         {
             _repositoryLocator = repositoryLocator;
@@ -70,54 +71,84 @@ namespace DataExportLibrary.DataRelease
             DataSet = dataSet;
 
             //see what has been extracted before
-            ExtractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
+            var extractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
+            if (extractionResults == null || extractionResults.DestinationDescription == null)
+                return;
+            
+            Assessments = new Dictionary<IExtractionResults, Releaseability>();
+            Assessments.Add(extractionResults, MakeAssesment(extractionResults));
 
-            MakeAssesment();
+            foreach (var supplementalResult in extractionResults.SupplementalExtractionResults)
+                Assessments.Add(supplementalResult, MakeSupplementalAssesment(supplementalResult));
         }
 
-        private void MakeAssesment()
+        private Releaseability MakeAssesment(ICumulativeExtractionResults extractionResults)
         {
             try
             {
                 //always try to figure out what the current SQL is
                 SqlCurrentConfiguration = GetCurrentConfigurationSQL();
 
-                if (ExtractionResults == null || ExtractionResults.DestinationDescription == null)
-                {
-                    Assesment = Releaseability.NeverBeenSuccessfullyExecuted;
-                    return;
-                }
-
                 //let the user know when the data was extracted
-                DateOfExtraction = ExtractionResults.DateOfExtraction;
-                SqlExtracted = ExtractionResults.SQLExecuted;
+                DateOfExtraction = extractionResults.DateOfExtraction;
+                SqlExtracted = extractionResults.SQLExecuted;
 
                 //the cohort has been changed in the configuration in the time elapsed since the file we are evaluating was generated (that was when CummatliveExtractionResults was populated)
-                if (ExtractionResults.CohortExtracted != Configuration.Cohort_ID)
-                {
-                    Assesment = Releaseability.CohortDesynchronisation;
-                    return;
-                }
+                if (extractionResults.CohortExtracted != Configuration.Cohort_ID)
+                    return Releaseability.CohortDesynchronisation;
 
-                if (SqlOutOfSyncWithDataExportManagerConfiguration())
-                {
-                    Assesment = Releaseability.ExtractionSQLDesynchronisation;
-                    return;
-                }
+                if (SqlOutOfSyncWithDataExportManagerConfiguration(extractionResults))
+                    return Releaseability.ExtractionSQLDesynchronisation;
 
-                Assesment = GetSpecificAssessment();
+                var finalAssessment = GetSpecificAssessment(extractionResults);
 
-                if (Assesment == Releaseability.Undefined)
-                    Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
+                if (finalAssessment == Releaseability.Undefined)
+                    return SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
+
+                return finalAssessment;
             }
             catch (Exception e)
             {
                 Exception = e;
-                Assesment = Releaseability.ExceptionOccurredWhileEvaluatingReleaseability;
+                return Releaseability.ExceptionOccurredWhileEvaluatingReleaseability;
             }
         }
 
-        protected abstract Releaseability GetSpecificAssessment();
+        private Releaseability MakeSupplementalAssesment(ISupplementalExtractionResults supplementalExtractionResults)
+        {
+            try
+            {
+                var extractedObject = _repositoryLocator.GetArbitraryDatabaseObject(
+                        supplementalExtractionResults.RepositoryType,
+                        supplementalExtractionResults.ExtractedType, 
+                        supplementalExtractionResults.ExtractedId) as INamed;
+
+                if (extractedObject == null)
+                    return Releaseability.Undefined;
+                    
+                if (extractedObject is SupportingSQLTable)
+                {
+                    if ((extractedObject as SupportingSQLTable).SQL != supplementalExtractionResults.SQLExecuted)
+                        return Releaseability.ExtractionSQLDesynchronisation;
+                }
+
+                var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
+
+                if (finalAssessment == Releaseability.Undefined)
+                    return (extractedObject.Name != supplementalExtractionResults.ExtractedName ? Releaseability.ExtractionSQLDesynchronisation : Releaseability.Releaseable);
+
+                return finalAssessment;
+            }
+            catch (Exception e)
+            {
+                Exception = e;
+                return Releaseability.ExceptionOccurredWhileEvaluatingReleaseability;
+            }
+        }
+
+        protected abstract Releaseability GetSupplementalSpecificAssessment(ISupplementalExtractionResults supplementalExtractionResults);
+
+        protected abstract Releaseability GetSpecificAssessment(ICumulativeExtractionResults extractionResults);
 
         private bool SqlDifferencesVsLiveCatalogue()
         {
@@ -164,13 +195,13 @@ namespace DataExportLibrary.DataRelease
             return resultLive.SQL;
         }
         
-        private bool SqlOutOfSyncWithDataExportManagerConfiguration()
+        private bool SqlOutOfSyncWithDataExportManagerConfiguration(IExtractionResults extractionResults)
         {
-            if (ExtractionResults.SQLExecuted == null)
+            if (extractionResults.SQLExecuted == null)
                 throw new Exception("Cumulative Extraction Results for the extraction in which this dataset was involved in does not have any SQLExecuted recorded for it.");
             
             //if the SQL today is different to the SQL that was run when the user last extracted the data then there is a desync in the SQL (someone has changed something in the catalogue/data export manager configuration since the data was extracted)
-            return !SqlCurrentConfiguration.Equals(ExtractionResults.SQLExecuted);
+            return !SqlCurrentConfiguration.Equals(extractionResults.SQLExecuted);
         }
         
         public override string ToString()

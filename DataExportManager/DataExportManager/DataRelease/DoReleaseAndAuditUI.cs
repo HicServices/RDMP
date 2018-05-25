@@ -100,7 +100,7 @@ namespace DataExportManager.DataRelease
 
         private void CheckForMixedReleaseTypes(IEnumerable<ReleasePotential> datasetReleasePotentials)
         {
-            if (datasetReleasePotentials.Select(rp => rp.ExtractionResults.DestinationType).Distinct().Count() > 1)
+            if (datasetReleasePotentials.Select(rp => (rp.Assessments.First().Key as ICumulativeExtractionResults).DestinationType).Distinct().Count() > 1)
                 throw new Exception(
                     "There is a mix of extraction types (DB and filesystem) in the datasets you are trying to add. This is not allowed.");
         }
@@ -108,7 +108,7 @@ namespace DataExportManager.DataRelease
         private void CheckForCumulativeExtractionResults(ReleasePotential[] datasetReleasePotentials)
         {
             var staleDatasets = datasetReleasePotentials.Where(
-                p => p.ExtractionResults.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
+                p => (p.Assessments.First().Key as ICumulativeExtractionResults).HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
            
             if (staleDatasets.Any())
                 throw new Exception(

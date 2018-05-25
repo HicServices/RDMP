@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
@@ -378,7 +379,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     if (_request is ExtractDatasetCommand)
                     {
                         var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
-                        var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql.GetType(), sql.ID);
+                        var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
                         supplementalResult.CompleteAudit(TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
                     }
                     else
@@ -389,8 +390,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                             new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
                                                               extractGlobalsCommand.Configuration,
                                                               sql.SQL,
-                                                              sql.GetType(),
-                                                              sql.ID);
+                                                              sql);
                         result.CompleteAudit(TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
                         extractGlobalsCommand.ExtractionResults.Add(result);
                     }
@@ -416,7 +416,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 if (_request is ExtractDatasetCommand)
                 {
                     var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
-                    var supplementalResult = result.AddSupplementalExtractionResult(null, doc.GetType(), doc.ID);
+                    var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
                     supplementalResult.CompleteAudit(outputPath, 0);
                 }
                 else
@@ -426,8 +426,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     var result = new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
                                                                    extractGlobalsCommand.Configuration,
                                                                    null,
-                                                                   doc.GetType(),
-                                                                   doc.ID);
+                                                                   doc);
                     result.CompleteAudit(outputPath, 0);
                     extractGlobalsCommand.ExtractionResults.Add(result);
                 }
@@ -482,7 +481,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     if (_request is ExtractDatasetCommand)
                     {
                         var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
-                        var supplementalResult = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup.TableInfo.Name, lookup.TableInfo.GetType(), lookup.TableInfo.ID);
+                        var supplementalResult = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup.TableInfo.Name, lookup.TableInfo);
                         supplementalResult.CompleteAudit(TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
                     }
                 }

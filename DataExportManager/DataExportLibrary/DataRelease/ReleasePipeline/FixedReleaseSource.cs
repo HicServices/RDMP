@@ -58,7 +58,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             var staleDatasets = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).Where(
-                   p => p.ExtractionResults.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
+                   p => (p.Assessments.First().Key as ICumulativeExtractionResults).HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
 
             if (staleDatasets.Any())
                 throw new Exception(

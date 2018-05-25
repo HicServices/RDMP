@@ -223,6 +223,17 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dashboard">
+      <HintPath>..\..\DataLoad\Applications\Dashboard\obj\Debug\Dashboard.dll</HintPath>
+    </Reference>
+    <Reference Include="DataQualityEngine, Version=2.9.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DataQualityEngine\DataQualityEngine\bin\Debug\DataQualityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="DataQualityEngine.Database, Version=2.9.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DataQualityEngine\DataQualityEngine.Database\bin\Debug\DataQualityEngine.Database.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>

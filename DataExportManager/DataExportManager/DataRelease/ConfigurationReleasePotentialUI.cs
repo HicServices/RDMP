@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Ticketing;
 using CatalogueLibrary.Repositories.Construction;
@@ -68,56 +70,7 @@ namespace DataExportManager.DataRelease
         public ExtractionConfiguration Configuration
         {
             get { return _configuration; }
-            private set
-            {
-                btnRelease.Enabled = false;
-                _configuration = value;
-
-                if (value != null)
-                {
-                    _project = (Project)value.Project;
-
-                    //Deal with crazy newlines and super long configuration description
-                    lbConfigurationName.Text = "Configuration:" + value + " (ID=" + value.ID + ")";
-
-                    if (value.Cohort_ID == null)
-                    {
-                        lbCohortName.Text = "No Cohort Defined for Configuration!";
-                        lbCohortName.Tag = null;
-                        lbCohortName.ForeColor = Color.Red;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var cohort = value.Cohort;
-                            lbCohortName.Text = "Cohort:" + cohort;
-                            lbCohortName.Tag = cohort;
-                            lbCohortName.ForeColor = Color.Black;
-                        }
-                        catch (Exception e)
-                        {
-                            ExceptionViewer.Show(e);
-                            lbCohortName.Text = "Cohort:Error retrieving cohort";
-                            lbCohortName.Tag = null;
-                            lbCohortName.ForeColor = Color.Red;
-                        }
-                    }
-
-                    SetupUIThread = new Thread(()=> SetupUIAsync(value));
-                    SetupUIThread.Name = "SetupUIAsync ConfigID " + value.ID;
-                    SetupUIThread.Start();
-
-                    //reset (incse we are being switched to a different ExtractionConfiguration, we don't want holdovers)
-                    ReleasePotentials.Clear();
-                    listView1.Items.Clear();
-
-                }
-                else
-                {
-                    throw new NullReferenceException("Configuration null?!");
-                }
-            }
+            private set { _configuration = value; }
         }
 
         //Constructor
@@ -125,12 +78,11 @@ namespace DataExportManager.DataRelease
         {
             InitializeComponent();
 
-            this.listView1.MouseClick += listView1_MouseClick;
+            this.tlvDatasets.CellRightClick += (s, e) => { e.MenuStrip = ShowRightClickMenuFor(e.Model, e.Column); }; 
 
             DoTransparencyProperly.ThisHoversOver(ragSmileyEnvironment,lblConfigurationInvalid);
         }
-
-
+        
         Thread SetupUIThread = null;
 
         public void AbortAsyncLoading()
@@ -156,7 +108,7 @@ namespace DataExportManager.DataRelease
                 int timeout = 10000;
 
                 //wait for window handle to be created
-                while (!IsHandleCreated && (timeout-=100)>0)
+                while (!IsHandleCreated && (timeout-=100) > 0)
                 {
                     Thread.Sleep(100);
                     if(IsDisposed)
@@ -165,16 +117,13 @@ namespace DataExportManager.DataRelease
 
                 IExtractableDataSet[] currentlyConfiguredDatasets = Configuration.GetAllExtractableDataSets();
 
-
                 //identify old CumulativeExtractionResults that are no longer active (user extracted a dataset then removed it from the configuration)
                 var oldResults = Configuration.CumulativeExtractionResults
-                    .Where(
-                        result =>
-                            currentlyConfiguredDatasets.All(dataset => dataset.ID != result.ExtractableDataSet_ID)).ToArray();
+                                    .Where(result => currentlyConfiguredDatasets.All(dataset => dataset.ID != result.ExtractableDataSet_ID)).ToArray();
 
                 if (oldResults.Any())
                 {
-                    string message = "In Configuration:" + Configuration + ":" + Environment.NewLine + Environment.NewLine + 
+                    string message = "In Configuration " + Configuration + ":" + Environment.NewLine + Environment.NewLine + 
                         "The following CumulativeExtractionResults reflect datasets that were previously extracted under the existing Configuration but are no longer in the CURRENT configuration:";
 
                     message = oldResults.Aggregate(message, (s, n) => s + Environment.NewLine + n.ExtractableDataSet);
@@ -185,7 +134,28 @@ namespace DataExportManager.DataRelease
                             result.DeleteInDatabase();
                     }
                 }
-                
+
+                var oldLostSupplemental = Configuration.CumulativeExtractionResults
+                                                           .SelectMany(c => c.SupplementalExtractionResults)
+                                                           .Union(RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SupplementalExtractionResults>(Configuration))
+                                                           .Where(s => !RepositoryLocator.ArbitraryDatabaseObjectExists(s.RepositoryType, s.ExtractedType, s.ExtractedId))
+                                                           .ToList();
+
+                if (oldLostSupplemental.Any())
+                {
+                    string message = "In Configuration " + Configuration + ":" + Environment.NewLine + Environment.NewLine +
+                                     "The following list reflect objects (supporting sql, lookups or documents) " +
+                                     "that were previously extracted but have since been deleted:";
+
+                    message = oldLostSupplemental.Aggregate(message, (s, n) => s + Environment.NewLine + n.DestinationDescription);
+
+                    if (MessageBox.Show(message, "Delete expired Extraction Results for configuration?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        foreach (var result in oldLostSupplemental)
+                            result.DeleteInDatabase();
+                    }
+                }
+
                 //create new ReleaseAssesments
                 foreach (ExtractableDataSet dataSet in currentlyConfiguredDatasets)
                 {
@@ -204,7 +174,13 @@ namespace DataExportManager.DataRelease
                     return;
 
                 //notify UI that data files have been evaluated for this project
-                Invoke((MethodInvoker) GenerateSummaryOfExtractsSoFar);
+                //Invoke((MethodInvoker) GenerateSummaryOfExtractsSoFar);
+
+                tlvDatasets.SetObjects(ReleasePotentials);
+
+                //Can expand dataset bundles and also can expand strings for which the dictionary has a key for that string (i.e. the strings "Custom Tables" etc)
+                tlvDatasets.CanExpandGetter = x => x is ReleasePotential;
+                tlvDatasets.ChildrenGetter += ChildrenGetter;
 
                 try
                 {
@@ -240,7 +216,16 @@ namespace DataExportManager.DataRelease
             finally
             {
                 SetupUIThread = null; //always remove reference so we can go again
+                OnSetupUiComplete();
             }
+        }
+
+        private IEnumerable ChildrenGetter(object model)
+        {
+            if (model is ReleasePotential)
+                return (model as ReleasePotential).Assessments;
+
+            return null;
         }
 
         private void SetupUIAsyncCallback()
@@ -284,7 +269,7 @@ namespace DataExportManager.DataRelease
 
             if(environmentReady)
                 //if environment is ready and ALL datasets are also ready (or are Catalogue differences which is allowable) so permit them to release stuff
-                if(listView1.Items.Cast<ListViewItem>().Select(i=>i.Tag).Cast<ReleasePotential>().All(rp=>rp.Assesment == Releaseability.Releaseable || rp.Assesment == Releaseability.ColumnDifferencesVsCatalogue))
+                if(tlvDatasets.Objects.OfType<ReleasePotential>().All(rp=>rp.Assesment == Releaseability.Releaseable || rp.Assesment == Releaseability.ColumnDifferencesVsCatalogue))
                     btnRelease.Enabled = true; //you can release
         }
         
@@ -294,73 +279,6 @@ namespace DataExportManager.DataRelease
         //potential of each of the datasets in the Configuration
         List<ReleasePotential> ReleasePotentials = new List<ReleasePotential>();
         private IActivateItems _activator;
-        
-        private void GenerateSummaryOfExtractsSoFar()
-        {
-          
-            //create visual representation of these
-            foreach (ReleasePotential releasePotential in ReleasePotentials)
-            {
-                ListViewItem i = new ListViewItem();
-                i.SubItems.Add(releasePotential.DataSet.ToString());
-                i.Tag = releasePotential;
-
-                switch (releasePotential.Assesment)
-                {
-                    case Releaseability.NeverBeenSuccessfullyExecuted:
-                        i.ImageKey = "NeverBeenGenerated";
-                        break;
-
-                    case Releaseability.ExtractFilesMissing:
-                        i.ImageKey = "FileMissing";
-                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
-                        break;
-
-                    case Releaseability.ExtractionSQLDesynchronisation:
-                        i.ImageKey = "OutOfSync";
-                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
-                        break;
-
-                    case Releaseability.CohortDesynchronisation:
-                        i.ImageKey = "WrongCohort";
-                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
-                        break;
-
-                    case Releaseability.Releaseable:
-                        i.ImageKey = "Releaseable";
-                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
-                        break;
-
-                    case Releaseability.ColumnDifferencesVsCatalogue:
-                        i.ImageKey = "DifferentFromCatalogue";
-                        i.SubItems.Add(releasePotential.DateOfExtraction.ToString());
-                        break;
-
-                    case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability :
-                        i.ImageKey = "Exception";
-                        i.SubItems.Add(releasePotential.Exception.ToString());
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                listView1.Items.Add(i);
-            }
-
-            
-            //depending on the number of datasets, set the preferred size to this
-            if (listView1.Items.Count > 0)
-            {
-                Size = new Size(this.Size.Width,
-                    (listView1.GetItemRect(0).Height * listView1.Items.Count) + MaxHeadroom);
-
-                foreach (ColumnHeader column in listView1.Columns)
-                    column.Width = -2; //magical (apparently it resizes to max width of content or header)
-            }
-            else
-                this.Size = new Size(this.Size.Width, MaxHeadroom);
-        }
         
         protected override bool ProcessKeyPreview(ref Message m)
         {
@@ -379,98 +297,88 @@ namespace DataExportManager.DataRelease
 
         private bool CopySelectedItemToClipboard()
         {
-            if (listView1.SelectedItems.Count == 0)
+            if (tlvDatasets.CheckedItems.Count == 0)
                 return false;
 
-
             string toCopy = "";
-            foreach (ListViewItem item in listView1.SelectedItems)
-                toCopy += ((ReleasePotential) item.Tag).ToString() + Environment.NewLine;
+            foreach (var item in tlvDatasets.CheckedItems)
+                toCopy += item + Environment.NewLine;
 
             Clipboard.SetText(toCopy);
             return true;
         }
 
-        void listView1_MouseClick(object sender, MouseEventArgs e)
+        void tlvDatasets_CellRightClick(object sender, CellRightClickEventArgs e)
         {
-            if(e.Button == MouseButtons.Right)
-            {
-                ListViewItem item = listView1.GetItemAt(e.Location.X, e.Location.Y);
-
-                if(item == null)
-                    return;
-                else
-                {
-                    ShowRightClickMenuFor((ReleasePotential)item.Tag,e.Location);
-                }
-            }
+            
+            
         }
 
-        private void ShowRightClickMenuFor(ReleasePotential tag, Point point)
+        private ContextMenuStrip ShowRightClickMenuFor(object model, OLVColumn column)
         {
             var atomicCommandExecutionFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
-
 
             //create right click context menu
             RightClickMenu = new ContextMenuStrip();
 
-            if (tag.SqlExtracted != tag.SqlCurrentConfiguration)
+            var potential = model as ReleasePotential;
+            if (potential == null)
+                return null;
+
+            if (potential.SqlExtracted != potential.SqlCurrentConfiguration)
                 RightClickMenu.Items.Add("View SQL Extracted vs Now", CatalogueIcons.SqlThenVSNow,
                     (sender, args) =>
-                        new SQLBeforeAndAfterViewer(tag.SqlExtracted, tag.SqlCurrentConfiguration,
+                        new SQLBeforeAndAfterViewer(potential.SqlExtracted, potential.SqlCurrentConfiguration,
                             "Original Extraction SQL:", "Current Configuration:", "SQL Desync", MessageBoxButtons.OK)
                             .Show());
 
-            if (tag.Assesment == Releaseability.ColumnDifferencesVsCatalogue)
+            if (potential.Assessments.First().Value == Releaseability.ColumnDifferencesVsCatalogue)
                 RightClickMenu.Items.Add("Show Column Changes VS Catalogue", CatalogueIcons.SqlThenVSNow, (sender, args) =>
                     new SQLBeforeAndAfterViewer(
                         string.Join("\r\n",
-                            tag.ColumnsThatAreDifferentFromCatalogue.Values.Where(v => v != null)
-                                .Select(val => val.SelectSQL)),
+                            potential.ColumnsThatAreDifferentFromCatalogue.Values.Where(v => v != null)
+                                     .Select(val => val.SelectSQL)),
                         string.Join("\r\n",
-                            tag.ColumnsThatAreDifferentFromCatalogue.Select(
-                                kvp =>
-                                    kvp.Value == null
-                                        ? kvp.Key.SelectSQL + "/*Column no longer appears in catalogue*/"
-                                        : kvp.Key.SelectSQL)),
-                        "Catalogue Version", "Current Configuration Version",
-                        "Catalogue Vs DataExportManager Configuration", MessageBoxButtons.OK).Show());
+                            potential.ColumnsThatAreDifferentFromCatalogue.Select(
+                                        kvp =>
+                                            kvp.Value == null
+                                                ? kvp.Key.SelectSQL + "/*Column no longer appears in catalogue*/"
+                                                : kvp.Key.SelectSQL)),
+                                "Catalogue Version", "Current Configuration Version",
+                                "Catalogue Vs DataExportManager Configuration", MessageBoxButtons.OK).Show());
 
-            if (tag.ExtractDirectory != null && tag.ExtractDirectory.Exists)
+            if (potential.ExtractDirectory != null && potential.ExtractDirectory.Exists)
             {
                 RightClickMenu.Items.Add("Open Folder", CatalogueIcons.ExtractionDirectoryNode,
-                    (sender, args) => Process.Start(tag.ExtractDirectory.FullName));
+                    (sender, args) => Process.Start(potential.ExtractDirectory.FullName));
 
-                if (listView1.SelectedItems.Count <= 1)
-                    RightClickMenu.Items.Add("Add file as Patch (Not Recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.Release,OverlayKind.Problem),
-                        (sender, args) => AddAsPatchContent(tag));
-                        //get the .Tag element of the selected (right clicked) item (because user isn't doing multi-select)
-                else
-                    RightClickMenu.Items.Add("Add all selected files as Patch (Not Recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.Release, OverlayKind.Problem),
-                        (sender, args) => AddAllAsPatchContent(
-                            listView1.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag).Cast<ReleasePotential>()
-                            //get all the .Tag elements
-                            ));
+                //if (listView1.SelectedItems.Count <= 1)
+                //    RightClickMenu.Items.Add("Add file as Patch (Not Recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.Release, OverlayKind.Problem),
+                //        (sender, args) => AddAsPatchContent(tag));
+                //get the .Tag element of the selected (right clicked) item (because user isn't doing multi-select)
+                //else
+                //    RightClickMenu.Items.Add("Add all selected files as Patch (Not Recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.Release, OverlayKind.Problem),
+                //        (sender, args) => AddAllAsPatchContent(
+                //            listView1.SelectedItems.Cast<ListViewItem>().Select(i => i.Tag).Cast<ReleasePotential>()
+                //            //get all the .Tag elements
+                //            ));
             }
-
-
+            
             RightClickMenu.Items.Add(
-                atomicCommandExecutionFactory.CreateMenuItem(new ExecuteCommandActivate(_activator,(ExtractionConfiguration) tag.Configuration)));
+                atomicCommandExecutionFactory.CreateMenuItem(new ExecuteCommandActivate(_activator, (ExtractionConfiguration)potential.Configuration)));
 
             RightClickMenu.Items.Add("Execute Extraction Configuration",
                 _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Execute),
                 (sender, args) =>
 
-                    new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget((ExtractionConfiguration) tag.Configuration).Execute()
+                    new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget((ExtractionConfiguration)potential.Configuration).Execute()
 
                         );
 
-            RightClickMenu.Show(listView1, point);
-
+            return RightClickMenu;
         }
 
-        private void 
-            AddAllAsPatchContent(IEnumerable<ReleasePotential> releasePotentials)
+        private void AddAllAsPatchContent(IEnumerable<ReleasePotential> releasePotentials)
         {
             if (ConfirmReleaseEnvironmentAcceptable())
                 foreach (ReleasePotential potential in releasePotentials)
@@ -500,9 +408,9 @@ namespace DataExportManager.DataRelease
 
         private void btnRelease_Click(object sender, EventArgs e)
         {
-            if (RequestRelease != null)
-                RequestRelease(this, listView1.Items.Cast<ListViewItem>().Select(i => i.Tag).Cast<ReleasePotential>().ToArray(), _environmentalPotential);
-            else
+            //if (RequestRelease != null)
+            //    RequestRelease(this, listView1.Items.Cast<ListViewItem>().Select(i => i.Tag).Cast<ReleasePotential>().ToArray(), _environmentalPotential);
+            //else
                 throw new Exception("Nobody is listening to our event handler (RequestRelease) :(");
         }
 
@@ -517,6 +425,130 @@ namespace DataExportManager.DataRelease
             _activator = activator;
             Configuration = configuration;
 
+            PrepareUI();
+
+            olvColumn1.ImageGetter += ImageGetter;
+            olvColumn1.AspectGetter += AspectGetter;
+            olvColumn2.ImageGetter += StatusGetter;
+            olvColumn2.AspectGetter += (x => String.Empty);
+        }
+
+        private object StatusGetter(object rowObject)
+        {
+            if (rowObject is ReleasePotential)
+                return null;
+
+            var potential = (KeyValuePair<IExtractionResults, Releaseability>)rowObject;
+
+            return GetImageFromReleasability(potential.Value);
+        }
+
+        private object AspectGetter(object rowObject)
+        {
+            if (rowObject is ReleasePotential)
+                return (rowObject as ReleasePotential).DataSet.ToString();
+
+            var potential = (KeyValuePair<IExtractionResults, Releaseability>)rowObject;
+
+            return potential.Key.ToString();
+        }
+
+        private object ImageGetter(object rowObject)
+        {
+            if (rowObject is ReleasePotential)
+                return _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
+
+            var potential = (KeyValuePair<IExtractionResults, Releaseability>) rowObject;
+
+            if (potential.Key is ICumulativeExtractionResults)
+                return _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
+
+            var supplemental = potential.Key as ISupplementalExtractionResults;
+
+            return _activator.CoreIconProvider.GetImage(supplemental.ExtractedType.Split('.').Last());
+        }
+
+        private string GetImageFromReleasability(Releaseability value)
+        {
+            switch (value)
+            {
+                case Releaseability.NeverBeenSuccessfullyExecuted:
+                    return "NeverBeenGenerated";
+                case Releaseability.ExtractFilesMissing:
+                    return "FileMissing";
+                case Releaseability.ExtractionSQLDesynchronisation:
+                    return "OutOfSync";
+                case Releaseability.CohortDesynchronisation:
+                    return "WrongCohort";
+                case Releaseability.Releaseable:
+                    return "Releaseable";
+                case Releaseability.ColumnDifferencesVsCatalogue:
+                    return "DifferentFromCatalogue";
+                case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability:
+                    return "Exception";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void PrepareUI()
+        {
+            if (Configuration != null)
+            {
+                _project = (Project)Configuration.Project;
+
+                //Deal with crazy newlines and super long configuration description
+                lbConfigurationName.Text = "Configuration:" + Configuration + " (ID=" + Configuration.ID + ")";
+
+                if (Configuration.Cohort_ID == null)
+                {
+                    lbCohortName.Text = "No Cohort Defined for Configuration!";
+                    lbCohortName.Tag = null;
+                    lbCohortName.ForeColor = Color.Red;
+                }
+                else
+                {
+                    try
+                    {
+                        var cohort = Configuration.Cohort;
+                        lbCohortName.Text = "Cohort: " + cohort;
+                        lbCohortName.Tag = cohort;
+                        lbCohortName.ForeColor = Color.Black;
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionViewer.Show(e);
+                        lbCohortName.Text = "Cohort: Error retrieving cohort";
+                        lbCohortName.Tag = null;
+                        lbCohortName.ForeColor = Color.Red;
+                    }
+                }
+
+                //reset (since we are being switched to a different ExtractionConfiguration, we don't want holdovers)
+                ReleasePotentials.Clear();
+                tlvDatasets.Items.Clear();
+
+                SetupUIThread = new Thread(() => SetupUIAsync(Configuration));
+                SetupUIThread.Name = "SetupUIAsync ConfigID " + Configuration.ID;
+                SetupUIThread.Start();
+
+                SetupUiComplete += (s,e) => tlvDatasets.Invoke(new MethodInvoker(() => {                    
+                    tlvDatasets.CheckAll();
+                    tlvDatasets.ExpandAll();
+                }));
+            }
+            else
+            {
+                throw new NullReferenceException("Configuration null?!");
+            }
+        }
+
+        private event EventHandler SetupUiComplete;
+
+        protected virtual void OnSetupUiComplete()
+        {
+            var handler = SetupUiComplete;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
     }
 }

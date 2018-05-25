@@ -7,6 +7,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode.Checks;
 
@@ -43,7 +44,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
                 var releasePotential = releasePotentials.First();
 
-                var destinationType = _catalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(releasePotential.ExtractionResults.DestinationType, typeof(IExecuteDatasetExtractionDestination));
+                var destinationType = _catalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(
+                    (releasePotential.Assessments.First().Key as ICumulativeExtractionResults).DestinationType, typeof(IExecuteDatasetExtractionDestination));
                 ObjectConstructor constructor = new ObjectConstructor();
 
                 var destinationUsedAtExtraction = (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, _catalogueRepository);
@@ -80,7 +82,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             var staleDatasets = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).Where(
-                   p => p.ExtractionResults.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
+                   p => (p.Assessments.First().Key as ICumulativeExtractionResults).HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
 
             if (staleDatasets.Any())
                 throw new Exception(

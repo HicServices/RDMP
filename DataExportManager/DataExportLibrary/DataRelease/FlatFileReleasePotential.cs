@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,20 +22,28 @@ namespace DataExportLibrary.DataRelease
         {
         }
 
-        protected override Releaseability GetSpecificAssessment()
+        protected override Releaseability GetSupplementalSpecificAssessment(ISupplementalExtractionResults supplementalExtractionResults)
         {
-            ExtractDirectory = new FileInfo(ExtractionResults.DestinationDescription).Directory;
-            if (FilesAreMissing())
+            if (File.Exists(supplementalExtractionResults.DestinationDescription))
+                return Releaseability.Undefined;
+
+            return Releaseability.ExtractFilesMissing;
+        }
+
+        protected override Releaseability GetSpecificAssessment(ICumulativeExtractionResults extractionResults)
+        {
+            ExtractDirectory = new FileInfo(extractionResults.DestinationDescription).Directory;
+            if (FilesAreMissing(extractionResults))
                 return Releaseability.ExtractFilesMissing;
             
             ThrowIfPollutionFoundInConfigurationRootExtractionFolder();
             return Releaseability.Undefined;// Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
         }
 
-        private bool FilesAreMissing()
+        private bool FilesAreMissing(ICumulativeExtractionResults extractionResults)
         {
-            ExtractFile = new FileInfo(ExtractionResults.DestinationDescription);
-            var metadataFile = new FileInfo(ExtractionResults.DestinationDescription.Replace(".csv", ".docx"));
+            ExtractFile = new FileInfo(extractionResults.DestinationDescription);
+            var metadataFile = new FileInfo(extractionResults.DestinationDescription.Replace(".csv", ".docx"));
 
             if (!ExtractFile.Exists)
                 return true;//extract is missing

@@ -26,6 +26,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted);
 
         List<ISupplementalExtractionResults> SupplementalExtractionResults { get; }
-        ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, Type extractedType, int extractedId);
+        ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject);
     }
 }

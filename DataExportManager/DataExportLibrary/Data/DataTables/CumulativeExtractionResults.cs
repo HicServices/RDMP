@@ -111,9 +111,9 @@ namespace DataExportLibrary.Data.DataTables
             get { return new List<ISupplementalExtractionResults>(Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this)); }
         }
 
-        public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, Type extractedType, int extractedId)
+        public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject)
         {
-            var result = new SupplementalExtractionResults(Repository, this, sqlExecuted, extractedType, extractedId);
+            var result = new SupplementalExtractionResults(Repository, this, sqlExecuted, extractedObject);
             SupplementalExtractionResults.Add(result);
             return result;
         }
@@ -179,6 +179,11 @@ namespace DataExportLibrary.Data.DataTables
             RecordsExtracted = recordsExtracted;
 
             SaveToDatabase();
+        }
+
+        public override string ToString()
+        {
+            return ExtractableDataSet.Catalogue.Name;
         }
     }
 }

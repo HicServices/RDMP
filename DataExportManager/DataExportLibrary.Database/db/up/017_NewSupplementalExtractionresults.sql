@@ -11,8 +11,10 @@ begin
 	    [RecordsExtracted] [int] NULL,
 	    [Exception] [varchar](max) NULL,
 	    [SQLExecuted] [varchar](max) NULL,
+        [ExtractedName] [varchar](max) NULL,
 	    [ExtractedType] [varchar](max) NULL,
 	    [ExtractedId] [int] NULL,
+	    [RepositoryType] [varchar](max) NULL,
      CONSTRAINT [PK_SupplementalExtractionResults] PRIMARY KEY CLUSTERED 
     (
 	    [ID] ASC
