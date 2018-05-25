@@ -106,7 +106,6 @@ namespace CatalogueManager.LoadExecutionUIs
             this.cbMigrateRAWToStaging.TabIndex = 9;
             this.cbMigrateRAWToStaging.Text = "Migrate RAW to Staging";
             this.cbMigrateRAWToStaging.UseVisualStyleBackColor = true;
-            this.cbMigrateRAWToStaging.CheckedChanged += new System.EventHandler(this.cbMigrateRAWToStaging_CheckedChanged);
             // 
             // ddLoadProgress
             // 

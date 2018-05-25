@@ -46,6 +46,11 @@ namespace RDMPAutomationService.Runners
             
             var databaseConfiguration = new HICDatabaseConfiguration(loadMetadata);
             var flags = new HICLoadConfigurationFlags();
+            
+            flags.ArchiveData = !_options.DoNotArchiveData;
+            flags.DoLoadToStaging = !_options.StopAfterRAW;
+            flags.DoMigrateFromStagingToLive = !_options.StopAfterSTAGING;
+
             var checkable = new CheckEntireDataLoadProcess(loadMetadata, databaseConfiguration, flags, locator.CatalogueRepository.MEF); 
 
             switch (_options.Command)
@@ -70,8 +75,8 @@ namespace RDMPAutomationService.Runners
                         var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress);
                     
                         dataLoadProcess = _options.Iterative
-                            ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, null, logManager, listener) :
-                                new SingleJobScheduledDataLoadProcess(loadMetadata, checkable, execution, jobDateFactory,whichLoadProgress, null, logManager, listener) ;
+                            ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener) :
+                                new SingleJobScheduledDataLoadProcess(loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener);
                     }
                     else
                         //OnDemand

@@ -1,38 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CommandLine;
-using CommandLine.Text;
-using DataLoadEngine.Checks;
-using DataLoadEngine.Checks.Checkers;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Job.Scheduling;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadProcess;
-using DataLoadEngine.LoadProcess.Scheduling;
-using DataLoadEngine.LoadProcess.Scheduling.Strategy;
-using HIC.Logging;
 using RDMPAutomationService.Options;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
-using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.LoadExecutionUIs
 {
@@ -50,10 +27,6 @@ namespace CatalogueManager.LoadExecutionUIs
     /// </summary>
     public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     {
-        private HICDatabaseConfiguration _databaseLoadConfiguration;
-        
-        private Task _runningLoadProcessTask;
-        
         private LoadMetadata _loadMetadata;
         private ILoadProgress[] _allLoadProgresses;
 
@@ -80,10 +53,8 @@ namespace CatalogueManager.LoadExecutionUIs
             SetButtonStates(null,null);
 
             SetLoadProgressGroupBoxState();
-
         }
-
-
+        
         private void SetLoadProgressGroupBoxState()
         {
             _allLoadProgresses = _loadMetadata.LoadProgresses;
@@ -116,22 +87,7 @@ namespace CatalogueManager.LoadExecutionUIs
             gbLoadProgresses.Enabled = checkAndExecuteUI1.ChecksPassed;
             gbDebugOptions.Enabled = checkAndExecuteUI1.ChecksPassed;
         }
-
-        private void ExecuteHandler(IDataLoadEventListener listener,GracefulCancellationToken token)
-        {
-            IDataLoadProcess _dataLoadProcess;
-
-            if (_loadMetadata.LoadProgresses.Any())
-                if (cbRunIteratively.Checked)
-                    _dataLoadProcess = CreateIterativeScheduledDataLoadProcess(listener);
-                else
-                    _dataLoadProcess = CreateSingleScheduledJobLoadProcess(listener);
-            else
-                _dataLoadProcess = CreateOnDemandDataLoadProcess(listener);
-
-            RunDataLoadProcess(_dataLoadProcess, listener, token);
-        }
-
+        
         private RDMPCommandLineOptions AutomationCommandGetter(CommandLineActivity activityRequested)
         {
             var lp = GetLoadProgressIfAny();
@@ -140,56 +96,17 @@ namespace CatalogueManager.LoadExecutionUIs
             {
                 Command = activityRequested,
                 LoadMetadata = _loadMetadata.ID,
-                Iterative = cbRunIteratively.Checked
+                Iterative = cbRunIteratively.Checked,
+                DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
+                DoNotArchiveData = cbSkipArchiving.Checked,
+                StopAfterRAW = !cbMigrateRAWToStaging.Checked,
+                StopAfterSTAGING = !cbMigrateStagingToLive.Checked,
             };
 
             if (lp != null)
                 options.LoadProgress = lp.ID;
             
             return options;
-        }
-
-
-        private ILogManager CreateLogManager(ILoadMetadata loadMetadata)
-        {
-            return new LogManager(loadMetadata.GetDistinctLoggingDatabaseSettings());
-        }
-
-        private static string TranslateExitCode(ExitCodeType exitCode)
-        {
-            string message;
-            switch (exitCode)
-            {
-                case ExitCodeType.Success:
-                    message = "Data load has ended successfully";
-                    break;
-                case ExitCodeType.Error:
-                    message = "Data load encountered an error, please see previous exceptions/errors.";
-                    break;
-                case ExitCodeType.Abort:
-                    message = "Data load has been aborted/cancelled successfully";
-                    break;
-                case ExitCodeType.OperationNotRequired:
-                    message = "Data load is not required, there is no data to load.";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("exitCode");
-            }
-            return message;
-        }
-
-        private void TryToCreateHICProjectDirectory()
-        {
-            try
-            {
-                new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles, false);
-            }
-            catch (DirectoryNotFoundException e)
-            {
-                ExceptionViewer.Show("Couldn't create HICProjectDirectory for " + _loadMetadata.Name +
-                                     ". It either doesn't exist or you don't have access rights to the root directory (DirectoryNotFoundException could mean this too) " +
-                                     _loadMetadata.LocationOfFlatFiles  ,e);
-            }
         }
 
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
@@ -200,111 +117,10 @@ namespace CatalogueManager.LoadExecutionUIs
                 MessageBox.Show("Load is running so you cannot close this window, try clicking Abort first");
             }
         }
-
-        private void cbMigrateRAWToStaging_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbMigrateRAWToStaging.Checked)
-                cbMigrateStagingToLive.Enabled = true;
-            else
-            {
-                cbMigrateStagingToLive.Enabled = false;
-                cbMigrateStagingToLive.Checked = false;
-            }
-        }
-
-        private HICLoadConfigurationFlags GetLoadConfigurationFlags()
-        {
-              return new HICLoadConfigurationFlags
-            {
-                ArchiveData = !cbSkipArchiving.Checked,
-                DoLoadToStaging = cbMigrateRAWToStaging.Checked,
-                DoMigrateFromStagingToLive = cbMigrateStagingToLive.Checked,
-            };
-
-        }
-
-        #region LoadProcess creation
-
-        private DataLoadProcess CreateOnDemandDataLoadProcess(IDataLoadEventListener listener)
-        {
-            // Create the 'on demand' data load process, overriding the data provider if one is specified
-            var logManager = CreateLogManager(_loadMetadata);
-            var pipeline = CreateLoadPipeline(listener,logManager);
-            var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
-            return new DataLoadProcess(_loadMetadata, preExecutionChecker, logManager, listener, pipeline);
-        }
-
-        private SingleJobScheduledDataLoadProcess CreateSingleScheduledJobLoadProcess(IDataLoadEventListener listener)
-        {
-            var toAttempt = CreateLoadProgressSelectionStrategy();
-            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt);
-
-            var logManager = CreateLogManager(_loadMetadata);
-            var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
-            var pipeline = CreateLoadPipeline(listener, logManager);
-
-            return new SingleJobScheduledDataLoadProcess(_loadMetadata, preExecutionChecker, pipeline,
-                jobDateGenerationStrategyFactory,
-                CreateLoadProgressSelectionStrategy(), GetNumDaysPerJob(), logManager, listener);
-        }
-
-        private int GetNumDaysPerJob()
-        {
-            return Convert.ToInt32(udDaysPerJob.Value);
-        }
-
-        private IterativeScheduledDataLoadProcess CreateIterativeScheduledDataLoadProcess(IDataLoadEventListener listener)
-        {
-            var toAttempt = CreateLoadProgressSelectionStrategy();
-            var jobDateGenerationStrategyFactory = new JobDateGenerationStrategyFactory(toAttempt);
-            var logManager = CreateLogManager(_loadMetadata);
-            var preExecutionChecker = new PreExecutionChecker(_loadMetadata, _databaseLoadConfiguration);
-            var pipeline = CreateLoadPipeline(listener,logManager);
-            return new IterativeScheduledDataLoadProcess(_loadMetadata, preExecutionChecker, pipeline, jobDateGenerationStrategyFactory, toAttempt, GetNumDaysPerJob(), logManager, listener);
-        }
-
-        #endregion
-
-        private void RunDataLoadProcess(IDataLoadProcess dataLoadProcess,IDataLoadEventListener listener, GracefulCancellationToken token)
-        {
-            try
-            {
-                var exitCode = dataLoadProcess.Run(token);
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, TranslateExitCode(exitCode)));
-            }
-            catch (OperationCanceledException ex)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Data load operation has been cancelled.", ex));
-            }
-            catch (AggregateException ex)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Entire data load process crashed", ex));
-                ex.Handle(e =>
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
-                    return true;
-                });
-            }
-            catch (Exception e)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Entire data load process crashed", e));
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
-            }
-        }
-
-        private ILoadProgressSelectionStrategy CreateLoadProgressSelectionStrategy()
-        {
-            var loadProgress = GetLoadProgressIfAny();
-             
-            if(loadProgress == null)
-                return new AnyAvailableLoadProgressSelectionStrategy(_loadMetadata);
-            
-            return new SingleLoadProgressSelectionStrategy(loadProgress);
-        }
-
+        
         private LoadProgress GetLoadProgressIfAny()
         {
-            if (ddLoadProgress.SelectedIndex == 0)
+            if (ddLoadProgress.SelectedIndex == 0 || ddLoadProgress.SelectedIndex == -1)
                 return null;
 
             var scheduleItem = (KeyValuePair<int, string>)ddLoadProgress.SelectedItem;
@@ -314,22 +130,6 @@ namespace CatalogueManager.LoadExecutionUIs
             return RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
         }
 
-        private IDataLoadExecution CreateLoadPipeline(IDataLoadEventListener listener, ILogManager logManager)
-        {
-            try
-            {
-                var repository = (CatalogueRepository)_loadMetadata.Repository;
-
-                // Create the pipeline
-                var factory = new HICDataLoadFactory(_loadMetadata, _databaseLoadConfiguration, GetLoadConfigurationFlags(), repository, logManager);
-                var loadPipeline = factory.Create(listener);
-                return loadPipeline;
-            }
-            catch (InvalidOperationException e)
-            {
-                throw new Exception("Error when building load pipeline: " + e);
-            }
-        }
         
         private void ddLoadProgress_SelectedIndexChanged(object sender, EventArgs e)
         {
