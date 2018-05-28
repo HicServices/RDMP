@@ -184,7 +184,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewDQEResultsForCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadMetadataLogs.cs" />
     <Compile Include="DQEPluginUserInterface.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
     <Compile Include="Menus\MenuItems\DQEMenuItem.cs" />
     <Compile Include="Overview\DataLoadsGraph.cs">
       <SubType>UserControl</SubType>

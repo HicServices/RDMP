@@ -42,6 +42,7 @@ using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
 using Dashboard.Automation;
+using Dashboard.CommandExecution.AtomicCommands;
 using DataExportLibrary.Providers;
 using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
@@ -347,6 +348,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             log.ShowDataLoadRunID(dataLoadRunID);
         }
 
+        public void ActivateViewLog(LoadMetadata loadMetadata)
+        {
+            new ExecuteCommandViewLoadMetadataLogs(this).SetTarget(loadMetadata).Execute();
+        }
+
         public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
         {
             return Activate<LoadDiagram, LoadMetadata>(loadMetadata);
@@ -400,7 +406,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return objectToEmphasise;
         }
 
-        
+        public void ActivateViewDQEResultsForCatalogue(Catalogue catalogue)
+        {
+            new ExecuteCommandViewDQEResultsForCatalogue(this).SetTarget(catalogue).Execute();
+        }
+
 
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {

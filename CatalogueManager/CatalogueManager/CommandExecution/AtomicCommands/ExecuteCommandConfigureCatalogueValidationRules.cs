@@ -1,16 +1,14 @@
 ﻿using System.Drawing;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Validation;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Dashboard.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExecution,IAtomicCommandWithTarget
     {
         private Catalogue _catalogue;
 

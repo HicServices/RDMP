@@ -48,7 +48,9 @@ namespace CatalogueManager.LoadExecutionUIs
             this.cbRunIteratively = new System.Windows.Forms.CheckBox();
             this.cbAbortShouldActuallyCancelInstead = new System.Windows.Forms.CheckBox();
             this.flpControls = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnViewLogs = new System.Windows.Forms.Button();
             this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
+            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             this.gbDebugOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDaysPerJob)).BeginInit();
             this.gbLoadProgresses.SuspendLayout();
@@ -72,7 +74,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbDebugOptions.Controls.Add(this.cbMigrateStagingToLive);
             this.gbDebugOptions.Controls.Add(this.cbMigrateRAWToStaging);
             this.gbDebugOptions.Controls.Add(this.cbSkipArchiving);
-            this.gbDebugOptions.Location = new System.Drawing.Point(466, 3);
+            this.gbDebugOptions.Location = new System.Drawing.Point(531, 3);
             this.gbDebugOptions.Name = "gbDebugOptions";
             this.gbDebugOptions.Size = new System.Drawing.Size(166, 90);
             this.gbDebugOptions.TabIndex = 16;
@@ -165,7 +167,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbLoadProgresses.Controls.Add(this.udDaysPerJob);
             this.gbLoadProgresses.Controls.Add(this.label3);
             this.gbLoadProgresses.Controls.Add(this.label4);
-            this.gbLoadProgresses.Location = new System.Drawing.Point(3, 3);
+            this.gbLoadProgresses.Location = new System.Drawing.Point(68, 3);
             this.gbLoadProgresses.Name = "gbLoadProgresses";
             this.gbLoadProgresses.Size = new System.Drawing.Size(457, 90);
             this.gbLoadProgresses.TabIndex = 57;
@@ -229,21 +231,41 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             this.flpControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.flpControls.Controls.Add(this.btnViewLogs);
             this.flpControls.Controls.Add(this.gbLoadProgresses);
             this.flpControls.Controls.Add(this.gbDebugOptions);
-            this.flpControls.Location = new System.Drawing.Point(195, 3);
+            this.flpControls.Location = new System.Drawing.Point(195, 25);
             this.flpControls.Name = "flpControls";
             this.flpControls.Size = new System.Drawing.Size(724, 110);
             this.flpControls.TabIndex = 59;
             // 
+            // btnViewLogs
+            // 
+            this.btnViewLogs.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.btnViewLogs.Location = new System.Drawing.Point(3, 30);
+            this.btnViewLogs.Name = "btnViewLogs";
+            this.btnViewLogs.Size = new System.Drawing.Size(59, 36);
+            this.btnViewLogs.TabIndex = 58;
+            this.btnViewLogs.Text = "View Logs";
+            this.btnViewLogs.UseVisualStyleBackColor = true;
+            this.btnViewLogs.Click += new System.EventHandler(this.btnViewLogs_Click);
+            // 
             // checkAndExecuteUI1
             // 
-            this.checkAndExecuteUI1.CommandGetter = null;
             this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 0);
+            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 22);
             this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
-            this.checkAndExecuteUI1.Size = new System.Drawing.Size(922, 733);
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(922, 711);
             this.checkAndExecuteUI1.TabIndex = 58;
+            // 
+            // rdmpObjectsRibbonUI1
+            // 
+            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
+            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
+            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
+            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(922, 22);
+            this.rdmpObjectsRibbonUI1.TabIndex = 60;
             // 
             // ExecuteLoadMetadataUI
             // 
@@ -251,6 +273,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.flpControls);
             this.Controls.Add(this.checkAndExecuteUI1);
+            this.Controls.Add(this.rdmpObjectsRibbonUI1);
             this.Name = "ExecuteLoadMetadataUI";
             this.Size = new System.Drawing.Size(922, 733);
             this.gbDebugOptions.ResumeLayout(false);
@@ -281,6 +304,8 @@ namespace CatalogueManager.LoadExecutionUIs
         private System.Windows.Forms.Button btnRefreshLoadProgresses;
         private CheckAndExecuteUI checkAndExecuteUI1;
         private System.Windows.Forms.FlowLayoutPanel flpControls;
+        private ObjectVisualisation.RDMPObjectsRibbonUI rdmpObjectsRibbonUI1;
+        private System.Windows.Forms.Button btnViewLogs;
     }
 }
 

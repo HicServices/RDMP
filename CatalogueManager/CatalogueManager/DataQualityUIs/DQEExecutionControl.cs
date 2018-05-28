@@ -5,11 +5,14 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Triggers;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Reports;
 using RDMPAutomationService.Options;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
@@ -45,11 +48,27 @@ namespace CatalogueManager.DataQualityUIs
             base.SetDatabaseObject(activator, databaseObject);
             _catalogue = databaseObject;
             checkAndExecuteUI1.SetItemActivator(activator);
+
+            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
+            rdmpObjectsRibbonUI1.Clear();
+            rdmpObjectsRibbonUI1.Add(RDMPConcept.DQE,OverlayKind.Execute,"Run Data Quality Engine");
+            rdmpObjectsRibbonUI1.Add(_catalogue);
         }
 
         public override string GetTabName()
         {
             return "DQE Execution:" + base.GetTabName();
+        }
+
+        private void btnViewResults_Click(object sender, EventArgs e)
+        {
+            _activator.ActivateViewDQEResultsForCatalogue(_catalogue);
+        }
+
+        private void btnConfigureValidation_Click(object sender, EventArgs e)
+        {
+            var cmd = new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue);
+            cmd.Execute();
         }
     }
 

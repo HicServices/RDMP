@@ -50,6 +50,10 @@ namespace CatalogueManager.LoadExecutionUIs
 
             checkAndExecuteUI1.SetItemActivator(activator);
 
+            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
+            rdmpObjectsRibbonUI1.Clear();
+            rdmpObjectsRibbonUI1.Add(_loadMetadata);
+
             SetButtonStates(null,null);
 
             SetLoadProgressGroupBoxState();
@@ -159,6 +163,11 @@ namespace CatalogueManager.LoadExecutionUIs
         private void btnRefreshLoadProgresses_Click(object sender, EventArgs e)
         {
             SetLoadProgressGroupBoxState();
+        }
+
+        private void btnViewLogs_Click(object sender, EventArgs e)
+        {
+            _activator.ActivateViewLog(_loadMetadata);
         }
 
     }
