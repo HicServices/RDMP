@@ -130,21 +130,7 @@ namespace RDMPAutomationServiceTests
             //shouldn't get suggested because we don't know the dates to cache from
             Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
         }
-
-        [Test]
-        public void SuggestCache_CatalogueLocked()
-        {
-            //associate the catalogue with the LoadMetadata
-            _cata.LoadMetadata_ID = _lmd.ID;
-            _cata.SaveToDatabase();
-
-            //Catalogue is not locked so should be suggesting this cache
-            Assert.AreEqual(_cp, new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
-                
-            //Catalogue is locked so shouldn't be suggesting this cache
-            Assert.IsNull(new CacheRunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestCacheProgress());
-        }
-
+        
         [Test]
         public void SuggestCache_NoPipeline()
         {

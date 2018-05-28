@@ -68,9 +68,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             patternArgument.SetValue("*.csv");
             patternArgument.SaveToDatabase();
 
-            //The run finder should be suggesting this run - See DLECacheRunFinderTest.cs
-            Assert.AreEqual(lp, new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestLoadBecauseCacheAvailable());
-
+            
             var hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
 
             //take the forLoading file

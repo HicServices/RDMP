@@ -36,7 +36,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             LoadMetadata lmd;
             setup.SetUp(timeoutInMilliseconds,out lmd);
 
-            var auto = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID });
+            var auto = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID,Command = CommandLineActivity.run });
             auto.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
 
             setup.VerifyNoErrorsAfterExecutionThenCleanup(timeoutInMilliseconds);

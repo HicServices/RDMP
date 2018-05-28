@@ -76,9 +76,9 @@ namespace RDMPAutomationServiceTests
             }
         }
 
-        [TestCase(false,false,true)] //No locks, suggest run
-        [TestCase(false, true, true)] //Window but not a locked window, suggest run
-        public void SuggestLoadMetadata_Locks(bool lockCatalogue, bool createPermissionWindow, bool expectedSuggestRunning)
+        [TestCase(false,true)] //No locks, suggest run
+        [TestCase( true, true)] //Window but not a locked window, suggest run
+        public void SuggestLoadMetadata_Locks(bool createPermissionWindow, bool expectedSuggestRunning)
         {
             var lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch of coconuts");
             var lp = new LoadProgress(CatalogueRepository, lmd);

@@ -28,7 +28,6 @@ namespace RDMPAutomationService.Logic.DLE
         public ILoadProgress SuggestLoadBecauseCacheAvailable()
         {
             var cacheProgresses = _catalogueRepository.GetAllObjects<CacheProgress>();
-            var lockedCatalogues = _catalogueRepository.GetAllAutomationLockedCatalogues();
             
             foreach (CacheProgress cp in cacheProgresses)
             {
@@ -55,30 +54,12 @@ namespace RDMPAutomationService.Logic.DLE
                 int daysToLoad = loadProgress.DefaultNumberOfDaysToLoadEachTime;
 
                 if (daysToLoad == 0)
-                {
                     _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, String.Format("Load Progress {0} has 0 days to load set", loadProgress.Name)));
-                    continue;
-                }
-
-                if (dtLoadProgress.Value.AddDays(daysToLoad) <= dtCache)
-                    if(!LocksPreventLoading(loadProgress,lockedCatalogues))
-                    {
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, String.Format("Load Progress {0} has data to load and it's not locked. Firing!", loadProgress.Name)));
-                        return loadProgress;
-                    }
             }
 
             //No tasks are ready to go
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No cache loading tasks are ready to go, exiting..."));
             return null;
-        }
-
-        private bool LocksPreventLoading(ILoadProgress cacheProgress, Catalogue[] lockedCatalogues)
-        {
-            var loadCatalogues = cacheProgress.LoadMetadata.GetAllCatalogues();
-
-            //if any of the catalogues that participate in the load are locked in another automation task (could be DQE or cache download even!)
-            return loadCatalogues.Any(lockedCatalogues.Contains);
         }
     }
 }

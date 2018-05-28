@@ -40,8 +40,6 @@ namespace RDMPAutomationService.Logic.Cache
                 return null;
             }
 
-            var automationLockedCatalogues = _catalogueRepository.GetAllAutomationLockedCatalogues();
-
             //if there is no logging server then we can't do automated cache runs
             var defaults = new ServerDefaults((CatalogueRepository) _catalogueRepository);
             if (defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID) == null)
@@ -78,14 +76,6 @@ namespace RDMPAutomationService.Logic.Cache
                 {
                     _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                         String.Format("Cache Progress {0} has no associated catalogues... skipping.", kvp.Key)));
-                    toDiscard.Add(kvp.Key);
-                }
-                else if (kvp.Value.Any(automationLockedCatalogues.Contains)) //if there are locked catalogues
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                        String.Format("Cache Progress {0} contains locked catalogues ({1})... skipping.", 
-                                      kvp.Key,
-                                      String.Join(",", kvp.Value.Intersect(automationLockedCatalogues).Select(x => x.Name)))));
                     toDiscard.Add(kvp.Key);
                 }
                 else

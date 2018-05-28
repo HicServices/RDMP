@@ -56,7 +56,6 @@
     <Compile Include="AutomationLoopTests\FictionalCache\Reading\TestDataCacheReader.cs" />
     <Compile Include="CacheRunFinderTests.cs" />
     <Compile Include="DLECacheRunFinderTests.cs" />
-    <Compile Include="DLERunFinderTests.cs" />
     <Compile Include="DQERunFinderTests.cs" />
     <Compile Include="AutomationLoopTests\EndToEndDLETest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

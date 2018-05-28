@@ -401,6 +401,10 @@
       <Project>{ca13a431-7fb6-4bce-8521-42d130934311}</Project>
       <Name>Tests.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
+      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
+      <Name>RDMPAutomationService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
       <Name>DataLoadEngine</Name>

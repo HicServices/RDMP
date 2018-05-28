@@ -298,11 +298,6 @@ namespace CatalogueLibrary.Repositories
             return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
         }
         
-        public Catalogue[] GetAllAutomationLockedCatalogues()
-        {
-            return SelectAll<Catalogue>("SELECT * FROM AutomationLockedCatalogues", "Catalogue_ID").ToArray();
-        }
-
         public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
         {
             var servers = GetAllObjects<ExternalDatabaseServer>();

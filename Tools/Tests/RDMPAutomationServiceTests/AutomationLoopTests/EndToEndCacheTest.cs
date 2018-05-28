@@ -59,7 +59,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest");
             _cata.LoadMetadata_ID = _lmd.ID;
             _cata.SaveToDatabase();
-        
+
             _lp = new LoadProgress(CatalogueRepository, _lmd);
             _cp = new CacheProgress(CatalogueRepository, _lp); 
             
@@ -105,7 +105,8 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         public void RunEndToEndCacheTest()
         {
             Assert.AreEqual(0, _hicProjectDirectory.Cache.GetFiles("*.csv").Count());
-            var auto = new DleRunner(new DleOptions { LoadProgress = _lp.ID, Iterative = true });
+
+            var auto = new CacheRunner(new CacheOptions(){  CacheProgress= _cp.ID, Command = CommandLineActivity.run });
             auto.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
         }
 

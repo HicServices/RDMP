@@ -78,7 +78,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         {
             
             //start an automation loop in the slot, it should pickup the load
-            var auto = new DleRunner(new DleOptions() { LoadMetadata = _stage1_setupCatalogue.DemographyCatalogue.LoadMetadata.ID});
+            var auto = new DleRunner(new DleOptions() { LoadMetadata = _stage1_setupCatalogue.DemographyCatalogue.LoadMetadata.ID,Command = CommandLineActivity.run});
             auto.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
 
             //also shouldn't be any logged errors

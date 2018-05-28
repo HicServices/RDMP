@@ -45,13 +45,10 @@ namespace RDMPAutomationService.Logic.DQE
 
         public Catalogue SuggestRun()
         {
-            var lockedCatalogues = _catalogueRepository.GetAllAutomationLockedCatalogues();
-            var availableCatalogues = _catalogueRepository.GetAllCataloguesWithAtLeastOneExtractableItem().Where(c=>
+            var availableCatalogues = _catalogueRepository.GetAllCataloguesWithAtLeastOneExtractableItem().Where(c =>
                 !c.IsColdStorageDataset
                 &&
-                !c.IsDeprecated
-                &&
-                !lockedCatalogues.Contains(c)).ToArray();
+                !c.IsDeprecated).ToArray();
 
             if (availableCatalogues.Length == 0)
             {
