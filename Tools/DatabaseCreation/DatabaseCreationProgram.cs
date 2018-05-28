@@ -8,6 +8,7 @@ using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using CommandLine;
 using MapsDirectlyToDatabaseTable.Versioning;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
@@ -27,12 +28,7 @@ namespace DatabaseCreation
 
         public static int Main(string[] args)
         {
-            var parser = new Parser(settings =>
-            {
-                settings.CaseSensitive = false;
-            });
-
-            return parser.ParseArguments<DatabaseCreationProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
+            return UsefulStuff.GetParser().ParseArguments<DatabaseCreationProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
         }
 
         private static int RunOptionsAndReturnExitCode(DatabaseCreationProgramOptions options)

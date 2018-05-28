@@ -16,13 +16,8 @@ namespace RDMPAutomationService
         {
            try
             {
-                var parser = new Parser(settings =>
-                {
-                    settings.CaseSensitive = false;
-                });
-  
                return
-                    parser.ParseArguments<DleOptions, DqeOptions, CacheOptions>(args)
+                    UsefulStuff.GetParser().ParseArguments<DleOptions, DqeOptions, CacheOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
                             (DleOptions opts) => Run(opts),

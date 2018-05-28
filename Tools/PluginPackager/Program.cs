@@ -4,6 +4,7 @@ using System.IO;
 using CatalogueLibrary.Repositories;
 using CommandLine;
 using RDMPStartup.PluginManagement;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
 namespace PluginPackager
@@ -12,12 +13,7 @@ namespace PluginPackager
     {
         static int Main(string[] args)
         {
-            var parser = new Parser(settings =>
-            {
-                settings.CaseSensitive = false;
-            });
-
-            return parser.ParseArguments<PluginPackagerProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
+            return UsefulStuff.GetParser().ParseArguments<PluginPackagerProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
         }
 
         private static int RunOptionsAndReturnExitCode(PluginPackagerProgramOptions opts)

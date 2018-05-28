@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using CommandLine;
 using MySql.Data.MySqlClient;
 using Oracle.ManagedDataAccess.Client;
 using ReusableLibraryCode.DataAccess;
@@ -1018,6 +1019,24 @@ c.name = @column_name", con);
                 if (!UsefulStuff.MD5File(file1.FullName).Equals(UsefulStuff.MD5File(file2.FullName)))
                     throw new Exception("File found in Globals directory which has a different MD5 from another Globals file.  Files were \"" + file1.FullName + "\" and \"" + file2.FullName + "\"");
             }
+        }
+
+        public static Parser GetParser()
+        {
+            var defaults = Parser.Default.Settings;
+
+            var parser = new Parser(settings =>
+            {
+                settings.CaseSensitive = false;
+                settings.CaseInsensitiveEnumValues = true;
+                settings.EnableDashDash = defaults.EnableDashDash;
+                settings.HelpWriter = defaults.HelpWriter;
+                settings.IgnoreUnknownArguments = defaults.IgnoreUnknownArguments;
+                settings.MaximumDisplayWidth = defaults.MaximumDisplayWidth;
+                settings.ParsingCulture = defaults.ParsingCulture;
+            });
+
+            return parser;
         }
     }
 }
