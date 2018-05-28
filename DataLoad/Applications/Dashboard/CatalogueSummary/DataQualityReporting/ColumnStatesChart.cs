@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -57,6 +58,14 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting
 
                 panel1.Controls.Add(bar);
             }
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+
+            foreach (ConsequenceBar bar in panel1.Controls.OfType<ConsequenceBar>())
+                bar.Invalidate();
         }
     }
 }

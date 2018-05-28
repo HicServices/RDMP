@@ -35,6 +35,7 @@ namespace Dashboard.CatalogueSummary
             dqePivotCategorySelector1.PivotCategorySelectionChanged += dqePivotCategorySelector1_PivotCategorySelectionChanged;
 
             AssociatedCollection = RDMPCollection.Catalogue;
+            DoubleBuffered = true;
         }
 
         public Catalogue Catalogue
