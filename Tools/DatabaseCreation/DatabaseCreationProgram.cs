@@ -27,7 +27,12 @@ namespace DatabaseCreation
 
         public static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<DatabaseCreationProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
+            var parser = new Parser(settings =>
+            {
+                settings.CaseSensitive = false;
+            });
+
+            return parser.ParseArguments<DatabaseCreationProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
         }
 
         private static int RunOptionsAndReturnExitCode(DatabaseCreationProgramOptions options)

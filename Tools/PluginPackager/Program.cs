@@ -12,7 +12,12 @@ namespace PluginPackager
     {
         static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<PluginPackagerProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
+            var parser = new Parser(settings =>
+            {
+                settings.CaseSensitive = false;
+            });
+
+            return parser.ParseArguments<PluginPackagerProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
         }
 
         private static int RunOptionsAndReturnExitCode(PluginPackagerProgramOptions opts)
