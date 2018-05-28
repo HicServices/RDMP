@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CatalogueLibrary.Repositories;
 using RDMPAutomationService.Options;
 
 namespace RDMPAutomationService.Runners
@@ -16,6 +10,9 @@ namespace RDMPAutomationService.Runners
     {
         public IRunner CreateRunner(RDMPCommandLineOptions command)
         {
+            if (command.Command == CommandLineActivity.none)
+                throw new Exception("No command has been set on '" + command.GetType().Name + "'");
+
             var dleOpts = command as DleOptions;
             var dqeOpts = command as DqeOptions;
             var cacheOpts = command as CacheOptions;

@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Dashboard.CatalogueSummary.DataQualityReporting.SubComponents;
 using DataQualityEngine.Data;
 
@@ -29,7 +24,7 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting
 
         public void ClearGraph()
         {
-            tableLayoutPanel1.Controls.Clear();
+            panel1.Controls.Clear();
         }
 
         public void SelectEvaluation(Evaluation evaluation, string pivotCategoryValue)
@@ -39,45 +34,29 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting
 
         private void GenerateChart(Evaluation evaluation, string pivotCategoryValue)
         {
-            tableLayoutPanel1.Controls.Clear();
-            tableLayoutPanel1.RowCount = evaluation.ColumnStates.Count();
+            panel1.Controls.Clear();
 
-            tableLayoutPanel1.SuspendLayout();
             int row = 0;
-            foreach (var targetProperty in evaluation.ColumnStates.Select(c=>c.TargetProperty).Distinct())
+
+            foreach (var property in evaluation.ColumnStates.Select(c=>c.TargetProperty).Distinct())
             {
-                Label l = new Label();
-                l.Text = targetProperty;
-                tableLayoutPanel1.Controls.Add(l,0,row);
-
-                l.Width = l.PreferredWidth;
-                tableLayoutPanel1.ColumnStyles[0].SizeType = SizeType.Absolute;
-                tableLayoutPanel1.ColumnStyles[0].Width = Math.Max(tableLayoutPanel1.ColumnStyles[0].Width,l.PreferredWidth);
-                string property = targetProperty;
-                
-
                 ConsequenceBar bar = new ConsequenceBar();
-
+                bar.Label = property;
                 bar.Correct = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue)?s.CountCorrect:0);
                 bar.Invalid = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue)?s.CountInvalidatesRow:0);
                 bar.Missing = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue)?s.CountMissing:0);
                 bar.Wrong = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue)?s.CountWrong:0);
                 bar.DBNull = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue)?s.CountDBNull:0);
+                
+                bar.Width = panel1.Width;
+                bar.Location = new Point(0,23*row++);
+                
+                bar.Anchor = AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right;
+
                 bar.GenerateToolTip();
 
-                tableLayoutPanel1.Controls.Add(bar, 1, row);
-                row++;
+                panel1.Controls.Add(bar);
             }
-
-            foreach (RowStyle r in tableLayoutPanel1.RowStyles)
-                r.SizeType = SizeType.AutoSize;
-
-            tableLayoutPanel1.ResumeLayout(true);
-        }
-
-        public override Size GetPreferredSize(Size proposedSize)
-        {
-            return new Size(tableLayoutPanel1.PreferredSize.Width + 200, proposedSize.Height);
         }
     }
 }

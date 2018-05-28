@@ -54,59 +54,66 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             tlpCohortCreation.Controls.Clear();
             tlpDataExport.Controls.Clear();
             tlpDataLoad.Controls.Clear();
+
+            var activator = _windowManager.ContentManager;
             
             /////////////////////////////////////Data Management/////////////////////////////////
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(_windowManager.ContentManager),tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(activator),tlpDataManagement);
             
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_windowManager.ContentManager, true),tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, true),tlpDataManagement);
 
-            AddCommand(new ExecuteCommandEditExistingCatalogue(_windowManager.ContentManager),
-                _windowManager.ContentManager.CoreChildProvider.AllCatalogues,
+            AddCommand(new ExecuteCommandEditExistingCatalogue(activator),
+                activator.CoreChildProvider.AllCatalogues,
                 cata => cata.Name,
+                tlpDataManagement);
+
+            AddCommand(
+                new ExecuteCommandRunDQEOnCatalogue(activator),
+                activator.CoreChildProvider.AllCatalogues, cata => cata.Name,
                 tlpDataManagement);
 
             /////////////////////////////////////Cohort Creation/////////////////////////////////
 
-            AddCommand(new ExecuteCommandImportFileAsNewCohort(_windowManager.ContentManager),
+            AddCommand(new ExecuteCommandImportFileAsNewCohort(activator),
                 tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_windowManager.ContentManager),tlpCohortCreation);
+            AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator),tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(_windowManager.ContentManager),
-                    _windowManager.ContentManager.CoreChildProvider.AllCohortIdentificationConfigurations,
+            AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(activator),
+                    activator.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
             
-            AddCommand(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_windowManager.ContentManager), 
-                    _windowManager.ContentManager.CoreChildProvider.AllCohortIdentificationConfigurations,
+            AddCommand(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(activator), 
+                    activator.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandCreateNewCohortFromCatalogue(_windowManager.ContentManager),
-                _windowManager.ContentManager.CoreChildProvider.AllCatalogues,
+            AddCommand(new ExecuteCommandCreateNewCohortFromCatalogue(activator),
+                activator.CoreChildProvider.AllCatalogues,
                 c=>c.Name,
 tlpCohortCreation);
             
             /////////////////////////////////////Data Export/////////////////////////////////
             
-            var dataExportChildProvider = _windowManager.ContentManager.CoreChildProvider as DataExportChildProvider;
+            var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
             if (dataExportChildProvider != null)
             {
-                AddCommand(new ExecuteCommandCreateNewDataExtractionProject(_windowManager.ContentManager), tlpDataExport);
-                AddCommand(new ExecuteCommandEditAndRunExistingDataExtractionProject(_windowManager.ContentManager),
+                AddCommand(new ExecuteCommandCreateNewDataExtractionProject(activator), tlpDataExport);
+                AddCommand(new ExecuteCommandEditAndRunExistingDataExtractionProject(activator),
                         dataExportChildProvider.Projects,
                         cic => cic.Name,
                         tlpDataExport);
 
-                AddCommand(new ExecuteCommandMakeCatalogueProjectSpecific(_windowManager.ContentManager),
+                AddCommand(new ExecuteCommandMakeCatalogueProjectSpecific(activator),
                     dataExportChildProvider.AllCatalogues.Where(c=>!c.IsProjectSpecific(null)).ToArray(),
                     c=>c.Name,tlpDataExport );
             }
 
             //////////////////////////////////Data Loading////////////////////////////////////
-            AddCommand(new ExecuteCommandCreateNewLoadMetadata(_windowManager.ContentManager),tlpDataLoad);
-            AddCommand(new ExecuteCommandExecuteLoadMetadata(_windowManager.ContentManager), 
-                _windowManager.ContentManager.CoreChildProvider.AllLoadMetadatas,
+            AddCommand(new ExecuteCommandCreateNewLoadMetadata(activator),tlpDataLoad);
+            AddCommand(new ExecuteCommandExecuteLoadMetadata(activator), 
+                activator.CoreChildProvider.AllLoadMetadatas,
                 lmd=>lmd.Name,
                 tlpDataLoad);
             
@@ -117,7 +124,7 @@ tlpCohortCreation);
 
 
             //////////////////////////////////Advanced////////////////////////////////////
-            AddCommand(new ExecuteCommandManagePlugins(_windowManager.ContentManager),tlpAdvanced);
+            AddCommand(new ExecuteCommandManagePlugins(activator),tlpAdvanced);
         }
 
         private void AddCommand<T>(IAtomicCommandWithTarget command, IEnumerable<T> selection, Func<T, string> propertySelector, TableLayoutPanel tableLayoutPanel)
