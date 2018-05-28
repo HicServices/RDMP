@@ -15,12 +15,16 @@ namespace RDMPAutomationService.Runners
         {
             var dleOpts = command as DleOptions;
             var dqeOpts = command as DqeOptions;
+            var cacheOpts = command as CacheOptions;
 
             if (dleOpts != null)
                 return new DleRunner(dleOpts);
 
             if(dqeOpts != null)
                 return new DqeRunner(dqeOpts);
+
+            if(cacheOpts != null)
+                return new CacheRunner(cacheOpts);
 
             throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
         }

@@ -18,11 +18,12 @@ namespace RDMPAutomationService
             {
                
                return
-                    Parser.Default.ParseArguments<DleOptions,DqeOptions>(args)
+                    Parser.Default.ParseArguments<DleOptions, DqeOptions, CacheOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
                             (DleOptions opts) => Run(opts),
                             (DqeOptions opts)=> Run(opts),
+                            (CacheOptions opts)=>Run(opts),
                             errs => 1);
             }
             catch (Exception e)
