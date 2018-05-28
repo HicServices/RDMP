@@ -252,6 +252,10 @@ namespace CachingEngine.DataRetrievers
 
         public override string ToString()
         {
+            if(_permissionWindow == null)
+                return "Downloader (Any Time)";
+
+
             return "Downloader for " + _permissionWindow.Name;
         }
     }

@@ -51,6 +51,7 @@ namespace RDMPAutomationService.Runners
                     try
                     {
                         var cachingHost = new CachingHost(repositoryLocator.CatalogueRepository);
+                        cachingHost.RetryMode = _options.RetryMode;
                         cachingHost.CacheProgressList = new ICacheProgress[] { cp }.ToList(); //run the cp
 
                         //if it has a permission window
