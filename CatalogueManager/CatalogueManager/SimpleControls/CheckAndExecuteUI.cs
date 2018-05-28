@@ -29,8 +29,15 @@ namespace CatalogueManager.SimpleControls
             _factory = new RunnerFactory();
             _activator = activator;
             executeInAutomationServerUI1.SetItemActivator(activator);
+            
+            executeInAutomationServerUI1.CommandGetter = Detatch_CommandGetter;
         }
-        
+
+        private RDMPCommandLineOptions Detatch_CommandGetter()
+        {
+            return CommandGetter(CommandLineActivity.run);
+        }
+
         //constructor
         public CheckAndExecuteUI()
         {
