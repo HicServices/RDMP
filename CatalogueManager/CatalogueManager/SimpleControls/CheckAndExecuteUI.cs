@@ -12,11 +12,16 @@ using ReusableLibraryCode.Progress;
 
 namespace CatalogueManager.SimpleControls
 {
+    /// <summary>
+    /// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the 
+    /// UI will show the checking/executing progress messages).  This class ensures that the behaviour is the same between console run rdmp and the UI applications.
+    /// </summary>
     public partial class CheckAndExecuteUI : UserControl
     {
         //things you have to set for it to work
         public event EventHandler StateChanged;
-        public Func<CommandLineActivity, RDMPCommandLineOptions> CommandGetter;
+
+        public CommandGetterHandler CommandGetter;
 
         public bool ChecksPassed { get; private set; }
         public bool IsExecuting { get { return _runningTask != null && !_runningTask.IsCompleted; } }

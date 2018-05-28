@@ -13,18 +13,25 @@
   <Class Name="RDMPAutomationService.Options.DleOptions" Collapsed="true">
     <Position X="0.75" Y="4" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAAAAgAAAAgAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <HashCode>AEAAEAAAAAAAAAgAAAAgAAAAAAAAAAAABAAAQAACIAA=</HashCode>
       <FileName>Options\DleOptions.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RDMPAutomationService.Options.DqeOptions" Collapsed="true">
-    <Position X="5.5" Y="4" Width="2.25" />
+    <Position X="6.5" Y="4" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Options\DqeOptions.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Enum Name="RDMPAutomationService.Options.CommandLineActivity" Collapsed="true">
+  <Class Name="RDMPAutomationService.Options.CacheOptions" Collapsed="true">
+    <Position X="3.75" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Options\CacheOptions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="RDMPAutomationService.Options.CommandLineActivity">
     <Position X="7" Y="1" Width="2" />
     <TypeIdentifier>
       <HashCode>AQAAAgAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
