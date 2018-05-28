@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommandLine;
-using CommandLine.Text;
+﻿using CommandLine;
 
 namespace RDMPAutomationService.Options
 {
+    /// <summary>
+    /// Command line options for the caching engine
+    /// </summary>
     [Verb("cache",HelpText ="Run the Caching engine which fetches data by date from a remote endpoint in batches of a given size (independently from loading it to any relational databases)")]
     public class CacheOptions:RDMPCommandLineOptions
     {

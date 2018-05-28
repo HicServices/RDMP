@@ -47,8 +47,8 @@ namespace CachingEngineTests.Unit
             // engine1 should have been executed once
             engine1.AssertWasCalled(engine => engine.ExecutePipeline(Arg<GracefulCancellationToken>.Is.Anything));
             
-            // engine2 should not have been executed as it is locked
-            engine2.AssertWasNotCalled(engine => engine.ExecutePipeline(Arg<GracefulCancellationToken>.Is.Anything));
+            // engine2 should also have been run (locking isn't a thing anymore)
+            engine2.AssertWasCalled(engine => engine.ExecutePipeline(Arg<GracefulCancellationToken>.Is.Anything));
         }
 
         [Test]

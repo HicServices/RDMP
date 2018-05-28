@@ -9,6 +9,9 @@ using RDMPAutomationService.Options;
 
 namespace CatalogueManager.SimpleControls
 {
+    /// <summary>
+    /// Translates a given RDMPCommandLineOptions into a command line text that can be run.  This is either copied onto the users clipboard or executed as a standalone process
+    /// </summary>
     partial class ExecuteInAutomationServerUI : UserControl
     {
         private IActivateItems _activator;

@@ -18,6 +18,9 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Runners
 {
+    /// <summary>
+    /// <see cref="IRunner"/> for the Data Load Engine.  Supports both check and execute commands.
+    /// </summary>
     public class DleRunner:IRunner
     {
         private readonly DleOptions _options;

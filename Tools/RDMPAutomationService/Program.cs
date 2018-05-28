@@ -17,12 +17,13 @@ namespace RDMPAutomationService
            try
             {
                return
-                    UsefulStuff.GetParser().ParseArguments<DleOptions, DqeOptions, CacheOptions>(args)
+                    UsefulStuff.GetParser().ParseArguments<DleOptions, DqeOptions, CacheOptions,ListOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
                             (DleOptions opts) => Run(opts),
                             (DqeOptions opts)=> Run(opts),
                             (CacheOptions opts)=>Run(opts),
+                            (ListOptions opts)=>Run(opts),
                             errs => 1);
             }
             catch (Exception e)

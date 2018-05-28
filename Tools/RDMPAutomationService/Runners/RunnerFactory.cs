@@ -9,6 +9,9 @@ using RDMPAutomationService.Options;
 
 namespace RDMPAutomationService.Runners
 {
+    /// <summary>
+    /// Constructs the respective <see cref="IRunner"/> based on the supplied <see cref="RDMPCommandLineOptions"/> Type
+    /// </summary>
     public class RunnerFactory
     {
         public IRunner CreateRunner(RDMPCommandLineOptions command)
@@ -16,6 +19,7 @@ namespace RDMPAutomationService.Runners
             var dleOpts = command as DleOptions;
             var dqeOpts = command as DqeOptions;
             var cacheOpts = command as CacheOptions;
+            var listOpts = command as ListOptions;
 
             if (dleOpts != null)
                 return new DleRunner(dleOpts);
@@ -26,26 +30,10 @@ namespace RDMPAutomationService.Runners
             if(cacheOpts != null)
                 return new CacheRunner(cacheOpts);
 
+            if(listOpts != null)
+                return new ListRunner(listOpts);
+
             throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
         }
-
-
-        //todo ListOptions
-        /*case CommandLineActivity.list:
-
-                    Console.WriteLine(string.Format("[ID] - Name"));
-
-                    if (_options.LoadMetadata != 0)
-                    {
-                        var l = locator.CatalogueRepository.GetObjectByID<LoadMetadata>(_options.LoadMetadata);
-                        Console.WriteLine("[{0}] - {1}", l.ID, l.Name);
-                    }
-                    else
-                    {
-                        foreach (LoadMetadata l in locator.CatalogueRepository.GetAllObjects<LoadMetadata>())
-                            Console.WriteLine("[{0}] - {1}", l.ID, l.Name);
-                    }
-
-                    return 0;*/
     }
 }
