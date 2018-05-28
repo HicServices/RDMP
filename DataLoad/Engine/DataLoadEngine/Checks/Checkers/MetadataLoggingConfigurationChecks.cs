@@ -85,7 +85,11 @@ namespace DataLoadEngine.Checks.Checkers
                     if (dataTasks.Contains(distinctLoggingTask))
                         notifier.OnCheckPerformed(new CheckEventArgs("Found Logging Task " + distinctLoggingTask + " in Logging database",CheckResult.Success, null));
                     else
-                        notifier.OnCheckPerformed(new CheckEventArgs("Could not find Logging Task " + distinctLoggingTask + " in Logging database, you must enter the CatalogueManager and choose a new Logging Task by right clicking the Catalogue and selecting 'Configure Logging'", CheckResult.Fail, null));
+                    {
+                        var fix = notifier.OnCheckPerformed(new CheckEventArgs("Could not find Logging Task " + distinctLoggingTask + " in Logging database", CheckResult.Fail, null, "Create Logging Task '" + distinctLoggingTask +"'"));
+                        if(fix)
+                            lm.CreateNewLoggingTaskIfNotExists(distinctLoggingTask);
+                    }
                 }
 
             }
