@@ -55,8 +55,9 @@ namespace DataExportManager.Menus
             var extractionResults =  _extractionConfiguration.CumulativeExtractionResults.ToArray();
 
             _datasets = _childProvider.GetDatasets(extractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
-            
-            
+
+            Items.Add("Edit Description", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
+
             _importableDataSets = _childProvider.ExtractableDataSets.Except(_datasets).Where(ds=>ds.Project_ID == null || ds.Project_ID == extractionConfiguration.Project_ID).ToArray();
             
             ///////////////////Change Cohorts//////////////
@@ -89,10 +90,7 @@ namespace DataExportManager.Menus
             var generateDoc = new ToolStripMenuItem("Generate Release Document", FamFamFamIcons.page_white_word,(s, e) => GenerateReleaseDocument());
             generateDoc.Enabled = _datasets.Any() && extractionResults.Any();
             Items.Add(generateDoc);
-
-            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(_extractionConfiguration));
-
-
+            
             var freeze = new ToolStripMenuItem("Freeze Extraction", CatalogueIcons.FrozenExtractionConfiguration,(s, e) => Freeze());
             freeze.Enabled = !extractionConfiguration.IsReleased && _datasets.Any();
             Items.Add(freeze);

@@ -24,7 +24,6 @@ namespace CachingEngine
     public class CachingHost
     {
         public List<ICacheProgress> CacheProgressList { get; set; }
-        public List<IPermissionWindow> PermissionWindows { get; set; }
         public bool RetryMode { get; set; }
         // this is more because we can't retrieve CacheWindows from LoadProgresss (yet) 
 

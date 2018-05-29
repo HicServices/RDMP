@@ -54,10 +54,6 @@ namespace RDMPAutomationService.Runners
                         cachingHost.RetryMode = _options.RetryMode;
                         cachingHost.CacheProgressList = new ICacheProgress[] { cp }.ToList(); //run the cp
 
-                        //if it has a permission window
-                        if (cp.PermissionWindow_ID != null)
-                            cachingHost.PermissionWindows = new[] { cp.PermissionWindow }.ToList();
-
                         //By default caching host will block 
                         cachingHost.TerminateIfOutsidePermissionWindow = true;
 
