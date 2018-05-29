@@ -20,16 +20,21 @@ namespace DataExportLibrary.DataRelease
         {
         }
 
-        protected override Releaseability GetSpecificAssessment()
+        protected override Releaseability GetSupplementalSpecificAssessment(ISupplementalExtractionResults supplementalExtractionResults)
+        {
+            return Releaseability.Undefined;
+        }
+
+        protected override Releaseability GetSpecificAssessment(ICumulativeExtractionResults extractionResults)
         {
             var _extractDir = Configuration.GetProject().ExtractionDirectory;
 
             ExtractDirectory = new ExtractionDirectory(_extractDir, Configuration).GetDirectoryForDataset(DataSet);
 
-            var externalServerId = int.Parse(ExtractionResults.DestinationDescription.Split('|')[0]);
+            var externalServerId = int.Parse(extractionResults.DestinationDescription.Split('|')[0]);
             var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
-            var dbName = ExtractionResults.DestinationDescription.Split('|')[1];
-            var tblName = ExtractionResults.DestinationDescription.Split('|')[2];
+            var dbName = extractionResults.DestinationDescription.Split('|')[1];
+            var tblName = extractionResults.DestinationDescription.Split('|')[2];
             var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
             var database = server.ExpectDatabase(dbName);
             if (!database.Exists())

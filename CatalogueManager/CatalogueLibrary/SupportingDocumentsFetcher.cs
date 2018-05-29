@@ -41,7 +41,7 @@ namespace CatalogueLibrary
             return thingsThatFailed;
         }
 
-        public void ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
+        public string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
         {
             if(!supportingDocument.IsReleasable())
                 throw new Exception("Cannot extract SupportingDocument " + supportingDocument + " because it was not evaluated as IsReleasable()");
@@ -53,6 +53,8 @@ namespace CatalogueLibrary
 
             //copy with overwritte
             File.Copy(toCopy.FullName, Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name), true);
+            
+            return Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name);
         }
 
         public void Check(ICheckNotifier notifier)

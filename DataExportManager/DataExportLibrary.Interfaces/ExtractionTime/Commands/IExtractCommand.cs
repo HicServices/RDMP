@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -17,7 +18,5 @@ namespace DataExportLibrary.Interfaces.ExtractionTime.Commands
 
         ExtractCommandState State { get; set; }
         string Name { get; }
-
-        IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
     }
 }

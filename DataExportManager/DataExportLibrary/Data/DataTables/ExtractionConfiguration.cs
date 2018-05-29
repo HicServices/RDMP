@@ -500,7 +500,6 @@ namespace DataExportLibrary.Data.DataTables
                 .ToArray();
         }
 
-
         public void AddDatasetToConfiguration(IExtractableDataSet extractableDataSet)
         {
             //it is already part of the configuration
@@ -640,6 +639,14 @@ namespace DataExportLibrary.Data.DataTables
 
             IsReleased = false;
             SaveToDatabase();
+        }
+
+        public override void DeleteInDatabase()
+        {
+            foreach (var result in Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this))
+                result.DeleteInDatabase();
+
+            base.DeleteInDatabase();
         }
     }
 }

@@ -33,7 +33,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         string DateFormat { get; }
         string GetFilename();
         string GetDestinationDescription();
-        DestinationType GetDestinationType();
 
         ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, ExtractableDataSet dataSet);
         FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository);

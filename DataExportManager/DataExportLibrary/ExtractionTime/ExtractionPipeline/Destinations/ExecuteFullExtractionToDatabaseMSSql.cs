@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
@@ -265,6 +266,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 }
             }
             TableLoadInfo.CloseAndArchive();
+            // also close off the cumulative extraction result
+            if (_request is ExtractDatasetCommand)
+            {
+                var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
+                if (result != null)
+                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), TableLoadInfo.Inserts);
+            }
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -367,6 +375,25 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                     //end auditing it
                     tableLoadInfo.CloseAndArchive();
+
+                    if (_request is ExtractDatasetCommand)
+                    {
+                        var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                        var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
+                        supplementalResult.CompleteAudit(TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
+                    }
+                    else
+                    {
+                        var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                        Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
+                        var result =
+                            new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
+                                                              extractGlobalsCommand.Configuration,
+                                                              sql.SQL,
+                                                              sql);
+                        result.CompleteAudit(TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
+                        extractGlobalsCommand.ExtractionResults.Add(result);
+                    }
                 }
             }
             catch (Exception e)
@@ -385,7 +412,24 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to copy " + doc + " to directory " + directory.FullName));
             try
             {
-                fetcher.ExtractToDirectory(directory, doc);
+                var outputPath = fetcher.ExtractToDirectory(directory, doc);
+                if (_request is ExtractDatasetCommand)
+                {
+                    var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                    var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
+                    supplementalResult.CompleteAudit(outputPath, 0);
+                }
+                else
+                {
+                    var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                    Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
+                    var result = new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
+                                                                   extractGlobalsCommand.Configuration,
+                                                                   null,
+                                                                   doc);
+                    result.CompleteAudit(outputPath, 0);
+                    extractGlobalsCommand.ExtractionResults.Add(result);
+                }
                 return ExtractCommandState.Completed;
             }
             catch (Exception e)
@@ -433,6 +477,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                     //end auditing it
                     tableLoadInfo.CloseAndArchive();
+
+                    if (_request is ExtractDatasetCommand)
+                    {
+                        var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                        var supplementalResult = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup.TableInfo.Name, lookup.TableInfo);
+                        supplementalResult.CompleteAudit(TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
+                    }
                 }
             }
             catch (Exception e)

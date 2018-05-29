@@ -97,17 +97,25 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                 }
                 catch (Exception e)
                 {
-                    if (Source.CumulativeExtractionResults != null)
-                    {
-                        //audit to logging architecture
-                        FatalErrorLogging.GetInstance()
-                            .LogFatalError(_dataLoadInfo, "Execute extraction pipeline",
-                                ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
+                    FatalErrorLogging.GetInstance()
+                                     .LogFatalError(_dataLoadInfo, "Execute extraction pipeline", ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
+                    if (ExtractCommand is ExtractDatasetCommand)
+                    {
                         //audit to extraction results
-                        var audit = Source.CumulativeExtractionResults;
-                        audit.Exception = ExceptionHelper.ExceptionToListOfInnerMessages(e, true);
-                        audit.SaveToDatabase();
+                        var result = (ExtractCommand as ExtractDatasetCommand).CumulativeExtractionResults;
+                        result.Exception = ExceptionHelper.ExceptionToListOfInnerMessages(e, true);
+                        result.SaveToDatabase();
+                    }
+                    else
+                    {
+                        //audit to extraction results
+                        var result = (ExtractCommand as ExtractGlobalsCommand).ExtractionResults;
+                        foreach (var extractionResults in result)
+                        {
+                            extractionResults.Exception = ExceptionHelper.ExceptionToListOfInnerMessages(e, true);
+                            extractionResults.SaveToDatabase();   
+                        }
                     }
 
                     //throw so it can be audited to UI (triple audit yay!)
@@ -115,29 +123,32 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                 }
 
                 if (Source == null)
-                    throw new Exception("Execute Pipeline completed without Exception but Source was null somehow" +
-                                        "?!");
-
-                //Deal with finishing off the Cumulative Extraction Results (only applies to IExtractCommand objects of type IExtractDatasetCommand)
-                var successAudit = Source.CumulativeExtractionResults;
-
-                if (successAudit == null)
-                    return;
-
-                successAudit.DestinationType = Destination.GetType().FullName;
-                successAudit.DestinationDescription = Destination.GetDestinationDescription();
-                successAudit.DistinctReleaseIdentifiersEncountered = Source.UniqueReleaseIdentifiersEncountered.Count;
-                successAudit.RecordsExtracted = Destination.TableLoadInfo.Inserts;
+                    throw new Exception("Execute Pipeline completed without Exception but Source was null somehow?!");
 
                 if (Source.WasCancelled)
                 {
-                    successAudit.Exception = "User Cancelled Extraction";
                     FatalErrorLogging.GetInstance()
                         .LogFatalError(Destination.TableLoadInfo.DataLoadInfoParent, this.GetType().Name,
                             "User Cancelled Extraction");
-                }
 
-                successAudit.SaveToDatabase();
+                    if (ExtractCommand is ExtractDatasetCommand)
+                    {
+                        //audit to extraction results
+                        var result = (ExtractCommand as ExtractDatasetCommand).CumulativeExtractionResults;
+                        result.Exception = "User Cancelled Extraction";
+                        result.SaveToDatabase();
+                    }
+                    else
+                    {
+                        //audit to extraction results
+                        var result = (ExtractCommand as ExtractGlobalsCommand).ExtractionResults;
+                        foreach (var extractionResults in result)
+                        {
+                            extractionResults.Exception = "User Cancelled Extraction";
+                            extractionResults.SaveToDatabase();
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
