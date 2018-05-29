@@ -119,13 +119,20 @@ namespace DataExportManager.ProjectUI
 
         private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
         {
-            //commands = chooseExtractablesUI1.GetFinalExtractCommands();
-            return new ExtractionOptions() { Command = CommandLineActivity.run, /*ExtractGlobals = chooseExtractablesUI1.GetGlobalsBundle().Any(), SelectedDatasets = toExtract*/ };
+            return new ExtractionOptions() { 
+                Command = activityRequested,
+                ExtractGlobals = olvDatasets.IsChecked(Globals),
+                Datasets = _datasets.Where(olvDatasets.IsChecked).Select(ds => ds.ID).ToArray(),
+                ExtractionConfiguration = _extractionConfiguration.ID,
+                Pipeline = _pipelineSelectionUI1.Pipeline == null?0:_pipelineSelectionUI1.Pipeline.ID
+            };
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
+            
+            _extractionConfiguration = databaseObject;
             
             checkAndExecuteUI1.SetItemActivator(activator);
 
@@ -143,8 +150,6 @@ namespace DataExportManager.ProjectUI
             //don't accept refresh while executing
             if (checkAndExecuteUI1.IsExecuting)
                 return;
-            
-            _extractionConfiguration = databaseObject;
             
             if (_pipelineSelectionUI1 == null)
             {
@@ -164,9 +169,7 @@ namespace DataExportManager.ProjectUI
             olvDatasets.ExpandAll();
             olvDatasets.CheckAll();
         }
-
         
-
         private void tbTopX_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(tbTopX.Text))
