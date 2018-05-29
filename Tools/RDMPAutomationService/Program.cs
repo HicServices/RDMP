@@ -18,7 +18,7 @@ namespace RDMPAutomationService
         {
            try
             {
-               return
+               var returnCode = 
                     UsefulStuff.GetParser().ParseArguments<DleOptions, DqeOptions, CacheOptions,ListOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
@@ -27,10 +27,13 @@ namespace RDMPAutomationService
                             (CacheOptions opts)=>Run(opts),
                             (ListOptions opts)=>Run(opts),
                             errs => 1);
+
+               NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
+                return returnCode;
             }
             catch (Exception e)
             {
-                Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(e,true));
+                NLog.LogManager.GetCurrentClassLogger().Info(e,"Fatal error occurred so returning -1");
                 return -1;
             }
         }
