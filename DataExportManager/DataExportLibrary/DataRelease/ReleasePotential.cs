@@ -1,26 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.Office.Core;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.DataRelease
 {
