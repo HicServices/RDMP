@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -11,7 +7,6 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.ProjectUI;
-using Diagnostics.TestData;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
@@ -58,11 +53,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            var ui = Activator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(_extractionConfiguration);
-            
-            if(_autoStart)
-                ui.Start();
-
+            Activator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(_extractionConfiguration);
         }
     }
 }

@@ -92,6 +92,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Options\ExtractionOptions.cs" />
+    <Compile Include="Runners\ExtractionRunner.cs" />
     <Compile Include="Runners\IRunner.cs" />
     <Compile Include="Runners\ListRunner.cs" />
     <Compile Include="Runners\RunnerFactory.cs" />

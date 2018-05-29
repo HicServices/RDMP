@@ -17,6 +17,7 @@ namespace RDMPAutomationService.Runners
             var dqeOpts = command as DqeOptions;
             var cacheOpts = command as CacheOptions;
             var listOpts = command as ListOptions;
+            var extractionOpts = command as ExtractionOptions;
 
             if (dleOpts != null)
                 return new DleRunner(dleOpts);
@@ -30,7 +31,11 @@ namespace RDMPAutomationService.Runners
             if(listOpts != null)
                 return new ListRunner(listOpts);
 
+            if (extractionOpts != null)
+                return new ExtractionRunner(extractionOpts);
+
             throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
         }
+        
     }
 }

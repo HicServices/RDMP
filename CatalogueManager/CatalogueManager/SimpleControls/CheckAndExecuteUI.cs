@@ -29,6 +29,8 @@ namespace CatalogueManager.SimpleControls
         private RunnerFactory _factory;
         private IActivateItems _activator;
 
+        public IRunner CurrentRunner { get; private set; }
+
         public void SetItemActivator(IActivateItems activator)
         {
             _factory = new RunnerFactory();
@@ -71,6 +73,7 @@ namespace CatalogueManager.SimpleControls
                 ragChecks.Fatal(ex);
                 return;
             }
+            CurrentRunner = runner;
 
             btnRunChecks.Enabled = false;
             
@@ -124,6 +127,7 @@ namespace CatalogueManager.SimpleControls
                 ragChecks.Fatal(ex);
                 return;
             }
+            CurrentRunner = runner;
 
             _runningTask =
                 //run the data load in a Thread
