@@ -70,6 +70,7 @@ namespace DataExportLibrary.DataRelease
             _repository = configuration.Repository;
             Configuration = configuration;
             DataSet = dataSet;
+            Assessments = new Dictionary<IExtractionResults, Releaseability>();
 
             //see what has been extracted before
             var extractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
@@ -78,7 +79,6 @@ namespace DataExportLibrary.DataRelease
 
             DatasetExtractionResult = extractionResults;
 
-            Assessments = new Dictionary<IExtractionResults, Releaseability>();
             Assessments.Add(extractionResults, MakeAssesment(extractionResults));
 
             foreach (var supplementalResult in extractionResults.SupplementalExtractionResults)
