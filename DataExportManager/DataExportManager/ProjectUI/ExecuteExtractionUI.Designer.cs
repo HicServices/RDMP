@@ -183,6 +183,7 @@ namespace DataExportManager.ProjectUI
             // 
             this.olvState.Groupable = false;
             this.olvState.Text = "State";
+            this.olvState.Width = 160;
             // 
             // olvID
             // 

@@ -68,7 +68,10 @@ namespace DataExportManager.ProjectUI
             checkAndExecuteUI1.GroupBySender();
 
             olvName.ImageGetter = Name_ImageGetter;
+
             olvState.ImageGetter = State_ImageGetter;
+            olvState.AspectGetter = State_AspectGetter;
+
             olvDatasets.ChildrenGetter = ChildrenGetter;
             olvDatasets.CanExpandGetter = CanExpandGetter;
             olvDatasets.HierarchicalCheckboxes = true;
@@ -108,18 +111,25 @@ namespace DataExportManager.ProjectUI
 
         private object State_ImageGetter(object rowObject)
         {
+            var state = GetState(rowObject);
+            return state == null?null:_activator.CoreIconProvider.GetImage(state);
+        }
+
+        private object GetState(object rowObject)
+        {
             var extractionRunner = checkAndExecuteUI1.CurrentRunner as ExtractionRunner;
             var eds = rowObject as ExtractableDataSet;
 
             if (extractionRunner == null || eds == null)
                 return null;
 
-            var state = extractionRunner.GetState(eds);
+            return extractionRunner.GetState(eds);
+        }
 
-            if (state == null)
-                return null;
-
-            return _activator.CoreIconProvider.GetImage(state);
+        private object State_AspectGetter(object rowobject)
+        {
+            var state = GetState(rowobject);
+            return state == null ? null : state.ToString();
         }
 
         private object Name_ImageGetter(object rowobject)
