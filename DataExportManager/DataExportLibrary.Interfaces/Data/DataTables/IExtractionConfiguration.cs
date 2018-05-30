@@ -41,5 +41,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
 
         void RemoveDatasetFromConfiguration(IExtractableDataSet extractableDataSet);
         void Unfreeze();
+        IMapsDirectlyToDatabaseTable[] GetGlobals();
     }
 }

@@ -423,6 +423,12 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingDocument.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingSQLTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsTableInfo.cs" />
+    <Compile Include="Icons\IconProvision\CatalogueIcons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CatalogueIcons.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -442,11 +448,6 @@
     </Compile>
     <Compile Include="FindAndReplace\FindAndReplaceUI.Designer.cs">
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Icons\IconProvision\CatalogueIcons.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CatalogueIcons.resx</DependentUpon>
     </Compile>
     <Compile Include="Menus\AllLoadMetadatasNodeMenu.cs" />
     <Compile Include="Menus\AllObjectImportsNodeMenu.cs" />
@@ -1516,6 +1517,12 @@
     <None Include="Icons\ProjectCatalogue.png" />
     <None Include="Icons\ProjectCataloguesNode.png" />
     <None Include="Icons\MakeProjectSpecificCatalogueNormalAgain.png" />
+    <None Include="Icons\NotLaunched.png" />
+    <None Include="Icons\WaitingForSQLServer.png" />
+    <None Include="Icons\WritingToFile.png" />
+    <None Include="Icons\Waiting.png" />
+    <None Include="Icons\Writing.png" />
+    <None Include="Icons\WaitingForDatabase.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

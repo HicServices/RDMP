@@ -16,5 +16,8 @@ namespace RDMPAutomationService.Options
 
         [Option('p', "Pipeline", HelpText = "The ID of the extraction Pipeline to use")]
         public int Pipeline { get; set; }
+
+        [Option('m', "MaxConcurrentExtractions",HelpText = "Maximum number of datasets to extract at once")]
+        public int? MaxConcurrentExtractions { get; set; }
     }
 }

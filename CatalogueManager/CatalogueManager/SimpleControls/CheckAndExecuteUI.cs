@@ -88,7 +88,7 @@ namespace CatalogueManager.SimpleControls
             //create a to memory that passes the events to checksui since that's the only one that can respond to proposed fixes
             var toMemory = new ToMemoryCheckNotifier(checksUI1);
 
-            Task.Factory.StartNew(() => runner.Run(_activator.RepositoryLocator, new FromCheckNotifierToDataLoadEventListener(toMemory), toMemory, new GracefulCancellationToken())).ContinueWith(
+            Task.Factory.StartNew(() => Check(runner,toMemory)).ContinueWith(
                 t=>
                 {
                     //once Thread completes do this on the main UI Thread
@@ -107,6 +107,18 @@ namespace CatalogueManager.SimpleControls
 
             _runningTask = null;
             ChecksPassed = true;
+        }
+
+        private void Check(IRunner runner, ToMemoryCheckNotifier toMemory)
+        {
+            try
+            {
+                runner.Run(_activator.RepositoryLocator, new FromCheckNotifierToDataLoadEventListener(toMemory), toMemory,new GracefulCancellationToken());
+            }
+            catch (Exception e)
+            {
+                toMemory.OnCheckPerformed(new CheckEventArgs("Entire process crashed", CheckResult.Fail, e));
+            }
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
@@ -131,19 +143,8 @@ namespace CatalogueManager.SimpleControls
 
             _runningTask =
                 //run the data load in a Thread
-                Task.Factory.StartNew(() =>
+                Task.Factory.StartNew(() => Run(runner))
 
-                {
-                    try
-                    {
-                        runner.Run(_activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
-                    }
-                    catch (Exception ex)
-                    {
-                        loadProgressUI1.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Fatal Error",ex));
-                    }
-                    
-                })
                 //then on the main UI thread (after load completes with success/error
                 .ContinueWith((t) =>
                 {
@@ -158,7 +159,19 @@ namespace CatalogueManager.SimpleControls
 
             SetButtonStates();
         }
-        
+
+        private void Run(IRunner runner)
+        {
+            try
+            {
+                runner.Run(_activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
+            }
+            catch (Exception ex)
+            {
+                loadProgressUI1.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Fatal Error",ex));
+            }  
+        }
+
         private void SetButtonStates()
         {
             if (StateChanged != null)

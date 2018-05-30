@@ -27,7 +27,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
             return new ExtractCommandCollection(datasetBundles);
         }
 
-        private ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractableDataSet dataset, ExtractionConfiguration configuration)
+        private ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractableDataSet dataset, IExtractionConfiguration configuration)
         {
             var catalogue = dataset.Catalogue;
 
@@ -48,6 +48,11 @@ namespace DataExportLibrary.ExtractionTime.Commands
                 lookupsFound.ToArray());//all lookups associated with the Catalogue (the one behind the ExtractableDataset)
 
             return new ExtractDatasetCommand(repositoryLocator,configuration, bundle);
+        }
+
+        public ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets)
+        {
+            return CreateDatasetCommand(repositoryLocator, selectedDataSets.ExtractableDataSet,selectedDataSets.ExtractionConfiguration);
         }
     }
 }

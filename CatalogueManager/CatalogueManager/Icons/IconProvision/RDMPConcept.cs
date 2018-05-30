@@ -140,5 +140,11 @@ namespace CatalogueManager.Icons.IconProvision
 
         AllLoadMetadatasNode,
         AllPermissionWindowsNode,
+
+
+        Waiting,
+        WaitingForDatabase,
+        Writing,
+        Warning
     }
 }

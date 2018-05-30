@@ -57,6 +57,8 @@ namespace CatalogueManager.Icons.IconProvision
             StateBasedIconProviders.Add(new ProcessTaskStateBasedIconProvider());
             StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new CatalogueItemStateBasedIconProvider(OverlayProvider));
+
+            StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
         }
 
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)

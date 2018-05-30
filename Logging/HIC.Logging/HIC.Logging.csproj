@@ -164,6 +164,7 @@
     <Compile Include="Listeners\NLogListeners\NLogIDataLoadEventListener.cs" />
     <Compile Include="Listeners\Extensions\NotifyEventArgsExtensions.cs" />
     <Compile Include="Listeners\NLogListeners\NLogListener.cs" />
+    <Compile Include="Listeners\OverrideSenderIDataLoadEventListener.cs" />
     <Compile Include="Listeners\ToLoggingDatabaseDataLoadEventListener.cs" />
     <Compile Include="Listeners\ToFileDataLoadEventListener.cs" />
     <Compile Include="LoggingDatabaseChecker.cs" />

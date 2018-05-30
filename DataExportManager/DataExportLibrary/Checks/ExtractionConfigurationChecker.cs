@@ -117,7 +117,8 @@ namespace DataExportLibrary.Checks
 
             //globals
             if (datasets.Any())
-                foreach (SupportingSQLTable table in datasets.First().Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableGlobals))
+                
+                foreach (SupportingSQLTable table in _config.GetGlobals().OfType<SupportingSQLTable>())
                     new SupportingSQLTableChecker(table).Check(notifier);
         }
 

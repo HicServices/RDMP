@@ -16,7 +16,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
     /// </summary>
     public class ExtractGlobalsCommand : IExtractCommand
     {
-        private readonly Project project;
+        private readonly IProject project;
 
         public GlobalsBundle Globals { get; set; }
 
@@ -26,7 +26,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
         public IExtractionConfiguration Configuration { get; set; }
         public List<IExtractionResults> ExtractionResults { get; private set; }
 
-        public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, Project project, ExtractionConfiguration configuration, GlobalsBundle globals)
+        public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project, ExtractionConfiguration configuration, GlobalsBundle globals)
         {
             this.RepositoryLocator = repositoryLocator;
             this.project = project;

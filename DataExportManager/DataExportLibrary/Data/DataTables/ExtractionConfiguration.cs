@@ -641,6 +641,23 @@ namespace DataExportLibrary.Data.DataTables
             SaveToDatabase();
         }
 
+        public IMapsDirectlyToDatabaseTable[] GetGlobals()
+        {
+            var sds = SelectedDataSets.FirstOrDefault(s=>s.ExtractableDataSet.Catalogue != null);
+
+            if(sds == null)
+                return new IMapsDirectlyToDatabaseTable[0];
+
+            var cata = sds.ExtractableDataSet.Catalogue;
+
+            return 
+                cata.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableGlobals)
+                .Cast<IMapsDirectlyToDatabaseTable>()
+                .Union(
+                cata.GetAllSupportingDocuments(FetchOptions.ExtractableGlobals))
+                .ToArray();
+        }
+
         public override void DeleteInDatabase()
         {
             foreach (var result in Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this))

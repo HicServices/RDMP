@@ -51,7 +51,7 @@ namespace DataExportManager.ProjectUI
         
 
         private const string Globals = "Globals";
-        private object[] _globals;
+        private IMapsDirectlyToDatabaseTable[] _globals;
         private IExtractableDataSet[] _datasets;
         private Dictionary<IExtractableDataSet, List<IMapsDirectlyToDatabaseTable>> _bundledStuff;
 
@@ -151,7 +151,7 @@ namespace DataExportManager.ProjectUI
 
             olvDatasets.ClearObjects();
 
-            _globals = GetGlobals();
+            _globals = _extractionConfiguration.GetGlobals();
             _datasets = databaseObject.SelectedDataSets.Select(ds => ds.ExtractableDataSet).ToArray();
             GetBundledStuff();
 
@@ -214,17 +214,6 @@ namespace DataExportManager.ProjectUI
             olvDatasets.UseFiltering = true;
         }
 
-        public object[] GetGlobals()
-        {
-            List<object> toReturn = new List<object>();
-            //add globals to the globals category
-            toReturn.AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
-
-            //add global SQLs to globals category
-            toReturn.AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
-
-            return toReturn.ToArray();
-        }
         private void GetBundledStuff()
         {
             _bundledStuff = new Dictionary<IExtractableDataSet, List<IMapsDirectlyToDatabaseTable>>();
@@ -437,29 +426,7 @@ namespace DataExportManager.ProjectUI
 
         
         
-        private DataLoadInfo StartAudit()
-        {
-            DataLoadInfo dataLoadInfo;
-
-            var logManager = _configurationToExecute.GetExplicitLoggingDatabaseServerOrDefault();
-            
-            try
-            {
-                //populate DataLoadInfo object (Audit)
-                dataLoadInfo = new DataLoadInfo(ExecuteDatasetExtractionSource.AuditTaskName,
-                                                     Process.GetCurrentProcess().ProcessName,
-                                                     Project.Name + "(ExtractionConfiguration ID=" +
-                                                     _configurationToExecute.ID + ")",
-                                                     "", cbIsTest.Checked,logManager.Server);
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show("Problem occurred trying to create Logging Component:" + e.Message + " (check user has access to " + logManager.Server+ " and that the DataLoadTask '"+ExecuteDatasetExtractionSource.AuditTaskName+"' exists)", e);
-                return null;
-            }
-
-            return dataLoadInfo;
-        }
+       
         
 
         
