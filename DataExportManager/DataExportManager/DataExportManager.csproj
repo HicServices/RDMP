@@ -431,12 +431,6 @@
     <Compile Include="ProjectUI\DataUsers\DataUserManagement.Designer.cs">
       <DependentUpon>DataUserManagement.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProjectUI\ExecuteDatasetExtractionHostUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProjectUI\ExecuteDatasetExtractionHostUI.Designer.cs">
-      <DependentUpon>ExecuteDatasetExtractionHostUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="ProjectUI\ExecuteExtractionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -561,10 +555,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectUI\DataUsers\DataUserManagement.resx">
       <DependentUpon>DataUserManagement.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProjectUI\ExecuteDatasetExtractionHostUI.resx">
-      <DependentUpon>ExecuteDatasetExtractionHostUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectUI\ExecuteExtractionUI.resx">

@@ -17,6 +17,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using HIC.Logging;
 using HIC.Logging.Listeners;
 using RDMPAutomationService.Options;
@@ -48,6 +49,8 @@ namespace RDMPAutomationService.Runners
             _configuration = repositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_options.ExtractionConfiguration);
             _project = _configuration.Project;
             var pipeline = repositoryLocator.CatalogueRepository.GetObjectByID<Pipeline>(_options.Pipeline);
+            
+            List<Task> tasks = new List<Task>();
 
             switch (_options.Command)
             {
@@ -55,6 +58,7 @@ namespace RDMPAutomationService.Runners
 
                     var dli = StartAudit();
 
+                    //if we are extracting globals
                     if(_options.ExtractGlobals)
                     {
                         var g = _configuration.GetGlobals();
@@ -86,7 +90,7 @@ namespace RDMPAutomationService.Runners
                         if (semaphore != null)
                             semaphore.WaitOne();
 
-                        Task.Run(() =>
+                        tasks.Add(Task.Run(() =>
                         {
                             try
                             {
@@ -98,8 +102,10 @@ namespace RDMPAutomationService.Runners
                                     semaphore.Release();
                             }
                         }
-                        );
+                        ));
                     }
+
+                    Task.WaitAll(tasks.ToArray(), token.StopToken);
                     
                     break;
                 case CommandLineActivity.check:
@@ -120,9 +126,7 @@ namespace RDMPAutomationService.Runners
 
                     foreach(var sds in GetSelectedDataSets())
                         ChecksDictionary.Add(sds,new ToMemoryCheckNotifier(checkNotifier));
-
-                    List<Task> tasks = new List<Task>();
-
+                    
                     foreach (var kvp in ChecksDictionary)
                     {
                         KeyValuePair<ISelectedDataSets, ToMemoryCheckNotifier> kvp1 = kvp;
@@ -198,5 +202,72 @@ namespace RDMPAutomationService.Runners
 
             return dataLoadInfo;
         }
+
+        /*private void DoExtractionAsync(IExtractCommand request)
+        {
+            request.State = ExtractCommandState.WaitingForSQLServer;
+                
+            _pipelineUseCase = new ExtractionPipelineUseCase(Project, request, _pipeline, _dataLoadInfo);
+            _pipelineUseCase.Execute(progressUI1);
+
+            if (_pipelineUseCase.Crashed)
+            {
+                request.State = ExtractCommandState.Crashed;
+            }
+            else
+                if (_pipelineUseCase.Source != null)
+                    if (_pipelineUseCase.Source.WasCancelled)
+                        request.State = ExtractCommandState.UserAborted;
+                    else if (_pipelineUseCase.Source.ValidationFailureException != null)
+                        request.State = ExtractCommandState.Warning;
+                    else
+                    {
+                        request.State = ExtractCommandState.Completed;
+                            
+                        progressUI1.OnNotify(_pipelineUseCase.Destination,
+                            new NotifyEventArgs(ProgressEventType.Information,
+                                "Extraction completed successfully into : " +
+                                _pipelineUseCase.Destination.GetDestinationDescription()));
+
+                        if (request is ExtractDatasetCommand)
+                            WriteMetadata(request);
+                    }
+        }
+
+        private void WriteMetadata(IExtractCommand request)
+        {
+            request.State = ExtractCommandState.WritingMetadata;
+            WordDataWriter wordDataWriter;
+
+            try
+            {
+                wordDataWriter = new WordDataWriter(_pipelineUseCase);
+            }
+            catch (NotSupportedException e)
+            {
+                //something about the pipeline resulted i a known unsupported state (e.g. extracting to a database) so we can't use WordDataWritter with this
+                // tell user that we could not run the report and set the status to warning
+                request.State = ExtractCommandState.Warning;
+                
+                progressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED because of NotSupportedException",e));
+                return;
+            }
+
+            wordDataWriter.GenerateWordFile();//run the report
+
+            //if there were any exceptions
+            if (wordDataWriter.ExceptionsGeneratingWordFile.Any())
+            {
+                request.State = ExtractCommandState.Warning;
+                    
+                foreach (Exception e in wordDataWriter.ExceptionsGeneratingWordFile)
+                    progressUI1.OnNotify(wordDataWriter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
+            }
+            else
+            {
+                //word data extracted ok
+                request.State = ExtractCommandState.Completed;
+            }
+        }*/
     }
 }

@@ -148,6 +148,7 @@
     <Compile Include="Data\DataTables\ISupplementalExtractionResults.cs" />
     <Compile Include="Data\IExternalCohortDefinitionData.cs" />
     <Compile Include="Data\IHICProjectSalt.cs" />
+    <Compile Include="ExtractionTime\Commands\ExtractCommand.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandState.cs" />
     <Compile Include="ExtractionTime\Commands\IExtractCommand.cs" />
     <Compile Include="ExtractionTime\IExtractionDirectory.cs" />

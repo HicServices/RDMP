@@ -1,26 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using System.Threading;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
-using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Repositories;
 using HIC.Logging;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
@@ -64,39 +54,26 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             //adjust context: we want a destination requirement of IExecuteDatasetExtractionDestination
             _context.MustHaveDestination = typeof(IExecuteDatasetExtractionDestination);//we want this freaky destination type
             _context.MustHaveSource = typeof(ExecuteDatasetExtractionSource);
-        }
 
-        [Obsolete("Use the constructor with the IProject parameter, this will be removed soon")]
-        public ExtractionPipelineUseCase(IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
-        {
-            _dataLoadInfo = dataLoadInfo;
-            ExtractCommand = extractCommand;
-            if (ExtractCommand != ExtractDatasetCommand.EmptyCommand)
-                _project = ExtractCommand.Configuration.Project;
-            _pipeline = pipeline;
-
-            //create the context using the standard context factory
-            var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
-            _context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo);
-
-            //adjust context: we want a destination requirement of IExecuteDatasetExtractionDestination
-            _context.MustHaveDestination = typeof(IExecuteDatasetExtractionDestination);//we want this freaky destination type
-            _context.MustHaveSource = typeof(ExecuteDatasetExtractionSource);
+            extractCommand.ElevateState(ExtractCommandState.NotLaunched);
         }
         
         public void Execute(IDataLoadEventListener listener)
         {
             try
             {
+                ExtractCommand.ElevateState(ExtractCommandState.WaitingToExecute);
                 var engine = GetEngine(_pipeline, listener);
 
                 try
                 {
                     _cancelToken = new CancellationTokenSource();
                     engine.ExecutePipeline(new GracefulCancellationToken(_cancelToken.Token, _cancelToken.Token));
+                    ExtractCommand.ElevateState(ExtractCommandState.Completed);
                 }
                 catch (Exception e)
                 {
+                    ExtractCommand.ElevateState(ExtractCommandState.Crashed);
                     FatalErrorLogging.GetInstance()
                                      .LogFatalError(_dataLoadInfo, "Execute extraction pipeline", ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
@@ -153,7 +130,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             catch (Exception ex)
             {
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Execute pipeline failed with Exception",ex));
-                Crashed = true;
+                ExtractCommand.ElevateState( ExtractCommandState.Crashed);
             }
         }
 

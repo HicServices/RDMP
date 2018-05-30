@@ -123,13 +123,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (Request == null && GlobalsRequest == null)
-                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Component has not been initialized before being asked to GetChunk(s)"));
 
             // we are in the Global Commands case, let's return an empty DataTable (not null) 
             // so we can trigger the destination to extract the globals docs and sql
             if (GlobalsRequest != null)
             {
+                GlobalsRequest.ElevateState(ExtractCommandState.WaitingForSQLServer);
                 if (firstGlobalChunk)
                 {
                     //unless we are checking, start auditing
@@ -140,10 +139,15 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                     firstGlobalChunk = false;
                     return new DataTable("Globals");
                 }
-                
+
                 return null;
             }
 
+            if (Request == null)
+                throw new Exception("Component has not been initialized before being asked to GetChunk(s)");
+
+            Request.ElevateState(ExtractCommandState.WaitingForSQLServer);
+            
             if(_cancel)
                 throw new Exception("User cancelled data extraction");
             
@@ -168,28 +172,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
             DataTable chunk=null;
 
-            Thread t = new Thread(() =>
+            try
             {
-                try
-                {
-                    chunk = _hostedSource.GetChunk(listener, cancellationToken);
-                }
-                catch (Exception e)
-                {
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Read from source failed",e));
-                }
-            });
-            t.Start();
-
-            bool haveAttemptedCancelling = false;
-            while (t.IsAlive)
+                chunk = _hostedSource.GetChunk(listener, cancellationToken);
+            }
+            catch (Exception e)
             {
-                if(cancellationToken.IsCancellationRequested && _hostedSource.cmd != null && !haveAttemptedCancelling)
-                {
-                    _hostedSource.cmd.Cancel();//cancel the database command
-                    haveAttemptedCancelling = true;
-                }
-                Thread.Sleep(100);
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Read from source failed",e));
             }
             
             if(cancellationToken.IsCancellationRequested)

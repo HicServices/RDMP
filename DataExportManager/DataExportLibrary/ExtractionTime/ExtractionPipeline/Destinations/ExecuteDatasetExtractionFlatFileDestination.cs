@@ -252,7 +252,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public string GetFilename()
         {
-            string filename = _request.Name;
+            string filename = _request.ToString();
 
             var datasetCommand = _request as IExtractDatasetCommand;
             if (datasetCommand != null && UseAcronymForFileNaming)

@@ -295,7 +295,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public string GetFilename()
         {
-            return _request.Name;
+            return _request.ToString();
         }
 
         public string GetDestinationDescription()
