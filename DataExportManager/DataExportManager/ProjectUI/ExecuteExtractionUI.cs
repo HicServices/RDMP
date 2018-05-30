@@ -64,12 +64,20 @@ namespace DataExportManager.ProjectUI
             AssociatedCollection = RDMPCollection.DataExport;
 
             checkAndExecuteUI1.CommandGetter = CommandGetter;
+            checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
+            checkAndExecuteUI1.GroupBySender();
 
             olvName.ImageGetter = Name_ImageGetter;
             olvState.ImageGetter = State_ImageGetter;
             olvDatasets.ChildrenGetter = ChildrenGetter;
             olvDatasets.CanExpandGetter = CanExpandGetter;
             olvDatasets.HierarchicalCheckboxes = true;
+
+        }
+
+        private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
+        {
+            olvDatasets.RefreshObjects(olvDatasets.Objects.Cast<object>().ToArray());
         }
 
 
@@ -105,8 +113,13 @@ namespace DataExportManager.ProjectUI
 
             if (extractionRunner == null || eds == null)
                 return null;
-            
-            return _activator.CoreIconProvider.GetImage(extractionRunner.GetState(eds));
+
+            var state = extractionRunner.GetState(eds);
+
+            if (state == null)
+                return null;
+
+            return _activator.CoreIconProvider.GetImage(state);
         }
 
         private object Name_ImageGetter(object rowobject)

@@ -8,7 +8,7 @@ namespace RDMPAutomationService.Options
         [Option('g',"Globals", HelpText = "Include extraction of globals (global SupportingDocuments etc")]
         public bool ExtractGlobals { get; set; }
 
-        [Option('e',"ExtractionConfiguration",HelpText = "The ExtractionConfiguration ID to extract")]
+        [Option('e',"ExtractionConfiguration",HelpText = "The ExtractionConfiguration ID to extract",Required = true)]
         public int ExtractionConfiguration { get; set; }
 
         [Option('s', "Datasets", HelpText = "Restrict extraction to only those ExtractableDatasets that have the provided list of IDs (must be part of the ExtractionConfiguration")]

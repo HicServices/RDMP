@@ -207,6 +207,11 @@ namespace CatalogueManager.SimpleControls
             }
         }
 
+        public void GroupBySender()
+        {
+            loadProgressUI1.GroupBySender();
+        }
+
         private void btnAbortLoad_Click(object sender, EventArgs e)
         {
             _cancellationTokenSource.Abort();

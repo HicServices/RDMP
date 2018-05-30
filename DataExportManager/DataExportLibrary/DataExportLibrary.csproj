@@ -199,6 +199,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Checks\ExtractionConfigurationChecker.cs" />
     <Compile Include="Checks\ProjectChecker.cs" />
     <Compile Include="Checks\SelectedDatasetsChecker.cs" />
     <Compile Include="Checks\SupportingSQLTableChecker.cs" />

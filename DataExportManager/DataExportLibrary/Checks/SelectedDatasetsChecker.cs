@@ -11,6 +11,7 @@ using DataExportLibrary.Data;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -24,9 +25,9 @@ namespace DataExportLibrary.Checks
     public class SelectedDatasetsChecker : ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        private SelectedDataSets _selectedDataSet;
+        private ISelectedDataSets _selectedDataSet;
 
-        public SelectedDatasetsChecker(SelectedDataSets selectedDataSet,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public SelectedDatasetsChecker(ISelectedDataSets selectedDataSet,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
             _selectedDataSet = selectedDataSet;
