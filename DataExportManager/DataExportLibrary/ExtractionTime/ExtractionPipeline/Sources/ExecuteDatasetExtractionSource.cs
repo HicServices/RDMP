@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
@@ -175,6 +176,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             try
             {
                 chunk = _hostedSource.GetChunk(listener, cancellationToken);
+            }
+            catch (AggregateException a)
+            {
+                if (a.GetExceptionIfExists<TaskCanceledException>() != null)
+                    _cancel = true;
+
+                throw;
             }
             catch (Exception e)
             {

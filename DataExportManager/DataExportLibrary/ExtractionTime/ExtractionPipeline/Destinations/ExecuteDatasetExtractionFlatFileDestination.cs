@@ -68,9 +68,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
+            _request.ElevateState(ExtractCommandState.WritingToFile);
+
             if (!haveWrittenBundleContents && _request is ExtractDatasetCommand)
                 WriteBundleContents(((ExtractDatasetCommand)_request).DatasetBundle, job, cancellationToken);
-
+            
             if (_request is ExtractGlobalsCommand)
             {
                 ExtractGlobals((ExtractGlobalsCommand)_request, job, _dataLoadInfo);

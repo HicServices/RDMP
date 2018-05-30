@@ -52,6 +52,9 @@ namespace RDMPAutomationService.Runners
             
             List<Task> tasks = new List<Task>();
 
+            if (HasConfigurationPreviouslyBeenReleased())
+                throw new Exception("Extraction Configuration has already been released");
+
             switch (_options.Command)
             {
                 case CommandLineActivity.run:
@@ -64,7 +67,7 @@ namespace RDMPAutomationService.Runners
                         var g = _configuration.GetGlobals();
                         var globals = new GlobalsBundle(g.OfType<SupportingDocument>().ToArray(),g.OfType<SupportingSQLTable>().ToArray());
                         _globalsCommand = new ExtractGlobalsCommand(repositoryLocator, _project, _configuration, globals);
-                        var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, pipeline, dli);
+                        var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, pipeline, dli) { Token = token };
                         useCase.Execute(new OverrideSenderIDataLoadEventListener("Globals",listener));
                     }
 
@@ -84,7 +87,7 @@ namespace RDMPAutomationService.Runners
 
                     foreach (var kvp in ExtractCommands)
                     {
-                        var executeUseCase = new ExtractionPipelineUseCase(_project, kvp.Value, pipeline, dli);
+                        var executeUseCase = new ExtractionPipelineUseCase(_project, kvp.Value, pipeline, dli){Token = token};
                         var name = kvp.Key.ToString();
 
                         if (semaphore != null)
@@ -105,7 +108,7 @@ namespace RDMPAutomationService.Runners
                         ));
                     }
 
-                    Task.WaitAll(tasks.ToArray(), token.StopToken);
+                    Task.WaitAll(tasks.ToArray());
                     
                     break;
                 case CommandLineActivity.check:
@@ -135,7 +138,7 @@ namespace RDMPAutomationService.Runners
                         tasks.Add(t);
                     }
 
-                    Task.WaitAll(tasks.ToArray(), token.StopToken);
+                    Task.WaitAll(tasks.ToArray());
                     
                     break;
 
@@ -203,71 +206,15 @@ namespace RDMPAutomationService.Runners
             return dataLoadInfo;
         }
 
-        /*private void DoExtractionAsync(IExtractCommand request)
+        
+        private bool HasConfigurationPreviouslyBeenReleased()
         {
-            request.State = ExtractCommandState.WaitingForSQLServer;
-                
-            _pipelineUseCase = new ExtractionPipelineUseCase(Project, request, _pipeline, _dataLoadInfo);
-            _pipelineUseCase.Execute(progressUI1);
+            var previouslyReleasedStuff = _configuration.ReleaseLogEntries;
 
-            if (_pipelineUseCase.Crashed)
-            {
-                request.State = ExtractCommandState.Crashed;
-            }
-            else
-                if (_pipelineUseCase.Source != null)
-                    if (_pipelineUseCase.Source.WasCancelled)
-                        request.State = ExtractCommandState.UserAborted;
-                    else if (_pipelineUseCase.Source.ValidationFailureException != null)
-                        request.State = ExtractCommandState.Warning;
-                    else
-                    {
-                        request.State = ExtractCommandState.Completed;
-                            
-                        progressUI1.OnNotify(_pipelineUseCase.Destination,
-                            new NotifyEventArgs(ProgressEventType.Information,
-                                "Extraction completed successfully into : " +
-                                _pipelineUseCase.Destination.GetDestinationDescription()));
+            if (previouslyReleasedStuff.Any())
+                return true;
 
-                        if (request is ExtractDatasetCommand)
-                            WriteMetadata(request);
-                    }
+            return false;
         }
-
-        private void WriteMetadata(IExtractCommand request)
-        {
-            request.State = ExtractCommandState.WritingMetadata;
-            WordDataWriter wordDataWriter;
-
-            try
-            {
-                wordDataWriter = new WordDataWriter(_pipelineUseCase);
-            }
-            catch (NotSupportedException e)
-            {
-                //something about the pipeline resulted i a known unsupported state (e.g. extracting to a database) so we can't use WordDataWritter with this
-                // tell user that we could not run the report and set the status to warning
-                request.State = ExtractCommandState.Warning;
-                
-                progressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED because of NotSupportedException",e));
-                return;
-            }
-
-            wordDataWriter.GenerateWordFile();//run the report
-
-            //if there were any exceptions
-            if (wordDataWriter.ExceptionsGeneratingWordFile.Any())
-            {
-                request.State = ExtractCommandState.Warning;
-                    
-                foreach (Exception e in wordDataWriter.ExceptionsGeneratingWordFile)
-                    progressUI1.OnNotify(wordDataWriter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
-            }
-            else
-            {
-                //word data extracted ok
-                request.State = ExtractCommandState.Completed;
-            }
-        }*/
     }
 }

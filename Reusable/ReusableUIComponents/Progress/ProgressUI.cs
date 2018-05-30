@@ -349,9 +349,11 @@ namespace ReusableUIComponents.Progress
 
         private void tbTextFilter_TextChanged(object sender, EventArgs e)
         {
-            olvProgressEvents.ModelFilter = new TextMatchFilter(olvProgressEvents,tbTextFilter.Text,StringComparison.CurrentCultureIgnoreCase);
+            SetFilterFromTextBox();
         }
+
         
+
         private void ddGroupBy_SelectedIndexChanged(object sender, EventArgs e)
         {
             var dd = ddGroupBy.SelectedItem as string;
@@ -363,9 +365,15 @@ namespace ReusableUIComponents.Progress
             olvProgressEvents.BuildGroups();
         }
 
-        public void GroupBySender()
+        public void GroupBySender(string filter = null)
         {
             ddGroupBy.SelectedItem = "Sender";
+            tbTextFilter.Text = filter;
+        }
+
+        private void SetFilterFromTextBox()
+        {
+            olvProgressEvents.ModelFilter = new TextMatchFilter(olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
         }
     }
     internal class QueuedProgressMessage

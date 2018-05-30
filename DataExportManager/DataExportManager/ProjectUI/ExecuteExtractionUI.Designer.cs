@@ -33,7 +33,6 @@ namespace DataExportManager.ProjectUI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.cbIsTest = new System.Windows.Forms.CheckBox();
             this.cbSkipValidation = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.tbTopX = new System.Windows.Forms.TextBox();
@@ -55,16 +54,6 @@ namespace DataExportManager.ProjectUI
             ((System.ComponentModel.ISupportInitialize)(this.olvDatasets)).BeginInit();
             this.SuspendLayout();
             // 
-            // cbIsTest
-            // 
-            this.cbIsTest.AutoSize = true;
-            this.cbIsTest.Location = new System.Drawing.Point(6, 36);
-            this.cbIsTest.Name = "cbIsTest";
-            this.cbIsTest.Size = new System.Drawing.Size(88, 17);
-            this.cbIsTest.TabIndex = 7;
-            this.cbIsTest.Text = "Audit as Test";
-            this.cbIsTest.UseVisualStyleBackColor = true;
-            // 
             // cbSkipValidation
             // 
             this.cbSkipValidation.AutoSize = true;
@@ -80,7 +69,7 @@ namespace DataExportManager.ProjectUI
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 56);
+            this.label4.Location = new System.Drawing.Point(6, 37);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(88, 13);
             this.label4.TabIndex = 17;
@@ -88,7 +77,7 @@ namespace DataExportManager.ProjectUI
             // 
             // tbTopX
             // 
-            this.tbTopX.Location = new System.Drawing.Point(100, 53);
+            this.tbTopX.Location = new System.Drawing.Point(100, 34);
             this.tbTopX.Name = "tbTopX";
             this.tbTopX.Size = new System.Drawing.Size(94, 20);
             this.tbTopX.TabIndex = 18;
@@ -96,13 +85,12 @@ namespace DataExportManager.ProjectUI
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.cbIsTest);
             this.groupBox2.Controls.Add(this.cbSkipValidation);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.tbTopX);
-            this.groupBox2.Location = new System.Drawing.Point(194, 166);
+            this.groupBox2.Location = new System.Drawing.Point(195, 33);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(203, 83);
+            this.groupBox2.Size = new System.Drawing.Size(203, 59);
             this.groupBox2.TabIndex = 26;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Options";
@@ -112,7 +100,7 @@ namespace DataExportManager.ProjectUI
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(964, 160);
+            this.panel1.Size = new System.Drawing.Size(964, 27);
             this.panel1.TabIndex = 27;
             // 
             // splitContainer1
@@ -175,11 +163,13 @@ namespace DataExportManager.ProjectUI
             this.olvDatasets.Name = "olvDatasets";
             this.olvDatasets.RowHeight = 19;
             this.olvDatasets.ShowGroups = false;
+            this.olvDatasets.ShowImagesOnSubItems = true;
             this.olvDatasets.Size = new System.Drawing.Size(318, 543);
             this.olvDatasets.TabIndex = 28;
             this.olvDatasets.UseCompatibleStateImageBehavior = false;
             this.olvDatasets.View = System.Windows.Forms.View.Details;
             this.olvDatasets.VirtualMode = true;
+            this.olvDatasets.SelectedIndexChanged += new System.EventHandler(this.olvDatasets_SelectedIndexChanged);
             // 
             // olvName
             // 
@@ -203,9 +193,9 @@ namespace DataExportManager.ProjectUI
             // checkAndExecuteUI1
             // 
             this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 160);
+            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 27);
             this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
-            this.checkAndExecuteUI1.Size = new System.Drawing.Size(964, 412);
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(964, 545);
             this.checkAndExecuteUI1.TabIndex = 28;
             // 
             // ExecuteExtractionUI
@@ -229,7 +219,6 @@ namespace DataExportManager.ProjectUI
 
         #endregion
 
-        private System.Windows.Forms.CheckBox cbIsTest;
         private System.Windows.Forms.CheckBox cbSkipValidation;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbTopX;

@@ -125,8 +125,6 @@ namespace CatalogueManager.SimpleControls
         {
             _cancellationTokenSource = new GracefulCancellationTokenSource();
 
-            loadProgressUI1.ShowRunning(true);
-
             IRunner runner;
 
             try
@@ -140,6 +138,9 @@ namespace CatalogueManager.SimpleControls
                 return;
             }
             CurrentRunner = runner;
+
+            loadProgressUI1.Clear();
+            loadProgressUI1.ShowRunning(true);
 
             _runningTask =
                 //run the data load in a Thread
@@ -164,6 +165,7 @@ namespace CatalogueManager.SimpleControls
         {
             try
             {
+                
                 runner.Run(_activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
             }
             catch (Exception ex)
@@ -195,7 +197,6 @@ namespace CatalogueManager.SimpleControls
             {
                 checksUI1.Visible = false;
                 loadProgressUI1.Visible = true;
-                loadProgressUI1.Clear();
             }
             
             //checks have passed is there a load underway already?
@@ -220,9 +221,9 @@ namespace CatalogueManager.SimpleControls
             }
         }
 
-        public void GroupBySender()
+        public void GroupBySender(string filter = null)
         {
-            loadProgressUI1.GroupBySender();
+            loadProgressUI1.GroupBySender(filter);
         }
 
         private void btnAbortLoad_Click(object sender, EventArgs e)

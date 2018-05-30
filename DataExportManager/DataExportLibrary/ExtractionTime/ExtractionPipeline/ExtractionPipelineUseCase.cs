@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
@@ -20,17 +21,16 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
     /// </summary>
     public class ExtractionPipelineUseCase : PipelineUseCase
     {
-        private CancellationTokenSource _cancelToken;
         private readonly IProject _project;
         private readonly IPipeline _pipeline;
         DataLoadInfo _dataLoadInfo;
         private DataFlowPipelineContext<DataTable> _context;
         
-        public bool Crashed = false;
-        
         public IExtractCommand ExtractCommand { get; set; }
         public ExecuteDatasetExtractionSource Source { get; private set; }
-        
+
+        public GracefulCancellationToken Token { get; set; }
+
         /// <summary>
         /// If Destination is an IExecuteDatasetExtractionDestination then it will be initialized properly with the configuration, cohort etc otherwise the destination will have to react properly 
         /// / dynamically based on what comes down the pipeline just like it would normally e.g. SqlBulkInsertDestination would be a logically permissable destination for an ExtractionPipeline
@@ -67,9 +67,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
 
                 try
                 {
-                    _cancelToken = new CancellationTokenSource();
-                    engine.ExecutePipeline(new GracefulCancellationToken(_cancelToken.Token, _cancelToken.Token));
-                    ExtractCommand.ElevateState(ExtractCommandState.Completed);
+                    engine.ExecutePipeline(Token?? new GracefulCancellationToken());
+                    listener.OnNotify(Destination, new NotifyEventArgs(ProgressEventType.Information, "Extraction completed successfully into : " + Destination.GetDestinationDescription()));
                 }
                 catch (Exception e)
                 {
@@ -107,6 +106,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                     FatalErrorLogging.GetInstance()
                         .LogFatalError(Destination.TableLoadInfo.DataLoadInfoParent, this.GetType().Name,
                             "User Cancelled Extraction");
+                    ExtractCommand.ElevateState(ExtractCommandState.UserAborted);
 
                     if (ExtractCommand is ExtractDatasetCommand)
                     {
@@ -132,14 +132,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Execute pipeline failed with Exception",ex));
                 ExtractCommand.ElevateState( ExtractCommandState.Crashed);
             }
-        }
 
-        public void Cancel()
-        {
-            if (_cancelToken == null)
-                throw new Exception("Cannot cancel now because cancellation token has not been set yet, you must wait till _engine.ExecutePipeline is called");
-            
-            _cancelToken.Cancel();
+            //if it didn't crash / get aborted etc
+            if (ExtractCommand.State < ExtractCommandState.WritingMetadata && ExtractCommand is ExtractDatasetCommand)
+                WriteMetadata(listener);
         }
 
         public override IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)
@@ -164,6 +160,68 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
         public override IDataFlowPipelineContext GetContext()
         {
             return _context;
+        }
+
+
+
+        /*private void DoExtractionAsync(IExtractCommand request)
+        {
+            request.State = ExtractCommandState.WaitingForSQLServer;
+                
+            _pipelineUseCase = new ExtractionPipelineUseCase(Project, request, _pipeline, _dataLoadInfo);
+            _pipelineUseCase.Execute(progressUI1);
+
+            if (_pipelineUseCase.Crashed)
+            {
+                request.State = ExtractCommandState.Crashed;
+            }
+            else
+                if (_pipelineUseCase.Source != null)
+                    if (_pipelineUseCase.Source.WasCancelled)
+                        request.State = ExtractCommandState.UserAborted;
+                    else if (_pipelineUseCase.Source.ValidationFailureException != null)
+                        request.State = ExtractCommandState.Warning;
+                    else
+                    {
+                        request.State = ExtractCommandState.Completed;
+                            
+
+                    }
+        }
+        */
+        private void WriteMetadata(IDataLoadEventListener listener)
+        {
+            ExtractCommand.ElevateState(ExtractCommandState.WritingMetadata);
+            WordDataWriter wordDataWriter;
+
+            
+            try
+            {
+                wordDataWriter = new WordDataWriter(this);
+                wordDataWriter.GenerateWordFile();//run the report
+            }
+            catch (Exception e)
+            {
+                //something about the pipeline resulted i a known unsupported state (e.g. extracting to a database) so we can't use WordDataWritter with this
+                // tell user that we could not run the report and set the status to warning
+                ExtractCommand.ElevateState(ExtractCommandState.Warning);
+                
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED",e));
+                return;
+            }
+            
+            //if there were any exceptions
+            if (wordDataWriter.ExceptionsGeneratingWordFile.Any())
+            {
+                ExtractCommand.ElevateState(ExtractCommandState.Warning);
+                    
+                foreach (Exception e in wordDataWriter.ExceptionsGeneratingWordFile)
+                    listener.OnNotify(wordDataWriter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
+            }
+            else
+            {
+                ExtractCommand.ElevateState(ExtractCommandState.Completed);
+            }
         }
     }
 }

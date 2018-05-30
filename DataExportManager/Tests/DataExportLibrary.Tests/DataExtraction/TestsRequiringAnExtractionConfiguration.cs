@@ -16,6 +16,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using HIC.Logging;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -158,7 +159,7 @@ CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
 
                 Assert.IsNotEmpty(pipelineUseCase.Source.Request.QueryBuilder.SQL);
 
-                Assert.IsFalse(pipelineUseCase.Crashed);
+                Assert.IsTrue(pipelineUseCase.ExtractCommand.State == ExtractCommandState.Completed);
             }
             finally
             {
