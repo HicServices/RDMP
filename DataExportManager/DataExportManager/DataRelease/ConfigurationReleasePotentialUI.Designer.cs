@@ -148,6 +148,7 @@
             this.tlvDatasets.HierarchicalCheckboxes = true;
             this.tlvDatasets.Location = new System.Drawing.Point(6, 73);
             this.tlvDatasets.Name = "tlvDatasets";
+            this.tlvDatasets.RowHeight = 19;
             this.tlvDatasets.ShowGroups = false;
             this.tlvDatasets.ShowImagesOnSubItems = true;
             this.tlvDatasets.Size = new System.Drawing.Size(414, 282);

@@ -170,23 +170,29 @@ namespace RDMPStartup
         
         Dictionary<string, Type> _cachedTypesByNameDictionary = new Dictionary<string, Type>();
 
+        object oLockDictionary = new object();
         private Type GetTypeByName(string s, Type expectedBaseClassType)
         {
-            if (_cachedTypesByNameDictionary.ContainsKey(s))
-                return _cachedTypesByNameDictionary[s];
-               
-            var toReturn = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s,expectedBaseClassType);
+            Type toReturn;
+            lock (oLockDictionary)
+            {
+                if (_cachedTypesByNameDictionary.ContainsKey(s))
+                    return _cachedTypesByNameDictionary[s];
 
-            if (toReturn == null)
-                throw new TypeLoadException("Could not find Type called '" + s + "'");
+                toReturn = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s, expectedBaseClassType);
 
-            if (expectedBaseClassType != null)
-                if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                    throw new TypeLoadException("Found Type '" + s + "' which we managed to find but it did not match an expected base Type (" + expectedBaseClassType + ")");
+                if (toReturn == null)
+                    throw new TypeLoadException("Could not find Type called '" + s + "'");
 
-            //cache known type to not hammer reflection all the time!
-            _cachedTypesByNameDictionary.Add(s, toReturn);
+                if (expectedBaseClassType != null)
+                    if (!expectedBaseClassType.IsAssignableFrom(toReturn))
+                        throw new TypeLoadException("Found Type '" + s +
+                                                    "' which we managed to find but it did not match an expected base Type (" +
+                                                    expectedBaseClassType + ")");
 
+                //cache known type to not hammer reflection all the time!
+                _cachedTypesByNameDictionary.Add(s, toReturn);
+            }
             return toReturn;
         }
     }
