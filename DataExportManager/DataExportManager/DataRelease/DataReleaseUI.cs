@@ -15,7 +15,8 @@ using DataExportManager.ProjectUI;
 using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
-
+using RDMPObjectVisualisation.Pipelines;
+using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
 using ReusableUIComponents;
 
 namespace DataExportManager.DataRelease
@@ -29,6 +30,9 @@ namespace DataExportManager.DataRelease
     public partial class DataReleaseUI : DataReleaseUI_Design
     {
         private Project _project;
+
+        private IPipelineSelectionUI _pipelineUI;
+        private IExtractionConfiguration[] _unreleaseConfigurations;
 
         public Project Project
         {
@@ -47,9 +51,9 @@ namespace DataExportManager.DataRelease
             {
                 List<FileInfo> toReturn = new List<FileInfo>();
 
-                foreach (var kvp in doReleaseAndAuditUI1.ConfigurationsForRelease)
-                    foreach (ReleasePotential potential in kvp.Value)
-                        toReturn.AddRange(potential.ExtractDirectory.GetFiles());
+                //foreach (var kvp in doReleaseAndAuditUI1.ConfigurationsForRelease)
+                //    foreach (ReleasePotential potential in kvp.Value)
+                //        toReturn.AddRange(potential.ExtractDirectory.GetFiles());
 
                 return toReturn.ToArray();
             }
@@ -70,16 +74,15 @@ namespace DataExportManager.DataRelease
             Project = project;
 
             //tell children controls about the project
-            doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
+            //doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
             AssociatedCollection = RDMPCollection.DataExport;
+            SetupPipeline();
         }
 
         private void SetupUIForProject(Project project)
         {
-
             lblLoading.Visible = true;
             lblLoading.Refresh();
-
 
             foreach (Control c in flowLayoutPanel1.Controls)
             {
@@ -98,17 +101,17 @@ namespace DataExportManager.DataRelease
             else
             {
                 //show all unreleased configurations
-                var configurations = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
+                _unreleaseConfigurations = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
 
                 //for each configuration defined in the project
-                for (int index = 0; index < configurations.Length; index++)
+                for (int index = 0; index < _unreleaseConfigurations.Length; index++)
                 {
                     //create a UI that shows the datasets in it and their statuses and lets the user generate releases
-                    IExtractionConfiguration configuration = configurations[index];
+                    IExtractionConfiguration configuration = _unreleaseConfigurations[index];
 
                     var configurationReleasePotentialUI = new ConfigurationReleasePotentialUI()
                     {
-                        Width = flowLayoutPanel1.Width - 20
+                        Width = flowLayoutPanel1.Width - 30
                     };
 
                     configurationReleasePotentialUI.SetConfiguration((IActivateItems) _activator, (ExtractionConfiguration) configuration);
@@ -122,12 +125,13 @@ namespace DataExportManager.DataRelease
             }
 
             lblLoading.Visible = false;
+            SetupPipeline();
         }
 
         private void configurationReleasePotentialUI_RequestPatchRelease(object sender,
             ReleasePotential datasetReleasePotential, ReleaseEnvironmentPotential environmentPotential)
         {
-            doReleaseAndAuditUI1.AddPatchRelease(datasetReleasePotential, environmentPotential);
+            //doReleaseAndAuditUI1.AddPatchRelease(datasetReleasePotential, environmentPotential);
         }
 
         private void ConfigurationReleasePotentialUIOnRequestRelease(object sender, ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
@@ -143,7 +147,7 @@ namespace DataExportManager.DataRelease
             if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
                 throw new Exception("Ticketing system decided that Environment was not ready for release");
 
-            doReleaseAndAuditUI1.AddToRelease(datasetReleasePotentials, environmentPotential);
+            //doReleaseAndAuditUI1.AddToRelease(datasetReleasePotentials, environmentPotential);
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -167,7 +171,7 @@ namespace DataExportManager.DataRelease
         private void flowLayoutPanel1_Resize(object sender, EventArgs e)
         {
             foreach (Control c in flowLayoutPanel1.Controls)
-                c.Width = flowLayoutPanel1.Width - 20; //allow scroll bar visibility
+                c.Width = flowLayoutPanel1.Width - 30; //allow scroll bar visibility
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
@@ -176,14 +180,40 @@ namespace DataExportManager.DataRelease
             Project = databaseObject;
 
             //tell children controls about the project
-            doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
+            //doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
         }
 
         public override string GetTabName()
         {
-            return "Release:" + base.GetTabName();
+            return "Release: " + base.GetTabName();
+        }
+        
+        private void SetupPipeline()
+        {
+            if (_pipelineUI == null)
+            {
+                var releaseData = GetReleaseData();
+                releaseData.IsDesignTime = true;
+                var context = new ReleaseUseCase(_project, releaseData);
+                _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
+            }
         }
 
+        private ReleaseData GetReleaseData()
+        {
+            return new ReleaseData
+            {
+                ConfigurationsForRelease = flowLayoutPanel1
+                                                    .Controls
+                                                    .Cast<ConfigurationReleasePotentialUI>()
+                                                    .ToDictionary(crp => (IExtractionConfiguration)crp.Configuration, crp => crp.ReleasePotentials),
+                EnvironmentPotential = flowLayoutPanel1
+                                                    .Controls
+                                                    .Cast<ConfigurationReleasePotentialUI>()
+                                                    .Select(crp => crp.EnvironmentalPotential).FirstOrDefault(),
+                ReleaseState = ReleaseState.Nothing
+            };
+        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataReleaseUI_Design, UserControl>))]

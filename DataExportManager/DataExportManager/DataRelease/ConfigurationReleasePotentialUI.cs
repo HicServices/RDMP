@@ -185,12 +185,13 @@ namespace DataExportManager.DataRelease
                     {
                         tlvDatasets.CheckAll();
                         tlvDatasets.ExpandAll();
+                        Height = 19*tlvDatasets.Items.Count + MaxHeadroom;
                     }));
 
                 try
                 {
                     //notify environment that environment evaluation is done
-                    _environmentalPotential = new ReleaseEnvironmentPotential(value);//takes a while
+                    EnvironmentalPotential = new ReleaseEnvironmentPotential(value);//takes a while
 
                 }
                 catch (Exception e)
@@ -243,7 +244,7 @@ namespace DataExportManager.DataRelease
             ragSmileyEnvironment.Reset();
 
             //if environment is ready
-            if (_environmentalPotential.Assesment == TicketingReleaseabilityEvaluation.Releaseable)
+            if (EnvironmentalPotential.Assesment == TicketingReleaseabilityEvaluation.Releaseable)
             {
                 //environment is READY!
                 lblConfigurationInvalid.Text = "Environment Ready";
@@ -251,7 +252,7 @@ namespace DataExportManager.DataRelease
                 environmentReady = true;
                 
             }
-            else if(_environmentalPotential.Assesment == TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
+            else if(EnvironmentalPotential.Assesment == TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
             {
                 //environment is READY!
                 lblConfigurationInvalid.Text = "Environment Ready (But you have no ticketing system)";
@@ -264,10 +265,10 @@ namespace DataExportManager.DataRelease
 
 
                 //environment is NOT READY!
-                lblConfigurationInvalid.Text = _environmentalPotential.Reason;
+                lblConfigurationInvalid.Text = EnvironmentalPotential.Reason;
 
                 ragSmileyEnvironment.Visible = true;
-                ragSmileyEnvironment.Fatal(_environmentalPotential.Exception);
+                ragSmileyEnvironment.Fatal(EnvironmentalPotential.Exception);
                 lblConfigurationInvalid.ForeColor = Color.DarkRed;
             }
 
@@ -281,10 +282,10 @@ namespace DataExportManager.DataRelease
         }
         
         //potential of environment the Configuration is in (Ticketing system, and maybe folders available, writeability etc)
-        private ReleaseEnvironmentPotential _environmentalPotential;
+        public ReleaseEnvironmentPotential EnvironmentalPotential;
         
         //potential of each of the datasets in the Configuration
-        List<ReleasePotential> ReleasePotentials = new List<ReleasePotential>();
+        public List<ReleasePotential> ReleasePotentials = new List<ReleasePotential>();
         private IActivateItems _activator;
         
         protected override bool ProcessKeyPreview(ref Message m)
@@ -383,25 +384,25 @@ namespace DataExportManager.DataRelease
         {
             if (ConfirmReleaseEnvironmentAcceptable())
                 foreach (ReleasePotential potential in releasePotentials)
-                    RequestPatchRelease(this, potential, _environmentalPotential);
+                    RequestPatchRelease(this, potential, EnvironmentalPotential);
         }
 
         private void AddAsPatchContent(ReleasePotential datasetReleasePotential)
         {
             if (ConfirmReleaseEnvironmentAcceptable())
-                RequestPatchRelease(this, datasetReleasePotential, _environmentalPotential);
+                RequestPatchRelease(this, datasetReleasePotential, EnvironmentalPotential);
         }
 
         private bool ConfirmReleaseEnvironmentAcceptable()
         {
-            if (_environmentalPotential == null)
+            if (EnvironmentalPotential == null)
             {
                 MessageBox.Show("Please wait till environment has been assessed");
                 return false;
             }
 
-            if (_environmentalPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable)
-                if (MessageBox.Show("Environment is not currently Releaseable, it's current state is '" + _environmentalPotential.Assesment + "' ("+_environmentalPotential.Reason+") do you wish to perform an Illegal Patch? Your user account will forever be audited as the authorizer of this patch in place of JIRA workflows", "Perform Illegal Patch?", MessageBoxButtons.YesNoCancel) != DialogResult.Yes)
+            if (EnvironmentalPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable)
+                if (MessageBox.Show("Environment is not currently Releaseable, it's current state is '" + EnvironmentalPotential.Assesment + "' ("+EnvironmentalPotential.Reason+") do you wish to perform an Illegal Patch? Your user account will forever be audited as the authorizer of this patch in place of JIRA workflows", "Perform Illegal Patch?", MessageBoxButtons.YesNoCancel) != DialogResult.Yes)
                     return false;
 
             return true;
@@ -417,8 +418,8 @@ namespace DataExportManager.DataRelease
 
         private void lblConfigurationInvalid_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if(_environmentalPotential != null && _environmentalPotential.Exception != null)
-                ExceptionViewer.Show(_environmentalPotential.Exception);
+            if(EnvironmentalPotential != null && EnvironmentalPotential.Exception != null)
+                ExceptionViewer.Show(EnvironmentalPotential.Exception);
         }
 
         public void SetConfiguration(IActivateItems activator, ExtractionConfiguration configuration)
