@@ -18,6 +18,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
@@ -26,6 +27,7 @@ using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.DataRelease;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
@@ -170,6 +172,17 @@ namespace DataExportManager.DataRelease
                     }
                 }
 
+                ////add globals to the globals category
+                //Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
+
+                ////add global SQLs to globals category
+                //Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
+
+                //add the bundle
+                //Categories[Bundles].AddRange(collection.Datasets);
+
+                // TODO: add Global Release Potentials!
+
                 if (IsDisposed)
                     return;
 
@@ -227,10 +240,55 @@ namespace DataExportManager.DataRelease
 
         private IEnumerable ChildrenGetter(object model)
         {
-            if (model is ReleasePotential)
-                return (model as ReleasePotential).Assessments;
+            if (!(model is ReleasePotential)) 
+                return null;
+            
+            var potential = (ReleasePotential) model;
+            var results = new List<ResultDetails>();
+            results.AddRange(potential.Assessments.Keys.OfType<CumulativeExtractionResults>().Select(c => new ResultDetails()
+            {
+                Name = c.ExtractableDataSet.Catalogue.ToString(),
+                Type = c.ExtractableDataSet.Catalogue.GetType().FullName,
+                Releasability = potential.Assessments[c]
+            }));
+                
+            var factory = new ExtractCommandCollectionFactory();
+            var collection = factory.Create(RepositoryLocator, Configuration);
 
-            return null;
+            var datasetBundle = collection.Datasets
+                .First(x => x.SelectedDataSets.ExtractableDataSet_ID == potential.DataSet.ID)
+                .DatasetBundle;
+            var notExtracted = datasetBundle.Documents.Select(d => (d as INamed))
+                .Union(datasetBundle.SupportingSQL.Select(s => (s as INamed)))
+                .Union(datasetBundle.LookupTables.Select(l => (l.TableInfo as INamed)));
+
+            foreach (var item in notExtracted)
+            {
+                var result = potential.Assessments.Keys.OfType<SupplementalExtractionResults>().FirstOrDefault(a => a.ExtractedId == item.ID);
+                if (result != null)
+                    results.Add(new ResultDetails()
+                    {
+                        Name = item.Name,
+                        Type = item.GetType().FullName,
+                        Releasability = potential.Assessments[result]
+                    });
+                else
+                    results.Add(new ResultDetails()
+                    {
+                        Name = item.Name,
+                        Type = item.GetType().FullName,
+                        Releasability = Releaseability.NeverBeenSuccessfullyExecuted
+                    });
+            }
+
+            return results;
+        }
+
+        private class ResultDetails
+        {
+            public string Name { get; set; }
+            public string Type { get; set; }
+            public Releaseability Releasability { get; set; }
         }
 
         private void SetupUIAsyncCallback()
@@ -262,8 +320,6 @@ namespace DataExportManager.DataRelease
             }
             else
             {
-
-
                 //environment is NOT READY!
                 lblConfigurationInvalid.Text = EnvironmentalPotential.Reason;
 
@@ -437,12 +493,10 @@ namespace DataExportManager.DataRelease
 
         private object StatusGetter(object rowObject)
         {
-            if (rowObject is ReleasePotential)
-                return null;
+            if (rowObject is ResultDetails)
+                return GetImageFromReleasability(((ResultDetails) rowObject).Releasability);
 
-            var potential = (KeyValuePair<IExtractionResults, Releaseability>)rowObject;
-
-            return GetImageFromReleasability(potential.Value);
+            return null;
         }
 
         private object AspectGetter(object rowObject)
@@ -450,9 +504,10 @@ namespace DataExportManager.DataRelease
             if (rowObject is ReleasePotential)
                 return (rowObject as ReleasePotential).DataSet.ToString();
 
-            var potential = (KeyValuePair<IExtractionResults, Releaseability>)rowObject;
-
-            return potential.Key.ToString();
+            if (rowObject is ResultDetails)
+                return ((ResultDetails)rowObject).Name;
+            
+            return null;
         }
 
         private object ImageGetter(object rowObject)
@@ -460,14 +515,10 @@ namespace DataExportManager.DataRelease
             if (rowObject is ReleasePotential)
                 return _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
 
-            var potential = (KeyValuePair<IExtractionResults, Releaseability>) rowObject;
+            if (rowObject is ResultDetails)
+                return _activator.CoreIconProvider.GetImage(((ResultDetails) rowObject).Type.Split('.').Last());
 
-            if (potential.Key is ICumulativeExtractionResults)
-                return _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
-
-            var supplemental = potential.Key as ISupplementalExtractionResults;
-
-            return _activator.CoreIconProvider.GetImage(supplemental.ExtractedType.Split('.').Last());
+            return null;
         }
 
         private string GetImageFromReleasability(Releaseability value)

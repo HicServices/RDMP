@@ -32,7 +32,7 @@ namespace DataExportManager.DataRelease
         private Project _project;
 
         private IPipelineSelectionUI _pipelineUI;
-        private IExtractionConfiguration[] _unreleaseConfigurations;
+        private IExtractionConfiguration[] _unreleasedConfigurations;
 
         public Project Project
         {
@@ -66,19 +66,6 @@ namespace DataExportManager.DataRelease
             AssociatedCollection = RDMPCollection.DataExport;
         }
 
-        public DataReleaseUI(IActivateItems activator, Project project)
-        {
-            _activator = activator;
-            InitializeComponent();
-
-            Project = project;
-
-            //tell children controls about the project
-            //doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
-            AssociatedCollection = RDMPCollection.DataExport;
-            SetupPipeline();
-        }
-
         private void SetupUIForProject(Project project)
         {
             lblLoading.Visible = true;
@@ -101,13 +88,13 @@ namespace DataExportManager.DataRelease
             else
             {
                 //show all unreleased configurations
-                _unreleaseConfigurations = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
+                _unreleasedConfigurations = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
 
                 //for each configuration defined in the project
-                for (int index = 0; index < _unreleaseConfigurations.Length; index++)
+                for (int index = 0; index < _unreleasedConfigurations.Length; index++)
                 {
                     //create a UI that shows the datasets in it and their statuses and lets the user generate releases
-                    IExtractionConfiguration configuration = _unreleaseConfigurations[index];
+                    IExtractionConfiguration configuration = _unreleasedConfigurations[index];
 
                     var configurationReleasePotentialUI = new ConfigurationReleasePotentialUI()
                     {
@@ -128,8 +115,7 @@ namespace DataExportManager.DataRelease
             SetupPipeline();
         }
 
-        private void configurationReleasePotentialUI_RequestPatchRelease(object sender,
-            ReleasePotential datasetReleasePotential, ReleaseEnvironmentPotential environmentPotential)
+        private void configurationReleasePotentialUI_RequestPatchRelease(object sender, ReleasePotential datasetReleasePotential, ReleaseEnvironmentPotential environmentPotential)
         {
             //doReleaseAndAuditUI1.AddPatchRelease(datasetReleasePotential, environmentPotential);
         }
@@ -154,15 +140,7 @@ namespace DataExportManager.DataRelease
         {
             SetupUIForProject(Project);
         }
-
-        /// <summary>
-        /// Refreshes the state of the configurations 
-        /// </summary>
-        public void Reload()
-        {
-            btnRefresh_Click(null, null);
-        }
-
+        
         private void DataReleaseManagementUI_Load(object sender, EventArgs e)
         {
 
@@ -178,9 +156,6 @@ namespace DataExportManager.DataRelease
         {
             base.SetDatabaseObject(activator, databaseObject);
             Project = databaseObject;
-
-            //tell children controls about the project
-            //doReleaseAndAuditUI1.SetProject((IActivateItems) activator, Project);
         }
 
         public override string GetTabName()
