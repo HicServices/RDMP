@@ -10,6 +10,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.DataRelease
 {
@@ -18,13 +19,16 @@ namespace DataExportLibrary.DataRelease
     /// Extraction Destinations will return an implementation of this class which will run checks on the releasaility of the extracted datasets
     /// based on the extraction method used.
     /// </summary>
-    public abstract class ReleasePotential
+    public abstract class ReleasePotential:ICheckable
     {
         protected readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly IRepository _repository;
         private List<IColumn> _columnsToExtract;
-        public IExtractionConfiguration Configuration { get; set; }
+
+        public ISelectedDataSets SelectedDataSet { get; private set; }
+        public IExtractionConfiguration Configuration { get; private set; }
         public IExtractableDataSet DataSet { get; private set; }
+
         public Dictionary<ExtractableColumn, ExtractionInformation> ColumnsThatAreDifferentFromCatalogue { get; private set; }
 
         public Exception Exception { get; private set; }
@@ -53,12 +57,13 @@ namespace DataExportLibrary.DataRelease
 
         public Dictionary<IExtractionResults, Releaseability> Assessments { get; protected set; }
 
-        protected ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet)
+        protected ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
         {
             _repositoryLocator = repositoryLocator;
-            _repository = configuration.Repository;
-            Configuration = configuration;
-            DataSet = dataSet;
+            _repository = selectedDataSet.Repository;
+            SelectedDataSet = selectedDataSet;
+            Configuration = selectedDataSet.ExtractionConfiguration;
+            DataSet = selectedDataSet.ExtractableDataSet;
             Assessments = new Dictionary<IExtractionResults, Releaseability>();
 
             //see what has been extracted before
@@ -208,6 +213,29 @@ namespace DataExportLibrary.DataRelease
                     toReturn += " Status: " + Assessments[DatasetExtractionResult];
 
                     return toReturn;
+            }
+        }
+
+        public virtual void Check(ICheckNotifier notifier)
+        {
+            //todo : call MakeAssesment here instead of constructor
+            foreach (KeyValuePair<IExtractionResults, Releaseability> kvp in Assessments)
+            {
+                CheckResult checkResult;
+                switch (kvp.Value)
+                {
+                    case Releaseability.ColumnDifferencesVsCatalogue:
+                        checkResult = CheckResult.Warning;
+                        break;
+                    case Releaseability.Releaseable:
+                        checkResult = CheckResult.Success;
+                        break;
+                    default:
+                        checkResult = CheckResult.Fail;
+                        break;
+                }
+
+                notifier.OnCheckPerformed(new CheckEventArgs(kvp.Key + " is " + kvp.Value, checkResult));
             }
         }
     }

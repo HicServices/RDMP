@@ -1,6 +1,7 @@
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.DataRelease
 {
@@ -9,7 +10,7 @@ namespace DataExportLibrary.DataRelease
     /// </summary>
     public class NoReleasePotential : ReleasePotential
     {
-        public NoReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet) : base(repositoryLocator, configuration, dataSet)
+        public NoReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet): base(repositoryLocator, selectedDataSet)
         {
         }
 
@@ -21,6 +22,13 @@ namespace DataExportLibrary.DataRelease
         protected override Releaseability GetSpecificAssessment(ICumulativeExtractionResults extractionResults)
         {
             return Releaseability.NeverBeenSuccessfullyExecuted;
+        }
+
+        public override void Check(ICheckNotifier notifier)
+        {
+            base.Check(notifier);
+
+            notifier.OnCheckPerformed(new CheckEventArgs(SelectedDataSet + " is " + Releaseability.NeverBeenSuccessfullyExecuted, CheckResult.Fail));
         }
     }
 }

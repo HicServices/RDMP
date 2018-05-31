@@ -18,7 +18,7 @@ namespace DataExportLibrary.DataRelease
     /// </summary>
     public class FlatFileReleasePotential : ReleasePotential
     {
-        public FlatFileReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet) : base(repositoryLocator, configuration, dataSet)
+        public FlatFileReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets): base(repositoryLocator, selectedDataSets)
         {
         }
 

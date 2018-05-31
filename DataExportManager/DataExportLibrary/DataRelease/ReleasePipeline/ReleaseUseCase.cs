@@ -15,13 +15,13 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
     public class ReleaseUseCase : PipelineUseCase
     {
-        private readonly Project _project;
+        private readonly IProject _project;
         private readonly ReleaseData _releaseData;
         private readonly DataFlowPipelineContext<ReleaseAudit> _context;
         private readonly object[] _initObjects;
         private CatalogueRepository _catalogueRepository;
 
-        public ReleaseUseCase(Project project, ReleaseData releaseData)
+        public ReleaseUseCase(IProject project, ReleaseData releaseData)
         {
             ExplicitDestination = null;
 

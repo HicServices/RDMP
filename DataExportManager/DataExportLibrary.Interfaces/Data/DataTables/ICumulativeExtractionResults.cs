@@ -27,5 +27,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
 
         List<ISupplementalExtractionResults> SupplementalExtractionResults { get; }
         ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject);
+        bool IsFor(ISelectedDataSets selectedDataSet);
     }
 }

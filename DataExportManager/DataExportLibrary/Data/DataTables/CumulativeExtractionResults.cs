@@ -118,6 +118,12 @@ namespace DataExportLibrary.Data.DataTables
             return result;
         }
 
+        public bool IsFor(ISelectedDataSets selectedDataSet)
+        {
+            return selectedDataSet.ExtractableDataSet_ID == ExtractableDataSet_ID &&
+                   selectedDataSet.ExtractionConfiguration_ID == ExtractionConfiguration_ID;
+        }
+
         #endregion
 
         public CumulativeExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration, IExtractableDataSet dataset, string sql)

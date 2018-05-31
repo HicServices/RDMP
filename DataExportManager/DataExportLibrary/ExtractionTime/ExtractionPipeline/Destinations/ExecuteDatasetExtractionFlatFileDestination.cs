@@ -292,9 +292,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     : ExtractCommandState.Crashed;
         }
         
-        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, ExtractableDataSet dataSet)
+        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ISelectedDataSets selectedDataSet)
         {
-            return new FlatFileReleasePotential(repositoryLocator, configuration, dataSet);
+            return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
         }
 
         public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)

@@ -117,7 +117,7 @@ namespace DataExportManager.DataRelease
                         return;
                 }
 
-                IExtractableDataSet[] currentlyConfiguredDatasets = Configuration.GetAllExtractableDataSets();
+                ISelectedDataSets[] currentlyConfiguredDatasets = Configuration.SelectedDataSets;
 
                 //identify old CumulativeExtractionResults that are no longer active (user extracted a dataset then removed it from the configuration)
                 var oldResults = Configuration.CumulativeExtractionResults
@@ -158,19 +158,6 @@ namespace DataExportManager.DataRelease
                     }
                 }
 
-                //create new ReleaseAssesments
-                foreach (ExtractableDataSet dataSet in currentlyConfiguredDatasets)
-                {
-                    var extractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == dataSet.ID);
-                    if (extractionResults == null || extractionResults.DestinationDescription == null)
-                        ReleasePotentials.Add(new NoReleasePotential(RepositoryLocator, Configuration, dataSet));
-                    else
-                    {
-                        var releasePotential = ((IExecuteDatasetExtractionDestination)new ObjectConstructor().Construct(extractionResults.GetDestinationType()))
-                                                    .GetReleasePotential(RepositoryLocator, Configuration, dataSet);
-                        ReleasePotentials.Add(releasePotential);
-                    }
-                }
 
                 ////add globals to the globals category
                 //Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));

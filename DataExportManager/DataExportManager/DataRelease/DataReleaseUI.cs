@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Ticketing;
 using CatalogueManager.Collections;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.DataRelease.ReleasePipeline;
@@ -16,10 +17,13 @@ using DataExportManager.ProjectUI;
 using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
+using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
+using RDMPAutomationService.Runners;
 using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
 namespace DataExportManager.DataRelease
@@ -34,10 +38,12 @@ namespace DataExportManager.DataRelease
     {
         private Project _project;
 
-        private IPipelineSelectionUI _pipelineUI;
+        private IPipelineSelectionUI _pipelineSelectionUI1;
         private IExtractionConfiguration[] _unreleasedConfigurations;
+        private IMapsDirectlyToDatabaseTable[] _globals;
 
-        
+        private const string Globals = "Globals";
+
         public DataReleaseUI()
         {
             InitializeComponent();
@@ -49,11 +55,54 @@ namespace DataExportManager.DataRelease
             tlvReleasePotentials.CanExpandGetter = CanExpandGetter;
             tlvReleasePotentials.ChildrenGetter = ChildrenGetter;
             checkAndExecuteUI1.CommandGetter = CommandGetter;
+
+            olvReleaseability.AspectGetter = Releaseability_AspectGetter;
+            olvReleaseability.ImageGetter = Releaseability_ImageGetter;
         }
+
+        private object Releaseability_ImageGetter(object rowObject)
+        {
+            var state = GetState(rowObject);
+            return state == null ? null : _activator.CoreIconProvider.GetImage(state);
+        }
+
+        private object Releaseability_AspectGetter(object rowObject)
+        {
+            var state = GetState(rowObject);
+            return state == null ? null : state.ToString();
+        }
+
+        private object GetState(object rowObject)
+        {
+            var releaseRunner = checkAndExecuteUI1.CurrentRunner as ReleaseRunner;
+            var sds = rowObject as ISelectedDataSets;
+
+            if (releaseRunner == null)
+                return null;
+
+            ICheckable key = null;
+
+            if(sds != null)
+                key = releaseRunner.ChecksDictionary.Keys.OfType<ReleasePotential>().ToArray().SingleOrDefault(rp => rp.SelectedDataSet.ID == sds.ID);
+            else
+            if (rowObject as string == Globals)
+                key = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().SingleOrDefault();
+            
+            if (key != null)
+                return releaseRunner.ChecksDictionary[key].GetWorst();
+            
+            return null;
+        }
+
 
         private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
         {
-            return new ReleaseOptions();
+            return new ReleaseOptions()
+            {
+                Pipeline = _pipelineSelectionUI1.Pipeline == null ? 0 : _pipelineSelectionUI1.Pipeline.ID,
+                Configurations = tlvReleasePotentials.CheckedObjects.OfType<ExtractionConfiguration>().Select(ec=>ec.ID).ToArray(),
+                Command = activityRequested,
+            };
         }
 
 
@@ -68,6 +117,9 @@ namespace DataExportManager.DataRelease
             if (ec != null)
                 return ec.SelectedDataSets;
 
+            if (model as string == Globals)
+                return _globals;
+
             return null;
         }
         private bool CanExpandGetter(object model)
@@ -81,6 +133,10 @@ namespace DataExportManager.DataRelease
             if (_activator == null)
                 return null;
 
+            if (rowObject is string)
+                return _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder);
+            
+
             return _activator.CoreIconProvider.GetImage(rowObject);
         }
 
@@ -90,18 +146,29 @@ namespace DataExportManager.DataRelease
 
             _project = databaseObject;
 
-            if (_pipelineUI == null)
+            //figure out the globals
+            var ec = _project.ExtractionConfigurations.FirstOrDefault();
+            _globals = ec != null ? ec.GetGlobals(): new IMapsDirectlyToDatabaseTable[0];
+            
+
+
+            checkAndExecuteUI1.SetItemActivator(activator);
+
+            if (_pipelineSelectionUI1 == null)
             {
                 var context = new ReleaseUseCase(_project, new ReleaseData(){IsDesignTime = true});
-                _pipelineUI = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
-                _pipelineUI.CollapseToSingleLineMode();
-                _pipelineUI.Pipeline = null;
+                _pipelineSelectionUI1 = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
+                _pipelineSelectionUI1.CollapseToSingleLineMode();
+                _pipelineSelectionUI1.Pipeline = null;
             }
 
             tlvReleasePotentials.ClearObjects();
+            tlvReleasePotentials.AddObject(Globals);
             tlvReleasePotentials.AddObject(_project);
             tlvReleasePotentials.ExpandAll();
             tlvReleasePotentials.CheckAll();
+
+            tlvReleasePotentials.DisableObjects(_globals);
         }
 
         public override string GetTabName()

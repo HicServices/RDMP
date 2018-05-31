@@ -34,7 +34,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         string GetFilename();
         string GetDestinationDescription();
 
-        ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, ExtractableDataSet dataSet);
+        ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
         FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository);
     }
 }

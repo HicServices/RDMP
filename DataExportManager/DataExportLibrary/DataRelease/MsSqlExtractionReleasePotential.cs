@@ -16,7 +16,7 @@ namespace DataExportLibrary.DataRelease
     /// </summary>
     public class MsSqlExtractionReleasePotential : ReleasePotential
     {
-        public MsSqlExtractionReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDataSet dataSet) : base(repositoryLocator, configuration, dataSet)
+        public MsSqlExtractionReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets): base(repositoryLocator, selectedDataSets)
         {
         }
 
