@@ -9,6 +9,7 @@ using DataLoadEngine.Checks.Checkers;
 using LoadModules.Generic.Attachers;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
@@ -176,7 +177,14 @@ namespace DataLoadEngineTests.Integration.CheckingTests
                 var results = new ToMemoryCheckNotifier();
                 _checker.Check(results);
 
-                results.WriteToConsole();
+                foreach (var msg in results.Messages)
+                {
+                    Console.WriteLine("(" + msg.Result + ")" + msg.Message);
+
+                    if (msg.Ex != null)
+                        Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(msg.Ex));
+                }
+
                 Assert.AreEqual( CheckResult.Success,results.GetWorst());
             }
             finally
