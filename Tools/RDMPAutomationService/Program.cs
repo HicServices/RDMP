@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
 using CatalogueLibrary.DataFlowPipeline;
 using CommandLine;
 using HIC.Logging.Listeners.NLogListeners;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using LogLevel = NLog.LogLevel;
 
 namespace RDMPAutomationService
@@ -19,7 +18,7 @@ namespace RDMPAutomationService
            try
             {
                var returnCode = 
-                    UsefulStuff.GetParser().ParseArguments<DleOptions, DqeOptions, CacheOptions,ListOptions,ExtractionOptions>(args)
+                    UsefulStuff.GetParser().ParseArguments<DleOptions, DqeOptions, CacheOptions,ListOptions,ExtractionOptions,ReleaseOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
                             (DleOptions opts) => Run(opts),
@@ -27,6 +26,7 @@ namespace RDMPAutomationService
                             (CacheOptions opts)=>Run(opts),
                             (ListOptions opts)=>Run(opts),
                             (ExtractionOptions opts)=>Run(opts),
+                            (ReleaseOptions opts)=>Run(opts),
                             errs => 1);
 
                NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);

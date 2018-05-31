@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
 using CommandLine;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
 
 namespace CatalogueManager.SimpleControls
 {

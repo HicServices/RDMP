@@ -1,5 +1,6 @@
 ﻿using System;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
 
 namespace RDMPAutomationService.Runners
 {
@@ -18,6 +19,7 @@ namespace RDMPAutomationService.Runners
             var cacheOpts = command as CacheOptions;
             var listOpts = command as ListOptions;
             var extractionOpts = command as ExtractionOptions;
+            var releaseOpts = command as ReleaseOptions;
 
             if (dleOpts != null)
                 return new DleRunner(dleOpts);
@@ -34,6 +36,9 @@ namespace RDMPAutomationService.Runners
             if (extractionOpts != null)
                 return new ExtractionRunner(extractionOpts);
 
+            if(releaseOpts != null)
+                return new ReleaseRunner(releaseOpts);
+            
             throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
         }
         

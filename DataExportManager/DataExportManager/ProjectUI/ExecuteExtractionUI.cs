@@ -24,6 +24,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
 using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;

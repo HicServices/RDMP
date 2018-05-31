@@ -73,14 +73,16 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Options\Abstracts\ConcurrentRDMPCommandLineOptions.cs" />
+    <Compile Include="Options\Abstracts\RDMPCommandLineOptions.cs" />
     <Compile Include="Options\CacheOptions.cs" />
     <Compile Include="Options\DqeOptions.cs" />
     <Compile Include="Options\ListOptions.cs" />
+    <Compile Include="Options\ReleaseOptions.cs" />
     <Compile Include="Runners\DqeRunner.cs" />
     <Compile Include="Runners\DleRunner.cs" />
     <Compile Include="Options\DleOptions.cs" />
     <Compile Include="Runners\CacheRunner.cs" />
-    <Compile Include="Options\RDMPCommandLineOptions.cs" />
     <Compile Include="Logic\Cache\CacheRunFinder.cs" />
     <Compile Include="Logic\DLE\DLERunFinder.cs" />
     <Compile Include="Logic\DQE\DQERunFinder.cs" />
@@ -96,6 +98,8 @@
     <Compile Include="Runners\ExtractionRunner.cs" />
     <Compile Include="Runners\IRunner.cs" />
     <Compile Include="Runners\ListRunner.cs" />
+    <Compile Include="Runners\ManyRunner.cs" />
+    <Compile Include="Runners\ReleaseRunner.cs" />
     <Compile Include="Runners\RunnerFactory.cs" />
   </ItemGroup>
   <ItemGroup>

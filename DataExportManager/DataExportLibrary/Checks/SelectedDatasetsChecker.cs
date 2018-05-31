@@ -25,18 +25,19 @@ namespace DataExportLibrary.Checks
     public class SelectedDatasetsChecker : ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        private ISelectedDataSets _selectedDataSet;
+
+        public ISelectedDataSets SelectedDataSet { get; private set; }
 
         public SelectedDatasetsChecker(ISelectedDataSets selectedDataSet,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
-            _selectedDataSet = selectedDataSet;
+            SelectedDataSet = selectedDataSet;
         }
-
+        
         public void Check(ICheckNotifier notifier)
         {
-            var ds = _selectedDataSet.ExtractableDataSet;
-            var config = _selectedDataSet.ExtractionConfiguration;
+            var ds = SelectedDataSet.ExtractableDataSet;
+            var config = SelectedDataSet.ExtractionConfiguration;
             var cohort = config.Cohort;
             var project = config.Project;
             const int timeout = 5;

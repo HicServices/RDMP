@@ -5,7 +5,7 @@ using RDMPAutomationService.Properties;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 
-namespace RDMPAutomationService.Options
+namespace RDMPAutomationService.Options.Abstracts
 {
     /// <summary>
     /// Abstract base class for all command line options that can be supplied to the rdmp cli (includes overriding app.config to get connection strings to platform metadata databases)

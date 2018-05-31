@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using RDMPAutomationService.Options.Abstracts;
 
 namespace RDMPAutomationService.Options
 {

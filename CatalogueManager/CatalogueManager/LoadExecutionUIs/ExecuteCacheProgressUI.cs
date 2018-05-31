@@ -10,6 +10,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 

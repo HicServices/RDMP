@@ -6,6 +6,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.ItemActivation;
 using HIC.Logging;
 using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

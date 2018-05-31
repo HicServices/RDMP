@@ -3,12 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
 using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
@@ -22,131 +18,102 @@ using HIC.Logging;
 using HIC.Logging.Listeners;
 using RDMPAutomationService.Options;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Runners
 {
-    public class ExtractionRunner : IRunner
+    public class ExtractionRunner : ManyRunner
     {
         private ExtractionOptions _options;
         ExtractionConfiguration _configuration;
         IProject _project;
 
-        public Dictionary<ISelectedDataSets, ToMemoryCheckNotifier> ChecksDictionary { get; private set; }
-
         ExtractGlobalsCommand _globalsCommand;
-        public Dictionary<ISelectedDataSets, ExtractDatasetCommand> ExtractCommands { get; private set; }
+        private Pipeline _pipeline;
+        private DataLoadInfo _dataLoadInfo;
 
-        public ExtractionRunner(ExtractionOptions extractionOpts)
+        public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
+
+        public ExtractionRunner(ExtractionOptions extractionOpts):base(extractionOpts)
         {
             _options = extractionOpts;
-            ChecksDictionary = new Dictionary<ISelectedDataSets, ToMemoryCheckNotifier>();
-            ExtractCommands = new Dictionary<ISelectedDataSets, ExtractDatasetCommand>();
+            ExtractCommands = new Dictionary<ISelectedDataSets, ExtractCommand>();
         }
 
-        public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        protected override void Initialize()
         {
-            _configuration = repositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_options.ExtractionConfiguration);
+
+            _configuration = RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_options.ExtractionConfiguration);
             _project = _configuration.Project;
-            var pipeline = repositoryLocator.CatalogueRepository.GetObjectByID<Pipeline>(_options.Pipeline);
-            
-            List<Task> tasks = new List<Task>();
+            _pipeline = RepositoryLocator.CatalogueRepository.GetObjectByID<Pipeline>(_options.Pipeline);
 
             if (HasConfigurationPreviouslyBeenReleased())
                 throw new Exception("Extraction Configuration has already been released");
+        }
 
-            switch (_options.Command)
+        protected override object[] GetRunnables()
+        {
+            ExtractCommands.Clear();
+
+            var commands = new List<IExtractCommand>();
+
+            _dataLoadInfo = StartAudit();
+
+            //if we are extracting globals
+            if (_options.ExtractGlobals)
             {
-                case CommandLineActivity.run:
+                var g = _configuration.GetGlobals();
+                var globals = new GlobalsBundle(g.OfType<SupportingDocument>().ToArray(), g.OfType<SupportingSQLTable>().ToArray());
+                _globalsCommand = new ExtractGlobalsCommand(RepositoryLocator, _project, _configuration, globals);
+                commands.Add(_globalsCommand);
+            }
+            
+            var factory = new ExtractCommandCollectionFactory();
 
-                    var dli = StartAudit();
-
-                    //if we are extracting globals
-                    if(_options.ExtractGlobals)
-                    {
-                        var g = _configuration.GetGlobals();
-                        var globals = new GlobalsBundle(g.OfType<SupportingDocument>().ToArray(),g.OfType<SupportingSQLTable>().ToArray());
-                        _globalsCommand = new ExtractGlobalsCommand(repositoryLocator, _project, _configuration, globals);
-                        var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, pipeline, dli) { Token = token };
-                        useCase.Execute(new OverrideSenderIDataLoadEventListener("Globals",listener));
-                    }
-
-                    ExtractCommands.Clear();
-
-                    var factory = new ExtractCommandCollectionFactory();
-
-                    Semaphore semaphore = null;
-                    if (_options.MaxConcurrentExtractions != null)
-                        semaphore = new Semaphore(0, _options.MaxConcurrentExtractions.Value);
-
-                    foreach (ISelectedDataSets sds in GetSelectedDataSets())
-                    {
-                        var extractDatasetCommand = factory.Create(repositoryLocator, sds);
-                        ExtractCommands.Add(sds, extractDatasetCommand);
-                    }
-
-                    foreach (var kvp in ExtractCommands)
-                    {
-                        var executeUseCase = new ExtractionPipelineUseCase(_project, kvp.Value, pipeline, dli){Token = token};
-                        var name = kvp.Key.ToString();
-
-                        if (semaphore != null)
-                            semaphore.WaitOne();
-
-                        tasks.Add(Task.Run(() =>
-                        {
-                            try
-                            {
-                                executeUseCase.Execute(new OverrideSenderIDataLoadEventListener(name, listener));
-                            }
-                            finally
-                            {
-                                if (semaphore != null)
-                                    semaphore.Release();
-                            }
-                        }
-                        ));
-                    }
-
-                    Task.WaitAll(tasks.ToArray());
-                    
-                    break;
-                case CommandLineActivity.check:
-
-                    var memory = new ToMemoryCheckNotifier(checkNotifier);
-
-                    var projectChecker = new ProjectChecker(repositoryLocator, _configuration.Project) {CheckDatasets = false,CheckConfigurations = false};
-                    projectChecker.Check(memory);
-
-                    var configurationChecker = new ExtractionConfigurationChecker(repositoryLocator, _configuration) {CheckDatasets = false};
-                    configurationChecker.Check(memory);
-
-                    //don't bother checking datasets if the Project / Configuration checks fail
-                    if (memory.GetWorst() > CheckResult.Warning)
-                        return 0;
-                    
-                    ChecksDictionary.Clear();
-
-                    foreach(var sds in GetSelectedDataSets())
-                        ChecksDictionary.Add(sds,new ToMemoryCheckNotifier(checkNotifier));
-                    
-                    foreach (var kvp in ChecksDictionary)
-                    {
-                        KeyValuePair<ISelectedDataSets, ToMemoryCheckNotifier> kvp1 = kvp;
-                        var t = new Task(() => new SelectedDatasetsChecker(kvp1.Key, repositoryLocator).Check(kvp1.Value));
-                        t.Start();
-                        tasks.Add(t);
-                    }
-
-                    Task.WaitAll(tasks.ToArray());
-                    
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
+            foreach (ISelectedDataSets sds in GetSelectedDataSets())
+            {
+                var extractDatasetCommand = factory.Create(RepositoryLocator, sds);
+                commands.Add(extractDatasetCommand);
+                ExtractCommands.Add(sds,extractDatasetCommand);
             }
 
-            return 0;
+            return commands.ToArray();
+        }
+
+        protected override void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener)
+        {
+            var globalCommand = runnable as ExtractGlobalsCommand;
+            var datasetCommand = runnable as ExtractDatasetCommand;
+
+            if(globalCommand != null)
+            {
+                var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, _pipeline, _dataLoadInfo) { Token = Token };
+                useCase.Execute(new OverrideSenderIDataLoadEventListener("Globals", listener));
+            }
+
+            if (datasetCommand != null)
+            {
+                var executeUseCase = new ExtractionPipelineUseCase(_project,datasetCommand, _pipeline, _dataLoadInfo) { Token = Token };
+                executeUseCase.Execute(listener);
+            }
+        }
+
+        protected override ICheckable[] GetCheckables()
+        {
+            ChecksDictionary.Clear();
+            var checkables = new List<ICheckable>();
+
+            checkables.Add(new ProjectChecker(RepositoryLocator, _configuration.Project)
+            {
+                CheckDatasets = false,
+                CheckConfigurations = false
+            });
+
+            checkables.Add(new ExtractionConfigurationChecker(RepositoryLocator, _configuration) { CheckDatasets = false });
+
+            foreach (var sds in GetSelectedDataSets())
+                checkables.Add(new SelectedDatasetsChecker(sds, RepositoryLocator));
+
+            return checkables.ToArray();
         }
         
         private ISelectedDataSets[] GetSelectedDataSets()
@@ -162,7 +129,7 @@ namespace RDMPAutomationService.Runners
             if(_options.Command == CommandLineActivity.check)
             {
 
-                var sds = ChecksDictionary.Keys.SingleOrDefault(k => k.ExtractableDataSet_ID == rowObject.ID);
+                var sds = ChecksDictionary.Keys.OfType<SelectedDatasetsChecker>().SingleOrDefault(k => k.SelectedDataSet.ExtractableDataSet_ID == rowObject.ID);
 
                 if (sds == null)
                     return null;
@@ -183,6 +150,7 @@ namespace RDMPAutomationService.Runners
             return null;
         }
 
+        
         private DataLoadInfo StartAudit()
         {
             DataLoadInfo dataLoadInfo;

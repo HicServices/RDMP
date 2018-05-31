@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
+using RDMPAutomationService.Options.Abstracts;
 
 namespace RDMPAutomationService.Options
 {

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
+using RDMPAutomationService.Options.Abstracts;
 
 namespace RDMPAutomationService.Options
 {
     [Verb("extract", HelpText = "Runs the Data Extraction Engine")]
-    public class ExtractionOptions:RDMPCommandLineOptions
+    public class ExtractionOptions:ConcurrentRDMPCommandLineOptions
     {
         [Option('g',"Globals", HelpText = "Include extraction of globals (global SupportingDocuments etc")]
         public bool ExtractGlobals { get; set; }
@@ -19,7 +20,5 @@ namespace RDMPAutomationService.Options
         [Option('p', "Pipeline", HelpText = "The ID of the extraction Pipeline to use")]
         public int Pipeline { get; set; }
 
-        [Option('m', "MaxConcurrentExtractions",HelpText = "Maximum number of datasets to extract at once")]
-        public int? MaxConcurrentExtractions { get; set; }
     }
 }
