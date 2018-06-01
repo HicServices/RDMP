@@ -128,7 +128,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         protected IEnumerable<DirectoryInfo> GetAllGlobalFolders(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
-            const string folderName = ExtractionDirectory.GlobalsDataFolderName;
+            const string folderName = ExtractionDirectory.GLOBALS_DATA_NAME;
 
             foreach (ReleasePotential releasePotential in toRelease.Value)
             {

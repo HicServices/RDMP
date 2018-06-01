@@ -11,6 +11,7 @@ using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
@@ -35,7 +36,6 @@ namespace DataExportManager.ProjectUI
     /// </summary>
     public partial class ChooseExtractablesUI : RDMPUserControl
     {
-        private const string Globals = "Globals";
         private const string Bundles = "Datasets";
         
         public event ExtractCommandSelectedHandler CommandSelected;
@@ -83,7 +83,7 @@ namespace DataExportManager.ProjectUI
             olvColumn1.ImageGetter += ImageGetter;
             
             Categories.Clear();
-            Categories.Add(Globals, new List<object>());
+            Categories.Add(ExtractionDirectory.GLOBALS_DATA_NAME, new List<object>());
             Categories.Add(Bundles, new List<object>());
             
             var factory = new ExtractCommandCollectionFactory();
@@ -92,10 +92,10 @@ namespace DataExportManager.ProjectUI
             //find all the things that are available for extraction
             
             //add globals to the globals category
-            Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
+            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
 
             //add global SQLs to globals category
-            Categories[Globals].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
+            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
 
             //add the bundle
             Categories[Bundles].AddRange(collection.Datasets);
@@ -255,10 +255,10 @@ namespace DataExportManager.ProjectUI
         public GlobalsBundle GetGlobalsBundle()
         {
             //get the checked globals
-            var docs = Categories[Globals].OfType<SupportingDocument>().Where(g => tlvDatasets.CheckedObjects.Contains(g)).ToArray();
+            var docs = Categories[ExtractionDirectory.GLOBALS_DATA_NAME].OfType<SupportingDocument>().Where(g => tlvDatasets.CheckedObjects.Contains(g)).ToArray();
 
             //and the checked global supporting sql
-            var sqls = Categories[Globals].OfType<SupportingSQLTable>().Where(g => tlvDatasets.CheckedObjects.Contains(g)).ToArray();
+            var sqls = Categories[ExtractionDirectory.GLOBALS_DATA_NAME].OfType<SupportingSQLTable>().Where(g => tlvDatasets.CheckedObjects.Contains(g)).ToArray();
             
             //record it so we can decide what icon to use
             _lastDispatchedGlobalsBundle = new GlobalsBundle(docs, sqls);

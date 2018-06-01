@@ -11,6 +11,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.DataRelease.ReleasePipeline;
+using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.Icons.IconProvision;
 using DataExportManager.ProjectUI;
@@ -41,8 +42,6 @@ namespace DataExportManager.DataRelease
         private IPipelineSelectionUI _pipelineSelectionUI1;
         private IExtractionConfiguration[] _unreleasedConfigurations;
         private IMapsDirectlyToDatabaseTable[] _globals;
-
-        private const string Globals = "Globals";
 
         public DataReleaseUI()
         {
@@ -85,7 +84,7 @@ namespace DataExportManager.DataRelease
             if(sds != null)
                 key = releaseRunner.ChecksDictionary.Keys.OfType<ReleasePotential>().ToArray().SingleOrDefault(rp => rp.SelectedDataSet.ID == sds.ID);
             else
-            if (rowObject as string == Globals)
+                if (rowObject as string == ExtractionDirectory.GLOBALS_DATA_NAME)
                 key = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().SingleOrDefault();
             
             if (key != null)
@@ -117,7 +116,7 @@ namespace DataExportManager.DataRelease
             if (ec != null)
                 return ec.SelectedDataSets;
 
-            if (model as string == Globals)
+            if (model as string == ExtractionDirectory.GLOBALS_DATA_NAME)
                 return _globals;
 
             return null;
@@ -163,7 +162,7 @@ namespace DataExportManager.DataRelease
             }
 
             tlvReleasePotentials.ClearObjects();
-            tlvReleasePotentials.AddObject(Globals);
+            tlvReleasePotentials.AddObject(ExtractionDirectory.GLOBALS_DATA_NAME);
             tlvReleasePotentials.AddObject(_project);
             tlvReleasePotentials.ExpandAll();
             tlvReleasePotentials.CheckAll();

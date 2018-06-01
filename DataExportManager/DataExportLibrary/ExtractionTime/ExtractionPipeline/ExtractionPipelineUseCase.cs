@@ -162,8 +162,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             return _context;
         }
 
-
-
         /*private void DoExtractionAsync(IExtractCommand request)
         {
             request.State = ExtractCommandState.WaitingForSQLServer;

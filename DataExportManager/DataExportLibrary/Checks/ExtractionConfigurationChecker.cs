@@ -15,6 +15,7 @@ namespace DataExportLibrary.Checks
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private IExtractionConfiguration _config;
         public bool CheckDatasets { get; set; }
+        public bool CheckGlobals { get; set; }
 
         public ExtractionConfigurationChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IExtractionConfiguration config)
         {
@@ -100,14 +101,12 @@ namespace DataExportLibrary.Checks
 
             if (_config.Cohort_ID == null)
             {
-
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         "Open configuration '" + _config + "' does not have a cohort yet",
                         CheckResult.Fail));
                 return;
             }
-
 
             var cohort = repo.GetObjectByID<ExtractableCohort>((int)_config.Cohort_ID);
             
@@ -116,11 +115,10 @@ namespace DataExportLibrary.Checks
                     new SelectedDatasetsChecker(s, _repositoryLocator).Check(notifier);
 
             //globals
-            if (datasets.Any())
-                
-                foreach (SupportingSQLTable table in _config.GetGlobals().OfType<SupportingSQLTable>())
-                    new SupportingSQLTableChecker(table).Check(notifier);
+            if (CheckGlobals)
+                if (datasets.Any())
+                    foreach (SupportingSQLTable table in _config.GetGlobals().OfType<SupportingSQLTable>())
+                        new SupportingSQLTableChecker(table).Check(notifier);
         }
-
     }
 }

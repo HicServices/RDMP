@@ -124,7 +124,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-
             // we are in the Global Commands case, let's return an empty DataTable (not null) 
             // so we can trigger the destination to extract the globals docs and sql
             if (GlobalsRequest != null)
@@ -138,7 +137,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                         StartAuditGlobals();
                     }
                     firstGlobalChunk = false;
-                    return new DataTable("Globals");
+                    return new DataTable(ExtractionDirectory.GLOBALS_DATA_NAME);
                 }
 
                 return null;
@@ -430,6 +429,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 return;
             }
 
+            if (GlobalsRequest != null)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Request is for Globals, checking will not be carried out at source", CheckResult.Success));
+                return;
+            }
+            
             if (Request == null)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("ExtractionRequest has not been set", CheckResult.Fail));
@@ -448,8 +453,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                     "Extraction SQL for Checking (may differ from runtime extraction SQL e.g. have TOP 100 in it) is :" +
                     Request.QueryBuilder.SQL, CheckResult.Success));
 
-
-            notifier.OnCheckPerformed(new CheckEventArgs("About to run GetChunk ",CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs("About to run GetChunk ", CheckResult.Success));
             try
             {
                 _testMode = true;
@@ -463,7 +467,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                     notifier.OnCheckPerformed(
                         new CheckEventArgs("successfully read " + dt.Rows.Count + " rows using the above SQL",
                             CheckResult.Success));
-
             }
             catch (Exception e)
             {
@@ -484,8 +487,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             {
                 _testMode = false;
             }
-
-            
         }
 
         private bool _testMode;

@@ -22,7 +22,7 @@ namespace DataExportLibrary.ExtractionTime
         
         public const string ExtractionSubFolderName = "Extractions";
         public const string StandardExtractionPrefix = "Extr_";
-        public const string GlobalsDataFolderName = "Globals";
+        public const string GLOBALS_DATA_NAME = "Globals";
         public const string CustomCohortDataFolderName = "CohortCustomData";
         public const string MasterDataFolderName = "MasterData";
 
@@ -79,7 +79,7 @@ namespace DataExportLibrary.ExtractionTime
 
         public DirectoryInfo GetGlobalsDirectory()
         {
-            return extractionDirectory.CreateSubdirectory(GlobalsDataFolderName);
+            return extractionDirectory.CreateSubdirectory(GLOBALS_DATA_NAME);
         }
 
         public static bool IsOwnerOf(IExtractionConfiguration configuration, DirectoryInfo directory)

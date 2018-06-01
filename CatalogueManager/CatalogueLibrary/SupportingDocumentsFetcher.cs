@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
@@ -11,6 +10,7 @@ namespace CatalogueLibrary
     /// </summary>
     public class SupportingDocumentsFetcher
     {
+        private readonly SupportingDocument _document;
         private readonly Catalogue _catalogue;
 
         public SupportingDocumentsFetcher(Catalogue catalogue)
@@ -18,30 +18,21 @@ namespace CatalogueLibrary
             _catalogue = catalogue;
         }
 
-        public List<Exception> TryExtractAllToDirectory(DirectoryInfo directory,FetchOptions fetch)
+        public SupportingDocumentsFetcher(SupportingDocument document)
         {
-            List<Exception> thingsThatFailed = new List<Exception>();
-
-            foreach (SupportingDocument supportingDocument in _catalogue.GetAllSupportingDocuments(fetch))
-            {
-                try
-                {
-                    if (!supportingDocument.Extractable)
-                        continue;
-
-                    ExtractToDirectory(directory,supportingDocument);
-                }
-                catch (Exception e)
-                {
-
-                    thingsThatFailed.Add(e);
-                }
-            }
-
-            return thingsThatFailed;
+            _document = document;
+            _catalogue = document.Repository.GetObjectByID<Catalogue>(document.Catalogue_ID);
         }
 
-        public string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
+        public string ExtractToDirectory(DirectoryInfo directory)
+        {
+            if (_document != null)
+                return ExtractToDirectory(directory, _document);
+
+            throw new Exception("SupportingDocument was not specified!");
+        }
+
+        private string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
         {
             if(!supportingDocument.IsReleasable())
                 throw new Exception("Cannot extract SupportingDocument " + supportingDocument + " because it was not evaluated as IsReleasable()");
@@ -73,6 +64,28 @@ namespace CatalogueLibrary
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not check supporting documents of " + _catalogue, CheckResult.Fail, e));
                 }
+            }
+        }
+
+        public void CheckSingle(ICheckNotifier notifier)
+        {
+            if (_document == null)
+                notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument " + _document + " has not been set", CheckResult.Fail));
+            else
+            {
+                try
+                {
+                    FileInfo toCopy = new FileInfo(_document.URL.LocalPath);
+                    if (toCopy.Exists)
+                        notifier.OnCheckPerformed(new CheckEventArgs("Found SupportingDocument " + toCopy.Name + " and it exists", CheckResult.Success));
+                    else
+                        notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument " + _document + "(ID=" + _document.ID + ") " +
+                                                                     "does not map to an existing file despite being flagged as Extractable", CheckResult.Fail));
+                }
+                catch (Exception e)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Could not check supporting document " + _document, CheckResult.Fail, e));
+                }   
             }
         }
     }

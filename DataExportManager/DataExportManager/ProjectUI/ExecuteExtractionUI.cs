@@ -15,6 +15,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Data.DataTables;
@@ -50,8 +51,6 @@ namespace DataExportManager.ProjectUI
         public int TopX { get; set; }
         private ExtractionConfiguration _extractionConfiguration;
         
-
-        private const string Globals = "Globals";
         private IMapsDirectlyToDatabaseTable[] _globals;
         private IExtractableDataSet[] _datasets;
         private Dictionary<IExtractableDataSet, List<IMapsDirectlyToDatabaseTable>> _bundledStuff;
@@ -93,7 +92,7 @@ namespace DataExportManager.ProjectUI
 
         private IEnumerable ChildrenGetter(object model)
         {
-            if (model as string == Globals)
+            if (model as string == ExtractionDirectory.GLOBALS_DATA_NAME)
                 return _globals;
 
             if (model as string == CoreDatasets)
@@ -113,18 +112,22 @@ namespace DataExportManager.ProjectUI
         private object State_ImageGetter(object rowObject)
         {
             var state = GetState(rowObject);
-            return state == null?null:_activator.CoreIconProvider.GetImage(state);
+            return state == null ? null : _activator.CoreIconProvider.GetImage(state);
         }
 
         private object GetState(object rowObject)
         {
             var extractionRunner = checkAndExecuteUI1.CurrentRunner as ExtractionRunner;
+
+            if (rowObject as string == "Globals" && extractionRunner != null)
+                return extractionRunner.GetGlobalsState();
+
             var eds = rowObject as ExtractableDataSet;
 
-            if (extractionRunner == null || eds == null)
-                return null;
-
-            return extractionRunner.GetState(eds);
+            if (extractionRunner != null && eds != null) 
+                return extractionRunner.GetState(eds);
+            
+            return null;
         }
 
         private object State_AspectGetter(object rowobject)
@@ -145,7 +148,7 @@ namespace DataExportManager.ProjectUI
         {
             return new ExtractionOptions() { 
                 Command = activityRequested,
-                ExtractGlobals = olvDatasets.IsChecked(Globals),
+                ExtractGlobals = olvDatasets.IsChecked(ExtractionDirectory.GLOBALS_DATA_NAME),
                 Datasets = _datasets.Where(olvDatasets.IsChecked).Select(ds => ds.ID).ToArray(),
                 ExtractionConfiguration = _extractionConfiguration.ID,
                 Pipeline = _pipelineSelectionUI1.Pipeline == null?0:_pipelineSelectionUI1.Pipeline.ID
@@ -168,7 +171,7 @@ namespace DataExportManager.ProjectUI
 
             olvDatasets.DisableObjects(_globals.Union(_bundledStuff.Values.SelectMany(v=>v)));
 
-            olvDatasets.AddObjects(new object[] { Globals, CoreDatasets, ProjectSpecificDatasets });
+            olvDatasets.AddObjects(new object[] { ExtractionDirectory.GLOBALS_DATA_NAME, CoreDatasets, ProjectSpecificDatasets });
             
             
             //don't accept refresh while executing
@@ -235,6 +238,7 @@ namespace DataExportManager.ProjectUI
                 _bundledStuff.Add(dataset, new List<IMapsDirectlyToDatabaseTable>());
                 _bundledStuff[dataset].AddRange(dataset.Catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals));
                 _bundledStuff[dataset].AddRange(dataset.Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals));
+                _bundledStuff[dataset].AddRange(dataset.Catalogue.GetLookupTableInfoList());
             }
         }
 
@@ -243,7 +247,6 @@ namespace DataExportManager.ProjectUI
             var eds =  olvDatasets.SelectedObject as ExtractableDataSet;
             checkAndExecuteUI1.GroupBySender(eds != null ? eds.ToString() : null);
         }
-
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExecuteExtractionUI_Design, UserControl>))]

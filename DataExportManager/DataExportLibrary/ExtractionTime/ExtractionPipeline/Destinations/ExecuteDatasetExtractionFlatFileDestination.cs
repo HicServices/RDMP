@@ -304,12 +304,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private bool TryExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
         {
-            SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(null);
+            SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(doc);
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to copy "+doc+" to directory " + directory.FullName));
             try
             {
-                var outputPath = fetcher.ExtractToDirectory(directory, doc);
+                var outputPath = fetcher.ExtractToDirectory(directory);
                 if (_request is ExtractDatasetCommand)
                 {
                     var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
