@@ -57,11 +57,8 @@ namespace CatalogueManager.SimpleControls
         private GracefulCancellationTokenSource _cancellationTokenSource;
         private Task _runningTask;
         
-
-
         private void btnRunChecks_Click(object sender, EventArgs e)
         {
-            
             IRunner runner;
 
             try

@@ -567,13 +567,19 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 var database = server.ExpectDatabase(GetDatabaseName());
 
                 if (database.Exists())
-                    notifier.OnCheckPerformed(new CheckEventArgs("Confirmed database " + database + " exists", CheckResult.Success));
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Database " + database + " already exists! if an extraction has already been run " +
+                            "you may have errors if you are re-extracting the same tables", CheckResult.Warning));
                 else
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Database " + database + " does not exist on server... how were we even able to connect?!", CheckResult.Fail));
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Database " + database + " does not exist on server... it will be created at runtime",
+                            CheckResult.Success));
                     return;
                 }
-                
+
                 var tables = database.DiscoverTables(false);
 
                 if (tables.Any())

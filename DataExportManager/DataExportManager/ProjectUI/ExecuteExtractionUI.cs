@@ -173,7 +173,6 @@ namespace DataExportManager.ProjectUI
 
             tlvDatasets.AddObjects(new object[] { ExtractionDirectory.GLOBALS_DATA_NAME, CoreDatasets, ProjectSpecificDatasets });
             
-            
             //don't accept refresh while executing
             if (checkAndExecuteUI1.IsExecuting)
                 return;
