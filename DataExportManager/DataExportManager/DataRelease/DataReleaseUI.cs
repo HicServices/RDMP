@@ -109,6 +109,7 @@ namespace DataExportManager.DataRelease
                 Configurations = tlvReleasePotentials.CheckedObjects.OfType<ExtractionConfiguration>().Select(ec=>ec.ID).ToArray(),
                 SelectedDataSets = tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
                 Command = activityRequested,
+                ReleaseGlobals = tlvReleasePotentials.IsChecked(Globals),
             };
         }
 

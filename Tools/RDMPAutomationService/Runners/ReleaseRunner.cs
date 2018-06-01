@@ -59,7 +59,8 @@ namespace RDMPAutomationService.Runners
 
             List<ReleasePotential> ReleasePotentials = new List<ReleasePotential>();
 
-            toReturn.Add(new GlobalsReleaseChecker(_configurations));
+            if(_options.ReleaseGlobals)
+                toReturn.Add(new GlobalsReleaseChecker(_configurations));
 
             foreach (IExtractionConfiguration configuration in _configurations)
             {

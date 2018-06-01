@@ -15,5 +15,8 @@ namespace RDMPAutomationService.Options
 
         [Option('s',"SelectedDatasets", HelpText = "List of SelectedDatasets IDs to release, they must all belong to ExtractionConfigurations within the same Project")]
         public IEnumerable<int> SelectedDataSets { get; set; }
+
+        [Option('g', "Globals", HelpText = "True to release extracted globals (default) or false to skip them", Default = true)]
+        public bool ReleaseGlobals { get; set; }
     }
 }
