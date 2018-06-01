@@ -41,7 +41,7 @@ namespace DataExportManager.ProjectUI
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.olvDatasets = new BrightIdeasSoftware.TreeListView();
+            this.tlvDatasets = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvState = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvID = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -51,7 +51,7 @@ namespace DataExportManager.ProjectUI
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.olvDatasets)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).BeginInit();
             this.SuspendLayout();
             // 
             // cbSkipValidation
@@ -114,7 +114,7 @@ namespace DataExportManager.ProjectUI
             // 
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.tbFilter);
-            this.splitContainer1.Panel1.Controls.Add(this.olvDatasets);
+            this.splitContainer1.Panel1.Controls.Add(this.tlvDatasets);
             // 
             // splitContainer1.Panel2
             // 
@@ -147,29 +147,29 @@ namespace DataExportManager.ProjectUI
             // 
             // olvDatasets
             // 
-            this.olvDatasets.AllColumns.Add(this.olvName);
-            this.olvDatasets.AllColumns.Add(this.olvState);
-            this.olvDatasets.AllColumns.Add(this.olvID);
-            this.olvDatasets.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tlvDatasets.AllColumns.Add(this.olvName);
+            this.tlvDatasets.AllColumns.Add(this.olvState);
+            this.tlvDatasets.AllColumns.Add(this.olvID);
+            this.tlvDatasets.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.olvDatasets.CellEditUseWholeCell = false;
-            this.olvDatasets.CheckBoxes = true;
-            this.olvDatasets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.tlvDatasets.CellEditUseWholeCell = false;
+            this.tlvDatasets.CheckBoxes = true;
+            this.tlvDatasets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName,
             this.olvState});
-            this.olvDatasets.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvDatasets.Location = new System.Drawing.Point(0, 0);
-            this.olvDatasets.Name = "olvDatasets";
-            this.olvDatasets.RowHeight = 19;
-            this.olvDatasets.ShowGroups = false;
-            this.olvDatasets.ShowImagesOnSubItems = true;
-            this.olvDatasets.Size = new System.Drawing.Size(318, 543);
-            this.olvDatasets.TabIndex = 28;
-            this.olvDatasets.UseCompatibleStateImageBehavior = false;
-            this.olvDatasets.View = System.Windows.Forms.View.Details;
-            this.olvDatasets.VirtualMode = true;
-            this.olvDatasets.SelectedIndexChanged += new System.EventHandler(this.olvDatasets_SelectedIndexChanged);
+            this.tlvDatasets.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tlvDatasets.Location = new System.Drawing.Point(0, 0);
+            this.tlvDatasets.Name = "tlvDatasets";
+            this.tlvDatasets.RowHeight = 19;
+            this.tlvDatasets.ShowGroups = false;
+            this.tlvDatasets.ShowImagesOnSubItems = true;
+            this.tlvDatasets.Size = new System.Drawing.Size(318, 543);
+            this.tlvDatasets.TabIndex = 28;
+            this.tlvDatasets.UseCompatibleStateImageBehavior = false;
+            this.tlvDatasets.View = System.Windows.Forms.View.Details;
+            this.tlvDatasets.VirtualMode = true;
+            this.tlvDatasets.SelectedIndexChanged += new System.EventHandler(this.olvDatasets_SelectedIndexChanged);
             // 
             // olvName
             // 
@@ -213,7 +213,7 @@ namespace DataExportManager.ProjectUI
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.olvDatasets)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -226,7 +226,7 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private TreeListView olvDatasets;
+        private TreeListView tlvDatasets;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbFilter;
         private CatalogueManager.SimpleControls.CheckAndExecuteUI checkAndExecuteUI1;
