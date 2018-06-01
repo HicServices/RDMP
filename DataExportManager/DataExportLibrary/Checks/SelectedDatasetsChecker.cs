@@ -120,13 +120,13 @@ namespace DataExportLibrary.Checks
                         if (e.Message.Contains("Timeout"))
                             notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s",CheckResult.Warning));
                         else
-                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail,e));
+                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Warning,e));
                     }
                 }
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute Top 1 on dataset " + ds, CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute Top 1 on dataset " + ds, CheckResult.Warning, e));
             }
 
             var cata = _repositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>((int)ds.Catalogue_ID);
