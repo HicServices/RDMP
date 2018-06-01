@@ -58,6 +58,12 @@ namespace DataExportManager.DataRelease
 
             olvReleaseability.AspectGetter = Releaseability_AspectGetter;
             olvReleaseability.ImageGetter = Releaseability_ImageGetter;
+            checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
+        }
+
+        private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
+        {
+            tlvReleasePotentials.RefreshObjects(tlvReleasePotentials.Objects.Cast<object>().ToArray());
         }
 
         private object Releaseability_ImageGetter(object rowObject)
@@ -101,6 +107,7 @@ namespace DataExportManager.DataRelease
             {
                 Pipeline = _pipelineSelectionUI1.Pipeline == null ? 0 : _pipelineSelectionUI1.Pipeline.ID,
                 Configurations = tlvReleasePotentials.CheckedObjects.OfType<ExtractionConfiguration>().Select(ec=>ec.ID).ToArray(),
+                SelectedDataSets = tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
                 Command = activityRequested,
             };
         }

@@ -73,15 +73,15 @@ namespace DataExportManager.ProjectUI
             olvState.ImageGetter = State_ImageGetter;
             olvState.AspectGetter = State_AspectGetter;
 
-            olvDatasets.ChildrenGetter = ChildrenGetter;
-            olvDatasets.CanExpandGetter = CanExpandGetter;
-            olvDatasets.HierarchicalCheckboxes = true;
+            tlvDatasets.ChildrenGetter = ChildrenGetter;
+            tlvDatasets.CanExpandGetter = CanExpandGetter;
+            tlvDatasets.HierarchicalCheckboxes = true;
 
         }
 
         private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
         {
-            olvDatasets.RefreshObjects(olvDatasets.Objects.Cast<object>().ToArray());
+            tlvDatasets.RefreshObjects(tlvDatasets.Objects.Cast<object>().ToArray());
         }
 
 
@@ -145,8 +145,8 @@ namespace DataExportManager.ProjectUI
         {
             return new ExtractionOptions() { 
                 Command = activityRequested,
-                ExtractGlobals = olvDatasets.IsChecked(Globals),
-                Datasets = _datasets.Where(olvDatasets.IsChecked).Select(ds => ds.ID).ToArray(),
+                ExtractGlobals = tlvDatasets.IsChecked(Globals),
+                Datasets = _datasets.Where(tlvDatasets.IsChecked).Select(ds => ds.ID).ToArray(),
                 ExtractionConfiguration = _extractionConfiguration.ID,
                 Pipeline = _pipelineSelectionUI1.Pipeline == null?0:_pipelineSelectionUI1.Pipeline.ID
             };
@@ -160,15 +160,15 @@ namespace DataExportManager.ProjectUI
             
             checkAndExecuteUI1.SetItemActivator(activator);
 
-            olvDatasets.ClearObjects();
+            tlvDatasets.ClearObjects();
 
             _globals = _extractionConfiguration.GetGlobals();
             _datasets = databaseObject.SelectedDataSets.Select(ds => ds.ExtractableDataSet).ToArray();
             GetBundledStuff();
 
-            olvDatasets.DisableObjects(_globals.Union(_bundledStuff.Values.SelectMany(v=>v)));
+            tlvDatasets.DisableObjects(_globals.Union(_bundledStuff.Values.SelectMany(v=>v)));
 
-            olvDatasets.AddObjects(new object[] { Globals, CoreDatasets, ProjectSpecificDatasets });
+            tlvDatasets.AddObjects(new object[] { Globals, CoreDatasets, ProjectSpecificDatasets });
             
             
             //don't accept refresh while executing
@@ -191,8 +191,8 @@ namespace DataExportManager.ProjectUI
 
             TopX = -1;
 
-            olvDatasets.ExpandAll();
-            olvDatasets.CheckAll();
+            tlvDatasets.ExpandAll();
+            tlvDatasets.CheckAll();
         }
         
         private void tbTopX_TextChanged(object sender, EventArgs e)
@@ -222,8 +222,8 @@ namespace DataExportManager.ProjectUI
 
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
-            olvDatasets.ModelFilter = new TextMatchFilter(olvDatasets,tbFilter.Text);
-            olvDatasets.UseFiltering = true;
+            tlvDatasets.ModelFilter = new TextMatchFilter(tlvDatasets,tbFilter.Text);
+            tlvDatasets.UseFiltering = true;
         }
 
         private void GetBundledStuff()
@@ -240,7 +240,7 @@ namespace DataExportManager.ProjectUI
 
         private void olvDatasets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var eds =  olvDatasets.SelectedObject as ExtractableDataSet;
+            var eds =  tlvDatasets.SelectedObject as ExtractableDataSet;
             checkAndExecuteUI1.GroupBySender(eds != null ? eds.ToString() : null);
         }
 
