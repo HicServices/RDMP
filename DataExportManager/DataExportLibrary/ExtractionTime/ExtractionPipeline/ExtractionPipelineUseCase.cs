@@ -130,12 +130,17 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             catch (Exception ex)
             {
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Execute pipeline failed with Exception",ex));
-                ExtractCommand.ElevateState( ExtractCommandState.Crashed);
+                ExtractCommand.ElevateState(ExtractCommandState.Crashed);
             }
 
             //if it didn't crash / get aborted etc
-            if (ExtractCommand.State < ExtractCommandState.WritingMetadata && ExtractCommand is ExtractDatasetCommand)
-                WriteMetadata(listener);
+            if (ExtractCommand.State < ExtractCommandState.WritingMetadata)
+            {
+                if (ExtractCommand is ExtractDatasetCommand) 
+                    WriteMetadata(listener);
+                else
+                    ExtractCommand.ElevateState(ExtractCommandState.Completed);
+            }
         }
 
         public override IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)
