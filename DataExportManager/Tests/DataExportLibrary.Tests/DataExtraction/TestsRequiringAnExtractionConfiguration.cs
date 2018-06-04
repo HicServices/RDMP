@@ -57,7 +57,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
 
             _request = new ExtractDatasetCommand(RepositoryLocator,_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
-                _extractableColumns, new HICProjectSalt(_project), "",
+                _extractableColumns, new HICProjectSalt(_project),
                 new ExtractionDirectory(@"C:\temp\", _configuration));
         }
 

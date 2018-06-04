@@ -53,6 +53,11 @@ namespace RDMPAutomationService.Runners
                 throw new Exception("No Configurations have been selected for release");
         }
 
+        protected override void AfterRun()
+        {
+            
+        }
+
         protected override ICheckable[] GetCheckables()
         {
             List<ICheckable> toReturn = new List<ICheckable>();

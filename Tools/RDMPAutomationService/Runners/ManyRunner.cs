@@ -103,9 +103,13 @@ namespace RDMPAutomationService.Runners
             
             Task.WaitAll(tasks.ToArray());
 
+            AfterRun();
+
             return 0;
         }
+
         protected abstract void Initialize();
+        protected abstract void AfterRun();
 
         protected abstract ICheckable[] GetCheckables();
         

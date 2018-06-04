@@ -51,6 +51,12 @@ namespace RDMPAutomationService.Runners
                 throw new Exception("Extraction Configuration has already been released");
         }
 
+        protected override void AfterRun()
+        {
+            if(_dataLoadInfo != null && !_dataLoadInfo.IsClosed)
+                _dataLoadInfo.CloseAndMarkComplete();
+        }
+
         protected override object[] GetRunnables()
         {
             ExtractCommands.Clear();
