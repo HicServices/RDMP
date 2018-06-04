@@ -4,6 +4,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime;
+using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using ReusableLibraryCode.Checks;
@@ -109,8 +110,8 @@ namespace DataExportLibrary.Checks
             }
 
             var cohort = repo.GetObjectByID<ExtractableCohort>((int)_config.Cohort_ID);
-            
-            if(CheckDatasets)
+
+            if (CheckDatasets)
                 foreach (ISelectedDataSets s in _config.SelectedDataSets)
                     new SelectedDatasetsChecker(s, _repositoryLocator).Check(notifier);
 

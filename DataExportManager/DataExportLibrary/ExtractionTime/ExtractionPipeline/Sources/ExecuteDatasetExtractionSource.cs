@@ -440,53 +440,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 notifier.OnCheckPerformed(new CheckEventArgs("ExtractionRequest has not been set", CheckResult.Fail));
                 return;
             }
-
-            notifier.OnCheckPerformed(new CheckEventArgs("ExtractionRequest is set, about to generate test extraction SQL", CheckResult.Success));
-                
-            if(Request.LimitationSql == null || (!Request.LimitationSql.Trim().StartsWith("TOP ")))
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs("Request did not have any LimitationSql or it did not start with TOP",
-                        CheckResult.Warning));
-                
-            notifier.OnCheckPerformed(
-                new CheckEventArgs(
-                    "Extraction SQL for Checking (may differ from runtime extraction SQL e.g. have TOP 100 in it) is :" +
-                    Request.QueryBuilder.SQL, CheckResult.Success));
-
-            notifier.OnCheckPerformed(new CheckEventArgs("About to run GetChunk ", CheckResult.Success));
-            try
-            {
-                _testMode = true;
-                DataTable dt = GetChunk(new FromCheckNotifierToDataLoadEventListener(notifier), new GracefulCancellationToken());
-
-                if (dt == null)
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs("The above SQL returned no rows",
-                            CheckResult.Fail));
-                else
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs("successfully read " + dt.Rows.Count + " rows using the above SQL",
-                            CheckResult.Success));
-            }
-            catch (Exception e)
-            {
-                if (e.Message.Contains("Timeout"))
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Above SQL resulted in a timeout, it is likely that your pipeline is intact but targets a slow table that is not worth previewing",
-                            CheckResult.Warning, e));
-                else
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Could not read data from the source (above SQL failed)",
-                            CheckResult.Fail, e));
-                }
-            }
-            finally
-            {
-                _testMode = false;
-            }
         }
 
         private bool _testMode;
