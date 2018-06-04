@@ -540,12 +540,9 @@ namespace CatalogueLibrary.QueryBuilding
             ClearTopX(queryBuilder);
 
             //if we are expected to have a topx
-            if (topX > 0)
-            {
-                var response = syntaxHelper.HowDoWeAchieveTopX(topX);
-                queryBuilder.TopXCustomLine = AddCustomLine(queryBuilder,response.SQL, response.Location);
-                queryBuilder.TopXCustomLine.Role = CustomLineRole.TopX;
-            }
+            var response = syntaxHelper.HowDoWeAchieveTopX(topX);
+            queryBuilder.TopXCustomLine = AddCustomLine(queryBuilder, response.SQL, response.Location);
+            queryBuilder.TopXCustomLine.Role = CustomLineRole.TopX;
         }
 
         public static void ClearTopX(ISqlQueryBuilder queryBuilder)
@@ -557,7 +554,6 @@ namespace CatalogueLibrary.QueryBuilding
                 queryBuilder.SQLOutOfDate = true;
             }
         }
-
 
         public static IEnumerable<CustomLine> GetCustomLinesSQLForStage(ISqlQueryBuilder queryBuilder, QueryComponent stage)
         {

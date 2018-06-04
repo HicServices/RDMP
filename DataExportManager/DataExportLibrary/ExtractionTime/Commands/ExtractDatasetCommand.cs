@@ -68,6 +68,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
             Salt = salt;
             Directory = directory;
             IncludeValidation = includeValidation;
+            TopX = -1;
         }
 
         /// <summary>
@@ -91,6 +92,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
             Salt = new HICProjectSalt(Project);
             Directory = new ExtractionDirectory(Project.ExtractionDirectory, configuration);
             IncludeValidation = includeValidation;
+            TopX = -1;
         }
 
         public static readonly ExtractDatasetCommand EmptyCommand = new ExtractDatasetCommand();
