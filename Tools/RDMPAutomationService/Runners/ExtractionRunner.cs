@@ -114,22 +114,19 @@ namespace RDMPAutomationService.Runners
                 CheckDatasets = false,
                 CheckGlobals = false
             });
-
-            foreach (var sds in GetSelectedDataSets())
-                checkables.Add(new SelectedDatasetsChecker(sds, RepositoryLocator));
-
+            
             checkables.Add(new GlobalExtractionChecker(_configuration));
 
             foreach (var runnable in GetRunnables())
             {
-                var globalCommand = runnable as ExtractGlobalsCommand;
+                var command = runnable as IExtractCommand;
                 var datasetCommand = runnable as ExtractDatasetCommand;
-
-                if (globalCommand != null)
-                    checkables.Add(new ExtractionPipelineUseCase(_project, _globalsCommand, _pipeline, _dataLoadInfo) { Token = Token }.GetEngine(_pipeline, new ToMemoryDataLoadEventListener(false)));
                 
                 if (datasetCommand != null)
-                    checkables.Add(new ExtractionPipelineUseCase(_project, datasetCommand, _pipeline, _dataLoadInfo) { Token = Token }.GetEngine(_pipeline, new ToMemoryDataLoadEventListener(false)));
+                    checkables.Add(new SelectedDatasetsChecker(datasetCommand.SelectedDataSets, RepositoryLocator));
+
+                checkables.Add(new ExtractionPipelineUseCase(_project, command, _pipeline, DataLoadInfo.Empty) { Token = Token }
+                                       .GetEngine(_pipeline, new ToMemoryDataLoadEventListener(false)));
             }
             
             return checkables.ToArray();

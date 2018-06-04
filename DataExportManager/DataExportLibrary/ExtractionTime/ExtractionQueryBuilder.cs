@@ -73,8 +73,8 @@ namespace DataExportLibrary.ExtractionTime
             //identify any tables we are supposed to force join to
             var forcedJoins = request.SelectedDataSets.SelectedDatasetsForcedJoins;
 
-            QueryBuilder queryBuilder = new QueryBuilder("DISTINCT " + request.LimitationSql, hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
-
+            QueryBuilder queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
+            queryBuilder.TopX = request.TopX;
             
             queryBuilder.SetSalt(request.Salt.GetSalt());
 

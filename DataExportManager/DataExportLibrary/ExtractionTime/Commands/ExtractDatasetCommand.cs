@@ -22,7 +22,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
     /// (Lookup tables, SupportingDocuments etc).  Also includes optional settings (e.g. IncludeValidation) etc.  You can realise the request by running the 
     /// QueryBuilder SQL. 
     /// </summary>
-    public class ExtractDatasetCommand : ExtractCommand,IExtractDatasetCommand
+    public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     {
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
@@ -48,7 +48,6 @@ namespace DataExportLibrary.ExtractionTime.Commands
 
         public List<IColumn> ColumnsToExtract{get;set;} 
         public IHICProjectSalt Salt{get;set;}
-        public string LimitationSql{get;set;}
         public bool IncludeValidation {get;set;} 
         
         public IExtractionDirectory Directory { get; set; }
@@ -58,15 +57,15 @@ namespace DataExportLibrary.ExtractionTime.Commands
         public ICumulativeExtractionResults CumulativeExtractionResults { get; set; }
         public List<ReleaseIdentifierSubstitution> ReleaseIdentifierSubstitutions { get; private set; }
         public List<IExtractionResults> ExtractionResults { get; private set; }
+        public int TopX { get; set; }
 
-        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableCohort extractableCohort, IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt, string limitationSql, IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
+        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableCohort extractableCohort, IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt, IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
         {
             RepositoryLocator = repositoryLocator;
             ExtractableCohort = extractableCohort;
             DatasetBundle = datasetBundle;
             ColumnsToExtract = columnsToExtract;
             Salt = salt;
-            LimitationSql = limitationSql;
             Directory = directory;
             IncludeValidation = includeValidation;
         }
@@ -78,10 +77,9 @@ namespace DataExportLibrary.ExtractionTime.Commands
         /// <param name="repositoryLocator"></param>
         /// <param name="configuration"></param>
         /// <param name="datasetBundle"></param>
-        /// <param name="limitationSql"></param>
         /// <param name="includeValidation"></param>
         /// <param name="includeLookups"></param>
-        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDatasetBundle datasetBundle, string limitationSql = "", bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
+        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDatasetBundle datasetBundle, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
         {
             RepositoryLocator = repositoryLocator;
             
@@ -91,7 +89,6 @@ namespace DataExportLibrary.ExtractionTime.Commands
             DatasetBundle = datasetBundle;
             ColumnsToExtract = new List<IColumn>(Configuration.GetAllExtractableColumnsFor(datasetBundle.DataSet));
             Salt = new HICProjectSalt(Project);
-            LimitationSql = limitationSql;
             Directory = new ExtractionDirectory(Project.ExtractionDirectory, configuration);
             IncludeValidation = includeValidation;
         }

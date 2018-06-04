@@ -182,7 +182,7 @@ namespace DataExportLibrary.DataRelease
             var salt = new HICProjectSalt(project);
 
             //create a request for an empty bundle - only the dataset
-            var request = new ExtractDatasetCommand(_repositoryLocator, Configuration, cohort, new ExtractableDatasetBundle(DataSet), _columnsToExtract, salt, "", null);
+            var request = new ExtractDatasetCommand(_repositoryLocator, Configuration, cohort, new ExtractableDatasetBundle(DataSet), _columnsToExtract, salt, null);
             
             request.GenerateQueryBuilder();
 
