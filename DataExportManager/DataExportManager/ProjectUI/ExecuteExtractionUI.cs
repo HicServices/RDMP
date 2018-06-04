@@ -83,7 +83,6 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.RefreshObjects(tlvDatasets.Objects.Cast<object>().ToArray());
         }
 
-
         private bool CanExpandGetter(object model)
         {
             var e = ChildrenGetter(model);
@@ -151,7 +150,7 @@ namespace DataExportManager.ProjectUI
                 ExtractGlobals = tlvDatasets.IsChecked(ExtractionDirectory.GLOBALS_DATA_NAME),
                 Datasets = _datasets.Where(tlvDatasets.IsChecked).Select(ds => ds.ID).ToArray(),
                 ExtractionConfiguration = _extractionConfiguration.ID,
-                Pipeline = _pipelineSelectionUI1.Pipeline == null?0:_pipelineSelectionUI1.Pipeline.ID
+                Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 :_pipelineSelectionUI1.Pipeline.ID
             };
         }
 
@@ -189,6 +188,8 @@ namespace DataExportManager.ProjectUI
                 //if the configuration has a default then use that pipeline
                 if (_extractionConfiguration.DefaultPipeline_ID != null)
                     _pipelineSelectionUI1.Pipeline = _extractionConfiguration.DefaultPipeline;
+
+                _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
             }
 
             TopX = -1;
@@ -196,7 +197,13 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.ExpandAll();
             tlvDatasets.CheckAll();
         }
-        
+
+        private void ResetChecksUI(object sender, EventArgs e)
+        {
+            if (!checkAndExecuteUI1.IsExecuting)
+                checkAndExecuteUI1.Reset();
+        }
+
         private void tbTopX_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(tbTopX.Text))

@@ -139,7 +139,7 @@ namespace CatalogueManager.SimpleControls
 
             loadProgressUI1.Clear();
             loadProgressUI1.ShowRunning(true);
-
+            
             _runningTask =
                 //run the data load in a Thread
                 Task.Factory.StartNew(() => Run(runner))
@@ -163,7 +163,6 @@ namespace CatalogueManager.SimpleControls
         {
             try
             {
-                
                 runner.Run(_activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
             }
             catch (Exception ex)
@@ -175,7 +174,7 @@ namespace CatalogueManager.SimpleControls
         private void SetButtonStates()
         {
             if (StateChanged != null)
-                StateChanged(this,new EventArgs());
+                StateChanged(this, new EventArgs());
 
             if (!ChecksPassed)
             {
@@ -228,6 +227,18 @@ namespace CatalogueManager.SimpleControls
         {
             _cancellationTokenSource.Abort();
             loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"Abort request issued"));
+        }
+
+        public void Reset()
+        {
+            if (!IsExecuting)
+            {
+                checksUI1.Clear();
+                loadProgressUI1.Clear();
+                ChecksPassed = false;
+                _runningTask = null;
+                SetButtonStates();
+            }
         }
     }
 }
