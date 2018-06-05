@@ -30,7 +30,7 @@ namespace CohortManagerLibrary.Execution
             SubqueriesCached = subqueriesCached;
             CountSQL = countSQL;
             CumulativeSQL = cumulativeSQL;
-            CancellationTokenSource = cancellationTokenSource;
+            _cancellationTokenSource = cancellationTokenSource;
             IsResultsForRootContainer = isResultsForRootContainer;
         }
 
@@ -40,12 +40,24 @@ namespace CohortManagerLibrary.Execution
         /// Although this is called CountSQL it is actually a select distinct identifiers!
         /// </summary>
         public string CountSQL { get; set; }
-        public CancellationTokenSource CancellationTokenSource { get; set; }
+
+        private CancellationTokenSource _cancellationTokenSource;
+        private DbCommand _cmdCount;
+
+        public void Cancel()
+        {
+            _cancellationTokenSource.Cancel();
+            if (_cmdCount != null && _cmdCount.Connection.State == ConnectionState.Open)
+            {
+                _cmdCount.Cancel();
+            }
+            
+        }
 
         public DataTable Identifiers { get; private set; }
         public DataTable CumulativeIdentifiers { get; private set; }
 
-        public bool IsExecuting { get; set; }
+        public bool IsExecuting { get; private set; }
 
         public void GetCohortAsync(IDataAccessPoint[] accessPoints, int commandTimeout)
         {
@@ -53,6 +65,8 @@ namespace CohortManagerLibrary.Execution
                 throw new Exception("GetCohortAsync has already been called for this object");
 
             Identifiers = new DataTable();
+            
+            IsExecuting = true;
 
             var server = GetServerToExecuteQueryOn(accessPoints);
             
@@ -61,12 +75,12 @@ namespace CohortManagerLibrary.Execution
             using (var con = server.GetConnection())
             {
                 con.Open();
-                var cmdCount = server.GetCommand(CountSQL, con);
-                cmdCount.CommandTimeout = commandTimeout;
-                
-                var identifiersReader =  cmdCount.ExecuteReaderAsync(CancellationTokenSource.Token);
+                _cmdCount = server.GetCommand(CountSQL, con);
+                _cmdCount.CommandTimeout = commandTimeout;
 
-                identifiersReader.Wait(CancellationTokenSource.Token);
+                var identifiersReader = _cmdCount.ExecuteReaderAsync(_cancellationTokenSource.Token);
+
+                identifiersReader.Wait(_cancellationTokenSource.Token);
                 var rIds = identifiersReader.Result;
                 Identifiers.Load(rIds);
                 rIds.Close();
@@ -81,12 +95,12 @@ namespace CohortManagerLibrary.Execution
 
                     var cmdCountCumulative = server.GetCommand(CumulativeSQL, con);
                     cmdCountCumulative.CommandTimeout = commandTimeout;
-                    cumulativeIdentifiersRead = cmdCountCumulative.ExecuteReaderAsync(CancellationTokenSource.Token);
+                    cumulativeIdentifiersRead = cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
                 }
 
                 if (cumulativeIdentifiersRead != null)
                 {
-                    cumulativeIdentifiersRead.Wait(CancellationTokenSource.Token);
+                    cumulativeIdentifiersRead.Wait(_cancellationTokenSource.Token);
                     var rCumulative = cumulativeIdentifiersRead.Result;
                     CumulativeIdentifiers.Load(rCumulative);
                     rCumulative.Close();

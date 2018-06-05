@@ -3,6 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -85,6 +86,8 @@ namespace CohortManager.SubComponents
         private int _timeout = 3000;
 
         private ISqlParameter[] _globals;
+        
+        CancellationTokenSource _cancelGlobalOperations;
 
         /// <summary>
         /// Occurs when the user selects something in the ObjectListView, object is the thing selected
@@ -350,6 +353,10 @@ namespace CohortManager.SubComponents
 
         public void CancelAll()
         {
+            //don't start any more global operations if your midway through
+            if(_cancelGlobalOperations != null)
+                _cancelGlobalOperations.Cancel();
+
             Compiler.CancelAllTasks(true);
             RecreateAllTasks();
         }
@@ -359,14 +366,17 @@ namespace CohortManager.SubComponents
             //only allow starting all if we are not mid execution already
             if (IsExecutingGlobalOperations())
                 return;
-            
+
+            _cancelGlobalOperations = new CancellationTokenSource();
+
+
             _runner = new CohortCompilerRunner(Compiler,_timeout);
             _runner.PhaseChanged += RunnerOnPhaseChanged;
             new Task(() =>
             {
                 try
                 {
-                    _runner.Run();
+                    _runner.Run(_cancelGlobalOperations.Token);
                 }
                 catch (Exception e)
                 {
