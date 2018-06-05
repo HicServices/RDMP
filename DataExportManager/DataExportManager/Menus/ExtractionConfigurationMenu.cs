@@ -104,6 +104,7 @@ namespace DataExportManager.Menus
 
             Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
+            ReBrandActivateAs("Check & Execute", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
         }
 
 
