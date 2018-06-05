@@ -44,8 +44,7 @@ namespace CatalogueManager.Menus
 
             Add(new ExecuteCommandCreateNewLoadMetadata(_activator));
             
-
-            ReBrandActivateAs("Check & Execute",RDMPConcept.LoadMetadata,OverlayKind.Execute);
+            ReBrandActivateAs("Check and Execute",RDMPConcept.LoadMetadata,OverlayKind.Execute);
         }
 
         public void Delete()

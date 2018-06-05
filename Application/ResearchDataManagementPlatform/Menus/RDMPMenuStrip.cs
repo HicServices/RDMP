@@ -313,7 +313,7 @@ namespace ResearchDataManagementPlatform.Menus
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             AddToNew(new ExecuteCommandCreateNewExtractableDataSetPackage(_activator));
             AddToNew(new ExecuteCommandCreateNewDataExtractionProject(_activator));
-            AddToNew(new ExecuteCommandReleaseProject(_activator));
+            AddToNew(new ExecuteCommandRelease(_activator));
 
         }
 

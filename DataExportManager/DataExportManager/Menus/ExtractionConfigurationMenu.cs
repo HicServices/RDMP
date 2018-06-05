@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -63,7 +64,8 @@ namespace DataExportManager.Menus
             ///////////////////Change Cohorts//////////////
             string message = extractionConfiguration.Cohort_ID == null ? "Choose Cohort" : "Change Cohort";
 
-
+            Add(new ExecuteCommandRelease(_activator).SetTarget(extractionConfiguration));
+            
             var cohortMenuItem = new ToolStripMenuItem(message, _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Link), (s, e) => LinkCohortToExtractionConfiguration());
             cohortMenuItem.Enabled = !extractionConfiguration.IsReleased;
             Items.Add(cohortMenuItem);
@@ -104,7 +106,7 @@ namespace DataExportManager.Menus
 
             Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
-            ReBrandActivateAs("Check & Execute", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
+            ReBrandActivateAs("Check and Execute", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
         }
 
 

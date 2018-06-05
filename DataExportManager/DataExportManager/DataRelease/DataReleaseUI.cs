@@ -212,6 +212,13 @@ namespace DataExportManager.DataRelease
                 ReleaseState = ReleaseState.Nothing
             };
         }*/
+
+        public void TickAllFor(ExtractionConfiguration configuration)
+        {
+            tlvReleasePotentials.UncheckAll();
+            tlvReleasePotentials.CheckObject(configuration);
+            tlvReleasePotentials.CheckObject(ExtractionDirectory.GLOBALS_DATA_NAME);
+        }
     }
 
     

@@ -344,7 +344,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReleaseProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRelease.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetProjectExtractionDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowDetailedSummaryOfAllCohorts.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
