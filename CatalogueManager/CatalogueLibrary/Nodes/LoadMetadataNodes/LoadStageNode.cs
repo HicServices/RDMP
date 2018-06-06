@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class LoadStageNode
+    public class LoadStageNode : IOrderable
     {
         public LoadMetadata LoadMetadata { get; private set; }
         public LoadStage LoadStage { get; private set; }
+
+        //prevent reordering
+        public int Order { get { return (int)LoadStage; } set { } }
 
         public LoadStageNode(LoadMetadata loadMetadata, LoadStage loadStage)
         {
