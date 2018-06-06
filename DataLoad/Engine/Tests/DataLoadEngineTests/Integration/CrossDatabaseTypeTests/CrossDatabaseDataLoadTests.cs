@@ -254,6 +254,7 @@ MrMurder,2001-01-01,Yella");
                 var newC1 = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "NewC1");
                 Assert.AreEqual(2, newC1["Parent_ID"]);
                 Assert.AreEqual(1, newC1["ChildNumber"]);
+                Assert.AreEqual(DBNull.Value, newC1["Height"]); //the "null" in the input file should be DBNull.Value in the final database
                 AssertHasDataLoadRunId(newC1);
 
             }

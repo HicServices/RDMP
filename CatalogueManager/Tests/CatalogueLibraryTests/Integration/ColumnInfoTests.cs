@@ -131,15 +131,6 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        public void GetColumnCollationType_TableCatalogueColumnBrowseURL_EqualToLatin1General()
-        {
-            string collation = UsefulStuff.GetInstance()
-                       .GetColumnCollationType(CatalogueRepository.ConnectionString, "Catalogue", "Browse_URL");
-
-            Assert.IsTrue(collation.StartsWith("Latin1_General"));
-        }
-
-        [Test]
         public void  Test_GetRAWStageTypeWhenPreLoadDiscardedDilution()
         {
             TableInfo parent = new TableInfo(CatalogueRepository, "Rokkits");

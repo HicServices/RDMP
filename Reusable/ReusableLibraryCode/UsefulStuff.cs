@@ -82,6 +82,7 @@ namespace ReusableLibraryCode
             throw new Exception("Could not find column named " + columnName + " in table " + tableName );
         }
 
+        [Obsolete("Not used by anyone, use Discovery instead")]
         public int GetColumnLengthMySql(DbConnection connection,string tableName, string columnName)
         {
             tableName = tableName.Trim('`');
@@ -124,7 +125,8 @@ namespace ReusableLibraryCode
             }
             throw new MissingFieldException("Could not find field " + columnName + " in table " + tableName);
         }
-        
+
+        [Obsolete("Not used by anyone, use Discovery instead")]
         public string GetColumnTypeMySql(string connectionString, string databaseName, string tableName, string columnName)
         {
             MySqlConnection con = new MySqlConnection(connectionString);
@@ -151,6 +153,7 @@ namespace ReusableLibraryCode
             throw new MissingFieldException("Could not find field " + columnName + " in table " + tableName);
         }
 
+        [Obsolete("Not used by anyone, use Discovery instead")]
         public string GetColumnCollationType(string connectionString, string tableName, string columnName)
         {
             if (!connectionString.Contains("Initial Catalog") && !connectionString.Contains("Database"))
@@ -196,7 +199,8 @@ c.name = @column_name", con);
             }
             
         }
-        
+
+        [Obsolete("Not used by anyone, use Discovery instead")]
         public string GetColumnCollationTypeMySql(string connectionString,string databaseName, string tableName, string columnName)
         {
             MySqlConnection con = new MySqlConnection(connectionString);
@@ -223,6 +227,7 @@ c.name = @column_name", con);
             throw new MissingFieldException("Could not find field " + columnName + " in table " + tableName);
         }
 
+        [Obsolete("Not used by anyone, use Discovery instead")]
         public string[] ListStoredProcedures(string connectionString,string databaseName )
         {
             databaseName = databaseName.Trim(new char[] {'[', ']'});
@@ -252,7 +257,8 @@ c.name = @column_name", con);
 
             return procs.ToArray();
         }
-        
+
+        [Obsolete("Not used by anyone, use Discovery instead")]
         public string ValidateQuery(string connectionString, string query)
         {
             if (!query.StartsWith("SELECT"))
@@ -419,7 +425,7 @@ c.name = @column_name", con);
 
 
         }
-
+        [Obsolete("Not used by anyone")]
         public static string MD5Stream(MemoryStream stream)
         {
             using (var md5 = MD5.Create())
@@ -460,7 +466,8 @@ c.name = @column_name", con);
                 default: return false;
             }
         }
-        
+
+        [Obsolete("Not used by anyone")]
         public Dictionary<string, object> DbDataReaderToDictionary(DbDataReader r)
         {
             var dict = new Dictionary<string, object>();
