@@ -420,7 +420,7 @@ namespace DataExportManager.ProjectUI.Datasets
             if(node.ForcedJoin == null)
                 if (newvalue == CheckState.Checked)
                 {
-                    var forceJoin = new SelectedDatasetsForcedJoin(_activator.RepositoryLocator.DataExportRepository,SelectedDataSet, node.TableInfo);
+                    var forceJoin = new SelectedDataSetsForcedJoin(_activator.RepositoryLocator.DataExportRepository,SelectedDataSet, node.TableInfo);
                     node.ForcedJoin = forceJoin;
                     return CheckState.Checked;
                 }
@@ -472,7 +472,7 @@ namespace DataExportManager.ProjectUI.Datasets
                 }
 
             //identify the existing force joins
-            var existingForceJoins = new HashSet<SelectedDatasetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDatasetsForcedJoin>(SelectedDataSet));
+            var existingForceJoins = new HashSet<SelectedDataSetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(SelectedDataSet));
 
             foreach (AvailableForceJoinNode node in nodes)
             {
@@ -484,7 +484,7 @@ namespace DataExportManager.ProjectUI.Datasets
                 }
             }
 
-            foreach (SelectedDatasetsForcedJoin redundantForcedJoin in existingForceJoins)
+            foreach (SelectedDataSetsForcedJoin redundantForcedJoin in existingForceJoins)
                 redundantForcedJoin.DeleteInDatabase();
 
             foreach (var node in nodes)

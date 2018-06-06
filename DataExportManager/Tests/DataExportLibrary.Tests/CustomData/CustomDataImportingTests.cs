@@ -114,7 +114,7 @@ namespace DataExportLibrary.Tests.CustomData
         }
 
         /// <summary>
-        /// Tests that you can reference a custom cohort column in the WHERE Sql of a core dataset in extraction.  Requires you configure a <see cref="JoinInfo"/> and specify a <see cref="SelectedDatasetsForcedJoin"/>
+        /// Tests that you can reference a custom cohort column in the WHERE Sql of a core dataset in extraction.  Requires you configure a <see cref="JoinInfo"/> and specify a <see cref="SelectedDataSetsForcedJoin"/>
         /// </summary>
         [Test]
         public void Extract_ProjectSpecificCatalogue_FilterReference()
@@ -145,7 +145,7 @@ namespace DataExportLibrary.Tests.CustomData
             var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
             CatalogueRepository.JoinInfoFinder.AddJoinInfo(idCol, otherIdCol, ExtractionJoinType.Left, null);
 
-            new SelectedDatasetsForcedJoin(DataExportRepository, _selectedDataSet, CustomTableInfo);
+            new SelectedDataSetsForcedJoin(DataExportRepository, _selectedDataSet, CustomTableInfo);
 
             //generate a new request (this will include the newly created column)
             _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, new ExtractableDatasetBundle(_extractableDataSet));
