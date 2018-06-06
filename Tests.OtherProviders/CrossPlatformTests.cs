@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -145,6 +146,70 @@ namespace Tests.OtherProviders
             Assert.AreEqual(10,tbl.DiscoverColumn("Field6").DataType.GetLengthIfString());
         }
 
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void AddColumnTest(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            //create a single column table with primary key
+            var tbl = database.CreateTable("TestDistincting", new[]
+            {
+                new DatabaseColumnRequest("Field1",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey = true} //varchar(max)
+            });
+
+
+            //table should exist
+            Assert.IsTrue(tbl.Exists());
+
+            //column should be varchar(100)
+            Assert.AreEqual(100, tbl.DiscoverColumn("Field1").DataType.GetLengthIfString());
+
+            //and should be a primary key
+            Assert.IsTrue(tbl.DiscoverColumn("Field1").IsPrimaryKey);
+
+            //ALTER TABLE to ADD COLUMN of date type
+            tbl.AddColumn("Field2", new DatabaseTypeRequest(typeof(DateTime)), true, 1000);
+
+            //new column should exist
+            var newCol = tbl.DiscoverColumn("Field2");
+
+            //and should have a type of datetime as requested
+            var typeCreated = newCol.DataType.SQLType;
+            var tt = database.Server.GetQuerySyntaxHelper().TypeTranslater;
+            Assert.AreEqual(typeof(DateTime), tt.GetCSharpTypeForSQLDBType(typeCreated));
+
+            var fieldsToAlter = new List<string>(new []{"Field1", "Field2"});
+
+            //sql server can't handle altering primary key columns or anything with a foreign key on it too!
+            if (type == DatabaseType.MicrosoftSQLServer)
+                fieldsToAlter.Remove("Field1"); 
+
+            foreach (string fieldName in new String[]{})
+            {
+
+                //ALTER TABLE, ALTER COLUMN of date type each of these to be now varchar(10)s
+
+                //discover the column
+                newCol = tbl.DiscoverColumn(fieldName);
+
+                //ALTER the column to varchar(10)
+                var newTypeCSharp = new DatabaseTypeRequest(typeof(string), 10);
+                var newTypeSql = tt.GetSQLDBTypeForCSharpType(newTypeCSharp);
+                newCol.DataType.AlterTypeTo(newTypeSql);
+
+                //rediscover it
+                newCol = tbl.DiscoverColumn(fieldName);
+
+                //make sure the type change happened
+                Assert.AreEqual(10, newCol.DataType.GetLengthIfString());
+            }
+
+            //and should still be a primary key
+            Assert.IsTrue(tbl.DiscoverColumn("Field1").IsPrimaryKey);
+            //and should not be a primary key
+            Assert.IsFalse(tbl.DiscoverColumn("Field2").IsPrimaryKey);
+        }
 
         [Test]
         [TestCase(DatabaseType.MYSQLServer)]
