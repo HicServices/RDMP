@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using Tests.Common;
 
-namespace Tests.OtherProviders
+namespace ReusableCodeTests
 {
     public class CrossPlatformTests:DatabaseTests
     {
