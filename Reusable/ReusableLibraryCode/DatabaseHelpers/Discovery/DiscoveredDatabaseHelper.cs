@@ -23,7 +23,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public abstract void DropDatabase(DiscoveredDatabase database);
         public abstract Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database);
 
-        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty = false)
+        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, bool createEmpty = false)
         {
             List<DatabaseColumnRequest> columns = new List<DatabaseColumnRequest>();
             List<DatabaseColumnRequest> customRequests = explicitColumnDefinitions != null
@@ -49,7 +49,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 }
             }
 
-            var tbl = CreateTable(database, tableName, columns.ToArray(),null,false);
+            var tbl = CreateTable(database, tableName, columns.ToArray(), foreignKeyPairs, cascadeDelete);
 
             //unless we are being asked to create it empty then upload the DataTable to it
             if(!createEmpty)

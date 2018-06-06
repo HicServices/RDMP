@@ -193,6 +193,13 @@ namespace Tests.Common
             RepositoryLocator.CatalogueRepository.MEF.Setup(_startup.MEFSafeDirectoryCatalog);
         }
 
+        [TestFixtureTearDown]
+        void DropCreatedDatabases()
+        {
+            foreach (DiscoveredDatabase db in forCleanup)
+                if (db.Exists())
+                    db.ForceDrop();
+        }
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         { 
             //its a healthy message, jolly good
@@ -339,12 +346,16 @@ delete from {1}..Project
             //replace all whitespace with single spaces
             return Regex.Replace(sql, @"\s+", " ").Trim();
         }
+        
+        HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
 
         protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName)
         {
             DiscoveredServer wc1;
             DiscoveredDatabase wc2;
-            return GetCleanedServer(type, dbnName, out wc1, out wc2);
+            var toReturn =  GetCleanedServer(type, dbnName, out wc1, out wc2);
+            forCleanup.Add(toReturn);
+            return toReturn;
         }
 
         protected DiscoveredDatabase GetCleanedServer(DatabaseType type,string dbnName, out DiscoveredServer server, out DiscoveredDatabase database)

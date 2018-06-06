@@ -102,7 +102,10 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
 
                 //t1.Name = t2.Name, t1.Age=T2.Age etc
                 sqlLines.Add(new CustomLine(string.Join(",", columnsToMigrate.FieldsToUpdate.Where(c=>!c.IsPrimaryKey).Select(c=>string.Format("t1.{0} = t2.{0}",c.GetRuntimeName()))), QueryComponent.SET));
-                
+
+                //also update the hic_dataLoadRunID field
+                sqlLines.Add(new CustomLine(string.Format("t1.{0}={1}", SpecialFieldNames.DataLoadRunID,dataLoadInfoID),QueryComponent.SET));
+
                 //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
                 sqlLines.Add(new CustomLine(string.Join(" OR ",columnsToMigrate.FieldsToDiff.Where(c=>!c.IsPrimaryKey).Select(GetORLine)), QueryComponent.WHERE));
                 
