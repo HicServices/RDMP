@@ -122,6 +122,30 @@ namespace Tests.OtherProviders
             tbl.Drop();
         }
 
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void CreateMaxVarcharColumns(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var tbl = database.CreateTable("TestDistincting", new[]
+            {
+                new DatabaseColumnRequest("Field1",new DatabaseTypeRequest(typeof(string),int.MaxValue)), //varchar(max)
+                new DatabaseColumnRequest("Field2",new DatabaseTypeRequest(typeof(string),null)), //varchar(???)
+                new DatabaseColumnRequest("Field3",new DatabaseTypeRequest(typeof(string),1000)), //varchar(???)
+                new DatabaseColumnRequest("Field4",new DatabaseTypeRequest(typeof(string),5000)), //varchar(???)
+                new DatabaseColumnRequest("Field5",new DatabaseTypeRequest(typeof(string),10000)), //varchar(???)
+                new DatabaseColumnRequest("Field6",new DatabaseTypeRequest(typeof(string),10)), //varchar(10)
+            });
+
+            Assert.IsTrue(tbl.Exists());
+
+            Assert.GreaterOrEqual(tbl.DiscoverColumn("Field1").DataType.GetLengthIfString(),4000);
+            Assert.GreaterOrEqual(tbl.DiscoverColumn("Field2").DataType.GetLengthIfString(), 1000); // unknown size should be at least 1k? that seems sensible
+            Assert.AreEqual(10,tbl.DiscoverColumn("Field6").DataType.GetLengthIfString());
+        }
+
+
         [Test]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -131,7 +155,7 @@ namespace Tests.OtherProviders
 
             var tbl = database.CreateTable("TestDistincting",new []
             {
-                new DatabaseColumnRequest("Field1",new DatabaseTypeRequest(typeof(string),10)),
+                new DatabaseColumnRequest("Field1",new DatabaseTypeRequest(typeof(string),int.MaxValue)), //varchar(max)
                 new DatabaseColumnRequest("Field2",new DatabaseTypeRequest(typeof(DateTime))),
                 new DatabaseColumnRequest("Field3",new DatabaseTypeRequest(typeof(int)))
             });

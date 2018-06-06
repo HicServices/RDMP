@@ -9,7 +9,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
     public class MySqlQuerySyntaxHelper : QuerySyntaxHelper
     {
-        public MySqlQuerySyntaxHelper() : base(new TypeTranslater(), new MySqlAggregateHelper(),new MySqlUpdateHelper())//no specific type translation required
+        public MySqlQuerySyntaxHelper() : base(new MySqlTypeTranslater(), new MySqlAggregateHelper(),new MySqlUpdateHelper())//no specific type translation required
         {
         }
 

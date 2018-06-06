@@ -299,6 +299,7 @@
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\TopXResponse.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\DatabaseTypeRequest.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\ITypeTranslater.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\MySql\MySqlTypeTranslater.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeTranslater.cs" />
     <Compile Include="DirectoryInfoComparer.cs" />
     <Compile Include="DoNotExtractProperty.cs" />
