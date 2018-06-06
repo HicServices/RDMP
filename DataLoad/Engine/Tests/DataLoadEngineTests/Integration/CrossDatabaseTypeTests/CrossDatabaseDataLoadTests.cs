@@ -118,6 +118,9 @@ MrMurder,2001-01-01,Yella");
                 Assert.AreEqual(new DateTime(2001, 01, 01), bob["DateOfBirth"]);
                 Assert.AreEqual(DBNull.Value,bob[SpecialFieldNames.DataLoadRunID]);
 
+                //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
+                if(databaseType != DatabaseType.MYSQLServer)
+                    Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
             }
             finally
             {
@@ -274,6 +277,14 @@ MrMurder,2001-01-01,Yella");
             Assert.IsNotNull(o,"A row which was expected to have a hic_dataLoadRunID had null instead");
             Assert.AreNotEqual(DBNull.Value,o,"A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
             Assert.GreaterOrEqual((int)o, 0);
+
+            var d = row[SpecialFieldNames.ValidFrom];
+            Assert.IsNotNull(d, "A row which was expected to have a hic_validFrom had null instead");
+            Assert.AreNotEqual(DBNull.Value,d, "A row which was expected to have a hic_validFrom had DBNull.Value instead");
+            
+            //expect validFrom to be after 2 hours ago (to handle UTC / BST nonesense)
+            Assert.GreaterOrEqual((DateTime)d, DateTime.Now.Subtract(new TimeSpan(2,0,0)));
+
         }
 
         private void CreateCSVProcessTask(LoadMetadata lmd, TableInfo ti, string regex)
