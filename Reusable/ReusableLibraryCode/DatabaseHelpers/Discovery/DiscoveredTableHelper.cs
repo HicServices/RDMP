@@ -57,10 +57,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 colRequest.IsPrimaryKey = c.IsPrimaryKey && !dropPrimaryKeys;
                 
                 columns.Add(colRequest);
-                
             }
 
-            return table.Database.Helper.GetCreateTableSql(table.Database, table.GetRuntimeName(), columns.ToArray());
+            return table.Database.Helper.GetCreateTableSql(table.Database, table.GetRuntimeName(), columns.ToArray(),null,false);
         }
 
         public virtual bool IsEmpty(DbConnection connection, DiscoveredTable discoveredTable, DbTransaction transaction)

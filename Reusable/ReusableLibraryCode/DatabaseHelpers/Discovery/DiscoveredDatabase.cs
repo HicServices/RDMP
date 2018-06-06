@@ -116,9 +116,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns)
         {
-            return Helper.CreateTable(this,tableName,columns);
+            return Helper.CreateTable(this, tableName, columns,null,false);
         }
-
+        
+        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns,Dictionary<DatabaseColumnRequest,DiscoveredColumn> foreignKeyPairs,bool cascadeDelete)
+        {
+            return Helper.CreateTable(this, tableName, columns, foreignKeyPairs,cascadeDelete);
+        }
         public DiscoveredTable CreateTable(string tableName, DataTable dt,DatabaseColumnRequest[] explicitColumnDefinitions=null, bool createEmpty=false)
         {
             return Helper.CreateTable(this, tableName, dt, explicitColumnDefinitions,createEmpty);

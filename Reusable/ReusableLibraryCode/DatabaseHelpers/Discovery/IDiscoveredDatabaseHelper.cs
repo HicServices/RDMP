@@ -29,8 +29,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database);
 
         DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty=false);
-        DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns);
-        string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns);
+        DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete);
+        string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete);
 
         DirectoryInfo Detach(DiscoveredDatabase database);
         void CreateBackup(DiscoveredDatabase discoveredDatabase, string backupName);

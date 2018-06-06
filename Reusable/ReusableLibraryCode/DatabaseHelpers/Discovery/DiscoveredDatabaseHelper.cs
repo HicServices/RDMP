@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
+using System.Text;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
@@ -48,7 +49,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 }
             }
 
-            var tbl = CreateTable(database, tableName, columns.ToArray());
+            var tbl = CreateTable(database, tableName, columns.ToArray(),null,false);
 
             //unless we are being asked to create it empty then upload the DataTable to it
             if(!createEmpty)
@@ -56,10 +57,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             
             return tbl;
         }
-
-        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns)
+        
+        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs,bool cascadeDelete)
         {
-            string bodySql = GetCreateTableSql(database, tableName, columns);
+            string bodySql = GetCreateTableSql(database, tableName, columns, foreignKeyPairs, cascadeDelete);
 
             var server = database.Server;
 
@@ -72,7 +73,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return database.ExpectTable(tableName);
         }
 
-        public string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns)
+        public virtual string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete)
         {
             string bodySql = "";
 
@@ -92,12 +93,35 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             var pks = columns.Where(c => c.IsPrimaryKey).ToArray();
             if (pks.Any())
                 bodySql += GetPrimaryKeyDeclarationSql(tableName, pks);
+            
+            if (foreignKeyPairs != null)
+            {
+                bodySql += Environment.NewLine + GetForeignKeyConstraintSql(tableName, syntaxHelper, foreignKeyPairs, cascadeDelete) + Environment.NewLine;
+            }
 
             bodySql = bodySql.TrimEnd('\r', '\n', ',');
 
             bodySql += ")" + Environment.NewLine;
 
             return bodySql;
+        }
+
+        private string GetForeignKeyConstraintSql(string tableName, IQuerySyntaxHelper syntaxHelper, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete)
+        {
+            //@"    CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID) REFERENCES Persons(PersonID) on delete cascade";
+            var otherTable = foreignKeyPairs.Values.Select(v => v.Table).Distinct().Single();
+
+            string constraintName = "FK_" + tableName + "_" + otherTable;
+
+            return string.Format(
+@"CONSTRAINT {0} FOREIGN KEY ({1})
+REFERENCES {2}({3}) {4}",
+                                               constraintName,
+                string.Join(",",foreignKeyPairs.Keys.Select(k=>syntaxHelper.GetRuntimeName(k.ColumnName))),
+                otherTable.GetRuntimeName(),
+                string.Join(",",foreignKeyPairs.Values.Select(v=>v.GetRuntimeName())),
+                cascadeDelete ? " on delete cascade": ""
+                );
         }
 
         public abstract DirectoryInfo Detach(DiscoveredDatabase database);

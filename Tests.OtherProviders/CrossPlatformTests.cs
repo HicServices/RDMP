@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -121,6 +122,71 @@ namespace Tests.OtherProviders
             Assert.AreEqual(1,tbl.GetRowCount());
 
             tbl.Drop();
+        }
+
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void ForeignKeyCreationTest(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var tblParent = database.CreateTable("Parent", new[]
+            {
+                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){IsPrimaryKey =  true}, //varchar(10)
+                new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),10)), //varchar(10)
+            });
+
+            var parentIdPkCol = tblParent.DiscoverColumn("ID");
+            
+            var parentIdFkCol = new DatabaseColumnRequest("Parent_ID", new DatabaseTypeRequest(typeof (int)));
+
+            var tblChild = database.CreateTable("Child", new[]
+            {
+                parentIdFkCol, //varchar(10)
+                new DatabaseColumnRequest("ChildName",new DatabaseTypeRequest(typeof(string),10)), //varchar(10)
+            }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>()
+            {
+                {parentIdFkCol, parentIdPkCol}
+            },true);
+
+            using (var intoParent = tblParent.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("ID");
+                dt.Columns.Add("Name");
+
+                dt.Rows.Add(1, "Bob");
+                dt.Rows.Add(2, "Frank");
+
+                intoParent.Upload(dt);
+            }
+
+            using (var con = tblChild.Database.Server.GetConnection())
+            {
+                con.Open();
+
+                var cmd = tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (100,'chucky')", con);
+                
+                //violation of fk
+                Assert.That(() => cmd.ExecuteNonQuery(), Throws.Exception);
+
+                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (1,'chucky')", con).ExecuteNonQuery();
+                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (1,'chucky2')", con).ExecuteNonQuery();
+            }
+            
+            Assert.AreEqual(2,tblParent.GetRowCount());
+            Assert.AreEqual(2, tblChild.GetRowCount());
+
+            using (var con = tblParent.Database.Server.GetConnection())
+            {
+                con.Open();
+
+                var cmd = tblParent.Database.Server.GetCommand("DELETE FROM " + tblParent.GetRuntimeName(), con);
+                cmd.ExecuteNonQuery();
+            }
+            
+            Assert.AreEqual(0,tblParent.GetRowCount());
+            Assert.AreEqual(0, tblChild.GetRowCount());
         }
 
         [TestCase(DatabaseType.MYSQLServer)]
