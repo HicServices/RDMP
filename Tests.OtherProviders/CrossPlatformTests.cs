@@ -132,7 +132,7 @@ namespace Tests.OtherProviders
 
             var tblParent = database.CreateTable("Parent", new[]
             {
-                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){IsPrimaryKey =  true}, //varchar(10)
+                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){IsPrimaryKey =  true},
                 new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),10)), //varchar(10)
             });
 
@@ -142,7 +142,7 @@ namespace Tests.OtherProviders
 
             var tblChild = database.CreateTable("Child", new[]
             {
-                parentIdFkCol, //varchar(10)
+                parentIdFkCol,
                 new DatabaseColumnRequest("ChildName",new DatabaseTypeRequest(typeof(string),10)), //varchar(10)
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>()
             {
@@ -187,6 +187,85 @@ namespace Tests.OtherProviders
             
             Assert.AreEqual(0,tblParent.GetRowCount());
             Assert.AreEqual(0, tblChild.GetRowCount());
+        }
+
+        [TestCase(DatabaseType.MYSQLServer,true)]
+        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+        public void ForeignKeyCreationTest_TwoColumns(DatabaseType type, bool cascadeDelete)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var tblParent = database.CreateTable("Parent", new[]
+            {
+                new DatabaseColumnRequest("ID1",new DatabaseTypeRequest(typeof(int))){IsPrimaryKey =  true}, //varchar(10)
+                new DatabaseColumnRequest("ID2",new DatabaseTypeRequest(typeof(int))){IsPrimaryKey =  true}, //varchar(10)
+                new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),10)), //varchar(10)
+            });
+
+            var parentIdPkCol1 = tblParent.DiscoverColumn("ID1");
+            var parentIdPkCol2 = tblParent.DiscoverColumn("ID2");
+
+            var parentIdFkCol1 = new DatabaseColumnRequest("Parent_ID1", new DatabaseTypeRequest(typeof(int)));
+            var parentIdFkCol2 = new DatabaseColumnRequest("Parent_ID2", new DatabaseTypeRequest(typeof(int)));
+
+            var tblChild = database.CreateTable("Child", new[]
+            {
+                parentIdFkCol1,
+                parentIdFkCol2,
+                new DatabaseColumnRequest("ChildName",new DatabaseTypeRequest(typeof(string),10)), //varchar(10)
+            }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>()
+            {
+                {parentIdFkCol1,parentIdPkCol1},
+                {parentIdFkCol2,parentIdPkCol2}
+            }, cascadeDelete);
+
+            using (var intoParent = tblParent.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("ID1");
+                dt.Columns.Add("ID2");
+                dt.Columns.Add("Name");
+
+                dt.Rows.Add(1,2, "Bob");
+                
+                intoParent.Upload(dt);
+            }
+
+            using (var con = tblChild.Database.Server.GetConnection())
+            {
+                con.Open();
+
+                var cmd = tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (1,3,'chucky')", con);
+
+                //violation of fk
+                Assert.That(() => cmd.ExecuteNonQuery(), Throws.Exception);
+
+                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (1,2,'chucky')", con).ExecuteNonQuery();
+                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (1,2,'chucky2')", con).ExecuteNonQuery();
+            }
+
+            Assert.AreEqual(1, tblParent.GetRowCount());
+            Assert.AreEqual(2, tblChild.GetRowCount());
+
+            using (var con = tblParent.Database.Server.GetConnection())
+            {
+                con.Open();
+                var cmd = tblParent.Database.Server.GetCommand("DELETE FROM " + tblParent.GetRuntimeName(), con);
+
+                if (cascadeDelete)
+                {
+                    cmd.ExecuteNonQuery();
+                    Assert.AreEqual(0, tblParent.GetRowCount());
+                    Assert.AreEqual(0, tblChild.GetRowCount());
+                }
+                else
+                {
+                    //no cascade deletes so the query should crash on violation of fk constraint
+                    Assert.That(() => cmd.ExecuteNonQuery(), Throws.Exception);
+                }
+            }
         }
 
         [TestCase(DatabaseType.MYSQLServer)]
