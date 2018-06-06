@@ -143,9 +143,9 @@ namespace Diagnostics
                 
                 try
                 {
-                    bool isColumnNullable = UsefulStuff.GetInstance().IsColumnNullable(table, nonNullableProperty.Name);
+                    var col = table.DiscoverColumn(nonNullableProperty.Name);
 
-                    if(isColumnNullable)
+                    if (col.AllowNulls)
                         notifier.OnCheckPerformed(new CheckEventArgs("Column " + nonNullableProperty.Name + " in table " + table + " allows nulls but is mapped to a ValueType or Enum", CheckResult.Warning, null));
                 }
                 catch (Exception e)
