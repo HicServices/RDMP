@@ -13,6 +13,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Providers;
 using DataExportManager.Icons.IconProvision;
 using DataExportManager.ProjectUI;
 using DataExportLibrary;
@@ -42,6 +43,7 @@ namespace DataExportManager.DataRelease
         private IPipelineSelectionUI _pipelineSelectionUI1;
         private IExtractionConfiguration[] _unreleasedConfigurations;
         private IMapsDirectlyToDatabaseTable[] _globals;
+        private DataExportChildProvider _childProvider;
 
         public DataReleaseUI()
         {
@@ -87,15 +89,15 @@ namespace DataExportManager.DataRelease
 
             ICheckable key = null;
 
-            if(sds != null)
+            if (sds != null)
                 key = releaseRunner.ChecksDictionary.Keys.OfType<ReleasePotential>().ToArray().SingleOrDefault(rp => rp.SelectedDataSet.ID == sds.ID);
             else
                 if (rowObject as string == ExtractionDirectory.GLOBALS_DATA_NAME)
-                key = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().SingleOrDefault();
-            
+                    key = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().SingleOrDefault();
+
             if (key != null)
                 return releaseRunner.ChecksDictionary[key].GetWorst();
-            
+
             return null;
         }
 
@@ -105,7 +107,7 @@ namespace DataExportManager.DataRelease
             return new ReleaseOptions()
             {
                 Pipeline = _pipelineSelectionUI1.Pipeline == null ? 0 : _pipelineSelectionUI1.Pipeline.ID,
-                Configurations = tlvReleasePotentials.CheckedObjects.OfType<ExtractionConfiguration>().Select(ec=>ec.ID).ToArray(),
+                Configurations = tlvReleasePotentials.CheckedObjects.OfType<ExtractionConfiguration>().Select(ec => ec.ID).ToArray(),
                 SelectedDataSets = tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
                 Command = activityRequested,
                 ReleaseGlobals = tlvReleasePotentials.IsChecked(ExtractionDirectory.GLOBALS_DATA_NAME),
@@ -119,10 +121,10 @@ namespace DataExportManager.DataRelease
             var ec = model as ExtractionConfiguration;
 
             if (p != null)
-                return p.ExtractionConfigurations.Where(c => !c.IsReleased);
+                return _childProvider.GetActiveConfigurationsOnly(p);
 
             if (ec != null)
-                return ec.SelectedDataSets;
+                return _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
 
             if (model as string == ExtractionDirectory.GLOBALS_DATA_NAME)
                 return _globals;
@@ -142,7 +144,7 @@ namespace DataExportManager.DataRelease
 
             if (rowObject is string)
                 return _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder);
-            
+
 
             return _activator.CoreIconProvider.GetImage(rowObject);
         }
@@ -150,20 +152,19 @@ namespace DataExportManager.DataRelease
         public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-
+            _childProvider = (DataExportChildProvider)_activator.CoreChildProvider;
             _project = databaseObject;
 
             //figure out the globals
             var ec = _project.ExtractionConfigurations.FirstOrDefault();
-            _globals = ec != null ? ec.GetGlobals(): new IMapsDirectlyToDatabaseTable[0];
-            
+            _globals = ec != null ? ec.GetGlobals() : new IMapsDirectlyToDatabaseTable[0];
 
 
             checkAndExecuteUI1.SetItemActivator(activator);
 
             if (_pipelineSelectionUI1 == null)
             {
-                var context = new ReleaseUseCase(_project, new ReleaseData(){IsDesignTime = true});
+                var context = new ReleaseUseCase(_project, new ReleaseData() { IsDesignTime = true });
                 _pipelineSelectionUI1 = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
                 _pipelineSelectionUI1.Pipeline = null;
@@ -221,11 +222,10 @@ namespace DataExportManager.DataRelease
         }
     }
 
-    
+
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataReleaseUI_Design, UserControl>))]
     public abstract class DataReleaseUI_Design : RDMPSingleDatabaseObjectControl<Project>
     {
 
     }
 }
-
