@@ -16,7 +16,10 @@ using CatalogueLibrary.Repositories;
 using CohortManagerLibrary.Execution.Joinables;
 using CohortManagerLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
+using QueryCaching.Aggregation;
+using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {
@@ -131,20 +134,20 @@ namespace CohortManagerLibrary.Execution
         /// Adds the given AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration to the compiler Task list or returns the existing
         /// ICompileable if it is already part of the Compilation list.  This will not start the task, you will have to call Launch... to start the ICompileable executing
         /// </summary>
-        /// <param name="c">An AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration you want to schedule for execution</param>
+        /// <param name="runnable">An AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration you want to schedule for execution</param>
         /// <param name="globals"></param>
         /// <returns></returns>
-        public ICompileable AddTask(IMapsDirectlyToDatabaseTable c, IEnumerable<ISqlParameter> globals)
+        public ICompileable AddTask(IMapsDirectlyToDatabaseTable runnable, IEnumerable<ISqlParameter> globals)
         {
-            var aggregate = c as AggregateConfiguration;
-            var container = c as CohortAggregateContainer;
-            var joinable = c as JoinableCohortAggregateConfiguration;
+            var aggregate = runnable as AggregateConfiguration;
+            var container = runnable as CohortAggregateContainer;
+            var joinable = runnable as JoinableCohortAggregateConfiguration;
 
 
             if (aggregate == null && container == null && joinable == null)
                 throw new NotSupportedException(
                     "Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was " +
-                    c.GetType().Name);
+                    runnable.GetType().Name);
 
             CancellationTokenSource source = new CancellationTokenSource();
             ICompileable task;
@@ -180,7 +183,7 @@ namespace CohortManagerLibrary.Execution
             if (parent != null)
             {
                 //tell the task what the container is for UI purposes really
-                bool isFirstInContainer = parent.GetOrderedContents().First().Equals(c);
+                bool isFirstInContainer = parent.GetOrderedContents().First().Equals(runnable);
                 task.SetKnownContainer(parent, isFirstInContainer);
 
                 //but...
@@ -188,7 +191,7 @@ namespace CohortManagerLibrary.Execution
                 if (!isFirstInContainer && IncludeCumulativeTotals) //and we want cumulative totals
                 {
                     cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals);
-                    cumulativeQueryBuilder.StopContainerWhenYouReach = (IOrderable) c;
+                    cumulativeQueryBuilder.StopContainerWhenYouReach = (IOrderable) runnable;
                 }
                 
             }
@@ -295,10 +298,45 @@ namespace CohortManagerLibrary.Execution
             task.Stopwatch.Start();
 
             var t = new Thread(() => DoTaskAsync(task, execution, timeout));
+            TaskCompleted += CacheSingleTask;
             Threads.Add(t);
             t.Start();
         }
         
+        private void CacheSingleTask(object sender, ICompileable completedtask)
+        {
+            TaskCompleted -= CacheSingleTask;
+
+            if (CohortIdentificationConfiguration.QueryCachingServer == null)
+                return;
+
+            var cacheable = completedtask as ICacheableTask;
+            if (cacheable != null && cacheable.IsCacheableWhenFinished())
+                CacheSingleTask(cacheable, CohortIdentificationConfiguration.QueryCachingServer);
+        }
+
+        public void CacheSingleTask(ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
+        {
+            var manager = new CachedAggregateConfigurationResultsManager(queryCachingServer);
+
+            var explicitTypes = new List<DatabaseColumnRequest>();
+
+            AggregateConfiguration configuration = cacheableTask.GetAggregateConfiguration();
+            try
+            {
+                ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c => c.IsExtractionIdentifier).ColumnInfo;
+                explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), identifierColumnInfo.Data_type));
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
+            }
+
+            CacheCommitArguments args = cacheableTask.GetCacheArguments(Tasks[cacheableTask].CountSQL, Tasks[cacheableTask].Identifiers, explicitTypes.ToArray());
+
+            manager.CommitResults(args);
+        }
+
         /// <summary>
         /// Stops the execution of all currently executing ICompileable CohortIdentificationTaskExecutions. If it is executing an SQL query this should cancel the ongoing query.  If the
         /// ICompileable is not executing (it has crashed or finished etc) then nothing will happen.  alsoClearFromTaskList is always respected
@@ -346,6 +384,7 @@ namespace CohortManagerLibrary.Execution
             var execution = Tasks[task];
             return execution.SubqueriesCached + "/" + execution.SubQueries;
         }
+
         public bool AreaAllQueriesCached(ICompileable task )
         {
             if (!Tasks.ContainsKey(task))

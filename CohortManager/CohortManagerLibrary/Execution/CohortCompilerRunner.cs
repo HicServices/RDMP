@@ -142,30 +142,8 @@ namespace CohortManagerLibrary.Execution
 
             token.ThrowIfCancellationRequested();
 
-            foreach (var c in toCache)
-                SaveToCache(c);
-        }
-        
-        private void SaveToCache(ICacheableTask cacheable)
-        {
-            CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager(_queryCachingServer);
-
-            var explicitTypes = new List<DatabaseColumnRequest>();
-
-            AggregateConfiguration configuration = cacheable.GetAggregateConfiguration();
-            try
-            {
-                ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c => c.IsExtractionIdentifier).ColumnInfo;
-                explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), identifierColumnInfo.Data_type));
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
-            }
-
-            CacheCommitArguments args = cacheable.GetCacheArguments(Compiler.Tasks[cacheable].CountSQL, Compiler.Tasks[cacheable].Identifiers, explicitTypes.ToArray());
-
-            manager.CommitResults(args);
+            foreach (var c in toCache) 
+                Compiler.CacheSingleTask(c, _queryCachingServer);
         }
 
         private void SetPhase(Phase p)
