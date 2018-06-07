@@ -113,25 +113,34 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
         public DataTable GetDistinctNotNullTable(DataTable toProcess)
         {
             var dtDistinct = new DataTable(toProcess.TableName);
+
+            dtDistinct.Columns.Add(_privateIdentifier);
             
-            foreach (DataColumn column in toProcess.Columns)
-                dtDistinct.Columns.Add(column.ColumnName, column.DataType);
+            if(_hasReleaseIdentifierColumn)
+                dtDistinct.Columns.Add(_releaseIdentifier);
 
-            //make pk from all columns
+            dtDistinct.Columns.Add(_fk);
+
             dtDistinct.PrimaryKey = dtDistinct.Columns.Cast<DataColumn>().ToArray();
-
+            
             foreach (DataRow dr in toProcess.Rows)
             {
-                //ignore fully blank rows
-                if(dr.ItemArray.All(IsNull))
-                    continue;
+                object[] oarray;
+                if(_hasReleaseIdentifierColumn)
+                    oarray = new object[] {dr[_privateIdentifier], dr[_releaseIdentifier], dr[_fk]};
+                else
+                    oarray = new object[] { dr[_privateIdentifier], dr[_fk] };
 
                 //ignore fully blank rows
-                if (dr.ItemArray.Any(IsNull))
-                    throw new Exception("Cohort DataTable contained null row:" + string.Join(",", dr.ItemArray.Select(e => IsNull(e) ? "<null>":e)));
-                
-                if (!dtDistinct.Rows.Contains(dr.ItemArray))
-                    dtDistinct.Rows.Add(dr.ItemArray);
+                if (oarray.All(IsNull))
+                    continue;
+
+                //complain about anything else
+                if (oarray.Any(IsNull))
+                    throw new Exception("Cohort DataTable contained null row:" + string.Join(",", oarray.Select(e => IsNull(e) ? "<null>" : e)));
+
+                if (!dtDistinct.Rows.Contains(oarray))
+                    dtDistinct.Rows.Add(oarray);
             }
 
             return dtDistinct;
