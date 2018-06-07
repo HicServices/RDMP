@@ -9,6 +9,8 @@ using System.Web.UI.WebControls;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
@@ -959,6 +961,15 @@ namespace CatalogueLibrary.Data
             ClearAllInjections();
         }
         
+        internal Catalogue(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            //will be passed as a string
+            string folderAsString = shareDefinition.Properties["Folder"].ToString();
+            shareDefinition.Properties["Folder"] = new CatalogueFolder(this,folderAsString);
+
+            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
+        }
+
         /// <inheritdoc/>
         public override string ToString()
         {

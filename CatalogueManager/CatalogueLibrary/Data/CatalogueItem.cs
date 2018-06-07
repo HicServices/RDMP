@@ -4,8 +4,11 @@ using System.Configuration;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
@@ -66,6 +69,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// The ID of the parent <see cref="Catalogue"/> (dataset) to which this is a virtual column/column description
         /// </summary>
+        [Relationship(typeof(Catalogue))]
         [DoNotExtractProperty]
         public int Catalogue_ID
         {
@@ -265,6 +269,11 @@ namespace CatalogueLibrary.Data
             }
 
             ClearAllInjections();
+        }
+
+        internal CatalogueItem(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
         }
 
         public void InjectKnown(Catalogue instance)

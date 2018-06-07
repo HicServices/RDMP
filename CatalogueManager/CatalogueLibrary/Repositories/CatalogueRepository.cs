@@ -412,8 +412,17 @@ namespace CatalogueLibrary.Repositories
                     {
                         //sometimes json decided to swap types on you e.g. int64 for int32
                         var val = propertiesDictionary[prop.Name];
-                        if (val != null && val != DBNull.Value && !prop.PropertyType.IsInstanceOfType(val))
-                            val = Convert.ChangeType(val, prop.PropertyType);
+                        var propertyType = prop.PropertyType;
+
+                        //if it is a nullable int etc
+                        if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
+                            propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
+                        
+                        if (val != null && val != DBNull.Value && !propertyType.IsInstanceOfType(val))
+                            if (typeof(Enum).IsAssignableFrom(propertyType))
+                                val = Enum.ToObject(propertyType, val);//if the property is an enum
+                            else
+                                val = Convert.ChangeType(val, propertyType); //the property is not an enum
 
                         prop.SetValue(toCreate, val); //if it's a shared property (most properties) use the new shared value being imported
                         
