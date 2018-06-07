@@ -22,6 +22,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
+using DataExportLibrary.Providers.Nodes.UsedByNodes;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
@@ -53,7 +54,7 @@ namespace DataExportManager.ProjectUI
         
         private IMapsDirectlyToDatabaseTable[] _globals;
         private IExtractableDataSet[] _datasets;
-        private Dictionary<IExtractableDataSet, List<IMapsDirectlyToDatabaseTable>> _bundledStuff;
+        private HashSet<ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>> _bundledStuff;
 
         private const string CoreDatasets = "Core";
         private const string ProjectSpecificDatasets = "Project Specific";
@@ -102,8 +103,8 @@ namespace DataExportManager.ProjectUI
 
             var eds = model as IExtractableDataSet;
 
-            if (_bundledStuff != null && eds != null && _bundledStuff.ContainsKey(eds))
-                return _bundledStuff[eds];
+            if (_bundledStuff != null && eds != null)
+                return _bundledStuff.Where(s => s.User.Equals(eds));
 
             return null;
         }
@@ -168,7 +169,8 @@ namespace DataExportManager.ProjectUI
             _datasets = databaseObject.SelectedDataSets.Select(ds => ds.ExtractableDataSet).ToArray();
             GetBundledStuff();
 
-            tlvDatasets.DisableObjects(_globals.Union(_bundledStuff.Values.SelectMany(v=>v)));
+            tlvDatasets.DisableObjects(_globals);
+            tlvDatasets.DisableObjects(_bundledStuff);
 
             tlvDatasets.AddObjects(new object[] { ExtractionDirectory.GLOBALS_DATA_NAME, CoreDatasets, ProjectSpecificDatasets });
             
@@ -237,14 +239,18 @@ namespace DataExportManager.ProjectUI
 
         private void GetBundledStuff()
         {
-            _bundledStuff = new Dictionary<IExtractableDataSet, List<IMapsDirectlyToDatabaseTable>>();
+            _bundledStuff = new HashSet<ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>>();
 
             foreach (IExtractableDataSet dataset in _datasets)
             {
-                _bundledStuff.Add(dataset, new List<IMapsDirectlyToDatabaseTable>());
-                _bundledStuff[dataset].AddRange(dataset.Catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals));
-                _bundledStuff[dataset].AddRange(dataset.Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals));
-                _bundledStuff[dataset].AddRange(dataset.Catalogue.GetLookupTableInfoList());
+                foreach (var document in dataset.Catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals))
+                    _bundledStuff.Add( new ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>(dataset,document));
+
+                foreach (var supportingSQLTable in dataset.Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals))
+                    _bundledStuff.Add(new ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>(dataset, supportingSQLTable));
+
+                foreach (var lookup in dataset.Catalogue.GetLookupTableInfoList())
+                    _bundledStuff.Add(new ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>(dataset, lookup));
             }
         }
 
