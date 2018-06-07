@@ -18,7 +18,7 @@ namespace DataExportLibrary.Data.LinkCreators
     /// Usually when creating an ExtractionConfiguration you do not want to extract all the datasets (Catalogues).  SelectedDataSets represents the desire to extract a
     /// given dataset for a given ExtractableDataSet for a given ExtractionConfiguration.  
     /// </summary>
-    public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>, IInjectKnown<IExtractionConfiguration>, IInjectKnown<ISelectedDatasetsForcedJoin[]>,IDeletableWithCustomMessage
+    public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>, IInjectKnown<IExtractionConfiguration>, IInjectKnown<ISelectedDataSetsForcedJoin[]>,IDeletableWithCustomMessage
     {
         #region Database Properties
         
@@ -28,7 +28,7 @@ namespace DataExportLibrary.Data.LinkCreators
 
         private Lazy<IExtractableDataSet> _extractableDataSet;
         private Lazy<IExtractionConfiguration> _extractionConfiguration;
-        private Lazy<ISelectedDatasetsForcedJoin[]> _selectedDatasetsForcedJoins;
+        private Lazy<ISelectedDataSetsForcedJoin[]> _selectedDatasetsForcedJoins;
 
 
         public int ExtractionConfiguration_ID
@@ -78,7 +78,7 @@ namespace DataExportLibrary.Data.LinkCreators
         }
 
         [NoMappingToDatabase]
-        public ISelectedDatasetsForcedJoin[] SelectedDatasetsForcedJoins {
+        public ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins {
             get { return _selectedDatasetsForcedJoins.Value; }}
 
         #endregion
@@ -132,21 +132,21 @@ namespace DataExportLibrary.Data.LinkCreators
             return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
         }
 
-        public void InjectKnown(ISelectedDatasetsForcedJoin[] instances)
+        public void InjectKnown(ISelectedDataSetsForcedJoin[] instances)
         {
-            _selectedDatasetsForcedJoins = new Lazy<ISelectedDatasetsForcedJoin[]>(() => instances);
+            _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(() => instances);
         }
 
         public void ClearAllInjections()
         {
-            _selectedDatasetsForcedJoins = new Lazy<ISelectedDatasetsForcedJoin[]>(FetchForcedJoins);
+            _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(FetchForcedJoins);
             _extractionConfiguration = new Lazy<IExtractionConfiguration>(FetchExtractionConfiguration);
             _extractableDataSet = new Lazy<IExtractableDataSet>(FetchExtractableDataset);
         }
 
-        private ISelectedDatasetsForcedJoin[] FetchForcedJoins()
+        private ISelectedDataSetsForcedJoin[] FetchForcedJoins()
         {
-            return Repository.GetAllObjectsWithParent<SelectedDatasetsForcedJoin>(this).ToArray();
+            return Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(this).ToArray();
         }
 
         private ICatalogue FetchCatalogue()

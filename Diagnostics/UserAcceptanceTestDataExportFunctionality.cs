@@ -406,7 +406,7 @@ GO
                 notifier.OnCheckPerformed(new CheckEventArgs("Created new ExtractionConfiguration for project " + _project.Name,CheckResult.Success, null));
 
                 var selectedDataSet = new SelectedDataSets(RepositoryLocator.DataExportRepository,_extractionConfiguration,_extractableDataSet,null);
-                notifier.OnCheckPerformed(new CheckEventArgs("Added ExtractableDataset "+ _extractableDataSet + " as a SelectedDataset of project " + _project.Name, CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs("Added ExtractableDataset "+ _extractableDataSet + " as a SelectedDataSet of project " + _project.Name, CheckResult.Success, null));
                 
                 _extractableColumns = new List<IColumn>();
                 foreach (ExtractionInformation catalogueExtractable in _coreExtractionInformations)
@@ -487,7 +487,7 @@ GO
 
             new SelectedDataSets(RepositoryLocator.DataExportRepository,_extractionConfiguration, _hospitalAdmissionsExtractableDataSet,null);
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Added ExtractableDataset " + _hospitalAdmissionsExtractableDataSet + " as a SelectedDataset of project " + _project.Name, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs("Added ExtractableDataset " + _hospitalAdmissionsExtractableDataSet + " as a SelectedDataSet of project " + _project.Name, CheckResult.Success));
 
             
             foreach (ExtractionInformation catalogueExtractable in hospitalAdmissionsCatalogue.GetAllExtractionInformation(ExtractionCategory.Any))

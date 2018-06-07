@@ -249,7 +249,7 @@ namespace CohortManagerLibrary.Execution
                 else
                 {
                     //it is different so cancel the old one
-                    existingTask.Value.CancellationTokenSource.Cancel(true);
+                    existingTask.Value.Cancel();
 
                     //throw away the old task
                     Tasks.Remove(existingTask.Key);
@@ -308,7 +308,7 @@ namespace CohortManagerLibrary.Execution
         {
             foreach (var v in Tasks.Values)
                 if (v.IsExecuting)
-                    v.CancellationTokenSource.Cancel();
+                    v.Cancel();
 
             if(alsoClearTaskList)
                 Tasks.Clear();
@@ -326,7 +326,7 @@ namespace CohortManagerLibrary.Execution
             {
 
                 if (Tasks[compileable].IsExecuting)
-                    Tasks[compileable].CancellationTokenSource.Cancel();
+                    Tasks[compileable].Cancel();
 
                 if(alsoClearFromTaskList)
                     Tasks.Remove(compileable);

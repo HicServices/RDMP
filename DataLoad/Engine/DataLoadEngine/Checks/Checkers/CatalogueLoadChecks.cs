@@ -94,8 +94,8 @@ namespace DataLoadEngine.Checks.Checkers
             DiscoveredDatabase staging = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
             DiscoveredDatabase live = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
 
-            var liveTable = live.ExpectTable(tableInfo.GetRuntimeName());
-            var liveCols = liveTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
+            var liveTable = live.ExpectTable(tableInfo.GetRuntimeName(LoadBubble.Live,_databaseConfiguration.DatabaseNamer));
+            var liveCols = liveTable.DiscoverColumns();
 
             CheckTableInfoSynchronization(tableInfo,notifier);
 
@@ -124,11 +124,11 @@ namespace DataLoadEngine.Checks.Checkers
                     if (!stagingTable.Exists())
                         notifier.OnCheckPerformed(new CheckEventArgs("RequiresStagingTableCreation is false but staging does not exist, this flag should indicate that you anticipate STAGING to be already setup before you kick off the load", CheckResult.Fail));
 
-                    string[] stagingCols = stagingTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
+                    var stagingCols = stagingTable.DiscoverColumns();
 
                     ConfirmStagingAndLiveHaveSameColumns(tableInfo.GetRuntimeName(), stagingCols, liveCols, false,notifier);
 
-                    CheckStagingToLiveMigrationForTable(staging, stagingCols, live, liveCols, tableInfo, columnInfos, LoadBubble.Staging, LoadBubble.Live,notifier);
+                    CheckStagingToLiveMigrationForTable(stagingTable, stagingCols, liveTable, liveCols,notifier);
                 }
             }
             catch (Exception e)
@@ -216,12 +216,12 @@ namespace DataLoadEngine.Checks.Checkers
 
             runSynchronizationAgain = checker.TriggerCreated;
         }
-        
 
-        private void ConfirmStagingAndLiveHaveSameColumns(string tableName, string[] stagingCols, string[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
+
+        private void ConfirmStagingAndLiveHaveSameColumns(string tableName, DiscoveredColumn[] stagingCols, DiscoveredColumn[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
         {
             //in LIVE but not STAGING
-            foreach (var missingColumn in liveCols.Except(stagingCols))
+            foreach (var missingColumn in liveCols.Select(c=>c.GetRuntimeName()).Except(stagingCols.Select(c=>c.GetRuntimeName())))
                 //column is in live but not in staging, but it is hic_
                 if (missingColumn.StartsWith("hic_")) //this is permitted
                     continue;
@@ -264,77 +264,53 @@ namespace DataLoadEngine.Checks.Checkers
             }
         }
 
-        private void CheckStagingToLiveMigrationForTable(DiscoveredDatabase staging, string[] stagingCols, DiscoveredDatabase live, string[] liveCols, TableInfo tableInfo, IEnumerable<IColumnInfo> columnInfos, LoadBubble source, LoadBubble destination, ICheckNotifier notifier)
+        private void CheckStagingToLiveMigrationForTable(DiscoveredTable stagingTable, DiscoveredColumn[] stagingCols, DiscoveredTable liveTable, DiscoveredColumn[] liveCols, ICheckNotifier notifier)
         {
-            if (destination != LoadBubble.Live)
-                throw new Exception("Expected destination to be a live table");
-            
-            if (source != LoadBubble.Staging)
-                throw new Exception("Expected source to be either a STAGING table or a new lookup values table");
-
-            var nameOfTableInSourceDatabase = tableInfo.GetRuntimeName(source, _databaseConfiguration.DatabaseNamer);
-            var nameOfTableInDestinationDatabase = tableInfo.GetRuntimeName(destination, _databaseConfiguration.DatabaseNamer);
-
             try
             {
-                new MigrationColumnSet(staging.ExpectTable(nameOfTableInSourceDatabase), live.ExpectTable(nameOfTableInDestinationDatabase), new StagingToLiveMigrationFieldProcessor());
-                notifier.OnCheckPerformed(new CheckEventArgs("TableInfo " + tableInfo.Name + " passed " + typeof(MigrationColumnSet).Name + " check ", CheckResult.Success, null));
+                new MigrationColumnSet(stagingTable,liveTable,new StagingToLiveMigrationFieldProcessor());
+                notifier.OnCheckPerformed(new CheckEventArgs("TableInfo " + liveTable + " passed " + typeof(MigrationColumnSet).Name + " check ", CheckResult.Success, null));
             }
             catch (Exception e)
             {
 
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    typeof(MigrationColumnSet).Name + " reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo " + tableInfo, CheckResult.Fail, e));
+                    typeof(MigrationColumnSet).Name + " reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo " + liveTable, CheckResult.Fail, e));
             }
-
-            DiscoveredTable destinationTable = live.ExpectTable(nameOfTableInDestinationDatabase);
-            DiscoveredTable stagingTable = staging.ExpectTable(nameOfTableInSourceDatabase);
-
-            if(!destinationTable.Exists())
-                throw new Exception("Destination table " + destinationTable + " does not exist!");
-            if (!destinationTable.Exists())
-                throw new Exception("Destination table " + destinationTable + " does not exist!");
-
-            //live columns
-            foreach (string col in liveCols)
-                if (!col.StartsWith("hic_") &&                                                                         //must start hic_ 
-                    UsefulStuff.GetInstance().IsColumnIdentity(destinationTable, col))   //if they are identities
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        "Column " + col + " is an identity column in the LIVE database but does not start with hic_", CheckResult.Fail, null));//this one does not
+            
+            //live columns 
+            foreach (DiscoveredColumn col in liveCols)
+                if (!col.GetRuntimeName().StartsWith("hic_") && col.DataType.IsIdentity())    //must start hic_ if they are identities
+                    notifier.OnCheckPerformed(new CheckEventArgs("Column " + col + " is an identity column in the LIVE database but does not start with hic_", CheckResult.Fail, null));//this one does not
 
             //staging columns
-            foreach (string col in stagingCols) //staging columns
-                if (UsefulStuff.GetInstance().IsColumnIdentity(stagingTable, col)) //if there are any auto increments
+            foreach (DiscoveredColumn col in stagingCols) //staging columns
+                if (col.DataType.IsIdentity()) //if there are any auto increments
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         "Column " + col + " is an identity column and is in STAGING, the identity flag must be removed from the STAGING table", CheckResult.Fail, null));//complain since don't want a mismatch between IDs in staging and live or complaints about identity insert from SQL server
 
             //staging must allow null dataloadrunids and validfroms
-            ConfirmNullability(staging, nameOfTableInSourceDatabase, SpecialFieldNames.DataLoadRunID, true,notifier);
-            ConfirmNullability(staging, nameOfTableInSourceDatabase, SpecialFieldNames.ValidFrom, true,notifier);
+            ConfirmNullability(stagingTable.DiscoverColumn(SpecialFieldNames.DataLoadRunID), true, notifier);
+            ConfirmNullability(stagingTable.DiscoverColumn(SpecialFieldNames.ValidFrom), true, notifier);
 
             //live must allow nulls in validFrom
-            ConfirmNullability(live, nameOfTableInDestinationDatabase, SpecialFieldNames.ValidFrom, true, notifier);
+            ConfirmNullability(liveTable.DiscoverColumn(SpecialFieldNames.ValidFrom), true, notifier);
             //because it has a default of today
-            ConfirmDefaultPresent(live, nameOfTableInDestinationDatabase, SpecialFieldNames.ValidFrom, true, notifier);
+            ConfirmDefaultPresent(liveTable, SpecialFieldNames.ValidFrom, true, notifier);
 
         }
 
-        private void ConfirmDefaultPresent(DiscoveredDatabase server, string tablename, string fieldname, bool expectedDefaultability,ICheckNotifier notifier)
+        private void ConfirmDefaultPresent(DiscoveredTable table, string fieldname, bool expectedDefaultability,ICheckNotifier notifier)
         {
-            var table = server.ExpectTable(tablename);
-
             bool defaultability = DatabaseOperations.DoesColumnHaveDefault(table, fieldname);
             notifier.OnCheckPerformed(new CheckEventArgs("Default value of " + table.GetFullyQualifiedName() + "." + fieldname + " is IsPresent=" + defaultability + ", (expected " + expectedDefaultability + ")", defaultability == expectedDefaultability ? CheckResult.Success : CheckResult.Fail, null));
 
         }
 
-        private void ConfirmNullability(DiscoveredDatabase server, string tablename, string fieldname, bool expectedNullability, ICheckNotifier notifier)
+        private void ConfirmNullability(DiscoveredColumn column, bool expectedNullability, ICheckNotifier notifier)
         {
-            var table = server.ExpectTable(tablename);
-
-            bool nullability = UsefulStuff.GetInstance().IsColumnNullable(table, fieldname);
-            notifier.OnCheckPerformed(new CheckEventArgs("Nullability of " + table.GetFullyQualifiedName()+ "." + fieldname + " is AllowNulls=" + nullability + ", (expected " + expectedNullability + ")", nullability == expectedNullability ? CheckResult.Success : CheckResult.Fail, null));
-
+            bool nullability = column.AllowNulls;
+            notifier.OnCheckPerformed(new CheckEventArgs("Nullability of " + column + " is AllowNulls=" + nullability + ", (expected " + expectedNullability + ")", nullability == expectedNullability ? CheckResult.Success : CheckResult.Fail, null));
         }
         #endregion
     }

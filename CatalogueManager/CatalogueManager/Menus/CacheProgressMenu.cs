@@ -8,6 +8,7 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
@@ -25,8 +26,9 @@ namespace CatalogueManager.Menus
             : base(args, cacheProgress)
         {
             _cacheProgress = cacheProgress;
-            
-            Add(new ExecuteCommandExecuteCacheProgress(_activator).SetTarget(cacheProgress));
+
+            Items.Add("Edit", null, (s, e) => _activator.Activate<CacheProgressUI, CacheProgress>(cacheProgress));
+
             Add(new ExecuteCommandSetPermissionWindow(_activator,cacheProgress));
 
             //this will be used as design time fetch request date, set it to min dt to avoid issues around caches not having progress dates etc
@@ -44,6 +46,8 @@ namespace CatalogueManager.Menus
             {
                 _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not assemble CacheProgress Pipeline Options", CheckResult.Fail, e));
             }
+
+            ReBrandActivateAs("Execute Caching",RDMPConcept.CacheProgress,OverlayKind.Execute);
         }
     }
 }

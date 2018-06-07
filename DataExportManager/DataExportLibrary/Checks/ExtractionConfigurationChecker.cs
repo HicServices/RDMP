@@ -113,7 +113,7 @@ namespace DataExportLibrary.Checks
 
             if (CheckDatasets)
                 foreach (ISelectedDataSets s in _config.SelectedDataSets)
-                    new SelectedDatasetsChecker(s, _repositoryLocator).Check(notifier);
+                    new SelectedDataSetsChecker(s, _repositoryLocator).Check(notifier);
 
             //globals
             if (CheckGlobals)

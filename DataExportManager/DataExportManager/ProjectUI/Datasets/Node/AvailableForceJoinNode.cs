@@ -9,7 +9,7 @@ namespace DataExportManager.ProjectUI.Datasets.Node
     internal class AvailableForceJoinNode : IMasqueradeAs
     {
         [CanBeNull]
-        public SelectedDatasetsForcedJoin ForcedJoin { get; set; }
+        public SelectedDataSetsForcedJoin ForcedJoin { get; set; }
 
         public TableInfo TableInfo { get; set; }
         public JoinInfo[] JoinInfos { get; set; }

@@ -21,20 +21,20 @@ namespace DataExportLibrary.Data.DataTables
     /// 
     /// <para>A <see cref="JoinInfo"/> must still exist to tell <see cref="QueryBuilder"/> how to write the Join section of the query.</para>
     /// </summary>
-    public class SelectedDatasetsForcedJoin : DatabaseEntity, ISelectedDatasetsForcedJoin, IInjectKnown<TableInfo>
+    public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForcedJoin, IInjectKnown<TableInfo>
     {
         #region Database Properties
 
-        private int _selectedDatasets_ID;
+        private int _selectedDataSets_ID;
         private int _tableInfo_ID;
         private Lazy<TableInfo> _knownTableInfo;
 
         #endregion
 
-        public int SelectedDatasets_ID
+        public int SelectedDataSets_ID
         {
-            get { return _selectedDatasets_ID; }
-            set { SetField(ref _selectedDatasets_ID, value); }
+            get { return _selectedDataSets_ID; }
+            set { SetField(ref _selectedDataSets_ID, value); }
         }
         public int TableInfo_ID
         {
@@ -51,11 +51,11 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion
 
-        public SelectedDatasetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, TableInfo tableInfo)
+        public SelectedDataSetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, TableInfo tableInfo)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
-                {"SelectedDatasets_ID",sds.ID},
+                {"SelectedDataSets_ID",sds.ID},
                 {"TableInfo_ID",tableInfo.ID},
             });
 
@@ -64,9 +64,9 @@ namespace DataExportLibrary.Data.DataTables
 
             ClearAllInjections();
         }
-        internal SelectedDatasetsForcedJoin(IRepository repository, DbDataReader r): base(repository, r)
+        internal SelectedDataSetsForcedJoin(IRepository repository, DbDataReader r): base(repository, r)
         {
-            SelectedDatasets_ID = Convert.ToInt32(r["SelectedDatasets_ID"]);
+            SelectedDataSets_ID = Convert.ToInt32(r["SelectedDataSets_ID"]);
             TableInfo_ID = Convert.ToInt32(r["TableInfo_ID"]);
 
             ClearAllInjections();

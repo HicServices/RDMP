@@ -7,7 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using ANOStore.ANOEngineering;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.ExternalDatabaseServerPatching;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
@@ -193,6 +196,13 @@ namespace Tests.Common
             RepositoryLocator.CatalogueRepository.MEF.Setup(_startup.MEFSafeDirectoryCatalog);
         }
 
+        [TestFixtureTearDown]
+        void DropCreatedDatabases()
+        {
+            foreach (DiscoveredDatabase db in forCleanup)
+                if (db.Exists())
+                    db.ForceDrop();
+        }
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         { 
             //its a healthy message, jolly good
@@ -333,12 +343,16 @@ delete from {1}..Project
             //replace all whitespace with single spaces
             return Regex.Replace(sql, @"\s+", " ").Trim();
         }
+        
+        HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
 
         protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName)
         {
             DiscoveredServer wc1;
             DiscoveredDatabase wc2;
-            return GetCleanedServer(type, dbnName, out wc1, out wc2);
+            var toReturn =  GetCleanedServer(type, dbnName, out wc1, out wc2);
+            forCleanup.Add(toReturn);
+            return toReturn;
         }
 
         protected DiscoveredDatabase GetCleanedServer(DatabaseType type,string dbnName, out DiscoveredServer server, out DiscoveredDatabase database)
@@ -385,8 +399,39 @@ delete from {1}..Project
 
             return database;
         }
-    }
 
+        protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
+        {
+            var importer = new TableInfoImporter(CatalogueRepository, tbl);
+            importer.DoImport(out tableInfoCreated,out columnInfosCreated);
+
+            var forwardEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated,true);
+
+            Catalogue catalogue;
+            forwardEngineer.ExecuteForwardEngineering(out catalogue,out catalogueItems,out extractionInformations);
+
+            return catalogue;
+        }
+
+        protected Catalogue Import(DiscoveredTable tbl)
+        {
+            TableInfo tableInfoCreated;
+            ColumnInfo[] columnInfosCreated;
+            CatalogueItem[] catalogueItems;
+            ExtractionInformation[] extractionInformations;
+
+            return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems,out extractionInformations);
+        }
+
+        protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
+        {
+            CatalogueItem[] catalogueItems;
+            ExtractionInformation[] extractionInformations;
+
+            return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
+        }
+    }
+    
         
 
     public static class TestDatabaseNames

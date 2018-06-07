@@ -137,8 +137,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CohortManagerTests", "Cohor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataQualityEngine.Database", "DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj", "{5B2277DE-7D2B-48A4-AE01-86BEAB5C6005}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.OtherProviders", "Tests.OtherProviders\Tests.OtherProviders.csproj", "{E8C57170-C9FD-4083-A06A-F7E62BA6C579}"
-EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "RDMPInstaller", "RDMPInstaller\RDMPInstaller.wixproj", "{FCDC29D2-BFEB-42E3-B272-508DA4D12D16}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDMPStartup", "RDMPStartup\RDMPStartup.csproj", "{A870596C-7245-48F5-B588-AFE41D09B4D2}"
@@ -1162,30 +1160,6 @@ Global
 		{5B2277DE-7D2B-48A4-AE01-86BEAB5C6005}.Test|Mixed Platforms.Build.0 = Release|Any CPU
 		{5B2277DE-7D2B-48A4-AE01-86BEAB5C6005}.Test|x64.ActiveCfg = Release|Any CPU
 		{5B2277DE-7D2B-48A4-AE01-86BEAB5C6005}.Test|x86.ActiveCfg = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Development|Any CPU.Build.0 = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Development|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Development|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Development|x64.ActiveCfg = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Development|x86.ActiveCfg = Debug|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Release|x64.ActiveCfg = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Release|x86.ActiveCfg = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Test|Any CPU.ActiveCfg = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Test|Any CPU.Build.0 = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Test|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Test|Mixed Platforms.Build.0 = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Test|x64.ActiveCfg = Release|Any CPU
-		{E8C57170-C9FD-4083-A06A-F7E62BA6C579}.Test|x86.ActiveCfg = Release|Any CPU
 		{FCDC29D2-BFEB-42E3-B272-508DA4D12D16}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{FCDC29D2-BFEB-42E3-B272-508DA4D12D16}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{FCDC29D2-BFEB-42E3-B272-508DA4D12D16}.Debug|x64.ActiveCfg = Debug|x86

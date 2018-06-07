@@ -374,8 +374,8 @@ namespace DataExportLibrary.Data.DataTables
                         }
 
                         //clone should copy accross the forced joins (if any)
-                        foreach (SelectedDatasetsForcedJoin oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDatasetsForcedJoin>(selected))
-                            new SelectedDatasetsForcedJoin((IDataExportRepository) Repository, newSelectedDataSet,oldForcedJoin.TableInfo);
+                        foreach (SelectedDataSetsForcedJoin oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(selected))
+                            new SelectedDataSetsForcedJoin((IDataExportRepository) Repository, newSelectedDataSet,oldForcedJoin.TableInfo);
                        
 
                         try

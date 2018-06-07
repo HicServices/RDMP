@@ -202,7 +202,7 @@
     <Compile Include="Checks\ExtractionConfigurationChecker.cs" />
     <Compile Include="Checks\GlobalExtractionChecker.cs" />
     <Compile Include="Checks\ProjectChecker.cs" />
-    <Compile Include="Checks\SelectedDatasetsChecker.cs" />
+    <Compile Include="Checks\SelectedDataSetsChecker.cs" />
     <Compile Include="Checks\SupportingSQLTableChecker.cs" />
     <Compile Include="CohortCreationPipeline\CohortCreationRequest.cs" />
     <Compile Include="CohortCreationPipeline\CohortRefreshEngine.cs" />
@@ -240,8 +240,8 @@
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackageContents.cs" />
     <Compile Include="Data\DataTables\DeployedExtractionFilterFactory.cs" />
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackage.cs" />
-    <Compile Include="Data\DataTables\SelectedDatasetsForcedJoin.cs" />
     <Compile Include="Data\DataTables\SupplementalExtractionResults.cs" />
+    <Compile Include="Data\DataTables\SelectedDataSetsForcedJoin.cs" />
     <Compile Include="Data\Hierarchy\DataExportFilterHierarchy.cs" />
     <Compile Include="Data\ProjectCohortIdentificationConfigurationAssociation.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollection.cs" />

@@ -129,7 +129,7 @@ namespace RDMPAutomationService.Runners
                 var datasetCommand = runnable as ExtractDatasetCommand;
                 
                 if (datasetCommand != null)
-                    checkables.Add(new SelectedDatasetsChecker(datasetCommand.SelectedDataSets, RepositoryLocator));
+                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets, RepositoryLocator));
 
                 checkables.Add(new ExtractionPipelineUseCase(_project, command, _pipeline, DataLoadInfo.Empty) { Token = Token }
                                        .GetEngine(_pipeline, new ToMemoryDataLoadEventListener(false)));
@@ -150,7 +150,7 @@ namespace RDMPAutomationService.Runners
         {
             if(_options.Command == CommandLineActivity.check)
             {
-                var sds = ChecksDictionary.Keys.OfType<SelectedDatasetsChecker>().SingleOrDefault(k => k.SelectedDataSet.ExtractableDataSet_ID == rowObject.ID);
+                var sds = ChecksDictionary.Keys.OfType<SelectedDataSetsChecker>().SingleOrDefault(k => k.SelectedDataSet.ExtractableDataSet_ID == rowObject.ID);
 
                 if (sds == null)
                     return null;

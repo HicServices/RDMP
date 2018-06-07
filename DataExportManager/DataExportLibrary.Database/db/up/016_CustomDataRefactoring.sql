@@ -24,28 +24,28 @@ end
 GO
 
 --Support for 'join to these tables too' on extraction (Has similar role to AggregateForcedJoin)
-if not exists (select 1 from sys.tables where name = 'SelectedDatasetsForcedJoin')
+if not exists (select 1 from sys.tables where name = 'SelectedDataSetsForcedJoin')
 begin
-CREATE TABLE [SelectedDatasetsForcedJoin](
+CREATE TABLE [SelectedDataSetsForcedJoin](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[SelectedDataSets_ID] [int] NOT NULL,
 	[TableInfo_ID] [int] NOT NULL,
- CONSTRAINT [PK_SelectedDatasetsForcedJoin] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_SelectedDataSetsForcedJoin] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
 )
 )
 end
 go
-if not exists (select 1 from sys.foreign_keys where name = 'FK_SelectedDatasetsForcedJoin_SelectedDataSets') 
+if not exists (select 1 from sys.foreign_keys where name = 'FK_SelectedDataSetsForcedJoin_SelectedDataSets') 
 begin
-ALTER TABLE [SelectedDatasetsForcedJoin]  WITH CHECK ADD  CONSTRAINT [FK_SelectedDatasetsForcedJoin_SelectedDataSets] FOREIGN KEY([SelectedDataSets_ID])
+ALTER TABLE [SelectedDataSetsForcedJoin]  WITH CHECK ADD  CONSTRAINT [FK_SelectedDataSetsForcedJoin_SelectedDataSets] FOREIGN KEY([SelectedDataSets_ID])
 REFERENCES [SelectedDataSets] ([ID])
 ON DELETE CASCADE
 
-CREATE UNIQUE NONCLUSTERED INDEX [ix_SelectedDatasetsForceJoinsMustBeUnique] ON [dbo].[SelectedDatasetsForcedJoin]
+CREATE UNIQUE NONCLUSTERED INDEX [ix_SelectedDataSetsForceJoinsMustBeUnique] ON [dbo].[SelectedDataSetsForcedJoin]
 (
-	[SelectedDatasets_ID] ASC,
+	[SelectedDataSets_ID] ASC,
 	[TableInfo_ID] ASC
 )
 end

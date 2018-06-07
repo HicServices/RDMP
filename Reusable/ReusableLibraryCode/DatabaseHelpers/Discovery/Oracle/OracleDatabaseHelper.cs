@@ -46,6 +46,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         {
             List<DiscoveredTable> tables = new List<DiscoveredTable>();
             
+
+            /*Maybe add this WHERE statement?
+             * 
+             * where owner not in 
+(
+'SYS','SYSTEM','MDSYS','OUTLN','CTXSYS','OLAPSYS','FLOWS_FILES','DVSYS','AUDSYS','DBSNMP','GSMADMIN_INTERNAL','OJVMSYS','ORDSYS','APPQOSSYS','XDB','ORDDATA','WMSYS','LBACSYS'
+)*/
+
             var cmd = new OracleCommand("SELECT table_name FROM all_tables where owner='" + database + "'", (OracleConnection) connection);
             cmd.Transaction = transaction as OracleTransaction;
 
