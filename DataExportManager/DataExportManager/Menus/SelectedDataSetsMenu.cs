@@ -53,7 +53,7 @@ namespace DataExportManager.Menus
             addRootFilter.Enabled = root == null;
             Items.Add(addRootFilter);
 
-            Add(new ExecuteCommandViewSelectedDatasetsExtractionSql(_activator).SetTarget(selectedDataSet));
+            Add(new ExecuteCommandViewSelectedDataSetsExtractionSql(_activator).SetTarget(selectedDataSet));
 
         }
 

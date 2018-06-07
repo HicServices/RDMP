@@ -4,7 +4,7 @@ using MapsDirectlyToDatabaseTable;
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
     /// <summary>
-    /// See SelectedDatasetsForcedJoin
+    /// See SelectedDataSetsForcedJoin
     /// </summary>
     public interface ISelectedDataSetsForcedJoin:IMapsDirectlyToDatabaseTable
     {

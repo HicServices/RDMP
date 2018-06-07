@@ -21,12 +21,12 @@ namespace DataExportLibrary.Checks
     /// Checks that the <see cref="SelectedDataSets"/> can be built into a valid SQL extraction Query and that the SQL generated can be executed
     /// without syntax errors.
     /// </summary>
-    public class SelectedDatasetsChecker : ICheckable
+    public class SelectedDataSetsChecker : ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private SelectedDataSets _selectedDataSet;
 
-        public SelectedDatasetsChecker(SelectedDataSets selectedDataSet,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public SelectedDataSetsChecker(SelectedDataSets selectedDataSet,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
             _selectedDataSet = selectedDataSet;

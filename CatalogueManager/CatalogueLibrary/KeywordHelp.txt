@@ -79,4 +79,4 @@ ix_NoCicProjectDuplicates:Prevents you associating the same CohortIdentification
 IX_RemoteRDMP_NameMustBeUnique: Prevents you giving two RemoteRDMP endpoints the same name
 ix_YouCanImportEachObjectOnlyOnce: Prevents you from importing two or more copies of the same shared object (identified by it's sharing SharingUID)
 ix_YouCanExportEachObjectOnlyOnce: Prevents you from exporting the same object twice (with different SharingUID)
-ix_SelectedDatasetsForceJoinsMustBeUnique: Prevents you from declaring that the same TableInfo should be forced joined when extracting the SelectedDatasets multiple times
+ix_SelectedDataSetsForceJoinsMustBeUnique: Prevents you from declaring that the same TableInfo should be forced joined when extracting the SelectedDataSets multiple times

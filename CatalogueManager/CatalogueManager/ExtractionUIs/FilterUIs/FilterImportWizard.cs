@@ -114,7 +114,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             
             if(filtercontainer != null)
             {
-                var selectedDataSet = filtercontainer.GetSelectedDatasetRecursively();
+                var selectedDataSet = filtercontainer.GetSelectedDataSetRecursively();
                 var config = selectedDataSet.ExtractionConfiguration;
                 var root = selectedDataSet.RootFilterContainer;
 
