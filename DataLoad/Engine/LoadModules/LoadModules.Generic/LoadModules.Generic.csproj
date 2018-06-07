@@ -221,6 +221,7 @@
     <Compile Include="DataFlowOperations\Aliases\AliasHandler.cs" />
     <Compile Include="DataFlowOperations\Aliases\AliasResolutionStrategy.cs" />
     <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasTableFetchException.cs" />
+    <Compile Include="DataFlowOperations\ReleaseMetadata.cs" />
     <Compile Include="DataFlowOperations\TableVersionNamer.cs" />
     <Compile Include="DataFlowSources\DoNothingCacheSource.cs" />
     <Compile Include="DataProvider\FlatFileManipulation\ExcelToCSVFilesConverter.cs" />
@@ -288,6 +289,14 @@
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
+      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
+      <Name>DataExportLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
+      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
+      <Name>DataExportLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj">
       <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
       <Name>HIC.Logging</Name>
@@ -299,6 +308,10 @@
     <ProjectReference Include="..\..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5ad03b2f-232a-4e0b-86ff-dc7f49146962}</Project>
       <Name>ReusableLibraryCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Sharing\Sharing\Sharing.csproj">
+      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
+      <Name>Sharing</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>

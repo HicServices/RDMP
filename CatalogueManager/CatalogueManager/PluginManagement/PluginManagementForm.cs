@@ -366,7 +366,7 @@ namespace CatalogueManager.PluginManagement
 
         private void btnExportToDisk_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandExportObjectsToFile(_activator, plugins);
+            var cmd = new ExecuteCommandExportObjectsToFileUI(_activator, plugins);
             cmd.Execute();
         }
     }

@@ -561,7 +561,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             {
                 var fi = new FileInfo(sfd.FileName);
                 
-                var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
+                var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFileUI(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
 
                 if (!cmdAnoTablesToo.IsImpossible)
                     cmdAnoTablesToo.Execute();

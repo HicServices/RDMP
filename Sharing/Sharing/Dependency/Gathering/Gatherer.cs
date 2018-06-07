@@ -29,7 +29,8 @@ namespace Sharing.Dependency.Gathering
         public Gatherer(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
-            
+
+            _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
             _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
             _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
             _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
@@ -72,6 +73,15 @@ namespace Sharing.Dependency.Gathering
 
             foreach (var lma in plugin.LoadModuleAssemblies)
                 root.Children.Add(new GatheredObject(lma));
+            
+            return root;
+        }
+        public GatheredObject GatherDependencies(Catalogue catalogue)
+        {
+            var root = new GatheredObject(catalogue);
+
+            foreach (var cis in catalogue.CatalogueItems)
+                root.Children.Add(new GatheredObject(cis));
             
             return root;
         }
