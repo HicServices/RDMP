@@ -97,6 +97,7 @@ namespace DataLoadEngineTests.Integration
             pt1.SaveToDatabase();
 
             _cp.CacheFillProgress = new DateTime(1999, 1, 1);
+            _cp.Name = "MyTestCp";
             _cp.SaveToDatabase();
 
             pt1.CreateArgumentsForClassIfNotExists<TestCachedFileRetriever>();
@@ -109,7 +110,7 @@ namespace DataLoadEngineTests.Integration
             try
             {
                 var ex = Assert.Throws<Exception>(() => _factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
-                Assert.AreEqual("CacheProgress Cache Progress "+_cp.ID+" does not have a Pipeline configured on it", ex.Message);
+                Assert.AreEqual("CacheProgress MyTestCp does not have a Pipeline configured on it", ex.Message);
             }
             finally
             {
