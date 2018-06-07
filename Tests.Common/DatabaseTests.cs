@@ -7,7 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using ANOStore.ANOEngineering;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.ExternalDatabaseServerPatching;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
@@ -402,8 +405,39 @@ delete from {1}..Project
 
             return database;
         }
-    }
 
+        protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
+        {
+            var importer = new TableInfoImporter(CatalogueRepository, tbl);
+            importer.DoImport(out tableInfoCreated,out columnInfosCreated);
+
+            var forwardEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated,true);
+
+            Catalogue catalogue;
+            forwardEngineer.ExecuteForwardEngineering(out catalogue,out catalogueItems,out extractionInformations);
+
+            return catalogue;
+        }
+
+        protected Catalogue Import(DiscoveredTable tbl)
+        {
+            TableInfo tableInfoCreated;
+            ColumnInfo[] columnInfosCreated;
+            CatalogueItem[] catalogueItems;
+            ExtractionInformation[] extractionInformations;
+
+            return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems,out extractionInformations);
+        }
+
+        protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
+        {
+            CatalogueItem[] catalogueItems;
+            ExtractionInformation[] extractionInformations;
+
+            return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
+        }
+    }
+    
         
 
     public static class TestDatabaseNames
