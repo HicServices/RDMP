@@ -116,7 +116,7 @@ namespace DataExportLibrary.Checks
 
 
             foreach (SelectedDataSets s in config.SelectedDataSets)
-                new SelectedDatasetsChecker(s, _repositoryLocator).Check(notifier);
+                new SelectedDataSetsChecker(s, _repositoryLocator).Check(notifier);
 
             //globals
             if(datasets.Any())

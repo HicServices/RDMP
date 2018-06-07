@@ -269,7 +269,7 @@ namespace DataExportManager.ProjectUI.Datasets
 
         private void RunChecks()
         {
-            var checkable = new SelectedDatasetsChecker(SelectedDataSet, _activator.RepositoryLocator);
+            var checkable = new SelectedDataSetsChecker(SelectedDataSet, _activator.RepositoryLocator);
             ragSmiley1.StartChecking(checkable);
         }
 

@@ -16,11 +16,11 @@ using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewSelectedDatasetsExtractionSql:BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandViewSelectedDataSetsExtractionSql:BasicUICommandExecution,IAtomicCommandWithTarget
     {
         private SelectedDataSets _selectedDataSet;
 
-        public ExecuteCommandViewSelectedDatasetsExtractionSql(IActivateItems activator) : base(activator)
+        public ExecuteCommandViewSelectedDataSetsExtractionSql(IActivateItems activator) : base(activator)
         {
         }
 
