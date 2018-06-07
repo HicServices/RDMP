@@ -357,6 +357,11 @@ namespace CatalogueManager.Collections
 
                     return menu;
                 }
+
+                //no compatible menus so just return default menu
+                var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
+                defaultMenu.AddCommonMenuItems();
+                return defaultMenu;
             }
             else
             {
@@ -398,11 +403,9 @@ namespace CatalogueManager.Collections
                     return menu;
                 }
             }
-
-            //there are no derrived classes with compatible constructors so just use the basic one
-            var defaultMenu = new RDMPContextMenuStrip(args,o);
-            defaultMenu.AddCommonMenuItems();
-            return defaultMenu;
+            
+            //there are no derrived classes with compatible constructors
+            return null;
         }
 
 
