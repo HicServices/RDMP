@@ -304,9 +304,9 @@
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
+    <Compile Include="Providers\Nodes\UsedByNodes\IObjectUsedByOtherObjectNode.cs" />
+    <Compile Include="Providers\Nodes\UsedByNodes\ObjectUsedByOtherObjectNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
-    <Compile Include="Providers\Nodes\UsedByProject\ExtractableCohortUsedByProjectNode.cs" />
-    <Compile Include="Providers\Nodes\UsedByProject\IObjectUsedByProjectNode.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />
   </ItemGroup>
   <ItemGroup>

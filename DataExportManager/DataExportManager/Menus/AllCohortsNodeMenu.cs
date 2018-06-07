@@ -28,7 +28,7 @@ namespace DataExportManager.Menus
         public AllCohortsNodeMenu(RDMPContextMenuStripArgs args, AllCohortsNode node)
             : base(args, node)
         {
-            Add(new ExecuteCommandShowDetailedSummaryOfAllCohorts(_activator));
+            Add(new ExecuteCommandShowSummaryOfCohorts(_activator));
 
             Add(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(_activator));
 

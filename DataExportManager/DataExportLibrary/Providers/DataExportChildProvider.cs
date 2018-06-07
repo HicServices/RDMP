@@ -13,6 +13,7 @@ using DataExportLibrary.Data.Hierarchy;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
+using DataExportLibrary.Providers.Nodes.UsedByNodes;
 using DataExportLibrary.Providers.Nodes.UsedByProject;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -53,8 +54,10 @@ namespace DataExportLibrary.Providers
         private DataExportFilterHierarchy _dataExportFilterHierarchy;
 
         private static List<ExternalCohortTable> BlackListedSources = new List<ExternalCohortTable>();
-
-        public List<IObjectUsedByProjectNode> DuplicateObjectsButUsedByProjects = new List<IObjectUsedByProjectNode>();
+        
+        public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>>();
+        public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>();
+        
 
         public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new Dictionary<int, List<ExtractableCohort>>();
 
@@ -344,7 +347,7 @@ namespace DataExportLibrary.Providers
 
         private void AddChildren(CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode, DescendancyList descendancy)
         {
-            AddToDictionaries(new HashSet<object>(cohortSourceUsedByProjectNode.CohortsUsedByProject),descendancy);
+            AddToDictionaries(new HashSet<object>(cohortSourceUsedByProjectNode.CohortsUsed),descendancy);
         }
         
         private void AddChildren(AllCohortsNode cohortsNode, DescendancyList descendancy)
@@ -448,7 +451,7 @@ namespace DataExportLibrary.Providers
                 var source = CohortSources.Single(s => s.ID == cohort.ExternalCohortTable_ID);
 
                 //numbers match
-                var existing = toReturn.SingleOrDefault(s => s.Source.ID == cohort.ExternalCohortTable_ID);
+                var existing = toReturn.SingleOrDefault(s => s.ObjectBeingUsed.ID == cohort.ExternalCohortTable_ID);
 
                 //make sure we have a record of the source
                 if (existing == null)
@@ -458,17 +461,17 @@ namespace DataExportLibrary.Providers
                 }
 
                 //add the cohort to the list of known cohorts from this source (a project can have lots of cohorts and even cohorts from different sources) 
-                var cohortUsedByProject = new ExtractableCohortUsedByProjectNode(cohort, project);
-                existing.CohortsUsedByProject.Add(cohortUsedByProject);
+                var cohortUsedByProject = new ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode,ExtractableCohort>(existing,cohort);
+                existing.CohortsUsed.Add(cohortUsedByProject);
 
-                DuplicateObjectsButUsedByProjects.Add(cohortUsedByProject);
+                DuplicatesByCohortSourceUsedByProjectNode.Add(cohortUsedByProject);
             }
 
-            DuplicateObjectsButUsedByProjects.AddRange(toReturn);
+            DuplicatesByProject.AddRange(toReturn);
 
             //if the project has no cohorts then add a ??? node 
             if(!toReturn.Any())
-                toReturn.Add(new CohortSourceUsedByProjectNode(project));
+                toReturn.Add(new CohortSourceUsedByProjectNode(project,null));
 
             return toReturn;
         }

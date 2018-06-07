@@ -110,6 +110,8 @@ namespace CatalogueManager.Menus
             if (nameable != null)
                 Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
 
+            Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
+
             if (databaseEntity != null)
             {
                 if (databaseEntity.Equals(_args.CurrentlyPinnedObject))
@@ -117,7 +119,6 @@ namespace CatalogueManager.Menus
                 else
                     Add(new ExecuteCommandPin(_activator, databaseEntity));
 
-                Add(new ExecuteCommandShowKeywordHelp(_activator, databaseEntity));
                 Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
             }
             

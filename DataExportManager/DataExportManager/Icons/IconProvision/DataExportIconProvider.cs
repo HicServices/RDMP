@@ -9,6 +9,7 @@ using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Providers.Nodes;
+using DataExportLibrary.Providers.Nodes.UsedByNodes;
 using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportManager.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -36,8 +37,8 @@ namespace DataExportManager.Icons.IconProvision
                 return base.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link);
 
             //if it is a ProjectUsageNode then get the icon for the underlying object being used e.g. ExtractableCohortUsedByProject would return the icon for ExtractableCohort
-            if (concept is IObjectUsedByProjectNode)
-                return GetImage(((IObjectUsedByProjectNode) concept).ObjectBeingUsed, kind);
+            if (concept is IObjectUsedByOtherObjectNode)
+                return GetImage(((IObjectUsedByOtherObjectNode)concept).MasqueradingAs(), kind);
 
             if (concept is ProjectCohortIdentificationConfigurationAssociation)
                 return GetImage(((ProjectCohortIdentificationConfigurationAssociation)concept).GetCohortIdentificationConfigurationCached(), OverlayKind.Link);
