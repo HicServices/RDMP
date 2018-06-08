@@ -51,7 +51,6 @@
     <Compile Include="CommandExecution\ExecuteCommandExportObjectsToFile.cs" />
     <Compile Include="Dependency\ObjectSharingObscureDependencyFinder.cs" />
     <Compile Include="Dependency\SharedPluginImporter.cs" />
-    <Compile Include="Exceptions\SharingException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Refactoring\Exceptions\RefactoringException.cs" />
     <Compile Include="Dependency\Gathering\GatheredObject.cs" />
@@ -86,7 +85,9 @@
     <None Include="packages.config" />
     <None Include="Sharing.cd" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

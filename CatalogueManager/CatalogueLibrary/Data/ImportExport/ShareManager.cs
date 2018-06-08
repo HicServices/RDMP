@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using CatalogueLibrary.Data.ImportExport.Exceptions;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
@@ -27,10 +28,29 @@ namespace CatalogueLibrary.Data.ImportExport
 
         public LocalReferenceGetterDelegate LocalReferenceGetter;
 
-        public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, LocalReferenceGetterDelegate localReferenceGetter = null)
         {
             RepositoryLocator = repositoryLocator;
             _catalogueRepository = RepositoryLocator.CatalogueRepository;
+            LocalReferenceGetter = localReferenceGetter ?? DefaultLocalReferenceGetter;
+        }
+
+        private int? DefaultLocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
+        {
+            var defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+
+
+            if(property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
+            {
+                var server = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                if (server == null)
+                    return null;
+
+                return server.ID;
+            }
+
+            throw new SharingException("No default implementation exists for LocalReferenceGetterDelegate for property " + property.Name);
+
         }
 
         /// <summary>

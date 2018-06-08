@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.ImportExport.Exceptions;
 using CatalogueLibrary.Data.Serialization;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
-using Sharing.Exceptions;
 
 namespace Sharing.Dependency.Gathering
 {

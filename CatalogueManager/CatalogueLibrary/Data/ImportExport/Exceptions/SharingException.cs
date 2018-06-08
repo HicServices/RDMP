@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sharing.Exceptions
+namespace CatalogueLibrary.Data.ImportExport.Exceptions
 {
     public class SharingException:Exception
     {

@@ -391,7 +391,10 @@ namespace CatalogueLibrary.Repositories
             //remove null arguments they won't help us here
             foreach (string key in propertiesDictionary.Keys.ToArray())
             {
-                if (propertiesDictionary[key] == null || propertiesDictionary[key] as string == string.Empty)
+                if (propertiesDictionary[key] is CatalogueFolder)
+                    propertiesDictionary[key] = propertiesDictionary[key].ToString();
+
+                if (propertiesDictionary[key] == null)
                     propertiesDictionary.Remove(key);
             }
 
@@ -422,7 +425,7 @@ namespace CatalogueLibrary.Repositories
                             if (propertyType == typeof(CatalogueFolder))
                             {
                                 //will be passed as a string
-                                string folderAsString = shareDefinition.Properties["Folder"].ToString();
+                                string folderAsString = (string)propertiesDictionary["Folder"];
                                 val = new CatalogueFolder((Catalogue)(object)toCreate, folderAsString);
                             }
                             else
@@ -487,7 +490,6 @@ namespace CatalogueLibrary.Repositories
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
-
                         
                         //get the ID of the local import of the parent
                         if (propertiesDictionary.ContainsKey(property.Name))
