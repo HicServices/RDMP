@@ -23,8 +23,6 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {
-    public delegate void TaskCompletedHandler(object sender, ICompileable completedTask) ;
-
     /// <summary>
     /// Multi threading management class for CohortQueryBuilder.  Supports starting, executing and cancelling multiple cohort builder objects (ICompileable)
     /// at once.  Every input object (e.g. CohortAggregateContainer) will be assigned a corresponding ICompileable (e.g. AggregationContainerTask) and a
@@ -42,14 +40,12 @@ namespace CohortManagerLibrary.Execution
         
         public List<Thread> Threads = new List<Thread>();
 
-        public event TaskCompletedHandler TaskCompleted;
-
         public CohortCompiler(CohortIdentificationConfiguration cohortIdentificationConfiguration)
         {
             CohortIdentificationConfiguration = cohortIdentificationConfiguration;
         }
 
-        private void DoTaskAsync(ICompileable task, CohortIdentificationTaskExecution execution, int timeout)
+        private void DoTaskAsync(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,bool cacheOnCompletion = false)
         {
             try
             {
@@ -66,6 +62,9 @@ namespace CohortManagerLibrary.Execution
 
                 task.State = CompilationState.Finished;
                 task.Stopwatch.Stop();
+
+                if (cacheOnCompletion)
+                    CacheSingleTask(task);
             }
             catch (Exception ex)
             {
@@ -73,9 +72,6 @@ namespace CohortManagerLibrary.Execution
                 task.State= CompilationState.Crashed;
                 task.CrashMessage = ex;
             }
-
-            if (TaskCompleted != null)
-                TaskCompleted(this, task);
         }
 
         /// <summary>
@@ -297,16 +293,13 @@ namespace CohortManagerLibrary.Execution
             task.Stopwatch = new Stopwatch();
             task.Stopwatch.Start();
 
-            var t = new Thread(() => DoTaskAsync(task, execution, timeout));
-            TaskCompleted += CacheSingleTask;
+            var t = new Thread(() => DoTaskAsync(task, execution, timeout,true));
             Threads.Add(t);
             t.Start();
         }
-        
-        private void CacheSingleTask(object sender, ICompileable completedtask)
-        {
-            TaskCompleted -= CacheSingleTask;
 
+        private void CacheSingleTask(ICompileable completedtask)
+        {
             if (CohortIdentificationConfiguration.QueryCachingServer == null)
                 return;
 

@@ -343,7 +343,7 @@ namespace CohortManager.SubComponents
             //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
             Compiler.CancelTask(task, true);
             
-            RecreateAllTasks();
+            RecreateAllTasks(false);
 
             task = Compiler.AddTask(configOrContainer, _globals);
 
