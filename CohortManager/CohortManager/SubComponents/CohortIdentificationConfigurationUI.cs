@@ -17,6 +17,7 @@ using CohortManagerLibrary;
 using CohortManagerLibrary.Execution;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
+using ReusableUIComponents.SingleControlForms;
 
 namespace CohortManager.SubComponents
 {
@@ -197,6 +198,13 @@ namespace CohortManager.SubComponents
             Cancel,
             Clear,
             None
+        }
+
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        {
+            base.ConsultAboutClosing(sender, e);
+
+            CohortCompilerUI1.ConsultAboutClosing(sender,e);
         }
 
         private CompilationState GetState(IMapsDirectlyToDatabaseTable rowObject)

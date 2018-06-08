@@ -461,6 +461,10 @@ namespace CohortManager.SubComponents
                                     " Tasks currently executing, you must cancel them before closing");
                     e.Cancel = true;
                 }
+                else
+                {
+                    Compiler.CancelAllTasks(true);
+                }
             }
         }
         
