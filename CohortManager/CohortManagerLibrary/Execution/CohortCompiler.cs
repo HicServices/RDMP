@@ -310,6 +310,12 @@ namespace CohortManagerLibrary.Execution
 
         public void CacheSingleTask(ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
         {
+            //if it is already cached don't inception cache
+            var sql = Tasks[cacheableTask].CountSQL;
+
+            if (sql.Trim().StartsWith(CachedAggregateConfigurationResultsManager.CachingPrefix))
+                return;
+            
             var manager = new CachedAggregateConfigurationResultsManager(queryCachingServer);
 
             var explicitTypes = new List<DatabaseColumnRequest>();
@@ -325,7 +331,7 @@ namespace CohortManagerLibrary.Execution
                 throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
             }
 
-            CacheCommitArguments args = cacheableTask.GetCacheArguments(Tasks[cacheableTask].CountSQL, Tasks[cacheableTask].Identifiers, explicitTypes.ToArray());
+            CacheCommitArguments args = cacheableTask.GetCacheArguments(sql, Tasks[cacheableTask].Identifiers, explicitTypes.ToArray());
 
             manager.CommitResults(args);
         }
