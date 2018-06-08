@@ -69,7 +69,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// The ID of the parent <see cref="Catalogue"/> (dataset) to which this is a virtual column/column description
         /// </summary>
-        [Relationship(typeof(Catalogue))]
+        [Relationship(typeof(Catalogue),RelationshipType.SharedObject)]
         [DoNotExtractProperty]
         public int Catalogue_ID
         {
@@ -157,6 +157,7 @@ namespace CatalogueLibrary.Data
         /// e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core"/>) but only release the full postcode with 
         /// <see cref="ExtractionCategory.SpecialApprovalRequired"/>.
         /// </summary>
+        [Relationship(typeof(ColumnInfo), RelationshipType.LocalReference)] 
         public int? ColumnInfo_ID
         {
             get { return _columnInfoID; }

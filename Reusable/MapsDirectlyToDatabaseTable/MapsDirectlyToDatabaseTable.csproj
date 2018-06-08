@@ -140,6 +140,7 @@
     <Compile Include="Attributes\AdjustableLocationAttribute.cs" />
     <Compile Include="Attributes\AttributePropertyFinder.cs" />
     <Compile Include="Attributes\IAttributePropertyFinder.cs" />
+    <Compile Include="Attributes\RelationshipType.cs" />
     <Compile Include="DatabaseConnectionConfiguration.cs" />
     <Compile Include="IDeletableWithCustomMessage.cs" />
     <Compile Include="IDeleteable.cs" />

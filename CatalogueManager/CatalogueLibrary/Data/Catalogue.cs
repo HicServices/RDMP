@@ -16,6 +16,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -503,6 +504,7 @@ namespace CatalogueLibrary.Data
         /// that indicates for every row when it became active e.g. 'PrescribedDate' for prescribing.  Try to avoid using columns that have lots of nulls or 
         /// where the date is arbitrary (e.g. 'RecordLoadedDate')
         /// </summary>
+        [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference)] //todo do we want to share this?
         [DoNotExtractProperty]
         public int? TimeCoverage_ExtractionInformation_ID
         {
@@ -518,6 +520,7 @@ namespace CatalogueLibrary.Data
         /// <para>This chosen column should not have hundreds/thousands of unique values</para>
         /// </summary>
         [DoNotExtractProperty]
+        [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference)] 
         public int? PivotCategory_ExtractionInformation_ID
         {
             get { return _pivotCategoryExtractionInformationID; }
@@ -559,6 +562,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// The ID of the logging server that is to be used to log data loads of the dataset <see cref="HIC.Logging.LogManager"/>
         /// </summary>
+        [Relationship(typeof(ExternalDatabaseServer), RelationshipType.LocalReference)]
         [DoNotExtractProperty]
         public int? LiveLoggingServer_ID
         {
@@ -570,6 +574,7 @@ namespace CatalogueLibrary.Data
         /// Obsolete
         /// </summary>
         [Obsolete("Test logging databases are a bad idea on a live Catalogue repository")]
+        [Relationship(typeof(ExternalDatabaseServer), RelationshipType.LocalReference)]
         [DoNotExtractProperty]
         public int? TestLoggingServer_ID
         {
@@ -593,6 +598,7 @@ namespace CatalogueLibrary.Data
         /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
         /// </summary>
         [DoNotExtractProperty]
+        [Relationship(typeof(LoadMetadata), RelationshipType.IgnoreableLocalReference)]
         public int? LoadMetadata_ID
         {
             get { return _loadMetadataId; }
@@ -963,10 +969,6 @@ namespace CatalogueLibrary.Data
         
         internal Catalogue(ShareManager shareManager, ShareDefinition shareDefinition)
         {
-            //will be passed as a string
-            string folderAsString = shareDefinition.Properties["Folder"].ToString();
-            shareDefinition.Properties["Folder"] = new CatalogueFolder(this,folderAsString);
-
             shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
         }
 

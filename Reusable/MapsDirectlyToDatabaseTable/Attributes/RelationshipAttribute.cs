@@ -19,15 +19,18 @@ namespace MapsDirectlyToDatabaseTable.Attributes
         /// The decorated property
         /// </summary>
         public string PropertyName { get; set; }
+        
+        public RelationshipType Type { get; set; }
 
         /// <summary>
         /// Declares that the decorated property contains the ID of the specified Type of object
         /// </summary>
         /// <param name="cref"></param>
         /// <param name="propertyName"></param>
-        public RelationshipAttribute(Type cref,[CallerMemberName] string propertyName=null)
+        public RelationshipAttribute(Type cref,RelationshipType type,[CallerMemberName] string propertyName=null)
         {
             Cref = cref;
+            Type = type;
             PropertyName = propertyName;
         }
 

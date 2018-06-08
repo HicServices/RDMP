@@ -385,21 +385,20 @@ namespace CatalogueLibrary.Repositories
             //Make a dictionary of the normal properties we are supposed to be importing
             Dictionary<string,object> propertiesDictionary = shareDefinition.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
+            //for finding properties decorated with [Relationship]
+            var finder = new AttributePropertyFinder<RelationshipAttribute>(toCreate);
+
             //remove null arguments they won't help us here
             foreach (string key in propertiesDictionary.Keys.ToArray())
             {
-                if (propertiesDictionary[key] == null)
+                if (propertiesDictionary[key] == null || propertiesDictionary[key] as string == string.Empty)
                     propertiesDictionary.Remove(key);
             }
 
             //If we have already got a local copy of this shared object?
-            //either as an import
-            T actual = (T)shareManager.GetExistingImportObject(shareDefinition.SharingGuid);
-
-            //or as an export
-            if(actual == null)
-                 actual = (T)shareManager.GetExistingExportObject(shareDefinition.SharingGuid);
-
+            //either as an import or as an export
+            T actual = (T)shareManager.GetExistingImportObject(shareDefinition.SharingGuid) ?? (T)shareManager.GetExistingExportObject(shareDefinition.SharingGuid);
+            
             //we already have a copy imported of the shared object
             if (actual != null)
             {
@@ -408,7 +407,8 @@ namespace CatalogueLibrary.Repositories
                 //copy all the values out of the share definition / database copy
                 foreach (PropertyInfo prop in GetPropertyInfos(typeof(T)))
                 {
-                    if (propertiesDictionary.ContainsKey(prop.Name))
+                    //don't update any ID columns or any with relationships on UPDATE
+                    if (propertiesDictionary.ContainsKey(prop.Name) && finder.GetAttribute(prop) != null)
                     {
                         //sometimes json decided to swap types on you e.g. int64 for int32
                         var val = propertiesDictionary[prop.Name];
@@ -423,6 +423,15 @@ namespace CatalogueLibrary.Repositories
                                 val = Enum.ToObject(propertyType, val);//if the property is an enum
                             else
                                 val = Convert.ChangeType(val, propertyType); //the property is not an enum
+
+
+                        if (propertyType == typeof (CatalogueFolder))
+                        {
+                            //will be passed as a string
+                            string folderAsString = shareDefinition.Properties["Folder"].ToString();
+                            shareDefinition.Properties["Folder"] = new CatalogueFolder((Catalogue)(object)toCreate, folderAsString);
+                        }
+
 
                         prop.SetValue(toCreate, val); //if it's a shared property (most properties) use the new shared value being imported
                         
@@ -441,8 +450,6 @@ namespace CatalogueLibrary.Repositories
             {
                 //It's an INSERT i.e. create a new database copy with the correct foreign key values and update the memory copy
                 
-                var finder = new AttributePropertyFinder<RelationshipAttribute>(toCreate);
-
                 //for each relationship property on the class we are trying to hydrate
                 foreach (PropertyInfo property in GetPropertyInfos(typeof(T)))
                 {
@@ -452,21 +459,42 @@ namespace CatalogueLibrary.Repositories
                     //and also that we had already imported it since dependencies must be imported in order
                     if(relationshipAttribute != null)
                     {
-                        //Confirm that the share definition includes the knowledge that theres a parent class to this object
-                        if(!shareDefinition.RelationshipProperties.ContainsKey(relationshipAttribute))
-                            throw new Exception("Share Definition for object of Type " + typeof(T) + " is missing an expected RelationshipProperty called " + property.Name );
+                        int? newValue;
 
-                        //Get the SharingUID of the parent for this property
-                        Guid importGuidOfParent = shareDefinition.RelationshipProperties[relationshipAttribute];
+                        switch (relationshipAttribute.Type)
+                        {
+                            case RelationshipType.SharedObject:
+                                //Confirm that the share definition includes the knowledge that theres a parent class to this object
+                                if (!shareDefinition.RelationshipProperties.ContainsKey(relationshipAttribute))
+                                    throw new Exception("Share Definition for object of Type " + typeof(T) + " is missing an expected RelationshipProperty called " + property.Name);
 
-                        //Confirm that we have a local import of the parent
-                        var parentImport = shareManager.GetExistingImport(importGuidOfParent);
+                                //Get the SharingUID of the parent for this property
+                                Guid importGuidOfParent = shareDefinition.RelationshipProperties[relationshipAttribute];
 
-                        if(parentImport == null)
-                            throw new Exception("Cannot import an object of type " + typeof(T) + " because the ShareDefinition specifies a relationship to an object that has not yet been imported (A " + relationshipAttribute.Cref + " with a SharingUID of " + importGuidOfParent);
+                                //Confirm that we have a local import of the parent
+                                var parentImport = shareManager.GetExistingImport(importGuidOfParent);
 
+                                if (parentImport == null)
+                                    throw new Exception("Cannot import an object of type " + typeof(T) + " because the ShareDefinition specifies a relationship to an object that has not yet been imported (A " + relationshipAttribute.Cref + " with a SharingUID of " + importGuidOfParent);
+
+                                newValue = parentImport.LocalObjectID;
+                                break;
+                            case RelationshipType.LocalReference:
+                                newValue = shareManager.GetLocalReference(property, relationshipAttribute, shareDefinition);
+                                break;
+                            case RelationshipType.IgnoreableLocalReference:
+                                newValue = null;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+
+                        
                         //get the ID of the local import of the parent
-                        propertiesDictionary.Add(property.Name,parentImport.LocalObjectID);
+                        if (propertiesDictionary.ContainsKey(property.Name))
+                            propertiesDictionary[property.Name] = newValue;
+                        else
+                            propertiesDictionary.Add(property.Name,newValue);
                     }
                 }
 
