@@ -252,6 +252,9 @@ namespace CohortManagerLibrary.Execution
 
                     //throw away the old task
                     Tasks.Remove(existingTask.Key);
+
+                    //dispose of any resources it's holding onto
+                    existingTask.Value.Dispose();
                 }
             
       
@@ -348,7 +351,12 @@ namespace CohortManagerLibrary.Execution
                     v.Cancel();
 
             if(alsoClearTaskList)
+            {
+                foreach (var v in Tasks.Values)
+                    v.Dispose();
+
                 Tasks.Clear();
+            }
         }
 
         /// <summary>
@@ -366,7 +374,10 @@ namespace CohortManagerLibrary.Execution
                     Tasks[compileable].Cancel();
 
                 if(alsoClearFromTaskList)
+                {
+                    Tasks[compileable].Dispose();
                     Tasks.Remove(compileable);
+                }
             }
         }
 
