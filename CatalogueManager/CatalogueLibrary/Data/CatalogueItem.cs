@@ -4,8 +4,11 @@ using System.Configuration;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
@@ -66,6 +69,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// The ID of the parent <see cref="Catalogue"/> (dataset) to which this is a virtual column/column description
         /// </summary>
+        [Relationship(typeof(Catalogue),RelationshipType.SharedObject)]
         [DoNotExtractProperty]
         public int Catalogue_ID
         {
@@ -153,6 +157,7 @@ namespace CatalogueLibrary.Data
         /// e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core"/>) but only release the full postcode with 
         /// <see cref="ExtractionCategory.SpecialApprovalRequired"/>.
         /// </summary>
+        [Relationship(typeof(ColumnInfo), RelationshipType.IgnoreableLocalReference)]  //will appear as empty, then the user can guess from a table
         public int? ColumnInfo_ID
         {
             get { return _columnInfoID; }
@@ -265,6 +270,11 @@ namespace CatalogueLibrary.Data
             }
 
             ClearAllInjections();
+        }
+
+        internal CatalogueItem(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
         }
 
         public void InjectKnown(Catalogue instance)

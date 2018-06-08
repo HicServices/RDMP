@@ -46,8 +46,6 @@ namespace DataExportLibrary.DataRelease
             {
                 return Releaseability.ExtractFilesMissing;
             }
-
-            // TODO: Table can be polluted, how to check?? CHECK FOR SPURIOUS TABLES?
             
             return Releaseability.Undefined;
         }

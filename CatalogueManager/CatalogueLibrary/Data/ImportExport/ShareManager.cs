@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using CatalogueLibrary.Data.ImportExport.Exceptions;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 
 namespace CatalogueLibrary.Data.ImportExport
 {
@@ -23,10 +26,31 @@ namespace CatalogueLibrary.Data.ImportExport
 
         private const string PersistenceSeparator = "|";
 
-        public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public LocalReferenceGetterDelegate LocalReferenceGetter;
+
+        public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, LocalReferenceGetterDelegate localReferenceGetter = null)
         {
             RepositoryLocator = repositoryLocator;
             _catalogueRepository = RepositoryLocator.CatalogueRepository;
+            LocalReferenceGetter = localReferenceGetter ?? DefaultLocalReferenceGetter;
+        }
+
+        private int? DefaultLocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
+        {
+            var defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+
+
+            if(property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
+            {
+                var server = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                if (server == null)
+                    return null;
+
+                return server.ID;
+            }
+
+            throw new SharingException("No default implementation exists for LocalReferenceGetterDelegate for property " + property.Name);
+
         }
 
         /// <summary>
@@ -272,5 +296,24 @@ namespace CatalogueLibrary.Data.ImportExport
 
             return created;
         }
+
+        public int? GetLocalReference(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
+        {
+            if(property.DeclaringType == null)
+                throw new Exception("DeclaringType on Property '" + property + "' is null");
+
+            if (relationshipAttribute.Type != RelationshipType.LocalReference)
+                throw new Exception("Relationship was of Type " + relationshipAttribute.Type + " expected " + RelationshipType.LocalReference);
+
+            if(LocalReferenceGetter == null)
+                throw new Exception(
+                    string.Format("No LocalReferenceGetter has been set, cannot populate Property {0} {1}",
+                     property.Name,
+                     " on class " + property.DeclaringType.Name));
+
+            return LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
+        }
     }
+
+    public delegate int? LocalReferenceGetterDelegate(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition);
 }

@@ -343,7 +343,7 @@ namespace CohortManager.SubComponents
             //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
             Compiler.CancelTask(task, true);
             
-            RecreateAllTasks();
+            RecreateAllTasks(false);
 
             task = Compiler.AddTask(configOrContainer, _globals);
 
@@ -460,6 +460,10 @@ namespace CohortManager.SubComponents
                     MessageBox.Show("There are " + aliveCount +
                                     " Tasks currently executing, you must cancel them before closing");
                     e.Cancel = true;
+                }
+                else
+                {
+                    Compiler.CancelAllTasks(true);
                 }
             }
         }

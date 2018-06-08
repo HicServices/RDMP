@@ -283,6 +283,7 @@
     <Compile Include="Data\IAggregateTopX.cs" />
     <Compile Include="Data\IColumnInfo.cs" />
     <Compile Include="Data\IMasqueradeAs.cs" />
+    <Compile Include="Data\ImportExport\Exceptions\SharingException.cs" />
     <Compile Include="Data\ImportExport\ShareManager.cs" />
     <Compile Include="Data\ImportExport\ObjectExport.cs" />
     <Compile Include="Data\ImportExport\ObjectImport.cs" />

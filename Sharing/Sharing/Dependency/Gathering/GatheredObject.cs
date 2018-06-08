@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.ImportExport.Exceptions;
 using CatalogueLibrary.Data.Serialization;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -74,13 +75,17 @@ namespace Sharing.Dependency.Gathering
 
                 RelationshipAttribute attribute = relationshipFinder.GetAttribute(property);
 
-                //if it's a relationship
-                if (attribute != null)
+                //if it's a relationship to a shared object
+                if (attribute != null && attribute.Type == RelationshipType.SharedObject)
                 {
                     var idOfParent = property.GetValue(Object);
                     Type typeOfParent = attribute.Cref;
 
-                    var parent = branchParents.Single(d => d.Type == typeOfParent && d.ID.Equals(idOfParent));
+                    var parent = branchParents.SingleOrDefault(d => d.Type == typeOfParent && d.ID.Equals(idOfParent));
+
+                    if(parent == null)
+                        throw new SharingException("Property " + property + " on Type " + Object.GetType() + " is marked [Relationship] but we found no ShareDefinition amongst the current objects parents to satisfy this property");
+
                     relationshipProperties.Add(attribute, parent.SharingGuid);
                 }
                 else

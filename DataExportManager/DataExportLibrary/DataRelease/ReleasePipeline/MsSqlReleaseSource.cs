@@ -119,6 +119,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             {
                 throw new Exception("Database does not exist!");
             }
+
             foreach (var table in tables)
             {
                 var foundTable = _database.ExpectTable(table);
@@ -127,11 +128,14 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     throw new Exception("Table does not exist!");
                 }
             }
-            foreach (var discoveredTable in _database.DiscoverTables(false))
+
+            var spuriousTables = _database.DiscoverTables(false).Where(t => !tables.Contains(t.GetRuntimeName())).ToList();
+            if (spuriousTables.Any() && !notifier.OnCheckPerformed(new CheckEventArgs("Spurious table(s): " + String.Join(",", spuriousTables) + " found in the DB.",
+                                                                                      CheckResult.Warning,
+                                                                                      null,
+                                                                                      "Are you sure you want to continue the release process?")))
             {
-                if (!tables.Contains(discoveredTable.GetRuntimeName()))
-                    throw new Exception("Spurious table " + discoveredTable.GetRuntimeName() + " was found in the DB. " +
-                                        "Are you releasing ALL the extraction configuration which are part of the project?");
+                throw new Exception("Release aborted by user.");
             }
 
             DirectoryInfo sourceFolder = GetSourceFolder();

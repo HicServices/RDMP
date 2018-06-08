@@ -256,7 +256,7 @@ namespace DataExportManager.DataRelease
 
         private ReleaseData GetReleaseData()
         {
-            return new ReleaseData
+            return new ReleaseData(_activator.RepositoryLocator)
             {
                 ConfigurationsForRelease = ConfigurationsForRelease,
                 EnvironmentPotential = _environmentPotential,

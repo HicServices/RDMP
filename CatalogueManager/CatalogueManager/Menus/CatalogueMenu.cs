@@ -41,7 +41,9 @@ namespace CatalogueManager.Menus
             
 
             Items.Add(new ToolStripSeparator());
-            
+
+            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {catalogue}));
+
             Add(new ExecuteCommandCreateANOVersion(_activator, catalogue));
 
             /////////////////////////////////////////////////////////////Catalogue Items sub menu///////////////////////////

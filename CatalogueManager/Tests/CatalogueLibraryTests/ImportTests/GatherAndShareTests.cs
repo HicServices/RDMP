@@ -129,5 +129,82 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.IsTrue(gObj.Children.Any(d=>d.Object.Equals(lma1)));
             Assert.IsTrue(gObj.Children.Any(d => d.Object.Equals(lma2)));
         }
+
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void GatherAndShare_Catalogue_Test(bool goViaJson)
+        {
+            //Setup some objects under Catalogue that we can share
+            var cata = new Catalogue(CatalogueRepository, "Cata");
+            var catalogueItem1 = new CatalogueItem(CatalogueRepository, cata, "Ci1");
+            var catalogueItem2 = new CatalogueItem(CatalogueRepository, cata, "Ci2");
+
+            var tableInfo = new TableInfo(CatalogueRepository, "Myt");
+            var colInfo = new ColumnInfo(CatalogueRepository, "[Mt].[C1]", "varchar(10)", tableInfo);
+
+            catalogueItem1.ColumnInfo_ID = colInfo.ID;
+            catalogueItem1.SaveToDatabase();
+
+            var ei = new ExtractionInformation(CatalogueRepository, catalogueItem1, colInfo, "UPPER(C1) as Fish");
+
+            //the logging server has a system default so should have been populated
+            Assert.IsNotNull(cata.LiveLoggingServer_ID);
+
+            //Catalogue sharing should be allowed
+            Gatherer g = new Gatherer(RepositoryLocator);
+            Assert.IsTrue(g.CanGatherDependencies(cata));
+
+            //gather the objects depending on Catalogue as a tree
+            var gObj = g.GatherDependencies(cata);
+            Assert.AreEqual(2, gObj.Children.Count); //both cata items
+
+            //get the share definition
+            var shareManager = new ShareManager(RepositoryLocator);
+            var shareDefinition = gObj.ToShareDefinitionWithChildren(shareManager);
+
+            if (goViaJson)
+            {
+                var json =
+                    shareDefinition.Select(s => JsonConvertExtensions.SerializeObject(s, RepositoryLocator)).ToList();
+                shareDefinition =
+                    json.Select(
+                        j => JsonConvertExtensions.DeserializeObject(j, typeof (ShareDefinition), RepositoryLocator))
+                        .Cast<ShareDefinition>()
+                        .ToList();
+            }
+
+            //make a local change
+            cata.Name = "fishfish";
+            cata.SaveToDatabase();
+
+            //import the saved copy
+            shareManager.ImportSharedObject(shareDefinition);
+
+            //revert the memory copy and check it got overwritten with the original saved values
+            cata.RevertToDatabaseState();
+            Assert.AreEqual("Cata", cata.Name);
+
+            var exports = CatalogueRepository.GetAllObjects<ObjectExport>();
+            Assert.IsTrue(exports.Any());
+
+            //now delete and report
+            foreach (var d in exports)
+                d.DeleteInDatabase();
+
+            cata.DeleteInDatabase();
+
+            //none of these should now exist thanks to cascade deletes
+            Assert.IsFalse(cata.Exists());
+            Assert.IsFalse(catalogueItem1.Exists());
+            Assert.IsFalse(catalogueItem2.Exists());
+
+            //import the saved copy
+            var newObjects = shareManager.ImportSharedObject(shareDefinition).ToArray();
+
+            Assert.AreEqual("Cata", ((Catalogue) newObjects[0]).Name);
+            Assert.AreEqual("Ci1", ((CatalogueItem) newObjects[1]).Name);
+            Assert.AreEqual("Ci2", ((CatalogueItem) newObjects[2]).Name);
+        }
     }
 }

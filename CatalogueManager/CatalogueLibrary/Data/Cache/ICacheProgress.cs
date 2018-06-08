@@ -9,7 +9,7 @@ namespace CatalogueLibrary.Data.Cache
     /// <summary>
     /// See CacheProgress
     /// </summary>
-    public interface ICacheProgress : ISaveable, IDeleteable, IMapsDirectlyToDatabaseTable
+    public interface ICacheProgress : ISaveable, IDeleteable, IMapsDirectlyToDatabaseTable, INamed
     {
         int LoadProgress_ID { get; set; }
         int? PermissionWindow_ID { get; set; }

@@ -48,6 +48,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CommandExecution\ExecuteCommandExportObjectsToFile.cs" />
     <Compile Include="Dependency\ObjectSharingObscureDependencyFinder.cs" />
     <Compile Include="Dependency\SharedPluginImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,6 +84,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Sharing.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
