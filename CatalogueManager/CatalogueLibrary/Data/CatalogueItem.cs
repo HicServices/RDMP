@@ -157,7 +157,7 @@ namespace CatalogueLibrary.Data
         /// e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core"/>) but only release the full postcode with 
         /// <see cref="ExtractionCategory.SpecialApprovalRequired"/>.
         /// </summary>
-        [Relationship(typeof(ColumnInfo), RelationshipType.LocalReference)] 
+        [Relationship(typeof(ColumnInfo), RelationshipType.IgnoreableLocalReference)]  //will appear as empty, then the user can guess from a table
         public int? ColumnInfo_ID
         {
             get { return _columnInfoID; }

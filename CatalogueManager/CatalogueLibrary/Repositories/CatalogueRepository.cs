@@ -408,7 +408,7 @@ namespace CatalogueLibrary.Repositories
                 foreach (PropertyInfo prop in GetPropertyInfos(typeof(T)))
                 {
                     //don't update any ID columns or any with relationships on UPDATE
-                    if (propertiesDictionary.ContainsKey(prop.Name) && finder.GetAttribute(prop) != null)
+                    if (propertiesDictionary.ContainsKey(prop.Name) && finder.GetAttribute(prop) == null)
                     {
                         //sometimes json decided to swap types on you e.g. int64 for int32
                         var val = propertiesDictionary[prop.Name];
@@ -419,20 +419,19 @@ namespace CatalogueLibrary.Repositories
                             propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
                         
                         if (val != null && val != DBNull.Value && !propertyType.IsInstanceOfType(val))
+                            if (propertyType == typeof(CatalogueFolder))
+                            {
+                                //will be passed as a string
+                                string folderAsString = shareDefinition.Properties["Folder"].ToString();
+                                val = new CatalogueFolder((Catalogue)(object)toCreate, folderAsString);
+                            }
+                            else
                             if (typeof(Enum).IsAssignableFrom(propertyType))
                                 val = Enum.ToObject(propertyType, val);//if the property is an enum
                             else
                                 val = Convert.ChangeType(val, propertyType); //the property is not an enum
 
-
-                        if (propertyType == typeof (CatalogueFolder))
-                        {
-                            //will be passed as a string
-                            string folderAsString = shareDefinition.Properties["Folder"].ToString();
-                            shareDefinition.Properties["Folder"] = new CatalogueFolder((Catalogue)(object)toCreate, folderAsString);
-                        }
-
-
+                        
                         prop.SetValue(toCreate, val); //if it's a shared property (most properties) use the new shared value being imported
                         
                     }
