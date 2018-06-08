@@ -61,17 +61,24 @@ namespace CohortManagerLibrary.Execution
 
             if (_rIds != null && !_rIds.IsClosed)
             {
-                _rIds.Close();
-                if (Identifiers != null)
-                    Identifiers.Clear();
+                try
+                {
+                    _rIds.Close();
+                }
+                catch (InvalidOperationException)
+                {
+                }
             }
 
             if (_rCumulative != null && !_rCumulative.IsClosed)
             {
-                _rCumulative.Close();
-
-                if (CumulativeIdentifiers != null)
-                    CumulativeIdentifiers.Clear();
+                try
+                {
+                    _rCumulative.Close();
+                }
+                catch (InvalidOperationException)
+                {
+                }
             }
             
         }
