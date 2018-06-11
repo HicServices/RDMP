@@ -332,6 +332,7 @@
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateReleaseDocument.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReleaseProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetProjectExtractionDirectory.cs" />
