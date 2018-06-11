@@ -270,6 +270,7 @@
     <Compile Include="Integration\PipelineTests\Components\TransposerTests.cs" />
     <Compile Include="Integration\PipelineTests\PipelineArgumentTests.cs" />
     <Compile Include="Integration\PipelineTests\TestDataPipelineAssembler.cs" />
+    <Compile Include="Integration\PrematureLoadEnderTests.cs" />
     <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestQueryBuilding.cs" />
     <Compile Include="Integration\RuntimeTaskFactoryTests.cs" />
     <Compile Include="Integration\SingleJobPipelineTests.cs" />
