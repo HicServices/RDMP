@@ -77,13 +77,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
             return toReturn;
         }
-
-        public override DbConnectionStringBuilder ChangeDatabase(DbConnectionStringBuilder builder, string newDatabase)
-        {
-            builder[DatabaseKeyName] = newDatabase;
-            return builder;
-        }
-
+        
         public override DbConnectionStringBuilder EnableAsync(DbConnectionStringBuilder builder)
         {
             return builder; //no special stuff required?

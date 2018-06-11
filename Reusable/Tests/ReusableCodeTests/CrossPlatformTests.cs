@@ -353,6 +353,20 @@ namespace ReusableCodeTests
             Assert.IsFalse(tbl.DiscoverColumn("Field2").IsPrimaryKey);
         }
 
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void ChangeDatabaseShouldNotAffectOriginalConnectionString_Test(DatabaseType type)
+        {
+            var database1 = GetCleanedServer(type, _dbName, out server, out database);
+            var stringBefore = database1.Server.Builder.ConnectionString;
+
+            var database2 = database1.Server.ExpectDatabase("SomeOtherDb");
+
+            Assert.AreEqual(stringBefore, database1.Server.Builder.ConnectionString);
+        }
+
+
         [Test]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]

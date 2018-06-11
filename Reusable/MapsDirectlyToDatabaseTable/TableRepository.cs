@@ -1014,12 +1014,21 @@ namespace MapsDirectlyToDatabaseTable
             return (DateTime)o;
         }
 
+        Dictionary<Type,bool> _knownSupportedTypes = new Dictionary<Type,bool>();
+        object oLockKnownTypes = new object();
+
         public bool SupportsObjectType(Type type)
         {
-            if(!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
+            if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
                 throw new NotSupportedException("This method can only be passed Types derrived from IMapsDirectlyToDatabaseTable");
-
-            return DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists();
+            
+            lock (oLockKnownTypes)
+            {
+                if (!_knownSupportedTypes.ContainsKey(type))
+                    _knownSupportedTypes.Add(type,DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());
+            
+                return _knownSupportedTypes[type];
+            }
         }
 
 

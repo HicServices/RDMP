@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
@@ -36,7 +39,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 try
                 {
                     ShareManager shareManager = new ShareManager(Activator.RepositoryLocator);
-
+                    shareManager.LocalReferenceGetter = LocalReferenceGetter;
                     foreach (var f in ofd.FileNames)
                         using (var stream = File.Open(f, FileMode.Open))
                             shareManager.ImportSharedObject(stream);
@@ -46,6 +49,32 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                     ExceptionViewer.Show("Error importing file(s)",e);
                 }
             }
+        }
+
+        private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute,ShareDefinition shareDefinition)
+        {
+            MessageBox.Show("Choose a local object for '" + property + "' on " + Environment.NewLine
+                            +
+                            string.Join(Environment.NewLine,
+                                shareDefinition.Properties.Select(kvp => kvp.Key + ": " + kvp.Value)));
+
+            var requiredType = relationshipAttribute.Cref;
+
+            if (Activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(requiredType))
+            {
+                var selected = SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>());
+                if (selected != null)
+                    return selected.ID;
+            }
+
+            if (Activator.RepositoryLocator.DataExportRepository.SupportsObjectType(requiredType))
+            {
+                var selected = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>());
+                if (selected != null)
+                    return selected.ID;
+            }
+
+            return null;
         }
 
         public Image GetImage(IIconProvider iconProvider)
