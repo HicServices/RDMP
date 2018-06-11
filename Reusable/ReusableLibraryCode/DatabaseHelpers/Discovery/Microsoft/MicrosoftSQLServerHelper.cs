@@ -59,17 +59,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
         }
         #endregion
 
-        /// <summary>
-        /// Changes the database that the DbConnectionStringBuilder points at. This does not modify the original DbConnectionStringBuilder.
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="newDatabase"></param>
-        /// <returns></returns>
-        public override DbConnectionStringBuilder ChangeDatabase(DbConnectionStringBuilder builder, string newDatabase)
-        {
-            return new SqlConnectionStringBuilder(builder.ConnectionString) {InitialCatalog = newDatabase};
-        }
-
+        
         public override string[] ListDatabases(DbConnectionStringBuilder builder)
         {
             //create a copy so as not to corrupt the original
