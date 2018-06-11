@@ -40,7 +40,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             var newBuilder = GetConnectionStringBuilder(builder.ConnectionString);
             newBuilder[DatabaseKeyName] = newDatabase;
-            return builder;
+            return newBuilder;
         }
 
         public abstract string[] ListDatabases(DbConnectionStringBuilder builder);
