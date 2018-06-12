@@ -22,6 +22,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         IUpdateHelper UpdateHelper { get; set; }
 
         string GetRuntimeName(string s);
+        
+        /// <summary>
+        /// Ensures that the supplied single entity object e.g. "mytable" , "mydatabase, "[mydatabase]", "`mydatabase` etc is returned wrapped in appropriate qualifiers for
+        /// the database we are providing syntax for
+        /// </summary>
+        /// <param name="databaseOrTableName"></param>
+        /// <returns></returns>
+        string EnsureWrapped(string databaseOrTableName);
+
         string EnsureFullyQualified(string databaseName,string schemaName, string tableName);
         string EnsureFullyQualified(string databaseName, string schemaName,string tableName, string columnName, bool isTableValuedFunction = false);
         string Escape(string sql);

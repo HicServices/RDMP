@@ -21,6 +21,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             return toReturn.Length > 30 ? toReturn.Substring(0, 30) : toReturn;
 
         }
+
+        public override string EnsureWrappedImpl(string databaseOrTableName)
+        {
+            return "`" + GetRuntimeName(databaseOrTableName) + "`";
+        }
+
         public override TopXResponse HowDoWeAchieveTopX(int x)
         {
             return new TopXResponse("ROWNUM <= " + x, QueryComponent.WHERE);

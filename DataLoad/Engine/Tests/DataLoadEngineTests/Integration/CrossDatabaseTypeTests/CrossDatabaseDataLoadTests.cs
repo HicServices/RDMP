@@ -39,6 +39,10 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             var logManager = new LogManager(logServer);
             
             var db = GetCleanedServer(databaseType, "CrossDatabaseLoadTest");
+
+            var raw = db.Server.ExpectDatabase(db.GetRuntimeName() + "_RAW");
+            if(raw.Exists())
+                raw.ForceDrop();
             
             var dt = new DataTable("MyTable");
             dt.Columns.Add("Name");

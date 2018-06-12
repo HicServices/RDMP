@@ -87,6 +87,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return s.Substring(s.LastIndexOf(".") + 1).Trim('[', ']', '`');
         }
 
+        public string EnsureWrapped(string databaseOrTableName)
+        {
+            if(databaseOrTableName.Contains(DatabaseTableSeparator))
+                throw new Exception("Strings passed to EnsureWrapped cannot contain separators i.e. '" + DatabaseTableSeparator + "'");
+
+            return EnsureWrappedImpl(databaseOrTableName);
+        }
+
+        public abstract string EnsureWrappedImpl(string databaseOrTableName);
+
         public virtual string EnsureFullyQualified(string databaseName, string schema, string tableName)
         {
 

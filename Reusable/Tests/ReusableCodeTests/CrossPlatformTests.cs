@@ -422,7 +422,7 @@ namespace ReusableCodeTests
                 {
                     new DatabaseColumnRequest("Field1",new DatabaseTypeRequest(typeof(string),int.MaxValue)), //varchar(max)
                     new DatabaseColumnRequest("Field2",new DatabaseTypeRequest(typeof(DateTime))),
-                    new DatabaseColumnRequest("Field3",new DatabaseTypeRequest(typeof(int)))
+                    new DatabaseColumnRequest("Field3",new DatabaseTypeRequest(typeof(int))){AllowNulls=false}
                 });
 
                 var dt = new DataTable();
@@ -450,6 +450,40 @@ namespace ReusableCodeTests
 
                 Assert.AreEqual(3, tbl.GetRowCount());
                 Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
+
+                tbl.Truncate();
+
+                tbl.CreatePrimaryKey(tbl.DiscoverColumn("Field3"));
+
+                Assert.IsTrue(tbl.DiscoverColumn("Field3").IsPrimaryKey);
+
+            }
+            finally
+            {
+                database.ForceDrop();
+            }
+        }
+
+        [TestCase(DatabaseType.MYSQLServer, "_-o-_", ":>0<:","-_")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "_-o-_", ":>0<:", "-_")]
+        public void HorribleColumnNames(DatabaseType type, string horribleDatabaseName, string horribleTableName,string columnName)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            database = server.ExpectDatabase(horribleDatabaseName);
+            database.Create(true);
+            try
+            {
+                var dt = new DataTable();
+                dt.Columns.Add(horribleTableName);
+                dt.Rows.Add(new[] {"dave"});
+                dt.PrimaryKey = new[] {dt.Columns[0]};
+
+                var tbl = database.CreateTable(horribleTableName, dt);
+                
+                Assert.AreEqual(1, tbl.GetRowCount());
+
+                Assert.IsTrue(tbl.DiscoverColumns().Single().IsPrimaryKey);
 
             }
             finally
