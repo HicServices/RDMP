@@ -80,6 +80,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             var server = database.Server;
             var syntaxHelper = server.GetQuerySyntaxHelper();
 
+            tableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(), null, tableName);
+
             bodySql += "CREATE TABLE " + tableName + "(" + Environment.NewLine;
 
             foreach (var col in columns)

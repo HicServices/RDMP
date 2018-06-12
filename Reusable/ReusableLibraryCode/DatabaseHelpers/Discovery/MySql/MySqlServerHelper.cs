@@ -101,7 +101,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             using(var con = new MySqlConnection(b.ConnectionString))
             {
                 con.Open();
-                GetCommand("CREATE DATABASE " + newDatabaseName.GetRuntimeName(),con).ExecuteNonQuery();
+                GetCommand("CREATE DATABASE `" + newDatabaseName.GetRuntimeName() + "`",con).ExecuteNonQuery();
             }
         }
 

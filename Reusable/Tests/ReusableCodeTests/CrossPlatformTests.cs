@@ -408,6 +408,56 @@ namespace ReusableCodeTests
             Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
         }
 
+        [TestCase(DatabaseType.MYSQLServer, "_-o-_",":>0<:")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "_-o-_", ":>0<:")]
+        public void HorribleDatabaseAndTableNames(DatabaseType type,string horribleDatabaseName, string horribleTableName)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            database = server.ExpectDatabase(horribleDatabaseName);
+            database.Create(true);
+            try
+            {
+                var tbl = database.CreateTable(horribleTableName, new[]
+                {
+                    new DatabaseColumnRequest("Field1",new DatabaseTypeRequest(typeof(string),int.MaxValue)), //varchar(max)
+                    new DatabaseColumnRequest("Field2",new DatabaseTypeRequest(typeof(DateTime))),
+                    new DatabaseColumnRequest("Field3",new DatabaseTypeRequest(typeof(int)))
+                });
+
+                var dt = new DataTable();
+                dt.Columns.Add("Field1");
+                dt.Columns.Add("Field2");
+                dt.Columns.Add("Field3");
+
+                dt.Rows.Add(new[] { "dave", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "dave", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "dave", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "dave", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "frank", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "frank", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "frank", "2001-01-01", "51" });
+
+                Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
+                Assert.AreEqual(0, tbl.GetRowCount());
+
+                using (var insert = tbl.BeginBulkInsert())
+                    insert.Upload(dt);
+
+                Assert.AreEqual(7, tbl.GetRowCount());
+
+                tbl.MakeDistinct();
+
+                Assert.AreEqual(3, tbl.GetRowCount());
+                Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
+
+            }
+            finally
+            {
+                database.ForceDrop();
+            }
+        }
+
         [TestFixtureTearDown]
         public void TearDown()
         {

@@ -32,7 +32,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             using (var con = (MySqlConnection) database.Server.GetConnection())
             {
                 con.Open();
-                MySqlCommand cmd = new MySqlCommand("DROP DATABASE " + database.GetRuntimeName(),con);
+                MySqlCommand cmd = new MySqlCommand("DROP DATABASE `" + database.GetRuntimeName() +"`",con);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -59,7 +59,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
             List<DiscoveredTable> tables = new List<DiscoveredTable>();
 
-            var cmd = new MySqlCommand("SHOW TABLES in " + database, (MySqlConnection) connection);
+            var cmd = new MySqlCommand("SHOW TABLES in `" + database +"`", (MySqlConnection) connection);
             cmd.Transaction = transaction as MySqlTransaction;
 
             var r = cmd.ExecuteReader();
