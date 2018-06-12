@@ -1050,7 +1050,8 @@ namespace CatalogueLibrary.Data
                         string sql;
                         try
                         {
-                            QueryBuilder qb = new QueryBuilder("TOP 1", null);
+                            QueryBuilder qb = new QueryBuilder(null, null);
+                            qb.TopX = 1;
                             qb.AddColumnRange(extractionInformations);
                     
                             sql = qb.SQL;
