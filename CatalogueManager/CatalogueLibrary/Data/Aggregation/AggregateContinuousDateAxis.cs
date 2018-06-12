@@ -1,14 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-
-using MySql.Data.MySqlClient;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueLibrary.Data.Aggregation

@@ -594,7 +594,6 @@
     <EmbeddedResource Include="Wizard\CreateNewDataExtractionProjectUI.resx">
       <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

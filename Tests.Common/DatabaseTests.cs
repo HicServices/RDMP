@@ -114,7 +114,7 @@ namespace Tests.Common
             CreateScratchArea();
 
             if (_mySqlServer != null)
-                DiscoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer));
+                DiscoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer){SslMode = MySqlSslMode.None});
 
             if(_oracleServer != null)
                 DiscoveredOracleServer = new DiscoveredServer(new OracleConnectionStringBuilder(_oracleServer));

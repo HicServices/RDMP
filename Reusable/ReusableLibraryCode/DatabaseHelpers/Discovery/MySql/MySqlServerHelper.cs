@@ -51,6 +51,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
             builder.AllowUserVariables = true;
             builder.AllowBatch = true;
+
+            if(builder.Server == "localhost")
+                builder.SslMode = MySqlSslMode.None;
+
             return builder;
         }
 

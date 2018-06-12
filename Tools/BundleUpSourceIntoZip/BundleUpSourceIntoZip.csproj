@@ -50,9 +50,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(TargetDir)BundleUpSourceIntoZip.exe $(ProjectDir)..\..\ $(ProjectDir)output\</PostBuildEvent>
