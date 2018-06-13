@@ -168,10 +168,5 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
         {
             return string.Format(@"alter table {0} rename to {1};", discoveredTable.GetRuntimeName(),newName);
         }
-
-        public override void MakeDistinct(DiscoveredTable discoveredTable)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

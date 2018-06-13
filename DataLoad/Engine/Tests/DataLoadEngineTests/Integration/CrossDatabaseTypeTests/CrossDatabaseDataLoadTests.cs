@@ -28,6 +28,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 {
     public class CrossDatabaseDataLoadTests :DatabaseTests
     {
+        [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
         public void Load(DatabaseType databaseType)
