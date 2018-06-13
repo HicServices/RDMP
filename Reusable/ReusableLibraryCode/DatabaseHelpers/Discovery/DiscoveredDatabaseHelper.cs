@@ -80,19 +80,25 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             var server = database.Server;
             var syntaxHelper = server.GetQuerySyntaxHelper();
 
-            bodySql += "CREATE TABLE " + tableName + "(" + Environment.NewLine;
+            //the name sans brackets (hopefully they didn't pass any brackets)
+            tableName = syntaxHelper.GetRuntimeName(tableName);
+
+            //the name uflly specified e.g. [db]..[tbl] or `db`.`tbl` - See Test HorribleColumnNames
+            var fullyQualifiedName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(), null, tableName);
+
+            bodySql += "CREATE TABLE " + fullyQualifiedName + "(" + Environment.NewLine;
 
             foreach (var col in columns)
             {
                 var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
 
                 //add the column name and accompanying datatype
-                bodySql += syntaxHelper.GetRuntimeName(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL") + "," + Environment.NewLine;
+                bodySql += syntaxHelper.EnsureWrapped(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL") + "," + Environment.NewLine;
             }
 
             var pks = columns.Where(c => c.IsPrimaryKey).ToArray();
             if (pks.Any())
-                bodySql += GetPrimaryKeyDeclarationSql(tableName, pks);
+                bodySql += GetPrimaryKeyDeclarationSql(tableName, pks,syntaxHelper);
             
             if (foreignKeyPairs != null)
             {
@@ -110,16 +116,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             //@"    CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID) REFERENCES Persons(PersonID) on delete cascade";
             var otherTable = foreignKeyPairs.Values.Select(v => v.Table).Distinct().Single();
-
-            string constraintName = "FK_" + tableName + "_" + otherTable;
+            
+            string constraintName = MakeSaneConstraintName("FK_", tableName + "_" + otherTable);
 
             return string.Format(
 @"CONSTRAINT {0} FOREIGN KEY ({1})
 REFERENCES {2}({3}) {4}",
                                                constraintName,
-                string.Join(",",foreignKeyPairs.Keys.Select(k=>syntaxHelper.GetRuntimeName(k.ColumnName))),
-                otherTable.GetRuntimeName(),
-                string.Join(",",foreignKeyPairs.Values.Select(v=>v.GetRuntimeName())),
+                string.Join(",",foreignKeyPairs.Keys.Select(k=>syntaxHelper.EnsureWrapped(k.ColumnName))),
+                otherTable.GetFullyQualifiedName(),
+                string.Join(",",foreignKeyPairs.Values.Select(v=>syntaxHelper.EnsureWrapped(v.GetRuntimeName()))),
                 cascadeDelete ? " on delete cascade": ""
                 );
         }
@@ -128,9 +134,24 @@ REFERENCES {2}({3}) {4}",
 
         public abstract void CreateBackup(DiscoveredDatabase discoveredDatabase, string backupName);
 
-        protected virtual string GetPrimaryKeyDeclarationSql(string tableName, DatabaseColumnRequest[] pks)
+        protected virtual string GetPrimaryKeyDeclarationSql(string tableName, DatabaseColumnRequest[] pks, IQuerySyntaxHelper syntaxHelper)
         {
-            return string.Format(" CONSTRAINT PK_{0} PRIMARY KEY ({1})",tableName,string.Join(",",pks.Select(c=>c.ColumnName))) + "," + Environment.NewLine;
+            var constraintName = MakeSaneConstraintName("PK_", tableName);
+
+            return string.Format(" CONSTRAINT {0} PRIMARY KEY ({1})", constraintName, string.Join(",", pks.Select(c => syntaxHelper.EnsureWrapped(c.ColumnName)))) + "," + Environment.NewLine;
+        }
+
+        private string MakeSaneConstraintName(string prefix, string tableName)
+        {
+            var constraintName = QuerySyntaxHelper.MakeHeaderNameSane(tableName);
+
+            if (string.IsNullOrWhiteSpace(constraintName))
+            {
+                Random r = new Random();
+                constraintName = "Constraint" + r.Next(10000);
+            }
+
+            return prefix + constraintName;
         }
     }
 }

@@ -74,7 +74,7 @@ setlocal enableDelayedExpansion
 for /f %%a in ('dir %CODE_DROP%environment.files\%ENV%\*.config /b /a-d ') do (
 	set FILENAME=%%a
 	echo Copying %CODE_DROP%environment.files\%ENV%\%%a to %CODE_DROP%Tests\!FILENAME:%ENV%.=!
-	xcopy %CODE_DROP%environment.files\%ENV%\%%a %CODE_DROP%Tests\!FILENAME:%ENV%.=! /Y
+	copy %CODE_DROP%environment.files\%ENV%\%%a %CODE_DROP%Tests\!FILENAME:%ENV%.=! /Y
 )
 
 :: Also need to copy CommitAssembly exe config

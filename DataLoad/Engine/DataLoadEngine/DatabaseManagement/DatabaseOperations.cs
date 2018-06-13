@@ -19,12 +19,19 @@ namespace DataLoadEngine.DatabaseManagement
     {
         public static void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, string srcTableName, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls,PreLoadDiscardedColumn[]  dillutionColumns)
         {
-            DiscoveredTable discoveredSourceTable = srcDatabaseInfo.ExpectTable(srcTableName);
+            DiscoveredTable sourceTable = srcDatabaseInfo.ExpectTable(srcTableName);
             
-            if (!discoveredSourceTable.Exists())
+            if (!sourceTable.Exists())
                 throw new Exception("Table " + srcTableName + " does not exist on " + srcDatabaseInfo);
 
-            var sql = discoveredSourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/); 
+            var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/); 
+
+            
+            //new table will start with the same name as the as the old scripted one
+            DiscoveredTable newTable = destDatabaseInfo.ExpectTable(destTableName);
+
+            //replace all references to the old table with the new table name
+            sql = sql.Replace(sourceTable.GetFullyQualifiedName(), newTable.GetFullyQualifiedName());
 
             using (var con = destDatabaseInfo.Server.GetConnection())
             {
@@ -33,15 +40,8 @@ namespace DataLoadEngine.DatabaseManagement
                 cmd.ExecuteNonQuery();
             }
 
-            //new table will start with the same name as the as the old scripted one
-            DiscoveredTable newTable = destDatabaseInfo.ExpectTable(srcTableName);
-
             if (!newTable.Exists())
-                throw new Exception("Table '" + srcTableName + "' not found in " + destDatabaseInfo + " despite running table creation SQL!");
-
-            //if user wants to rename it
-            if (!srcTableName.Equals(destTableName))
-                newTable.Rename(destTableName);
+                throw new Exception("Table '" + newTable + "' not found in " + destDatabaseInfo + " despite running table creation SQL!");
             
             foreach (DiscoveredColumn column in newTable.DiscoverColumns())
             {

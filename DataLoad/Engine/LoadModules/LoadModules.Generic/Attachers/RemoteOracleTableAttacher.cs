@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary;
-using DataLoadEngine.Attachers;
 using Oracle.ManagedDataAccess.Client;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers

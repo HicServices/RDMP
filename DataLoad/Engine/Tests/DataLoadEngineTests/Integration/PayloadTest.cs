@@ -42,7 +42,9 @@ namespace DataLoadEngineTests.Integration
             var lmd = new LoadMetadata(CatalogueRepository, "Loading");
             lmd.LocationOfFlatFiles = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo("delme"), true).RootPath.FullName;
             lmd.SaveToDatabase();
-            
+
+            CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
+
             b.catalogue.LoadMetadata_ID = lmd.ID;
             b.catalogue.LoggingDataTask = "TestPayloadInjection";
             b.catalogue.SaveToDatabase();

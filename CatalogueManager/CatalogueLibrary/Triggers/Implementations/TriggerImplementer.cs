@@ -91,7 +91,7 @@ namespace CatalogueLibrary.Triggers.Implementations
             //script original table
             string createTableSQL = _table.ScriptTableCreation(true, true, true);
 
-            string toReplaceTableName = Regex.Escape("CREATE TABLE " + _table.GetRuntimeName());
+            string toReplaceTableName = Regex.Escape("CREATE TABLE " + _table.GetFullyQualifiedName());
 
             if (Regex.Matches(createTableSQL, toReplaceTableName).Count != 1)
                 throw new Exception("Expected to find 1 occurrence of " + toReplaceTableName + " in the SQL " + createTableSQL);

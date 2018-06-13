@@ -366,7 +366,6 @@
     <Folder Include="Checks\Notifiers\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Checks\Checking.cd" />
     <None Include="DataFlowPipeline\Components\Anonymisation.cd" />
     <None Include="DataProvider\ReadingFromCacheInDataLoad.cd" />

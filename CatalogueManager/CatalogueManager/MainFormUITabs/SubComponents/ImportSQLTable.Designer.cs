@@ -67,7 +67,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             this.groupBox1.Size = new System.Drawing.Size(654, 245);
             this.groupBox1.TabIndex = 159;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Import Microsoft SQL Table";
+            this.groupBox1.Text = "Import SQL Table";
             // 
             // label1
             // 

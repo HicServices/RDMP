@@ -18,7 +18,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 
             _bulkcopy = new SqlBulkCopy((SqlConnection)connection.Connection, SqlBulkCopyOptions.KeepIdentity, (SqlTransaction)connection.Transaction);
             _bulkcopy.BulkCopyTimeout = 50000;
-            _bulkcopy.DestinationTableName = _discoveredTable.GetRuntimeName();
+            _bulkcopy.DestinationTableName = _discoveredTable.GetFullyQualifiedName();
         }
 
         public int Upload(DataTable dt)

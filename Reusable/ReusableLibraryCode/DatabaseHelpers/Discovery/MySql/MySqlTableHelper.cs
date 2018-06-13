@@ -118,7 +118,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             var server = discoveredTable.Database.Server;
 
             var tableName = discoveredTable.GetFullyQualifiedName();
-            var tempTable = discoveredTable.Database.ExpectTable(discoveredTable.GetRuntimeName() + "_DistinctingTemp").GetRuntimeName();
+            var tempTable = discoveredTable.Database.ExpectTable(discoveredTable.GetRuntimeName() + "_DistinctingTemp").GetFullyQualifiedName();
 
             using (var con = server.BeginNewTransactedConnection())
             {

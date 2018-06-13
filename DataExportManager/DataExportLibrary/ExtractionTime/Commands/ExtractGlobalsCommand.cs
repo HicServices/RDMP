@@ -9,6 +9,10 @@ using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 
 namespace DataExportLibrary.ExtractionTime.Commands
 {
+    /// <summary>
+    /// Extraction command for the data export engine which mandates the extraction of all global (not dataset specific) files in an <see cref="ExtractionConfiguration"/> (e.g.
+    /// <see cref="CatalogueLibrary.Data.SupportingSQLTable"/>)
+    /// </summary>
     public class ExtractGlobalsCommand : IExtractCommand
     {
         private readonly Project project;

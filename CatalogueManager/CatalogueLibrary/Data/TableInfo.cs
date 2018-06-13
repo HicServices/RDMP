@@ -29,7 +29,7 @@ namespace CatalogueLibrary.Data
     /// <para>This class represents a constant for the RDMP and allows the system to detect when data analysts have randomly dropped/renamed columns without 
     /// telling anybody and present this information in a rational context to the systems user (see TableInfoSynchronizer).</para>
     /// </summary>
-    public class TableInfo : VersionedDatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>
+    public class TableInfo : VersionedDatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,ICheckable
     {
 
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
@@ -313,6 +313,10 @@ namespace CatalogueLibrary.Data
 
         public void Check(ICheckNotifier notifier)
         {
+            if (IsLookupTable())
+                if (IsPrimaryExtractionTable)
+                    notifier.OnCheckPerformed(new CheckEventArgs("Table is both a Lookup table AND is marked IsPrimaryExtractionTable",CheckResult.Fail));
+
             try
             {
                 TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(this);

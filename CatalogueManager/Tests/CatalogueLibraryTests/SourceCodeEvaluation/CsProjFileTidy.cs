@@ -11,7 +11,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
     {
         public List<string>  csFilesFound = new List<string>();
 
-        private Dictionary<string, int> _expectedToSee = new Dictionary<string,int>();
+        private Dictionary<string, int> _expectedToSee = new Dictionary<string,int>(StringComparer.InvariantCultureIgnoreCase);
 
         public List<string> UntidyMessages { get; set; }
 
@@ -150,7 +150,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 if (firstClassNameInFile.Contains("_Design"))
                     return;
 
-                if (!csFile.Name.Equals(firstClassNameInFile + ".cs"))
+                if (!csFile.Name.Equals(firstClassNameInFile + ".cs",StringComparison.CurrentCultureIgnoreCase))
                     UntidyMessages.Add("File " + csFile.FullName + " contains a class is called " + firstClassNameInFile + " (does not match file name of file)");
             }
 

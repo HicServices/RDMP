@@ -161,7 +161,7 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
 
         public override IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection)
         {
-            throw new NotImplementedException();
+            return new OracleBulkCopy(discoveredTable,connection);
         }
 
         protected override string GetRenameTableSql(DiscoveredTable discoveredTable, string newName)

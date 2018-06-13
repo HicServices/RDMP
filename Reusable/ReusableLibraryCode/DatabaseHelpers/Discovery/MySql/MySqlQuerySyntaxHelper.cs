@@ -21,6 +21,20 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             return result.ToLower();
         }
 
+        public override string EnsureWrappedImpl(string databaseOrTableName)
+        {
+            return "`" + GetRuntimeName(databaseOrTableName) + "`";
+        }
+
+        public override string EnsureFullyQualified(string databaseName, string schema, string tableName)
+        {
+            //if there is no schema address it as db..table (which is the same as db.dbo.table in Microsoft SQL Server)
+            if (!string.IsNullOrWhiteSpace(schema))
+                throw new NotSupportedException("Schema (e.g. .dbo. not supported by MySql)");
+
+            return "`" + GetRuntimeName(databaseName) + "`" + DatabaseTableSeparator + "`" + GetRuntimeName(tableName) + "`";
+        }
+
         public override string DatabaseTableSeparator
         {
             get { return "."; }

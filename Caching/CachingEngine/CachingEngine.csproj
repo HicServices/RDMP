@@ -180,7 +180,6 @@
     <Compile Include="BasicCache\NoSubdirectoriesCachePathResolver.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="CachingEngine.cd" />
     <None Include="packages.config" />
   </ItemGroup>

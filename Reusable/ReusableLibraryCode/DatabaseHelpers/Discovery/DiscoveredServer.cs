@@ -24,7 +24,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             //give helper a chance to mutilate the builder if he wants (also gives us a new copy of the builder incase anyone external modifies the old reference)
             Builder = Helper.GetConnectionStringBuilder(builder.ConnectionString);
         }
-        
+
+        public DiscoveredServer(string connectionString, DatabaseType databaseType)
+        {
+            Helper = new DatabaseHelperFactory(databaseType).CreateInstance();
+            Builder = Helper.GetConnectionStringBuilder(connectionString);
+        }
+
         public DbConnection GetConnection(IManagedTransaction transaction = null)
         {
             if (transaction != null)
@@ -154,7 +160,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return Name ;
         }
 
-        public void CreateDatabase(string newDatabaseName)
+        public DiscoveredDatabase CreateDatabase(string newDatabaseName)
         {
             //the database we will create - it's ok DiscoveredDatabase is IMightNotExist
             DiscoveredDatabase db = ExpectDatabase(newDatabaseName);
@@ -163,6 +169,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             
             if(!db.Exists())
                 throw new Exception("Helper tried to create database " + newDatabaseName + " but the database didn't exist after the creation attempt");
+
+            return db;
         }
 
         public IManagedConnection BeginNewTransactedConnection()

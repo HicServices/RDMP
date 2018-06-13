@@ -51,6 +51,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
             builder.AllowUserVariables = true;
             builder.AllowBatch = true;
+
+            if(builder.Server == "localhost")
+                builder.SslMode = MySqlSslMode.None;
+
             return builder;
         }
 
@@ -101,7 +105,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             using(var con = new MySqlConnection(b.ConnectionString))
             {
                 con.Open();
-                GetCommand("CREATE DATABASE " + newDatabaseName.GetRuntimeName(),con).ExecuteNonQuery();
+                GetCommand("CREATE DATABASE `" + newDatabaseName.GetRuntimeName() + "`",con).ExecuteNonQuery();
             }
         }
 
