@@ -15,23 +15,23 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable:BasicUICommandExecution,IAtomicCommand
     {
-        private readonly bool _autoImport;
+        private readonly bool _allowImportAsCatalogue;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="activator"></param>
-        /// <param name="autoImport">true to automatically create the catalogue without showing the UI</param>
-        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator,bool autoImport) : base(activator)
+        /// <param name="allowImportAsCatalogue">true to automatically create the catalogue without showing the UI</param>
+        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator,bool allowImportAsCatalogue) : base(activator)
         {
-            _autoImport = autoImport;
+            this._allowImportAsCatalogue = allowImportAsCatalogue;
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            var importTable = new ImportSQLTable(Activator,_autoImport);
+            var importTable = new ImportSQLTable(Activator,_allowImportAsCatalogue);
             importTable.ShowDialog();
         }
 
@@ -45,6 +45,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Creates a New Catalogue by associating it " +
                    "\r\n" +
                    "with an existing Dataset Table in your database";
+        }
+
+        public override string GetCommandName()
+        {
+            if (!_allowImportAsCatalogue)
+                return "Create New TableInfo By Importing Existing Data Table";
+
+            return base.GetCommandName();
         }
     }
 }
