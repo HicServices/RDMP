@@ -21,7 +21,6 @@ using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
-using Oracle.ManagedDataAccess.Client;
 using RDMPStartup;
 using RDMPStartup.Events;
 using ReusableLibraryCode;
@@ -117,7 +116,7 @@ namespace Tests.Common
                 DiscoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer){SslMode = MySqlSslMode.None});
 
             if(_oracleServer != null)
-                DiscoveredOracleServer = new DiscoveredServer(new OracleConnectionStringBuilder(_oracleServer));
+                DiscoveredOracleServer = new DiscoveredServer(_oracleServer,DatabaseType.Oracle);
         }
 
         
@@ -388,16 +387,7 @@ delete from {1}..Project
 
             database = server.ExpectDatabase(dbnName);
 
-            if (database.Exists())
-            {
-                foreach (DiscoveredTable discoveredTable in database.DiscoverTables(false))
-                    discoveredTable.Drop();
-
-                database.Drop();
-                Assert.IsFalse(database.Exists());
-            }
-
-            server.CreateDatabase(dbnName);
+            database.Create(true);
 
             server.ChangeDatabase(dbnName);
 

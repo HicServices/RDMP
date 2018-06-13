@@ -24,7 +24,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             //give helper a chance to mutilate the builder if he wants (also gives us a new copy of the builder incase anyone external modifies the old reference)
             Builder = Helper.GetConnectionStringBuilder(builder.ConnectionString);
         }
-        
+
+        public DiscoveredServer(string connectionString, DatabaseType databaseType)
+        {
+            Helper = new DatabaseHelperFactory(databaseType).CreateInstance();
+            Builder = Helper.GetConnectionStringBuilder(connectionString);
+        }
+
         public DbConnection GetConnection(IManagedTransaction transaction = null)
         {
             if (transaction != null)

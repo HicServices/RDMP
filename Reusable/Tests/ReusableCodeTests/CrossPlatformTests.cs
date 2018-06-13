@@ -18,7 +18,7 @@ namespace ReusableCodeTests
         DiscoveredDatabase database;
         
 
-        [Test]
+        [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
         public void TestTableCreation(DatabaseType type)
@@ -34,8 +34,8 @@ namespace ReusableCodeTests
 
             database.CreateTable(tbl.GetRuntimeName(), new[]
             {
-                new DatabaseColumnRequest("name", "varchar(10)", false){IsPrimaryKey=true},
-                new DatabaseColumnRequest("foreignName", "nvarchar(7)"){IsPrimaryKey=true},
+                new DatabaseColumnRequest("name", new DatabaseTypeRequest(typeof(string),10), false){IsPrimaryKey=true},
+                new DatabaseColumnRequest("foreignName", new DatabaseTypeRequest(typeof(string),7)){IsPrimaryKey=true},
                 new DatabaseColumnRequest("address", new DatabaseTypeRequest(typeof (string), 500)),
                 new DatabaseColumnRequest("dob", new DatabaseTypeRequest(typeof (DateTime)),false),
                 new DatabaseColumnRequest("score",
@@ -45,7 +45,7 @@ namespace ReusableCodeTests
 
             Assert.IsTrue(tbl.Exists());
 
-            var colsDictionary = tbl.DiscoverColumns().ToDictionary(k=>k.GetRuntimeName(),v=>v);
+            var colsDictionary = tbl.DiscoverColumns().ToDictionary(k=>k.GetRuntimeName(),v=>v,StringComparer.InvariantCultureIgnoreCase);
 
             var name = colsDictionary["name"];
             Assert.AreEqual(10,name.DataType.GetLengthIfString());
@@ -79,7 +79,14 @@ namespace ReusableCodeTests
 
             Assert.AreEqual(typeof(decimal), syntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(score.DataType.SQLType));
 
-            tbl.Drop();
+            //drop the database
+            database.ForceDrop();
+
+            //the database shouldn't exist anymore
+            Assert.IsFalse(database.Exists());
+
+            //and neither should the table
+            Assert.IsFalse(tbl.Exists());
         }
 
         
@@ -121,6 +128,7 @@ namespace ReusableCodeTests
             tbl.Drop();
         }
 
+        [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void ForeignKeyCreationTest(DatabaseType type)
@@ -162,13 +170,13 @@ namespace ReusableCodeTests
             {
                 con.Open();
 
-                var cmd = tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (100,'chucky')", con);
+                var cmd = tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetFullyQualifiedName() + " VALUES (100,'chucky')", con);
                 
                 //violation of fk
                 Assert.That(() => cmd.ExecuteNonQuery(), Throws.Exception);
 
-                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (1,'chucky')", con).ExecuteNonQuery();
-                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (1,'chucky2')", con).ExecuteNonQuery();
+                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetFullyQualifiedName() + " VALUES (1,'chucky')", con).ExecuteNonQuery();
+                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetFullyQualifiedName() + " VALUES (1,'chucky2')", con).ExecuteNonQuery();
             }
             
             Assert.AreEqual(2,tblParent.GetRowCount());
@@ -178,7 +186,7 @@ namespace ReusableCodeTests
             {
                 con.Open();
 
-                var cmd = tblParent.Database.Server.GetCommand("DELETE FROM " + tblParent.GetRuntimeName(), con);
+                var cmd = tblParent.Database.Server.GetCommand("DELETE FROM " + tblParent.GetFullyQualifiedName(), con);
                 cmd.ExecuteNonQuery();
             }
             
