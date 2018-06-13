@@ -172,7 +172,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             
             PrimeDestinationTypesBasedOnCatalogueTypes();
 
-            _destination.AllowResizingColumnsAtUploadTime = false;
+            _destination.AllowResizingColumnsAtUploadTime = true;
             _destination.PreInitialize(_destinationDatabase, listener);
 
             return _destination;
