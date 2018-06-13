@@ -54,7 +54,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             
             var tbl = db.CreateTable("MyTable",dt,new []
             {
-                new DatabaseColumnRequest("Name","varchar(20)",false), 
+                new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),20),false),
                 new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false)
             });
             Assert.AreEqual(3,tbl.GetRowCount());

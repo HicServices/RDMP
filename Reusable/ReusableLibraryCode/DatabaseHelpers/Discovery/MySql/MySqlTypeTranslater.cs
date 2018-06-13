@@ -4,15 +4,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
     public class MySqlTypeTranslater : TypeTranslater
     {
-        protected override string GetStringDataType(int? maxExpectedStringWidth)
+        public MySqlTypeTranslater() : base(4000, 4000)
         {
-            if (maxExpectedStringWidth == null)
-                return "varchar(4000)";
+        }
 
-            if (maxExpectedStringWidth > 8000)
-                return "text";
-
-            return "varchar(" + maxExpectedStringWidth + ")";
+        public override string GetStringDataTypeWithUnlimitedWidth()
+        {
+            return "text";
         }
     }
 }

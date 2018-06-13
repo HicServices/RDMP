@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Data;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {

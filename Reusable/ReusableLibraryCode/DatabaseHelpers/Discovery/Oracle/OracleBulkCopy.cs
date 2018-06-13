@@ -29,9 +29,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
                 string.Join(",", _columns.Select(c => ParameterSymbol + c.GetRuntimeName()))
                 );
 
+            var tt = _server.GetQuerySyntaxHelper().TypeTranslater;
+
             _cmd = _server.GetCommand(sql, connection);
             foreach (var c in _columns)
-                _server.AddParameterWithValueToCommand(ParameterSymbol + c.GetRuntimeName(), _cmd, DBNull.Value);
+            {
+                var p = _server.AddParameterWithValueToCommand(ParameterSymbol + c.GetRuntimeName(), _cmd, DBNull.Value);
+                p.DbType = tt.GetDbTypeForSQLDBType(c.DataType.SQLType);
+            }
 
             _cmd.Prepare();
         }
@@ -62,7 +67,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             {
                 //populate parameters for current row
                 foreach (var col in columnsAvailable)
-                    _cmd.Parameters[ParameterSymbol + col].Value = dataRow[col];
+                {
+                    var param = _cmd.Parameters[ParameterSymbol + col];
+
+                    //oracle isn't too bright when it comes to these kinds of things, see Test CreateDateColumnFromDataTable
+                    if (param.DbType == DbType.DateTime)
+                        param.Value = Convert.ToDateTime(dataRow[col]);
+                    else
+                    {
+                        param.Value = dataRow[col];
+                    }
+                }
 
                 //send query
                 affectedRows += _cmd.ExecuteNonQuery();

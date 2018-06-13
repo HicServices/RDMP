@@ -56,16 +56,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return cmd;
         }
 
-        public DbParameter GetParameter(string parameterName, DbCommand forCommand)
+        private DbParameter GetParameter(string parameterName)
         {
             return Helper.GetParameter(parameterName);
         }
 
-        public void AddParameterWithValueToCommand(string parameterName, DbCommand command, object valueForParameter)
+        public DbParameter AddParameterWithValueToCommand(string parameterName, DbCommand command, object valueForParameter)
         {
-            DbParameter dbParameter = GetParameter(parameterName, command);
+            DbParameter dbParameter = GetParameter(parameterName);
             dbParameter.Value = valueForParameter;
             command.Parameters.Add(dbParameter);
+            return dbParameter;
         }
 
         public DiscoveredDatabase ExpectDatabase(string database)
