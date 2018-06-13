@@ -95,7 +95,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 acceptedTimespanAtSomePoint = true;
         }
 
-        private bool havereceivedBonafideType = false;
+        public bool IsPrimedWithBonafideType = false;
         
 
         public void AdjustToCompensateForValue(object o)
@@ -107,7 +107,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 return;
 
             //if we have previously seen a hard typed value then we can't just change datatypes to something else!
-            if (havereceivedBonafideType)
+            if (IsPrimedWithBonafideType)
                 if (CurrentEstimate != o.GetType())
                 {
                     throw new Exception("We were adjusting to compensate for object " + o + " which is of Type " +
@@ -142,10 +142,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 //its not a string
 
                 //if we have yet to see a proper type
-                if (!havereceivedBonafideType)
+                if (!IsPrimedWithBonafideType)
                 {
                     CurrentEstimate = o.GetType();//get its type
-                    havereceivedBonafideType = true;
+                    IsPrimedWithBonafideType = true;
                 }
 
                 //While it might seem obvious that o.GetType() is compatible as it's ToString() we still need to measure decimal places for types like double and Int16 etc

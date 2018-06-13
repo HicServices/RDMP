@@ -71,6 +71,36 @@ namespace DataExportLibrary.Tests
             Assert.AreEqual("varchar(5)", t.GetSqlDBType(_translater));
         }
 
+        [TestCase("2013")]
+        [TestCase(2013)]
+        public void TestDatatypeComputer_DateTimeFromInt(object testValue)
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue("01/01/2001");
+            Assert.AreEqual(typeof(DateTime), t.CurrentEstimate);
+
+            t.AdjustToCompensateForValue(testValue);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+        }
+
+        [Test]
+        public void TestDatatypeComputer_IntToDateTime()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue("2013");
+            t.AdjustToCompensateForValue("01/01/2001");
+            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+        }
+
+        [Test]
+        public void TestDatatypeComputer_IntToDateTime_ThrowsException()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(2013); //if we pass an hard type...
+
+            Assert.Throws<Exception>(() => t.AdjustToCompensateForValue("01/01/2001")); //...then we don't accept strings anymore
+        }
+
         [Test]
         public void TestDatatypeComputer_DateTime()
         {

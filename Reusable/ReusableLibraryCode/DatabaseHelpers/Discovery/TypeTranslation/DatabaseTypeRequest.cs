@@ -14,11 +14,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public static readonly ReadOnlyCollection<Type> PreferenceOrder = new ReadOnlyCollection<Type>(new Type[]
         {
             typeof(bool),
-            typeof (int),
-            typeof (decimal),
+            typeof(int),
+            typeof(decimal),
+
             typeof(TimeSpan),
-            typeof (DateTime), //ironically Convert.ToDateTime likes int and floats as valid dates -- nuts
-            typeof (string)
+            typeof(DateTime), //ironically Convert.ToDateTime likes int and floats as valid dates -- nuts
+            
+            typeof(string)
         });
 
         public Type CSharpType { get; private set; }

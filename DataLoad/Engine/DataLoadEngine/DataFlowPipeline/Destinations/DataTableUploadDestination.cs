@@ -185,23 +185,51 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 var requiredForCurrentBatch = dataTypeDictionaryCurrent[column.GetRuntimeName()].GetTypeRequest();
                 var currentType = typeTranslater.GetDataTypeRequestForSQLDBType(column.DataType.SQLType);
 
-                //work out the most degraded type of the two (new batches may require less relaxed datatypes than the current allows for after all and we don't want to attempt to alter back
-                //up the priority hierarchy and result in truncating live data!
-                DatabaseTypeRequest newRequirement = DatabaseTypeRequest.Max(currentType, requiredForCurrentBatch);
-
-                //get the sql string for the max type
-                string newSqlTypeRequired = typeTranslater.GetSQLDBTypeForCSharpType(newRequirement);
-
-                //if the SQL data type has degraded e.g. varchar(10) to varchar(50) or datetime to varchar(20)
-                if (newSqlTypeRequired != column.DataType.SQLType)
+                if (!requiredForCurrentBatch.CSharpType.Equals(currentType.CSharpType) && dataTypeDictionaryCurrent[column.GetRuntimeName()].IsPrimedWithBonafideType && tbl.IsEmpty())
                 {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + column.DataType.SQLType + "' to '" + newSqlTypeRequired + "'"));
+                    // alter anyway (through drop and add to be on the asfe side) if we have a bonafide type and the table is empty.
+                    tbl.DropColumn(column);
+                    tbl.AddColumn(column.GetRuntimeName(), requiredForCurrentBatch, false, AlterTimeout);
 
-                    string sql = column.Helper.GetAlterColumnToSql(column, newSqlTypeRequired, column.AllowNulls);
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Executing SQL '" + sql + "'"));
-                    var cmd = tbl.Database.Server.GetCommand(sql, _managedConnection);
-                    cmd.CommandTimeout = AlterTimeout;
-                    cmd.ExecuteNonQuery();
+                    //listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + column.DataType.SQLType + "' to '" + newForcedType + "'"));
+
+                    //string sql = column.Helper.GetAlterColumnToSql(column, newForcedType, column.AllowNulls);
+                    //listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Executing SQL '" + sql + "'"));
+                    //var cmd = tbl.Database.Server.GetCommand(sql, _managedConnection);
+                    //cmd.CommandTimeout = AlterTimeout;
+                    //try
+                    //{
+                    //    cmd.ExecuteNonQuery();
+                    //}
+                    //catch (SqlException e)
+                    //{
+                    //    if (e.Message.Contains("Operand type clash")) // we cannot alter this types into another, need to drop and recreate!
+                    //    {
+                    //        tbl.DropColumn(column);
+                    //        tbl.AddColumn(column.GetRuntimeName(), requiredForCurrentBatch, false, AlterTimeout);
+                    //    }
+                    //}
+                }
+                else
+                {
+                    //work out the most degraded type of the two (new batches may require less relaxed datatypes than the current allows for after all and we don't want to attempt to alter back
+                    //up the priority hierarchy and result in truncating live data!
+                    DatabaseTypeRequest newRequirement = DatabaseTypeRequest.Max(currentType, requiredForCurrentBatch);
+
+                    //get the sql string for the max type
+                    string newSqlTypeRequired = typeTranslater.GetSQLDBTypeForCSharpType(newRequirement);
+
+                    //if the SQL data type has degraded e.g. varchar(10) to varchar(50) or datetime to varchar(20)
+                    if (newSqlTypeRequired != column.DataType.SQLType)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + column.DataType.SQLType + "' to '" + newSqlTypeRequired + "'"));
+
+                        string sql = column.Helper.GetAlterColumnToSql(column, newSqlTypeRequired, column.AllowNulls);
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Executing SQL '" + sql + "'"));
+                        var cmd = tbl.Database.Server.GetCommand(sql, _managedConnection);
+                        cmd.CommandTimeout = AlterTimeout;
+                        cmd.ExecuteNonQuery();
+                    }   
                 }
             }
         }
