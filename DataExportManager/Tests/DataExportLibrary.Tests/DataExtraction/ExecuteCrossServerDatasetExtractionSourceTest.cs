@@ -25,8 +25,8 @@ namespace DataExportLibrary.Tests.DataExtraction
             var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
             //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-            Assert.AreEqual(@"ReleaseID,Result
-" + _cohortKeysGenerated[_cohortKeysGenerated.Keys.First()] + @",1", File.ReadAllText(r.OutputFile).Trim());
+            Assert.AreEqual(@"ReleaseID,Name,DateOfBirth
+" + _cohortKeysGenerated[_cohortKeysGenerated.Keys.First()] + @",Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim());
 
             File.Delete(r.OutputFile);
         }
@@ -78,13 +78,14 @@ SET @ProjectNumber=1;
 SELECT DISTINCT 
 
 [tempdb]..[Cohort].[ReleaseID] AS ReleaseID,
-[{0}ScratchArea]..[TestTable].[Result]
+[{0}ScratchArea]..[TestTable].[Name],
+[{0}ScratchArea]..[TestTable].[DateOfBirth]
 FROM 
 [{0}ScratchArea]..[TestTable]
 INNER JOIN [tempdb]..[Cohort] ON [{0}ScratchArea]..[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID] collate Latin1_General_BIN
 WHERE
 [tempdb]..[Cohort].[cohortDefinition_id]=-599
-",TestDatabaseNames.Prefix);
+", TestDatabaseNames.Prefix);
 
             var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort.ExternalCohortTable_ID);
             string origValue = e.Database;
