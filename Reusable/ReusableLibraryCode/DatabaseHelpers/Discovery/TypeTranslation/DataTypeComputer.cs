@@ -27,11 +27,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
         public int Length
         {
-            get { return Math.Max(_stringLength, numbersAfterDecimalPlace + numbersBeforeDecimalPlace + 1); }
+            get { return Math.Max(_stringLength, NumbersAfterDecimalPlace + NumbersBeforeDecimalPlace + 1); }
         }
 
-        public int numbersBeforeDecimalPlace { get; private set; }
-        public int numbersAfterDecimalPlace { get; private set; }
+        public int NumbersBeforeDecimalPlace { get; private set; }
+        public int NumbersAfterDecimalPlace { get; private set; }
 
         private bool acceptedTimespanAtSomePoint = false;
 
@@ -50,12 +50,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         HashSet<Type> _compatibleTypes = new HashSet<Type>(new[]{typeof(bool),typeof(int),typeof(decimal)});
 
         /// <summary>
-        /// Matches any number which looks like a proper decimal but has leading zeroes e.g. 012837 but does not match when there are
-        /// decimal places or other characters e.g. it wouldn't match 0.00123.  This is used to preserve leading zeroes in integers (desired
-        /// because it could be a serial number or otherwise important leading 0).  In this case the DataTypeComputer will use varchar(x) to
-        /// represent the column instead of decimal(x,y)
+        /// Matches any number which looks like a proper decimal but has leading zeroes e.g. 012837 including.  Also matches if there is a
+        /// decimal point (optionally followed by other digits).  It must match at least 2 digits at the start e.g. 01.01 would be matched
+        /// but 0.01 wouldn't be matched (that's a legit float).  This is used to preserve leading zeroes in input (desired because it could
+        /// be a serial number or otherwise important leading 0).  In this case the DataTypeComputer will use varchar(x) to represent the 
+        /// column instead of decimal(x,y).
+        /// 
+        /// <para>Also allows for starting with a negative sign e.g. -01.01 would be matched as a string</para>
+        /// <para>Also allows for leading / trailing whitespace</para>
+        /// 
         /// </summary>
-        Regex zeroPrefixedNumber = new Regex(@"^0+[1-9]+");
+        Regex zeroPrefixedNumber = new Regex(@"^\s*-?0+[1-9]+\.?[0-9]*\s*$");
 
         /// <summary>
         /// Creates a new DataType 
@@ -64,8 +69,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public DataTypeComputer(int minimumLengthToMakeCharacterFields)
         {
             _stringLength = minimumLengthToMakeCharacterFields;
-            numbersBeforeDecimalPlace = -1;
-            numbersAfterDecimalPlace = -1;
+            NumbersBeforeDecimalPlace = -1;
+            NumbersAfterDecimalPlace = -1;
 
             CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[0];
         }
@@ -102,8 +107,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
             if (digits != null)
             {
-                numbersBeforeDecimalPlace = digits.Item1;
-                numbersAfterDecimalPlace = digits.Item2;
+                NumbersBeforeDecimalPlace = digits.Item1;
+                NumbersAfterDecimalPlace = digits.Item2;
             }
 
             if (currentEstimatedType == typeof (TimeSpan))
@@ -139,9 +144,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 //if the current estimate is unacceptable
                 while (!IsAcceptableAs(CurrentEstimate, oAsString))
                 {
-                    //everyone loves strings, you can fit anything into them
-                    if(CurrentEstimate == typeof(string))
-                        throw new Exception("Value '" + oAsString + "' was reported as incompatible with string type.  How?");
+                    //everyone loves strings, you can fit anything into them... IsAcceptableAs can change the CurrentEstimate e.g. with ChangeEstimateDirectlyToString
+                    if (CurrentEstimate == typeof (string))
+                        break;
                     
                     ChangeEstimateToNext();
                 }
@@ -186,6 +191,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 else
                     CurrentEstimate = nextEstiamte; //else we are ok with the next estimate because it is compatible
             }
+        }
+
+        private void ChangeEstimateDirectlyToString()
+        {
+            CurrentEstimate = typeof (string);
         }
 
 
@@ -245,12 +255,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 {
                     //we must preserve leading zeroes
                     if (IsFreakilyZeroPrefixedNumber(value))
+                    {
+                        ChangeEstimateDirectlyToString();
                         return false;
+                    }
 
                     var t = Convert.ToInt32(value);
                     
                     //we could switch from int to decimal in which case we need to store number of decimal places before incase we get 1000 then 0.1 then 1 and then end we should end on decimal(5,1) not decimal(2,1)
-                    numbersBeforeDecimalPlace = Math.Max(numbersBeforeDecimalPlace, t.ToString().Length);
+                    NumbersBeforeDecimalPlace = Math.Max(NumbersBeforeDecimalPlace, t.ToString().Length);
                     
                     return true;
                 }
@@ -263,7 +276,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 try
                 {
                     if(IsFreakilyZeroPrefixedNumber(value))
+                    {
+                        ChangeEstimateDirectlyToString();
                         return false;
+                    }
 
                     var t = decimal.Parse(value);
 
@@ -273,8 +289,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                     GetDecimalPlaces(t, out before, out after);
 
                     //could be whole number with no decimal
-                    numbersBeforeDecimalPlace = Math.Max(numbersBeforeDecimalPlace, before);
-                    numbersAfterDecimalPlace = Math.Max(numbersAfterDecimalPlace, after);
+                    NumbersBeforeDecimalPlace = Math.Max(NumbersBeforeDecimalPlace, before);
+                    NumbersAfterDecimalPlace = Math.Max(NumbersAfterDecimalPlace, after);
                     
                     return true;
                 }
@@ -347,7 +363,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return new DatabaseTypeRequest(
                 CurrentEstimate,
                 Length == -1 ? (int?) null : Length,
-                new Tuple<int, int>(numbersBeforeDecimalPlace, numbersAfterDecimalPlace));
+                new Tuple<int, int>(NumbersBeforeDecimalPlace, NumbersAfterDecimalPlace));
         }
 
         /// <summary>
