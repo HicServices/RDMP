@@ -33,8 +33,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public int NumbersBeforeDecimalPlace { get; private set; }
         public int NumbersAfterDecimalPlace { get; private set; }
 
-        private bool acceptedTimespanAtSomePoint = false;
-
         public bool IsPrimedWithBonafideType = false;
 
         /// <summary>
@@ -110,9 +108,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 NumbersBeforeDecimalPlace = digits.Item1;
                 NumbersAfterDecimalPlace = digits.Item2;
             }
-
-            if (currentEstimatedType == typeof (TimeSpan))
-                acceptedTimespanAtSomePoint = true;
         }
 
 
@@ -212,13 +207,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                     //if it parses as a date 
                     if (DateTime.TryParse(value, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out t))
                     {
-                        bool toReturn = (t.Year == 1 && t.Month == 1 && t.Day == 1);//without any ymd component then it's a date...  this means 00:00 is a valid TimeSpan too 
-                        
-                        //if we ever accept a TimeSpan then we have to fallback to string if we get a date afterwards otherwise we will be treating previous values of time only as DateTime which usually results in C#/TSQL/SQL Server using todays date for the date part which is bad
-                        if (toReturn && !acceptedTimespanAtSomePoint)
-                            acceptedTimespanAtSomePoint = true;
-                        
-                        return toReturn;
+                        return (t.Year == 1 && t.Month == 1 && t.Day == 1);//without any ymd component then it's a date...  this means 00:00 is a valid TimeSpan too 
                     }
                     
                     return false;
@@ -232,9 +221,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 try
                 {
                     //never accept as a date if we previously accepted as a TimeSpan
-                    if (acceptedTimespanAtSomePoint)
+                    if (_validTypesSeen.Contains(typeof(TimeSpan)))
                         return false;
-
+                    
                     DateTime t;
                     return DateTime.TryParse(value, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault,out t);
 

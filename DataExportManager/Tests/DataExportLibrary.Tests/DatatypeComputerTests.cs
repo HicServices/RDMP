@@ -1,7 +1,9 @@
 ﻿using System;
+using Google.Protobuf.WellKnownTypes;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using Type = System.Type;
 
 namespace DataExportLibrary.Tests
 {
@@ -90,6 +92,45 @@ namespace DataExportLibrary.Tests
 
             t.AdjustToCompensateForValue("2013");
             Assert.AreEqual(typeof(string), t.CurrentEstimate);
+        }
+
+        //Tests system being happy to sign off in the orders bool=>int=>decimal but nothing else
+        [TestCase("true", typeof(bool), "11", typeof(int))]
+        [TestCase("1", typeof(int), "1.1",typeof(decimal))]
+        [TestCase("true", typeof(bool), "1.1", typeof(decimal))]
+        public void TestDataTypeComputer_FallbackCompatible(string input1, Type expectedTypeAfterFirstInput, string input2, Type expectedTypeAfterSecondInput)
+        {
+            var t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(input1);
+            
+            Assert.AreEqual(expectedTypeAfterFirstInput,t.CurrentEstimate);
+            
+            t.AdjustToCompensateForValue(input2);
+            Assert.AreEqual(expectedTypeAfterSecondInput, t.CurrentEstimate);
+        }
+
+        //Tests system being angry at having signed off on a bool=>int=>decimal then seeing a valid non string type (e.g. DateTime)
+        //under these circumstances it should go directly to System.String
+        [TestCase("1",typeof(int),"2001-01-01")]
+        [TestCase("true", typeof(bool), "2001-01-01")]
+        [TestCase("1.1", typeof(decimal), "2001-01-01")]
+        [TestCase("1.1", typeof(decimal), "10:00am")]
+        [TestCase("2001-1-1", typeof(DateTime), "10:00am")]
+        public void TestDataTypeComputer_FallbackIncompatible(string input1, Type expectedTypeAfterFirstInput, string input2)
+        {
+            var t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(input1);
+
+            Assert.AreEqual(expectedTypeAfterFirstInput, t.CurrentEstimate);
+
+            t.AdjustToCompensateForValue(input2);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+
+            //now check it in reverse just to be sure
+            t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(input2);
+            t.AdjustToCompensateForValue(input1);
+            Assert.AreEqual(typeof(string),t.CurrentEstimate);
         }
 
         [Test]
@@ -236,6 +277,7 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(input);
 
             Assert.AreEqual(expectedType, t.CurrentEstimate);
+            Assert.AreEqual(input.Length,t.Length);
         }
 
         [Test]
