@@ -11,6 +11,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -54,6 +55,7 @@ namespace CatalogueLibrary.Data
         private int? _identifierDumpServer_ID;
         private bool _isTableValuedFunction;
 
+        [Sql]
         public string Name
         {
             get { return _name; }
@@ -69,6 +71,8 @@ namespace CatalogueLibrary.Data
             get { return _server; }
             set { SetField(ref _server, value); }
         }
+
+        [Sql]
         public string Database
         {
             get { return _database; }

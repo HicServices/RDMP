@@ -107,8 +107,8 @@ GO
 USE {0}
 
 CREATE TABLE [dbo].[Cohort](
-       [PrivateID] [char](10) NOT NULL,
-       [ReleaseID] [char](10) NULL,
+       [PrivateID] [varchar](10) NOT NULL,
+       [ReleaseID] [varchar](10) NULL,
        [cohortDefinition_id] [int] NOT NULL,
 CONSTRAINT [PK_Cohort] PRIMARY KEY CLUSTERED 
 (
