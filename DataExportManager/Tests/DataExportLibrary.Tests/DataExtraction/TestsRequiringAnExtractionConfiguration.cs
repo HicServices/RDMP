@@ -22,6 +22,7 @@ using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -108,7 +109,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
             dt.Rows.Add(new object[] {_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01"});
 
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestTable", dt);
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
             
             CatalogueItem[] cataItems;
             _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);

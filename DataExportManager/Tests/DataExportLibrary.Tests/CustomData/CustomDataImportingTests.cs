@@ -89,9 +89,11 @@ namespace DataExportLibrary.Tests.CustomData
             {
                 var dt = new DataTable();
                 dt.Columns.Add("PrivateID");
-                dt.Columns.Add("Result");
-                dt.Rows.Add(new object[] {"Priv_12345", 1});
-                dt.Rows.Add(new object[] {"Priv_wtf11", 2});
+                dt.Columns.Add("Name");
+                dt.Columns.Add("DateOfBirth");
+
+                dt.Rows.Add(new object[] {"Priv_12345", "Bob","2001-01-01"});
+                dt.Rows.Add(new object[] {"Priv_wtf11", "Frank","2001-10-29"});
                 blk.Upload(dt);
             }
             
@@ -106,9 +108,13 @@ namespace DataExportLibrary.Tests.CustomData
                 
             var lines = File.ReadAllLines(mainDataTableCsv.FullName);
 
-            Assert.AreEqual("ReleaseID,Result,SuperSecretThing", lines[0]);
-            Assert.AreEqual("Pub_11ftw,2,the wizard of OZ was a man behind a machine", lines[1]);
-            Assert.AreEqual("Pub_54321,1,monkeys can all secretly fly", lines[2]);
+            Assert.AreEqual("ReleaseID,Name,DateOfBirth,SuperSecretThing", lines[0]);
+
+            var bobLine = lines.Single(l => l.StartsWith("Pub_54321,Bob"));
+            var frankLine = lines.Single(l => l.StartsWith("Pub_11ftw,Frank"));
+
+            Assert.AreEqual("Pub_54321,Bob,2001-01-01,monkeys can all secretly fly", bobLine);
+            Assert.AreEqual("Pub_11ftw,Frank,2001-10-29,the wizard of OZ was a man behind a machine", frankLine);
 
             asExtractable.DeleteInDatabase();
         }
@@ -157,9 +163,11 @@ namespace DataExportLibrary.Tests.CustomData
             {
                 var dt = new DataTable();
                 dt.Columns.Add("PrivateID");
-                dt.Columns.Add("Result");
-                dt.Rows.Add(new object[] { "Priv_12345", 1 });
-                dt.Rows.Add(new object[] { "Priv_wtf11", 2 });
+                dt.Columns.Add("Name");
+                dt.Columns.Add("DateOfBirth");
+
+                dt.Rows.Add(new object[] { "Priv_12345", "Bob", "2001-01-01" });
+                dt.Rows.Add(new object[] { "Priv_wtf11", "Frank", "2001-10-29" });
                 blk.Upload(dt);
             }
 
@@ -174,8 +182,8 @@ namespace DataExportLibrary.Tests.CustomData
 
             var lines = File.ReadAllLines(mainDataTableCsv.FullName);
 
-            Assert.AreEqual("ReleaseID,Result", lines[0]);
-            Assert.AreEqual("Pub_54321,1", lines[1]);
+            Assert.AreEqual("ReleaseID,Name,DateOfBirth", lines[0]);
+            Assert.AreEqual("Pub_54321,Bob,2001-01-01", lines[1]);
             Assert.AreEqual(2,lines.Length);
 
             

@@ -57,7 +57,7 @@ namespace DataExportLibrary.Tests.DataExtraction
                 Assert.IsNull(host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token));
 
                 Assert.AreEqual(0,dt.Rows.Count);
-                Assert.AreEqual(2, dt.Columns.Count);
+                Assert.AreEqual(3, dt.Columns.Count);
             }
             else
             {
