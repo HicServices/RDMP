@@ -169,7 +169,6 @@
     <Compile Include="DataExtraction\TestCohortRefreshing.cs" />
     <Compile Include="DataExtraction\TestsRequiringAnExtractionConfiguration.cs" />
     <Compile Include="DataUserTests.cs" />
-    <Compile Include="ExecuteExtractionToDatabaseTest.cs" />
     <Compile Include="ExtractionConfigurationTest.cs" />
     <Compile Include="DatatypeComputerTests.cs" />
     <Compile Include="ImportFileTests.cs" />
