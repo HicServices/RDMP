@@ -25,7 +25,7 @@ namespace CatalogueLibrary.Triggers.Implementations
                 case DatabaseType.MYSQLServer:
                     return new MySqlTriggerImplementer(table, createDataLoadRunIDAlso);
                 case DatabaseType.Oracle:
-                    throw new NotImplementedException();
+                    return new MySqlTriggerImplementer(table, createDataLoadRunIDAlso);
                 default:
                     throw new ArgumentOutOfRangeException("databaseType");
             }

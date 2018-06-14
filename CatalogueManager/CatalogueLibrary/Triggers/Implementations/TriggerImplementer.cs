@@ -91,13 +91,13 @@ namespace CatalogueLibrary.Triggers.Implementations
             //script original table
             string createTableSQL = _table.ScriptTableCreation(true, true, true);
 
-            string toReplaceTableName = Regex.Escape("CREATE TABLE " + _table.GetFullyQualifiedName());
+            string toReplaceTableName = "CREATE TABLE " + _table.GetFullyQualifiedName();
 
-            if (Regex.Matches(createTableSQL, toReplaceTableName).Count != 1)
-                throw new Exception("Expected to find 1 occurrence of " + toReplaceTableName + " in the SQL " + createTableSQL);
+            if (!createTableSQL.Contains(toReplaceTableName))
+                throw new Exception("Expected to find occurrence of " + toReplaceTableName + " in the SQL " + createTableSQL);
 
             //rename table
-            createTableSQL = Regex.Replace(createTableSQL, toReplaceTableName, "CREATE TABLE " + _archiveTable);
+            createTableSQL = createTableSQL.Replace(toReplaceTableName, "CREATE TABLE " + _archiveTable.GetFullyQualifiedName());
 
             string toRemoveIdentities = "IDENTITY\\(\\d+,\\d+\\)";
 

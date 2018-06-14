@@ -133,8 +133,7 @@ namespace DataLoadEngine.Checks.Checkers
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Could not get list of columns on STAGING/LIVE for TableInfo " + tableInfo, CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs("Load Checks Crashed " + tableInfo, CheckResult.Fail, e));
             }
         }
 

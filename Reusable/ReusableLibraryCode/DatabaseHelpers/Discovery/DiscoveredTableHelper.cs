@@ -22,7 +22,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public virtual void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls,int timeout)
         {
-            var cmd = table.Database.Server.GetCommand("ALTER TABLE " + table + " ADD " + name + " " + dataType + " " + (allowNulls ? "NULL" : "NOT NULL"), connection);
+            var cmd = table.Database.Server.GetCommand("ALTER TABLE " + table.GetFullyQualifiedName() + " ADD " + name + " " + dataType + " " + (allowNulls ? "NULL" : "NOT NULL"), connection);
             cmd.CommandTimeout = timeout;
             cmd.ExecuteNonQuery();
         }

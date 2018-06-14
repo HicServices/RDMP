@@ -49,7 +49,7 @@ namespace CatalogueLibrary.Triggers.Implementations
             var sql = string.Format(@"CREATE TRIGGER {0} BEFORE UPDATE ON {1} FOR EACH ROW
 {2};", 
        GetTriggerName(),
-       _table,
+       _table.GetFullyQualifiedName(),
        CreateTriggerBody());
 
             using (var con = _server.GetConnection())
@@ -67,7 +67,7 @@ namespace CatalogueLibrary.Triggers.Implementations
         {
             return string.Format(@"BEGIN
     INSERT INTO {0} SET {1},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
-  END", _archiveTable,
+  END", _archiveTable.GetFullyQualifiedName(),
                 string.Join(",", _columns.Select(c => c.GetRuntimeName() + "=OLD." + c.GetRuntimeName())));
         }
 
