@@ -151,7 +151,7 @@ namespace LoadModules.Generic.Attachers
 
             try
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "About to attach file " + _locations.AttachMdfPath + " as a database to server " + builder.DataSource));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to attach file " + _locations.AttachMdfPath + " as a database to server " + builder.DataSource));
                 _attachConnection.Open();
             }
             catch (Exception e)
