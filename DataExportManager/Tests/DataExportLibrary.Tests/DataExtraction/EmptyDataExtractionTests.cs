@@ -85,7 +85,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
             //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-            Assert.AreEqual(@"ReleaseID,Result", File.ReadAllText(r.OutputFile).Trim());
+            Assert.AreEqual(@"ReleaseID,Name,DateOfBirth", File.ReadAllText(r.OutputFile).Trim());
 
             Assert.AreEqual(1, _request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution));
             File.Delete(r.OutputFile);

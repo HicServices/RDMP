@@ -71,15 +71,13 @@ namespace DataExportLibrary.Tests
             Assert.AreEqual("varchar(5)", t.GetSqlDBType(_translater));
         }
 
-        [TestCase("2013")]
-        [TestCase(2013)]
-        public void TestDatatypeComputer_DateTimeFromInt(object testValue)
+        public void TestDatatypeComputer_DateTimeFromInt()
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("01/01/2001");
             Assert.AreEqual(typeof(DateTime), t.CurrentEstimate);
 
-            t.AdjustToCompensateForValue(testValue);
+            t.AdjustToCompensateForValue("2013");
             Assert.AreEqual(typeof(string), t.CurrentEstimate);
         }
 
@@ -92,13 +90,22 @@ namespace DataExportLibrary.Tests
             Assert.AreEqual(typeof(string), t.CurrentEstimate);
         }
 
-        [Test]
-        public void TestDatatypeComputer_IntToDateTime_ThrowsException()
+        [TestCase("fish",32)]
+        [TestCase(32, "fish")]
+        [TestCase("2001-01-01",2001)]
+        [TestCase(2001, "2001-01-01")]
+        [TestCase("2001", 2001)]
+        [TestCase(2001, "2001")]
+        public void TestDatatypeComputer_MixingTypes_ThrowsException(object o1, object o2)
         {
-            DataTypeComputer t = new DataTypeComputer();
-            t.AdjustToCompensateForValue(2013); //if we pass an hard type...
+            //if we pass an hard type...
+            //...then we don't accept strings anymore
 
-            Assert.Throws<Exception>(() => t.AdjustToCompensateForValue("01/01/2001")); //...then we don't accept strings anymore
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(o1); 
+
+            var ex = Assert.Throws<DataTypeComputerException>(() => t.AdjustToCompensateForValue(o2)); 
+            Assert.IsTrue(ex.Message.Contains("mixed type"));
         }
 
         [Test]
@@ -210,7 +217,7 @@ namespace DataExportLibrary.Tests
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue((Int16)5);
-            var ex = Assert.Throws<Exception>(()=>t.AdjustToCompensateForValue((Int32)1000));
+            var ex = Assert.Throws<DataTypeComputerException>(()=>t.AdjustToCompensateForValue((Int32)1000));
 
             Assert.IsTrue(ex.Message.Contains("We were adjusting to compensate for object 1000 which is of Type System.Int32 , we were previously passed a System.Int16 type, is your column of mixed type? this is unacceptable"));
         }

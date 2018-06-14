@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
@@ -33,6 +34,20 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public int numbersAfterDecimalPlace { get; private set; }
 
         private bool acceptedTimespanAtSomePoint = false;
+
+        public bool IsPrimedWithBonafideType = false;
+
+        /// <summary>
+        /// Previous data types we have seen and used to adjust our CurrentEstimate.  It is important to record these, because if we see
+        /// an int and change our CurrentEstimate to int then we can't change our CurrentEstimate to datetime later on because that's not
+        /// compatible with int. See test TestDatatypeComputer_IntToDateTime
+        /// </summary>
+        HashSet<Type> _validTypesSeen = new HashSet<Type>();
+
+        /// <summary>
+        /// Types which can be converted into one another without breaking
+        /// </summary>
+        HashSet<Type> _compatibleTypes = new HashSet<Type>(new[]{typeof(bool),typeof(int),typeof(decimal)});
 
         /// <summary>
         /// Matches any number which looks like a proper decimal but has leading zeroes e.g. 012837 but does not match when there are
@@ -95,8 +110,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 acceptedTimespanAtSomePoint = true;
         }
 
-        public bool IsPrimedWithBonafideType = false;
-        
 
         public void AdjustToCompensateForValue(object o)
         {
@@ -110,7 +123,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             if (IsPrimedWithBonafideType)
                 if (CurrentEstimate != o.GetType())
                 {
-                    throw new Exception("We were adjusting to compensate for object " + o + " which is of Type " +
+                    throw new DataTypeComputerException("We were adjusting to compensate for object " + o + " which is of Type " +
                                         o.GetType() + " , we were previously passed a " + CurrentEstimate +
                                         " type, is your column of mixed type? this is unacceptable");
                 }
@@ -123,23 +136,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 if(string.IsNullOrWhiteSpace(oAsString))
                     return;
 
-                int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate);
-
-                for (int i = indexOfCurrentPreference; i < DatabaseTypeRequest.PreferenceOrder.Count; i++)
+                //if the current estimate is unacceptable
+                while (!IsAcceptableAs(CurrentEstimate, oAsString))
                 {
-                    Debug.Assert(CurrentEstimate == DatabaseTypeRequest.PreferenceOrder[i]);
-                    //try it as current estimate
-                    bool canConvert = IsAcceptableAs(CurrentEstimate, oAsString);
+                    //everyone loves strings, you can fit anything into them
+                    if(CurrentEstimate == typeof(string))
+                        throw new Exception("Value '" + oAsString + "' was reported as incompatible with string type.  How?");
                     
-                    if (canConvert)
-                        break;//it is acceptable
-                    else
-                        CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[i + 1];//try the next type because this one isn't working -- 
+                    ChangeEstimateToNext();
                 }
+
+                _validTypesSeen.Add(CurrentEstimate);
             }
             else
             {
                 //its not a string
+                if(_validTypesSeen.Any())
+                    throw new DataTypeComputerException("We were adjusting to compensate for hard Typed object '" + o + "' which is of Type " + o.GetType() + ", but previously we were passed string values, is your column of mixed type? that is unacceptable");
 
                 //if we have yet to see a proper type
                 if (!IsPrimedWithBonafideType)
@@ -152,8 +165,29 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 IsAcceptableAs(o.GetType(), o.ToString());
             }
         }
-        
-        
+
+        private void ChangeEstimateToNext()
+        {
+            int current = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate);
+            
+            //if we have never seen any good data just try the next one
+            if(!_validTypesSeen.Any())
+                CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[current + 1];
+            else
+            {
+                //we have seen some good data before, but we have seen something that doesn't fit with the CurrentEstimate so
+                //we need to degrade the Estimate to a new Type that is compatible with all the Types previously seen
+                
+                var nextEstiamte = DatabaseTypeRequest.PreferenceOrder[current + 1];
+                
+                //if the next Type is not part of the compatible Types then we must use string
+                if (!_compatibleTypes.Contains(nextEstiamte))
+                    CurrentEstimate = typeof (string);
+                else
+                    CurrentEstimate = nextEstiamte; //else we are ok with the next estimate because it is compatible
+            }
+        }
+
 
         private bool IsAcceptableAs(Type type, string value)
         {
