@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class HICProjectDirectoryNode: IDirectoryInfoNode
+    public class HICProjectDirectoryNode: IDirectoryInfoNode, IOrderable
     {
         public LoadMetadata LoadMetadata { get; set; }
 
@@ -45,5 +46,7 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
         {
             return (LoadMetadata != null ? LoadMetadata.GetHashCode() : 0);
         }
+
+        public int Order { get { return 3; } set{} }
     }
 }
