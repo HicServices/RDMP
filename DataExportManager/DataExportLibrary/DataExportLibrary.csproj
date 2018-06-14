@@ -263,6 +263,8 @@
     <Compile Include="DataRelease\FlatFileReleasePotential.cs" />
     <Compile Include="DataRelease\MsSqlExtractionReleasePotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\FlatFileReleaseSource.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecutePkSynthesizerDatasetExtractionSource.cs" />
+    <Compile Include="Spontaneous\SpontaneousColumn.cs" />
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />
@@ -379,9 +381,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Spontaneous\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

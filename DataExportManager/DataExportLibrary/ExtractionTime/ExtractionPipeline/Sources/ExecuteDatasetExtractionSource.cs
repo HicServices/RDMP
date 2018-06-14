@@ -68,7 +68,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         public Dictionary<ExtractableColumn, ExtractTimeTransformationObserved> ExtractTimeTransformationsObserved;
         private DbDataCommandDataFlowSource _hostedSource;
 
-        private void Initialize(ExtractDatasetCommand request)
+        protected virtual void Initialize(ExtractDatasetCommand request)
         {
             Request = request;
 
