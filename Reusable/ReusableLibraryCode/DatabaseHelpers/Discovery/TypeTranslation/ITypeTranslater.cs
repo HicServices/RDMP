@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -19,6 +20,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// <param name="request"></param>
         /// <returns></returns>
         string GetSQLDBTypeForCSharpType(DatabaseTypeRequest request);
+
+        /// <summary>
+        /// Returns the System.Data.DbType (e.g. DbType.String) for the specified proprietary database type (e.g. "varchar(max)")
+        /// </summary>
+        /// <param name="sqlType"></param>
+        /// <returns></returns>
+        DbType GetDbTypeForSQLDBType(string sqlType);
 
         /// <summary>
         /// Translates a database proprietary type e.g. 'decimal(10,2)' into a C# type 'typeof(String)'

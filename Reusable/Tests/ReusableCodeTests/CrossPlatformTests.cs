@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -273,6 +274,7 @@ namespace ReusableCodeTests
             }
         }
 
+        [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void CreateMaxVarcharColumns(DatabaseType type)
@@ -294,6 +296,52 @@ namespace ReusableCodeTests
             Assert.GreaterOrEqual(tbl.DiscoverColumn("Field1").DataType.GetLengthIfString(),4000);
             Assert.GreaterOrEqual(tbl.DiscoverColumn("Field2").DataType.GetLengthIfString(), 1000); // unknown size should be at least 1k? that seems sensible
             Assert.AreEqual(10,tbl.DiscoverColumn("Field6").DataType.GetLengthIfString());
+        }
+
+
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void CreateMaxVarcharColumnFromDataTable(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+            
+            DataTable dt = new DataTable();
+            dt.Columns.Add("MassiveColumn");
+            
+            StringBuilder sb = new StringBuilder("Amaa");
+            for (int i = 0; i < 10000; i++)
+                sb.Append(i);
+
+            dt.Rows.Add(sb.ToString());
+
+
+            var tbl=  database.CreateTable("MassiveTable", dt);
+
+            Assert.IsTrue(tbl.Exists());
+            Assert.GreaterOrEqual(tbl.DiscoverColumn("MassiveColumn").DataType.GetLengthIfString(),8000);
+
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(sb.ToString(),dt.Rows[0][0]);
+        }
+
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void CreateDateColumnFromDataTable(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("DateColumn");
+            dt.Rows.Add("2001-01-22");
+
+            var tbl = database.CreateTable("DateTable", dt);
+
+            Assert.IsTrue(tbl.Exists());
+
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(new DateTime(2001,01,22), dt.Rows[0][0]);
         }
 
         [TestCase(DatabaseType.MYSQLServer)]

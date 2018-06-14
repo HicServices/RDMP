@@ -1,4 +1,5 @@
-﻿using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Aggregation;
+﻿using System;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
@@ -39,7 +40,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
         public override string GetScalarFunctionSql(MandatoryScalarFunctions function)
         {
-            throw new System.NotImplementedException();
+            switch (function)
+            {
+                case MandatoryScalarFunctions.GetTodaysDate:
+                    return "SYSDATE";
+                default:
+                    throw new ArgumentOutOfRangeException("function");
+            }
         }
 
         public override string DatabaseTableSeparator

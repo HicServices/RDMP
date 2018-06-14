@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 
@@ -21,7 +22,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public virtual void AddColumn(DiscoveredTable table, DbConnection connection, string name, string dataType, bool allowNulls,int timeout)
         {
-            var cmd = table.Database.Server.GetCommand("ALTER TABLE " + table + " ADD " + name + " " + dataType + " " + (allowNulls ? "NULL" : "NOT NULL"), connection);
+            var cmd = table.Database.Server.GetCommand("ALTER TABLE " + table.GetFullyQualifiedName() + " ADD " + name + " " + dataType + " " + (allowNulls ? "NULL" : "NOT NULL"), connection);
             cmd.CommandTimeout = timeout;
             cmd.ExecuteNonQuery();
         }
@@ -75,7 +76,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public virtual void CreatePrimaryKey(DiscoveredTable table, DiscoveredColumn[] discoverColumns, IManagedConnection connection)
         {
-            string sql = string.Format("ALTER TABLE {0} ADD PRIMARY KEY ({1});",
+            string sql = string.Format("ALTER TABLE {0} ADD PRIMARY KEY ({1})",
                      table.GetFullyQualifiedName(),
                     string.Join(",", discoverColumns.Select(c => c.GetRuntimeName()))
                     );
@@ -87,6 +88,32 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         protected abstract string GetRenameTableSql(DiscoveredTable discoveredTable, string newName);
 
-        public abstract void MakeDistinct(DiscoveredTable discoveredTable);
+        public virtual void MakeDistinct(DiscoveredTable discoveredTable)
+        {
+            var server = discoveredTable.Database.Server;
+
+            //note to future developers, this method has horrible side effects e.g. column defaults might be recalculated, foreign key CASCADE Deletes might happen
+            //to other tables we can help the user not make such mistakes with this check.
+            if(discoveredTable.DiscoverColumns().Any(c => c.IsPrimaryKey))
+                throw new NotSupportedException("Table "+discoveredTable+" has primary keys, why are you calling MakeDistinct on it!");
+
+            var tableName = discoveredTable.GetFullyQualifiedName();
+            var tempTable = discoveredTable.Database.ExpectTable(discoveredTable.GetRuntimeName() + "_DistinctingTemp").GetFullyQualifiedName();
+
+            using (var con = server.BeginNewTransactedConnection())
+            {
+                var cmdDistinct = server.GetCommand(string.Format("CREATE TABLE {1} AS SELECT distinct * FROM {0}", tableName, tempTable), con);
+                cmdDistinct.ExecuteNonQuery();
+
+                var cmdTruncate = server.GetCommand(string.Format("DELETE FROM {0}", tableName), con);
+                cmdTruncate.ExecuteNonQuery();
+
+                var cmdBack = server.GetCommand(string.Format("INSERT INTO {0} (SELECT * FROM {1})", tableName, tempTable), con);
+                cmdBack.ExecuteNonQuery();
+
+                var cmdDropDistinctTable = server.GetCommand(string.Format("DROP TABLE {0}", tempTable), con);
+                cmdDropDistinctTable.ExecuteNonQuery();
+            }
+        }
     }
 }
