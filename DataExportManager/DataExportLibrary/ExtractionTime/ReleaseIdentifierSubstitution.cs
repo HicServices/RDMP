@@ -40,8 +40,8 @@ namespace DataExportLibrary.ExtractionTime
         }
         public int ID { get { return -1; } }
         public bool HashOnDataRelease { get { return false; } }
-        public bool IsExtractionIdentifier { get { return true; } }
-        public bool IsPrimaryKey { get { return false; } }
+        public bool IsExtractionIdentifier { get { return OriginalDatasetColumn.IsExtractionIdentifier; } }
+        public bool IsPrimaryKey { get { return OriginalDatasetColumn.IsPrimaryKey; } }
 
         public ReleaseIdentifierSubstitution(IColumn extractionIdentifierToSubFor, IExtractableCohort extractableCohort, bool isPartOfMultiCHISubstitution)
         {
