@@ -263,8 +263,8 @@ namespace DataExportLibrary.Tests
             
             Assert.AreEqual(typeof(double), t.CurrentEstimate);
 
-            Assert.AreEqual(2, t.NumbersAfterDecimalPlace);
-            Assert.AreEqual(3, t.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(3, t.DecimalSize.NumbersBeforeDecimalPlace);
         }
 
         [TestCase(" 1.01", typeof(decimal))]
@@ -303,8 +303,8 @@ namespace DataExportLibrary.Tests
 
             Assert.AreEqual(typeof(bool), t.CurrentEstimate);
 
-            Assert.AreEqual(-1, t.NumbersAfterDecimalPlace);
-            Assert.AreEqual(-1, t.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersBeforeDecimalPlace);
         }
 
         [Test]
@@ -328,8 +328,8 @@ namespace DataExportLibrary.Tests
 
             Assert.AreEqual(typeof(Int16), t.CurrentEstimate);
 
-            Assert.AreEqual(3, t.NumbersBeforeDecimalPlace);
-            Assert.AreEqual(-1, t.NumbersAfterDecimalPlace);
+            Assert.AreEqual(3, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
             
 
         }
@@ -341,8 +341,9 @@ namespace DataExportLibrary.Tests
 
             Assert.AreEqual(typeof(byte[]), t.CurrentEstimate);
 
-            Assert.AreEqual(-1, t.NumbersAfterDecimalPlace);
-            Assert.AreEqual(-1, t.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.IsTrue(t.DecimalSize.IsEmpty);
         }
 
 
@@ -353,8 +354,8 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue("111111111.11111111111115");
 
             Assert.AreEqual(typeof(decimal), t.CurrentEstimate);
-            Assert.AreEqual(9, t.NumbersBeforeDecimalPlace);
-            Assert.AreEqual(14, t.NumbersAfterDecimalPlace);
+            Assert.AreEqual(9, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(14, t.DecimalSize.NumbersAfterDecimalPlace);
         }
         
 
@@ -365,10 +366,10 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue("-111.000");
             
             Assert.AreEqual(typeof(decimal), t.CurrentEstimate);
-            Assert.AreEqual(3, t.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(3, t.DecimalSize.NumbersBeforeDecimalPlace);
 
             //even though they are trailing zeroes we still need this much space... there must be a reason why they are there right? (also makes it easier to go to string later if needed eh!)
-            Assert.AreEqual(3, t.NumbersAfterDecimalPlace); 
+            Assert.AreEqual(3, t.DecimalSize.NumbersAfterDecimalPlace); 
             
             t.AdjustToCompensateForValue("P");
 
@@ -488,8 +489,8 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(10000f);
 
             Assert.AreEqual(typeof(float), t.CurrentEstimate);
-            Assert.AreEqual(2,t.NumbersAfterDecimalPlace);
-            Assert.AreEqual(5, t.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2,t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, t.DecimalSize.NumbersBeforeDecimalPlace);
         }
 
         [Test]
@@ -503,8 +504,8 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(DBNull.Value);
 
             Assert.AreEqual(typeof(int), t.CurrentEstimate);
-            Assert.AreEqual(-1, t.NumbersAfterDecimalPlace);
-            Assert.AreEqual(5, t.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, t.DecimalSize.NumbersBeforeDecimalPlace);
         }
 
 
@@ -520,11 +521,12 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(DBNull.Value);
 
             Assert.AreEqual(typeof(double), t.CurrentEstimate);
-            Assert.AreEqual(3, t.NumbersAfterDecimalPlace);
-            Assert.AreEqual(5, t.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(3, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, t.DecimalSize.NumbersBeforeDecimalPlace);
         }
 
 
+        [TestCase("0.01",typeof(decimal),"A",4)]
         [TestCase("1234",typeof(int),"F",4)]
         [TestCase("false",typeof(bool), "F", 5)]
         [TestCase("2001-01-01",typeof(DateTime), "F", 10)]

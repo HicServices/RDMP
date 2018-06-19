@@ -8,11 +8,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
         {
         }
 
-        protected override TypeDeciderResult IsAcceptableAsTypeImpl(string candidateString)
+        protected override bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord)
         {
             bool result;
 
-            return new TypeDeciderResult(bool.TryParse(candidateString, out result));
+            return bool.TryParse(candidateString, out result);
         }
     }
 }

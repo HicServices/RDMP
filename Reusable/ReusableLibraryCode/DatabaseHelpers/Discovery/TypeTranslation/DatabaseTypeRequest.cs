@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -25,10 +26,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
         public Type CSharpType { get; private set; }
         public int? MaxWidthForStrings { get; private set; }
-        public Tuple<int,int> DecimalPlacesBeforeAndAfter { get; private set; }
+        public DecimalSize DecimalPlacesBeforeAndAfter { get; private set; }
 
         public DatabaseTypeRequest(Type cSharpType, int? maxWidthForStrings = null,
-            Tuple<int, int> decimalPlacesBeforeAndAfter = null)
+            DecimalSize decimalPlacesBeforeAndAfter = null)
         {
             CSharpType = cSharpType;
             MaxWidthForStrings = maxWidthForStrings;
@@ -91,25 +92,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             else if (second.MaxWidthForStrings != null)
                 newMaxWidthIfStrings = Math.Max(newMaxWidthIfStrings.Value, second.MaxWidthForStrings.Value); //else use the max of the two
 
-            Tuple<int, int> newDecimalPlacesBeforeAndAfter = first.DecimalPlacesBeforeAndAfter;
-
-            //if the first doesnt have decimal places
-            if (newDecimalPlacesBeforeAndAfter == null)
-                newDecimalPlacesBeforeAndAfter = second.DecimalPlacesBeforeAndAfter; //use the decimal places of the second
-            else if(second.DecimalPlacesBeforeAndAfter != null)
-            {
-                //
-                newDecimalPlacesBeforeAndAfter = new Tuple<int, int>(
-                    Math.Max(newDecimalPlacesBeforeAndAfter.Item1,second.DecimalPlacesBeforeAndAfter.Item1),
-                    Math.Max(newDecimalPlacesBeforeAndAfter.Item2,second.DecimalPlacesBeforeAndAfter.Item2));
-            }
-
-
             //types are the same
             return new DatabaseTypeRequest(
                 first.CSharpType,
                 newMaxWidthIfStrings,
-                newDecimalPlacesBeforeAndAfter
+                DecimalSize.Combine(first.DecimalPlacesBeforeAndAfter, second.DecimalPlacesBeforeAndAfter)
                 );
 
         }

@@ -25,11 +25,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
         public int Length
         {
-            get { return Math.Max(_stringLength, NumbersAfterDecimalPlace + NumbersBeforeDecimalPlace + 1); }
+            get { return Math.Max(_stringLength, DecimalSize.ToStringLength()); }
         }
 
-        public int NumbersBeforeDecimalPlace { get; private set; }
-        public int NumbersAfterDecimalPlace { get; private set; }
+        public DecimalSize DecimalSize = new DecimalSize();
 
         public bool IsPrimedWithBonafideType = false;
 
@@ -47,8 +46,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public DataTypeComputer(int minimumLengthToMakeCharacterFields)
         {
             _stringLength = minimumLengthToMakeCharacterFields;
-            NumbersBeforeDecimalPlace = -1;
-            NumbersAfterDecimalPlace = -1;
 
             CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[0];
             
@@ -90,18 +87,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// <param name="currentEstimatedType"></param>
         /// <param name="digits"></param>
         /// <param name="lengthIfString"></param>
-        public DataTypeComputer(Type currentEstimatedType, Tuple<int, int> digits, int lengthIfString)
+        public DataTypeComputer(Type currentEstimatedType, DecimalSize decimalSize, int lengthIfString)
         {
             CurrentEstimate = currentEstimatedType;
 
             if (lengthIfString > 0)
                 _stringLength = lengthIfString;
 
-            if (digits != null)
-            {
-                NumbersBeforeDecimalPlace = digits.Item1;
-                NumbersAfterDecimalPlace = digits.Item2;
-            }
+            DecimalSize = decimalSize ?? new DecimalSize();
         }
 
 
@@ -139,12 +132,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 if(CurrentEstimate == typeof(string))
                     return;
 
-                var result = _deciderDictionary[CurrentEstimate].IsAcceptableAsType(oAsString);
-
-                UpdateDecimalPlaces(result);
-
+                var result = _deciderDictionary[CurrentEstimate].IsAcceptableAsType(oAsString,DecimalSize);
+                
                 //if the current estimate compatible
-                if (result.IsCompatible)
+                if (result)
                 {
                     _validTypesSeen = _deciderDictionary[CurrentEstimate].CompatibilityGroup;
                     return;
@@ -171,17 +162,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
                 //if we have a decider for this lets get it to tell us the decimal places (if any)
                 if (_deciderDictionary.ContainsKey(o.GetType()))
-                    UpdateDecimalPlaces(_deciderDictionary[o.GetType()].IsAcceptableAsType(oToString));
+                    _deciderDictionary[o.GetType()].IsAcceptableAsType(oToString,DecimalSize);
             }
-        }
-
-        private void UpdateDecimalPlaces(TypeDeciderResult result)
-        {
-            if (result.NumbersBeforeDecimalPlace != null)
-                NumbersBeforeDecimalPlace = Math.Max(NumbersBeforeDecimalPlace, result.NumbersBeforeDecimalPlace.Value);
-
-            if (result.NumbersAfterDecimalPlace != null)
-                NumbersAfterDecimalPlace = Math.Max(NumbersAfterDecimalPlace, result.NumbersAfterDecimalPlace.Value);
         }
 
         private void ChangeEstimateToNext()
@@ -227,7 +209,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return new DatabaseTypeRequest(
                 CurrentEstimate,
                 Length == -1 ? (int?) null : Length,
-                new Tuple<int, int>(NumbersBeforeDecimalPlace, NumbersAfterDecimalPlace));
+                DecimalSize);
         }
 
         /// <summary>

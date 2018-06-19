@@ -8,7 +8,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
         {
         }
 
-        protected override TypeDeciderResult IsAcceptableAsTypeImpl(string candidateString)
+        protected override bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord)
         {
             try
             {
@@ -19,12 +19,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
 
                 GetDecimalPlaces(t, out before, out after);
 
+                sizeRecord.IncreaseTo(before,after);
+
                 //could be whole number with no decimal
-                return new TypeDeciderResult(true,before,after);
+                return true;
             }
             catch (Exception)
             {
-                return new TypeDeciderResult(false);
+                return false;
             }
         }
 

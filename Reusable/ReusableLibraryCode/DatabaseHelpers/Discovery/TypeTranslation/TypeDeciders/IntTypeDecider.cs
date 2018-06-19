@@ -8,16 +8,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
         {
         }
 
-        protected override TypeDeciderResult IsAcceptableAsTypeImpl(string candidateString)
+        protected override bool IsAcceptableAsTypeImpl(string candidateString, DecimalSize sizeRecord)
         {
             try
             {
                 var t = Convert.ToInt32(candidateString);
-                return new TypeDeciderResult(true,t.ToString().Length);
+                
+                sizeRecord.IncreaseTo(t.ToString().Length);
+
+                return true;
             }
-            catch (Exception)
+            catch (FormatException)
             {
-                return new TypeDeciderResult(false);
+                return false;
+            }
+            catch (OverflowException)
+            {
+                return false;
             }
         }
     }

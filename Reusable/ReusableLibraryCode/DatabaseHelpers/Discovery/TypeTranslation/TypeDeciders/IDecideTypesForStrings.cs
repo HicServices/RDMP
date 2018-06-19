@@ -7,6 +7,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
     {
         TypeCompatibilityGroup CompatibilityGroup { get; }
         HashSet<Type> TypesSupported { get; }
-        TypeDeciderResult IsAcceptableAsType(string candidateString);
+        bool IsAcceptableAsType(string candidateString,DecimalSize sizeRecord);
     }
 }

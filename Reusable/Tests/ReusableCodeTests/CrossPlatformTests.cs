@@ -6,6 +6,7 @@ using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using Tests.Common;
 
 namespace ReusableCodeTests
@@ -39,7 +40,7 @@ namespace ReusableCodeTests
                 new DatabaseColumnRequest("address", new DatabaseTypeRequest(typeof (string), 500)),
                 new DatabaseColumnRequest("dob", new DatabaseTypeRequest(typeof (DateTime)),false),
                 new DatabaseColumnRequest("score",
-                    new DatabaseTypeRequest(typeof (decimal), null, new Tuple<int, int>(5, 3))) //<- e.g. 12345.123 
+                    new DatabaseTypeRequest(typeof (decimal), null, new DecimalSize(5, 3))) //<- e.g. 12345.123 
 
             });
 
@@ -74,8 +75,8 @@ namespace ReusableCodeTests
 
             var score = colsDictionary["score"];
             Assert.AreEqual(true, score.AllowNulls);
-            Assert.AreEqual(5,score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().Item1);
-            Assert.AreEqual(3, score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().Item2);
+            Assert.AreEqual(5,score.DataType.GetDecimalSize().NumbersBeforeDecimalPlace);
+            Assert.AreEqual(3, score.DataType.GetDecimalSize().NumbersAfterDecimalPlace);
 
             Assert.AreEqual(typeof(decimal), syntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(score.DataType.SQLType));
 
@@ -414,6 +415,44 @@ namespace ReusableCodeTests
 
             Assert.AreEqual(3, tbl.GetRowCount());
             Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
+        }
+
+        [Test]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void TestFloatDataTypes(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var dt = new DataTable();
+            dt.Columns.Add("MyCol");;
+
+            dt.Rows.Add(new[] { "100"});
+            dt.Rows.Add(new[] { "105"});
+            dt.Rows.Add(new[] { "2.1"});
+
+            var tbl = database.CreateTable("DecimalTestTable", dt);
+
+            dt =tbl.GetDataTable();
+            Assert.AreEqual(1,dt.Rows.OfType<DataRow>().Count(r=>Convert.ToDecimal(r[0]) == new decimal(100.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(105.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(2.1f)));
+            
+
+            var col = tbl.DiscoverColumn("MyCol");
+            var size = col.DataType.GetDecimalSize();
+            Assert.AreEqual(new DecimalSize(3, 1), size); //3 before decimal place 2 after;
+            Assert.AreEqual(3, size.Scale);
+            Assert.AreEqual(1, size.Precision);
+
+            col.DataType.AlterTypeTo("decimal(5,2)");
+
+            size = tbl.DiscoverColumn("MyCol").DataType.GetDecimalSize();
+            Assert.AreEqual(new DecimalSize(3,2),size); //3 before decimal place 2 after;
+            Assert.AreEqual(2, size.Scale);
+            Assert.AreEqual(5, size.Precision);
+
+            
         }
 
         [TestCase(DatabaseType.MYSQLServer, "_-o-_",":>0<:")]

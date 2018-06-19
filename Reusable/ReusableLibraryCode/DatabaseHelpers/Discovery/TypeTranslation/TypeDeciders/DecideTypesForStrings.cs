@@ -32,15 +32,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
             TypesSupported = new HashSet<Type>(typesSupportedSupported);
         }
 
-        public TypeDeciderResult IsAcceptableAsType(string candidateString)
+        public bool IsAcceptableAsType(string candidateString,DecimalSize sizeRecord)
         {
             //we must preserve leading zeroes if its not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
             if (zeroPrefixedNumber.IsMatch(candidateString))
-                return new TypeDeciderResult(false);
+                return false;
 
-            return IsAcceptableAsTypeImpl(candidateString);
+            return IsAcceptableAsTypeImpl(candidateString, sizeRecord);
         }
 
-        protected abstract TypeDeciderResult IsAcceptableAsTypeImpl(string candidateString);
+        protected abstract bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord);
     }
 }
