@@ -420,6 +420,47 @@ namespace ReusableCodeTests
         [Test]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void TestIntDataTypes(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var dt = new DataTable();
+            dt.Columns.Add("MyCol"); ;
+
+            dt.Rows.Add(new[] { "100" });
+            dt.Rows.Add(new[] { "105" });
+            dt.Rows.Add(new[] { "1" });
+
+            var tbl = database.CreateTable("IntTestTable", dt);
+
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToInt32(r[0]) == 100));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToInt32(r[0]) == 105));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToInt32(r[0]) == 1));
+
+            var col = tbl.DiscoverColumn("MyCol");
+            var size = col.DataType.GetDecimalSize();
+            //ints are not decimals so null
+            Assert.IsNull(size);
+
+            col.DataType.AlterTypeTo("decimal(5,2)");
+
+            size = tbl.DiscoverColumn("MyCol").DataType.GetDecimalSize();
+            Assert.AreEqual(new DecimalSize(3, 2), size); //3 before decimal place 2 after;
+            Assert.AreEqual(3, size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, size.Precision);
+            Assert.AreEqual(2, size.Scale);
+            
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(100.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(105.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(1.0f)));
+        }
+
+        [Test]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestFloatDataTypes(DatabaseType type)
         {
             database = GetCleanedServer(type, _dbName, out server, out database);
@@ -442,17 +483,19 @@ namespace ReusableCodeTests
             var col = tbl.DiscoverColumn("MyCol");
             var size = col.DataType.GetDecimalSize();
             Assert.AreEqual(new DecimalSize(3, 1), size); //3 before decimal place 2 after;
-            Assert.AreEqual(3, size.Scale);
-            Assert.AreEqual(1, size.Precision);
-
+            Assert.AreEqual(3,size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(1,size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(4, size.Precision);
+            Assert.AreEqual(1, size.Scale);
+            
             col.DataType.AlterTypeTo("decimal(5,2)");
 
             size = tbl.DiscoverColumn("MyCol").DataType.GetDecimalSize();
             Assert.AreEqual(new DecimalSize(3,2),size); //3 before decimal place 2 after;
-            Assert.AreEqual(2, size.Scale);
+            Assert.AreEqual(3, size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, size.NumbersAfterDecimalPlace);
             Assert.AreEqual(5, size.Precision);
-
-            
+            Assert.AreEqual(2, size.Scale);
         }
 
         [TestCase(DatabaseType.MYSQLServer, "_-o-_",":>0<:")]

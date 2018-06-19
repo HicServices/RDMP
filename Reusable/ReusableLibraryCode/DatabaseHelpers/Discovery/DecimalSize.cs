@@ -2,6 +2,10 @@
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
+    /// <summary>
+    /// Records the number of decimal places required to represent a given decimal.  This can class can represent a int (in which case <see cref="NumbersAfterDecimalPlace"/> will be 0) or
+    /// decimal.  If the origin of the class is not numerical then a <see cref="DecimalSize"/> might still exist but it should be <see cref="IsEmpty"/>.
+    /// </summary>
     public class DecimalSize
     {
         public int? NumbersBeforeDecimalPlace;
@@ -88,7 +92,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         #region Equality
         protected bool Equals(DecimalSize other)
         {
-            return NumbersBeforeDecimalPlace == other.NumbersBeforeDecimalPlace && NumbersAfterDecimalPlace == other.NumbersAfterDecimalPlace;
+            return (NumbersBeforeDecimalPlace??0) == (other.NumbersBeforeDecimalPlace??0) && (NumbersAfterDecimalPlace??0) == (other.NumbersAfterDecimalPlace??0);
         }
 
         public override bool Equals(object obj)
