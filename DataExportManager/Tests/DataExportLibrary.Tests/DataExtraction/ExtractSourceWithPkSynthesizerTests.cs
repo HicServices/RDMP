@@ -77,6 +77,45 @@ namespace DataExportLibrary.Tests.DataExtraction
             Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
         }
 
+        [Test]
+        public void Test_CatalogueItems_NonExtractedPrimaryKey_MultiTable_IsImpossible()
+        {
+            var request = SetupExtractDatasetCommand("MultiTable_IsImpossible", new string[] { }, new[] { "DateOfBirth" });
+            SetupLookupTable();
+
+            var source = new ExecutePkSynthesizerDatasetExtractionSource();
+            source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
+            var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 1));
+            Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
+            Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
+
+            var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
+            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
+        }
+
+        private void SetupLookupTable()
+        {
+            DataTable dt = new DataTable();
+
+            dt.Columns.Add("Name");
+            dt.Columns.Add("Description");
+
+            dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
+
+            var catalogue = CatalogueRepository.GetAllCatalogues().First();
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("SimpleLookup", dt, new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
+
+            var cataItem = new CatalogueItem(CatalogueRepository, catalogue, "name_description");
+            var tblInfo = catalogue.GetTableInfoList(true).First();
+
+            var colInfo = new ColumnInfo(CatalogueRepository, "name_description", "VARCHAR(20)", tblInfo);
+            cataItem.ColumnInfo_ID = colInfo.ID;
+
+        }
+
         private ExtractDatasetCommand SetupExtractDatasetCommand(string testTableName, string[] pkExtractionColumns, string[] pkColumnInfos = null)
         {
             DataTable dt = new DataTable();
