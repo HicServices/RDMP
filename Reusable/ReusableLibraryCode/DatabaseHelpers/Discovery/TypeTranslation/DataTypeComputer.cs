@@ -1,9 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -20,27 +18,26 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
     public class DataTypeComputer
     {
         public Type CurrentEstimate { get; set; }
-
+        
+        private readonly Dictionary<Type, IDecideTypesForStrings> _deciderDictionary = new Dictionary<Type, IDecideTypesForStrings>();
 
         private int _stringLength;
 
         public int Length
         {
-            get { return Math.Max(_stringLength, numbersAfterDecimalPlace + numbersBeforeDecimalPlace + 1); }
+            get { return Math.Max(_stringLength, DecimalSize.ToStringLength()); }
         }
 
-        public int numbersBeforeDecimalPlace { get; private set; }
-        public int numbersAfterDecimalPlace { get; private set; }
+        public DecimalSize DecimalSize = new DecimalSize();
 
-        private bool acceptedTimespanAtSomePoint = false;
+        public bool IsPrimedWithBonafideType = false;
 
         /// <summary>
-        /// Matches any number which looks like a proper decimal but has leading zeroes e.g. 012837 but does not match when there are
-        /// decimal places or other characters e.g. it wouldn't match 0.00123.  This is used to preserve leading zeroes in integers (desired
-        /// because it could be a serial number or otherwise important leading 0).  In this case the DataTypeComputer will use varchar(x) to
-        /// represent the column instead of decimal(x,y)
+        /// Previous data types we have seen and used to adjust our CurrentEstimate.  It is important to record these, because if we see
+        /// an int and change our CurrentEstimate to int then we can't change our CurrentEstimate to datetime later on because that's not
+        /// compatible with int. See test TestDatatypeComputer_IntToDateTime
         /// </summary>
-        Regex zeroPrefixedNumber = new Regex(@"^0+[1-9]+");
+        TypeCompatibilityGroup _validTypesSeen = TypeCompatibilityGroup.None;
 
         /// <summary>
         /// Creates a new DataType 
@@ -49,10 +46,22 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public DataTypeComputer(int minimumLengthToMakeCharacterFields)
         {
             _stringLength = minimumLengthToMakeCharacterFields;
-            numbersBeforeDecimalPlace = -1;
-            numbersAfterDecimalPlace = -1;
 
             CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[0];
+            
+            var deciders = new IDecideTypesForStrings[]
+            {
+                new BoolTypeDecider(),
+                new IntTypeDecider(),
+                new DecimalTypeDecider(),
+
+                new TimeSpanTypeDecider(),
+                new DateTimeTypeDecider(),
+            };
+
+            foreach (IDecideTypesForStrings decider in deciders)
+                foreach (Type type in decider.TypesSupported)
+                    _deciderDictionary.Add(type, decider);
         }
 
         public DataTypeComputer():this(-1)
@@ -78,25 +87,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// <param name="currentEstimatedType"></param>
         /// <param name="digits"></param>
         /// <param name="lengthIfString"></param>
-        public DataTypeComputer(Type currentEstimatedType, Tuple<int, int> digits, int lengthIfString)
+        public DataTypeComputer(Type currentEstimatedType, DecimalSize decimalSize, int lengthIfString)
         {
             CurrentEstimate = currentEstimatedType;
 
             if (lengthIfString > 0)
                 _stringLength = lengthIfString;
 
-            if (digits != null)
-            {
-                numbersBeforeDecimalPlace = digits.Item1;
-                numbersAfterDecimalPlace = digits.Item2;
-            }
-
-            if (currentEstimatedType == typeof (TimeSpan))
-                acceptedTimespanAtSomePoint = true;
+            DecimalSize = decimalSize ?? new DecimalSize();
         }
 
-        private bool havereceivedBonafideType = false;
-        
 
         public void AdjustToCompensateForValue(object o)
         {
@@ -107,197 +107,93 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 return;
 
             //if we have previously seen a hard typed value then we can't just change datatypes to something else!
-            if (havereceivedBonafideType)
+            if (IsPrimedWithBonafideType)
                 if (CurrentEstimate != o.GetType())
                 {
-                    throw new Exception("We were adjusting to compensate for object " + o + " which is of Type " +
+                    throw new DataTypeComputerException("We were adjusting to compensate for object " + o + " which is of Type " +
                                         o.GetType() + " , we were previously passed a " + CurrentEstimate +
                                         " type, is your column of mixed type? this is unacceptable");
                 }
 
+            var oToString = o.ToString();
             var oAsString = o as string;
-            
-            //its a string, probably an untyped column :( lets work out what datatype would be suitable
+
+            //we might need to fallback on a string later on, in this case we should always record the maximum length of input seen before even if it is acceptable as int, double, dates etc
+            _stringLength = Math.Max(Length, oToString.Length);
+
+            //if it's a string
             if (oAsString != null)
             {
-                if(string.IsNullOrWhiteSpace(oAsString))
+                //ignore empty ones
+                if (string.IsNullOrWhiteSpace(oAsString))
+                    return;
+                
+                //if we have already fallen back to string then just stick with it (theres no going back up the ladder)
+                if(CurrentEstimate == typeof(string))
                     return;
 
-                int indexOfCurrentPreference = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate);
-
-                for (int i = indexOfCurrentPreference; i < DatabaseTypeRequest.PreferenceOrder.Count; i++)
+                var result = _deciderDictionary[CurrentEstimate].IsAcceptableAsType(oAsString,DecimalSize);
+                
+                //if the current estimate compatible
+                if (result)
                 {
-                    Debug.Assert(CurrentEstimate == DatabaseTypeRequest.PreferenceOrder[i]);
-                    //try it as current estimate
-                    bool canConvert = IsAcceptableAs(CurrentEstimate, oAsString);
-                    
-                    if (canConvert)
-                        break;//it is acceptable
-                    else
-                        CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[i + 1];//try the next type because this one isn't working -- 
+                    _validTypesSeen = _deciderDictionary[CurrentEstimate].CompatibilityGroup;
+                    return;
                 }
+
+                //if it isn't compatible, try the next Type
+                ChangeEstimateToNext();
+
+                //recurse because why not
+                AdjustToCompensateForValue(oAsString);
             }
             else
             {
-                //its not a string
+                //if we ever made a descision about a string inputs then we won't accept hard typed objects now
+                if(_validTypesSeen != TypeCompatibilityGroup.None || CurrentEstimate == typeof(string))
+                    throw new DataTypeComputerException("We were adjusting to compensate for hard Typed object '" + o + "' which is of Type " + o.GetType() + ", but previously we were passed string values, is your column of mixed type? that is unacceptable");
 
                 //if we have yet to see a proper type
-                if (!havereceivedBonafideType)
+                if (!IsPrimedWithBonafideType)
                 {
                     CurrentEstimate = o.GetType();//get its type
-                    havereceivedBonafideType = true;
+                    IsPrimedWithBonafideType = true;
                 }
 
-                //While it might seem obvious that o.GetType() is compatible as it's ToString() we still need to measure decimal places for types like double and Int16 etc
-                IsAcceptableAs(o.GetType(), o.ToString());
+                //if we have a decider for this lets get it to tell us the decimal places (if any)
+                if (_deciderDictionary.ContainsKey(o.GetType()))
+                    _deciderDictionary[o.GetType()].IsAcceptableAsType(oToString,DecimalSize);
             }
         }
-        
-        
 
-        private bool IsAcceptableAs(Type type, string value)
+        private void ChangeEstimateToNext()
         {
-            //we might need to fallback on a string later on, in this case we should always record the maximum length of input seen before even if it is acceptable as int, double, dates etc
-            _stringLength = Math.Max(Length, value.Length);
-
-            if (type == typeof (TimeSpan))
-                try
-                {
-                    DateTime t;
-                    
-                    //if it parses as a date 
-                    if (DateTime.TryParse(value, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out t))
-                    {
-                        bool toReturn = (t.Year == 1 && t.Month == 1 && t.Day == 1);//without any ymd component then it's a date...  this means 00:00 is a valid TimeSpan too 
-                        
-                        //if we ever accept a TimeSpan then we have to fallback to string if we get a date afterwards otherwise we will be treating previous values of time only as DateTime which usually results in C#/TSQL/SQL Server using todays date for the date part which is bad
-                        if (toReturn && !acceptedTimespanAtSomePoint)
-                            acceptedTimespanAtSomePoint = true;
-                        
-                        return toReturn;
-                    }
-                    
-                    return false;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-
-            if(type == typeof(DateTime))
-                try
-                {
-                    //never accept as a date if we previously accepted as a TimeSpan
-                    if (acceptedTimespanAtSomePoint)
-                        return false;
-
-                    DateTime t;
-                    return DateTime.TryParse(value, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault,out t);
-
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-
-            if (type == typeof (bool))
-            {
-                bool result;
-                return bool.TryParse(value,out result);
-            }
-
-            if (type == typeof(int) || type == typeof(Int16) || type == typeof(Int64) || type == typeof(Int32))
-                try
-                {
-                    //we must preserve leading zeroes
-                    if (IsFreakilyZeroPrefixedNumber(value))
-                        return false;
-
-                    var t = Convert.ToInt32(value);
-                    
-                    //we could switch from int to decimal in which case we need to store number of decimal places before incase we get 1000 then 0.1 then 1 and then end we should end on decimal(5,1) not decimal(2,1)
-                    numbersBeforeDecimalPlace = Math.Max(numbersBeforeDecimalPlace, t.ToString().Length);
-                    
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-
-                if (type == typeof(decimal) || type == typeof(double) || type == typeof(float))
-                try
-                {
-                    if(IsFreakilyZeroPrefixedNumber(value))
-                        return false;
-
-                    var t = decimal.Parse(value);
-
-                    int before;
-                    int after;
-
-                    GetDecimalPlaces(t, out before, out after);
-
-                    //could be whole number with no decimal
-                    numbersBeforeDecimalPlace = Math.Max(numbersBeforeDecimalPlace, before);
-                    numbersAfterDecimalPlace = Math.Max(numbersAfterDecimalPlace, after);
-                    
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-
-            //Everything is always acceptable as a string (Length is Maxed at the top of this method).
-            if (type == typeof (string))
-                return true;
-
-
-            if (type == typeof(byte) || type == typeof(byte[]))
-            {
-                //sure! whatever
-                return true;
-            }
-
-            throw new NotSupportedException("Don't know how to check for acceptability of type " + type);
-        }
-
-        private bool IsFreakilyZeroPrefixedNumber(string value)
-        {
-             //we must preserve leading zeroes if its not actually 0 -- if they have 010101 then we have to use string but if they have just 0 we can use decimal
-            if (zeroPrefixedNumber.IsMatch(value))
-                    return true;
-
-            return false;
-        }
-
-        public void GetDecimalPlaces(decimal value, out int before, out int after)
-        {
-            decimal destructive = Math.Abs(value);
-
-            if (value == 0)
-            {
-                before = 1;
-                after = 0;
-                return;
-            }
+            int current = DatabaseTypeRequest.PreferenceOrder.IndexOf(CurrentEstimate);
             
-            before = 0;
-            while (destructive >= 1)
+            //if we have never seen any good data just try the next one
+            if(_validTypesSeen == TypeCompatibilityGroup.None )
+                CurrentEstimate = DatabaseTypeRequest.PreferenceOrder[current + 1];
+            else
             {
-                destructive = destructive/10; //divide by 10
-                destructive = decimal.Floor(destructive);//get rid of any overflowing decimal places 
-                before++;
+                //we have seen some good data before, but we have seen something that doesn't fit with the CurrentEstimate so
+                //we need to degrade the Estimate to a new Type that is compatible with all the Types previously seen
+                
+                var nextEstiamte = DatabaseTypeRequest.PreferenceOrder[current + 1];
+
+                //if the next estimate is a string or we have previously accepted an exclusive decider (e.g. DateTime)
+                if (nextEstiamte == typeof (string) || _validTypesSeen == TypeCompatibilityGroup.Exclusive)
+                    CurrentEstimate = typeof (string); //then just go with string
+                else
+                {
+                    //if the next decider is in the same group as the previously used ones
+                    if (_deciderDictionary[nextEstiamte].CompatibilityGroup == _validTypesSeen)
+                        CurrentEstimate = nextEstiamte;
+                    else
+                        CurrentEstimate = typeof (string); //the next Type decider is in an incompatible category so just go directly to string
+                }
             }
-
-            //always leave at least 1 before so that we can store 0s
-            before = Math.Max(before, 1);
-
-            //as if by magic... apparently
-            after = BitConverter.GetBytes(decimal.GetBits(value)[3])[2];
         }
-
+        
         public string GetSqlDBType(DiscoveredServer server)
         {
             return GetSqlDBType(server.Helper.GetQuerySyntaxHelper().TypeTranslater);
@@ -313,7 +209,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return new DatabaseTypeRequest(
                 CurrentEstimate,
                 Length == -1 ? (int?) null : Length,
-                new Tuple<int, int>(numbersBeforeDecimalPlace, numbersAfterDecimalPlace));
+                DecimalSize);
         }
 
         /// <summary>

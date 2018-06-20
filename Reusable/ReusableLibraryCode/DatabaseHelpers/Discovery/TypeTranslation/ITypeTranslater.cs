@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -39,7 +40,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         DataTypeComputer GetDataTypeComputerFor(DiscoveredColumn discoveredColumn);
 
         int GetLengthIfString(string sqlType);
-        Tuple<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType);
+        DecimalSize GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType);
         
         /// <summary>
         /// Translates the given sqlType which must be an SQL string compatible with this TypeTranslater e.g. varchar(10) into the destination ITypeTranslater
