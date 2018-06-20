@@ -20,7 +20,7 @@ namespace CatalogueLibraryTests.Integration
         [TestCase(DatabaseType.MYSQLServer)]
         public void TriggerImplementationTest(DatabaseType type)
         {
-            var db = GetCleanedServer(type, "CrossDatabaseTriggerTests");
+            var db = GetCleanedServer(type);
             var tbl = db.CreateTable("MyTable", new[]
             {
                 new DatabaseColumnRequest("name", new DatabaseTypeRequest(typeof (string), 30),false),

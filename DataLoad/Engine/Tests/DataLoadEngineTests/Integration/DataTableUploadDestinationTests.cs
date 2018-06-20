@@ -642,12 +642,8 @@ CREATE TABLE [dbo].[TestResizing](
         public void MySqlTest_Simple()
         {
             var token = new GracefulCancellationToken();
-
-            if (DiscoveredMySqlServer == null)
-                Assert.Inconclusive();
-
-            var db = DiscoveredMySqlServer.ExpectDatabase(TestDatabaseNames.GetConsistentName("DataTableUploadTests"));
-            db.Create(true);
+            
+            var db = GetCleanedServer(DatabaseType.MYSQLServer);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
@@ -698,12 +694,8 @@ CREATE TABLE [dbo].[TestResizing](
         public void MySqlTest_Resize()
         {
             var token = new GracefulCancellationToken();
-
-            if(DiscoveredMySqlServer == null)
-                Assert.Inconclusive();
-
-            var db = DiscoveredMySqlServer.ExpectDatabase(TestDatabaseNames.GetConsistentName("DataTableUploadTests"));
-            db.Create(true);
+            
+            var db = GetCleanedServer(DatabaseType.MYSQLServer);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
