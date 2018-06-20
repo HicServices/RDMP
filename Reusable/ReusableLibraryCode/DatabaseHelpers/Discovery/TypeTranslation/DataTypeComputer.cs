@@ -87,7 +87,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         /// <param name="currentEstimatedType"></param>
         /// <param name="digits"></param>
         /// <param name="lengthIfString"></param>
-        public DataTypeComputer(Type currentEstimatedType, DecimalSize decimalSize, int lengthIfString)
+        public DataTypeComputer(Type currentEstimatedType, DecimalSize decimalSize, int lengthIfString):this(-1)
         {
             CurrentEstimate = currentEstimatedType;
 
