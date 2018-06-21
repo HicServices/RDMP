@@ -4,8 +4,11 @@ using System.Configuration;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
@@ -27,7 +30,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
     /// </summary>
-    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>
+    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
     {
         #region Database Properties
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
@@ -61,15 +64,21 @@ namespace CatalogueLibrary.Data
 
         private Lazy<ExtractionInformation> _knownExtractionInformation;
         private Lazy<ColumnInfo> _knownColumnInfo;
+        private Lazy<Catalogue> _knownCatalogue;
 
         /// <summary>
         /// The ID of the parent <see cref="Catalogue"/> (dataset) to which this is a virtual column/column description
         /// </summary>
+        [Relationship(typeof(Catalogue),RelationshipType.SharedObject)]
         [DoNotExtractProperty]
         public int Catalogue_ID
         {
             get { return _catalogueID; }
-            set { SetField(ref _catalogueID , value); }
+            set
+            {
+                SetField(ref _catalogueID, value);
+                ClearAllInjections();
+            }
         }
         /// <inheritdoc/>
         public string Name {
@@ -148,6 +157,7 @@ namespace CatalogueLibrary.Data
         /// e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core"/>) but only release the full postcode with 
         /// <see cref="ExtractionCategory.SpecialApprovalRequired"/>.
         /// </summary>
+        [Relationship(typeof(ColumnInfo), RelationshipType.IgnoreableLocalReference)]  //will appear as empty, then the user can guess from a table
         public int? ColumnInfo_ID
         {
             get { return _columnInfoID; }
@@ -178,7 +188,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc cref="Catalogue_ID"/>
         [NoMappingToDatabase]
         public Catalogue Catalogue {
-            get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
+            get{return _knownCatalogue.Value;}
         }
 
         /// <summary>
@@ -262,11 +272,27 @@ namespace CatalogueLibrary.Data
             ClearAllInjections();
         }
 
+        internal CatalogueItem(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
+        }
+
+        public void InjectKnown(Catalogue instance)
+        {
+            _knownCatalogue = new Lazy<Catalogue>(()=>instance);
+        }
+
         /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfoIfAny);
             _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformationIfAny);
+            _knownCatalogue = new Lazy<Catalogue>(FetchCatalogue); 
+        }
+
+        private Catalogue FetchCatalogue()
+        {
+            return Repository.GetObjectByID<Catalogue>(Catalogue_ID);
         }
 
         private ExtractionInformation FetchExtractionInformationIfAny()

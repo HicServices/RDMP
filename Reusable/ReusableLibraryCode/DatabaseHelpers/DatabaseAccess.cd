@@ -1,17 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="Communal cross platform things we can find in databases">
-    <Position X="10.014" Y="5.386" Height="0.448" Width="10.367" />
+  <Comment CommentText="Database specific implementations">
+    <Position X="0.75" Y="14.25" Height="0.296" Width="18.447" />
+  </Comment>
+  <Comment CommentText="Abstracts Facades, Strategys and Interfaces">
+    <Position X="3.526" Y="0.5" Height="0.296" Width="20.29" />
+  </Comment>
+  <Comment CommentText="Start Here">
+    <Position X="0.5" Y="3.517" Height="0.309" Width="2.775" />
+  </Comment>
+  <Comment CommentText="Or Start Here">
+    <Position X="10.54" Y="8.741" Height="0.309" Width="2.334" />
+  </Comment>
+  <Comment CommentText="DDL Layer Implementations">
+    <Position X="0.766" Y="14.818" Height="0.296" Width="7.278" />
+  </Comment>
+  <Comment CommentText="Type Translation, Syntax and Query Building  Implementations">
+    <Position X="8.163" Y="14.827" Height="0.296" Width="11.011" />
   </Comment>
   <Class Name="ReusableLibraryCode.DataAccess.DataAccessPortal">
-    <Position X="0.75" Y="0.5" Width="2.75" />
+    <Position X="0.5" Y="0.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAEAAAAAAAAAQAAAAgAAAAABAAAAABAAAAAACAAQAA=</HashCode>
       <FileName>DataAccess\DataAccessPortal.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.DatabaseHelperFactory">
-    <Position X="6.25" Y="3.5" Width="3" />
+    <Position X="6.75" Y="3" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAABAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DatabaseHelpers\DatabaseHelperFactory.cs</FileName>
@@ -21,42 +36,42 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.MicrosoftSQLServerHelper" Collapsed="true">
-    <Position X="13.25" Y="1.75" Width="2.5" />
+    <Position X="3" Y="16.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>ACAQAIQAAAAAAAAAACAAAAAUAAICIAAIKQAAAHBEAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Microsoft\MicrosoftSQLServerHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.MySqlServerHelper" Collapsed="true">
-    <Position X="16.25" Y="1.75" Width="2" />
+    <Position X="5.75" Y="16.5" Width="2" />
     <TypeIdentifier>
       <HashCode>ACAQAKQAAAAAAAAAACAAAAAUAAICIAAAKQAAAHBEAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\MySql\MySqlServerHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.OracleServerHelper" Collapsed="true">
-    <Position X="10.75" Y="1.75" Width="2.25" />
+    <Position X="0.5" Y="16.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>ACAQAIQAAAAAAAAAACAAAAAUAAICIAAAKQAAAHBEAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Oracle\OracleServerHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.UsefulStuff">
-    <Position X="0.75" Y="4.25" Width="2.75" />
+    <Position X="0.5" Y="4.25" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>BgAEAAQgQIgCIBAAIAABQCAEBAABAgNChSQAA0YgAMM=</HashCode>
+      <HashCode>BgAEAAQgAIgAIAAIIAABQCAEBAABAANChSQAA0QgAMM=</HashCode>
       <FileName>UsefulStuff.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseCommandHelper">
-    <Position X="3.75" Y="6" Width="2.5" />
+    <Position X="6.75" Y="5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAQAAAAAAAAAAAAAAAAQAAACAAAYAAAAAgAADBAAAA=</HashCode>
       <FileName>DatabaseCommandHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredColumn">
-    <Position X="15.75" Y="7.5" Width="2" />
+    <Position X="19.25" Y="2.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AABAIAAAAAIAAEAEgAAAQAAAABwAAACAAAAAAAAABAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\DiscoveredColumn.cs</FileName>
@@ -64,10 +79,9 @@
     <ShowAsAssociation>
       <Field Name="Helper" />
     </ShowAsAssociation>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredServer">
-    <Position X="6.75" Y="7.5" Width="2.25" />
+    <Position X="10.5" Y="2.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>ACJQAAAAAAAAAAAEECgAEAwEECAKYAEAAQAABFFAIAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\DiscoveredServer.cs</FileName>
@@ -78,16 +92,16 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredDataType">
-    <Position X="18" Y="6.75" Width="2" />
+    <Position X="21.5" Y="2.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAEkAFAAAAAACAAAIAAAAAACAEAAAA=</HashCode>
+      <HashCode>AAAAAAEAAAAAAAAEkAFAAAAAACIAAIAAAAAACAEAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\DiscoveredDataType.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredTable">
-    <Position X="13" Y="7.5" Width="2" />
+    <Position X="16.75" Y="2.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>EABAAAAAAEASAkAFBCAAAAEEAIQAIACCAAAAAAEABAA=</HashCode>
+      <HashCode>GABAAAAAAEASAkAFBCAAAAMEAIwAIACCAAAAAAEAhAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\DiscoveredTable.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -97,9 +111,9 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredDatabase">
-    <Position X="10" Y="7.5" Width="2.25" />
+    <Position X="13.5" Y="2.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>CEBAAAAAAIAQAEAEBAIAAAAAAIAAAESAAAABAgEAAAA=</HashCode>
+      <HashCode>CEBAAAAAAIAQAEIEBgIAAAAAAIAAAESAAAABAgEAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\DiscoveredDatabase.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -109,22 +123,14 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredStoredprocedure">
-    <Position X="18" Y="8.75" Width="2.25" />
+    <Position X="21.5" Y="6.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\DiscoveredStoredprocedure.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredServerHelper" Collapsed="true">
-    <Position X="13.5" Y="0.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>ACIQAIQBAAAAAACAACACAAAUAAICIAEAKQAAAHBMAAA=</HashCode>
-      <FileName>DatabaseHelpers\Discovery\DiscoveredServerHelper.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.MicrosoftSQLColumnHelper" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="13.25" Y="4.75" Width="2.5" />
+    <Position X="3.25" Y="22" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Microsoft\MicrosoftSQLColumnHelper.cs</FileName>
@@ -132,21 +138,21 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.MicrosoftSQLDatabaseHelper" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="13.25" Y="2.75" Width="2.5" />
+    <Position X="3" Y="18.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAAAgAAEAAAAAAAAAAAAAEAAAABAACAAAA=</HashCode>
+      <HashCode>AAABAAAAAAAAAgIAEgAAAAAAAAAAAAEAAAABAACAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Microsoft\MicrosoftSQLDatabaseHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.MicrosoftSQLTableHelper" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="13.25" Y="3.75" Width="2.5" />
+    <Position X="3.25" Y="20.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAAAlAAIAAAABAAAAEAQAAYAAIAAAAAAAAIAAAAA=</HashCode>
+      <HashCode>GAAAAAAlAAIAAAABAAAAEAQAAYAAIAAAAAAAAIAAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Microsoft\MicrosoftSQLTableHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.MySqlColumnHelper" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="16.25" Y="4.75" Width="2" />
+    <Position X="6" Y="22" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\MySql\MySqlColumnHelper.cs</FileName>
@@ -154,21 +160,32 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.MySqlDatabaseHelper" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="16.25" Y="2.75" Width="2" />
+    <Position X="5.75" Y="18.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAAAgAAEAAAAAAAAAAAAAEAAAABAACAAAA=</HashCode>
+      <HashCode>AAABAAAAAAAAAgIAEgAAAAAAAAAAAAEAAAABAACAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\MySql\MySqlDatabaseHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.MySqlTableHelper" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="16.25" Y="3.75" Width="2" />
+    <Position X="6" Y="20.75" Width="2" />
+    <InheritanceLine Type="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredTableHelper" FixedFromPoint="true">
+      <Path>
+        <Point X="4.75" Y="20.312" />
+        <Point X="4.75" Y="20.51" />
+        <Point X="7" Y="20.51" />
+        <Point X="7" Y="20.75" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>EAAAAAAEgAIAAAABAAABEAQAAIAAIAAAAAAAAIAAAAA=</HashCode>
+      <HashCode>GAAAAAAEgAIAAAABAAABEAQAAIAAIAAAAAAAAIAAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\MySql\MySqlTableHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.OracleColumnHelper" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="10.75" Y="4.75" Width="2.25" />
+    <Position X="0.75" Y="22" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Oracle\OracleColumnHelper.cs</FileName>
@@ -176,21 +193,29 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.OracleDatabaseHelper" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="10.75" Y="2.75" Width="2.25" />
+    <Position X="0.5" Y="18.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAAAgAAEAAAAAAAAAAAAAEAAAABAACAAAA=</HashCode>
+      <HashCode>AAABAAAAAAAAAgIAEgAAAAAAAAAAAAEAAAABAACAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Oracle\OracleDatabaseHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.OracleTableHelper" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="10.75" Y="3.75" Width="2.25" />
+    <Position X="0.75" Y="20.75" Width="2.25" />
+    <InheritanceLine Type="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredTableHelper" FixedFromPoint="true">
+      <Path>
+        <Point X="3.938" Y="20.312" />
+        <Point X="3.938" Y="20.51" />
+        <Point X="1.875" Y="20.51" />
+        <Point X="1.875" Y="20.75" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>EAAAAAAEBAIAAQABAAAAEAQAAIAAIAAAAAAAAIAAAAA=</HashCode>
+      <HashCode>GAAAAAAEBAIAAQABAAAAEAQAAIAAIAAAAAAAAIAAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Oracle\OracleTableHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.ManagedTransaction">
-    <Position X="10" Y="11.75" Width="2.5" />
+    <Position X="13.5" Y="7.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AACAAAAAAAAAAAEAAAACAAAAAAAAAAgAAAIAAAAAAAA=</HashCode>
       <FileName>ManagedTransaction.cs</FileName>
@@ -198,43 +223,212 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntaxHelper" Collapsed="true">
-    <Position X="21.5" Y="3" Width="2" />
+    <Position X="11" Y="15.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AEAQAAACCIAASAAAAAAAAAAIAAAkARCAACAAAABCAIE=</HashCode>
+      <HashCode>AEAQAAAiCIAASAAAAAAAAAAIAAAkARCAgCAAAABCAJk=</HashCode>
       <FileName>DatabaseHelpers\Discovery\QuerySyntaxHelper.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.MicrosoftQuerySyntaxHelper" Collapsed="true">
-    <Position X="18.75" Y="4.25" Width="2.25" />
+    <Position X="8.5" Y="16.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAQAAAAAAAACAAAAAAAAAAIAAAAABAAAAAAAAACAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Microsoft\MicrosoftQuerySyntaxHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.OracleQuerySyntaxHelper" Collapsed="true">
-    <Position X="21.25" Y="4.25" Width="2.25" />
+    <Position X="11" Y="16.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAACAAAAAAAAAAIAAAAABCAAAAAAAACAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\Oracle\OracleQuerySyntaxHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.MySqlQuerySyntaxHelper" Collapsed="true">
-    <Position X="23.75" Y="4.25" Width="2.25" />
+    <Position X="13.5" Y="16.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAACAAAAAAAAAAIAAAAABCAAAAAAAACAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\MySql\MySqlQuerySyntaxHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredServerHelper" Collapsed="true">
+    <Position X="3" Y="15.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>ACIQAIQBAAAAAACAACACAAAUAAICIAEAKQAAAHBMAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\DiscoveredServerHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredDatabaseHelper" Collapsed="true">
+    <Position X="3" Y="17.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAgAAAAgIAFoAAAAAAAAAAAAGAAAABAACAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\DiscoveredDatabaseHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredTableHelper" Collapsed="true">
+    <Position X="3.25" Y="19.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>GABAAAAEAAICAAAJAEAAEAYAAIgAIAAAAAAAAIAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\DiscoveredTableHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Aggregation.MicrosoftSQLAggregateHelper" Collapsed="true">
+    <Position X="8.75" Y="22" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAgAAAAEAAQAAAAAIQAAAAEACAAAQAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\Microsoft\Aggregation\MicrosoftSQLAggregateHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Update.MicrosoftSQLUpdateHelper" Collapsed="true">
+    <Position X="8.75" Y="20.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\Microsoft\Update\MicrosoftSQLUpdateHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Aggregation.MySqlAggregateHelper" Collapsed="true">
+    <Position X="11.75" Y="22" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAgAAAAAAAAIAAAAIEAAAAAQAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\MySql\Aggregation\MySqlAggregateHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Update.MySqlUpdateHelper" Collapsed="true">
+    <Position X="11.5" Y="20.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\MySql\Update\MySqlUpdateHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.MySqlBulkCopy" Collapsed="true">
+    <Position X="11.75" Y="23" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAIAgAAAAAAAIAAAAAAAAABAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\MySql\MySqlBulkCopy.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.MicrosoftSQLBulkCopy" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8.75" Y="23" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAIAgAAAAAAAIAAAAACAAABAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\Microsoft\MicrosoftSQLBulkCopy.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.MicrosoftSQLTypeTranslater" Collapsed="true">
+    <Position X="8.5" Y="18.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\Microsoft\MicrosoftSQLTypeTranslater.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.MySqlTypeTranslater" Collapsed="true">
+    <Position X="11" Y="18.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\MySql\MySqlTypeTranslater.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Aggregation.OracleAggregateHelper" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14" Y="22" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\Oracle\Aggregation\OracleAggregateHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.OracleTypeTranslater" Collapsed="true">
+    <Position X="13.5" Y="18.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\Oracle\OracleTypeTranslater.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Update.OracleUpdateHelper" Collapsed="true">
+    <Position X="13.75" Y="20.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\Oracle\Update\OracleUpdateHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.CustomLine" Collapsed="true">
+    <Position X="9" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAEEAAACAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\CustomLine.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Role" />
+      <Property Name="LocationToInsert" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.QuerySyntaxHelperFactory" Collapsed="true">
+    <Position X="3.5" Y="6.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\QuerySyntaxHelperFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.TopXResponse" Collapsed="true">
+    <Position X="9" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\TopXResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update.UpdateHelper" Collapsed="true">
+    <Position X="11.75" Y="19.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\Update\UpdateHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.DatabaseTypeRequest" Collapsed="true">
+    <Position X="11.25" Y="10.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAABAAAAAAgAEAAAAACAAAAIACAAAAAAAAAiA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\DatabaseTypeRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.DataTypeComputer" Collapsed="true">
+    <Position X="8.75" Y="10.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>CAABASAAQAAgDAAAAAABAABAAAAAAAwAAAAQAAEAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\DataTypeComputer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeTranslater" Collapsed="true">
+    <Position X="11.25" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AkAAEAgQAAAMgAAJEAAQIACAADIBADAACgISACCAdgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeTranslater.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Interface Name="ReusableLibraryCode.DataAccess.IDataAccessCredentials">
-    <Position X="3.75" Y="4" Width="2.25" />
+    <Position X="3.75" Y="4.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataAccess\IDataAccessCredentials.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ReusableLibraryCode.DataAccess.IDataAccessPoint">
-    <Position X="3.75" Y="2" Width="2.25" />
+    <Position X="3.75" Y="2.5" Width="2.25" />
+    <AssociationLine Name="DatabaseType" Type="ReusableLibraryCode.DatabaseType" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6" Y="3.438" />
+        <Point X="6.375" Y="3.438" />
+        <Point X="6.375" Y="2.125" />
+        <Point X="7.5" Y="2.125" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAMAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
       <FileName>DataAccess\IDataAccessPoint.cs</FileName>
@@ -243,54 +437,132 @@
       <Property Name="DatabaseType" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.IMightNotExist" Collapsed="true">
-    <Position X="5.25" Y="0.75" Width="1.5" />
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.IMightNotExist">
+    <Position X="3.75" Y="1" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\IMightNotExist.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.IDiscoveredColumnHelper" Collapsed="true">
-    <Position X="15.5" Y="6" Width="2.5" />
+    <Position X="19" Y="1" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\IDiscoveredColumnHelper.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.IDiscoveredDatabaseHelper" Collapsed="true">
-    <Position X="9.75" Y="6" Width="2.5" />
+    <Position X="13.25" Y="1" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAAAgAAFAAAAAAAAAAAAAEAAAABAACAAAA=</HashCode>
+      <HashCode>AAABAAAAAAAAAgIAFoAAAAAAAAAAAAEAAAABAACAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\IDiscoveredDatabaseHelper.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.IDiscoveredServerHelper" Collapsed="true">
-    <Position X="6.75" Y="6" Width="2.5" />
+    <Position X="10.25" Y="1" Width="2.5" />
     <TypeIdentifier>
       <HashCode>ACIQAIQBAAAAAACAACACAAAUAAICIAEACQAAAHBIAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\IDiscoveredServerHelper.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.IDiscoveredTableHelper" Collapsed="true">
-    <Position X="12.75" Y="6" Width="2.5" />
+    <Position X="16.25" Y="1" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAAAEAAICAAABAEAAEAQAAIAAIAAAAAAAAIAAAAA=</HashCode>
+      <HashCode>GABAAAAEAAICAAAJAEAAEAYAAIgAIAAAAAAAAIAAAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\IDiscoveredTableHelper.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.IQuerySyntaxHelper" Collapsed="true">
-    <Position X="21.25" Y="2" Width="2.75" />
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.IQuerySyntaxHelper">
+    <Position X="3.5" Y="7" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AEAQAAAAAIAACAAAAAAAAAAIAAAkARCAAAAAAABAAIA=</HashCode>
+      <HashCode>AEAQAAAAAIAACAAAAAAAAAAIAAAkARCAAAAAAABAAIg=</HashCode>
       <FileName>DatabaseHelpers\Discovery\QuerySyntax\IQuerySyntaxHelper.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="TypeTranslater" />
+      <Property Name="UpdateHelper" />
+      <Property Name="AggregateHelper" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.ITypeTranslater">
+    <Position X="7.5" Y="8" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABEAAAIAAAACIAACAAAAAAAAAABgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\ITypeTranslater.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update.IUpdateHelper" Collapsed="true">
+    <Position X="6.75" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\Update\IUpdateHelper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation.IAggregateHelper" Collapsed="true">
+    <Position X="6.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\Aggregation\IAggregateHelper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.IBulkCopy" Collapsed="true">
+    <Position X="6.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\IBulkCopy.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation.IQueryAxis">
+    <Position X="13.75" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABAgAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\Aggregation\IQueryAxis.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AxisIncrement" />
+    </ShowAsAssociation>
   </Interface>
   <Enum Name="ReusableLibraryCode.DatabaseType">
-    <Position X="7.25" Y="0.75" Width="1.5" />
+    <Position X="7.5" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAgAA=</HashCode>
       <FileName>DatabaseType.cs</FileName>
     </TypeIdentifier>
   </Enum>
+  <Enum Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation.AxisIncrement">
+    <Position X="16.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAJAAAAAAAAAAAAAAAAAEAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\Aggregation\AxisIncrement.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.CustomLineRole" Collapsed="true">
+    <Position X="11.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAEAAAg=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\CustomLineRole.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.MandatoryScalarFunctions">
+    <Position X="13.75" Y="12.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\IQuerySyntaxHelper.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.QueryComponent" Collapsed="true">
+    <Position X="11.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAgAACAAAAAAcAAAQAAgAAEAAAAAABAAAAAAAEAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\QueryComponent.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update.UpdateStatementSqlGetter" Collapsed="true">
+    <Position X="16.25" Y="20.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\Update\IUpdateHelper.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

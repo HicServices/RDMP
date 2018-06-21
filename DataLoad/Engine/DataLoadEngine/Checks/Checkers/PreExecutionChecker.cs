@@ -4,6 +4,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Triggers;
 using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Migration;
@@ -63,13 +64,13 @@ namespace DataLoadEngine.Checks.Checkers
 
         private void CheckTablesDoNotExistOnStaging(IEnumerable<TableInfo> allTableInfos)
         {
-            var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
+            DiscoveredDatabase stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
             var alreadyExistingTableInfosThatShouldntBeThere = new List<string>();
 
             var tableNames = allTableInfos.Select(info => info.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
-            foreach (var tableName in tableNames)
+            foreach (string tableName in tableNames)
             {
-                if (DatabaseOperations.CheckTableExists(tableName, stagingDbInfo))
+                if (stagingDbInfo.ExpectTable(tableName).Exists())
                     alreadyExistingTableInfosThatShouldntBeThere.Add(tableName);
             }
 
@@ -95,10 +96,15 @@ namespace DataLoadEngine.Checks.Checkers
         private void CheckTablesAreEmptyInDatabaseOnServer()
         {
             var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-            if (!DatabaseOperations.CheckTablesAreEmptyInDatabaseOnServer(stagingDbInfo))
-                _notifier.OnCheckPerformed(new CheckEventArgs("Staging database '" + stagingDbInfo.GetRuntimeName() + "' is not empty on " + stagingDbInfo.Server.Name, CheckResult.Fail, null));
-            else
-                _notifier.OnCheckPerformed(new CheckEventArgs("Staging database is empty (" + stagingDbInfo + ")", CheckResult.Success, null));
+
+            foreach (var table in stagingDbInfo.DiscoverTables(false))
+            {
+                if(!table.IsEmpty())
+                    _notifier.OnCheckPerformed(new CheckEventArgs("Table " + table + " in staging database '" + stagingDbInfo.GetRuntimeName() + "' is not empty on " + stagingDbInfo.Server.Name, CheckResult.Fail));
+                else
+                    _notifier.OnCheckPerformed(new CheckEventArgs("Staging database is empty (" + stagingDbInfo + ")", CheckResult.Success, null));
+            }
+            
         }
 
         // Check that the column infos from the catalogue match up with what is actually in the staging databases
@@ -160,7 +166,17 @@ namespace DataLoadEngine.Checks.Checkers
                 var tableName = tableInfo.GetRuntimeName(tableNamingConvention, _databaseConfiguration.DatabaseNamer);
                 try
                 {
-                    DatabaseOperations.CheckTableContainsColumns(dbInfo, tableName, columnNames);
+
+                    var cols = dbInfo.ExpectTable(tableName).DiscoverColumns().ToArray();
+                    
+                    string missing = string.Join(",",
+                        columnNames.Where(
+                            req =>
+                                !cols.Any(c => c.GetRuntimeName().Equals(req, StringComparison.CurrentCultureIgnoreCase))));
+                    
+                    if (!string.IsNullOrWhiteSpace(missing))
+                        throw new Exception(dbInfo + " does not contain columns: " + missing);
+
                 }
                 catch (Exception e)
                 {
@@ -191,7 +207,7 @@ namespace DataLoadEngine.Checks.Checkers
 
             var shouldDrop = _notifier.OnCheckPerformed(new CheckEventArgs("RAW database '" + rawDbInfo + "' exists", CheckResult.Fail, null, "Drop database " + rawDbInfo));
             
-            if(!rawDbInfo.GetRuntimeName().EndsWith("_RAW"))
+            if(!rawDbInfo.GetRuntimeName().EndsWith("_RAW",StringComparison.CurrentCultureIgnoreCase))
                 throw new Exception("rawDbInfo database name did not end with _RAW! It was:" + rawDbInfo.GetRuntimeName()+ " (Why is the system trying to drop this database?)");
             if (shouldDrop)
             {
@@ -211,7 +227,7 @@ namespace DataLoadEngine.Checks.Checkers
             // Check that the update triggers are present/enabled
             foreach (var tableInfo in allTableInfos)
             {
-                TriggerChecks checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live], tableInfo.GetRuntimeName(), true, null);
+                TriggerChecks checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live].ExpectTable(tableInfo.GetRuntimeName()), true);
                 checker.Check(_notifier);
             }
         }

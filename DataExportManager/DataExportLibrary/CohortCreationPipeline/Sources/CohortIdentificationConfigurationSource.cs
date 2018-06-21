@@ -28,6 +28,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
         public bool FreezeAfterSuccessfulImport { get; set; }
 
         private bool haveSentData = false;
+        private CancellationTokenSource _cancelGlobalOperations = new CancellationTokenSource();
 
         /// <summary>
         /// If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear out the cache.  This will mean that
@@ -60,7 +61,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
         public void Abort(IDataLoadEventListener listener)
         {
-            
+            _cancelGlobalOperations.Cancel();
         }
 
         public DataTable TryGetPreview()
@@ -87,6 +88,9 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
             if (rootContainerTask.State != CompilationState.Finished)
                 throw new Exception("CohortIdentificationCriteria execution resulted in state '" + rootContainerTask.State + "'", rootContainerTask.CrashMessage);
+
+            if(rootContainerTask == null)
+                throw new Exception("Root container task was null, was the execution cancelled? / crashed");
 
             var execution = cohortCompiler.Tasks[rootContainerTask];
 
@@ -154,7 +158,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
             var runner = new CohortCompilerRunner(cohortCompiler, Timeout);
             runner.RunSubcontainers = false;
             runner.PhaseChanged += (s,e)=> listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CohortCompilerRunner entered Phase '" + runner.ExecutionPhase + "'"));
-            return runner.Run();
+            return runner.Run(_cancelGlobalOperations.Token);
         }
 
         public void Check(ICheckNotifier notifier)

@@ -295,11 +295,13 @@ INSERT INTO [RoundhousE].[ScriptsRun]
 
             Version maxPatchVersion = patches.Values.Max(pat => pat.DatabaseVersionNumber);
 
+            var db = new DiscoveredServer(_builder).GetCurrentDatabase();
+
             try
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
 
-                UsefulStuff.BackupSqlServerDatabase(CreateConnectionString(),_database, "Full backup of " + _database);
+                db.CreateBackup("Full backup of " + _database);
             
                 notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
                 
@@ -312,7 +314,7 @@ INSERT INTO [RoundhousE].[ScriptsRun]
                 return false;
             }
 
-            var db = new DiscoveredServer(_builder).GetCurrentDatabase();
+            
 
             try
             {

@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.LoadExecutionUIs;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsLoadMetadata : RDMPCommandExecutionProposal<LoadMetadata>
+    class ProposeExecutionWhenTargetIsLoadMetadata : RDMPCommandExecutionProposal<LoadMetadata>
     {
         public ProposeExecutionWhenTargetIsLoadMetadata(IActivateItems itemActivator) : base(itemActivator)
         {
@@ -24,7 +25,7 @@ namespace CatalogueManager.CommandExecution.Proposals
 
         public override void Activate(LoadMetadata target)
         {
-            ItemActivator.Activate<LoadMetadataUI,LoadMetadata>(target);
+            ItemActivator.Activate<ExecuteLoadMetadataUI,LoadMetadata>(target);
         }
 
         public override ICommandExecution ProposeExecution(ICommand cmd, LoadMetadata target, InsertOption insertOption = InsertOption.Default)

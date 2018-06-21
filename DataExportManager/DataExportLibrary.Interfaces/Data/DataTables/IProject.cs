@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
@@ -18,5 +19,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         IEnumerable<IDataUser> DataUsers { get; }
         
         IDataExportRepository DataExportRepository { get; }
+        ICatalogue[] GetAllProjectCatalogues();
+        ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory any);
     }
 }

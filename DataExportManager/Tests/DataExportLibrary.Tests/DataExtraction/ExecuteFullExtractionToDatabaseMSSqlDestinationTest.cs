@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
+using DataExportLibrary.Data;
+using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime;
+using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataLoadEngine.DatabaseManagement;
-using DataLoadEngine.DatabaseManagement.Operations;
+using DataExportLibrary.ExtractionTime.UserPicks;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
@@ -29,6 +27,28 @@ namespace DataExportLibrary.Tests.DataExtraction
         {
             DiscoveredDatabase dbToExtractTo = null;
 
+            var ci = new CatalogueItem(CatalogueRepository, _catalogue, "YearOfBirth");
+            var columnToTransform = _columnInfos.Single(c=>c.GetRuntimeName().Equals("DateOfBirth",StringComparison.CurrentCultureIgnoreCase));
+
+            string transform = "YEAR(" + columnToTransform.Name + ")";
+
+            var ei = new ExtractionInformation(CatalogueRepository, ci, columnToTransform, transform);
+            ei.Alias = "YearOfBirth";
+            ei.ExtractionCategory = ExtractionCategory.Core;
+            ei.SaveToDatabase();
+            
+            //make it part of the ExtractionConfiguration
+            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet, (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL);
+            newColumn.Alias = ei.Alias;
+            newColumn.SaveToDatabase();
+
+            _extractableColumns.Add(newColumn);
+            
+            //recreate the extraction command so it gets updated with the new column too.
+            _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
+                _extractableColumns, new HICProjectSalt(_project), "",
+                new ExtractionDirectory(@"C:\temp\", _configuration));
+
             try
             {
                 _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
@@ -44,25 +64,19 @@ namespace DataExportLibrary.Tests.DataExtraction
 
                 base.Execute(out execute, out result);
 
-                Assert.IsTrue(dbToExtractTo.ExpectTable(_expectedTableName).Exists());
+                var destinationTable = dbToExtractTo.ExpectTable(_expectedTableName);
+                Assert.IsTrue(destinationTable.Exists());
 
-                var server = dbToExtractTo.Server;
-                using (var con = server.GetConnection())
-                {
-                    con.Open();
-                    var cmd = server.GetCommand("SELECT * FROM " + _expectedTableName, con);
+                var dt = destinationTable.GetDataTable();
 
-                    DataTable dt = new DataTable();
+                Assert.AreEqual(1, dt.Rows.Count);
+                Assert.AreEqual(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim(),dt.Rows[0]["ReleaseID"]);
+                Assert.AreEqual(new DateTime(2001,1,1), dt.Rows[0]["DateOfBirth"]);
+                Assert.AreEqual(2001, dt.Rows[0]["YearOfBirth"]);
 
-                    var da = server.GetDataAdapter(cmd);
-                    da.Fill(dt);
+                Assert.AreEqual(columnToTransform.Data_type, destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
+                Assert.AreEqual("int",destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
 
-                    Assert.AreEqual(1,dt.Rows.Count);
-
-                    Assert.AreEqual(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim(), ((string)dt.Rows[0]["ReleaseID"]).Trim());
-                    Assert.AreEqual(1, dt.Rows[0]["Result"]);
-
-                }
             }
             finally
             {

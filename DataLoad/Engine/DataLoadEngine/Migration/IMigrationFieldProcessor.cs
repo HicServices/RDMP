@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Migration
 {
@@ -9,7 +10,7 @@ namespace DataLoadEngine.Migration
     /// </summary>
     public interface IMigrationFieldProcessor
     {
-        void ValidateFields(string[] sourceFields, string[] destinationFields);
+        void ValidateFields(DiscoveredColumn[] fromColumns, DiscoveredColumn[] toColumns);
 
         /// <summary>
         /// Assigns the current field to either Diff and/or Update (or neither).
@@ -19,6 +20,6 @@ namespace DataLoadEngine.Migration
         /// (some fields might not matter if they are different e.g. dataLoadRunID)</param>
         /// <param name="fieldsToUpdate">Fields that will have their values copied across to the new table (this is usually a superset of fields to diff, and also
         /// includes all primary keys).</param>
-        void AssignFieldsForProcessing(string field, List<string> fieldsToDiff, List<string> fieldsToUpdate);
+        void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate);
     }
 }

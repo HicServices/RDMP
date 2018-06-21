@@ -45,6 +45,36 @@ namespace CatalogueLibrary.Providers
             if (o is HICProjectDirectoryNode)
                 return DescribeProblem((HICProjectDirectoryNode) o);
 
+            if (o is ExtractionInformation)
+                return DescribeProblem((ExtractionInformation) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(ExtractionInformation extractionInformation)
+        {
+            //Get the Catalogue that this ExtractionInformation is descended from
+            var descendancy = _childProvider.GetDescendancyListIfAnyFor(extractionInformation);
+            if (descendancy != null)
+            {
+                var catalogue = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
+                if (catalogue != null)
+                {
+                    //if we know the Catalogue extractability
+                    
+                    //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
+                    //otherwise it's a Problem
+
+                    if (catalogue.IsProjectSpecific(null))
+                    {
+                        if(extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
+                            return "Catalogue " + catalogue + " is Project Specific Catalogue so all ExtractionCategory should be " + ExtractionCategory.ProjectSpecific;
+                    }
+                    else if( extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                        return "ExtractionCategory is only valid when the Catalogue ('"+catalogue+"') is also ProjectSpecific";
+                }
+            }
+
             return null;
         }
 

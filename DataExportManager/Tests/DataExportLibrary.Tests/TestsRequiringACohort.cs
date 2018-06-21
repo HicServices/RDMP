@@ -1,12 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using CatalogueLibrary;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataHelper;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
+using DataLoadEngine.DataFlowPipeline.Destinations;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace DataExportLibrary.Tests
@@ -17,22 +24,29 @@ namespace DataExportLibrary.Tests
         protected const int projectNumberInTestData = 99;
         protected ExternalCohortTable _externalCohortTable;
         protected IExtractableCohort _extractableCohort;
-
-        protected string customTableName;
-
+        
         protected string cohortTableName = "Cohort";
         protected string definitionTableName = "CohortDefinition";
-        protected string customTablesTableName = "CohortCustomData";
 
         protected string ExternalCohortTableNameInCatalogue = "CohortTests";
         protected readonly string CohortDatabaseName = TestDatabaseNames.GetConsistentName("CohortDatabase");
-        protected DiscoveredDatabase _externalCohortDetails;
+        protected DiscoveredDatabase _cohortDatabase;
         private Exception _setupException;
-        
+
+        /// <summary>
+        /// Set the Project_ID to your project to make this 'custom data'
+        /// </summary>
+        protected ExtractableDataSet CustomExtractableDataSet;
+        protected Catalogue CustomCatalogue;
+        protected DiscoveredTable CustomTable;
+        protected TableInfo CustomTableInfo;
+
         /// <summary>
         /// Dictionary of the private and release IDs generated for the cohort, where Keys is a collection of private identifiers and Values are the corresponding release identifiers
         /// </summary>
         protected readonly Dictionary<string, string> _cohortKeysGenerated = new Dictionary<string, string>();
+
+        
 
         [TestFixtureSetUp]
         protected override void SetUp()
@@ -43,7 +57,7 @@ namespace DataExportLibrary.Tests
                 
                 CreateCohortDatabase();
 
-                _externalCohortDetails = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
+                _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
                 
                 EmptyCohortTables();
                 SetupCohortDefinitionAndCustomTable();
@@ -93,8 +107,8 @@ GO
 USE {0}
 
 CREATE TABLE [dbo].[Cohort](
-       [PrivateID] [char](10) NOT NULL,
-       [ReleaseID] [char](10) NULL,
+       [PrivateID] [varchar](10) NOT NULL,
+       [ReleaseID] [varchar](10) NULL,
        [cohortDefinition_id] [int] NOT NULL,
 CONSTRAINT [PK_Cohort] PRIMARY KEY CLUSTERED 
 (
@@ -123,29 +137,6 @@ ALTER TABLE [dbo].[Cohort]  WITH CHECK ADD  CONSTRAINT [FK_Cohort_CohortDefiniti
 REFERENCES [dbo].[CohortDefinition] ([id])
 GO
 ALTER TABLE [dbo].[Cohort] CHECK CONSTRAINT [FK_Cohort_CohortDefinition]
-GO
-
-CREATE TABLE [dbo].[CohortCustomData](
-	[cohortDefinition_id] [int] NOT NULL,
-	[customTableName] [varchar](256) NOT NULL,
-	[active] [bit] NOT NULL,
- CONSTRAINT [PK_CohortCustomData] PRIMARY KEY CLUSTERED 
-(
-	[cohortDefinition_id] ASC,
-	[customTableName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-
-ALTER TABLE [dbo].[CohortCustomData] ADD  CONSTRAINT [DF_CohortCustomData_active]  DEFAULT ((1)) FOR [active]
-GO
-
-ALTER TABLE [dbo].[CohortCustomData]  WITH CHECK ADD  CONSTRAINT [FK_CohortCustomData_CohortDefinition] FOREIGN KEY([cohortDefinition_id])
-REFERENCES [dbo].[CohortDefinition] ([id])
-GO
-
-ALTER TABLE [dbo].[CohortCustomData] CHECK CONSTRAINT [FK_CohortCustomData_CohortDefinition]
 GO
 ",
                 //{0}
@@ -186,13 +177,12 @@ CohortDatabaseName);
             var newExternal = new ExternalCohortTable(DataExportRepository, "")
             {
                 Database = CohortDatabaseName,
-                Server = _externalCohortDetails.Server.Name,
+                Server = _cohortDatabase.Server.Name,
                 DefinitionTableName = definitionTableName,
                 TableName = cohortTableName,
                 Name = ExternalCohortTableNameInCatalogue,
-                CustomTablesTableName = customTablesTableName,
-                Username = _externalCohortDetails.Server.ExplicitUsernameIfAny,
-                Password = _externalCohortDetails.Server.ExplicitPasswordIfAny,
+                Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
+                Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
                 PrivateIdentifierField = "PrivateID",
                 ReleaseIdentifierField = "ReleaseID",
                 DefinitionTableForeignKeyField = "cohortDefinition_id"
@@ -205,72 +195,63 @@ CohortDatabaseName);
 
         private void CreateExtractableCohort()
         {
-            int colsCreated;
-            _extractableCohort = new ExtractableCohort(DataExportRepository, _externalCohortTable, cohortIDInTestData,out colsCreated);
-            Assert.AreEqual(2, colsCreated);
-
+            _extractableCohort = new ExtractableCohort(DataExportRepository, _externalCohortTable, cohortIDInTestData);
             Assert.AreEqual(_extractableCohort.OriginID,cohortIDInTestData);
-
-            var cols = _extractableCohort.CustomCohortColumns;
-            Assert.IsTrue(cols.Any(c => c.GetRuntimeName().Equals("SuperSecretThing")));
-            Assert.IsTrue(cols.Any(c => c.GetRuntimeName().Equals("PrivateID")));
         }
 
         private void SetupCohortDefinitionAndCustomTable()
         {
-            var server = _externalCohortDetails.Server;
-            using(var con = server.GetConnection())
+            DataTable dt = new DataTable();
+            dt.Columns.Add("SuperSecretThing");
+            dt.Columns.Add("PrivateID");
+
+            dt.Rows.Add(new[] {"monkeys can all secretly fly", "Priv_12345"});
+            dt.Rows.Add(new[] { "the wizard of OZ was a man behind a machine", "Priv_wtf11" });
+
+            CustomTable = _cohortDatabase.CreateTable("custTable99", dt);
+
+            ColumnInfo[] cols;
+            new TableInfoImporter(CatalogueRepository, CustomTable).DoImport(out CustomTableInfo, out cols);
+            
+            CatalogueItem[] cis;
+            ExtractionInformation[] eis;
+            new ForwardEngineerCatalogue(CustomTableInfo, cols, true).ExecuteForwardEngineering(out CustomCatalogue, out cis, out eis);
+
+            CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, CustomCatalogue);
+            
+            foreach (ExtractionInformation e in eis)
             {
-                con.Open();
+                e.ExtractionCategory = ExtractionCategory.ProjectSpecific;
+                
+                if (e.GetRuntimeName().Equals("PrivateID"))
+                    e.IsExtractionIdentifier = true;
 
-                //setup description of cohort (with custom table
-                customTableName = "custTable99";
+                e.SaveToDatabase();
+            }
 
+            using (var con = _cohortDatabase.Server.GetConnection())
+            {
                 string insertSQL = "SET IDENTITY_INSERT " + definitionTableName + " ON ;" + Environment.NewLine;
                 insertSQL += "INSERT INTO " + definitionTableName +
-                             " (id,projectNumber,description,version) VALUES (" + cohortIDInTestData + "," +
-                             projectNumberInTestData + ",'unitTestDataForCohort',1)";
+                         " (id,projectNumber,description,version) VALUES (" + cohortIDInTestData + "," +
+                         projectNumberInTestData + ",'unitTestDataForCohort',1)";
 
-                var cmdInsert = server.GetCommand(insertSQL, con);
-                Assert.AreEqual(1, cmdInsert.ExecuteNonQuery());
-
-
-                string insertCustomTableDataSQL = "INSERT INTO " + customTablesTableName +
-                            " (cohortDefinition_id,customTableName,active) VALUES (" + cohortIDInTestData + ",'" + customTableName + "',1)";
-
-                var cmdInsertCustomTableDataSQL = server.GetCommand(insertCustomTableDataSQL, con);
-                Assert.AreEqual(1, cmdInsertCustomTableDataSQL.ExecuteNonQuery());
-                
-                string sqlCreateCustomTable =
-                    "IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[custTable99]') AND TYPE IN (N'U'))DROP TABLE [dbo].[custTable99];" +
-                    Environment.NewLine;
-
-                sqlCreateCustomTable += @"
-CREATE TABLE [dbo].[custTable99](
-	[SuperSecretThing] [varchar](max) NULL,
-	[PrivateID] [varchar](10) NULL
-) ON [PRIMARY]
-
-INSERT INTO custTable99 VALUES ('monkeys can all secretly fly','Priv_12345')
-INSERT INTO custTable99 VALUES ('the wizard of OZ was a man behind a machine','Priv_wtf11')
-";
-                var createCustomTable = server.GetCommand(sqlCreateCustomTable, con);
-                createCustomTable.ExecuteNonQuery();
+                con.Open();
+                _cohortDatabase.Server.GetCommand(insertSQL, con).ExecuteNonQuery();
             }
         }
 
-
-
+        
         private void EmptyCohortTables()
         {
 
-            using (var con = _externalCohortDetails.Server.GetConnection())
+            using (var con = _cohortDatabase.Server.GetConnection())
             {
                 con.Open();
 
                 //clear out old data
                 var cmdDelete =
-                    _externalCohortDetails.Server.GetCommand(
+                    _cohortDatabase.Server.GetCommand(
                         "DELETE FROM " + cohortTableName + "; DELETE FROM " + definitionTableName + ";", con);
                 cmdDelete.ExecuteNonQuery();
             }
@@ -280,13 +261,13 @@ INSERT INTO custTable99 VALUES ('the wizard of OZ was a man behind a machine','P
         {
             _cohortKeysGenerated.Add(privateID,publicID);
 
-            using (var con = _externalCohortDetails.Server.GetConnection())
+            using (var con = _cohortDatabase.Server.GetConnection())
             {
                 con.Open();
 
                 string insertIntoList = "INSERT INTO Cohort(PrivateID,ReleaseID,cohortDefinition_id) VALUES ('" + privateID + "','" + publicID + "'," + cohortIDInTestData + ")";
 
-                var insertRecord = _externalCohortDetails.Server.GetCommand(insertIntoList, con);
+                var insertRecord = _cohortDatabase.Server.GetCommand(insertIntoList, con);
                 Assert.AreEqual(1, insertRecord.ExecuteNonQuery());
             }
         }

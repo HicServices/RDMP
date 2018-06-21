@@ -20,7 +20,7 @@ namespace CatalogueManager.Menus
                 typeof(ANOStore.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.ANOStore) 
                 { OverrideCommandName = "Create ANOStore Database" });
 
-            Add(new ExecuteCommandExportObjectsToFile(_activator,_activator.CoreChildProvider.AllANOTables));
+            Add(new ExecuteCommandExportObjectsToFileUI(_activator,_activator.CoreChildProvider.AllANOTables));
         }
     }
 }

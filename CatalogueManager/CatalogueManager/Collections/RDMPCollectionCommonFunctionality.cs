@@ -464,25 +464,25 @@ namespace CatalogueManager.Collections
             }
             else
             {
-                //but the filter is currently hiding the object?
-                if (IsHiddenByFilter(e.Object))
-                    return;
-
-                //is parent in tree?
-                if(parent != null && Tree.IndexOf(parent) != -1)
-                    Tree.RefreshObject(parent);//refresh parent
-                else
+                try
                 {
-                    try
+                    //but the filter is currently hiding the object?
+                    if (IsHiddenByFilter(e.Object))
+                        return;
+                
+                    //is parent in tree?
+                    if(parent != null && Tree.IndexOf(parent) != -1)
+                        Tree.RefreshObject(parent);//refresh parent
+                    else
                     {
                         //parent isn't in tree, could be a root object? try to refresh the object anyway
                         if (Tree.IndexOf(e.Object) != -1)
                             Tree.RefreshObject(e.Object);
                     }
-                    catch (IndexOutOfRangeException)
-                    {
+                }
+                catch (IndexOutOfRangeException)
+                {
                         
-                    }
                 }
             }
 

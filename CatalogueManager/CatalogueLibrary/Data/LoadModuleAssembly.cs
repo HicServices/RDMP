@@ -173,7 +173,7 @@ namespace CatalogueLibrary.Data
 	        set { SetField(ref _dllFileVersion,value);}
         }
 
-        [Relationship(typeof(Plugin))]
+        [Relationship(typeof(Plugin), RelationshipType.SharedObject)]
         public int Plugin_ID
         {
 	        get { return _plugin_ID;}

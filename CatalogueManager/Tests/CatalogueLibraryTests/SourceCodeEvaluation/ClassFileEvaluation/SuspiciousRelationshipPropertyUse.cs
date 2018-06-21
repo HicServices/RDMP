@@ -12,6 +12,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using NUnit.Framework;
 using Mono.Reflection;
 using ReusableLibraryCode;
@@ -206,6 +207,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                 if (!t.IsClass)
                     continue;
 
+                //don't worry about the ToString method on classes that are IInjectKnown
                 var toStringMethod = t.GetMethod("ToString", new Type[0]);
 
                 //it doesn't have any ToString methods!
@@ -239,8 +241,18 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                             PropertyInfo prop;
 
                             if (RelationshipPropertyInfos.TryGetBySecond(methodInfo, out prop))
-                                _fails.Add("FAIL: ToString method in Type " + t.FullName +
-                                           " uses Relationship PropertyInfo " + prop.Name);
+                            {
+
+                                
+                                //if we are injectable for it
+                        if( t.GetInterfaces().Any(x =>
+                              x.IsGenericType &&
+                              x.GetGenericTypeDefinition() == typeof(IInjectKnown<>) &&
+                              x.GetGenericArguments()[0] == prop.PropertyType))
+                            continue;
+
+                                _fails.Add("FAIL: ToString method in Type " + t.FullName + " uses Relationship PropertyInfo " + prop.Name);
+                            }
                         }
                     }
             }

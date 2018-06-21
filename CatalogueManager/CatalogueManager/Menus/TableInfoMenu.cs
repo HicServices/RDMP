@@ -9,6 +9,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
+using CatalogueLibrary.Triggers.Implementations;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
@@ -55,7 +56,7 @@ namespace CatalogueManager.Menus
 
             Items.Add(new ToolStripSeparator());
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo));
-            Items.Add(new AddJoinInfoMenuItem(_activator, tableInfo));
+            Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo));
             Items.Add(new ToolStripSeparator());
 
             Items.Add("Synchronize TableInfo ", CatalogueIcons.Sync, delegate { TableInfo_Click(tableInfo); });
@@ -206,8 +207,8 @@ namespace CatalogueManager.Menus
 
                         var db = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.InternalDataProcessing);
 
-                        TriggerImplementer implementer = new TriggerImplementer(db, tableInfo.GetRuntimeName());
-                        implementer.CreateTrigger(pks.Select(col => col.GetRuntimeName()).ToArray(), checks);
+                        MicrosoftSQLTriggerImplementer implementer = new MicrosoftSQLTriggerImplementer(db.ExpectTable(tableInfo.GetRuntimeName()));
+                        implementer.CreateTrigger(checks);
                         MessageBox.Show("Success, look for the new table " + tableInfo.GetRuntimeName() + "_Archive which will contain old records whenever there is an update");
                     }
                 }

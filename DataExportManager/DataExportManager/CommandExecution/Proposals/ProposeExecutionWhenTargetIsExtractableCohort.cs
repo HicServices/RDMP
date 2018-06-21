@@ -15,7 +15,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsExtractableCohort : RDMPCommandExecutionProposal<ExtractableCohort>
+    class ProposeExecutionWhenTargetIsExtractableCohort : RDMPCommandExecutionProposal<ExtractableCohort>
     {
         public ProposeExecutionWhenTargetIsExtractableCohort(IActivateItems activator):base(activator)
         {
@@ -33,10 +33,6 @@ namespace DataExportManager.CommandExecution.Proposals
 
         public override ICommandExecution ProposeExecution(ICommand cmd, ExtractableCohort target, InsertOption insertOption = InsertOption.Default)
         {
-            var fileCommand = cmd as FileCollectionCommand; 
-            if(fileCommand != null)
-                return new ExecuteCommandImportFileAsCustomDataForCohort(ItemActivator, target, fileCommand);
-
             //no command possible, dragged command must have been something else
             return null;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using ReusableLibraryCode.DataAccess;
@@ -37,6 +38,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         
         public virtual bool Exists(IManagedTransaction transaction = null)
         {
+            if (!Database.Exists())
+                return false;
+
             return Database.DiscoverTables(true, transaction)
                .Any(t => t.GetRuntimeName().Equals(GetRuntimeName(),StringComparison.InvariantCultureIgnoreCase));
         }
@@ -125,16 +129,22 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 return Helper.GetRowCount(connection.Connection, this, connection.Transaction);
         }
 
-        public void AddColumn(string name, DatabaseTypeRequest type,bool allowNulls)
+        public bool IsEmpty(IManagedTransaction transaction = null)
         {
-            AddColumn(name, Database.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(type),allowNulls);
+            using (IManagedConnection connection = Database.Server.GetManagedConnection(transaction))
+                return Helper.IsEmpty(connection.Connection, this, connection.Transaction);
         }
 
-        public void AddColumn(string name, string databaseType, bool allowNulls)
+        public void AddColumn(string name, DatabaseTypeRequest type,bool allowNulls,int timeout)
+        {
+            AddColumn(name, Database.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(type),allowNulls,timeout);
+        }
+
+        public void AddColumn(string name, string databaseType, bool allowNulls,int timeout)
         {
             using (IManagedConnection connection = Database.Server.GetManagedConnection())
             {
-                Helper.AddColumn(this, connection.Connection, name, databaseType, allowNulls);
+                Helper.AddColumn(this, connection.Connection, name, databaseType, allowNulls,timeout);
             }
         }
 
@@ -163,6 +173,33 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public void MakeDistinct()
         {
             Helper.MakeDistinct(this);
+        }
+
+        public string ScriptTableCreation(bool dropPrimaryKeys,bool dropNullability, bool convertIdentityToInt)
+        {
+            return Helper.ScriptTableCreation(this, dropPrimaryKeys, dropNullability, convertIdentityToInt);
+        }
+
+        public void Rename(string newName)
+        {
+            using (IManagedConnection connection = Database.Server.GetManagedConnection())
+            {
+                Helper.RenameTable(this,newName,connection);
+                _table = newName;
+            }
+            
+        }
+
+        /// <summary>
+        /// Creates a primary key on the table if none exists yet
+        /// </summary>
+        /// <param name="discoverColumn"></param>
+        public void CreatePrimaryKey(params DiscoveredColumn[] discoverColumns)
+        {
+            using (IManagedConnection connection = Database.Server.GetManagedConnection())
+            {
+                Helper.CreatePrimaryKey(this,discoverColumns, connection);
+            }
         }
     }
 

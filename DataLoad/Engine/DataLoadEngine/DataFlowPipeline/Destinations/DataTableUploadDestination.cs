@@ -11,7 +11,6 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using HIC.Logging;
 using HIC.Logging.Listeners;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -65,6 +64,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         private bool _firstTime = true;
 
+        private const int AlterTimeout = 300;
+
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             //work out the table name for the table we are going to create
@@ -96,7 +97,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     tableAlreadyExistsButEmpty = true;
                     
                     if(!AllowLoadingPopulatedTables)
-                        if (discoveredTable.GetRowCount() == 0)
+                        if (discoveredTable.IsEmpty())
                             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found table " + TargetTableName + " already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
                         else
                             throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
@@ -199,7 +200,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     string sql = column.Helper.GetAlterColumnToSql(column, newSqlTypeRequired, column.AllowNulls);
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Executing SQL '" + sql + "'"));
                     var cmd = tbl.Database.Server.GetCommand(sql, _managedConnection);
-
+                    cmd.CommandTimeout = AlterTimeout;
                     cmd.ExecuteNonQuery();
                 }
             }

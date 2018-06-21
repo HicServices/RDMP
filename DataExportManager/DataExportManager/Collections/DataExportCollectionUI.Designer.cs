@@ -58,7 +58,7 @@ namespace DataExportManager.Collections
             this.tlvDataExport.UseCompatibleStateImageBehavior = false;
             this.tlvDataExport.View = System.Windows.Forms.View.Details;
             this.tlvDataExport.VirtualMode = true;
-            this.tlvDataExport.ItemActivate += new System.EventHandler(this.tlvDataExport_ItemActivate);
+            
             // 
             // olvName
             // 

@@ -40,55 +40,53 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCatalogues, false, false);
-            if (dialog.ShowDialog() == DialogResult.OK)
+            Catalogue cata;
+
+            if (!SelectOne(_availableCatalogues,out cata))
+                return;
+            
+            //Ensure logging task is correct
+            var otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();
+
+            //if there are other catalogues
+            if (otherCatalogues.Any())
             {
-                //associate them
-                var cata = dialog.Selected as Catalogue;
-                if (cata != null)
+                var tasks = otherCatalogues.Select(c => c.LoggingDataTask).Distinct().ToArray();
+                //if the other catalogues have an agreed logging task
+                if (tasks.Length == 1)
                 {
-                    //Ensure logging task is correct
-                    var otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();
+                    string task = tasks.Single();
 
-                    //if there are other catalogues
-                    if (otherCatalogues.Any())
+                    //and that logging task is not blank!, and differs from this Catalogue
+                    if (!string.IsNullOrWhiteSpace(task) && !task.Equals(cata.LoggingDataTask))
                     {
-                        var tasks = otherCatalogues.Select(c => c.LoggingDataTask).Distinct().ToArray();
-                        //if the other catalogues have an agreed logging task
-                        if (tasks.Length == 1)
+                        var liveServers = otherCatalogues.Where(c => c.LiveLoggingServer_ID != null).Select(c => c.LiveLoggingServer_ID).Distinct().ToArray();
+
+                        //AND if there is agreement on what logging server to use!
+                        if (liveServers.Count() <= 1)
                         {
-                            string task = tasks.Single();
+                            //if there is no current logging task for the Catalogue
+                            if(string.IsNullOrWhiteSpace(cata.LoggingDataTask)
 
-                            //and that logging task is not blank!, and differs from this Catalogue
-                            if (!string.IsNullOrWhiteSpace(task) && !task.Equals(cata.LoggingDataTask))
+                            //or if the user wants to switch to the new one
+                            || MessageBox.Show("Do you want to set Catalogue '" + cata.Name + "' to use shared logging task '" + task + "' isntead of it's current Logging Task '"+cata.LoggingDataTask+"' (All Catalogues in a load must share the same task and logging servers)?", "Synchronise Logging Tasks", MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
-                                var liveServers = otherCatalogues.Where(c => c.LiveLoggingServer_ID != null).Select(c => c.LiveLoggingServer_ID).Distinct().ToArray();
-
-                                //AND if there is agreement on what logging server to use!
-                                if (liveServers.Count() <= 1)
-                                {
-                                    //if there is no current logging task for the Catalogue
-                                    if(string.IsNullOrWhiteSpace(cata.LoggingDataTask)
-
-                                    //or if the user wants to switch to the new one
-                                    || MessageBox.Show("Do you want to set Catalogue '" + cata.Name + "' to use shared logging task '" + task + "' isntead of it's current Logging Task '"+cata.LoggingDataTask+"' (All Catalogues in a load must share the same task and logging servers)?", "Synchronise Logging Tasks", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                                    {
-
-                                        //switch Catalogue to use that logging task (including servers)
-                                        cata.LoggingDataTask = task;
-                                        cata.LiveLoggingServer_ID = liveServers.SingleOrDefault();
-                                        cata.SaveToDatabase();
-                                    }
-                                }
+                                //switch Catalogue to use that logging task (including servers)
+                                cata.LoggingDataTask = task;
+                                cata.LiveLoggingServer_ID = liveServers.SingleOrDefault();
+                                cata.SaveToDatabase();
                             }
                         }
                     }
-
-                    cata.LoadMetadata_ID = _loadMetadata.ID;
-                    cata.SaveToDatabase();
-                    Publish(_loadMetadata);
                 }
             }
+
+            //associate them
+            cata.LoadMetadata_ID = _loadMetadata.ID;
+            cata.SaveToDatabase();
+            Publish(_loadMetadata);
+            
+            
         }
 
         public Image GetImage(IIconProvider iconProvider)

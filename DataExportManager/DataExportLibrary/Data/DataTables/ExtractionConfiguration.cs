@@ -360,23 +360,28 @@ namespace DataExportLibrary.Data.DataTables
                     ExtractionConfiguration clone = repo.CloneObjectInTable(this);
 
                     //find each of the selected datasets for ourselves and clone those too
-                    foreach (ExtractableDataSet dataSet in GetAllExtractableDataSets())
+                    foreach (SelectedDataSets selected in SelectedDataSets)
                     {
                         //clone the link meaning that the dataset is now selected for the clone configuration too 
-                        var newSelectedDataSet = new SelectedDataSets(repo, clone, dataSet, null);
+                        var newSelectedDataSet = new SelectedDataSets(repo, clone, selected.ExtractableDataSet, null);
 
                         // now clone each of the columns for each of the datasets that we just created links to (make them the same as the old configuration
-                        foreach (IColumn extractableColumn in GetAllExtractableColumnsFor(dataSet))
+                        foreach (IColumn extractableColumn in GetAllExtractableColumnsFor(selected.ExtractableDataSet))
                         {
                             ExtractableColumn cloneExtractableColumn = repo.CloneObjectInTable((ExtractableColumn)extractableColumn);
                             cloneExtractableColumn.ExtractionConfiguration_ID = clone.ID;
                             cloneExtractableColumn.SaveToDatabase();
                         }
 
+                        //clone should copy accross the forced joins (if any)
+                        foreach (SelectedDataSetsForcedJoin oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(selected))
+                            new SelectedDataSetsForcedJoin((IDataExportRepository) Repository, newSelectedDataSet,oldForcedJoin.TableInfo);
+                       
+
                         try
                         {
                             //clone the root filter container
-                            var rootContainer = (FilterContainer)GetFilterContainerFor(dataSet);
+                            var rootContainer = (FilterContainer)GetFilterContainerFor(selected.ExtractableDataSet);
 
                             //turns out there wasn't one to clone at all
                             if (rootContainer == null)
@@ -534,10 +539,11 @@ namespace DataExportLibrary.Data.DataTables
 
             var legacyColumns = GetAllExtractableColumnsFor(extractableDataSet).Cast<ExtractableColumn>().ToArray();
 
-            //add Core columns
-            foreach (var core in extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core))
-                if (legacyColumns.All(l => l.CatalogueExtractionInformation_ID != core.ID))
-                    AddColumnToExtraction(extractableDataSet, core);
+            //add Core or ProjectSpecific columns
+            foreach (var all in extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+                if(all.ExtractionCategory == ExtractionCategory.Core || all.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                    if (legacyColumns.All(l => l.CatalogueExtractionInformation_ID != all.ID))
+                        AddColumnToExtraction(extractableDataSet, all);
         }
 
         public void RemoveDatasetFromConfiguration(IExtractableDataSet extractableDataSet)

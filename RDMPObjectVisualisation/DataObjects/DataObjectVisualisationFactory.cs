@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataFlowPipeline;
@@ -41,7 +42,10 @@ namespace RDMPObjectVisualisation.DataObjects
                 return new CohortIdentificationConfigurationVisualisation((CohortIdentificationConfiguration) value);
 
             if(type == typeof(AggregateConfiguration))
-                return new PatientIndexTableVisualisation((AggregateConfiguration) value);//if we expand into visualizing non patient index tables then we will have to evaluate the value to see what type of aggregate it is (identifier list, graphable, patient index table etc)
+                return new AggregateConfigurationVisualisation((AggregateConfiguration) value);//if we expand into visualizing non patient index tables then we will have to evaluate the value to see what type of aggregate it is (identifier list, graphable, patient index table etc)
+
+            if (type == typeof (ExtractionInformation))
+                return new ExtractionInformationVisualisation((ExtractionInformation) value);
 
             return new UnknownObjectVisualisation(value);
         }

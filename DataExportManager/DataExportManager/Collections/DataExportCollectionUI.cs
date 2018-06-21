@@ -56,7 +56,9 @@ namespace DataExportManager.Collections
         public DataExportCollectionUI()
         {
             InitializeComponent();
-            
+
+
+            olvProjectNumber.IsEditable = false;
             olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
         }
         
@@ -120,21 +122,6 @@ namespace DataExportManager.Collections
             }
         }
 
-        private void tlvDataExport_ItemActivate(object sender, EventArgs e)
-        {
-            object o = tlvDataExport.SelectedObject;
-            var customDataTable = o as CustomDataTableNode;
-            
-            if (customDataTable != null)
-            {
-                var c = new DataTableViewer(customDataTable.Cohort.ExternalCohortTable,
-                    customDataTable.Cohort.GetCustomTableExtractionSQL(customDataTable.TableName, true),
-                    "Top 100 of " + customDataTable.TableName);
-
-                _activator.ShowWindow(c, true);
-            }
-        }
-        
         public static bool IsRootObject(object root)
         {
             return root is Project || root is ExtractableDataSetPackage;

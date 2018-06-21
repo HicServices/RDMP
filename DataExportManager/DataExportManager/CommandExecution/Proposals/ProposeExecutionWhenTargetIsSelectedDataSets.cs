@@ -6,12 +6,13 @@ using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportManager.ProjectUI;
+using DataExportManager.ProjectUI.Datasets;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
 namespace DataExportManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsSelectedDataSets:RDMPCommandExecutionProposal<SelectedDataSets>
+    class ProposeExecutionWhenTargetIsSelectedDataSets:RDMPCommandExecutionProposal<SelectedDataSets>
     {
         public ProposeExecutionWhenTargetIsSelectedDataSets(IActivateItems itemActivator): base(itemActivator)
         {

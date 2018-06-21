@@ -173,6 +173,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllLoadMetadatasNode {
+            get {
+                object obj = ResourceManager.GetObject("AllLoadMetadatasNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllObjectExportsNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectExportsNode", resourceCulture);
@@ -196,6 +206,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap AllObjectSharingNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectSharingNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AllPermissionWindowsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllPermissionWindowsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -483,26 +503,6 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CustomDataTableNode {
-            get {
-                object obj = ResourceManager.GetObject("CustomDataTableNode", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap CustomDataTableNotActive {
-            get {
-                object obj = ResourceManager.GetObject("CustomDataTableNotActive", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap DashboardControl {
             get {
                 object obj = ResourceManager.GetObject("DashboardControl", resourceCulture);
@@ -566,6 +566,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap DQE {
             get {
                 object obj = ResourceManager.GetObject("DQE", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DropHere {
+            get {
+                object obj = ResourceManager.GetObject("DropHere", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -816,6 +826,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap ExtractionInformation {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ExtractionInformation_ProjectSpecific {
+            get {
+                object obj = ResourceManager.GetObject("ExtractionInformation_ProjectSpecific", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1123,6 +1143,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap MakeProjectSpecificCatalogueNormalAgain {
+            get {
+                object obj = ResourceManager.GetObject("MakeProjectSpecificCatalogueNormalAgain", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap NoIconAvailable {
             get {
                 object obj = ResourceManager.GetObject("NoIconAvailable", resourceCulture);
@@ -1266,6 +1296,26 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap Project {
             get {
                 object obj = ResourceManager.GetObject("Project", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProjectCatalogue {
+            get {
+                object obj = ResourceManager.GetObject("ProjectCatalogue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProjectCataloguesNode {
+            get {
+                object obj = ResourceManager.GetObject("ProjectCataloguesNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

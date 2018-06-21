@@ -94,6 +94,8 @@ namespace DatabaseCreation
             CreatePipeline("DATA EXPORT:To CSV", typeof (ExecuteDatasetExtractionSource), typeof (ExecuteDatasetExtractionFlatFileDestination));
 
             CreatePipeline("RELEASE PROJECT:To Directory", null, typeof (BasicDataReleaseDestination));
+            
+            CreatePipeline("CREATE TABLE:From Aggregate Query", null, typeof(DataTableUploadDestination));
         }
 
         private void SetCSVSourceDelimiterToComma(Pipeline pipe)

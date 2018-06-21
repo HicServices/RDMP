@@ -14,6 +14,7 @@ task :setup_connection do
     File.open("Tests.Common/TestDatabases.txt", "w") do |f|
         f.write "ServerName:#{DBSERVER}\r\n"
         f.write "Prefix:#{DBPREFIX}\r\n"
+        f.write "MySql:Server=#{MYSQLDB};Uid=#{MYSQLUSR};Pwd=#{MYSQLPASS};\r\n"
     end
 end
 

@@ -86,7 +86,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             QueryHaving.TextChanged += HavingTextChanged;
             aggregateContinuousDateAxisUI1.AxisSaved += ReloadUIFromDatabase;
 
-            olvJoin.SetNativeBackgroundWatermark(Images.DropHere);
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
             olvJoinTableName.ImageGetter += ImageGetter;

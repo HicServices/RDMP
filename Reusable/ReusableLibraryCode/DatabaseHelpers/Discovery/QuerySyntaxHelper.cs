@@ -17,10 +17,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     {
        public abstract string DatabaseTableSeparator { get; }
 
+        /// <summary>
+        /// Symbols (for all database types) which denote wrapped entity names e.g. [dbo].[mytable] contains qualifiers '[' and ']'
+        /// </summary>
+        public static char[] TableNameQualifiers = { '[',']','`'};
+        
         public ITypeTranslater TypeTranslater { get; private set; }
         public IAggregateHelper AggregateHelper { get; private set; }
         public IUpdateHelper UpdateHelper { get; set; }
-
 
         protected virtual Regex GetAliasRegex()
         {
@@ -82,6 +86,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
             return s.Substring(s.LastIndexOf(".") + 1).Trim('[', ']', '`');
         }
+
+        public string EnsureWrapped(string databaseOrTableName)
+        {
+            if(databaseOrTableName.Contains(DatabaseTableSeparator))
+                throw new Exception("Strings passed to EnsureWrapped cannot contain separators i.e. '" + DatabaseTableSeparator + "'");
+
+            return EnsureWrappedImpl(databaseOrTableName);
+        }
+
+        public abstract string EnsureWrappedImpl(string databaseOrTableName);
 
         public virtual string EnsureFullyQualified(string databaseName, string schema, string tableName)
         {

@@ -168,5 +168,15 @@ namespace DataExportLibrary.Data.DataTables
         {
             return new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository) Repository, this, cic);
         }
+
+        public ICatalogue[] GetAllProjectCatalogues()
+        {
+            return Repository.GetAllObjectsWithParent<ExtractableDataSet>(this).Select(eds => eds.Catalogue).ToArray();
+        }
+
+        public ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory c)
+        {
+            return GetAllProjectCatalogues().SelectMany(pc => pc.GetAllExtractionInformation(c)).ToArray();
+        }
     }
 }

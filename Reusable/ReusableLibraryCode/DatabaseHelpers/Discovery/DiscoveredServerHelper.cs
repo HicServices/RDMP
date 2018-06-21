@@ -36,7 +36,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return (string) builder[DatabaseKeyName];
         }
 
-        public abstract DbConnectionStringBuilder ChangeDatabase(DbConnectionStringBuilder builder, string newDatabase);
+        public virtual DbConnectionStringBuilder ChangeDatabase(DbConnectionStringBuilder builder, string newDatabase)
+        {
+            var newBuilder = GetConnectionStringBuilder(builder.ConnectionString);
+            newBuilder[DatabaseKeyName] = newDatabase;
+            return newBuilder;
+        }
 
         public abstract string[] ListDatabases(DbConnectionStringBuilder builder);
         public abstract string[] ListDatabases(DbConnection con);

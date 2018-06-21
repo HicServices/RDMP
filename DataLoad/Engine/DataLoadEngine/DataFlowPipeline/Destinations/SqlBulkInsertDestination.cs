@@ -11,7 +11,6 @@ using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
 using HIC.Logging;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
@@ -23,18 +22,19 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
     /// </summary>
     public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipelineRequirement<ITableLoadInfo>
     {
-        
         protected readonly string Table;
         private readonly List<string> _columnNamesToIgnore;
         private string _taskBeingPerformed;
 
         public const int Timeout = 5000;
 
-        private SqlBulkCopy _copy = null;
+        private IBulkCopy _copy = null;
         private Stopwatch _timer = new Stopwatch();
 
         protected ITableLoadInfo TableLoadInfo;
         private DiscoveredDatabase _dbInfo;
+
+        private DiscoveredTable _table;
 
         public SqlBulkInsertDestination(DiscoveredDatabase dbInfo, string tableName, IEnumerable<string> columnNamesToIgnore)
         {
@@ -44,14 +44,13 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 throw new Exception("Parameter tableName is not specified for SqlBulkInsertDestination");
 
             Table = RDMPQuerySyntaxHelper.EnsureValueIsWrapped(tableName);
+            _table = _dbInfo.ExpectTable(tableName);
             _columnNamesToIgnore = columnNamesToIgnore.ToList();
             _taskBeingPerformed = "Bulk insert into " + Table + "(server=" + _dbInfo.Server + ",database=" + _dbInfo.GetRuntimeName() + ")";
         }
 
 
         private int _recordsWritten = 0;
-
-
 
         public virtual void SubmitChunk(DataTable chunk, IDataLoadEventListener job)
         {
@@ -61,8 +60,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 _copy = InitializeBulkCopy(chunk,job);
                 AssessMissingAndIgnoredColumns(chunk,job);
             }
-            
-            UsefulStuff.BulkInsertWithBetterErrorMessages(_copy, chunk, _dbInfo.Server);
+
+            _copy.Upload(chunk);
        
             _timer.Stop();
             RaiseEvents(chunk,job);
@@ -117,22 +116,15 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             job.OnProgress(this,new ProgressEventArgs(_taskBeingPerformed,new ProgressMeasurement(_recordsWritten,ProgressType.Records),_timer.Elapsed));
         }
 
-        private SqlBulkCopy InitializeBulkCopy(DataTable dt, IDataLoadEventListener job)
+        private IBulkCopy InitializeBulkCopy(DataTable dt, IDataLoadEventListener job)
         {
-            var bulkCopy = new SqlBulkCopy(_dbInfo.Server.Builder.ConnectionString);
-            bulkCopy.DestinationTableName = Table;
-            bulkCopy.BulkCopyTimeout = Timeout;
-
-            foreach (DataColumn column in dt.Columns)
-            {
-                if (!_columnNamesToIgnore.Contains(column.ColumnName))
-                    bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping(column.ColumnName, column.ColumnName));
-            }
+            var insert = _table.BeginBulkInsert();
+            insert.Timeout = Timeout;
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 "SqlBulkCopy to " + _dbInfo.Server + ", " + _dbInfo.GetRuntimeName() + ".." + Table + " initialised for " + dt.Columns.Count + " columns, with a timeout of " + Timeout + ".  First chunk received had rowcount of " + dt.Rows.Count));
 
-            return bulkCopy;
+            return insert;
         }
 
 
@@ -147,6 +139,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         }
 
         private bool _isDisposed = false;
+        
+
         private void CloseConnection(IDataLoadEventListener listener)
         {
             if(_isDisposed)
@@ -159,7 +153,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     TableLoadInfo.CloseAndArchive();
 
                 if (_copy != null)
-                    _copy.Close();
+                    _copy.Dispose();
 
                 if (_recordsWritten == 0)
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Warning, 0 records written by SqlBulkInsertDestination (" + _dbInfo.Server + "," + _dbInfo.GetRuntimeName()+ ")"));

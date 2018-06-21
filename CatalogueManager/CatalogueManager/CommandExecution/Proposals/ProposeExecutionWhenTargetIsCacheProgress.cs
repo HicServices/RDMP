@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data.Cache;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.LoadExecutionUIs;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsCacheProgress:RDMPCommandExecutionProposal<CacheProgress>
+    class ProposeExecutionWhenTargetIsCacheProgress:RDMPCommandExecutionProposal<CacheProgress>
     {
         public ProposeExecutionWhenTargetIsCacheProgress(IActivateItems itemActivator) : base(itemActivator)
         {
@@ -24,7 +25,7 @@ namespace CatalogueManager.CommandExecution.Proposals
 
         public override void Activate(CacheProgress target)
         {
-            ItemActivator.Activate<CacheProgressUI, CacheProgress>(target);
+            ItemActivator.Activate<ExecuteCacheProgressUI, CacheProgress>(target);
         }
 
         public override ICommandExecution ProposeExecution(ICommand cmd, CacheProgress target, InsertOption insertOption = InsertOption.Default)

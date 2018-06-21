@@ -77,6 +77,10 @@ namespace CatalogueManager.Refreshing
             if(subscriber == null)
                 throw new ArgumentException("Control must be an IRefreshBusSubscriber to establish a lifetime subscription", "c");
 
+            //ignore double requests for subscription
+            if (subscribers.Contains(subscriber))
+                return;
+
             if(containerControl == null)
                 throw new ArgumentOutOfRangeException();
 

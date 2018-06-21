@@ -44,7 +44,7 @@ namespace DataExportLibrary.ExtractionTime
             if (!root.Exists)
                 root.Create();
 
-            string subdirectoryName = GetExtractionDirectoryPrefix(configuration) + "_" + extractionDate.ToString("yyyyMMdd");
+            string subdirectoryName = GetExtractionDirectoryPrefix(configuration);
 
             if (!Directory.Exists(Path.Combine(root.FullName, subdirectoryName)))
                 extractionDirectory = root.CreateSubdirectory(subdirectoryName);
@@ -55,11 +55,6 @@ namespace DataExportLibrary.ExtractionTime
         public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
         {
             return StandardExtractionPrefix + configuration.ID;
-        }
-
-        public static ExtractionDirectory GetForDifferentDate(string rootExtractionDirectory, IExtractionConfiguration configuration, DateTime extractDate)
-        {
-            return new ExtractionDirectory(rootExtractionDirectory, configuration, extractDate);
         }
 
         public DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset)
@@ -99,7 +94,7 @@ namespace DataExportLibrary.ExtractionTime
             if (directory.Parent.FullName != Path.Combine(p.ExtractionDirectory, ExtractionSubFolderName))
                 return false;
             
-            return directory.Name.StartsWith(StandardExtractionPrefix + configuration.ID + "_");
+            return directory.Name.StartsWith(StandardExtractionPrefix + configuration.ID);
         }
 
         public DirectoryInfo GetDirectoryForCohortCustomData()

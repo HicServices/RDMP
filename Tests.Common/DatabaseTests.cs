@@ -7,7 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using ANOStore.ANOEngineering;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.ExternalDatabaseServerPatching;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
@@ -18,7 +21,6 @@ using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
-using Oracle.ManagedDataAccess.Client;
 using RDMPStartup;
 using RDMPStartup.Events;
 using ReusableLibraryCode;
@@ -52,8 +54,8 @@ namespace Tests.Common
         protected DiscoveredDatabase DiscoveredDatabaseICanCreateRandomTablesIn;
         protected DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
 
-        protected DiscoveredServer DiscoveredMySqlServer;
-        protected DiscoveredServer DiscoveredOracleServer;
+        private readonly DiscoveredServer _discoveredMySqlServer;
+        private readonly DiscoveredServer _discoveredOracleServer;
 
         static private Startup _startup;
 
@@ -111,10 +113,10 @@ namespace Tests.Common
             CreateScratchArea();
 
             if (_mySqlServer != null)
-                DiscoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer));
+                _discoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer){SslMode = MySqlSslMode.None});
 
             if(_oracleServer != null)
-                DiscoveredOracleServer = new DiscoveredServer(new OracleConnectionStringBuilder(_oracleServer));
+                _discoveredOracleServer = new DiscoveredServer(_oracleServer,DatabaseType.Oracle);
         }
 
         
@@ -193,6 +195,13 @@ namespace Tests.Common
             RepositoryLocator.CatalogueRepository.MEF.Setup(_startup.MEFSafeDirectoryCatalog);
         }
 
+        [TestFixtureTearDown]
+        void DropCreatedDatabases()
+        {
+            foreach (DiscoveredDatabase db in forCleanup)
+                if (db.Exists())
+                    db.ForceDrop();
+        }
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         { 
             //its a healthy message, jolly good
@@ -318,7 +327,6 @@ delete from {1}..FilterContainer
 
 delete from {1}..Project_DataUser
 delete from {1}..DataUser
-delete from {1}..Project
 
 delete from {1}..ExtractableCohort
 delete from {1}..ExternalCohortTable
@@ -326,7 +334,7 @@ delete from {1}..ExternalCohortTable
 delete from {1}..ExtractableDataSetPackage
 
 delete from {1}..ExtractableDataSet
-
+delete from {1}..Project
 ";
 
         /// <summary>
@@ -340,12 +348,19 @@ delete from {1}..ExtractableDataSet
             //replace all whitespace with single spaces
             return Regex.Replace(sql, @"\s+", " ").Trim();
         }
+        
+        HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
 
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName)
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null)
         {
+            if (dbnName == null)
+                dbnName = DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName();
+
             DiscoveredServer wc1;
             DiscoveredDatabase wc2;
-            return GetCleanedServer(type, dbnName, out wc1, out wc2);
+            var toReturn =  GetCleanedServer(type, dbnName, out wc1, out wc2);
+            forCleanup.Add(toReturn);
+            return toReturn;
         }
 
         protected DiscoveredDatabase GetCleanedServer(DatabaseType type,string dbnName, out DiscoveredServer server, out DiscoveredDatabase database)
@@ -356,10 +371,10 @@ delete from {1}..ExtractableDataSet
                     server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
                     break;
                 case DatabaseType.MYSQLServer:
-                    server = DiscoveredMySqlServer;
+                    server = _discoveredMySqlServer;
                     break;
                 case DatabaseType.Oracle:
-                    server = DiscoveredOracleServer;
+                    server = _discoveredOracleServer;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type");
@@ -375,16 +390,7 @@ delete from {1}..ExtractableDataSet
 
             database = server.ExpectDatabase(dbnName);
 
-            if (database.Exists())
-            {
-                foreach (DiscoveredTable discoveredTable in database.DiscoverTables(false))
-                    discoveredTable.Drop();
-
-                database.Drop();
-                Assert.IsFalse(database.Exists());
-            }
-
-            server.CreateDatabase(dbnName);
+            database.Create(true);
 
             server.ChangeDatabase(dbnName);
 
@@ -392,8 +398,39 @@ delete from {1}..ExtractableDataSet
 
             return database;
         }
-    }
 
+        protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
+        {
+            var importer = new TableInfoImporter(CatalogueRepository, tbl);
+            importer.DoImport(out tableInfoCreated,out columnInfosCreated);
+
+            var forwardEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated,true);
+
+            Catalogue catalogue;
+            forwardEngineer.ExecuteForwardEngineering(out catalogue,out catalogueItems,out extractionInformations);
+
+            return catalogue;
+        }
+
+        protected Catalogue Import(DiscoveredTable tbl)
+        {
+            TableInfo tableInfoCreated;
+            ColumnInfo[] columnInfosCreated;
+            CatalogueItem[] catalogueItems;
+            ExtractionInformation[] extractionInformations;
+
+            return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems,out extractionInformations);
+        }
+
+        protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
+        {
+            CatalogueItem[] catalogueItems;
+            ExtractionInformation[] extractionInformations;
+
+            return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
+        }
+    }
+    
         
 
     public static class TestDatabaseNames

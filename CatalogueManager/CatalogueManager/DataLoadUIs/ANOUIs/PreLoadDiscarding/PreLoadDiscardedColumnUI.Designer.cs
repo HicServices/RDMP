@@ -36,7 +36,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbSqlDataType = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.lblErrorInType = new System.Windows.Forms.Label();
             this.btnCheck = new System.Windows.Forms.Button();
             this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.label5 = new System.Windows.Forms.Label();
@@ -117,17 +116,6 @@
             this.label4.TabIndex = 12;
             this.label4.Text = "SqlDataType:";
             // 
-            // lblErrorInType
-            // 
-            this.lblErrorInType.AutoSize = true;
-            this.lblErrorInType.ForeColor = System.Drawing.Color.Red;
-            this.lblErrorInType.Location = new System.Drawing.Point(129, 87);
-            this.lblErrorInType.Name = "lblErrorInType";
-            this.lblErrorInType.Size = new System.Drawing.Size(72, 13);
-            this.lblErrorInType.TabIndex = 13;
-            this.lblErrorInType.Text = "lblErrorInType";
-            this.lblErrorInType.Visible = false;
-            // 
             // btnCheck
             // 
             this.btnCheck.Location = new System.Drawing.Point(3, 173);
@@ -173,7 +161,6 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.btnCheck);
             this.Controls.Add(this.checksUI1);
-            this.Controls.Add(this.lblErrorInType);
             this.Controls.Add(this.tbSqlDataType);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -199,7 +186,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbSqlDataType;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label lblErrorInType;
         private System.Windows.Forms.Button btnCheck;
         private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Label label5;

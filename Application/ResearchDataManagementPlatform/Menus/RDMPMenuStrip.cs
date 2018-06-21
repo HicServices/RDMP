@@ -239,25 +239,6 @@ namespace ResearchDataManagementPlatform.Menus
             generator.RepositoryLocator = RepositoryLocator;
             generator.Show();
         }
-
-        private void miIndexRebuild_Click(object sender, EventArgs e)
-        {
-            SqlConnection con;
-            if (sender == mi_CatalogueDatabaseIndexRebuild)
-                con = (SqlConnection)RepositoryLocator.CatalogueRepository.GetConnection().Connection;
-            else if (sender == mi_DataExportDatabaseIndexRebuild)
-                con = (SqlConnection)RepositoryLocator.DataExportRepository.GetConnection().Connection;
-            else
-                throw new ArgumentException();
-
-            SMOIndexRebuilder rebuilder = new SMOIndexRebuilder();
-
-            using (con)
-            {
-                con.Open();
-                rebuilder.RebuildIndexes(con, new PopupChecksUI("Rebuild Indexes", false));
-            }
-        }
         
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -332,7 +313,6 @@ namespace ResearchDataManagementPlatform.Menus
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             AddToNew(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator));
             AddToNew(new ExecuteCommandImportFileAsNewCohort(_activator));
-            AddToNew(new ExecuteCommandImportFileAsCustomDataForCohort(_activator));
             
             //Data export commands
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());

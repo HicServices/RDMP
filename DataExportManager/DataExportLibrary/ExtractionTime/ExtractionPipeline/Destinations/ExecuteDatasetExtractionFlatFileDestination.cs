@@ -67,10 +67,16 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         private bool haveOpened = false;
         private bool haveWrittenBundleContents = false;
 
-        public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
             if (!haveWrittenBundleContents && _request is ExtractDatasetCommand)
                 WriteBundleContents(((ExtractDatasetCommand)_request).DatasetBundle, job, cancellationToken);
+
+            if (_request is ExtractGlobalsCommand)
+            {
+                ExtractGlobals((ExtractGlobalsCommand)_request, job, _dataLoadInfo);
+                return null;
+            }
 
             stopwatch.Start();
             if (!haveOpened)
@@ -201,11 +207,17 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out"));
                 return;
             }
+            
+            if (_request is ExtractGlobalsCommand)
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Request is for the extraction of Globals."));
+                OutputFile = _request.GetExtractionDirectory().FullName;
+                return;
+            }
 
             LinesWritten = 0;
 
             DirectoryPopulated = request.GetExtractionDirectory();
-
             
             switch (FlatFileType)
             {
@@ -215,7 +227,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     break;
                 case ExecuteExtractionToFlatFileType.CSV:
                     OutputFile = Path.Combine(DirectoryPopulated.FullName, GetFilename() + ".csv");
-                    _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
+                    if (request.Configuration != null)
+                        _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
+                    else
+                        _output = new CSVOutputFormat(OutputFile, ",", DateFormat);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -253,25 +268,23 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         {
             return DestinationType.FileSystem;
         }
-
-        public void ExtractGlobals(Project project, ExtractionConfiguration configuration, GlobalsBundle globals, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
+        
+        private void ExtractGlobals(ExtractGlobalsCommand request, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
-            ExtractionDirectory targetDirectory = new ExtractionDirectory(project.ExtractionDirectory, configuration);
-            DirectoryInfo globalsDirectory = targetDirectory.GetGlobalsDirectory();
-            
-            foreach (var doc in globals.Documents)
-                globals.States[doc] = TryExtractSupportingDocument(globalsDirectory, doc, listener)
+            var globalsDirectory = request.GetExtractionDirectory();
+
+            foreach (var doc in request.Globals.Documents)
+                request.Globals.States[doc] = TryExtractSupportingDocument(globalsDirectory, doc, listener)
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
-            
-            foreach (var sql in globals.SupportingSQL)
-                globals.States[sql] = TryExtractSupportingSQLTable(globalsDirectory, configuration, sql, listener, dataLoadInfo)
+
+            foreach (var sql in request.Globals.SupportingSQL)
+                request.Globals.States[sql] = TryExtractSupportingSQLTable(globalsDirectory, request.Configuration, sql, listener, dataLoadInfo)
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
         }
         
-        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-            IExtractionConfiguration configuration, ExtractableDataSet dataSet)
+        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, ExtractableDataSet dataSet)
         {
             return new FlatFileReleasePotential(repositoryLocator, configuration, dataSet);
         }
@@ -312,12 +325,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", target, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
 
                 int sqlLinesWritten = new ExtractTableVerbatim(sql.GetServer(),
-              sql.SQL, sql.Name,
-              directory,
-              configuration
-                  .Separator,
-                  DateFormat)
-              .DoExtraction();
+                    sql.SQL, sql.Name,
+                    directory,
+                    configuration
+                        .Separator,
+                    DateFormat)
+                    .DoExtraction();
 
                 sw.Stop();
 

@@ -1,25 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.Checks
 {
@@ -123,126 +114,19 @@ namespace DataExportLibrary.Checks
 
             var cohort = repo.GetObjectByID<ExtractableCohort>((int) config.Cohort_ID);
 
-            foreach (ExtractableDataSet ds in datasets)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Inspecting dataset " + ds, CheckResult.Success));
 
-                var selectedcols = new List<IColumn>(config.GetAllExtractableColumnsFor(ds));
+            foreach (SelectedDataSets s in config.SelectedDataSets)
+                new SelectedDataSetsChecker(s, _repositoryLocator).Check(notifier);
 
-                if(!selectedcols.Any())
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Dataset " + ds + " in configuration '" + config + "' has no selected columns",
-                            CheckResult.Fail));
-                    
-                    continue;   
-                }
-
-                var request = new ExtractDatasetCommand(_repositoryLocator,config, cohort, new ExtractableDatasetBundle(ds), selectedcols, new HICProjectSalt(_project), "TOP 1", null);
-                try
-                {
-                    request.GenerateQueryBuilder();
-                }
-                catch (Exception e)
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Could not generate valid extraction SQL for dataset " + ds +
-                            " in configuration " + config, CheckResult.Fail,e));
-                    continue;
-                }
-
-                var server = request.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
-                bool serverExists = server.Exists();
-
-                notifier.OnCheckPerformed(new CheckEventArgs("Server " + server + " Exists:" + serverExists,serverExists ? CheckResult.Success : CheckResult.Fail));
-                try
-                {
-                    using (var con = server.GetConnection())
-                    {
-                        con.Open();
-                        var transaction = con.BeginTransaction();//incase user somehow manages to write a filter/transform that nukes data or something
-                    
-                        var managedTransaction = new ManagedTransaction(con,transaction);
-
-                        DbCommand cmd;
-
-                        try
-                        {
-                            cmd = server.GetCommand(request.QueryBuilder.SQL, con,managedTransaction);
-                            notifier.OnCheckPerformed(new CheckEventArgs("/*About to send Request SQL :*/" + Environment.NewLine + request.QueryBuilder.SQL,CheckResult.Success));
-                        }
-                        catch (QueryBuildingException e)
-                        {
-                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to assemble query for dataset " + ds,CheckResult.Fail, e));
-                            continue;
-                        }
-
-                        using (var r = cmd.ExecuteReader())
-                        {
-                            if (r.Read())
-                                notifier.OnCheckPerformed(new CheckEventArgs("Read at least 1 row successfully from dataset " + ds, CheckResult.Success));
-                            else
-                                notifier.OnCheckPerformed(new CheckEventArgs("Dataset " + ds + " is completely empty", CheckResult.Fail));
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute Top 1 on dataset " + ds, CheckResult.Fail,e));
-                }
-
-                var cata = repo.CatalogueRepository.GetObjectByID<Catalogue>((int) ds.Catalogue_ID);
-                SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(cata);
-                fetcher.Check(notifier);
-                 
-                //check catalogue locals
-                foreach (SupportingSQLTable table in cata.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals))
-                    CheckSupportingSQLTable(table, notifier);
-            }
-            
             //globals
             if(datasets.Any())
                 foreach (SupportingSQLTable table in datasets.First().Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableGlobals))
-                    CheckSupportingSQLTable(table, notifier);
+                    new SupportingSQLTableChecker(table).Check(notifier);
         }
 
-        private void CheckSupportingSQLTable(SupportingSQLTable table, ICheckNotifier notifier)
-        {
-            try
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Found SupportingSQLTable " + table + " about to check it", CheckResult.Success));
+        
 
-                var supportingSQLServer = table.GetServer();
-
-                notifier.OnCheckPerformed(supportingSQLServer.Exists()
-                    ? new CheckEventArgs("Server " + supportingSQLServer + " exists", CheckResult.Success)
-                    : new CheckEventArgs("Server " + supportingSQLServer + " does not exist", CheckResult.Fail));
-
-                using (var con = table.GetServer().GetConnection())
-                {
-                    con.Open();
-
-                    notifier.OnCheckPerformed(new CheckEventArgs("About to check Extraction SQL:" + table.SQL, CheckResult.Success));
-
-                    var reader = supportingSQLServer.GetCommand(table.SQL, con).ExecuteReader();
-                    if (reader.Read())
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs(
-                                "SupportingSQLTable table fetched successfully and at least 1 data row was read ",
-                                CheckResult.Success));
-                    else
-                        notifier.OnCheckPerformed(new CheckEventArgs("No data was successfully read from SupportingSQLTable " + table, CheckResult.Fail));
-                }
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs("Checking of SupportingSQLTable " + table + " failed with Exception",CheckResult.Fail, e));
-            }
-
-        }
+        
 
         private void CheckReleaseConfiguration(ExtractionConfiguration config, ICheckNotifier notifier)
         {

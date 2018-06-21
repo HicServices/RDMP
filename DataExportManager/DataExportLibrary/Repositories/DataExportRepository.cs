@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Reports;
@@ -31,7 +32,7 @@ namespace DataExportLibrary.Repositories
     public class DataExportRepository : TableRepository, IDataExportRepository
     {
         public CatalogueRepository CatalogueRepository { get; private set; }
-        
+
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
         {
             CatalogueRepository = catalogueRepository;
@@ -52,5 +53,13 @@ namespace DataExportLibrary.Repositories
             
         }
 
+        public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
+        {
+            var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
+            if (eds == null)
+                return new CatalogueExtractabilityStatus(false, false);
+
+            return eds.GetCatalogueExtractabilityStatus();
+        }
     }
 }

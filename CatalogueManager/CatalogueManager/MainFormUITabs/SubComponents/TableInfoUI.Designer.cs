@@ -40,6 +40,7 @@
             this.tbTableInfoID = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.SuspendLayout();
             // 
             // btnSynchronize
@@ -167,10 +168,20 @@
             this.objectSaverButton1.Size = new System.Drawing.Size(58, 28);
             this.objectSaverButton1.TabIndex = 156;
             // 
+            // ragSmiley1
+            // 
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Location = new System.Drawing.Point(399, 3);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 157;
+            // 
             // TableInfoUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.btnSynchronize);
             this.Controls.Add(this.label38);
@@ -204,5 +215,6 @@
         private System.Windows.Forms.Button btnParameters;
         private System.Windows.Forms.Button btnSynchronize;
         private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private ReusableUIComponents.RAGSmiley ragSmiley1;
     }
 }

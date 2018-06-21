@@ -37,10 +37,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             throw new NotImplementedException();
         }
 
+        public override void CreateBackup(DiscoveredDatabase discoveredDatabase, string backupName)
+        {
+            throw new NotImplementedException();
+        }
+
         public override IEnumerable<DiscoveredTable> ListTables(DiscoveredDatabase parent, IQuerySyntaxHelper querySyntaxHelper, DbConnection connection, string database, bool includeViews, DbTransaction transaction = null)
         {
             List<DiscoveredTable> tables = new List<DiscoveredTable>();
             
+
+            /*Maybe add this WHERE statement?
+             * 
+             * where owner not in 
+(
+'SYS','SYSTEM','MDSYS','OUTLN','CTXSYS','OLAPSYS','FLOWS_FILES','DVSYS','AUDSYS','DBSNMP','GSMADMIN_INTERNAL','OJVMSYS','ORDSYS','APPQOSSYS','XDB','ORDDATA','WMSYS','LBACSYS'
+)*/
+
             var cmd = new OracleCommand("SELECT table_name FROM all_tables where owner='" + database + "'", (OracleConnection) connection);
             cmd.Transaction = transaction as OracleTransaction;
 

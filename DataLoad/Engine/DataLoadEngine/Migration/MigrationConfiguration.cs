@@ -50,10 +50,7 @@ namespace DataLoadEngine.Migration
                     else
                         throw new Exception("Table " + fromTableName + " was not found on on server " + _fromDatabaseInfo.Server + " (Database " + _fromDatabaseInfo + ")"); //its not a lookup table if it isn't in STAGING thats a problem!
 
-                var sourceFields = fromTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
-                var destinationFields = toTable.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
-
-                columnSet.Add(new MigrationColumnSet(tableInfo.GetDatabaseRuntimeName(),fromTableName, toTableName, sourceFields, destinationFields,tableInfo.ColumnInfos, migrationFieldProcessor));
+                columnSet.Add(new MigrationColumnSet(fromTable,toTable, migrationFieldProcessor));
             }
 
             return columnSet;

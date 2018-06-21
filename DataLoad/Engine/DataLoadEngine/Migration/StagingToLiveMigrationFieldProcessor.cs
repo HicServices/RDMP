@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Triggers;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Migration
 {
@@ -13,20 +14,19 @@ namespace DataLoadEngine.Migration
     /// </summary>
     public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
     {
-        public void ValidateFields(string[] sourceFields, string[] destinationFields)
+        public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
         {
-            if (!destinationFields.Contains(SpecialFieldNames.DataLoadRunID))
+            if (!destinationFields.Any(f => f.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID, StringComparison.CurrentCultureIgnoreCase)))
                 throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.DataLoadRunID);
 
-            if (!destinationFields.Contains(SpecialFieldNames.ValidFrom))
+            if (!destinationFields.Any(f=>f.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom,StringComparison.CurrentCultureIgnoreCase)))
                 throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.ValidFrom);
-
         }
 
-        public void AssignFieldsForProcessing(string field, List<string> fieldsToDiff, List<string> fieldsToUpdate)
+        public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
         {
             //it is a hic internal field but not one of the overwritten, standard ones
-            if (field.StartsWith("hic_"))
+            if (field.GetRuntimeName().StartsWith("hic_",StringComparison.CurrentCultureIgnoreCase))
                 fieldsToUpdate.Add(field);
             else
             {

@@ -48,7 +48,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Plugin.Test.nuspec" />
     <None Include="PluginTest.build">
       <SubType>Designer</SubType>

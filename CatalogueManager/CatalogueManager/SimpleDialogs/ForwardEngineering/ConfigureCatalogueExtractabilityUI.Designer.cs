@@ -44,9 +44,25 @@
             this.pChangeAll = new System.Windows.Forms.Panel();
             this.pFilter = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.tbTableName = new System.Windows.Forms.TextBox();
+            this.tbCatalogueName = new System.Windows.Forms.TextBox();
+            this.tbDescription = new System.Windows.Forms.TextBox();
+            this.helpIconProjectSpecific = new ReusableUIComponents.HelpIcon();
+            this.pbProject = new System.Windows.Forms.PictureBox();
+            this.lblProject = new System.Windows.Forms.Label();
+            this.btnPickProject = new System.Windows.Forms.Button();
+            this.gbProjectSpecific = new System.Windows.Forms.GroupBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
             this.pChangeAll.SuspendLayout();
             this.pFilter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbProject)).BeginInit();
+            this.gbProjectSpecific.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // olvColumnExtractability
@@ -64,11 +80,11 @@
             this.olvIsExtractionIdentifier});
             this.olvColumnExtractability.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvColumnExtractability.FullRowSelect = true;
-            this.olvColumnExtractability.Location = new System.Drawing.Point(6, 28);
+            this.olvColumnExtractability.Location = new System.Drawing.Point(6, 138);
             this.olvColumnExtractability.Name = "olvColumnExtractability";
             this.olvColumnExtractability.RowHeight = 19;
             this.olvColumnExtractability.ShowGroups = false;
-            this.olvColumnExtractability.Size = new System.Drawing.Size(751, 530);
+            this.olvColumnExtractability.Size = new System.Drawing.Size(758, 409);
             this.olvColumnExtractability.TabIndex = 7;
             this.olvColumnExtractability.UseCompatibleStateImageBehavior = false;
             this.olvColumnExtractability.UseFiltering = true;
@@ -95,7 +111,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancel.Location = new System.Drawing.Point(269, 597);
+            this.btnCancel.Location = new System.Drawing.Point(273, 586);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(207, 23);
             this.btnCancel.TabIndex = 7;
@@ -106,7 +122,7 @@
             // btnAddToExisting
             // 
             this.btnAddToExisting.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnAddToExisting.Location = new System.Drawing.Point(482, 597);
+            this.btnAddToExisting.Location = new System.Drawing.Point(486, 586);
             this.btnAddToExisting.Name = "btnAddToExisting";
             this.btnAddToExisting.Size = new System.Drawing.Size(161, 23);
             this.btnAddToExisting.TabIndex = 7;
@@ -117,7 +133,7 @@
             // btnOk
             // 
             this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnOk.Location = new System.Drawing.Point(144, 597);
+            this.btnOk.Location = new System.Drawing.Point(148, 586);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(119, 23);
             this.btnOk.TabIndex = 7;
@@ -161,54 +177,186 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFilter.Location = new System.Drawing.Point(41, 3);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(441, 20);
+            this.tbFilter.Size = new System.Drawing.Size(448, 20);
             this.tbFilter.TabIndex = 0;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
             // helpIcon1
             // 
-            this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
-            this.helpIcon1.Location = new System.Drawing.Point(201, 3);
+            this.helpIcon1.Location = new System.Drawing.Point(203, 118);
             this.helpIcon1.Name = "helpIcon1";
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
             this.helpIcon1.TabIndex = 8;
             // 
             // pChangeAll
             // 
-            this.pChangeAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pChangeAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pChangeAll.Controls.Add(this.ddCategoriseMany);
             this.pChangeAll.Controls.Add(this.label3);
-            this.pChangeAll.Location = new System.Drawing.Point(497, 564);
+            this.pChangeAll.Location = new System.Drawing.Point(504, 553);
             this.pChangeAll.Name = "pChangeAll";
             this.pChangeAll.Size = new System.Drawing.Size(260, 26);
             this.pChangeAll.TabIndex = 8;
             // 
             // pFilter
             // 
-            this.pFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pFilter.Controls.Add(this.label6);
             this.pFilter.Controls.Add(this.tbFilter);
-            this.pFilter.Location = new System.Drawing.Point(6, 564);
+            this.pFilter.Location = new System.Drawing.Point(6, 553);
             this.pFilter.Name = "pFilter";
-            this.pFilter.Size = new System.Drawing.Size(485, 27);
+            this.pFilter.Size = new System.Drawing.Size(492, 27);
             this.pFilter.TabIndex = 9;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 7);
+            this.label1.Location = new System.Drawing.Point(12, 122);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(189, 13);
             this.label1.TabIndex = 10;
             this.label1.Text = "Choose which columns are extractable";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 13);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Catalogue Name:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(38, 34);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(63, 13);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Description:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(390, 9);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(68, 13);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Table Name:";
+            // 
+            // tbTableName
+            // 
+            this.tbTableName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbTableName.Location = new System.Drawing.Point(464, 6);
+            this.tbTableName.Name = "tbTableName";
+            this.tbTableName.ReadOnly = true;
+            this.tbTableName.Size = new System.Drawing.Size(297, 20);
+            this.tbTableName.TabIndex = 12;
+            // 
+            // tbCatalogueName
+            // 
+            this.tbCatalogueName.Location = new System.Drawing.Point(107, 6);
+            this.tbCatalogueName.Name = "tbCatalogueName";
+            this.tbCatalogueName.Size = new System.Drawing.Size(277, 20);
+            this.tbCatalogueName.TabIndex = 12;
+            this.tbCatalogueName.TextChanged += new System.EventHandler(this.tbCatalogueName_TextChanged);
+            // 
+            // tbDescription
+            // 
+            this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbDescription.Location = new System.Drawing.Point(107, 31);
+            this.tbDescription.Multiline = true;
+            this.tbDescription.Name = "tbDescription";
+            this.tbDescription.Size = new System.Drawing.Size(657, 48);
+            this.tbDescription.TabIndex = 12;
+            this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
+            // 
+            // helpIconProjectSpecific
+            // 
+            this.helpIconProjectSpecific.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.helpIconProjectSpecific.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIconProjectSpecific.BackgroundImage")));
+            this.helpIconProjectSpecific.Location = new System.Drawing.Point(141, 6);
+            this.helpIconProjectSpecific.Name = "helpIconProjectSpecific";
+            this.helpIconProjectSpecific.Size = new System.Drawing.Size(19, 19);
+            this.helpIconProjectSpecific.TabIndex = 15;
+            // 
+            // pbProject
+            // 
+            this.pbProject.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.pbProject.Location = new System.Drawing.Point(3, 3);
+            this.pbProject.Name = "pbProject";
+            this.pbProject.Size = new System.Drawing.Size(26, 26);
+            this.pbProject.TabIndex = 19;
+            this.pbProject.TabStop = false;
+            // 
+            // lblProject
+            // 
+            this.lblProject.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.lblProject.AutoSize = true;
+            this.lblProject.Location = new System.Drawing.Point(35, 9);
+            this.lblProject.Name = "lblProject";
+            this.lblProject.Size = new System.Drawing.Size(27, 13);
+            this.lblProject.TabIndex = 18;
+            this.lblProject.Text = "blah";
+            // 
+            // btnPickProject
+            // 
+            this.btnPickProject.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.btnPickProject.Location = new System.Drawing.Point(68, 4);
+            this.btnPickProject.Name = "btnPickProject";
+            this.btnPickProject.Size = new System.Drawing.Size(67, 23);
+            this.btnPickProject.TabIndex = 21;
+            this.btnPickProject.Text = "Existing...";
+            this.btnPickProject.UseVisualStyleBackColor = true;
+            this.btnPickProject.Click += new System.EventHandler(this.btnPickProject_Click);
+            // 
+            // gbProjectSpecific
+            // 
+            this.gbProjectSpecific.Controls.Add(this.flowLayoutPanel1);
+            this.gbProjectSpecific.Location = new System.Drawing.Point(258, 82);
+            this.gbProjectSpecific.Name = "gbProjectSpecific";
+            this.gbProjectSpecific.Size = new System.Drawing.Size(506, 52);
+            this.gbProjectSpecific.TabIndex = 22;
+            this.gbProjectSpecific.TabStop = false;
+            this.gbProjectSpecific.Text = "Catalogue can only be used with Project:";
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.pbProject);
+            this.flowLayoutPanel1.Controls.Add(this.lblProject);
+            this.flowLayoutPanel1.Controls.Add(this.btnPickProject);
+            this.flowLayoutPanel1.Controls.Add(this.helpIconProjectSpecific);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 16);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(500, 33);
+            this.flowLayoutPanel1.TabIndex = 23;
+            // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(107, 82);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
+            this.objectSaverButton1.TabIndex = 13;
+            // 
             // ConfigureCatalogueExtractabilityUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(767, 622);
+            this.ClientSize = new System.Drawing.Size(774, 611);
+            this.Controls.Add(this.gbProjectSpecific);
+            this.Controls.Add(this.objectSaverButton1);
+            this.Controls.Add(this.tbDescription);
+            this.Controls.Add(this.tbCatalogueName);
+            this.Controls.Add(this.tbTableName);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.pChangeAll);
@@ -226,6 +374,10 @@
             this.pChangeAll.PerformLayout();
             this.pFilter.ResumeLayout(false);
             this.pFilter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbProject)).EndInit();
+            this.gbProjectSpecific.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -248,5 +400,18 @@
         private System.Windows.Forms.Panel pChangeAll;
         private System.Windows.Forms.Panel pFilter;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox tbTableName;
+        private System.Windows.Forms.TextBox tbCatalogueName;
+        private System.Windows.Forms.TextBox tbDescription;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private ReusableUIComponents.HelpIcon helpIconProjectSpecific;
+        private System.Windows.Forms.PictureBox pbProject;
+        private System.Windows.Forms.Label lblProject;
+        private System.Windows.Forms.Button btnPickProject;
+        private System.Windows.Forms.GroupBox gbProjectSpecific;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }

@@ -1,11 +1,13 @@
 using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -15,6 +17,7 @@ using CohortManagerLibrary;
 using CohortManagerLibrary.Execution;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
+using ReusableUIComponents.SingleControlForms;
 
 namespace CohortManager.SubComponents
 {
@@ -63,6 +66,15 @@ namespace CohortManager.SubComponents
             olvExecute.AspectGetter += ExecuteAspectGetter;
             tlvCic.ButtonClick += tlvCic_ButtonClick;
             AssociatedCollection = RDMPCollection.Cohort;
+
+            CohortCompilerUI1.SelectionChanged += CohortCompilerUI1_SelectionChanged;
+        }
+
+        void CohortCompilerUI1_SelectionChanged(IMapsDirectlyToDatabaseTable obj)
+        {
+            var joinable = obj as JoinableCohortAggregateConfiguration;
+            
+            tlvCic.SelectedObject = joinable != null ? joinable.AggregateConfiguration : obj;
         }
 
         void queryCachingServerSelector_SelectedServerChanged()
@@ -107,6 +119,7 @@ namespace CohortManager.SubComponents
             }
         }
 
+
         public override string GetTabName()
         {
             return "Execute:" + base.GetTabName();
@@ -138,37 +151,8 @@ namespace CohortManager.SubComponents
             _configuration.Ticket = ticket.TicketText;
         }
 
-        private bool collapse = true;
         private RDMPCollectionCommonFunctionality _commonFunctionality;
-
-        private void btnCollapseOrExpand_Click(object sender, EventArgs e)
-        {
-
-            ticket.Visible = !collapse;
-            lblName.Visible = !collapse;
-            lblDescription.Visible = !collapse;
-            tbName.Visible = !collapse;
-            tbDescription.Visible = !collapse;
-            objectSaverButton1.Visible = !collapse;
-
-            if (collapse)
-            {
-                CohortCompilerUI1.Top = tbID.Bottom;
-                CohortCompilerUI1.Height = Bottom - tbID.Bottom;
-
-            }
-            else
-            {
-                CohortCompilerUI1.Top = objectSaverButton1.Bottom;
-                CohortCompilerUI1.Height = Bottom - objectSaverButton1.Bottom;
-            }
-
-            collapse = !collapse;
-            btnCollapseOrExpand.Text = collapse ? "-" : "+";
-        }
-
-
-
+        
         private object ExecuteAspectGetter(object rowObject)
         {
             //don't expose any buttons if global execution is in progress
@@ -216,6 +200,13 @@ namespace CohortManager.SubComponents
             None
         }
 
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        {
+            base.ConsultAboutClosing(sender, e);
+
+            CohortCompilerUI1.ConsultAboutClosing(sender,e);
+        }
+
         private CompilationState GetState(IMapsDirectlyToDatabaseTable rowObject)
         {
             return CohortCompilerUI1.GetState(rowObject);
@@ -224,11 +215,21 @@ namespace CohortManager.SubComponents
         void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
         {
             var o = e.Model;
+            var aggregate = o as AggregateConfiguration;
+            var container = o as CohortAggregateContainer;
 
-            if (o is AggregateConfiguration || o is CohortAggregateContainer)
+            if (aggregate != null)
             {
-                var m = (IMapsDirectlyToDatabaseTable)o;
-                OrderActivity(GetNextOperation(GetState(m)), m);
+                var joinable = aggregate.JoinableCohortAggregateConfiguration;
+                                    
+                if(joinable != null)
+                    OrderActivity(GetNextOperation(GetState(joinable)), joinable);
+                else
+                    OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
+            }
+            if (container != null)
+            {
+                OrderActivity(GetNextOperation(GetState(container)),container);
             }
         }
 

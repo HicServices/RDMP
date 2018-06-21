@@ -3,7 +3,6 @@ using CatalogueLibrary.FilterImporting.Construction;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Microsoft.SqlServer.Management.Smo;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;

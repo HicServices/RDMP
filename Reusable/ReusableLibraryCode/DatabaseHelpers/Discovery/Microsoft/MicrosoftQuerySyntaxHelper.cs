@@ -40,6 +40,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             }
         }
 
+        public override string EnsureWrappedImpl(string databaseOrTableName)
+        {
+            return "[" + GetRuntimeName(databaseOrTableName) + "]";
+        }
+
         public override string EnsureFullyQualified(string databaseName, string schema, string tableName)
         {
             //if there is no schema address it as db..table (which is the same as db.dbo.table in Microsoft SQL Server)

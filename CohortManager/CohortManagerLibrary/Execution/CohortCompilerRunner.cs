@@ -64,57 +64,67 @@ namespace CohortManagerLibrary.Execution
             Finished
         }
         
-        public ICompileable Run()
+        public ICompileable Run(CancellationToken token)
         {
-            var globals = _cic.GetAllParameters();
+            try
+            {
+                var globals = _cic.GetAllParameters();
 
-            //clear compiler list
-            Compiler.CancelAllTasks(true);
+                //clear compiler list
+                Compiler.CancelAllTasks(true);
 
-            SetPhase(Phase.RunningJoinableTasks);
+                SetPhase(Phase.RunningJoinableTasks);
 
-            foreach (var j in _cic.GetAllJoinables())
-                Compiler.AddTask(j, globals);
+                foreach (var j in _cic.GetAllJoinables())
+                    Compiler.AddTask(j, globals);
 
-            Compiler.CancelAllTasks(false);
+                Compiler.CancelAllTasks(false);
 
-            RunAsync(Compiler.Tasks.Keys.Where(c => c is JoinableTask && c.State == CompilationState.NotScheduled));
+                RunAsync(Compiler.Tasks.Keys.Where(c => c is JoinableTask && c.State == CompilationState.NotScheduled),token);
 
-            SetPhase(Phase.CachingJoinableTasks);
+                SetPhase(Phase.CachingJoinableTasks);
 
-            CacheAsync(Compiler.Tasks.Keys.OfType<JoinableTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
+                CacheAsync(Compiler.Tasks.Keys.OfType<JoinableTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()),token);
 
-            SetPhase(Phase.RunningAggregateTasks);
+                SetPhase(Phase.RunningAggregateTasks);
 
-            Compiler.AddTasksRecursively(globals, _cic.RootCohortAggregateContainer, false);
+                Compiler.AddTasksRecursively(globals, _cic.RootCohortAggregateContainer, false);
 
-            Compiler.CancelAllTasks(false);
+                Compiler.CancelAllTasks(false);
 
-            RunAsync(Compiler.Tasks.Keys.Where(c => c is AggregationTask && c.State == CompilationState.NotScheduled));
+                RunAsync(Compiler.Tasks.Keys.Where(c => c is AggregationTask && c.State == CompilationState.NotScheduled), token);
 
-            SetPhase(Phase.CachingAggregateTasks);
+                SetPhase(Phase.CachingAggregateTasks);
 
-            CacheAsync(Compiler.Tasks.Keys.OfType<AggregationTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()));
+                CacheAsync(Compiler.Tasks.Keys.OfType<AggregationTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()), token);
 
-            SetPhase(Phase.RunningFinalTotals);
+                SetPhase(Phase.RunningFinalTotals);
 
-            var toReturn = Compiler.AddTask(_cic.RootCohortAggregateContainer, globals);
+                var toReturn = Compiler.AddTask(_cic.RootCohortAggregateContainer, globals);
 
-            if(RunSubcontainers)
-                foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively())
-                    Compiler.AddTask(a, globals);
+                if(RunSubcontainers)
+                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively())
+                        Compiler.AddTask(a, globals);
 
-            Compiler.CancelAllTasks(false);
+                Compiler.CancelAllTasks(false);
 
-            RunAsync(Compiler.Tasks.Keys.Where(c => c.State == CompilationState.NotScheduled));
+                RunAsync(Compiler.Tasks.Keys.Where(c => c.State == CompilationState.NotScheduled), token);
 
-            SetPhase(Phase.Finished);
-
-            return toReturn;
+                SetPhase(Phase.Finished);
+            
+                return toReturn;
+            }
+            catch (OperationCanceledException)
+            {
+                SetPhase(Phase.None);
+                return null;
+            }
         }
 
-        private void RunAsync(IEnumerable<ICompileable> toRun)
+        private void RunAsync(IEnumerable<ICompileable> toRun, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             var tasks = toRun.ToArray();
 
             foreach (var r in tasks)
@@ -125,35 +135,15 @@ namespace CohortManagerLibrary.Execution
                 Thread.Sleep(1000);
         }
 
-        private void CacheAsync(IEnumerable<ICacheableTask> toCache)
+        private void CacheAsync(IEnumerable<ICacheableTask> toCache, CancellationToken token)
         {
             if (_queryCachingServer == null)
                 return;
 
-            foreach (var c in toCache)
-                SaveToCache(c);
-        }
-        
-        private void SaveToCache(ICacheableTask cacheable)
-        {
-            CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager(_queryCachingServer);
+            token.ThrowIfCancellationRequested();
 
-            var explicitTypes = new List<DatabaseColumnRequest>();
-
-            AggregateConfiguration configuration = cacheable.GetAggregateConfiguration();
-            try
-            {
-                ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c => c.IsExtractionIdentifier).ColumnInfo;
-                explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), identifierColumnInfo.Data_type));
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
-            }
-
-            CacheCommitArguments args = cacheable.GetCacheArguments(Compiler.Tasks[cacheable].CountSQL, Compiler.Tasks[cacheable].Identifiers, explicitTypes.ToArray());
-
-            manager.CommitResults(args);
+            foreach (var c in toCache) 
+                Compiler.CacheSingleTask(c, _queryCachingServer);
         }
 
         private void SetPhase(Phase p)

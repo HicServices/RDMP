@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class AllCataloguesUsedByLoadMetadataNode
+    public class AllCataloguesUsedByLoadMetadataNode : IOrderable
     {
         public LoadMetadata LoadMetadata { get; private set; }
 
@@ -38,5 +39,7 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
         {
             return (LoadMetadata != null ? LoadMetadata.GetHashCode() : 0);
         }
+
+        public int Order { get { return 1; } set{} }
     }
 }

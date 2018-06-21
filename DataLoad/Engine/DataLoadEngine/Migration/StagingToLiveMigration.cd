@@ -6,21 +6,21 @@
   <Class Name="DataLoadEngine.Migration.DatabaseMigrationStrategy" Collapsed="true">
     <Position X="4.75" Y="4.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AACAAAAAAAAAAAQAAAAAIgBACAAAAAIAAEAAAAAAAAQ=</HashCode>
+      <HashCode>AACAAAAAAAAAAAQAAAAAIgBAAAAAAAIAAEAAAAAAAAQ=</HashCode>
       <FileName>Migration\DatabaseMigrationStrategy.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLoadEngine.Migration.LiveMigrationQueryHelper" Collapsed="true">
-    <Position X="0.5" Y="7.5" Width="2.5" />
+  <Class Name="DataLoadEngine.Migration.QueryBuilding.LiveMigrationQueryHelper">
+    <Position X="0.5" Y="7.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>ACAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAACAAEAAA=</HashCode>
-      <FileName>Migration\LiveMigrationQueryHelper.cs</FileName>
+      <FileName>Migration\QueryBuilding\LiveMigrationQueryHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.Migration.MigrationHost">
     <Position X="0.5" Y="1.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>EAAEAAAAAAAAAAAAAAAAAAEAAAAAgACAAAgAAABAAAA=</HashCode>
+      <HashCode>EAAEAAAAAAAAAAAAAAAAAAEAAAAAAACAAAAAAABAAAA=</HashCode>
       <FileName>Migration\MigrationHost.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -30,46 +30,46 @@
   <Class Name="DataLoadEngine.Migration.MigrationConfiguration">
     <Position X="4.25" Y="1.25" Width="3" />
     <TypeIdentifier>
-      <HashCode>QAAAIAAAAAAAAAAAAAAAAAAAAIAQAABAAAAAAAAAAAA=</HashCode>
+      <HashCode>QAAAIAQAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAI=</HashCode>
       <FileName>Migration\MigrationConfiguration.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.Migration.MigrationColumnSet">
     <Position X="8.5" Y="0.5" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAAAAAAACQIAAAAAAkAAAAAAAAABAAACA=</HashCode>
+      <HashCode>AAAAIAAAAAAAAAAAAACAIAAAAAAEAAAAAAAQABAAAAA=</HashCode>
       <FileName>Migration\MigrationColumnSet.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLoadEngine.Migration.OverwriteMigrationStrategy" Collapsed="true">
+  <Class Name="DataLoadEngine.Migration.QueryBuilding.OverwriteMigrationStrategy">
     <Position X="4.75" Y="5.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAQ=</HashCode>
-      <FileName>Migration\OverwriteMigrationStrategy.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Migration\QueryBuilding\OverwriteMigrationStrategy.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLoadEngine.Migration.MigrationColumnSetQueryHelper">
+  <Class Name="DataLoadEngine.Migration.QueryBuilding.MigrationColumnSetQueryHelper">
     <Position X="8.25" Y="6" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAgAAAABAAAAAAAAAEAAAAAAAAAAgAAAAgAAAAAA=</HashCode>
-      <FileName>Migration\MigrationColumnSetQueryHelper.cs</FileName>
+      <HashCode>AAAAAAAAAABAEAAAAAAAEAAAAAAAAAAgAAAAgAAAAAA=</HashCode>
+      <FileName>Migration\QueryBuilding\MigrationColumnSetQueryHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLoadEngine.Migration.MigrationQueryHelper">
+  <Class Name="DataLoadEngine.Migration.QueryBuilding.MigrationQueryHelper">
     <Position X="1.75" Y="4" Width="2.5" />
     <TypeIdentifier>
       <HashCode>gAAAAAAAEAAAAAAAAAAAAgAAAAAAAAIACAAAiAAAAAA=</HashCode>
-      <FileName>Migration\MigrationQueryHelper.cs</FileName>
+      <FileName>Migration\QueryBuilding\MigrationQueryHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLoadEngine.Migration.ReverseMigrationQueryHelper" Collapsed="true">
-    <Position X="3.5" Y="7.5" Width="2.25" />
+  <Class Name="DataLoadEngine.Migration.QueryBuilding.ReverseMigrationQueryHelper">
+    <Position X="3.5" Y="7.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>gAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
-      <FileName>Migration\ReverseMigrationQueryHelper.cs</FileName>
+      <FileName>Migration\QueryBuilding\ReverseMigrationQueryHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DataLoadEngine.Migration.BackfillMigrationFieldProcessor">

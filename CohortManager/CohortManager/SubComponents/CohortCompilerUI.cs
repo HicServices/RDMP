@@ -1,39 +1,27 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents.EmptyLineElements;
-using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary;
 using CohortManagerLibrary.Execution;
 using CohortManagerLibrary.Execution.Joinables;
-using CohortManagerLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
-using QueryCaching.Aggregation.Arguments;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
-using ReusableUIComponents.SingleControlForms;
 
 
 namespace CohortManager.SubComponents
@@ -99,6 +87,13 @@ namespace CohortManager.SubComponents
 
         private ISqlParameter[] _globals;
         
+        CancellationTokenSource _cancelGlobalOperations;
+
+        /// <summary>
+        /// Occurs when the user selects something in the ObjectListView, object is the thing selected
+        /// </summary>
+        public event Action<IMapsDirectlyToDatabaseTable> SelectionChanged;
+
         public CohortCompilerUI()
         {
             InitializeComponent();
@@ -267,6 +262,7 @@ namespace CohortManager.SubComponents
         private bool _haveSubscribed = false;
         private CohortCompilerRunner _runner;
 
+
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
         {
             _cic = databaseObject;
@@ -347,7 +343,7 @@ namespace CohortManager.SubComponents
             //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
             Compiler.CancelTask(task, true);
             
-            RecreateAllTasks();
+            RecreateAllTasks(false);
 
             task = Compiler.AddTask(configOrContainer, _globals);
 
@@ -357,6 +353,10 @@ namespace CohortManager.SubComponents
 
         public void CancelAll()
         {
+            //don't start any more global operations if your midway through
+            if(_cancelGlobalOperations != null)
+                _cancelGlobalOperations.Cancel();
+
             Compiler.CancelAllTasks(true);
             RecreateAllTasks();
         }
@@ -366,14 +366,17 @@ namespace CohortManager.SubComponents
             //only allow starting all if we are not mid execution already
             if (IsExecutingGlobalOperations())
                 return;
-            
+
+            _cancelGlobalOperations = new CancellationTokenSource();
+
+
             _runner = new CohortCompilerRunner(Compiler,_timeout);
             _runner.PhaseChanged += RunnerOnPhaseChanged;
             new Task(() =>
             {
                 try
                 {
-                    _runner.Run();
+                    _runner.Run(_cancelGlobalOperations.Token);
                 }
                 catch (Exception e)
                 {
@@ -458,6 +461,10 @@ namespace CohortManager.SubComponents
                                     " Tasks currently executing, you must cancel them before closing");
                     e.Cancel = true;
                 }
+                else
+                {
+                    Compiler.CancelAllTasks(true);
+                }
             }
         }
         
@@ -492,6 +499,14 @@ namespace CohortManager.SubComponents
             {
                 ExceptionViewer.Show(o.CrashMessage);
             }
+        }
+
+        private void tlvConfiguration_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var c = tlvConfiguration.SelectedObject as ICompileable;
+
+            if(SelectionChanged != null)
+                SelectionChanged(c == null ? null : c.Child);
         }
     }
 

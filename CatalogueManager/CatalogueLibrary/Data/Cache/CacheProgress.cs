@@ -18,6 +18,7 @@ namespace CatalogueLibrary.Data.Cache
     {
         #region Database Properties
 
+        private string _name;
         private int _loadProgressID;
         private int? _permissionWindowID;
         private DateTime? _cacheFillProgress;
@@ -26,13 +27,20 @@ namespace CatalogueLibrary.Data.Cache
         private TimeSpan _chunkPeriod;
         private string _cacheLagPeriodLoadDelay;
 
+        /// <inheritdoc/>
+        public string Name
+        {
+            get { return _name; }
+            set { SetField(ref _name, value); }
+        }
+
         /// <summary>
         /// The LoadProgress which is responsible for loading data from this cache.
         /// </summary>
         public int LoadProgress_ID
         {
             get { return _loadProgressID; }
-            set { SetField(ref  _loadProgressID, value); }
+            set { SetField(ref _loadProgressID, value); }
         }
 
         /// <summary>
@@ -179,7 +187,8 @@ namespace CatalogueLibrary.Data.Cache
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
-                {"LoadProgress_ID", loadProgress.ID}
+                {"LoadProgress_ID", loadProgress.ID},
+                {"Name", "New CacheProgress " + Guid.NewGuid()}
             });
         }
 
@@ -193,6 +202,7 @@ namespace CatalogueLibrary.Data.Cache
             CacheLagPeriodLoadDelay = r["CacheLagPeriodLoadDelay"] as string;
             Pipeline_ID = ObjectToNullableInt(r["Pipeline_ID"]);
             ChunkPeriod = (TimeSpan)r["ChunkPeriod"];
+            Name = r["Name"].ToString();
         }
 
         /// <inheritdoc/>
@@ -254,7 +264,7 @@ FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction);
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "Cache Progress " + ID;
+            return Name;
         }
 
         /// <summary>

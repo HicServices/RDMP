@@ -266,6 +266,12 @@
     <Compile Include="Dependencies\Models\WPFBitmapConverter.cs" />
     <Compile Include="DoTransparencyProperly.cs" />
     <Compile Include="ExceptionCounterUI.cs" />
+    <Compile Include="ServerDatabaseTableSelectorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ServerDatabaseTableSelectorDialog.Designer.cs">
+      <DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Heatmapping\ExampleData.cs" />
     <Compile Include="Heatmapping\HeatmapUI.cs">
       <SubType>UserControl</SubType>
@@ -515,6 +521,9 @@
     <EmbeddedResource Include="ServerDatabaseTableSelector.resx">
       <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ServerDatabaseTableSelectorDialog.resx">
+      <DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Settings\UserSettingsUI.resx">
       <DependentUpon>UserSettingsUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -554,7 +563,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="ReusableUIComponentsKey.snk" />
   </ItemGroup>

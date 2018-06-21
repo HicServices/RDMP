@@ -82,12 +82,7 @@ namespace DataExportManager.Menus
                 int toAddID = importDialog.IDToImport;
                 try
                 {
-                    int customColsCreated;
-                    var newCohort = new ExtractableCohort(RepositoryLocator.DataExportRepository, _externalCohortTable, toAddID, out customColsCreated);
-
-                    if (customColsCreated > 0)
-                        MessageBox.Show("Also created " + customColsCreated + " custom columns");
-
+                    var newCohort = new ExtractableCohort(RepositoryLocator.DataExportRepository, _externalCohortTable, toAddID);
                     Publish(newCohort);
                 }
                 catch (Exception exception)

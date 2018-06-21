@@ -1,20 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CohortManagerLibrary.QueryBuilding;
 using DataExportLibrary.Data.DataTables;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.CohortCreationPipeline.Sources
@@ -34,103 +23,22 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
     /// <para>The purpose of all this is usually to ship a table ('Patient Index Table') which was used to build the researchers cohort into the saved cohorts 
     /// database so it can be linked and extracted (as custom data) along with all the normal datasets that make up the researchers extract.</para>
     /// </summary>
-    public class PatientIndexTableSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<AggregateConfiguration>, IPipelineRequirement<ExtractableCohort>
+    public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipelineRequirement<ExtractableCohort>
     {
-        private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-        private AggregateConfiguration _configuration;
-
-        [DemandsInitialization("The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.",DemandType.Unspecified,10000)]
-        public int Timeout { get; set; }
-
-        private bool haveSentData = false;
         private ExtractableCohort _extractableCohort;
-
-
-        public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        
+        protected override  string GetSQL()
         {
-
-            if(haveSentData)
-                return null;
-
-            haveSentData = true;
-
-            return GetDataTable(Timeout, listener);
-        }
-
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
-            
-        }
-
-        public void Abort(IDataLoadEventListener listener)
-        {
-            
-        }
-
-        public DataTable TryGetPreview()
-        {
-            return GetDataTable(10,null);
-        }
-
-        private DataTable GetDataTable(int timeout, IDataLoadEventListener listener)
-        {
-            if(listener != null)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to lookup which server to interrogate for CohortIdentificationConfiguration " + _cohortIdentificationConfiguration));
-
-            var server = _configuration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
-            
-            
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-
-                var sql = GetSQL();
-
-                if (listener != null)
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Connection opened, ready to send the following SQL (with Timeout "+Timeout+"s):" + Environment.NewLine + sql));
-
-                var cmd = server.GetCommand(sql, con);
-                cmd.CommandTimeout = timeout;
-
-                var dt = new DataTable();
-                server.GetDataAdapter(cmd).Fill(dt);
-
-                dt.TableName = server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(_configuration.Name + "_ID" + _configuration.ID);
-
-                if (listener != null)
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "successfully read " +dt.Rows + " rows from source"));
-
-
-                return dt;
-            }
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            try
-            {
-                var _sql = GetSQL();
-                notifier.OnCheckPerformed(new CheckEventArgs("successfully built extraction SQL:" + _sql, CheckResult.Success));
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not build extraction SQL for '" +_configuration + "' with parent '" +  _cohortIdentificationConfiguration + "'", CheckResult.Fail,e));
-            }
-            
-        }
-
-        private string GetSQL()
-        {
-            CohortQueryBuilder builder = new CohortQueryBuilder(_configuration,_cohortIdentificationConfiguration.GetAllParameters(),true);
+            CohortQueryBuilder builder = new CohortQueryBuilder(AggregateConfiguration,CohortIdentificationConfigurationIfAny.GetAllParameters(),true);
 
             var sql = builder.SQL;
 
-            var extractionIdentifier = _configuration.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
+            var extractionIdentifier = AggregateConfiguration.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
 
             //IMPORTANT: We are using impromptu SQL instead of a Spontaneous container / CustomLine because we want the CohortQueryBuilder to decide to use
             //the cached table data (if any).  If it senses we are monkeying with the query it will run it verbatim which will be very slow.
 
-            string whereString = _configuration.RootFilterContainer_ID != null ? "AND " : "WHERE ";
+            string whereString = AggregateConfiguration.RootFilterContainer_ID != null ? "AND " : "WHERE ";
 
             var impromptuSql = whereString + extractionIdentifier.SelectSQL + " IN (SELECT " +
                                _extractableCohort.GetPrivateIdentifier() + " FROM " +
@@ -146,20 +54,18 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
             //there is a group by
             return sql.Substring(0, insertionPoint) + Environment.NewLine + impromptuSql + Environment.NewLine + sql.Substring(insertionPoint, sql.Length - insertionPoint);
         }
-
-        public void PreInitialize(AggregateConfiguration value, IDataLoadEventListener listener)
-        {
-            _configuration = value;
-
-            _cohortIdentificationConfiguration = value.GetCohortIdentificationConfigurationIfAny();
-
-            if(_cohortIdentificationConfiguration == null)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Configuration " + _configuration + " is not a valid input because it does not have a CohortIdentificationConfiguration nevermind a JoinableCohortAggregateConfiguration.  Maybe it isn't a patient index table?"));
-        }
-
+        
         public void PreInitialize(ExtractableCohort value, IDataLoadEventListener listener)
         {
             _extractableCohort = value;
+        }
+
+        public override void PreInitialize(AggregateConfiguration value, IDataLoadEventListener listener)
+        {
+            base.PreInitialize(value, listener);
+
+            if (CohortIdentificationConfigurationIfAny == null)
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Configuration " + AggregateConfiguration + " is not a valid input because it does not have a CohortIdentificationConfiguration nevermind a JoinableCohortAggregateConfiguration.  Maybe it isn't a patient index table?"));
         }
     }
 }

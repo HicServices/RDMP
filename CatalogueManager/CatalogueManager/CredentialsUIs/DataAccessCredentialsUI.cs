@@ -83,7 +83,7 @@ namespace CatalogueManager.CredentialsUIs
                     _credentials.Password = tbPassword.Text;
                 }
                 _credentials.SaveToDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_credentials));
+                Publish(_credentials);
             }
             catch (Exception exception)
             {

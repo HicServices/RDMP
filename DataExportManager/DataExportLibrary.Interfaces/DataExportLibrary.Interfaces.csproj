@@ -143,10 +143,10 @@
     <Compile Include="Data\DataTables\IProject.cs" />
     <Compile Include="Data\DataTables\IReleaseLogEntry.cs" />
     <Compile Include="Data\DataTables\ISelectedDataSets.cs" />
+    <Compile Include="Data\DataTables\ISelectedDataSetsForcedJoin.cs" />
     <Compile Include="Data\IExternalCohortDefinitionData.cs" />
     <Compile Include="Data\IHICProjectSalt.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandState.cs" />
-    <Compile Include="ExtractionTime\Commands\IExtractCohortCustomTableCommand.cs" />
     <Compile Include="ExtractionTime\Commands\IExtractCommand.cs" />
     <Compile Include="ExtractionTime\IExtractionDirectory.cs" />
     <Compile Include="ExtractionTime\UserPicks\IBundledLookupTable.cs" />
@@ -177,9 +177,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repositories\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

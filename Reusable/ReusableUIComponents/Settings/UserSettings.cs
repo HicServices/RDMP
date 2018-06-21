@@ -28,6 +28,12 @@ namespace ReusableUIComponents.Settings
             }
         }
 
+        public static bool ConfirmApplicationExiting
+        {
+            get { return AppSettings.GetValueOrDefault("ConfirmExit", true); }
+            set { AppSettings.AddOrUpdateValue("ConfirmExit", value); }
+        }
+
         public static bool LicenseAccepted
         {
             get { return AppSettings.GetValueOrDefault("LicenseAccepted", false); }

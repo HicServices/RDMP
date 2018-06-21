@@ -57,6 +57,8 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
             _tableInfo = databaseObject;
 
+            ragSmiley1.StartChecking(_tableInfo);
+
             tbTableInfoID.Text = _tableInfo.ID.ToString();
             cbIsPrimaryExtractionTable.Checked = _tableInfo.IsPrimaryExtractionTable;
             tbTableInfoName.Text = _tableInfo.Name;
@@ -66,22 +68,13 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             btnParameters.Enabled = _tableInfo.IsTableValuedFunction;
 
             objectSaverButton1.SetupFor(_tableInfo,activator.RefreshBus);
+
+            //if it's a Lookup table, don't let them try to make it IsPrimaryExtractionTable (but let them disable that if they have already made that mistake somehow)
+            if (_tableInfo.IsLookupTable())
+                if (!cbIsPrimaryExtractionTable.Checked)
+                    cbIsPrimaryExtractionTable.Enabled = false;
         }
-
-        protected override bool ProcessKeyPreview(ref Message m)
-        {
-
-            PreviewKey p = new PreviewKey(ref m, ModifierKeys);
-
-            if (p.IsKeyDownMessage && p.e.KeyCode == Keys.S && p.e.Control)
-            {
-                btnTableInfoSave_Click(null, null);
-                p.Trap(this);
-            }
-
-            return base.ProcessKeyPreview(ref m);
-        }
-
+        
         private void cbIsPrimaryExtractionTable_CheckedChanged(object sender, EventArgs e)
         {
             _tableInfo.IsPrimaryExtractionTable = cbIsPrimaryExtractionTable.Checked;

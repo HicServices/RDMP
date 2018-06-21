@@ -23,7 +23,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if (masquerader != null)
                 _o = masquerader.MasqueradingAs();
 
-            if(!Activator.CommandExecutionFactory.CanActivate(o))
+            if(!Activator.CommandExecutionFactory.CanActivate(_o))
                 SetImpossible("Object cannot be Activated");
         }
 

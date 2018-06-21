@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -41,6 +43,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
         protected bool AllowEmptyExtractions = false;
         protected SelectedDataSets _selectedDataSet;
+        protected ColumnInfo[] _columnInfos;
 
         [TestFixtureSetUp]
         protected override void SetUp()
@@ -63,23 +66,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [TestFixtureTearDown]
         public void TearDown()
         {
-            //delete all columns
-            foreach (var selectedCol in _extractableColumns)
-                ((ExtractableColumn)selectedCol).DeleteInDatabase();
-
-            //unselect the dataset
-            _configuration.SelectedDataSets.Single().DeleteInDatabase();
-
-            _configuration.DeleteInDatabase();
-            _extractableDataSet.DeleteInDatabase();
-            _project.DeleteInDatabase();
-         
-            _catalogue.DeleteInDatabase();
-            var credentials = _tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-            _tableInfo.DeleteInDatabase();
-
-            if(credentials != null)
-                credentials.DeleteInDatabase();
+            RunBlitzDatabases(RepositoryLocator);
         }
 
         private void SetupDataExport()
@@ -110,52 +97,27 @@ namespace DataExportLibrary.Tests.DataExtraction
                 col.SaveToDatabase();
                 
                 _extractableColumns.Add(col);
-                
             }
         }
 
         private void SetupCatalogueConfigurationEtc()
         {
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
-            using(var con = server.GetConnection())
-            {
-                con.Open();
+            DataTable dt = new DataTable();
+            dt.Columns.Add("PrivateID");
+            dt.Columns.Add("Name");
+            dt.Columns.Add("DateOfBirth");
 
-                var cmdCreateTestTable = server.GetCommand(@"
-if exists (select 1 from sys.tables where Name = 'TestTable')
-begin
-drop table TestTable
-end
-CREATE TABLE TestTable (PrivateID varchar(10),Result int )", con);
-                cmdCreateTestTable.ExecuteNonQuery();
+            dt.Rows.Add(new object[] {_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01"});
 
-                var cmdInsert = server.GetCommand("INSERT INTO TestTable VALUES('" + _cohortKeysGenerated.Keys.First() + "',1);", con);
-                cmdInsert.ExecuteNonQuery();
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
             
-                con.Close();
-                
-                TableInfoImporter importer = new TableInfoImporter(RepositoryLocator.CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable"));
-
-                TableInfo t;
-                ColumnInfo[] cs;
-                importer.DoImport(out t, out cs);
-
-                var forwardEngineer = new ForwardEngineerCatalogue(t,cs,true);
-                _tableInfo = t;
-
-                Catalogue catalogue;
-                CatalogueItem[] cataItems;
-                ExtractionInformation[] extractionInformations;
-
-                forwardEngineer.ExecuteForwardEngineering(out catalogue,out cataItems,out extractionInformations);
-                _extractionInformations = extractionInformations;
-
-                ExtractionInformation _privateID = extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
-                _privateID.IsExtractionIdentifier = true;
-                _privateID.SaveToDatabase();
-
-                _catalogue = catalogue;
-            }
+            CatalogueItem[] cataItems;
+            _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);
+            
+            ExtractionInformation _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
+            _privateID.IsExtractionIdentifier = true;
+            _privateID.SaveToDatabase();
+            
         }
 
         protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results)

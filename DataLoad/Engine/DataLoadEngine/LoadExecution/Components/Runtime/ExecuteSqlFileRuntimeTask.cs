@@ -8,8 +8,6 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution.Components.Arguments;
-using log4net;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

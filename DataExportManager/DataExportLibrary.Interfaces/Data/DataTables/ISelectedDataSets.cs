@@ -1,4 +1,5 @@
 using CatalogueLibrary.Data;
+using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 
@@ -13,5 +14,9 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         int ExtractableDataSet_ID { get; set; }
         int? RootFilterContainer_ID { get; set; }
         IContainer RootFilterContainer { get; }
+
+        IExtractionConfiguration ExtractionConfiguration { get;}
+        IExtractableDataSet ExtractableDataSet { get; }
+        ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins { get;}
     }
 }

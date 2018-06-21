@@ -12,7 +12,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsIDirectoryInfoNode:RDMPCommandExecutionProposal<IDirectoryInfoNode>
+    class ProposeExecutionWhenTargetIsIDirectoryInfoNode:RDMPCommandExecutionProposal<IDirectoryInfoNode>
     {
         public ProposeExecutionWhenTargetIsIDirectoryInfoNode(IActivateItems itemActivator): base(itemActivator)
         {

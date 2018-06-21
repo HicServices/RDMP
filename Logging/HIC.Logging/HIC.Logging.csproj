@@ -178,7 +178,6 @@
     <Compile Include="RowErrorLogging.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Logging.cd" />
     <None Include="packages.config" />
   </ItemGroup>

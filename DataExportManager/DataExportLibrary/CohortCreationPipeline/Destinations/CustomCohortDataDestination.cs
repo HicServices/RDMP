@@ -43,6 +43,8 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
             
         public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            throw new NotImplementedException("This needs rewritten");
+
             //if there is no data in the batch
             if (toProcess == null)
                 if (!_haveSentFirstBatch)
@@ -255,7 +257,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
 
                     missingIdentifiers = listPrivateIdentifierMismatches(_database, _tableName, con);
 
-                    _cohort.RecordNewCustomTable(_database.Server, _tableName, con, null);
+                    //_cohort.RecordNewCustomTable(_database.Server, _tableName, con, null);
 
 
                     //if there were missing identifiers we should complain about them

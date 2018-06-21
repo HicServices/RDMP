@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.Mutilators;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -52,8 +46,7 @@ namespace LoadModules.Generic.Mutilators
         public ExitCodeType Mutilate(IDataLoadEventListener job)
         {
             var db = DataAccessPortal.GetInstance().ExpectDatabase(DatabaseToBackup, DataAccessContext.DataLoad);
-
-            UsefulStuff.BackupSqlServerDatabase(db.Server.Builder.ConnectionString, db.GetRuntimeName(), "DataLoadEngineBackup", MonthsTillExpiry);
+            db.CreateBackup("DataLoadEngineBackup");
             return ExitCodeType.Success;
         }
     }

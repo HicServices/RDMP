@@ -18,7 +18,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 
             _bulkcopy = new SqlBulkCopy((SqlConnection)connection.Connection, SqlBulkCopyOptions.KeepIdentity, (SqlTransaction)connection.Transaction);
             _bulkcopy.BulkCopyTimeout = 50000;
-            _bulkcopy.DestinationTableName = _discoveredTable.GetRuntimeName();
+            _bulkcopy.DestinationTableName = _discoveredTable.GetFullyQualifiedName();
         }
 
         public int Upload(DataTable dt)
@@ -28,6 +28,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
                     _bulkcopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);
 
             return UsefulStuff.BulkInsertWithBetterErrorMessages(_bulkcopy, dt, _discoveredTable.Database.Server);
+        }
+
+        public int Timeout
+        {
+            get { return _bulkcopy.BulkCopyTimeout; } 
+            set { _bulkcopy.BulkCopyTimeout = value; }
         }
 
         public void Dispose()

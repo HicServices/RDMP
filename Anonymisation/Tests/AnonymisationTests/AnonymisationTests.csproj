@@ -134,6 +134,7 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ForwardEngineerANOCatalogueTwoTableTests.cs" />
     <Compile Include="ANOStoreFunctionalityTests.cs" />
     <Compile Include="ANOMigrationTests.cs" />
     <Compile Include="ANOTableTests.cs" />
@@ -197,7 +198,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

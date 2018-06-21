@@ -16,7 +16,7 @@ namespace CohortManagerLibrary.Execution
         public abstract AggregateConfiguration GetAggregateConfiguration();
         public abstract CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes);
         public abstract void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager);
-
+        
         public bool IsCacheableWhenFinished()
         {
             if (!_compiler.Tasks.ContainsKey(this))

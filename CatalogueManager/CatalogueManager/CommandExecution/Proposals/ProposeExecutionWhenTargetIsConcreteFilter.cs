@@ -12,7 +12,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    public class ProposeExecutionWhenTargetIsConcreteFilter:RDMPCommandExecutionProposal<ConcreteFilter>
+    class ProposeExecutionWhenTargetIsConcreteFilter:RDMPCommandExecutionProposal<ConcreteFilter>
     {
         public ProposeExecutionWhenTargetIsConcreteFilter(IActivateItems itemActivator) : base(itemActivator)
         {

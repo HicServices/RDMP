@@ -73,7 +73,8 @@ SET @ProjectNumber=1;
 
 SELECT DISTINCT 
 [{0}CohortDatabase]..[Cohort].[ReleaseID] AS ReleaseID,
-[{0}ScratchArea]..[TestTable].[Result]
+[{0}ScratchArea]..[TestTable].[Name],
+[{0}ScratchArea]..[TestTable].[DateOfBirth]
 FROM 
 [{0}ScratchArea]..[TestTable] INNER JOIN [{0}CohortDatabase]..[Cohort] ON [{0}ScratchArea]..[TestTable].[PrivateID]=[{0}CohortDatabase]..[Cohort].[PrivateID] collate Latin1_General_BIN
 
@@ -115,13 +116,13 @@ AND
         {
             var cols = _configuration.GetAllExtractableColumnsFor(_extractableDataSet).Cast<ExtractableColumn>().ToArray();
 
-            var result = cols.Single(c => c.GetRuntimeName().Equals("Result"));
+            var name = cols.Single(c => c.GetRuntimeName().Equals("Name"));
 
             using (var con = DataExportRepository.GetConnection())
             {
                 DataExportRepository.DiscoveredServer.GetCommand(
                     "UPDATE ExtractableColumn set CatalogueExtractionInformation_ID = " + int.MaxValue + " where ID = " +
-                    result.ID, con).ExecuteNonQuery();
+                    name.ID, con).ExecuteNonQuery();
             }
 
         }

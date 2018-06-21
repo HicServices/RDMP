@@ -20,7 +20,7 @@ namespace DataExportManager.ProjectUI
 {
     /// <summary>
     /// Reports the progress of a single dataset bundle in a project extraction.  A dataset bundle is the dataset, any accompanying lookups / supporting documents etc.  You will see one
-    /// control per dataset you ticked in ChooseExtractablesUI plus a custom one called Globals which is for all global attachments (See SupportingDocumentsViewer).
+    /// control per dataset you ticked in ChooseExtractablesUI plus a custom one called Globals which is for all global attachments (See SupportingDocumentUI).
     /// 
     /// <para>The notifications will include the extraction SQL sent to the data repository (including the join against the cohort and any extraction specific filters - See ConfigureDatasetUI).
     /// Then depending on the pipeline you selected in ExecuteExtractionUI you will then see messages about the data being extracted including the number of records written/fetched and
@@ -57,7 +57,7 @@ namespace DataExportManager.ProjectUI
             if (extractCommand == null)
                 return;
 
-            lblDataset.Text = "Dataset:" + extractCommand;
+            lblDataset.Text = "Dataset: " + extractCommand;
         }
         
         private void btnCancel_Click(object sender, EventArgs e)
@@ -95,12 +95,9 @@ namespace DataExportManager.ProjectUI
 
                 progressUI1.ShowRunning(true);
 
-                var extractionRequest = ExtractCommand as ExtractDatasetCommand;
+                //var extractionRequest = (ExtractDatasetCommand)ExtractCommand;
 
-                if (extractionRequest != null)
-                    DoExtractionAsync(extractionRequest);
-                else
-                    DoExtractionAsync(ExtractCommand as ExtractCohortCustomTableCommand);
+                DoExtractionAsync(ExtractCommand);
             }
             catch (Exception e)
             {
@@ -117,23 +114,12 @@ namespace DataExportManager.ProjectUI
             }
         }
 
-        private void DoExtractionAsync(ExtractCohortCustomTableCommand extractCohortCustomTableCommandCohortPair)
-        {
-            extractCohortCustomTableCommandCohortPair.State = ExtractCommandState.WaitingForSQLServer;
-            _pipelineUseCase = new ExtractionPipelineUseCase(extractCohortCustomTableCommandCohortPair.Configuration.Project, extractCohortCustomTableCommandCohortPair, _pipeline, _dataLoadInfo);
-            _pipelineUseCase.Execute(progressUI1);
-
-            if (_pipelineUseCase.Source.WasCancelled)
-                extractCohortCustomTableCommandCohortPair.State = ExtractCommandState.UserAborted;
-            else
-                extractCohortCustomTableCommandCohortPair.State = _pipelineUseCase.Crashed?ExtractCommandState.Crashed:ExtractCommandState.Completed;
-        }
-
-        private void DoExtractionAsync(ExtractDatasetCommand request)
+        
+        private void DoExtractionAsync(IExtractCommand request)
         {
             request.State = ExtractCommandState.WaitingForSQLServer;
                 
-            _pipelineUseCase = new ExtractionPipelineUseCase(request.Configuration.Project, request, _pipeline, _dataLoadInfo);
+            _pipelineUseCase = new ExtractionPipelineUseCase(Project, request, _pipeline, _dataLoadInfo);
             _pipelineUseCase.Execute(progressUI1);
 
             if (_pipelineUseCase.Crashed)
@@ -155,11 +141,13 @@ namespace DataExportManager.ProjectUI
                                 "Extraction completed successfully into : " +
                                 _pipelineUseCase.Destination.GetDestinationDescription()));
 
-                        WriteMetadata(request);
+                        if (request is ExtractDatasetCommand)
+                            WriteMetadata(request);
+                        // TODO: add metadata for Globals?
                     }
         }
 
-        private void WriteMetadata(ExtractDatasetCommand request)
+        private void WriteMetadata(IExtractCommand request)
         {
             request.State = ExtractCommandState.WritingMetadata;
             WordDataWriter wordDataWriter;

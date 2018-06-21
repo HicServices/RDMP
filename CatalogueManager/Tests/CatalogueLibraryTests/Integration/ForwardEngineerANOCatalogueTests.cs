@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -147,6 +148,60 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
+        public void CreateANOVersionTest_IntIdentity()
+        {
+            var dbName = TestDatabaseNames.GetConsistentName("CreateANOVersionTest");
+
+            //setup the anonymisation database (destination)
+            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbName);
+
+            db.Create(true);
+
+            //Create this table in the scratch database
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("id", "int identity(1,1)", false) {IsPrimaryKey = true},
+                new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 10), false)
+            });
+
+            TableInfo ti;
+            ColumnInfo[] cols;
+            var cata = Import(tbl,out ti,out cols);
+
+            var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, cata);
+            planManager.TargetDatabase = db;
+
+            var nameCol = cols.Single(c => c.GetRuntimeName().Equals("Name"));
+
+            //setup test rules for migrator
+            planManager.Plans[nameCol].Plan = Plan.Drop;
+
+            //rules should pass checks
+            planManager.Check(new ThrowImmediatelyCheckNotifier());
+
+            var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
+            engine.Execute();
+
+            var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
+            Assert.IsTrue(anoCatalogue.Exists());
+
+            //should only be one (the id column
+            Assert.AreEqual(1,anoCatalogue.CatalogueItems.Length);
+            var idColInAnoDatabase = anoCatalogue.CatalogueItems[0].ColumnInfo;
+            Assert.AreEqual("int", idColInAnoDatabase.Data_type);
+            
+            db.ForceDrop();
+
+            var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
+            var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
+
+            Assert.AreEqual(exports, imports);
+            Assert.IsTrue(exports > 0);
+        }
+
+        
+
+        [Test]
         [TestCase(false,false)]
         [TestCase(false, true)]
         [TestCase(true,false)]
@@ -247,7 +302,9 @@ namespace CatalogueLibraryTests.Integration
                 if (!tableInfoAlreadyExistsForSkippedTable)
                 {
                     var ex = Assert.Throws<Exception>(engine.Execute);
-                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called 'SpineColor'"));
+                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called"));
+                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "[Necks].[SpineColor]"));
+                    
                     return;
                 }
                 else
@@ -368,6 +425,8 @@ namespace CatalogueLibraryTests.Integration
             eiDescription.Order = orderToInsertDescriptionFieldAt +1;
             eiDescription.ExtractionCategory = ExtractionCategory.Supplemental;
             eiDescription.SaveToDatabase();
+
+            bulk.catalogue.ClearAllInjections();
 
             //check it worked
             QueryBuilder qb = new QueryBuilder(null,null);

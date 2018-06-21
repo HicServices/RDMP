@@ -9,11 +9,15 @@ using System.Web.UI.WebControls;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -33,10 +37,11 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
-    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper
+
+    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
     {
         #region Database Properties
-
+        
         //just create these variables (one for every string or Uri field and reflection will populate them
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Acronym_MaxLength = -1;
@@ -147,6 +152,8 @@ namespace CatalogueLibrary.Data
         private bool _isColdStorageDataset;
         private int? _liveLoggingServerID;
         private int? _testLoggingServerID;
+
+        private Lazy<CatalogueItem[]> _knownCatalogueItems;
         
         /// <summary>
         /// Shorthand (recommended 3 characters or less) for referring to this dataset (e.g. 'DEM' for the dataset 'Demography')
@@ -497,6 +504,7 @@ namespace CatalogueLibrary.Data
         /// that indicates for every row when it became active e.g. 'PrescribedDate' for prescribing.  Try to avoid using columns that have lots of nulls or 
         /// where the date is arbitrary (e.g. 'RecordLoadedDate')
         /// </summary>
+        [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference)] //todo do we want to share this?
         [DoNotExtractProperty]
         public int? TimeCoverage_ExtractionInformation_ID
         {
@@ -512,6 +520,7 @@ namespace CatalogueLibrary.Data
         /// <para>This chosen column should not have hundreds/thousands of unique values</para>
         /// </summary>
         [DoNotExtractProperty]
+        [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference)] 
         public int? PivotCategory_ExtractionInformation_ID
         {
             get { return _pivotCategoryExtractionInformationID; }
@@ -553,6 +562,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// The ID of the logging server that is to be used to log data loads of the dataset <see cref="HIC.Logging.LogManager"/>
         /// </summary>
+        [Relationship(typeof(ExternalDatabaseServer), RelationshipType.LocalReference)]
         [DoNotExtractProperty]
         public int? LiveLoggingServer_ID
         {
@@ -564,6 +574,7 @@ namespace CatalogueLibrary.Data
         /// Obsolete
         /// </summary>
         [Obsolete("Test logging databases are a bad idea on a live Catalogue repository")]
+        [Relationship(typeof(ExternalDatabaseServer), RelationshipType.LocalReference)]
         [DoNotExtractProperty]
         public int? TestLoggingServer_ID
         {
@@ -587,6 +598,7 @@ namespace CatalogueLibrary.Data
         /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
         /// </summary>
         [DoNotExtractProperty]
+        [Relationship(typeof(LoadMetadata), RelationshipType.IgnoreableLocalReference)]
         public int? LoadMetadata_ID
         {
             get { return _loadMetadataId; }
@@ -606,7 +618,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                return Repository.GetAllObjectsWithParent<CatalogueItem>(this);
+                return _knownCatalogueItems.Value;
             }
         }
 
@@ -817,6 +829,8 @@ namespace CatalogueLibrary.Data
 
             if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
+
+            ClearAllInjections();
         }
         
         /// <summary>
@@ -949,8 +963,15 @@ namespace CatalogueLibrary.Data
             IsColdStorageDataset = (bool) r["IsColdStorageDataset"];
 
             Folder = new CatalogueFolder(this,r["Folder"].ToString());
+
+            ClearAllInjections();
         }
         
+        internal Catalogue(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
+        }
+
         /// <inheritdoc/>
         public override string ToString()
         {
@@ -1029,7 +1050,8 @@ namespace CatalogueLibrary.Data
                         string sql;
                         try
                         {
-                            QueryBuilder qb = new QueryBuilder("TOP 1", null);
+                            QueryBuilder qb = new QueryBuilder(null, null);
+                            qb.TopX = 1;
                             qb.AddColumnRange(extractionInformations);
                     
                             sql = qb.SQL;
@@ -1365,38 +1387,60 @@ namespace CatalogueLibrary.Data
                     .ToArray();
         }
 
-        private bool? _isExtractable;
-        
+        private CatalogueExtractabilityStatus _extractabilityStatus;
+
         /// <summary>
-        /// Returns whether or not the extractability of the Catalogue is known.  In general this is only true
-        /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
+        /// Records the known extractability status (as a cached answer for <see cref="GetExtractabilityStatus"/>)
         /// </summary>
-        /// <returns></returns>
-        internal bool GetIsExtractabilityKnown()
+        /// <param name="instance"></param>
+        public void InjectKnown(CatalogueExtractabilityStatus instance)
         {
-            return _isExtractable != null;
+            _extractabilityStatus = instance;
+        }
+
+        /// <inheritdoc/>
+        public void InjectKnown(CatalogueItem[] instance)
+        {
+            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => instance);
         }
 
         /// <summary>
-        /// Method is only valid once InjectExtractability is called, do not use it without first calling <see cref="GetIsExtractabilityKnown"/>.  In general this is only true
-        /// if you are selecting a Catalogue out of an <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/>
+        /// Cleares the cached answer of <see cref="GetExtractabilityStatus"/>
         /// </summary>
-        /// <returns></returns>
-        internal bool GetIsExtractable()
+        public void ClearAllInjections()
         {
-            if(_isExtractable == null)
-                throw new NotSupportedException("Method is only valid once InjectExtractability is called.  Catalogues do not know if they are extractable, it takes a Data Export object to tell them this fact");
-            
-            return _isExtractable.Value;
+            _extractabilityStatus = null;
+            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem>(this));
         }
 
         /// <summary>
-        /// Inform the Catalogue that there is/isn't an associated ExtractableDataSet in the data export database (the presence of one of these is what defines extractability)
+        /// Returns the extractability of the Catalogue if it is known.  If it is not known then the repository will be used to find out (and the result will be cached)
+        /// <para>If a null dataExportRepository is passed then you will get the cached answer or null</para>
         /// </summary>
-        /// <param name="isExtractable"></param>
-        internal void InjectExtractability(bool isExtractable)
+        /// <param name="dataExportRepository">Pass null to fetch only the cached value (or null if that is not known)</param>
+        /// <returns></returns>
+        public CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository)
         {
-            _isExtractable = isExtractable;
+            if (_extractabilityStatus != null)
+                return _extractabilityStatus;
+
+            if (dataExportRepository == null)
+                return null;
+
+            _extractabilityStatus = dataExportRepository.GetExtractabilityStatus(this);
+            return _extractabilityStatus;
+        }
+
+        /// <summary>
+        /// Returns true if the Catalogue is extractable but only with a specific Project.  You can pass null if you are addressing a Catalouge for whom you know 
+        /// IInjectKnown&lt;CatalogueExtractabilityStatus> has been called already.
+        /// </summary>
+        /// <param name="dataExportRepository"></param>
+        /// <returns></returns>
+        public bool IsProjectSpecific(IDataExportRepository dataExportRepository)
+        {
+            var e = GetExtractabilityStatus(dataExportRepository);
+            return e != null && e.IsProjectSpecific;
         }
 
         /// <summary>
@@ -1448,5 +1492,6 @@ namespace CatalogueLibrary.Data
             return IsAcceptableName(name, out whoCares);
         }
         #endregion
+
     }
 }

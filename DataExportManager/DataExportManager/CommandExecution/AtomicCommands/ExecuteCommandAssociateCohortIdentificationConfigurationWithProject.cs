@@ -49,10 +49,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                             !_existingAssociations.Any(
                                 a => a.CohortIdentificationConfiguration_ID == _cic.ID && v.ID == a.Project_ID)).ToArray();
 
-                var dialog =
-                    new SelectIMapsDirectlyToDatabaseTableDialog(valid,false,false);
-                if (dialog.ShowDialog() == DialogResult.OK)
-                     SetTarget((Project)dialog.Selected);
+                Project p;
+                if (SelectOne(valid, out p))
+                    SetTarget(p);
                 else
                     return;
             }
@@ -69,10 +68,10 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                         !_existingAssociations.Any(
                             a => a.Project_ID == _project.ID && v.ID == a.CohortIdentificationConfiguration_ID)).ToArray();
 
-                var dialog =
-                    new SelectIMapsDirectlyToDatabaseTableDialog(valid, false, false);
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    SetTarget((CohortIdentificationConfiguration)dialog.Selected);
+
+                CohortIdentificationConfiguration cic;
+                if (SelectOne(valid, out cic))
+                    SetTarget(cic);
                 else
                     return;
             }

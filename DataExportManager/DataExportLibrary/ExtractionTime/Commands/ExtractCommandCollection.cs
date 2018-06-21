@@ -19,13 +19,11 @@ namespace DataExportLibrary.ExtractionTime.Commands
     public class ExtractCommandCollection
     {
         public IExtractDatasetCommand[] Datasets { get; set; }
-        public IExtractCohortCustomTableCommand[] CustomTables { get; set; }
         
 
-        public ExtractCommandCollection(IEnumerable<ExtractDatasetCommand> datasetBundles, IEnumerable<ExtractCohortCustomTableCommand> customTableCommands)
+        public ExtractCommandCollection(IEnumerable<ExtractDatasetCommand> datasetBundles)
         {
             Datasets = datasetBundles.ToArray();
-            CustomTables = customTableCommands.ToArray();
         }
     }
 }

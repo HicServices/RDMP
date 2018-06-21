@@ -51,6 +51,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
             builder.AllowUserVariables = true;
             builder.AllowBatch = true;
+
+            if(builder.Server == "localhost")
+                builder.SslMode = MySqlSslMode.None;
+
             return builder;
         }
 
@@ -77,13 +81,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
             return toReturn;
         }
-
-        public override DbConnectionStringBuilder ChangeDatabase(DbConnectionStringBuilder builder, string newDatabase)
-        {
-            builder[DatabaseKeyName] = newDatabase;
-            return builder;
-        }
-
+        
         public override DbConnectionStringBuilder EnableAsync(DbConnectionStringBuilder builder)
         {
             return builder; //no special stuff required?
@@ -107,7 +105,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             using(var con = new MySqlConnection(b.ConnectionString))
             {
                 con.Open();
-                GetCommand("CREATE DATABASE " + newDatabaseName.GetRuntimeName(),con).ExecuteNonQuery();
+                GetCommand("CREATE DATABASE `" + newDatabaseName.GetRuntimeName() + "`",con).ExecuteNonQuery();
             }
         }
 

@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
@@ -56,10 +57,16 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         private HelpWorkflow _workflow;
         private CatalogueItem[] _catalogueItems;
         private bool _ddChangeAllChanged = false;
+        
+        /// <summary>
+        /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
+        /// </summary>
+        private Project _projectSpecific;
+
         public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer)
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny)
         {
             InitializeComponent();
 
@@ -70,7 +77,12 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols, false);
             ExtractionInformation[] eis;
             forwardEngineer.ExecuteForwardEngineering(out _catalogue,out _catalogueItems,out eis);
-            
+
+            tbCatalogueName.Text = _catalogue.Name;
+            tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now +")";
+            tbTableName.Text = _tableInfo.Name;
+            _catalogue.SaveToDatabase();
+
             //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
             foreach (CatalogueItem ci in _catalogueItems)
                 olvColumnExtractability.AddObject(new Node(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID)));
@@ -99,6 +111,17 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             
             olvColumnInfoName.ImageGetter = ImageGetter;
             olvColumnExtractability.RebuildColumns();
+
+            objectSaverButton1.SetupFor(_catalogue,activator.RefreshBus);
+
+            if (_activator.RepositoryLocator.DataExportRepository == null)
+                gbProjectSpecific.Enabled = false;
+            else
+            {
+                SelectProject(projectSpecificIfAny);
+                pbProject.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Project);
+                helpIconProjectSpecific.SetHelpText("Project Specific Catalogues", "A Catalogue can be isolated to a single extraction Project (for example if you are importing researchers questionnaire data etc).  This will mean the Catalogue only shows up under that Project and can only be extracted with that Project.");
+            }
         }
 
         private void IsExtractionIdentifier_AspectPutter(object rowobject, object newvalue)
@@ -258,12 +281,22 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
                 _ddChangeAllChanged = true;
             }
-
         }
 
         private void FinaliseExtractability()
         {
-            new ExtractableDataSet(_activator.RepositoryLocator.DataExportRepository, _catalogue);
+            var eds = new ExtractableDataSet(_activator.RepositoryLocator.DataExportRepository, _catalogue);
+
+            IAtomicCommandWithTarget cmd;
+            if(_projectSpecific != null)
+            {
+                cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(_projectSpecific).SetTarget(_catalogue);
+            
+                if (!cmd.IsImpossible)
+                    cmd.Execute();
+                else
+                    MessageBox.Show("Could not make Catalogue ProjectSpecific:" + cmd.ReasonCommandImpossible);
+            }
         }
 
         private void btnAddToExisting_Click(object sender, EventArgs e)
@@ -297,6 +330,9 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             _choicesFinalised = true;
             _catalogue.DeleteInDatabase();
             _catalogue = null;
+
+            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(addToInstead));
+
             Close();
         }
 
@@ -347,6 +383,8 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                     DialogResult = DialogResult.Cancel;
                     _catalogue.DeleteInDatabase();
                     _catalogue = null;
+
+                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
                 }
                 else
                     e.Cancel = true;
@@ -394,6 +432,49 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             {
                 return CatalogueItem.Name;
             }
+        }
+
+        private void tbCatalogueName_TextChanged(object sender, EventArgs e)
+        {
+            _catalogue.Name = tbCatalogueName.Text;
+        }
+
+        private void tbDescription_TextChanged(object sender, EventArgs e)
+        {
+            _catalogue.Description = tbDescription.Text;
+        }
+
+
+        private void SelectProject(Project projectSpecificIfAny)
+        {
+            if (projectSpecificIfAny == null)
+            {
+                lblProject.Text = "<<None>>";
+                btnPickProject.Text = "Pick...";
+                _projectSpecific = null;
+            }
+            else
+            {
+                lblProject.Text = projectSpecificIfAny.Name;
+                btnPickProject.Text = "Clear";
+                _projectSpecific = projectSpecificIfAny;
+            }
+        }
+
+        private void btnPickProject_Click(object sender, EventArgs e)
+        {
+            if (_projectSpecific != null)
+                SelectProject(null);
+            else
+            {
+
+                var all = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(all, false, false);
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    SelectProject((Project)dialog.Selected);
+            }
+            
         }
     }
 }

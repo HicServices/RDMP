@@ -64,6 +64,23 @@ namespace ReusableLibraryCode.Progress
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Flattens EventsReceivedBySender and returns the result as a Dictionary by ProgressEventType (Error / Warning etc)
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<ProgressEventType,List<NotifyEventArgs>> GetAllMessagesByProgressEventType()
+        {
+            Dictionary<ProgressEventType,List<NotifyEventArgs>> toReturn = new Dictionary<ProgressEventType,List<NotifyEventArgs>>();
+
+            foreach (ProgressEventType e in Enum.GetValues(typeof(ProgressEventType)))
+                toReturn.Add(e,new List<NotifyEventArgs>());
+
+            foreach (NotifyEventArgs eventArgs in EventsReceivedBySender.Values.SelectMany(a => a))
+                toReturn[eventArgs.ProgressEventType].Add(eventArgs);
+
+            return toReturn;
+        }
+
         public ProgressEventType GetWorst()
         {
             return EventsReceivedBySender.Values.Max(v=>v.Max(e=>e.ProgressEventType));

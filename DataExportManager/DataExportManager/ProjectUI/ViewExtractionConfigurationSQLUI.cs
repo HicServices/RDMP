@@ -19,6 +19,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using HIC.Common.Validation.Constraints.Primary;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
@@ -33,8 +34,8 @@ namespace DataExportManager.ProjectUI
     public partial class ViewExtractionConfigurationSQLUI : ViewExtractionConfigurationSQLUI_Design
     {
         private ScintillaNET.Scintilla QueryEditor;
-        private ExtractionConfiguration _extractionConfiguration;
-        private ExtractableDataSet _extractableDataSet;
+        private IExtractionConfiguration _extractionConfiguration;
+        private IExtractableDataSet _extractableDataSet;
 
 
         public ViewExtractionConfigurationSQLUI()

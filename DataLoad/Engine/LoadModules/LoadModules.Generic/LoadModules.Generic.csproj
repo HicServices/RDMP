@@ -175,8 +175,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
     </Reference>
-    <Reference Include="DiffieHellman">
-      <HintPath>..\..\..\..\libs\SharpSSH\DiffieHellman.dll</HintPath>
+    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -186,27 +187,31 @@
       <HintPath>..\..\..\..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.9.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\MySql.Data.8.0.11\lib\net452\MySql.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\Oracle.ManagedDataAccess.12.1.2400\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-    </Reference>
-    <Reference Include="Org.Mentalis.Security">
-      <HintPath>..\..\..\..\libs\SharpSSH\Org.Mentalis.Security.dll</HintPath>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Oracle.ManagedDataAccess.12.2.1100\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Renci.SshNet">
       <HintPath>..\..\..\..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -227,6 +232,8 @@
     <Compile Include="DataFlowOperations\Aliases\AliasHandler.cs" />
     <Compile Include="DataFlowOperations\Aliases\AliasResolutionStrategy.cs" />
     <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasTableFetchException.cs" />
+    <Compile Include="DataFlowOperations\ReleaseMetadata.cs" />
+    <Compile Include="DataFlowOperations\TableVersionNamer.cs" />
     <Compile Include="DataFlowSources\DoNothingCacheSource.cs" />
     <Compile Include="DataProvider\FlatFileManipulation\ExcelToCSVFilesConverter.cs" />
     <Compile Include="DataProvider\ImportFilesDataProvider.cs" />
@@ -293,6 +300,14 @@
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
+      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
+      <Name>DataExportLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
+      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
+      <Name>DataExportLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj">
       <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
       <Name>HIC.Logging</Name>
@@ -305,13 +320,16 @@
       <Project>{5ad03b2f-232a-4e0b-86ff-dc7f49146962}</Project>
       <Name>ReusableLibraryCode</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Sharing\Sharing\Sharing.csproj">
+      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
+      <Name>Sharing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
       <Name>DataLoadEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Attachers\GenericAttachers.cd" />
     <None Include="packages.config" />
   </ItemGroup>

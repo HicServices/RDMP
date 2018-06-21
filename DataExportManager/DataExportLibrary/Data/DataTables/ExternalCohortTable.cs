@@ -75,14 +75,6 @@ namespace DataExportLibrary.Data.DataTables
             set { SetField(ref _definitionTableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database, null, value)); }
         }
 
-        private string _customTablesTableName;
-
-        public string CustomTablesTableName
-        {
-            get { return _customTablesTableName; }
-            set { SetField(ref _customTablesTableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database, null, value)); }
-        }
-
         public string PrivateIdentifierField
         {
             get { return _privateIdentifierField; }
@@ -153,7 +145,7 @@ namespace DataExportLibrary.Data.DataTables
             var syntaxHelper = GetQuerySyntaxHelper();
             TableName = syntaxHelper.EnsureFullyQualified(Database, null, r["TableName"] as string);
             DefinitionTableName = syntaxHelper.EnsureFullyQualified(Database, null, r["DefinitionTableName"] as string);
-            CustomTablesTableName = syntaxHelper.EnsureFullyQualified(Database, null, r["CustomTablesTableName"] as string);
+            
 
             PrivateIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["PrivateIdentifierField"] as string);
             ReleaseIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["ReleaseIdentifierField"] as string);
@@ -262,24 +254,6 @@ namespace DataExportLibrary.Data.DataTables
                 }
                 else
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not find table " + DefinitionTableName + " in database " + Database, CheckResult.Fail, null));
-
-                
-                if (string.IsNullOrWhiteSpace(CustomTablesTableName))
-                    notifier.OnCheckPerformed(new CheckEventArgs("No CustomTablesTableName configured for ExternalCohortSource:" + Name,CheckResult.Fail, null));
-                else
-                {
-                    DiscoveredTable foundCustomTable = database.ExpectTable(CustomTablesTableName);
-
-                    if (foundCustomTable.Exists())
-                    {
-                        var columns = foundCustomTable.DiscoverColumns();
-                        ComplainIfColumnMissing(CustomTablesTableName, columns, DefinitionTableForeignKeyField, notifier);
-                        ComplainIfColumnMissing(CustomTablesTableName, columns, "customTableName", notifier);
-                        ComplainIfColumnMissing(CustomTablesTableName, columns, "active", notifier);
-                    }
-                    else
-                        notifier.OnCheckPerformed(new CheckEventArgs("Could not find table " + CustomTablesTableName + " in database " + Database, CheckResult.Fail, null));
-                }
             }
             catch (Exception e)
             {
@@ -426,21 +400,7 @@ dtCreated as dtCreated
 
             return string.Format(sql, ReleaseIdentifierField, TableName, DefinitionTableName, DefinitionTableForeignKeyField);
         }
-
-        public  string GetCustomTableSql()
-        {
-            string sql = @"Select 
-{0} as OriginID,
-customTableName as CustomTableName,
-active
-FROM
-{1}
-";
-
-            return string.Format(sql, DefinitionTableForeignKeyField,CustomTablesTableName);
-
-        }
-
+        
         public string GetExternalDataSql()
         {
             string sql = @"SELECT 

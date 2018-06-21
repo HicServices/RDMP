@@ -12,6 +12,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using RDMPObjectVisualisation;
 using ReusableLibraryCode;
@@ -37,23 +38,26 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
         private readonly bool _alsoForwardEngineerCatalogue;
 
         private DataFlowPipelineContext<DataTable> _context = new DataFlowPipelineContext<DataTable>();
-        
+        private FlatFileToLoad _fileToLoad;
+        private Project _projectSpecific;
+
         public Catalogue CatalogueCreatedIfAny { get; private set; }
 
-        public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator,DiscoveredDatabase database,FileInfo file, bool alsoForwardEngineerCatalogue)
+        public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator,DiscoveredDatabase database,FileInfo file, bool alsoForwardEngineerCatalogue,Project projectSpecific)
         {
             _repositoryLocator = activator.RepositoryLocator;
             _activator = activator;
             _database = database;
             _alsoForwardEngineerCatalogue = alsoForwardEngineerCatalogue;
+            _projectSpecific = projectSpecific;
             _context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.LoadsSingleFlatFile);
             _context.MustHaveDestination = typeof (DataTableUploadDestination);
 
             InitializeComponent();
             
-            var fileToLoad = new FlatFileToLoad(file);
-            
-            configureAndExecutePipeline1.AddInitializationObject(fileToLoad);
+            _fileToLoad = new FlatFileToLoad(file);
+
+            configureAndExecutePipeline1.AddInitializationObject(_fileToLoad);
             configureAndExecutePipeline1.AddInitializationObject(database);
             configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully += ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
 
@@ -73,8 +77,9 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                     var dest = (DataTableUploadDestination)args.PipelineEngine.DestinationObject;
                     targetTable = dest.TargetTableName;
                     var table = _database.ExpectTable(targetTable);
-                    
-                    var ui = new ConfigureCatalogueExtractabilityUI(_activator,new TableInfoImporter(_repositoryLocator.CatalogueRepository, table));
+
+                    var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table), "File '" + _fileToLoad.File.FullName + "'",_projectSpecific);
+                    ui.ShowDialog();
                     
                     var cata = CatalogueCreatedIfAny = ui.CatalogueCreatedIfAny;
 

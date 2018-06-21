@@ -217,7 +217,7 @@ namespace DataExportLibrary.Data.DataTables
             return Repository.GetAllObjects<SelectedDataSets>("WHERE RootFilterContainer_ID=" + root.ID).SingleOrDefault();
         }
 
-        public SelectedDataSets GetSelectedDatasetRecursively()
+        public SelectedDataSets GetSelectedDataSetsRecursively()
         {
             //if it is a root
             var dataset = GetSelectedDataSetIfAny();
@@ -234,7 +234,7 @@ namespace DataExportLibrary.Data.DataTables
                 return null; //boo hoo, we are an orphan somehow
 
             //our parent must be the root container maybe? recursive
-            return parent.GetSelectedDatasetRecursively();
+            return parent.GetSelectedDataSetsRecursively();
 
         }
     }

@@ -11,7 +11,6 @@ using DataLoadEngine.Job;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
 using MapsDirectlyToDatabaseTable;
-using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;

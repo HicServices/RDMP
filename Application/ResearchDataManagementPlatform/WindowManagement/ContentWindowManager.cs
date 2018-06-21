@@ -14,6 +14,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.CredentialsUIs;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
@@ -49,6 +50,7 @@ using RDMPObjectVisualisation.Copying;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using WeifenLuo.WinFormsUI.Docking;
@@ -203,17 +205,32 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        public bool DeleteWithConfirmation(object sender, IDeleteable deleteable, string overrideConfirmationText = null)
+        public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
             var databaseObject = deleteable as DatabaseEntity;
+
+
+            //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
+            var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
+            
+            string overrideConfirmationText = null;
+
+            if (customMessageDeletable != null)
+                overrideConfirmationText = "Are you sure you want to " +customMessageDeletable.GetDeleteMessage() +"?";
 
             //it has already been deleted before
             if (databaseObject != null && !databaseObject.Exists())
                 return false;
 
+            string idText = "";
+
+            if (databaseObject != null)
+                idText = " ID=" + databaseObject.ID;
+
             DialogResult result = MessageBox.Show(
-                overrideConfirmationText??
-                ("Are you sure you want to delete " + deleteable + " from the database?"), "Delete Record", MessageBoxButtons.YesNo);
+                (overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")) +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
+                "Delete " + deleteable.GetType().Name,
+                MessageBoxButtons.YesNo);
             
             if (result == DialogResult.Yes)
             {
@@ -236,18 +253,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return false;
         }
-
-        public bool DeleteControlFromDashboardWithConfirmation(object sender, DashboardControl controlToDelete)
-        {
-            var layout = controlToDelete.ParentLayout;
-            if (DeleteWithConfirmation(this, controlToDelete))
-            {
-
-                RefreshBus.Publish(sender,new RefreshObjectEventArgs(layout));
-                return true;
-            }
-            return false;
-        }
         
         public IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
         {
@@ -255,30 +260,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return wizard.ImportOneFromSelection(containerToImportOneInto, filtersThatCouldBeImported);
         }
 
-        public void ActivateCatalogueItemIssue(object sender, CatalogueItemIssue catalogueItemIssue)
-        {
-            Activate<IssueUI,CatalogueItemIssue>(catalogueItemIssue);
-        }
-
         public void ActivateConvertColumnInfoIntoANOColumnInfo(ColumnInfo columnInfo)
         {
             Activate<ColumnInfoToANOTableConverterUI, ColumnInfo>(columnInfo);
         }
 
-        public void ActivateSupportingDocument(object sender, SupportingDocument supportingDocument)
-        {
-            Activate<SupportingDocumentUI, SupportingDocument>(supportingDocument);
-        }
-
-        public void ActivateSupportingSqlTable(object sender, SupportingSQLTable supportingSQLTable)
-        {
-            Activate<SupportingSQLTableUI, SupportingSQLTable>(supportingSQLTable);
-        }
-
-        public void ActivateDataAccessCredentials(object sender, DataAccessCredentials dataAccessCredentials)
-        {
-            Activate<DataAccessCredentialsUI, DataAccessCredentials>(dataAccessCredentials);
-        }
 
         public void ViewDataSample(IViewSQLAndResultsCollection collection)
         {
@@ -318,11 +304,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             if(optionalLookupTableInfo != null)
                 t.SetLookupTableInfo(optionalLookupTableInfo);
-        }
-
-        public void ActivateJoinInfoConfiguration(object sender, TableInfo tableInfo)
-        {
-            Activate<JoinConfiguration, TableInfo>(tableInfo);
         }
 
         public void ActivateReOrderCatalogueItems(Catalogue catalogue)
@@ -370,25 +351,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return Activate<LoadDiagram, LoadMetadata>(loadMetadata);
         }
 
-        public void ActivateExternalDatabaseServer(object sender, ExternalDatabaseServer externalDatabaseServer)
-        {
-            Activate<ExternalDatabaseServerUI,ExternalDatabaseServer>(externalDatabaseServer);
-        }
 
-        public void ActivateTableInfo(object sender, TableInfo tableInfo)
-        {
-            Activate<TableInfoUI, TableInfo>(tableInfo);
-        }
-
-        public void ActivatePreLoadDiscardedColumn(object sender, PreLoadDiscardedColumn preLoadDiscardedColumn)
-        {
-            Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(preLoadDiscardedColumn);
-        }
-        
-        public void ActivatePermissionWindow(object sender, PermissionWindow permissionWindow)
-        {
-            Activate<PermissionWindowUI, PermissionWindow>(permissionWindow);
-        }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {

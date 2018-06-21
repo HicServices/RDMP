@@ -32,20 +32,29 @@ namespace LoadModules.Generic.Attachers
         [DemandsInitialization("The file to attach, e.g. \"*hic*.csv\" - this is NOT a Regex", Mandatory = true)]
         public string FilePattern { get; set; }
 
-        [DemandsInitialization("The table name to load e.g. \"My Table1\" (should not contain wrappers such as square brackets)",Mandatory=true)]
+
+        [DemandsInitialization("The table name to load with data from the file (this will be the RAW version of the table)")]
+        public TableInfo TableToLoad { get; set; }
+
+        [DemandsInitialization("Alternative to `TableToLoad`, type table name in if you want to load a custom table e.g. one created by another load component (that doesn't exist in LIVE).  The table name should should not contain wrappers such as square brackets (e.g. \"My Table1\")")]
         public string TableName { get; set; }
 
         [DemandsInitialization("Determines the behaviour of the system when no files are matched by FilePattern.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
         public bool SendLoadNotRequiredIfFileNotFound { get; set; }
         
-        public FlatFileAttacher()
-            : base(true)
+        public FlatFileAttacher() : base(true)
         {
             
         }
 
         public override ExitCodeType Attach(IDataLoadJob job)
         {
+            if (string.IsNullOrWhiteSpace(TableName) && TableToLoad != null)
+                TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw);
+
+            if(TableName != null)
+                TableName = TableName.Trim();
+
             var baseResult = base.Attach(job);
 
             if (baseResult != ExitCodeType.Success)
@@ -97,59 +106,56 @@ namespace LoadModules.Generic.Attachers
             {
                 DataTable dt = tableToLoad.GetDataTable(0);
 
-                // setup bulk insert it into destination
-                SqlBulkCopy insert = new SqlBulkCopy((SqlConnection) con);
-                insert.BulkCopyTimeout = 500000;
+                using (var insert = tableToLoad.BeginBulkInsert())
+                {
+                    // setup bulk insert it into destination
+                    insert.Timeout = 500000;
 
-                //bulk insert ito destination
-                insert.DestinationTableName = tableToLoad.GetRuntimeName();
+                    //bulk insert ito destination
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open file " + fileToLoad.FullName));
+                    OpenFile(fileToLoad,job);
 
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open file " + fileToLoad.FullName));
-                OpenFile(fileToLoad,job);
+                    //confirm the validity of the headers
+                    ConfirmFlatFileHeadersAgainstDataTable(dt,job);
 
-                //confirm the validity of the headers
-                ConfirmFlatFileHeadersAgainstDataTable(dt,job);
+                    con.Open();
 
-                //work out mappings
-                foreach (DataColumn column in dt.Columns)
-                    insert.ColumnMappings.Add(column.ColumnName, column.ColumnName);
-                con.Open();
-
-                //now we will read data out of the file in batches
-                int batchNumber = 1;
-                int maxBatchSize = 10000;
-                int recordsCreatedSoFar = 0;
+                    //now we will read data out of the file in batches
+                    int batchNumber = 1;
+                    int maxBatchSize = 10000;
+                    int recordsCreatedSoFar = 0;
                 
-
-                try
-                {
-                    //while there is data to be loaded into table 
-                    while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize) != 0)
+                    try
                     {
-                        DropEmptyColumns(dt);
-                        ConfirmFitToDestination(dt, tableToLoad, job);
-                        try
+                        //while there is data to be loaded into table 
+                        while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize) != 0)
                         {
-                            recordsCreatedSoFar += UsefulStuff.BulkInsertWithBetterErrorMessages(insert, dt, dbInfo.Server);
-                            dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
+                            DropEmptyColumns(dt);
+                            ConfirmFitToDestination(dt, tableToLoad, job);
+                            try
+                            {
+                                recordsCreatedSoFar += insert.Upload(dt); 
+                                
+                                dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
 
-                            job.OnProgress(this,
-                                new ProgressEventArgs(dbInfo.GetRuntimeName(),
-                                    new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
+                                job.OnProgress(this,
+                                    new ProgressEventArgs(dbInfo.GetRuntimeName(),
+                                        new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
+                            }
+                            catch (Exception e)
+                            {
+                                throw new Exception("Error processing batch number " + batchNumber + " (of batch size " + maxBatchSize+")",e);
+                            } 
                         }
-                        catch (Exception e)
-                        {
-                            throw new Exception("Error processing batch number " + batchNumber + " (of batch size " + maxBatchSize+")",e);
-                        } 
                     }
-                }
-                catch (Exception e)
-                {
-                    throw new FlatFileLoadException("Error processing file " + fileToLoad, e);
-                }
-                finally
-                {
-                    CloseFile();
+                    catch (Exception e)
+                    {
+                        throw new FlatFileLoadException("Error processing file " + fileToLoad, e);
+                    }
+                    finally
+                    {
+                        CloseFile();
+                    }
                 }
             }
         }
@@ -159,11 +165,14 @@ namespace LoadModules.Generic.Attachers
         
         public override void Check(ICheckNotifier notifier)
         {
-            if (string.IsNullOrWhiteSpace(TableName))
-                notifier.OnCheckPerformed(new CheckEventArgs("Argument TableName has not been set on " + this + ", you should specify this value in the LoadMetadataUI" ,CheckResult.Fail));
+            if (string.IsNullOrWhiteSpace(TableName) && TableToLoad == null)
+                notifier.OnCheckPerformed(new CheckEventArgs("Either argument TableName or TableToLoad must be set " + this + ", you should specify this value." ,CheckResult.Fail));
 
             if (string.IsNullOrWhiteSpace(FilePattern))
                 notifier.OnCheckPerformed(new CheckEventArgs("Argument FilePattern has not been set on " + this + ", you should specify this value in the LoadMetadataUI", CheckResult.Fail));
+
+            if (!string.IsNullOrWhiteSpace(TableName) && TableToLoad != null)
+                notifier.OnCheckPerformed(new CheckEventArgs("You should only specify argument TableName or TableToLoad, not both", CheckResult.Fail));
         }
         
         private void ConfirmFitToDestination(DataTable dt, DiscoveredTable tableToLoad,IDataLoadJob job)
