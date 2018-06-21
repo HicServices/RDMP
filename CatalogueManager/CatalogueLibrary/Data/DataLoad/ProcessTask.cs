@@ -119,12 +119,22 @@ namespace CatalogueLibrary.Data.DataLoad
 
         public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage)
         {
+            var existingProcessTasks = repository.GetAllObjects<ProcessTask>().Where(p => p.LoadMetadata_ID == parent.ID && p.LoadStage == stage).ToList();
+
+            var order = 0;
+            if (existingProcessTasks.Count() != 0)
+            {
+                var highestOrder = existingProcessTasks.Max(p => p.Order);
+                order = highestOrder + 1;
+            }
+            
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"LoadMetadata_ID", parent.ID},
                 {"ProcessTaskType", ProcessTaskType.Executable.ToString()},
                 {"LoadStage", stage},
-                {"Name", "New Process" + Guid.NewGuid()}
+                {"Name", "New Process" + Guid.NewGuid()},
+                {"Order", order}
             });
         }
 
