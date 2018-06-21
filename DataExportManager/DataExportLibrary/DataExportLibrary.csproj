@@ -211,6 +211,7 @@
     </Compile>
     <Compile Include="Checks\ExtractionConfigurationChecker.cs" />
     <Compile Include="Checks\GlobalExtractionChecker.cs" />
+    <Compile Include="Checks\GlobalsReleaseChecker.cs" />
     <Compile Include="Checks\ProjectChecker.cs" />
     <Compile Include="Checks\SelectedDataSetsChecker.cs" />
     <Compile Include="Checks\SupportingSQLTableChecker.cs" />

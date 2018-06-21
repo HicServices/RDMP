@@ -10,6 +10,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using DataExportLibrary.Checks;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;

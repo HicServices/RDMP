@@ -33,7 +33,7 @@ namespace CatalogueLibraryTests.Integration
 
             foreach (var type in databaseTypes)
                 if (!CatalogueRepository.HelpText.ContainsKey(type.Name) || string.IsNullOrWhiteSpace(CatalogueRepository.HelpText[type.Name]))
-                    problems.Add("Type " + type.Name + " does not have an entry in the help dictionary");
+                    problems.Add("Type " + type.Name + " does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
 
             foreach (string problem in problems)
                 Console.WriteLine("Fatal Problem:" + problem);

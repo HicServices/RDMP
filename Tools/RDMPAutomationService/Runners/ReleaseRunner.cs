@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.DataRelease;
@@ -116,21 +117,6 @@ namespace RDMPAutomationService.Runners
 
             //no, we are releasing all of them
             return configuration.SelectedDataSets;
-        }
-    }
-
-    public class GlobalsReleaseChecker:ICheckable
-    {
-        private readonly IExtractionConfiguration[] _configurations;
-
-        public GlobalsReleaseChecker(IExtractionConfiguration[] configurations)
-        {
-            _configurations = configurations;
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("Globals might not exist yet, not sure", CheckResult.Fail,new NotImplementedException()));
         }
     }
 }

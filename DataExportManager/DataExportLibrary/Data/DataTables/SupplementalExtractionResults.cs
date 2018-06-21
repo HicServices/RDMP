@@ -9,6 +9,10 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Data.DataTables
 {
+    /// <summary>
+    /// Describes the extraction status of a supplemental file/table which was bundled along with the normal datasets being extracted.  This could
+    /// be lookup tables, pdf documents, etc.
+    /// </summary>
     public class SupplementalExtractionResults : DatabaseEntity, ISupplementalExtractionResults
     {
         #region Database Properties

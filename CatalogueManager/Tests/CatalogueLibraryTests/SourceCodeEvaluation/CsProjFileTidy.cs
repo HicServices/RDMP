@@ -19,7 +19,11 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         private DirectoryInfo _root;
 
         //these class files are excused from having 2+ class files in them or 0
-        private string[] Whitelist = new[] { "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs","MapsDirectlyToDatabaseTableStatelessDefinition.cs"};
+        private string[] Whitelist = new[]
+        {
+            "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs","MapsDirectlyToDatabaseTableStatelessDefinition.cs",
+            "IObjectUsedByOtherObjectNode.cs"
+        };
 
         public CsProjFileTidy(FileInfo csProjFile)
         {
@@ -139,8 +143,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 //The only files allowed 2+ class files in them are tests and factories
                 if (csFile.Name.Contains("Test") || csFile.Name.Contains("Factory"))
                     return;
-                
-                UntidyMessages.Add("FAIL: .cs file contains 2+ classes/interfaces " + csFile.FullName);
+
+                                UntidyMessages.Add("FAIL: .cs file contains 2+ classes/interfaces " + csFile.FullName);
             }
             else
             {

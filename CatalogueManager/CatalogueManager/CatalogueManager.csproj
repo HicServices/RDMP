@@ -441,7 +441,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CatalogueIcons.resx</DependentUpon>
     </Compile>
-    <Compile Include="Service References\Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2365,6 +2365,7 @@
     </PublishFile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Service References\Icons\IconProvision\StateBasedIconProviders\" />
     <Folder Include="SimpleDialogs\LaunchAnyDialog\" />
   </ItemGroup>
   <ItemGroup>
