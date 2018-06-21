@@ -12,7 +12,14 @@ When trying to identify a `System.Type` suitable for an input string value (e.g.
 ### Zero Prefixes
 If an input string is a number that starts with zero e.g. "01" then the estimate will be changed to `System.String`.  This is intended behaviour since some codes e.g. CHI / Barcodes have valid zero prefixes.  If this is to be accurately preserved in the database then it must be stored as string (See `TestDatatypeComputer_PreeceedingZeroes`).  This also applies to values such as "-01"
 
-### String Fallback
+### Whitespace
+Leading and trailing whitespace is ignored for the purposes of determining Type.  E.g. " 0.1" is a valid `System.Decimal`.  However it is recorded for the maximum Length required if we later fallback to `System.String` (See Test `TestDatatypeComputer_Whitespace`).
+
+### Fallback Strategy (Over Time)
+DataTypeComputer will handle changes in `CurrentEstimate` over time based on new input values.  For example if you pass "1" (a valid `System.Int`) then "1.1" the estimate will fallback to `System.Decimal`.  This is done by recording the novel `System.Type` estimates of all previously seen objects in the column (See `_validTypesSeen`).  When updating the `CurrentEstimate` the Types of previous estimates are considered for compatibility e.g. it will be happy to go from `System.Int` to `System.Decimal` because you can store integers in a `System.Decimal`.  The same would not be true if after passing "1.1" (`System.Decimal`) you then passed "2001-01-01" since you couldn't store "1.1" in a `System.DateTime`, under these circumstances the DataTypeComputer would go straight to `System.String`
+
+fallback in order of `System.Type` ) 
+
 Since in this scenario Everything is ultimately compatible with `System.String` In order
 
 ### Strong Typed Objects

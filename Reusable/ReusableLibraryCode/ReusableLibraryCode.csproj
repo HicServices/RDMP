@@ -254,6 +254,7 @@
     <Compile Include="DataAccess\IHasQuerySyntaxHelper.cs" />
     <Compile Include="DatabaseCommandHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DatabaseColumnRequest.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\DecimalSize.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredDatabaseHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredParameter.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredServerHelper.cs" />
@@ -309,10 +310,18 @@
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QueryComponent.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QuerySyntaxHelperFactory.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\TopXResponse.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\BoolTypeDecider.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DateTimeTypeDecider.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DecideTypesForStrings.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DecimalTypeDecider.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\IDecideTypesForStrings.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\DatabaseTypeRequest.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\DataTypeComputerException.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\ITypeTranslater.cs" />
     <Compile Include="DatabaseHelpers\Discovery\MySql\MySqlTypeTranslater.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\IntTypeDecider.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TimeSpanTypeDecider.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeCompatibilityGroup.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeTranslater.cs" />
     <Compile Include="DirectoryInfoComparer.cs" />
     <Compile Include="DoNotExtractProperty.cs" />
@@ -368,6 +377,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DatabaseHelpers\DatabaseAccess.cd" />
+    <None Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeDeciders.cd" />
     <None Include="packages.config" />
     <None Include="ReusableLibraryCode.snk" />
   </ItemGroup>

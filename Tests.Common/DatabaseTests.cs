@@ -54,8 +54,8 @@ namespace Tests.Common
         protected DiscoveredDatabase DiscoveredDatabaseICanCreateRandomTablesIn;
         protected DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
 
-        protected DiscoveredServer DiscoveredMySqlServer;
-        protected DiscoveredServer DiscoveredOracleServer;
+        private readonly DiscoveredServer _discoveredMySqlServer;
+        private readonly DiscoveredServer _discoveredOracleServer;
 
         static private Startup _startup;
 
@@ -113,10 +113,10 @@ namespace Tests.Common
             CreateScratchArea();
 
             if (_mySqlServer != null)
-                DiscoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer){SslMode = MySqlSslMode.None});
+                _discoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer){SslMode = MySqlSslMode.None});
 
             if(_oracleServer != null)
-                DiscoveredOracleServer = new DiscoveredServer(_oracleServer,DatabaseType.Oracle);
+                _discoveredOracleServer = new DiscoveredServer(_oracleServer,DatabaseType.Oracle);
         }
 
         
@@ -351,8 +351,11 @@ delete from {1}..Project
         
         HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
 
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName)
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null)
         {
+            if (dbnName == null)
+                dbnName = DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName();
+
             DiscoveredServer wc1;
             DiscoveredDatabase wc2;
             var toReturn =  GetCleanedServer(type, dbnName, out wc1, out wc2);
@@ -368,10 +371,10 @@ delete from {1}..Project
                     server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
                     break;
                 case DatabaseType.MYSQLServer:
-                    server = DiscoveredMySqlServer;
+                    server = _discoveredMySqlServer;
                     break;
                 case DatabaseType.Oracle:
-                    server = DiscoveredOracleServer;
+                    server = _discoveredOracleServer;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type");

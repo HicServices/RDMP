@@ -104,7 +104,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         private void SaveAndShow(ProcessTask task)
         {
-            task.Order = 0;
             task.Name = "Run '" + Path.GetFileName(task.Path) +"'";
             task.SaveToDatabase();
 

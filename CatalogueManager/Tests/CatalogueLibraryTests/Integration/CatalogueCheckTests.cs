@@ -34,7 +34,7 @@ namespace CatalogueLibraryTests.Integration
             dt.Rows.Add("Frank");
             dt.Rows.Add("Peter");
 
-            var database = GetCleanedServer(databaseType, DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName());
+            var database = GetCleanedServer(databaseType);
             var tbl = database.CreateTable("CatalogueCheck_CanReadText",dt);
 
             var cata = Import(tbl);

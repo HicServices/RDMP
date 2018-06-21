@@ -39,7 +39,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             
-            var db = GetCleanedServer(databaseType, "CrossDatabaseLoadTest");
+            var db = GetCleanedServer(databaseType);
 
             var raw = db.Server.ExpectDatabase(db.GetRuntimeName() + "_RAW");
             if(raw.Exists())
@@ -151,7 +151,7 @@ MrMurder,2001-01-01,Yella");
             var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
 
-            var db = GetCleanedServer(databaseType, "CrossDatabaseLoadTest");
+            var db = GetCleanedServer(databaseType);
 
             var dtParent = new DataTable();
             dtParent.Columns.Add("ID");
