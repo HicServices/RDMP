@@ -161,17 +161,12 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
 
         public override IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection)
         {
-            throw new NotImplementedException();
+            return new OracleBulkCopy(discoveredTable,connection);
         }
 
         protected override string GetRenameTableSql(DiscoveredTable discoveredTable, string newName)
         {
             return string.Format(@"alter table {0} rename to {1};", discoveredTable.GetRuntimeName(),newName);
-        }
-
-        public override void MakeDistinct(DiscoveredTable discoveredTable)
-        {
-            throw new NotImplementedException();
         }
     }
 }

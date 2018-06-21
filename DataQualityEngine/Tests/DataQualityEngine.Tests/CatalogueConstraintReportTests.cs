@@ -213,7 +213,7 @@ namespace DataQualityEngine.Tests
             report.Check(notifier);
 
             Assert.AreEqual(CheckResult.Warning, notifier.GetWorst());
-            Assert.Contains("Found column in query builder columns which matches TargetProperty Result",notifier.Messages.Select(m=>m.Message).ToArray());
+            Assert.Contains("Found column in query builder columns which matches TargetProperty Name",notifier.Messages.Select(m=>m.Message).ToArray());
             
             Assert.IsTrue(report.CatalogueSupportsReport(_catalogue));
 
@@ -252,7 +252,7 @@ namespace DataQualityEngine.Tests
 <Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
   <ItemValidators>
     <ItemValidator>
-      <TargetProperty>Result</TargetProperty>
+      <TargetProperty>Name</TargetProperty>
       <SecondaryConstraints>
         <SecondaryConstraint xsi:type=""NotNull"">
           <Name>not null</Name>

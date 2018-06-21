@@ -173,7 +173,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             
             PrimeDestinationTypesBasedOnCatalogueTypes();
 
-            _destination.AllowResizingColumnsAtUploadTime = false;
+            _destination.AllowResizingColumnsAtUploadTime = true;
             _destination.PreInitialize(_destinationDatabase, listener);
 
             return _destination;
@@ -193,7 +193,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 var colName = extractionInformation.GetRuntimeName();
                 var colInfo = extractionInformation.ColumnInfo;
 
-                if(colInfo == null)
+                //if we do not know the data type or the ei is a transform
+                if (colInfo == null || extractionInformation.IsProperTransform())
                     continue;
 
                 //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
@@ -265,7 +266,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     }
                 }
             }
-            TableLoadInfo.CloseAndArchive();
+            
+            if (TableLoadInfo != null)
+                TableLoadInfo.CloseAndArchive();
             // also close off the cumulative extraction result
             if (_request is ExtractDatasetCommand)
             {

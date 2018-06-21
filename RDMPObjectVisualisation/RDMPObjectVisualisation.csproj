@@ -449,7 +449,6 @@
     <None Include="Resources\BigPatientIndexTable.png" />
     <None Include="Resources\BigGraph.png" />
     <None Include="Resources\BigCohort.png" />
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Pipelines\Pipelines.cd" />
     <None Include="Resources\DragFrom.png" />

@@ -1,19 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
     /// <summary>
     /// See ITypeTranslater
     /// </summary>
-    public class TypeTranslater:ITypeTranslater
+    public abstract class TypeTranslater:ITypeTranslater
     {
         protected const string StringSizeRegexPattern = @"\(([0-9]+)\)";
         protected const string DecimalsBeforeAndAfterPattern = @"\(([0-9]+),([0-9]+)\)";
+
+        /// <summary>
+        /// The maximum number of characters to declare explicitly in the char type (e.g. varchar(500)) before instead declaring the text/varchar(max) etc type
+        /// appropriate to the database engine being targeted
+        /// </summary>
+        protected int MaxStringWidthBeforeMax = 8000;
+
+        /// <summary>
+        /// The size to declare string fields when the API user has neglected to supply a length.  This should be high, if you want to avoid lots of extra long columns
+        /// use <see cref="DataTypeComputer"/> to determine the required length/type at runtime.
+        /// </summary>
+        protected int StringWidthWhenNotSupplied = 4000;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="maxStringWidthBeforeMax"><see cref="MaxStringWidthBeforeMax"/></param>
+        /// <param name="stringWidthWhenNotSupplied"><see cref="StringWidthWhenNotSupplied"/></param>
+        protected TypeTranslater(int maxStringWidthBeforeMax, int stringWidthWhenNotSupplied)
+        {
+            MaxStringWidthBeforeMax = maxStringWidthBeforeMax;
+            StringWidthWhenNotSupplied = stringWidthWhenNotSupplied;
+        }
 
         public string GetSQLDBTypeForCSharpType(DatabaseTypeRequest request)
         {
@@ -68,12 +93,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return "tinyint";
         }
 
-        protected virtual string GetFloatingPointDataType(Tuple<int, int> decimalPlacesBeforeAndAfter)
+        protected virtual string GetFloatingPointDataType(DecimalSize decimalSize)
         {
-            if (decimalPlacesBeforeAndAfter == null)
+            if (decimalSize == null || decimalSize.IsEmpty)
                 return "decimal(20,10)";
-            
-            return "decimal(" + (decimalPlacesBeforeAndAfter.Item1 + decimalPlacesBeforeAndAfter.Item2) + "," + decimalPlacesBeforeAndAfter.Item2 + ")";
+
+            return "decimal(" + decimalSize.Precision + "," + decimalSize.Scale + ")";
         }
 
         protected virtual string GetDateDateTimeDataType()
@@ -81,16 +106,24 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return "datetime";
         }
 
-        protected virtual string GetStringDataType(int? maxExpectedStringWidth)
+        protected string GetStringDataType(int? maxExpectedStringWidth)
         {
             if (maxExpectedStringWidth == null)
-                return "varchar(4000)";
+                return GetStringDataTypeImpl(StringWidthWhenNotSupplied);
 
-            if (maxExpectedStringWidth > 8000)
-                return "varchar(max)";
+            if (maxExpectedStringWidth > MaxStringWidthBeforeMax)
+                return GetStringDataTypeWithUnlimitedWidth();
             
+            return GetStringDataTypeImpl(maxExpectedStringWidth.Value);
+        }
+
+        protected virtual string GetStringDataTypeImpl(int maxExpectedStringWidth)
+        {
             return "varchar(" + maxExpectedStringWidth + ")";
         }
+
+        public abstract string GetStringDataTypeWithUnlimitedWidth();
+        
 
         protected virtual string GetTimeDataType()
         {
@@ -157,18 +190,53 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
         }
 
+        /// <inheritdoc/>
+        public DbType GetDbTypeForSQLDBType(string sqlType)
+        {
+            if (IsFloatingPoint(sqlType))
+                return DbType.Decimal;
+
+            if (IsString(sqlType))
+                return DbType.String;
+
+            if (IsDate(sqlType))
+                return DbType.DateTime;
+
+            if (IsTime(sqlType))
+                return DbType.Time;
+
+            if (IsInt(sqlType))
+                return  DbType.Int32;
+
+            if (IsSmallInt(sqlType))
+                return DbType.Int16;
+
+            if (IsBit(sqlType))
+                return DbType.Boolean;
+
+            if (IsByte(sqlType))
+                return DbType.Byte;
+
+            if (IsByteArray(sqlType))
+                return DbType.Object;
+
+            if (IsGuid(sqlType))
+                return DbType.Guid;
+
+            throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
+        }
 
         public virtual DatabaseTypeRequest GetDataTypeRequestForSQLDBType(string sqlType)
         {
             var cSharpType = GetCSharpTypeForSQLDBType(sqlType);
 
-            Tuple<int, int> digits = GetDigitsBeforeAndAfterDecimalPointIfDecimal(sqlType);
+            var digits = GetDigitsBeforeAndAfterDecimalPointIfDecimal(sqlType);
 
             int lengthIfString = GetLengthIfString(sqlType);
 
             //lengthIfString should still be populated even for digits etc because it might be that we have to fallback from "1.2" which is decimal(2,1) to varchar(3) if we see "F" appearing
             if (digits != null)
-                lengthIfString = Math.Max(lengthIfString, digits.Item1 + digits.Item2 + 1);
+                lengthIfString = Math.Max(lengthIfString, digits.ToStringLength());
 
             if (cSharpType == typeof(DateTime))
                 lengthIfString = GetStringLengthForDateTime();
@@ -204,7 +272,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return -1;
         }
 
-        public Tuple<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType)
+        public DecimalSize GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType)
         {
             if (string.IsNullOrWhiteSpace(sqlType))
                 return null;
@@ -216,7 +284,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 int precision = int.Parse(match.Groups[1].Value);
                 int scale = int.Parse(match.Groups[2].Value);
 
-                return new Tuple<int, int>(precision - scale, scale);
+                return new DecimalSize(precision - scale, scale);
 
             }
 

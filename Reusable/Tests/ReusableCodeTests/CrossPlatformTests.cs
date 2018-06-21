@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using Tests.Common;
 
 namespace ReusableCodeTests
@@ -18,7 +20,7 @@ namespace ReusableCodeTests
         DiscoveredDatabase database;
         
 
-        [Test]
+        [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
         public void TestTableCreation(DatabaseType type)
@@ -34,18 +36,18 @@ namespace ReusableCodeTests
 
             database.CreateTable(tbl.GetRuntimeName(), new[]
             {
-                new DatabaseColumnRequest("name", "varchar(10)", false){IsPrimaryKey=true},
-                new DatabaseColumnRequest("foreignName", "nvarchar(7)"){IsPrimaryKey=true},
+                new DatabaseColumnRequest("name", new DatabaseTypeRequest(typeof(string),10), false){IsPrimaryKey=true},
+                new DatabaseColumnRequest("foreignName", new DatabaseTypeRequest(typeof(string),7)){IsPrimaryKey=true},
                 new DatabaseColumnRequest("address", new DatabaseTypeRequest(typeof (string), 500)),
                 new DatabaseColumnRequest("dob", new DatabaseTypeRequest(typeof (DateTime)),false),
                 new DatabaseColumnRequest("score",
-                    new DatabaseTypeRequest(typeof (decimal), null, new Tuple<int, int>(5, 3))) //<- e.g. 12345.123 
+                    new DatabaseTypeRequest(typeof (decimal), null, new DecimalSize(5, 3))) //<- e.g. 12345.123 
 
             });
 
             Assert.IsTrue(tbl.Exists());
 
-            var colsDictionary = tbl.DiscoverColumns().ToDictionary(k=>k.GetRuntimeName(),v=>v);
+            var colsDictionary = tbl.DiscoverColumns().ToDictionary(k=>k.GetRuntimeName(),v=>v,StringComparer.InvariantCultureIgnoreCase);
 
             var name = colsDictionary["name"];
             Assert.AreEqual(10,name.DataType.GetLengthIfString());
@@ -74,12 +76,19 @@ namespace ReusableCodeTests
 
             var score = colsDictionary["score"];
             Assert.AreEqual(true, score.AllowNulls);
-            Assert.AreEqual(5,score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().Item1);
-            Assert.AreEqual(3, score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().Item2);
+            Assert.AreEqual(5,score.DataType.GetDecimalSize().NumbersBeforeDecimalPlace);
+            Assert.AreEqual(3, score.DataType.GetDecimalSize().NumbersAfterDecimalPlace);
 
             Assert.AreEqual(typeof(decimal), syntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(score.DataType.SQLType));
 
-            tbl.Drop();
+            //drop the database
+            database.ForceDrop();
+
+            //the database shouldn't exist anymore
+            Assert.IsFalse(database.Exists());
+
+            //and neither should the table
+            Assert.IsFalse(tbl.Exists());
         }
 
         
@@ -121,6 +130,7 @@ namespace ReusableCodeTests
             tbl.Drop();
         }
 
+        [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void ForeignKeyCreationTest(DatabaseType type)
@@ -162,13 +172,13 @@ namespace ReusableCodeTests
             {
                 con.Open();
 
-                var cmd = tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (100,'chucky')", con);
+                var cmd = tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetFullyQualifiedName() + " VALUES (100,'chucky')", con);
                 
                 //violation of fk
                 Assert.That(() => cmd.ExecuteNonQuery(), Throws.Exception);
 
-                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (1,'chucky')", con).ExecuteNonQuery();
-                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetRuntimeName() + " VALUES (1,'chucky2')", con).ExecuteNonQuery();
+                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetFullyQualifiedName() + " VALUES (1,'chucky')", con).ExecuteNonQuery();
+                tblParent.Database.Server.GetCommand("INSERT INTO " + tblChild.GetFullyQualifiedName() + " VALUES (1,'chucky2')", con).ExecuteNonQuery();
             }
             
             Assert.AreEqual(2,tblParent.GetRowCount());
@@ -178,7 +188,7 @@ namespace ReusableCodeTests
             {
                 con.Open();
 
-                var cmd = tblParent.Database.Server.GetCommand("DELETE FROM " + tblParent.GetRuntimeName(), con);
+                var cmd = tblParent.Database.Server.GetCommand("DELETE FROM " + tblParent.GetFullyQualifiedName(), con);
                 cmd.ExecuteNonQuery();
             }
             
@@ -265,6 +275,7 @@ namespace ReusableCodeTests
             }
         }
 
+        [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void CreateMaxVarcharColumns(DatabaseType type)
@@ -286,6 +297,52 @@ namespace ReusableCodeTests
             Assert.GreaterOrEqual(tbl.DiscoverColumn("Field1").DataType.GetLengthIfString(),4000);
             Assert.GreaterOrEqual(tbl.DiscoverColumn("Field2").DataType.GetLengthIfString(), 1000); // unknown size should be at least 1k? that seems sensible
             Assert.AreEqual(10,tbl.DiscoverColumn("Field6").DataType.GetLengthIfString());
+        }
+
+
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void CreateMaxVarcharColumnFromDataTable(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+            
+            DataTable dt = new DataTable();
+            dt.Columns.Add("MassiveColumn");
+            
+            StringBuilder sb = new StringBuilder("Amaa");
+            for (int i = 0; i < 10000; i++)
+                sb.Append(i);
+
+            dt.Rows.Add(sb.ToString());
+
+
+            var tbl=  database.CreateTable("MassiveTable", dt);
+
+            Assert.IsTrue(tbl.Exists());
+            Assert.GreaterOrEqual(tbl.DiscoverColumn("MassiveColumn").DataType.GetLengthIfString(),8000);
+
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(sb.ToString(),dt.Rows[0][0]);
+        }
+
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void CreateDateColumnFromDataTable(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("DateColumn");
+            dt.Rows.Add("2001-01-22");
+
+            var tbl = database.CreateTable("DateTable", dt);
+
+            Assert.IsTrue(tbl.Exists());
+
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(new DateTime(2001,01,22), dt.Rows[0][0]);
         }
 
         [TestCase(DatabaseType.MYSQLServer)]
@@ -353,6 +410,20 @@ namespace ReusableCodeTests
             Assert.IsFalse(tbl.DiscoverColumn("Field2").IsPrimaryKey);
         }
 
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void ChangeDatabaseShouldNotAffectOriginalConnectionString_Test(DatabaseType type)
+        {
+            var database1 = GetCleanedServer(type, _dbName, out server, out database);
+            var stringBefore = database1.Server.Builder.ConnectionString;
+
+            var database2 = database1.Server.ExpectDatabase("SomeOtherDb");
+
+            Assert.AreEqual(stringBefore, database1.Server.Builder.ConnectionString);
+        }
+
+
         [Test]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -392,6 +463,171 @@ namespace ReusableCodeTests
 
             Assert.AreEqual(3, tbl.GetRowCount());
             Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
+        }
+
+        [Test]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void TestIntDataTypes(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var dt = new DataTable();
+            dt.Columns.Add("MyCol"); ;
+
+            dt.Rows.Add(new[] { "100" });
+            dt.Rows.Add(new[] { "105" });
+            dt.Rows.Add(new[] { "1" });
+
+            var tbl = database.CreateTable("IntTestTable", dt);
+
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToInt32(r[0]) == 100));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToInt32(r[0]) == 105));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToInt32(r[0]) == 1));
+
+            var col = tbl.DiscoverColumn("MyCol");
+            var size = col.DataType.GetDecimalSize();
+            //ints are not decimals so null
+            Assert.IsNull(size);
+
+            col.DataType.AlterTypeTo("decimal(5,2)");
+
+            size = tbl.DiscoverColumn("MyCol").DataType.GetDecimalSize();
+            Assert.AreEqual(new DecimalSize(3, 2), size); //3 before decimal place 2 after;
+            Assert.AreEqual(3, size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, size.Precision);
+            Assert.AreEqual(2, size.Scale);
+            
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(100.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(105.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(1.0f)));
+        }
+
+        [Test]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void TestFloatDataTypes(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var dt = new DataTable();
+            dt.Columns.Add("MyCol");;
+
+            dt.Rows.Add(new[] { "100"});
+            dt.Rows.Add(new[] { "105"});
+            dt.Rows.Add(new[] { "2.1"});
+
+            var tbl = database.CreateTable("DecimalTestTable", dt);
+
+            dt =tbl.GetDataTable();
+            Assert.AreEqual(1,dt.Rows.OfType<DataRow>().Count(r=>Convert.ToDecimal(r[0]) == new decimal(100.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(105.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(2.1f)));
+            
+
+            var col = tbl.DiscoverColumn("MyCol");
+            var size = col.DataType.GetDecimalSize();
+            Assert.AreEqual(new DecimalSize(3, 1), size); //3 before decimal place 2 after;
+            Assert.AreEqual(3,size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(1,size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(4, size.Precision);
+            Assert.AreEqual(1, size.Scale);
+            
+            col.DataType.AlterTypeTo("decimal(5,2)");
+
+            size = tbl.DiscoverColumn("MyCol").DataType.GetDecimalSize();
+            Assert.AreEqual(new DecimalSize(3,2),size); //3 before decimal place 2 after;
+            Assert.AreEqual(3, size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, size.Precision);
+            Assert.AreEqual(2, size.Scale);
+        }
+
+        [TestCase(DatabaseType.MYSQLServer, "_-o-_",":>0<:")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "_-o-_", ":>0<:")]
+        public void HorribleDatabaseAndTableNames(DatabaseType type,string horribleDatabaseName, string horribleTableName)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            database = server.ExpectDatabase(horribleDatabaseName);
+            database.Create(true);
+            try
+            {
+                var tbl = database.CreateTable(horribleTableName, new[]
+                {
+                    new DatabaseColumnRequest("Field1",new DatabaseTypeRequest(typeof(string),int.MaxValue)), //varchar(max)
+                    new DatabaseColumnRequest("Field2",new DatabaseTypeRequest(typeof(DateTime))),
+                    new DatabaseColumnRequest("Field3",new DatabaseTypeRequest(typeof(int))){AllowNulls=false}
+                });
+
+                var dt = new DataTable();
+                dt.Columns.Add("Field1");
+                dt.Columns.Add("Field2");
+                dt.Columns.Add("Field3");
+
+                dt.Rows.Add(new[] { "dave", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "dave", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "dave", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "dave", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "frank", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "frank", "2001-01-01", "50" });
+                dt.Rows.Add(new[] { "frank", "2001-01-01", "51" });
+
+                Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
+                Assert.AreEqual(0, tbl.GetRowCount());
+
+                using (var insert = tbl.BeginBulkInsert())
+                    insert.Upload(dt);
+
+                Assert.AreEqual(7, tbl.GetRowCount());
+
+                tbl.MakeDistinct();
+
+                Assert.AreEqual(3, tbl.GetRowCount());
+                Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
+
+                tbl.Truncate();
+
+                tbl.CreatePrimaryKey(tbl.DiscoverColumn("Field3"));
+
+                Assert.IsTrue(tbl.DiscoverColumn("Field3").IsPrimaryKey);
+
+            }
+            finally
+            {
+                database.ForceDrop();
+            }
+        }
+
+        [TestCase(DatabaseType.MYSQLServer, "_-o-_", ":>0<:","-_")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "_-o-_", ":>0<:", "-_")]
+        public void HorribleColumnNames(DatabaseType type, string horribleDatabaseName, string horribleTableName,string columnName)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            database = server.ExpectDatabase(horribleDatabaseName);
+            database.Create(true);
+            try
+            {
+                var dt = new DataTable();
+                dt.Columns.Add(horribleTableName);
+                dt.Rows.Add(new[] {"dave"});
+                dt.PrimaryKey = new[] {dt.Columns[0]};
+
+                var tbl = database.CreateTable(horribleTableName, dt);
+                
+                Assert.AreEqual(1, tbl.GetRowCount());
+
+                Assert.IsTrue(tbl.DiscoverColumns().Single().IsPrimaryKey);
+
+            }
+            finally
+            {
+                database.ForceDrop();
+            }
         }
 
         [TestFixtureTearDown]

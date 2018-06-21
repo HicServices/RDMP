@@ -65,31 +65,12 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         }
 
         #region Helper methods
-        private DiscoveredServer GetServer(DatabaseType type)
-        {
-            switch (type)
-            {
-                case DatabaseType.MicrosoftSQLServer:
-                    return DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
-                case DatabaseType.MYSQLServer:
-                    return DiscoveredMySqlServer;
-                case DatabaseType.Oracle:
-                    return DiscoveredOracleServer;
-                default:
-                    throw new ArgumentOutOfRangeException("type");
-            }
-        }
 
         private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out Catalogue catalogue, out ExtractionInformation[] extractionInformations, out TableInfo tableinfo)
         {
-            DiscoveredServer server = GetServer(type);
             var listener = new ThrowImmediatelyDataLoadEventListener();
-
-            if (server == null)
-                Assert.Inconclusive();
-
-            var db = server.ExpectDatabase(TestDatabaseNames.GetConsistentName("AggregateDataBasedTests"));
-            db.Create(true);
+            
+            var db = GetCleanedServer(type);
 
             var data = GetTestDataTable();
 

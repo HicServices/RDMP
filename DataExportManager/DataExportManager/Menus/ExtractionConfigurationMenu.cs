@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -14,13 +13,11 @@ using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.DataRelease;
-using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Providers;
 using DataExportManager.CohortUI;
@@ -87,12 +84,10 @@ namespace DataExportManager.Menus
                 Items.Add(addPackageMenuItem);
             }
 
-
-            /////////////////Other stuff///////////
-            var generateDoc = new ToolStripMenuItem("Generate Release Document", FamFamFamIcons.page_white_word,(s, e) => GenerateReleaseDocument());
-            generateDoc.Enabled = _datasets.Any() && extractionResults.Any();
-            Items.Add(generateDoc);
+            Add(new ExecuteCommandGenerateReleaseDocument(_activator, extractionConfiguration));
             
+            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(_extractionConfiguration));
+
             var freeze = new ToolStripMenuItem("Freeze Extraction", CatalogueIcons.FrozenExtractionConfiguration,(s, e) => Freeze());
             freeze.Enabled = !extractionConfiguration.IsReleased && _datasets.Any();
             Items.Add(freeze);
@@ -129,21 +124,6 @@ namespace DataExportManager.Menus
             _extractionConfiguration.IsReleased = true;
             _extractionConfiguration.SaveToDatabase();
             Publish(_extractionConfiguration);
-        }
-
-        private void GenerateReleaseDocument()
-        {
-            try
-            {
-                WordDataReleaseFileGenerator generator = new WordDataReleaseFileGenerator(_extractionConfiguration, RepositoryLocator.DataExportRepository);
-                
-                //null means leave word file on screen and dont save
-                generator.GenerateWordFile(null);
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show(e);
-            }
         }
 
       

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using NUnit.Framework;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
@@ -10,50 +12,53 @@ namespace CatalogueLibraryTests.Integration
 {
     public class CatalogueCheckTests:DatabaseTests
     {
-        private Catalogue _cata;
-        private ColumnInfo _c2;
-        private ColumnInfo _c1;
-        private TableInfo _tableInfo;
-        private CatalogueItem _cataItem;
-
-        [TestFixtureSetUp]
-        public void CreateCatalogueEntities()
-        {
-            _cata = new Catalogue(CatalogueRepository, "fish");
-            _cataItem = new CatalogueItem(CatalogueRepository, _cata, "c");
-            _tableInfo = new TableInfo(CatalogueRepository, "table");
-            _c1 = new ColumnInfo(CatalogueRepository, "col1", "varchar(10)", _tableInfo);
-            _c2 = new ColumnInfo(CatalogueRepository, "col2","varchar(10)",_tableInfo);
-        }
-
-        [TestFixtureTearDown]
-        public void CleanupCatalougeEntities()
-        {
-            _cata.DeleteInDatabase();
-            _tableInfo.DeleteInDatabase();
-        }
-        
         [Test]
-        [ExpectedException(ExpectedMessage="The following invalid characters were found:'\\','.','#'",MatchType=MessageMatch.Contains)]
         public void CatalogueCheck_DodgyName()
         {
-            //change in memory
-            try {
-                
-                //catalogue is fine
-                _cata.Check(new ThrowImmediatelyCheckNotifier());
+            var cata = new Catalogue(CatalogueRepository, "fish");
+            
+            //name broken
+            cata.Name = @"c:\bob.txt#";
+            var ex = Assert.Throws<Exception>(()=>cata.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.IsTrue(ex.Message.Contains("The following invalid characters were found:'\\','.','#'"));
 
-                //name broken
-                _cata.Name = @"c:\bob.txt#";
-                _cata.Check(new ThrowImmediatelyCheckNotifier());
-            }
-            finally
-            {
-                //revert it and it is fine again
-                _cata.RevertToDatabaseState();
-                _cata.Check(new ThrowImmediatelyCheckNotifier());//should work 
+            cata.DeleteInDatabase();
+        }
 
-            }
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void CatalogueCheck_FetchData(DatabaseType databaseType)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Name");
+            dt.Rows.Add("Frank");
+            dt.Rows.Add("Peter");
+
+            var database = GetCleanedServer(databaseType);
+            var tbl = database.CreateTable("CatalogueCheck_CanReadText",dt);
+
+            var cata = Import(tbl);
+
+            //shouldn't be any errors
+            var tomemory = new ToMemoryCheckNotifier();
+            cata.Check(tomemory);
+            Assert.AreEqual(CheckResult.Success,tomemory.GetWorst());
+
+            //delete all the records in the table
+            tbl.Truncate();
+            cata.Check(tomemory);
+
+            //now it should warn us that it is empty 
+            Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());
+
+            tbl.Drop();
+
+
+            cata.Check(tomemory);
+
+            //now it should fail checks
+            Assert.AreEqual(CheckResult.Fail, tomemory.GetWorst());
+
 
         }
     }

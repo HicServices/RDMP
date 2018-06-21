@@ -21,7 +21,6 @@ using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
-using Oracle.ManagedDataAccess.Client;
 using RDMPStartup;
 using RDMPStartup.Events;
 using ReusableLibraryCode;
@@ -55,8 +54,8 @@ namespace Tests.Common
         protected DiscoveredDatabase DiscoveredDatabaseICanCreateRandomTablesIn;
         protected DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
 
-        protected DiscoveredServer DiscoveredMySqlServer;
-        protected DiscoveredServer DiscoveredOracleServer;
+        private readonly DiscoveredServer _discoveredMySqlServer;
+        private readonly DiscoveredServer _discoveredOracleServer;
 
         static private Startup _startup;
 
@@ -114,10 +113,10 @@ namespace Tests.Common
             CreateScratchArea();
 
             if (_mySqlServer != null)
-                DiscoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer));
+                _discoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer){SslMode = MySqlSslMode.None});
 
             if(_oracleServer != null)
-                DiscoveredOracleServer = new DiscoveredServer(new OracleConnectionStringBuilder(_oracleServer));
+                _discoveredOracleServer = new DiscoveredServer(_oracleServer,DatabaseType.Oracle);
         }
 
         
@@ -346,8 +345,11 @@ delete from {1}..Project
         
         HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
 
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName)
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null)
         {
+            if (dbnName == null)
+                dbnName = DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName();
+
             DiscoveredServer wc1;
             DiscoveredDatabase wc2;
             var toReturn =  GetCleanedServer(type, dbnName, out wc1, out wc2);
@@ -363,10 +365,10 @@ delete from {1}..Project
                     server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
                     break;
                 case DatabaseType.MYSQLServer:
-                    server = DiscoveredMySqlServer;
+                    server = _discoveredMySqlServer;
                     break;
                 case DatabaseType.Oracle:
-                    server = DiscoveredOracleServer;
+                    server = _discoveredOracleServer;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type");
@@ -382,16 +384,7 @@ delete from {1}..Project
 
             database = server.ExpectDatabase(dbnName);
 
-            if (database.Exists())
-            {
-                foreach (DiscoveredTable discoveredTable in database.DiscoverTables(false))
-                    discoveredTable.Drop();
-
-                database.Drop();
-                Assert.IsFalse(database.Exists());
-            }
-
-            server.CreateDatabase(dbnName);
+            database.Create(true);
 
             server.ChangeDatabase(dbnName);
 

@@ -38,6 +38,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         
         public virtual bool Exists(IManagedTransaction transaction = null)
         {
+            if (!Database.Exists())
+                return false;
+
             return Database.DiscoverTables(true, transaction)
                .Any(t => t.GetRuntimeName().Equals(GetRuntimeName(),StringComparison.InvariantCultureIgnoreCase));
         }

@@ -1,7 +1,9 @@
 ﻿using System;
+using Google.Protobuf.WellKnownTypes;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using Type = System.Type;
 
 namespace DataExportLibrary.Tests
 {
@@ -30,6 +32,16 @@ namespace DataExportLibrary.Tests
         public void TestDatatypeComputer_Int()
         {
             DataTypeComputer t = new DataTypeComputer();
+            
+            t.AdjustToCompensateForValue("0");
+            Assert.AreEqual(typeof(int), t.CurrentEstimate);
+            Assert.AreEqual(1, t.Length);
+
+            t.AdjustToCompensateForValue("-0");
+            Assert.AreEqual(typeof(int), t.CurrentEstimate);
+            Assert.AreEqual(2, t.Length);
+            
+            
             t.AdjustToCompensateForValue("15");
             t.AdjustToCompensateForValue("299");
             t.AdjustToCompensateForValue(null);
@@ -37,6 +49,7 @@ namespace DataExportLibrary.Tests
 
             Assert.AreEqual(typeof(int),t.CurrentEstimate);
         }
+
 
         [Test]
         public void TestDatatypeComputer_IntAnddecimal_MustUsedecimal()
@@ -71,6 +84,82 @@ namespace DataExportLibrary.Tests
             Assert.AreEqual("varchar(5)", t.GetSqlDBType(_translater));
         }
 
+        public void TestDatatypeComputer_DateTimeFromInt()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue("01/01/2001");
+            Assert.AreEqual(typeof(DateTime), t.CurrentEstimate);
+
+            t.AdjustToCompensateForValue("2013");
+            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+        }
+
+        //Tests system being happy to sign off in the orders bool=>int=>decimal but nothing else
+        [TestCase("true", typeof(bool), "11", typeof(int))]
+        [TestCase("1", typeof(int), "1.1",typeof(decimal))]
+        [TestCase("true", typeof(bool), "1.1", typeof(decimal))]
+        public void TestDataTypeComputer_FallbackCompatible(string input1, Type expectedTypeAfterFirstInput, string input2, Type expectedTypeAfterSecondInput)
+        {
+            var t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(input1);
+            
+            Assert.AreEqual(expectedTypeAfterFirstInput,t.CurrentEstimate);
+            
+            t.AdjustToCompensateForValue(input2);
+            Assert.AreEqual(expectedTypeAfterSecondInput, t.CurrentEstimate);
+        }
+
+        //Tests system being angry at having signed off on a bool=>int=>decimal then seeing a valid non string type (e.g. DateTime)
+        //under these circumstances it should go directly to System.String
+        [TestCase("1",typeof(int),"2001-01-01")]
+        [TestCase("true", typeof(bool), "2001-01-01")]
+        [TestCase("1.1", typeof(decimal), "2001-01-01")]
+        [TestCase("1.1", typeof(decimal), "10:00am")]
+        [TestCase("2001-1-1", typeof(DateTime), "10:00am")]
+        public void TestDataTypeComputer_FallbackIncompatible(string input1, Type expectedTypeAfterFirstInput, string input2)
+        {
+            var t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(input1);
+
+            Assert.AreEqual(expectedTypeAfterFirstInput, t.CurrentEstimate);
+
+            t.AdjustToCompensateForValue(input2);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+
+            //now check it in reverse just to be sure
+            t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(input2);
+            t.AdjustToCompensateForValue(input1);
+            Assert.AreEqual(typeof(string),t.CurrentEstimate);
+        }
+
+        [Test]
+        public void TestDatatypeComputer_IntToDateTime()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue("2013");
+            t.AdjustToCompensateForValue("01/01/2001");
+            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+        }
+
+        [TestCase("fish",32)]
+        [TestCase(32, "fish")]
+        [TestCase("2001-01-01",2001)]
+        [TestCase(2001, "2001-01-01")]
+        [TestCase("2001", 2001)]
+        [TestCase(2001, "2001")]
+        public void TestDatatypeComputer_MixingTypes_ThrowsException(object o1, object o2)
+        {
+            //if we pass an hard type...
+            //...then we don't accept strings anymore
+
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(o1); 
+
+            var ex = Assert.Throws<DataTypeComputerException>(() => t.AdjustToCompensateForValue(o2)); 
+            Assert.IsTrue(ex.Message.Contains("mixed type"));
+        }
+
         [Test]
         public void TestDatatypeComputer_DateTime()
         {
@@ -80,6 +169,15 @@ namespace DataExportLibrary.Tests
 
             Assert.AreEqual(t.CurrentEstimate, typeof(DateTime));
             Assert.AreEqual("datetime2", t.GetSqlDBType(_translater));
+        }
+
+        [TestCase("1. 01 ", typeof(DateTime))]
+        [TestCase("1. 1 ", typeof(DateTime))]
+        public void TestDatatypeComputer_DateTime_DodgyFormats(string input, Type expectedOutput)
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(input);
+            Assert.AreEqual(expectedOutput, t.CurrentEstimate);
         }
 
         [Test]
@@ -113,8 +211,29 @@ namespace DataExportLibrary.Tests
             Assert.AreEqual(t.CurrentEstimate, typeof(DateTime));
             Assert.AreEqual("datetime2", t.GetSqlDBType(_translater));
         }
+
+        [TestCase("01",2)]
+        [TestCase("01.1", 4)]
+        [TestCase("01.10", 5)]
+        [TestCase("-01", 3)]
+        [TestCase("-01.01", 6)]
+        [TestCase(" -01.01", 7)]
+        [TestCase("\t-01.01", 7)]
+        [TestCase("\r\n-01.01", 8)]
+        [TestCase("- 01.01", 7)]
+        [TestCase(" -01.01 ", 8)]
+        [TestCase("-01.01 ", 7)]
+        [TestCase("--01", 4)]
+        public void TestDatatypeComputer_PreeceedingZeroes(string input, int expectedLength)
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(input);
+            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+            Assert.AreEqual(expectedLength, t.Length);
+        }
+
         [Test]
-        public void TestDatatypeComputer_PreeceedingZeroes()
+        public void TestDatatypeComputer_PreeceedingZeroesAfterFloat()
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("1.5");
@@ -144,8 +263,21 @@ namespace DataExportLibrary.Tests
             
             Assert.AreEqual(typeof(double), t.CurrentEstimate);
 
-            Assert.AreEqual(2, t.numbersAfterDecimalPlace);
-            Assert.AreEqual(3, t.numbersBeforeDecimalPlace);
+            Assert.AreEqual(2, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(3, t.DecimalSize.NumbersBeforeDecimalPlace);
+        }
+
+        [TestCase(" 1.01", typeof(decimal))]
+        [TestCase(" 1.01 ", typeof(decimal))]
+        [TestCase(" 1", typeof(int))]
+        [TestCase(" true ",typeof(bool))]
+        public void TestDatatypeComputer_Whitespace(string input, Type expectedType)
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(input);
+
+            Assert.AreEqual(expectedType, t.CurrentEstimate);
+            Assert.AreEqual(input.Length,t.Length);
         }
 
         [Test]
@@ -171,8 +303,8 @@ namespace DataExportLibrary.Tests
 
             Assert.AreEqual(typeof(bool), t.CurrentEstimate);
 
-            Assert.AreEqual(-1, t.numbersAfterDecimalPlace);
-            Assert.AreEqual(-1, t.numbersBeforeDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersBeforeDecimalPlace);
         }
 
         [Test]
@@ -180,7 +312,7 @@ namespace DataExportLibrary.Tests
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue((Int16)5);
-            var ex = Assert.Throws<Exception>(()=>t.AdjustToCompensateForValue((Int32)1000));
+            var ex = Assert.Throws<DataTypeComputerException>(()=>t.AdjustToCompensateForValue((Int32)1000));
 
             Assert.IsTrue(ex.Message.Contains("We were adjusting to compensate for object 1000 which is of Type System.Int32 , we were previously passed a System.Int16 type, is your column of mixed type? this is unacceptable"));
         }
@@ -196,8 +328,8 @@ namespace DataExportLibrary.Tests
 
             Assert.AreEqual(typeof(Int16), t.CurrentEstimate);
 
-            Assert.AreEqual(3, t.numbersBeforeDecimalPlace);
-            Assert.AreEqual(-1, t.numbersAfterDecimalPlace);
+            Assert.AreEqual(3, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
             
 
         }
@@ -209,21 +341,58 @@ namespace DataExportLibrary.Tests
 
             Assert.AreEqual(typeof(byte[]), t.CurrentEstimate);
 
-            Assert.AreEqual(-1, t.numbersAfterDecimalPlace);
-            Assert.AreEqual(-1, t.numbersBeforeDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(null, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.IsTrue(t.DecimalSize.IsEmpty);
         }
+
 
         [Test]
         public void TestDatatypeComputer_NumberOfDecimalPlaces()
         {
             DataTypeComputer t = new DataTypeComputer();
             t.AdjustToCompensateForValue("111111111.11111111111115");
+
+            Assert.AreEqual(typeof(decimal), t.CurrentEstimate);
+            Assert.AreEqual(9, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(14, t.DecimalSize.NumbersAfterDecimalPlace);
+        }
+        
+
+        [Test]
+        public void TestDatatypeComputer_TrailingZeroesFallbackToString()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue("-111.000");
             
             Assert.AreEqual(typeof(decimal), t.CurrentEstimate);
-            Assert.AreEqual(9, t.numbersBeforeDecimalPlace);
-            Assert.AreEqual(14, t.numbersAfterDecimalPlace);
+            Assert.AreEqual(3, t.DecimalSize.NumbersBeforeDecimalPlace);
+
+            //even though they are trailing zeroes we still need this much space... there must be a reason why they are there right? (also makes it easier to go to string later if needed eh!)
+            Assert.AreEqual(3, t.DecimalSize.NumbersAfterDecimalPlace); 
+            
+            t.AdjustToCompensateForValue("P");
+
+            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+            Assert.AreEqual(8, t.Length);
         }
 
+        [Test]
+        public void TestDataTypeComputer_IntFloatString()
+        {
+            MicrosoftSQLTypeTranslater tt = new MicrosoftSQLTypeTranslater();
+
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue("-1000");
+
+            Assert.AreEqual("int",t.GetSqlDBType(tt));
+
+            t.AdjustToCompensateForValue("1.1");
+            Assert.AreEqual("decimal(6,1)", t.GetSqlDBType(tt));
+
+            t.AdjustToCompensateForValue("A");
+            Assert.AreEqual("varchar(7)", t.GetSqlDBType(tt));
+        }
 
         [Test]
         public void TestDatatypeComputer_FallbackOntoVarcharFromFloat()
@@ -311,6 +480,53 @@ namespace DataExportLibrary.Tests
             Assert.AreEqual(typeof(DateTime), t.CurrentEstimate);
         }
 
+        [Test]
+        public void TestDatatypeComputer_HardTypeFloats()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(1.1f);
+            t.AdjustToCompensateForValue(100.01f);
+            t.AdjustToCompensateForValue(10000f);
+
+            Assert.AreEqual(typeof(float), t.CurrentEstimate);
+            Assert.AreEqual(2,t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, t.DecimalSize.NumbersBeforeDecimalPlace);
+        }
+
+        [Test]
+        public void TestDatatypeComputer_HardTypeInts()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(1);
+            t.AdjustToCompensateForValue(100);
+            t.AdjustToCompensateForValue(null);
+            t.AdjustToCompensateForValue(10000);
+            t.AdjustToCompensateForValue(DBNull.Value);
+
+            Assert.AreEqual(typeof(int), t.CurrentEstimate);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, t.DecimalSize.NumbersBeforeDecimalPlace);
+        }
+
+
+        [Test]
+        public void TestDatatypeComputer_HardTypeDoubles()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue(1.1);
+            t.AdjustToCompensateForValue(100.203);
+            t.AdjustToCompensateForValue(100.20000);
+            t.AdjustToCompensateForValue(null);
+            t.AdjustToCompensateForValue(10000d);//<- d is required because Types must be homogenous
+            t.AdjustToCompensateForValue(DBNull.Value);
+
+            Assert.AreEqual(typeof(double), t.CurrentEstimate);
+            Assert.AreEqual(3, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, t.DecimalSize.NumbersBeforeDecimalPlace);
+        }
+
+
+        [TestCase("0.01",typeof(decimal),"A",4)]
         [TestCase("1234",typeof(int),"F",4)]
         [TestCase("false",typeof(bool), "F", 5)]
         [TestCase("2001-01-01",typeof(DateTime), "F", 10)]

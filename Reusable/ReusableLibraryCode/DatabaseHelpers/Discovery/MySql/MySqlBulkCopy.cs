@@ -20,7 +20,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         public int Upload(DataTable dt)
         {
             var loader = new MySqlBulkLoader((MySqlConnection)_connection.Connection);
-            loader.TableName = _discoveredTable.GetRuntimeName();
+            loader.TableName = "`" + _discoveredTable.GetRuntimeName() +"`";
             
             var tempFile = Path.GetTempFileName();
             loader.FieldTerminator = ",";

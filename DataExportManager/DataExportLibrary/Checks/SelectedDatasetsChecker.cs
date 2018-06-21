@@ -12,7 +12,6 @@ using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -26,17 +25,12 @@ namespace DataExportLibrary.Checks
     public class SelectedDataSetsChecker : ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        private readonly IExtractDatasetCommand _extractCommand;
-
         public ISelectedDataSets SelectedDataSet { get; private set; }
 
         public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            SelectedDataSet = selectedDataSet;
             _repositoryLocator = repositoryLocator;
-            var factory = new ExtractCommandCollectionFactory();
-            _extractCommand = factory.Create(_repositoryLocator, SelectedDataSet);
-            _extractCommand.TopX = 1;
+            SelectedDataSet = selectedDataSet;
         }
 
         public void Check(ICheckNotifier notifier)
@@ -61,19 +55,12 @@ namespace DataExportLibrary.Checks
                 return;
             }
 
-            if (_extractCommand == null)
-                throw new Exception("Invalid ExtractDatasetCommand received");
+            var request = new ExtractDatasetCommand(_repositoryLocator, config, cohort, new ExtractableDatasetBundle(ds),
+                selectedcols, new HICProjectSalt(project), null){TopX = 1};
 
             try
             {
-                if (_extractCommand.TopX == 0)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Request did not have any 'Top X' specified, adding TOP 1 for testing",
-                                              CheckResult.Success));
-                }
-                _extractCommand.TopX = 1;
-                if (_extractCommand.QueryBuilder == null)
-                    _extractCommand.GenerateQueryBuilder();
+                request.GenerateQueryBuilder();
             }
             catch (Exception e)
             {
@@ -84,7 +71,7 @@ namespace DataExportLibrary.Checks
                 return;
             }
 
-            var server = _extractCommand.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+            var server = request.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
             bool serverExists = server.Exists();
 
             notifier.OnCheckPerformed(new CheckEventArgs("Server " + server + " Exists:" + serverExists,
@@ -103,11 +90,11 @@ namespace DataExportLibrary.Checks
 
                     try
                     {
-                        cmd = server.GetCommand(_extractCommand.QueryBuilder.SQL, con, managedTransaction);
+                        cmd = server.GetCommand(request.QueryBuilder.SQL, con, managedTransaction);
                         cmd.CommandTimeout = timeout;
                         notifier.OnCheckPerformed(
                             new CheckEventArgs(
-                                "/*About to send Request SQL :*/" + Environment.NewLine + _extractCommand.QueryBuilder.SQL,
+                                "/*About to send Request SQL :*/" + Environment.NewLine + request.QueryBuilder.SQL,
                                 CheckResult.Success));
                     }
                     catch (QueryBuildingException e)
@@ -133,13 +120,13 @@ namespace DataExportLibrary.Checks
                         if (e.Message.Contains("Timeout"))
                             notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s",CheckResult.Warning));
                         else
-                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Warning,e));
+                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail,e));
                     }
                 }
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute Top 1 on dataset " + ds, CheckResult.Warning, e));
+                notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute Top 1 on dataset " + ds, CheckResult.Fail, e));
             }
 
             var cata = _repositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>((int)ds.Catalogue_ID);

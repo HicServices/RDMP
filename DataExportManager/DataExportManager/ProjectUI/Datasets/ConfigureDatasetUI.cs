@@ -455,8 +455,9 @@ namespace DataExportManager.ProjectUI.Datasets
             var tablesInQuery = olvSelected.Objects.OfType<ExtractableColumn>()
                 .Where(c => c.ColumnInfo != null)
                 .Select(c => c.ColumnInfo.TableInfo)
-                .Distinct();
-
+                .Distinct()
+                .Where(t=>!t.IsLookupTable()); //except lookup tables
+            
             //add those as readonly (you cant unjoin from those)
             foreach (TableInfo tableInfo in tablesInQuery)
                 nodes.Add(new AvailableForceJoinNode(tableInfo, true));

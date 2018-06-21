@@ -1,4 +1,6 @@
 using System;
+using System.Data;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -21,6 +23,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         string GetSQLDBTypeForCSharpType(DatabaseTypeRequest request);
 
         /// <summary>
+        /// Returns the System.Data.DbType (e.g. DbType.String) for the specified proprietary database type (e.g. "varchar(max)")
+        /// </summary>
+        /// <param name="sqlType"></param>
+        /// <returns></returns>
+        DbType GetDbTypeForSQLDBType(string sqlType);
+
+        /// <summary>
         /// Translates a database proprietary type e.g. 'decimal(10,2)' into a C# type 'typeof(String)'
         /// </summary>
         /// <param name="sqlType"></param>
@@ -31,7 +40,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         DataTypeComputer GetDataTypeComputerFor(DiscoveredColumn discoveredColumn);
 
         int GetLengthIfString(string sqlType);
-        Tuple<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType);
+        DecimalSize GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType);
         
         /// <summary>
         /// Translates the given sqlType which must be an SQL string compatible with this TypeTranslater e.g. varchar(10) into the destination ITypeTranslater

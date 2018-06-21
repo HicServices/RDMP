@@ -28,6 +28,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 {
     public class CrossDatabaseDataLoadTests :DatabaseTests
     {
+        [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
         public void Load(DatabaseType databaseType)
@@ -38,7 +39,11 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             
-            var db = GetCleanedServer(databaseType, "CrossDatabaseLoadTest");
+            var db = GetCleanedServer(databaseType);
+
+            var raw = db.Server.ExpectDatabase(db.GetRuntimeName() + "_RAW");
+            if(raw.Exists())
+                raw.ForceDrop();
             
             var dt = new DataTable("MyTable");
             dt.Columns.Add("Name");
@@ -50,7 +55,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             
             var tbl = db.CreateTable("MyTable",dt,new []
             {
-                new DatabaseColumnRequest("Name","varchar(20)",false), 
+                new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),20),false),
                 new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false)
             });
             Assert.AreEqual(3,tbl.GetRowCount());
@@ -146,7 +151,7 @@ MrMurder,2001-01-01,Yella");
             var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
 
-            var db = GetCleanedServer(databaseType, "CrossDatabaseLoadTest");
+            var db = GetCleanedServer(databaseType);
 
             var dtParent = new DataTable();
             dtParent.Columns.Add("ID");

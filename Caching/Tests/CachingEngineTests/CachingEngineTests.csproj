@@ -105,7 +105,6 @@
     <Compile Include="Unit\WebServiceDataFlowSource.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

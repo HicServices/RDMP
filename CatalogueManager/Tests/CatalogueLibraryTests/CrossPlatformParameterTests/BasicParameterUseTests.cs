@@ -32,30 +32,10 @@ namespace CatalogueLibraryTests.CrossPlatformParameterTests
         public void Test_DatabaseTypeQueryWithParameter_IntParameter(DatabaseType dbType)
         {
             //Pick the destination server
-            var databaseName = TestDatabaseNames.GetConsistentName("BasicParameterUseTests");
             var tableName = TestDatabaseNames.GetConsistentName("tbl");
-
-            DiscoveredServer server;
-            switch (dbType)
-            {
-                case DatabaseType.MicrosoftSQLServer:
-                    server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
-                    break;
-                case DatabaseType.MYSQLServer:
-                    server = DiscoveredMySqlServer;
-                    break;
-                case DatabaseType.Oracle:
-                    server = DiscoveredOracleServer;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("dbType");
-            }
-
-            if(server == null)
-                Assert.Inconclusive();
-
+            
             //make sure theres a database ready to receive the data
-            var db = server.ExpectDatabase(databaseName);
+            var db = GetCleanedServer(dbType);
             db.Create(true);
 
 

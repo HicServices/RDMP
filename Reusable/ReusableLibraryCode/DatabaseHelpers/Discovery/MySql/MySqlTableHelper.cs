@@ -113,31 +113,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             return string.Format("RENAME TABLE `{0}` TO `{1}`;", discoveredTable.GetRuntimeName(), newName);
         }
 
-        public override void MakeDistinct(DiscoveredTable discoveredTable)
-        {
-            var server = discoveredTable.Database.Server;
-
-            var tableName = discoveredTable.GetFullyQualifiedName();
-            var tempTable = discoveredTable.Database.ExpectTable(discoveredTable.GetRuntimeName() + "_DistinctingTemp").GetRuntimeName();
-
-            using (var con = server.BeginNewTransactedConnection())
-            {
-                var cmdDistinct = server.GetCommand(string.Format("CREATE TABLE {1} SELECT distinct * FROM {0}", tableName, tempTable), con);
-                cmdDistinct.ExecuteNonQuery();
-
-                var cmdTruncate = server.GetCommand(string.Format("DELETE FROM {0}", tableName), con);
-                cmdTruncate.ExecuteNonQuery();
-
-                var cmdBack = server.GetCommand(string.Format("INSERT INTO {0} (SELECT * FROM {1})", tableName,tempTable), con);
-                cmdBack.ExecuteNonQuery();
-
-                var cmdDropDistinctTable = server.GetCommand(string.Format("DROP TABLE {0}", tempTable), con);
-                cmdDropDistinctTable.ExecuteNonQuery();
-
-
-            }
-        }
-
         public override string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX)
         {
             return "SELECT * FROM " + table.GetFullyQualifiedName() + " LIMIT " + topX;

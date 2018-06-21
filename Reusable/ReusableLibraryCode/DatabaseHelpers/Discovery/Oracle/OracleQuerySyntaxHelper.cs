@@ -1,4 +1,5 @@
-﻿using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Aggregation;
+﻿using System;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
@@ -15,12 +16,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         public override string GetRuntimeName(string s)
         {
             //upper it because oracle is stupid
-            string toReturn =  s.Substring(s.LastIndexOf(".") + 1).Trim('`').ToUpper();
+            string toReturn =  s.Substring(s.LastIndexOf(".") + 1).Trim('"').ToUpper();
 
             //truncate it to 30 maximum because oracle cant count higher than 30
             return toReturn.Length > 30 ? toReturn.Substring(0, 30) : toReturn;
 
         }
+
+        public override string EnsureWrappedImpl(string databaseOrTableName)
+        {
+            return '"' + GetRuntimeName(databaseOrTableName) + '"';
+        }
+
         public override TopXResponse HowDoWeAchieveTopX(int x)
         {
             return new TopXResponse("ROWNUM <= " + x, QueryComponent.WHERE);
@@ -33,7 +40,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
         public override string GetScalarFunctionSql(MandatoryScalarFunctions function)
         {
-            throw new System.NotImplementedException();
+            switch (function)
+            {
+                case MandatoryScalarFunctions.GetTodaysDate:
+                    return "SYSDATE";
+                default:
+                    throw new ArgumentOutOfRangeException("function");
+            }
         }
 
         public override string DatabaseTableSeparator
