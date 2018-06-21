@@ -115,18 +115,9 @@ namespace CatalogueLibrary.Data.DataLoad
 
         #endregion
 
-
-
         public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage)
         {
-            var existingProcessTasks = repository.GetAllObjects<ProcessTask>().Where(p => p.LoadMetadata_ID == parent.ID && p.LoadStage == stage).ToList();
-
-            var order = 0;
-            if (existingProcessTasks.Count() != 0)
-            {
-                var highestOrder = existingProcessTasks.Max(p => p.Order);
-                order = highestOrder + 1;
-            }
+            var order = repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
             
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
