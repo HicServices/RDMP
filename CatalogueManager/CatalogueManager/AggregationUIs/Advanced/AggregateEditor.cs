@@ -66,10 +66,10 @@ namespace CatalogueManager.AggregationUIs.Advanced
         
         private List<TableInfo> _forcedJoins;
 
+        IQuerySyntaxHelper _querySyntaxHelper;
+
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Scintilla QueryHaving;
-
-        IQuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 
         //Constructor
         public AggregateEditor()
@@ -513,6 +513,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
+
+            _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
             SetAggregate(activator, databaseObject);
         }
 

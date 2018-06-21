@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -13,19 +8,15 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
-using CatalogueManager.MainFormUITabs.SubComponents;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderTests
@@ -180,11 +171,8 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
             axisDimension = new AggregateDimension(CatalogueRepository, dateDimension, configuration);
 
-            var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
-
             var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
             axis.StartDate = "'2000-01-01'";
-            axis.EndDate = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
             axis.AxisIncrement = AxisIncrement.Year;
             axis.SaveToDatabase();
             return configuration;
@@ -205,11 +193,8 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             axisDimension = new AggregateDimension(CatalogueRepository, axisCol, configuration);
             pivotDimension = new AggregateDimension(CatalogueRepository, categoryCol, configuration);
 
-            var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
-
             var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
             axis.StartDate = "'2000-01-01'";
-            axis.EndDate = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
             axis.AxisIncrement = AxisIncrement.Year;
             axis.SaveToDatabase();
             return configuration;

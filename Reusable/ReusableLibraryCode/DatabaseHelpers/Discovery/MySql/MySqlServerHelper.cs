@@ -39,6 +39,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public override DbConnection GetConnection(DbConnectionStringBuilder builder)
         {
+            EnforceSensibleOptions((MySqlConnectionStringBuilder) builder);
             return new MySqlConnection(builder.ConnectionString);
         }
 
