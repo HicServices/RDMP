@@ -73,7 +73,6 @@ namespace CatalogueManager.Menus
             ProcessTask newTask = new ProcessTask((ICatalogueRepository)lmd.Repository, lmd, stage);
             newTask.Path = type.FullName;
             newTask.ProcessTaskType = taskType;
-            newTask.Order = 0;
             newTask.Name = type.Name;
 
             newTask.SaveToDatabase();
