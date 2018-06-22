@@ -83,7 +83,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             TableInfo ti = Import(tbl, lmd,logManager);
 
             if (testCase == TestCase.LowPrivilegeLoaderAccount)
-                SetupLowPrivilegeUserRightsFor(ti);
+                SetupLowPrivilegeUserRightsFor(ti,true,true);
 
             var projectDirectory = SetupLoadDirectory(lmd);
 

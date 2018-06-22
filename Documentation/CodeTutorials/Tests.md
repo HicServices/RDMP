@@ -87,7 +87,7 @@ public class MyTests : DatabaseTests
 		Import(tbl, out tableInfo, out columnInfos);
 
 		//setup credentials for the table in RDMP (this will be Inconclusive if you have not enabled it in TestDatabases.txt
-		SetupLowPrivilegeUserRightsFor(tableInfo);
+		SetupLowPrivilegeUserRightsFor(tableInfo,true,false);
 
 		//request access to the database using DataLoad context
 		var newDatabase = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
@@ -104,7 +104,7 @@ public class MyTests : DatabaseTests
 		Assert.IsTrue(newTbl.DiscoverColumn("MyCol").IsPrimaryKey);
 
 		//low priority user shouldn't be able to drop tables
-		Assert.That(newTbl.Drop,Throws.Exception.TypeOf<Exception>());
+		Assert.That(newTbl.Drop,Throws.Exception);
 
 		//normal testing user should be able to
 		tbl.Drop();

@@ -426,7 +426,7 @@ delete from {1}..Project
             return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
         }
         
-        protected void SetupLowPrivilegeUserRightsFor(TableInfo ti)
+        protected void SetupLowPrivilegeUserRightsFor(TableInfo ti,bool read,bool write)
         {
             //get access to the database using the current credentials
 
@@ -436,6 +436,13 @@ delete from {1}..Project
             if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 Assert.Inconclusive();
 
+            //give the user access to the table
+            var sql = GrantAccessSql(username, ti, read, write);
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
+
+            using (var con = db.Server.GetConnection())
+                UsefulStuff.ExecuteBatchNonQuery(sql, con);
+
             //remove any existing credentials
             foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
                 CatalogueRepository.TableInfoToCredentialsLinker.BreakAllLinksBetween(cred, ti);
@@ -443,7 +450,33 @@ delete from {1}..Project
             //set the new ones
             DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
             credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
-            
+        }
+
+        private string GrantAccessSql(string username, TableInfo ti, bool read, bool write)
+        {
+            switch (ti.DatabaseType)
+            {
+                case DatabaseType.MicrosoftSQLServer:
+                    return string.Format(@"
+if exists (select * from sys.sysusers where name = '{0}')
+	drop user [{0}]
+GO
+
+CREATE USER [{0}] FOR LOGIN [{0}]
+GO
+{1}ALTER ROLE [db_datareader] ADD MEMBER [{0}]
+{2}ALTER ROLE [db_datawriter] ADD MEMBER [{0}]
+GO
+", username,read?"":"--",write?"":"--");
+                case DatabaseType.MYSQLServer:
+                    break;
+                case DatabaseType.Oracle:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            throw new NotImplementedException();
         }
     }
     
