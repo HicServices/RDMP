@@ -42,22 +42,6 @@ namespace DataLoadEngine.DatabaseManagement.Operations
             return dbInfo;
         }
         
-        /// <summary>
-        /// Do not use in the context of DLE (or any time where you have a cached list of TableInfos you could use instead as it will be faster to use the overload that takes TableInfo (if you use this method it has to go back to the Catalogue database to figure out what the TableInfos are)
-        /// </summary>
-        /// <param name="Catalogues"></param>
-        /// <param name="copyToStage"></param>
-        /// <param name="tableNamingScheme"></param>
-        /// <param name="includeLookupTables"></param>
-        public void CreateTablesInDatabaseFromCatalogueInfo(IEnumerable<ICatalogue> Catalogues, LoadBubble copyToStage, INameDatabasesAndTablesDuringLoads tableNamingScheme, bool includeLookupTables)
-        {
-            if (copyToStage == LoadBubble.Live)
-                throw new Exception("Please don't try to create tables in the live database");
-
-            foreach (var tableInfo in Catalogues.SelectMany(catalogue => catalogue.GetTableInfoList(includeLookupTables)).Distinct())
-                CreateTablesInDatabaseFromCatalogueInfo(tableInfo, copyToStage);
-        }
-
         public void CreateTablesInDatabaseFromCatalogueInfo(TableInfo tableInfo, LoadBubble copyToStage)
         {
             if (copyToStage == LoadBubble.Live)

@@ -175,9 +175,20 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             Helper.MakeDistinct(this);
         }
 
-        public string ScriptTableCreation(bool dropPrimaryKeys,bool dropNullability, bool convertIdentityToInt)
+
+        /// <summary>
+        /// Scripts the table columns, optionally adjusting for nullability / identity etc.  Optionally translates the SQL to run and create
+        /// a table in a different database / database language / table name
+        /// </summary>
+        /// <param name="dropPrimaryKeys">True if the resulting script should exclude any primary keys</param>
+        /// <param name="dropNullability">True if the resulting script should always allow nulls into columns</param>
+        /// <param name="convertIdentityToInt">True if the resulting script should replace identity columns with int in the generated SQL</param>
+        /// <param name="toCreateTable">Optional, If provided the SQL generated will be adjusted to create the alternate table instead (which could include going cross server type e.g. MySql to Sql Server)
+        /// <para>When using this parameter the table must not exist yet, use destinationDiscoveredDatabase.ExpectTable("MyYetToExistTable")</para></param>
+        /// <returns></returns>
+        public string ScriptTableCreation(bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt, DiscoveredTable toCreateTable = null)
         {
-            return Helper.ScriptTableCreation(this, dropPrimaryKeys, dropNullability, convertIdentityToInt);
+            return Helper.ScriptTableCreation(this, dropPrimaryKeys, dropNullability, convertIdentityToInt, toCreateTable);
         }
 
         public void Rename(string newName)

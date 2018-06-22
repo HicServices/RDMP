@@ -27,6 +27,22 @@ using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 {
+
+    /*
+     Test currently requires for LowPrivilegeLoaderAccount (e.g. minion)
+     ---------------------------------------------------
+     
+        create database DLE_STAGING
+
+        use DLE_STAGING
+
+        CREATE USER [minion] FOR LOGIN [minion]
+
+        ALTER ROLE [db_datareader] ADD MEMBER [minion]
+        ALTER ROLE [db_ddladmin] ADD MEMBER [minion]
+        ALTER ROLE [db_datawriter] ADD MEMBER [minion]
+    */
+
     public class CrossDatabaseDataLoadTests : DatabaseTests
     {
         public enum TestCase
@@ -43,10 +59,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
-
             var defaults = new ServerDefaults(CatalogueRepository);
-            defaults.ClearDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer);
-
             var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             
@@ -81,10 +94,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
 
             TableInfo ti = Import(tbl, lmd,logManager);
-
-            if (testCase == TestCase.LowPrivilegeLoaderAccount)
-                SetupLowPrivilegeUserRightsFor(ti,true,true);
-
+            
             var projectDirectory = SetupLoadDirectory(lmd);
 
             CreateCSVProcessTask(lmd,ti,"*.csv");
@@ -97,10 +107,16 @@ Frank,2001-01-01,Neon
 MrMurder,2001-01-01,Yella");
 
             
+            //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
+
             //clean up RAW / STAGING etc and generally accept proposed cleanup operations
             var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(),CatalogueRepository.MEF);
             checker.Check(new AcceptAllCheckNotifier());
-            
+
+            //create a reader
+            if (testCase == TestCase.LowPrivilegeLoaderAccount)
+                SetupLowPrivilegeUserRightsFor(ti, true, true);
+
             var loadFactory = new HICDataLoadFactory(
                 lmd,
                 new HICDatabaseConfiguration(lmd),
@@ -108,6 +124,7 @@ MrMurder,2001-01-01,Yella");
                 CatalogueRepository,
                 logManager
                 );
+
             try
             {
                 var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
@@ -143,6 +160,8 @@ MrMurder,2001-01-01,Yella");
             }
             finally
             {
+                Directory.Delete(lmd.LocationOfFlatFiles, true);
+
                 foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                     c.DeleteInDatabase();
 
@@ -160,8 +179,6 @@ MrMurder,2001-01-01,Yella");
         {
             //setup the data tables
             var defaults = new ServerDefaults(CatalogueRepository);
-            defaults.ClearDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer);
-
             var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
 
@@ -279,6 +296,8 @@ MrMurder,2001-01-01,Yella");
             }
             finally
             {
+                Directory.Delete(lmd.LocationOfFlatFiles,true);
+
                 foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                     c.DeleteInDatabase();
 

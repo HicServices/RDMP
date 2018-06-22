@@ -24,15 +24,12 @@ namespace DataLoadEngine.DatabaseManagement
             if (!sourceTable.Exists())
                 throw new Exception("Table " + srcTableName + " does not exist on " + srcDatabaseInfo);
 
-            var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/); 
 
-            
             //new table will start with the same name as the as the old scripted one
             DiscoveredTable newTable = destDatabaseInfo.ExpectTable(destTableName);
-
-            //replace all references to the old table with the new table name
-            sql = sql.Replace(sourceTable.GetFullyQualifiedName(), newTable.GetFullyQualifiedName());
-
+            
+            var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/,newTable); 
+            
             using (var con = destDatabaseInfo.Server.GetConnection())
             {
                 con.Open();

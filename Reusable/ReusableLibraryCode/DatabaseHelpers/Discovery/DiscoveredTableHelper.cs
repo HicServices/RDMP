@@ -43,7 +43,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             }
         }
 
-        public string ScriptTableCreation(DiscoveredTable table, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt)
+        /// <inheritdoc/>
+        public string ScriptTableCreation(DiscoveredTable table, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt, DiscoveredTable toCreateTable = null)
         {
             List<DatabaseColumnRequest> columns = new List<DatabaseColumnRequest>();
 
@@ -60,7 +61,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 columns.Add(colRequest);
             }
 
-            return table.Database.Helper.GetCreateTableSql(table.Database, table.GetRuntimeName(), columns.ToArray(),null,false);
+            var destinationTable = toCreateTable ?? table;
+
+            return table.Database.Helper.GetCreateTableSql(destinationTable.Database, destinationTable.GetRuntimeName(), columns.ToArray(), null, false);
         }
 
         public virtual bool IsEmpty(DbConnection connection, DiscoveredTable discoveredTable, DbTransaction transaction)
