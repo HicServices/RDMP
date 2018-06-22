@@ -19,7 +19,7 @@
             <dependency id="log4net" version="2.0.3" />
             <dependency id="Common.Logging" version="3.4.1" />
             <dependency id="CsvHelper" version="2.11.0" />
-            <dependency id="MySql.Data" version="[6.9.3]" />
+            <dependency id="MySql.Data" version="[8.0.11]" />
             <dependency id="Newtonsoft.Json" version="9.0.1" />
             <dependency id="Oracle.ManagedDataAccess" version="12.1.2400" />
             <dependency id="AutoCompleteMenu-ScintillaNET" version="1.5.0" />
