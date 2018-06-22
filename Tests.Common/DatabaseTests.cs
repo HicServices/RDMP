@@ -430,30 +430,20 @@ delete from {1}..Project
         protected void SetupLowPrivelegeUserRightsFor(TableInfo ti)
         {
             //get access to the database using the current credentials
-            var db = DataAccessPortal.GetInstance().ExpectDatabase(ti,DataAccessContext.InternalDataProcessing);
-            
-            using (var con = db.Server.GetConnection())
-            {
-                con.Open();
+
+            var username = TestDatabaseSettings.GetLowPrivelegeUsername(ti.DatabaseType);
+            var password = TestDatabaseSettings.GetLowPrivelegePassword(ti.DatabaseType);
                 
-                var username = TestDatabaseSettings.GetLowPrivelegeUsername(ti.DatabaseType);
-                var passWord = TestDatabaseSettings.GetLowPrivelegePassword(ti.DatabaseType);
-                
-                if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(passWord))
-                    Assert.Inconclusive();
+            if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                Assert.Inconclusive();
 
-                var newCredentials = new DataAccessCredentials(CatalogueRepository, TestDatabaseSettings.ServerName);
+            //remove any existing credentials
+            foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
+                CatalogueRepository.TableInfoToCredentialsLinker.BreakAllLinksBetween(cred, ti);
 
-                newCredentials.Password = passWord;
-                newCredentials.SaveToDatabase();
-
-                var previousCreds = ti.GetCredentialsIfExists(DataAccessContext.Any);
-
-                if(previousCreds != null)
-                    CatalogueRepository.TableInfoToCredentialsLinker.BreakLinkBetween(previousCreds,ti,DataAccessContext.Any);
-
-                CatalogueRepository.TableInfoToCredentialsLinker.CreateLinkBetween(newCredentials,ti,DataAccessContext.Any);
-            }
+            //set the new ones
+            DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
+            credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
             
         }
     }
