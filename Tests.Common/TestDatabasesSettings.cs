@@ -23,7 +23,7 @@ namespace Tests.Common
         public string OracleLowPrivilegeUsername { get; set; }
         public string OracleLowPrivilegePassword { get; set; }
 
-        public string GetLowPrivelegeUsername(DatabaseType databaseType)
+        public string GetLowPrivilegeUsername(DatabaseType databaseType)
         {
             switch (databaseType)
             {
@@ -38,7 +38,7 @@ namespace Tests.Common
             }
         }
 
-        public string GetLowPrivelegePassword(DatabaseType databaseType)
+        public string GetLowPrivilegePassword(DatabaseType databaseType)
         {
             switch (databaseType)
             {

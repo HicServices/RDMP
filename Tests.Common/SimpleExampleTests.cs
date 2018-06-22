@@ -32,7 +32,7 @@ namespace Tests.Common
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MYSQLServer)]
-        public void TestReadDataLowPriveleges(DatabaseType type)
+        public void TestReadDataLowPrivileges(DatabaseType type)
         {
             var database = GetCleanedServer(type);
 
@@ -55,7 +55,7 @@ namespace Tests.Common
             Import(tbl, out tableInfo, out columnInfos);
 
             //setup credentials for the table in RDMP (this will be Inconclusive if you have not enabled it in TestDatabases.txt
-            SetupLowPrivelegeUserRightsFor(tableInfo);
+            SetupLowPrivilegeUserRightsFor(tableInfo);
 
             //request access to the database using DataLoad context
             var newDatabase = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);

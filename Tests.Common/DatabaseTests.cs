@@ -425,14 +425,13 @@ delete from {1}..Project
 
             return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
         }
-
-
-        protected void SetupLowPrivelegeUserRightsFor(TableInfo ti)
+        
+        protected void SetupLowPrivilegeUserRightsFor(TableInfo ti)
         {
             //get access to the database using the current credentials
 
-            var username = TestDatabaseSettings.GetLowPrivelegeUsername(ti.DatabaseType);
-            var password = TestDatabaseSettings.GetLowPrivelegePassword(ti.DatabaseType);
+            var username = TestDatabaseSettings.GetLowPrivilegeUsername(ti.DatabaseType);
+            var password = TestDatabaseSettings.GetLowPrivilegePassword(ti.DatabaseType);
                 
             if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 Assert.Inconclusive();

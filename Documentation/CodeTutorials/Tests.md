@@ -55,7 +55,7 @@ public class MyTests : DatabaseTests
 }
 ```
 
-If you want to test a system running under a database user account with limited access rights you can use `DatabaseTests.SetupLowPrivelegeUserRightsFor`.  You will have to create the user account yourself and configure connect etc priveleges.
+If you want to test a system running under a database user account with limited access rights you can use `DatabaseTests.SetupLowPrivilegeUserRightsFor`.  You will have to create the user account yourself and configure connect etc privileges.
 
 
 ```csharp
@@ -64,7 +64,7 @@ public class MyTests : DatabaseTests
 	[TestCase(DatabaseType.MicrosoftSQLServer)]
 	[TestCase(DatabaseType.Oracle)]
 	[TestCase(DatabaseType.MYSQLServer)]
-	public void TestReadDataLowPriveleges(DatabaseType type)
+	public void TestReadDataLowPrivileges(DatabaseType type)
 	{
 		var database = GetCleanedServer(type);
 
@@ -87,7 +87,7 @@ public class MyTests : DatabaseTests
 		Import(tbl, out tableInfo, out columnInfos);
 
 		//setup credentials for the table in RDMP (this will be Inconclusive if you have not enabled it in TestDatabases.txt
-		SetupLowPrivelegeUserRightsFor(tableInfo);
+		SetupLowPrivilegeUserRightsFor(tableInfo);
 
 		//request access to the database using DataLoad context
 		var newDatabase = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);

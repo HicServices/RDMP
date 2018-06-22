@@ -19,6 +19,7 @@ using LoadModules.Generic.Attachers;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
@@ -26,22 +27,23 @@ using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 {
-    public class CrossDatabaseDataLoadTests :DatabaseTests
+    public class CrossDatabaseDataLoadTests : DatabaseTests
     {
         public enum TestCase
         {
             Normal,
-            LowPrivelegeLoaderAccount,
+            LowPrivilegeLoaderAccount,
             ForeignKeyOrphans
         }
 
         [TestCase(DatabaseType.Oracle,TestCase.Normal)]
         [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivelegeLoaderAccount)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
-        [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivelegeLoaderAccount)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
+
             var defaults = new ServerDefaults(CatalogueRepository);
             defaults.ClearDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer);
 
@@ -80,8 +82,8 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 
             TableInfo ti = Import(tbl, lmd,logManager);
 
-            if (testCase == TestCase.LowPrivelegeLoaderAccount)
-                SetupLowPrivelegeUserRightsFor(ti);
+            if (testCase == TestCase.LowPrivilegeLoaderAccount)
+                SetupLowPrivilegeUserRightsFor(ti);
 
             var projectDirectory = SetupLoadDirectory(lmd);
 
