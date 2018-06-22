@@ -15,13 +15,17 @@ Or alternatively you can run build.bat to perform a console build
 	.\build.bat [TEST|LIVE]
 
 ## Integration Test Database
-Before running integration tests you to run DatabaseCreation.exe with appropriate parameters
+Before running tests you should run DatabaseCreation.exe with appropriate parameters
 
-For example if you have a local server you can run 
-		cd .\DatabaseCreation\bin\Debug\
-		DatabaseCreation.exe localhost\sqlexpress TEST_ -D"
+For example if you have a local sql server express instance on your development PC you can run 
+```
+cd .\Tools\DatabaseCreation\bin\Debug\
+DatabaseCreation.exe localhost\sqlexpress TEST_ -D
+```
+
 If you need to change the server name or database prefix from the above example then before running the integration tests you will have to update ".\Tests.Common\DatabaseTests.txt" to have a matching servername and prefix.
-	__WARNING__:Integration tests will delete the contents of the TEST_ databases before each test is run 
+
+__WARNING__:DatabaseTests will delete the contents of the TEST_ databases before each test is run and some will create temporary databases/tables during runtime, therefore it is important that you do not use a production server for integration testing
 
 ## Running the software
 The easiest way to run RDMP is via the click once package (See Install) but if you want to run it directly from source then launch the startup project 

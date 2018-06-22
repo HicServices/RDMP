@@ -23,13 +23,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
                 DbCommand cmd = DatabaseCommandHelper.GetCommand(@"SELECT *
 FROM   all_tab_cols
-WHERE  table_name = :table_name
+WHERE  table_name = :table_name AND owner =:owner
 ", connection.Connection);
                 cmd.Transaction = connection.Transaction;
 
                 DbParameter p = new OracleParameter("table_name", OracleDbType.Varchar2);
                 p.Value = tableName;
                 cmd.Parameters.Add(p);
+
+                DbParameter p2 = new OracleParameter("owner", OracleDbType.Varchar2);
+                p2.Value = database;
+                cmd.Parameters.Add(p2);
 
                 using (var r = cmd.ExecuteReader())
                 {
@@ -50,7 +54,7 @@ WHERE  table_name = :table_name
                 //get primary key information 
                 cmd = new OracleCommand(@"SELECT cols.table_name, cols.column_name, cols.position, cons.status, cons.owner
 FROM all_constraints cons, all_cons_columns cols
-WHERE cols.table_name = :table_name
+WHERE cols.table_name = :table_name AND cols.owner = :owner
 AND cons.constraint_type = 'P'
 AND cons.constraint_name = cols.constraint_name
 AND cons.owner = cols.owner
@@ -62,6 +66,10 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
                 p.Value = tableName;
                 cmd.Parameters.Add(p);
 
+
+                p2 = new OracleParameter("owner", OracleDbType.Varchar2);
+                p2.Value = database;
+                cmd.Parameters.Add(p2);
 
                 using (var r = cmd.ExecuteReader())
                 {

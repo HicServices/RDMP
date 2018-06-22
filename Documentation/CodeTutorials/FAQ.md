@@ -6,6 +6,7 @@
 4. [My metadata databases are being hammered by thousands of requests](#databaseDdos)
 5. [How does RDMP handle untyped input (e.g. csv)?](#dataTypeComputer)
 6. [Does RDMP Support Plugins?](#plugins)
+7. [Are there Unit/Integration Tests?](#tests)
 
 <a name="reorder"></a>
 ### 1. How do I stop some nodes being reordered in RDMPCollectionUIs?
@@ -65,3 +66,7 @@ https://github.com/HicServices/RDMP/tree/develop/Reusable/ReusableLibraryCode/Da
 Yes, RDMP supports both functional plugins (e.g. new anonymisation components, new load plugins etc) as well as UI plugins (e.g. new operations when you right click a `Catalogue`).
 
 https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/PluginWriting.md
+
+<a name="tests"></a>
+### 7. Are there Unit/Integration Tests?
+Yes there are over 1,000 unit and integration tests, this is covered in [Tests](Tests.md)
