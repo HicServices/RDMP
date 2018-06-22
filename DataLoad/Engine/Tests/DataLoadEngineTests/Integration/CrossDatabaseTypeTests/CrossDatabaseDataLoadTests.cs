@@ -28,10 +28,19 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 {
     public class CrossDatabaseDataLoadTests :DatabaseTests
     {
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
-        public void Load(DatabaseType databaseType)
+        public enum TestCase
+        {
+            Normal,
+            LowPrivelegeLoaderAccount,
+            ForeignKeyOrphans
+        }
+
+        [TestCase(DatabaseType.Oracle,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivelegeLoaderAccount)]
+        [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivelegeLoaderAccount)]
+        public void Load(DatabaseType databaseType, TestCase testCase)
         {
             var defaults = new ServerDefaults(CatalogueRepository);
             defaults.ClearDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer);
@@ -70,6 +79,9 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
 
             TableInfo ti = Import(tbl, lmd,logManager);
+
+            if (testCase == TestCase.LowPrivelegeLoaderAccount)
+                SetupLowPrivelegeUserRightsFor(ti);
 
             var projectDirectory = SetupLoadDirectory(lmd);
 
