@@ -58,7 +58,7 @@ namespace ANOStore.ANOEngineering
                     {
                         //we might have to refactor or port JoinInfos to these tables so we should establish what the parenthood of them was
                         foreach (ColumnInfo columnInfo in skippedTable.ColumnInfos)
-                            GetNewColumnInfoForOld(columnInfo);
+                            GetNewColumnInfoForOld(columnInfo,true);
                     }
                     
                     //for each table that isn't being skipped
@@ -321,31 +321,33 @@ namespace ANOStore.ANOEngineering
         /// Returns the newly created / already existing NEW ANO column info when passed the old (identifiable original) ColumnInfo
         /// </summary>
         /// <param name="col"></param>
+        /// <param name="isOptional"></param>
         /// <returns></returns>
-        private ColumnInfo GetNewColumnInfoForOld(ColumnInfo col)
+        private ColumnInfo GetNewColumnInfoForOld(ColumnInfo col, bool isOptional = false)
         {
             //it's one we migrated ourselves
             if (_parenthoodDictionary.ContainsKey(col))
                 return (ColumnInfo)_parenthoodDictionary[col];
-            else
-            {
-                //it's one that was already existing before we did ANO migration e.g. a SkippedTableInfo (this can happen when there are 2+ tables underlying a Catalogue and you have already ANO one of those Tables previously (e.g. when it is a shared table with other Catalogues)
+            
+            //it's one that was already existing before we did ANO migration e.g. a SkippedTableInfo (this can happen when there are 2+ tables underlying a Catalogue and you have already ANO one of those Tables previously (e.g. when it is a shared table with other Catalogues)
 
-                //find a reference to the new ColumnInfo Location (note that it is possible the TableInfo was skipped, in which case we should still expect to find ColumnInfos that reference the new location because you must have created it somehow right?)
-                var syntaxHelper = _planManager.TargetDatabase.Server.GetQuerySyntaxHelper();
+            //find a reference to the new ColumnInfo Location (note that it is possible the TableInfo was skipped, in which case we should still expect to find ColumnInfos that reference the new location because you must have created it somehow right?)
+            var syntaxHelper = _planManager.TargetDatabase.Server.GetQuerySyntaxHelper();
 
-                var toReturn = FindNewColumnNamed(syntaxHelper,col,col.GetRuntimeName());
+            var toReturn = FindNewColumnNamed(syntaxHelper,col,col.GetRuntimeName(),isOptional);
                 
-                if (toReturn == null)
-                    toReturn = FindNewColumnNamed(syntaxHelper,col,"ANO" + col.GetRuntimeName());
+            if (toReturn == null)
+                toReturn = FindNewColumnNamed(syntaxHelper,col,"ANO" + col.GetRuntimeName(),isOptional);
 
-                if(toReturn == null)
+            if(toReturn == null)
+                if (isOptional)
+                    return null;
+                else
                     throw new Exception("Catalogue '" + _planManager.Catalogue + "' contained a CatalogueItem referencing Column '" + col + "' the ColumnInfo was not migrated (which is fine) but we then could not find ColumnInfo in the new ANO dataset (if it was part of SkippedTables why doesn't the Catalogue have a reference to the new location?)");
 
-                _parenthoodDictionary.Add(col,toReturn);
+            _parenthoodDictionary.Add(col,toReturn);
 
-                return toReturn;
-            }
+            return toReturn;
         }
 
 
@@ -357,8 +359,9 @@ namespace ANOStore.ANOEngineering
         /// <param name="syntaxHelper"></param>
         /// <param name="col"></param>
         /// <param name="expectedName"></param>
+        /// <param name="isOptional"></param>
         /// <returns></returns>
-        private ColumnInfo FindNewColumnNamed(IQuerySyntaxHelper syntaxHelper, ColumnInfo col, string expectedName)
+        private ColumnInfo FindNewColumnNamed(IQuerySyntaxHelper syntaxHelper, ColumnInfo col, string expectedName, bool isOptional)
         {
             string expectedNewName = syntaxHelper.EnsureFullyQualified(
                 _planManager.TargetDatabase.GetRuntimeName(),
@@ -371,10 +374,10 @@ namespace ANOStore.ANOEngineering
             bool failedANOToo = false;
 
             //maybe it was anonymised in the other configuration?
-            if (columns.Length == 0 && !expectedName.StartsWith("ANO"))
+            if (columns.Length == 0 && !expectedName.StartsWith("ANO",StringComparison.CurrentCultureIgnoreCase))
                 try
                 {
-                    return FindNewColumnNamed(syntaxHelper,col,"ANO" + expectedName);
+                    return FindNewColumnNamed(syntaxHelper,col,"ANO" + expectedName, isOptional);
                 }
                 catch (Exception)
                 {
@@ -394,6 +397,9 @@ namespace ANOStore.ANOEngineering
 
             if (columnsFromCorrectServerThatAreaAlsoLocalImports.Length == 1)
                 return columnsFromCorrectServerThatAreaAlsoLocalImports[0];
+
+            if (isOptional)
+                return null;
 
             throw new Exception("Found '" + columns.Length + "' ColumnInfos called '" + expectedNewName + "'" + (failedANOToo ? " (Or 'ANO" + expectedName + "')" : ""));
         }
