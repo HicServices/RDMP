@@ -71,7 +71,7 @@ namespace CatalogueLibrary.Data
                 {
                     {"cid", credentials.ID},
                     {"tid", tableInfo.ID}
-                });
+                },false);
         }
 
         /// <summary>
