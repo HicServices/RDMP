@@ -10,24 +10,20 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
 
         protected override bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord)
         {
-            try
-            {
-                var t = decimal.Parse(candidateString);
+            decimal t;
 
-                int before;
-                int after;
-
-                GetDecimalPlaces(t, out before, out after);
-
-                sizeRecord.IncreaseTo(before,after);
-
-                //could be whole number with no decimal
-                return true;
-            }
-            catch (Exception)
-            {
+            if (!decimal.TryParse(candidateString, out t))
                 return false;
-            }
+
+            int before;
+            int after;
+
+            GetDecimalPlaces(t, out before, out after);
+
+            sizeRecord.IncreaseTo(before,after);
+
+            //could be whole number with no decimal
+            return true;
         }
 
         private void GetDecimalPlaces(decimal value, out int before, out int after)
