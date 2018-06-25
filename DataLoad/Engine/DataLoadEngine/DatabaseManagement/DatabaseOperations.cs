@@ -45,7 +45,7 @@ namespace DataLoadEngine.DatabaseManagement
                 bool drop = false;
                 var colName = column.GetRuntimeName();
 
-                if (column.DataType.IsIdentity())
+                if (column.DataType.IsAutoIncrement())
                     drop = true;
 
                 if (colName.StartsWith("hic_") && dropHICColumns)

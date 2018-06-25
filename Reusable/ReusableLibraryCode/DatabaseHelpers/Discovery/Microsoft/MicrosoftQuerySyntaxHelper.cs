@@ -42,6 +42,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             }
         }
 
+        public override string GetAutoIncrementKeywordIfAny()
+        {
+            return "IDENTITY(1,1)";
+        }
+
         public override string EnsureWrappedImpl(string databaseOrTableName)
         {
             return "[" + GetRuntimeName(databaseOrTableName) + "]";

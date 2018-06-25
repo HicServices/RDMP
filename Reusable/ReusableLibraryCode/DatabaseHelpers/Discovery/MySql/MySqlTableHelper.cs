@@ -29,6 +29,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
                     if (r["Key"].Equals("PRI"))
                         toAdd.IsPrimaryKey = true;
+                    
+                    toAdd.AutoIncrement = r["Extra"] as string == "auto_increment";
 
                     toAdd.DataType = new DiscoveredDataType(r,SensibleTypeFromMySqlType(r["Type"].ToString()),toAdd);
                     columns.Add(toAdd);

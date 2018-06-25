@@ -25,7 +25,7 @@ namespace DataLoadEngine.Migration.QueryBuilding
             foreach (DiscoveredColumn col in _migrationColumnSet.FieldsToDiff)
             {
                 //if it is hic_ or identity specification
-                if(col.GetRuntimeName().StartsWith(ignorePrefix) || col.DataType.IsIdentity())
+                if(col.GetRuntimeName().StartsWith(ignorePrefix) || col.DataType.IsAutoIncrement())
                     continue;
 
                 sql += tableAlias + "[" + col.GetRuntimeName() + "],";

@@ -93,7 +93,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
 
                 //add the column name and accompanying datatype
-                bodySql += syntaxHelper.EnsureWrapped(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL") + "," + Environment.NewLine;
+                bodySql += string.Format("{0} {1} {2} {3},"+ Environment.NewLine,
+                    syntaxHelper.EnsureWrapped(col.ColumnName),
+                    datatype,
+                    col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL",
+                    col.AutoIncrement ? syntaxHelper.GetAutoIncrementKeywordIfAny():"");
             }
 
             var pks = columns.Where(c => c.IsPrimaryKey).ToArray();

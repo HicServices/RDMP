@@ -84,5 +84,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                     throw new ArgumentOutOfRangeException("function");
             }
         }
+
+        public override string GetAutoIncrementKeywordIfAny()
+        {
+            return "AUTO_INCREMENT";
+        }
     }
 }

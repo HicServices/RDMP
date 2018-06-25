@@ -37,9 +37,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
         public bool IsPrimaryKey {get; set;}
+        public bool AutoIncrement { get; set; }
+
         public DiscoveredDataType DataType { get; set; }
         public string Format { get; set; }
-
+        
         public string GetTopXSql(int topX, bool discardNulls)
         {
             return Helper.GetTopXSqlForColumn(Table.Database, Table, this, topX, discardNulls);

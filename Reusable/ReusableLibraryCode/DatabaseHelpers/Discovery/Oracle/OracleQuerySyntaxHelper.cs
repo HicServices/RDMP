@@ -51,6 +51,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             }
         }
 
+        public override string GetAutoIncrementKeywordIfAny()
+        {
+            //https://stackoverflow.com/questions/11296361/how-to-create-id-with-auto-increment-on-oracle
+            return null;
+        }
+
         public override string DatabaseTableSeparator
         {
             get { return "."; }

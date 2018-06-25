@@ -261,5 +261,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
             return adjustedHeader;
         }
+
+        public abstract string GetAutoIncrementKeywordIfAny();
     }
 }

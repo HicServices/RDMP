@@ -52,7 +52,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             {
                 string sqlType = c.DataType.SQLType;
 
-                if (c.DataType.IsIdentity() && convertIdentityToInt)
+                if (c.DataType.IsAutoIncrement() && convertIdentityToInt)
                     sqlType = "int";
 
                 var colRequest = new DatabaseColumnRequest(c.GetRuntimeName(),sqlType , c.AllowNulls || dropNullability);

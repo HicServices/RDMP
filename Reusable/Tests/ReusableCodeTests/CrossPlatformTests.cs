@@ -630,6 +630,26 @@ namespace ReusableCodeTests
             }
         }
 
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void CreateTable_AutoIncrementColumnTest(DatabaseType type)
+        {
+            database = GetCleanedServer(type);
+
+            var tbl =  database.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("IdColumn", new DatabaseTypeRequest(typeof (int)))
+                {
+                    AllowNulls = false,
+                    AutoIncrement = true,
+                    IsPrimaryKey = true
+                }
+            });
+
+            Assert.IsTrue(tbl.DiscoverColumn("IdColumn").DataType.IsAutoIncrement());
+            
+        }
+
         [TestFixtureTearDown]
         public void TearDown()
         {

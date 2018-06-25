@@ -131,10 +131,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             if (obj.GetType() != this.GetType()) return false;
             return Equals((DiscoveredDataType)obj);
         }
-        
-        public bool IsIdentity()
+
+        public bool IsAutoIncrement()
         {
-            return Column.Table.Database.Server.Helper.GetQuerySyntaxHelper().TypeTranslater.IsIdentity(SQLType);
+            return Column.AutoIncrement || Column.Table.Database.Server.Helper.GetQuerySyntaxHelper().TypeTranslater.IsIdentity(SQLType);
         }
     }
 }
