@@ -2,24 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.DataRelease;
-using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using HIC.Logging.Listeners;
-using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Runners
 {
+    /// <summary>
+    /// Runs the release process for one or more <see cref="ExtractionConfiguration"/> in the same <see cref="Project"/>.  This is the proces by which we gather all the artifacts
+    /// produced by the Extraction Engine (anonymised project extracts, bundled lookups and documents etc) and transmit them somewhere as a final released package.
+    /// </summary>
     public class ReleaseRunner:ManyRunner
     {
         private readonly ReleaseOptions _options;

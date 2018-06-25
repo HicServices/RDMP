@@ -11,6 +11,10 @@ using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Checks
 {
+    /// <summary>
+    /// Checks <see cref="ExtractionConfiguration"/> to ensure they are in a valid state for execution (have a cohort, linkable patient columns etc).  Optionally also checks
+    /// each dataset in the configuration with a <see cref="SelectedDataSetsChecker"/>
+    /// </summary>
     public class ExtractionConfigurationChecker:ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;

@@ -5,6 +5,9 @@ using RDMPAutomationService.Options.Abstracts;
 
 namespace RDMPAutomationService.Options
 {
+    /// <summary>
+    /// Options for the Extraction Engine which performs cohort linkage against datasets and extracts anonymous datasets
+    /// </summary>
     [Verb("extract", HelpText = "Runs the Data Extraction Engine")]
     public class ExtractionOptions:ConcurrentRDMPCommandLineOptions
     {

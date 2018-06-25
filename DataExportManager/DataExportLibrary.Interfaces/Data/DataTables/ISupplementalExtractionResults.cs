@@ -2,14 +2,15 @@ using System;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
+    /// <summary>
+    /// See SupplementalExtractionResults
+    /// </summary>
     public interface ISupplementalExtractionResults : IExtractionResults
     {
         int? CumulativeExtractionResults_ID { get; }
         int? ExtractionConfiguration_ID { get; }
 
         bool IsGlobal { get; }
-        
-        string SQLExecuted { get; set; }
         
         string ExtractedType { get; set; }
         int ExtractedId { get; set; }

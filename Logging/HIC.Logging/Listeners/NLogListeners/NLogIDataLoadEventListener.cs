@@ -4,6 +4,9 @@ using ReusableLibraryCode.Progress;
 
 namespace HIC.Logging.Listeners.NLogListeners
 {
+    /// <summary>
+    /// <see cref="IDataLoadEventListener"/> that passes all events to an <see cref="NLog.LogManager"/>.  Optionally throws on Errors (after logging).
+    /// </summary>
     public class NLogIDataLoadEventListener : NLogListener,IDataLoadEventListener
     {
         public NLogIDataLoadEventListener(bool throwOnError):base(throwOnError)

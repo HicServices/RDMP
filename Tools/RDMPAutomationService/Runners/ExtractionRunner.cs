@@ -23,6 +23,10 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Runners
 {
+    /// <summary>
+    /// Runs the extraction process for an <see cref="ExtractionConfiguration"/> in which all the datasets are linked and extracted to appropriate destination
+    /// (e.g. CSV, remote database etc)
+    /// </summary>
     public class ExtractionRunner : ManyRunner
     {
         private ExtractionOptions _options;

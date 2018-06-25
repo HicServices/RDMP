@@ -6,6 +6,10 @@ using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Checks
 {
+    /// <summary>
+    /// Checks that all the globals (<see cref="SupportingDocument"/> / <see cref="SupportingSQLTable"/>) that would be fetched as part of an
+    /// <see cref="ExtractionConfiguration"/> are accessible.
+    /// </summary>
     public class GlobalExtractionChecker : ICheckable
     {
         private readonly ExtractionConfiguration _configuration;

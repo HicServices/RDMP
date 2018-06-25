@@ -4,6 +4,10 @@ using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Checks
 {
+    /// <summary>
+    /// Checks the release state of the Globals that should have been extracted as part of the given <see cref="ExtractionConfiguration"/>.  If they
+    /// are missing then the overall release should not be run.
+    /// </summary>
     public class GlobalsReleaseChecker:ICheckable
     {
         private readonly IExtractionConfiguration[] _configurations;

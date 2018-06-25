@@ -4,6 +4,9 @@ using ReusableLibraryCode.Checks;
 
 namespace HIC.Logging.Listeners.NLogListeners
 {
+    /// <summary>
+    /// <see cref="ICheckNotifier"/> that passes all events to an <see cref="NLog.LogManager"/>.  Optionally throws on Errors (after logging).
+    /// </summary>
     public class NLogICheckNotifier : NLogListener,ICheckNotifier
     {
         public bool AcceptFixes { get; set; }
