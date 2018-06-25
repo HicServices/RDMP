@@ -171,6 +171,11 @@ namespace CatalogueManager.LoadExecutionUIs
             _activator.ActivateViewLog(_loadMetadata);
         }
 
+        private void btnLoadDiagram_Click(object sender, EventArgs e)
+        {
+            _activator.ActivateViewLoadMetadataDiagram(this, _loadMetadata);
+        }
+
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DatasetLoadControl_Design, UserControl>))]

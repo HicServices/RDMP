@@ -36,6 +36,8 @@ namespace CatalogueManager.Icons.IconProvision
 
         protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
 
+        private DatabaseTypeIconProvider _databaseTypeIconProvider = new DatabaseTypeIconProvider();
+
         public CatalogueIconProvider(IIconProvider[] pluginIconProviders)
         {
             _pluginIconProviders = pluginIconProviders;
@@ -117,6 +119,9 @@ namespace CatalogueManager.Icons.IconProvision
 
             if (ConceptIs(typeof (DashboardObjectUse),concept))
                 return GetImage(RDMPConcept.DashboardControl, OverlayKind.Link);
+
+            if (concept is DatabaseType)
+                return _databaseTypeIconProvider.GetImage((DatabaseType)concept);
 
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {

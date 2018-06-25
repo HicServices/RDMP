@@ -54,7 +54,10 @@
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.tbMappedDataPath = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.pbDatabaseProvider = new System.Windows.Forms.PictureBox();
+            this.ddDatabaseType = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbServer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDatabaseProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // pbServer
@@ -251,7 +254,7 @@
             // 
             this.tbServerName.Location = new System.Drawing.Point(96, 59);
             this.tbServerName.Name = "tbServerName";
-            this.tbServerName.Size = new System.Drawing.Size(660, 20);
+            this.tbServerName.Size = new System.Drawing.Size(507, 20);
             this.tbServerName.TabIndex = 2;
             this.tbServerName.TextChanged += new System.EventHandler(this.tbServerName_TextChanged);
             // 
@@ -289,10 +292,30 @@
             this.label6.TabIndex = 50;
             this.label6.Text = "Data Path Map:";
             // 
+            // pbDatabaseProvider
+            // 
+            this.pbDatabaseProvider.Location = new System.Drawing.Point(737, 59);
+            this.pbDatabaseProvider.Name = "pbDatabaseProvider";
+            this.pbDatabaseProvider.Size = new System.Drawing.Size(19, 19);
+            this.pbDatabaseProvider.TabIndex = 170;
+            this.pbDatabaseProvider.TabStop = false;
+            // 
+            // ddDatabaseType
+            // 
+            this.ddDatabaseType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddDatabaseType.FormattingEnabled = true;
+            this.ddDatabaseType.Location = new System.Drawing.Point(612, 59);
+            this.ddDatabaseType.Name = "ddDatabaseType";
+            this.ddDatabaseType.Size = new System.Drawing.Size(121, 21);
+            this.ddDatabaseType.TabIndex = 169;
+            this.ddDatabaseType.SelectedIndexChanged += new System.EventHandler(this.ddDatabaseType_SelectedIndexChanged);
+            // 
             // ExternalDatabaseServerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pbDatabaseProvider);
+            this.Controls.Add(this.ddDatabaseType);
             this.Controls.Add(this.tbMappedDataPath);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.objectSaverButton1);
@@ -320,8 +343,9 @@
             this.Controls.Add(this.tbServerName);
             this.Controls.Add(this.label3);
             this.Name = "ExternalDatabaseServerUI";
-            this.Size = new System.Drawing.Size(1021, 766);
+            this.Size = new System.Drawing.Size(808, 295);
             ((System.ComponentModel.ISupportInitialize)(this.pbServer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDatabaseProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -355,5 +379,7 @@
         private SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.TextBox tbMappedDataPath;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.PictureBox pbDatabaseProvider;
+        private System.Windows.Forms.ComboBox ddDatabaseType;
     }
 }

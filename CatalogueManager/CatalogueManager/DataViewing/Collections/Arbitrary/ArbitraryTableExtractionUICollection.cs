@@ -11,15 +11,28 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections.Arbitrary
 {
-    internal class ArbitraryTableExtractionUICollection : IViewSQLAndResultsCollection, IDataAccessPoint
+    internal class ArbitraryTableExtractionUICollection : IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
     {
         private DiscoveredTable _table;
+        
+        public DatabaseType DatabaseType { get; private set; }
 
         Dictionary<string, string> _arguments = new Dictionary<string, string>();
         private const string DatabaseKey = "Database";
         private const string ServerKey = "Server";
         private const string TableKey = "Table";
 
+
+        public string Username { get; private set; }
+        public string Password { get; set; }
+        public string GetDecryptedPassword()
+        {
+            return Password;
+        }
+
+        /// <summary>
+        /// probably needed for deserialization or something
+        /// </summary>
         public ArbitraryTableExtractionUICollection()
         {
             DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
@@ -32,6 +45,10 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
             _arguments.Add(ServerKey,_table.Database.Server.Name);
             _arguments.Add(DatabaseKey, _table.Database.GetRuntimeName());
             _arguments.Add(TableKey,_table.GetRuntimeName());
+            DatabaseType = table.Database.Server.DatabaseType;
+
+            Username = table.Database.Server.ExplicitUsernameIfAny;
+            Password = table.Database.Server.ExplicitPasswordIfAny;
         }
         
         public PersistStringHelper Helper { get; private set; }
@@ -76,10 +93,12 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
         public string Server { get { return _arguments[ServerKey]; } }
         public string Database { get { return _arguments[DatabaseKey]; } }
 
-        public DatabaseType DatabaseType { get{return DatabaseType.MicrosoftSQLServer;}}
+        
+
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
         {
-            return null;
+            //we have our own credentials if we do
+            return string.IsNullOrWhiteSpace(Username)? null:this;
         }
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
