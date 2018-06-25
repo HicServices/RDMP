@@ -110,7 +110,7 @@ namespace CatalogueManager.AggregationUIs
                 return;
             }
 
-            if(_cmd != null)
+            if (_cmd != null && _cmd.Connection != null && _cmd.Connection.State != ConnectionState.Closed)
                 _cmd.Cancel();
 
             pbLoading.Visible = false;

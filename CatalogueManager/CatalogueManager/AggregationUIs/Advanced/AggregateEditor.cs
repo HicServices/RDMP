@@ -12,6 +12,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.AggregationUIs.Advanced.Options;
 using CatalogueManager.AutoComplete;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
@@ -91,6 +92,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
             olvJoinTableName.ImageGetter += ImageGetter;
 
             olvJoin.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
+
+            btnGraph.Image = CatalogueIcons.BigGraph;
         }
 
         private object ImageGetter(object rowObject)
@@ -181,7 +184,10 @@ namespace CatalogueManager.AggregationUIs.Advanced
             _activator = activator;
             _aggregate = configuration;
             _options = options ?? new AggregateEditorOptionsFactory().Create(configuration);
-            
+
+            //can graph it if it isn't a cohort one or patient index table
+            btnGraph.Enabled = !_aggregate.IsCohortIdentificationAggregate;
+
             ReloadUIFromDatabase();
         }
 
@@ -274,7 +280,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 pictureBox1.Image = CatalogueIcons.BigCohort;
             else
                 pictureBox1.Image = CatalogueIcons.BigGraph;
-            
+
             //set the name to the tostring not the .Name so that we ignore the cic prefix
             tbName.Text = _aggregate.ToString();
         }
@@ -536,6 +542,12 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             if (cic != null)
                 cic.EnsureNamingConvention(_aggregate);
+        }
+
+        private void btnGraph_Click(object sender, EventArgs e)
+        {
+            var cmd = new ExecuteCommandExecuteAggregateGraph(_activator, _aggregate);
+            cmd.Execute();
         }
     }
     
