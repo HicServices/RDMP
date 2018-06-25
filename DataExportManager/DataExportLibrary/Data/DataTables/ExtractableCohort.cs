@@ -334,16 +334,17 @@ namespace DataExportLibrary.Data.DataTables
 
         public static DataTable GetImportableCohortDefinitionsTable(ExternalCohortTable externalSource, out string displayMemberName, out string valueMemberName, out string versionMemberName, out string projectNumberMemberName)
         {
-            SqlConnection con = (SqlConnection) externalSource.GetExpectDatabase().Server.GetConnection();
-
-            con.Open();
-            try
+            var server = externalSource.GetExpectDatabase().Server;
+            using (var con = server.GetConnection())
             {
-                SqlCommand cmd = new SqlCommand(
-                    "Select description,id,version,projectNumber from " + externalSource.DefinitionTableName
-                    + " where exists (Select 1 from " + externalSource.TableName + " WHERE " + externalSource.DefinitionTableForeignKeyField + "=id)"
-                    , con);
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                con.Open();
+                string sql = string.Format(
+                    "Select description,id,version,projectNumber from {0} where exists (Select 1 from {1} WHERE {2}=id)"
+                    , externalSource.DefinitionTableName,
+                     externalSource.TableName,
+                     externalSource.DefinitionTableForeignKeyField);
+
+                var da = server.GetDataAdapter(sql, con);
 
                 displayMemberName = "description";
                 valueMemberName = "id";
@@ -353,10 +354,7 @@ namespace DataExportLibrary.Data.DataTables
                 DataTable toReturn = new DataTable();
                 da.Fill(toReturn);
                 return toReturn;
-            }
-            finally
-            {
-                con.Close();
+                
             }
         }
         

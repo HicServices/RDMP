@@ -114,12 +114,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
             throw new NotImplementedException();
         }
-
-        public override bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds, out Exception exception)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)
         {
             return ((MySqlConnectionStringBuilder) builder).UserID;

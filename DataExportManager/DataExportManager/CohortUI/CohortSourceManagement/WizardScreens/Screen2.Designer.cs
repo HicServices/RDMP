@@ -60,6 +60,7 @@
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // olvName
             // 
@@ -91,7 +92,6 @@
             // 
             // btnNext
             // 
-            this.btnNext.Enabled = false;
             this.btnNext.Location = new System.Drawing.Point(6, 451);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(297, 23);

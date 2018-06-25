@@ -149,30 +149,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             return toReturn;
         }
 
-        public override bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds, out Exception exception)
-        {
-            try
-            {
-                var copyBuilder = new SqlConnectionStringBuilder(builder.ConnectionString);
-                copyBuilder.ConnectTimeout = timeoutInSeconds;
-
-                using (var con = GetConnection(copyBuilder))
-                {
-                    con.Open();
-
-                    con.Close();
-
-                    exception = null;
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                exception = e;
-                return false;
-            }
-        }
-
         public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)
         {
             var u = ((SqlConnectionStringBuilder) builder).UserID;

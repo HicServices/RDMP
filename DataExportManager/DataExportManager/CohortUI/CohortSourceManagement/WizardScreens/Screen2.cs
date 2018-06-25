@@ -74,6 +74,11 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
                 MessageBox.Show("You must select a database");
                 return;
             }
+            if (PrivateIdentifierPrototype == null)
+            {
+                MessageBox.Show("You must select a private identifier datatype");
+                return;
+            }
 
             Wizard = new CreateNewCohortDatabaseWizard(db, RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository);
             var popup = new PopupChecksUI("Creating Cohort Table", false);
@@ -82,6 +87,11 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
             if(popup.GetWorst() <= CheckResult.Warning)
                 if(MessageBox.Show("Close Form?","Close",MessageBoxButtons.YesNo ) == DialogResult.Yes)
                     ParentForm.Close();
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PrivateIdentifierPrototype = (PrivateIdentifierPrototype) listView1.SelectedObject;
         }
     }
 }
