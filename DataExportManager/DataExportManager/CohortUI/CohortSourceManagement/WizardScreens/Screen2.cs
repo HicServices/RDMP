@@ -10,10 +10,17 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortDatabaseWizard;
+using ReusableLibraryCode.Checks;
+using ReusableUIComponents.ChecksUI;
 
 namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
 {
     /// <summary>
+    /// Once you have understood and configured your cohort database schema including private / release identifier datatypes (See Screen2) you can now choose which database/server to 
+    /// create the database on (Sql Server).  Enter the server details.  If you omit username and password then Windows Authentication (Integrated Security) is used, if you enter a
+    /// username/password then these will be stored in the Data Export Manager database in encrypted form (See PasswordEncryptionKeyLocationUI) and used to do Sql Authentication when
+    /// doing data extractions.
+    /// 
     /// Allows you to specify the private and release identifier column name/datatypes for the cohort database you are creating.  It is anticipated that you will have some datasets already
     /// configured in the Data Catalogue Database and have marked your patient identifier columns as IsExtractionIdentifier (See ExtractionInformationUI, ImportSQLTable and 
     /// ForwardEngineerCatalogue).
@@ -43,10 +50,10 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
         {
             base.OnLoad(e);
 
-            Wizard = new CreateNewCohortDatabaseWizard(RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository);
+            serverDatabaseTableSelector1.HideTableComponents();
+            Wizard = new CreateNewCohortDatabaseWizard(null,RepositoryLocator.CatalogueRepository,RepositoryLocator.DataExportRepository);
         }
 
-        public ReleaseIdentifierAssignmentStrategy Strategy { get; private set; }
         public CreateNewCohortDatabaseWizard Wizard { get; private set; }
         public PrivateIdentifierPrototype PrivateIdentifierPrototype { get; private set; }
 
@@ -59,38 +66,22 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
                 MessageBox.Show("It looks like none of the ExtractionInformations in your Catalogue database are marked as IsExtractionIdentifier");
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnNext_Click(object sender, EventArgs e)
         {
-            var prototype = listView1.SelectedObject as PrivateIdentifierPrototype;
-            PrivateIdentifierPrototype = prototype;
-
-            if (prototype == null)
+            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+            if (db == null)
             {
-                cohortSourceDiagram1.SetPrivateIdentifierText("");
-                groupBox1.Enabled = false;
+                MessageBox.Show("You must select a database");
+                return;
             }
-            else
-            {
-                cohortSourceDiagram1.SetPrivateIdentifierText(prototype.RuntimeName + " " + prototype.DataType);
-                groupBox1.Enabled = true;
-            }
-        }
 
-        private void rb_CheckedChanged(object sender, EventArgs e)
-        {
-            btnNext.Enabled = true;
+            Wizard = new CreateNewCohortDatabaseWizard(db, RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository);
+            var popup = new PopupChecksUI("Creating Cohort Table", false);
+            Wizard.CreateDatabase(PrivateIdentifierPrototype, popup);
 
-            if(rbAutoIncrementing.Checked)
-                Strategy = ReleaseIdentifierAssignmentStrategy.Autonum;
-            else
-            if (rbGuid.Checked)
-                Strategy = ReleaseIdentifierAssignmentStrategy.Guid;
-            else if (rbIWantToHackTheReleaseIdentifierMyself.Checked)
-                Strategy = ReleaseIdentifierAssignmentStrategy.LeaveBlank;
-            else
-                btnNext.Enabled = false;
-
-            cohortSourceDiagram1.SetPublicIdentifierText(Wizard.GetReleaseIdentifierNameAndTypeAsSqlString(Strategy));
+            if(popup.GetWorst() <= CheckResult.Warning)
+                if(MessageBox.Show("Close Form?","Close",MessageBoxButtons.YesNo ) == DialogResult.Yes)
+                    ParentForm.Close();
         }
     }
 }

@@ -296,12 +296,6 @@
     <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.Designer.cs">
       <DependentUpon>Screen2.cs</DependentUpon>
     </Compile>
-    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen3.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen3.Designer.cs">
-      <DependentUpon>Screen3.cs</DependentUpon>
-    </Compile>
     <Compile Include="CohortUI\ExtractableCohortCollection.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -506,9 +500,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.resx">
       <DependentUpon>Screen2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CohortUI\CohortSourceManagement\WizardScreens\Screen3.resx">
-      <DependentUpon>Screen3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CohortUI\ExtractableCohortCollection.resx">
       <DependentUpon>ExtractableCohortCollection.cs</DependentUpon>

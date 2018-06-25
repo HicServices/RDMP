@@ -5,6 +5,7 @@ using DataExportLibrary.CohortDatabaseWizard;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using NUnit.Framework;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
@@ -69,7 +70,7 @@ namespace DataExportLibrary.Tests.Cohort
         {
             _extractionInfo1.IsExtractionIdentifier = true;
             _extractionInfo1.SaveToDatabase();
-            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(CatalogueRepository, DataExportRepository);
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository);
 
             //it finds it!
             Assert.IsTrue(wizard.GetPrivateIdentifierCandidates().Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));
@@ -85,7 +86,7 @@ namespace DataExportLibrary.Tests.Cohort
         [Test]
         public void ProposePrivateIdentifierDatatypes()
         {
-            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(CatalogueRepository, DataExportRepository);
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository);
 
             var candidates = wizard.GetPrivateIdentifierCandidates();
 
@@ -100,41 +101,31 @@ namespace DataExportLibrary.Tests.Cohort
             Assert.IsTrue(candidate.MatchingExtractionInformations.Single().ID== _extractionInfo1.ID);
         }
 
-        [Test]
-        [TestCase(ReleaseIdentifierAssignmentStrategy.Autonum)]
-        [TestCase(ReleaseIdentifierAssignmentStrategy.Guid)]
-        [TestCase(ReleaseIdentifierAssignmentStrategy.LeaveBlank)]
-        public void TheIronTest(ReleaseIdentifierAssignmentStrategy strategy)
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void TestActuallyCreatingIt(DatabaseType type)
         {
+            var db = GetCleanedServer(type);
 
-            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseName);
+            //drop it
+            db.ForceDrop();
 
-            if(db.Exists())
-                db.ForceDrop();
-
-            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(CatalogueRepository, DataExportRepository);
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository);
 
             _extractionInfo2.IsExtractionIdentifier = true;
             _extractionInfo2.SaveToDatabase();
 
             var candidate = wizard.GetPrivateIdentifierCandidates().Single(c => c.RuntimeName.Equals("PrivateIdentifierB"));
-            wizard.CreateDatabase(
+            var ect = wizard.CreateDatabase(
                 candidate,
-                strategy, 
-                (SqlConnectionStringBuilder)DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder,
-                cohortDatabaseName,
-                cohortDatabaseName,
                 new ThrowImmediatelyCheckNotifier());
 
             //database should exist
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseName);
             Assert.IsTrue(db.Exists());
 
-            foreach (DiscoveredTable table in db.DiscoverTables(false))
-                table.Drop();
-
-            db.Drop();
-
+            //the ExternalCohortTable should pass tests
+            ect.Check(new ThrowImmediatelyCheckNotifier());
         }
     }
 }

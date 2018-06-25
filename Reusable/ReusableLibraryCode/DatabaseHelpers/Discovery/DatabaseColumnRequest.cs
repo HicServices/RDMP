@@ -16,6 +16,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public bool AllowNulls { get; set; }
         public bool IsPrimaryKey { get; set; }
 
+        public bool AutoIncrement { get; set; }
+
         public DatabaseColumnRequest(string columnName, DatabaseTypeRequest typeRequested, bool allowNulls = true)
         {
             ColumnName = columnName;

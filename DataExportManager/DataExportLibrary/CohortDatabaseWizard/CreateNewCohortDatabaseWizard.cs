@@ -10,6 +10,8 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace DataExportLibrary.CohortDatabaseWizard
 {
@@ -28,11 +30,17 @@ namespace DataExportLibrary.CohortDatabaseWizard
     {
         private readonly CatalogueRepository _catalogueRepository;
         private readonly IDataExportRepository _dataExportRepository;
+        private readonly DiscoveredDatabase _targetDatabase;
 
-        public CreateNewCohortDatabaseWizard(CatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository)
+        private string _releaseIdentifierFieldName = "ReleaseId";
+        private string _definitionTableForeignKeyField = "cohortDefinition_id";
+
+
+        public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase,CatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository)
         {
             _catalogueRepository = catalogueRepository;
             _dataExportRepository = dataExportRepository;
+            _targetDatabase = targetDatabase;
         }
 
         public PrivateIdentifierPrototype[] GetPrivateIdentifierCandidates()
@@ -61,151 +69,68 @@ namespace DataExportLibrary.CohortDatabaseWizard
             return toReturn.ToArray();
         }
 
-        public string GetReleaseIdentifierNameAndTypeAsSqlString(ReleaseIdentifierAssignmentStrategy strategy)
+        public ExternalCohortTable CreateDatabase(PrivateIdentifierPrototype privateIdentifierPrototype, ICheckNotifier notifier)
         {
-            switch (strategy)
+            if (!_targetDatabase.Exists())
             {
-                case ReleaseIdentifierAssignmentStrategy.Unspecified:
-                    return "";
-                case ReleaseIdentifierAssignmentStrategy.Autonum:
-                    return "ReleaseId INT IDENTITY(1,1) NOT NULL";
-                case ReleaseIdentifierAssignmentStrategy.Guid:
-                    return "ReleaseId varchar(255) NOT NULL default CONVERT(varchar(255),newid())";
-                case ReleaseIdentifierAssignmentStrategy.LeaveBlank:
-                    return "ReleaseId varchar(500) NOT NULL";
-                default:
-                    throw new ArgumentOutOfRangeException("strategy");
+                notifier.OnCheckPerformed(new CheckEventArgs("Did not find database "+_targetDatabase +" on server so creating it",CheckResult.Success));
+                _targetDatabase.Create();
             }
-        }
-
-        public ExternalCohortTable CreateDatabase(PrivateIdentifierPrototype privateIdentifierPrototype, ReleaseIdentifierAssignmentStrategy strategy, SqlConnectionStringBuilder builder, string database, string nameForTheNewCohortSource, ICheckNotifier notifier)
-        {
-            if(strategy == ReleaseIdentifierAssignmentStrategy.Unspecified)
-                throw new NotSupportedException("Cannot create unspecified strategy, use LeaveBlank if you want a placeholder release identifier that the user will ALTER/Create it himself");
-
+            
             try
             {
-            
-                var server = new DiscoveredServer(builder);
-                bool createDatabase = !server.ExpectDatabase(database).Exists();
+                var definitionTable = _targetDatabase.CreateTable("CohortDefinition", new[]
+                    {
+                         new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){AllowNulls = false,AutoIncrement = true,IsPrimaryKey = true}, 
+                         new DatabaseColumnRequest("projectNumber",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
+                         new DatabaseColumnRequest("version",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
+                         new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),3000)){AllowNulls =  false},
+                         new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){AllowNulls =  false}
+                    });
 
-                string username = builder.UserID;
-                string password = builder.Password;
+                
+                var idColumn = definitionTable.DiscoverColumn("id");
+                var foreignKey = new DatabaseColumnRequest(_definitionTableForeignKeyField,new DatabaseTypeRequest(typeof (int)), false) {IsPrimaryKey = true};
+                
 
-                using(var con = new SqlConnection(builder.ConnectionString))
+                var cohortTable = _targetDatabase.CreateTable("Cohort",new []
                 {
-
-                    try
-                    {
-                        con.Open();
-                        notifier.OnCheckPerformed(new CheckEventArgs("successfully to server " + builder.DataSource, CheckResult.Success));
-                    }
-                    catch (Exception e)
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs("Could not connect to the server", CheckResult.Fail, e));
-                        return null;
-                    }
-
-                    if(createDatabase)
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs("Did not find database "+database +" on server so creating it",CheckResult.Success));
-                        new SqlCommand("CREATE DATABASE " + database,con).ExecuteNonQuery();
-                        notifier.OnCheckPerformed(new CheckEventArgs("successfully created empty database "+database +" on " + builder.DataSource,CheckResult.Success));
-                    }
-
-
-                    con.ChangeDatabase(database);
-                    notifier.OnCheckPerformed(new CheckEventArgs("Switched connection from master to database " + database,CheckResult.Success));
-                    
-                    
-                    string sql =
-                        string.Format(
-@"
-CREATE TABLE [dbo].[Cohort](
-       {0},
-       {2},
-       [cohortDefinition_id] [int] NOT NULL,
-CONSTRAINT [PK_Cohort] PRIMARY KEY CLUSTERED 
-(
-       [cohortDefinition_id] ASC,
-       {1} ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-CREATE TABLE [dbo].[CohortDefinition](
-       [id] [int] IDENTITY(1,1) NOT NULL,
-       [projectNumber] [int] NOT NULL,
-       [version] [int] NOT NULL,
-       [description] [varchar](4000) NOT NULL,
-       [dtCreated] [date] NOT NULL,
-CONSTRAINT [PK_CohortDefinition] PRIMARY KEY NONCLUSTERED 
-(
-       [id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-SET ANSI_PADDING OFF
-GO
-ALTER TABLE [dbo].[CohortDefinition] ADD  CONSTRAINT [DF_CohortDefinition_dtCreated]  DEFAULT (getdate()) FOR [dtCreated]
-GO
-ALTER TABLE [dbo].[Cohort]  WITH CHECK ADD  CONSTRAINT [FK_Cohort_CohortDefinition] FOREIGN KEY([cohortDefinition_id])
-REFERENCES [dbo].[CohortDefinition] ([id])
-GO
-ALTER TABLE [dbo].[Cohort] CHECK CONSTRAINT [FK_Cohort_CohortDefinition]
-GO
-
-",
-//{0}
-privateIdentifierPrototype.GetDeclarationSql(),
-//{1}
-privateIdentifierPrototype.RuntimeName,
-//{2}
-GetReleaseIdentifierNameAndTypeAsSqlString(strategy),
-//{3}
-"ReleaseId"
-);
-
-
-                    notifier.OnCheckPerformed(new CheckEventArgs("Decided SQL was:" + sql, CheckResult.Success));
-                    try
-                    {
-                        UsefulStuff.ExecuteBatchNonQuery(sql, con);
-                        notifier.OnCheckPerformed(new CheckEventArgs("successfully created tables (your database should be useable now, all that remains is creating in a pointer to it in the RDMP database)", CheckResult.Success));
-                    }
-                    catch (Exception e)
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs("Creation of tables SQL failed", CheckResult.Fail,e));
-                        return null;
-                    }
-
-                    notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source" + sql, CheckResult.Success));
-                    var pointer = new ExternalCohortTable(_dataExportRepository, "")
-                    {
-                        Server = builder.DataSource,
-                        Database = database,
-                        Username = username,
-                        Password = password,
-                        Name = nameForTheNewCohortSource,
-                        TableName = "Cohort",
-                        PrivateIdentifierField = privateIdentifierPrototype.RuntimeName,
-                        ReleaseIdentifierField = "ReleaseId",
-                        DefinitionTableForeignKeyField = "cohortDefinition_id",
-                        DefinitionTableName = "CohortDefinition",
-                    };
-
-                    pointer.SaveToDatabase();
-
-                    notifier.OnCheckPerformed(new CheckEventArgs("successfully created reference to cohort source in data export manager", CheckResult.Success));
-
-                    notifier.OnCheckPerformed(new CheckEventArgs("About to run post creation checks", CheckResult.Success));
-                    pointer.Check(notifier);
-
-                    notifier.OnCheckPerformed(new CheckEventArgs("Finished", CheckResult.Success));
-
-                    return pointer;
+                 new DatabaseColumnRequest(privateIdentifierPrototype.RuntimeName,privateIdentifierPrototype.DataType,false){IsPrimaryKey = true},
+                 new DatabaseColumnRequest(_releaseIdentifierFieldName,new DatabaseTypeRequest(typeof(string),300)), 
+                 foreignKey
                 }
+                ,
+                //foreign key between id and cohortDefinition_id
+                new Dictionary<DatabaseColumnRequest, DiscoveredColumn>() { { foreignKey,idColumn } },true);
+
+                
+                notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
+                var pointer = new ExternalCohortTable(_dataExportRepository, "")
+                {
+                    Server = _targetDatabase.Server.Name,
+                    Database = _targetDatabase.GetRuntimeName(),
+                    Username = _targetDatabase.Server.ExplicitUsernameIfAny,
+                    Password = _targetDatabase.Server.ExplicitPasswordIfAny,
+                    Name = _targetDatabase.GetRuntimeName(),
+                    TableName = cohortTable.GetRuntimeName(),
+                    PrivateIdentifierField = privateIdentifierPrototype.RuntimeName,
+                    ReleaseIdentifierField = _releaseIdentifierFieldName,
+                    DefinitionTableForeignKeyField = _definitionTableForeignKeyField,
+                    DefinitionTableName = definitionTable.GetRuntimeName(),
+                    DatabaseType = _targetDatabase.Server.DatabaseType
+                };
+
+                pointer.SaveToDatabase();
+
+                notifier.OnCheckPerformed(new CheckEventArgs("successfully created reference to cohort source in data export manager", CheckResult.Success));
+
+                notifier.OnCheckPerformed(new CheckEventArgs("About to run post creation checks", CheckResult.Success));
+                pointer.Check(notifier);
+
+                notifier.OnCheckPerformed(new CheckEventArgs("Finished", CheckResult.Success));
+
+                return pointer;
+                
             }
             catch (Exception e)
             {
@@ -215,14 +140,5 @@ GetReleaseIdentifierNameAndTypeAsSqlString(strategy),
                 return null;
             }
         }
-    }
-
-    public enum ReleaseIdentifierAssignmentStrategy
-    {
-        Unspecified,
-
-        Autonum,
-        Guid,
-        LeaveBlank
     }
 }

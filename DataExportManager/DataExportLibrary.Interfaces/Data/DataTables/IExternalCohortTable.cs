@@ -20,7 +20,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         string DefinitionTableForeignKeyField { get; set; }
         
         DiscoveredDatabase GetExpectDatabase();
-        void PushToServer(ICohortDefinition newCohortDefinition, DbConnection con, DbTransaction transaction);
+        void PushToServer(ICohortDefinition newCohortDefinition, IManagedConnection connection);
         bool IDExistsInCohortTable(int originID);
         string GetReleaseIdentifier(IExtractableCohort cohort);
     }

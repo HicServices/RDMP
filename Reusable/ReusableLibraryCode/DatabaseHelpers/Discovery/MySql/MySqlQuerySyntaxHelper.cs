@@ -1,4 +1,5 @@
 ﻿using System;
+using CommandLine;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -77,6 +78,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             {
                 case MandatoryScalarFunctions.GetTodaysDate:
                     return "now()";
+                case MandatoryScalarFunctions.GetGuid:
+                    return "uuid()";
                 default:
                     throw new ArgumentOutOfRangeException("function");
             }

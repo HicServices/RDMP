@@ -117,7 +117,8 @@ namespace DataExportLibrary.Data.DataTables
             SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository,DatabaseType.MicrosoftSQLServer);
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
-                {"Name", name ?? "NewExternalSource" + Guid.NewGuid()}
+                {"Name", name ?? "NewExternalSource" + Guid.NewGuid()},
+                {"DatabaseType",DatabaseType.MicrosoftSQLServer}
             });
         }
 
@@ -126,12 +127,14 @@ namespace DataExportLibrary.Data.DataTables
         {
             SoftwareVersion = r["SoftwareVersion"].ToString();
             Name = r["Name"] as string;
+            var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 
-            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(((DataExportRepository)repository).CatalogueRepository,DatabaseType.MicrosoftSQLServer);
+            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(((DataExportRepository)repository).CatalogueRepository,databaseType);
 
             Server = r["Server"] as string;
             Username = r["Username"] as string;
             Password = r["Password"] as string;
+
 
             if(!string.IsNullOrWhiteSpace(Server))
                 Server = RDMPQuerySyntaxHelper.EnsureValueIsNotWrapped(Server);
@@ -275,9 +278,9 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
         
-        public void PushToServer(ICohortDefinition newCohortDefinition, DbConnection con, DbTransaction transaction)
+        public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
         {
-            var cmdInsert = DatabaseCommandHelper.GetCommand("INSERT INTO " + DefinitionTableName + "(projectNumber,version,description) VALUES (@projectNumber,@version,@description); SELECT @@IDENTITY;", con, transaction);
+            var cmdInsert = DatabaseCommandHelper.GetCommand("INSERT INTO " + DefinitionTableName + "(projectNumber,version,description) VALUES (@projectNumber,@version,@description); SELECT @@IDENTITY;", connection.Connection,connection.Transaction);
             DatabaseCommandHelper.AddParameterWithValueToCommand("@projectNumber",cmdInsert,newCohortDefinition.ProjectNumber);
             DatabaseCommandHelper.AddParameterWithValueToCommand("@version",cmdInsert,newCohortDefinition.Version);
             DatabaseCommandHelper.AddParameterWithValueToCommand("@description",cmdInsert,newCohortDefinition.Description);
@@ -362,10 +365,18 @@ namespace DataExportLibrary.Data.DataTables
                 OnPropertyChanged(); 
             }
         }
-        [NoMappingToDatabase]
+
         public DatabaseType DatabaseType
         {
             get { return SelfCertifyingDataAccessPoint.DatabaseType; }
+            set
+            {
+                if (Equals(SelfCertifyingDataAccessPoint.DatabaseType, value))
+                    return;
+
+                SelfCertifyingDataAccessPoint.DatabaseType = value;
+                OnPropertyChanged();
+            }
         }
 
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)

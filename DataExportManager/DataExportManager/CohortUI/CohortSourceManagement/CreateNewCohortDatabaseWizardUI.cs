@@ -33,7 +33,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
     {
         Screen1 screen1;
         Screen2 screen2;
-        Screen3 screen3;
         
         public ExternalCohortTable ExternalCohortTableCreatedIfAny { get; set; }
 
@@ -43,19 +42,14 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
 
             screen1 = new Screen1();
             screen2 = new Screen2();
-            screen3 = new Screen3(this,screen2);
 
             pStage.Controls.Clear();
             pStage.Controls.Add(screen1);
 
             screen1.btnOk.Click += btnOk_Click;
             screen2.btnBack.Click += btnBackScreen2_Click;
-            screen2.btnNext.Click += btnNextScreen2_Click;
-            screen3.btnBack.Click += btnBackScreen3_Click;
         }
-
         
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -66,31 +60,7 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             screen2.RepositoryLocator = RepositoryLocator;
 
         }
-
-        private void btnNextScreen2_Click(object sender, EventArgs e)
-        {
-            if (screen2.PrivateIdentifierPrototype == null)
-            {
-                MessageBox.Show("You must select a private identifier prototype");
-                return;
-            }
-
-            if(screen2.Strategy == ReleaseIdentifierAssignmentStrategy.Unspecified)
-            {
-                MessageBox.Show("You must select a ReleaseIdentifier Assignment Strategy");
-                return;
-            }
-
-            pStage.Controls.Clear();
-            pStage.Controls.Add(screen3);
-        }
-
-        private void btnBackScreen3_Click(object sender, EventArgs e)
-        {
-            pStage.Controls.Clear();
-            pStage.Controls.Add(screen2);
-        }
-
+        
         void btnBackScreen2_Click(object sender, EventArgs e)
         {
             pStage.Controls.Clear();

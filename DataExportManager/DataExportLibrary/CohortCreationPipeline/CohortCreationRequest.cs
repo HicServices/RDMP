@@ -13,6 +13,7 @@ using DataExportLibrary.Interfaces.Pipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.CohortCreationPipeline
 {
@@ -138,13 +139,13 @@ namespace DataExportLibrary.CohortCreationPipeline
                 notifier.OnCheckPerformed(new CheckEventArgs("User did not provide a description of the cohort for the AuditLog",CheckResult.Fail));
         }
 
-        public void PushToServer(SqlConnection con, SqlTransaction transaction)
+        public void PushToServer(IManagedConnection connection)
         {
             string reason;
             if(!NewCohortDefinition.IsAcceptableAsNewCohort(out reason))
                 throw new Exception(reason);
 
-            NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, con, transaction);
+            NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, connection);
         }
 
         public int ImportAsExtractableCohort()

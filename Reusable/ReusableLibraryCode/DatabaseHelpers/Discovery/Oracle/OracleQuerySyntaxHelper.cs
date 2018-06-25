@@ -44,6 +44,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             {
                 case MandatoryScalarFunctions.GetTodaysDate:
                     return "SYSDATE";
+                    case MandatoryScalarFunctions.GetGuid:
+                    return "SYS_GUID()";
                 default:
                     throw new ArgumentOutOfRangeException("function");
             }

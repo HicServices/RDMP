@@ -1,6 +1,8 @@
 ﻿using System.Data.SqlClient;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.Interfaces.Pipeline
 {
@@ -13,6 +15,6 @@ namespace DataExportLibrary.Interfaces.Pipeline
         ICohortDefinition NewCohortDefinition { get; set; }
         
         int ImportAsExtractableCohort();
-        void PushToServer(SqlConnection con, SqlTransaction transaction);
+        void PushToServer(IManagedConnection transaction);
     }
 }

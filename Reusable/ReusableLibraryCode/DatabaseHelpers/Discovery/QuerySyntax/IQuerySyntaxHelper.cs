@@ -50,7 +50,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
 
     public enum MandatoryScalarFunctions
     {
-        GetTodaysDate
+        /// <summary>
+        /// A scalar function which must return todays datetime.
+        /// </summary>
+        GetTodaysDate,
         
+        /// <summary>
+        /// A scalar function which must return a new random GUID.
+        /// </summary>
+        GetGuid
     }
 }

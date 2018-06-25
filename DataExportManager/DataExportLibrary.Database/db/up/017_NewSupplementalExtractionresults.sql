@@ -38,5 +38,17 @@ begin
 end
 GO
 
+--Cohort Database now gets explicit DatabaseType
+if not exists (select OBJECT_NAME(object_id),* from sys.columns where name ='DatabaseType' and  OBJECT_NAME(object_id) = 'ExternalCohortTable')
+begin
+	alter table ExternalCohortTable add DatabaseType varchar(100) null
+end
+GO
 
+UPDATE ExternalCohortTable set DatabaseType = 'MicrosoftSQLServer' where DatabaseType is null
+GO
 
+if exists (select 1 from sys.columns where name = 'DatabaseType' and OBJECT_NAME(object_id) = 'ExternalCohortTable' and is_nullable = 1)
+  begin
+    alter table ExternalCohortTable alter column DatabaseType varchar(100) not null
+end

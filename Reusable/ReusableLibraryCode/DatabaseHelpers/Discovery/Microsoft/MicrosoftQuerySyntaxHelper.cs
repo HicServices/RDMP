@@ -35,6 +35,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             {
                 case MandatoryScalarFunctions.GetTodaysDate:
                     return "GETDATE()";
+               case MandatoryScalarFunctions.GetGuid:
+                    return "newid()";
                 default:
                     throw new ArgumentOutOfRangeException("function");
             }
