@@ -425,36 +425,61 @@ delete from {1}..Project
 
             return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
         }
-        
-        protected void SetupLowPrivilegeUserRightsFor(TableInfo ti,bool read,bool write)
-        {
-            //get access to the database using the current credentials
 
-            var username = TestDatabaseSettings.GetLowPrivilegeUsername(ti.DatabaseType);
-            var password = TestDatabaseSettings.GetLowPrivilegePassword(ti.DatabaseType);
-                
-            if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        [Flags]
+        public enum TestLowPrivilegePermissions 
+        {
+            Reader = 1,
+            Writer = 2,
+            CreateAndDropTables = 4,
+
+            All = Reader|Writer|CreateAndDropTables
+        }
+
+        protected void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db,TestLowPrivilegePermissions permissions)
+        {
+            SetupLowPrivilegeUserRightsFor(db, permissions, null);
+        }
+        protected void SetupLowPrivilegeUserRightsFor(TableInfo ti, TestLowPrivilegePermissions permissions)
+        {
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
+            SetupLowPrivilegeUserRightsFor(db, permissions, ti);
+        }
+
+        private void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db, TestLowPrivilegePermissions permissions, TableInfo ti)
+        {
+            var dbType = db.Server.DatabaseType;
+
+            //get access to the database using the current credentials
+            var username = TestDatabaseSettings.GetLowPrivilegeUsername(dbType);
+            var password = TestDatabaseSettings.GetLowPrivilegePassword(dbType);
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 Assert.Inconclusive();
 
             //give the user access to the table
-            var sql = GrantAccessSql(username, ti, read, write);
-            var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
+            var sql = GrantAccessSql(username, dbType, permissions);
 
             using (var con = db.Server.GetConnection())
                 UsefulStuff.ExecuteBatchNonQuery(sql, con);
 
-            //remove any existing credentials
-            foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
-                CatalogueRepository.TableInfoToCredentialsLinker.BreakAllLinksBetween(cred, ti);
+            if (ti != null)
+            {
+                //remove any existing credentials
+                foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
+                    CatalogueRepository.TableInfoToCredentialsLinker.BreakAllLinksBetween(cred, ti);
 
-            //set the new ones
-            DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
-            credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
+                //set the new ones
+                DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
+                credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
+            }
+            
         }
 
-        private string GrantAccessSql(string username, TableInfo ti, bool read, bool write)
+
+        private string GrantAccessSql(string username, DatabaseType type, TestLowPrivilegePermissions permissions)
         {
-            switch (ti.DatabaseType)
+            switch (type)
             {
                 case DatabaseType.MicrosoftSQLServer:
                     return string.Format(@"
@@ -464,10 +489,14 @@ GO
 
 CREATE USER [{0}] FOR LOGIN [{0}]
 GO
-{1}ALTER ROLE [db_datareader] ADD MEMBER [{0}]
-{2}ALTER ROLE [db_datawriter] ADD MEMBER [{0}]
+{1} ALTER ROLE [db_datareader] ADD MEMBER [{0}]
+{2} ALTER ROLE [db_datawriter] ADD MEMBER [{0}]
+{3} ALTER ROLE [db_ddladmin] ADD MEMBER [{0}]
 GO
-", username,read?"":"--",write?"":"--");
+", username,
+ permissions.HasFlag(TestLowPrivilegePermissions.Reader) ? "" : "--",
+ permissions.HasFlag(TestLowPrivilegePermissions.Reader) ? "" : "--",
+ permissions.HasFlag(TestLowPrivilegePermissions.CreateAndDropTables) ? "" : "--");
                 case DatabaseType.MYSQLServer:
                     break;
                 case DatabaseType.Oracle:

@@ -115,8 +115,10 @@ MrMurder,2001-01-01,Yella");
 
             //create a reader
             if (testCase == TestCase.LowPrivilegeLoaderAccount)
-                SetupLowPrivilegeUserRightsFor(ti, true, true);
-
+            {
+                SetupLowPrivilegeUserRightsFor(ti, TestLowPrivilegePermissions.Reader|TestLowPrivilegePermissions.Writer);
+                SetupLowPrivilegeUserRightsFor(db.Server.ExpectDatabase("DLE_STAGING"),TestLowPrivilegePermissions.All);
+            }
             var loadFactory = new HICDataLoadFactory(
                 lmd,
                 new HICDatabaseConfiguration(lmd),
@@ -247,7 +249,7 @@ MrMurder,2001-01-01,Yella");
                 Path.Combine(projectDirectory.ForLoading.FullName, "child.csv"),
 @"Parent_ID,ChildNumber,Name,DateOfBirth,Age,Height
 1,1,UpdC1,2001-01-01,20,3.5
-2,1,NewC1,200-01-01,19,null");
+2,1,NewC1,2000-01-01,19,null");
             
             
             //clean up RAW / STAGING etc and generally accept proposed cleanup operations

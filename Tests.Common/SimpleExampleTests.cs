@@ -55,7 +55,7 @@ namespace Tests.Common
             Import(tbl, out tableInfo, out columnInfos);
 
             //setup credentials for the table in RDMP (this will be Inconclusive if you have not enabled it in TestDatabases.txt
-            SetupLowPrivilegeUserRightsFor(tableInfo,true,false);
+            SetupLowPrivilegeUserRightsFor(tableInfo,TestLowPrivilegePermissions.Reader);
 
             //request access to the database using DataLoad context
             var newDatabase = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
