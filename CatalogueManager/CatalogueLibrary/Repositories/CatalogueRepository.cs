@@ -225,7 +225,7 @@ namespace CatalogueLibrary.Repositories
         /// <returns></returns>
         public ColumnInfo[] GetColumnInfosWithNameExactly(string name)
         {
-            return SelectAllWhere<ColumnInfo>("SELECT * FROM ColumnInfo WHERE Name = @name","ID",
+            return SelectAllWhere<ColumnInfo>("SELECT * FROM ColumnInfo WHERE LOWER(Name) = LOWER(@name)","ID",
                 new Dictionary<string, object>
                 {
                     {"name", name}
