@@ -58,6 +58,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
@@ -82,7 +83,10 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 20), false);
 
             if (testCase == TestCase.DodgyCollation)
-                nameCol.Collation = "Latin1_General_CS_AS_KS_WS";
+                if(databaseType == DatabaseType.MicrosoftSQLServer)
+                    nameCol.Collation = "Latin1_General_CS_AS_KS_WS";
+                else if (databaseType == DatabaseType.MYSQLServer)
+                    nameCol.Collation = "latin1_german1_ci";
 
             var tbl = db.CreateTable("MyTable",dt,new []
             {
