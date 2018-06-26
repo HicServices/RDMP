@@ -692,8 +692,27 @@ namespace ReusableCodeTests
             Assert.AreEqual(currentValue.Year,databaseValue.Year);
             Assert.AreEqual(currentValue.Month, databaseValue.Month);
             Assert.AreEqual(currentValue.Day, databaseValue.Day);
-            Assert.AreEqual(currentValue.Hour, databaseValue.Hour);}
+            Assert.AreEqual(currentValue.Hour, databaseValue.Hour);
+        }
 
+        [TestCase(DatabaseType.MicrosoftSQLServer, "Latin1_General_CS_AS_KS_WS")]
+        [TestCase(DatabaseType.MYSQLServer, "latin1_german1_ci")]
+        [TestCase(DatabaseType.Oracle, "BINARY_CI")] //Requires 12.2+ oracle https://www.experts-exchange.com/questions/29102764/SQL-Statement-to-create-case-insensitive-columns-and-or-tables-in-Oracle.html
+        public void CreateTable_CollationTest(DatabaseType type,string collation)
+        {
+            database = GetCleanedServer(type);
+
+            var tbl = database.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string),100))
+                {
+                    AllowNulls = false,
+                    Collation = collation
+                }
+            });
+
+            Assert.AreEqual(collation, tbl.DiscoverColumn("Name").Collation);
+        }
 
         [TestFixtureTearDown]
         public void TearDown()

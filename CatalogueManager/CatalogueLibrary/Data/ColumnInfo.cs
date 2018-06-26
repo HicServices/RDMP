@@ -28,7 +28,7 @@ namespace CatalogueLibrary.Data
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
     /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).</para>
     /// </summary>
-    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo
+    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation
     {
         public static int Name_MaxLength;
         public static int Data_type_MaxLength;
@@ -56,7 +56,7 @@ namespace CatalogueLibrary.Data
         private bool _isAutoIncrement;
         private int? _duplicateRecordResolutionOrder;
         private bool _duplicateRecordResolutionIsAscending;
-
+        private string _collation;
 
         public int TableInfo_ID
         {
@@ -135,8 +135,13 @@ namespace CatalogueLibrary.Data
         {
             get { return _isAutoIncrement; }
             set { SetField(ref  _isAutoIncrement, value); }
-
         }
+        public string Collation
+        {
+            get { return _collation; }
+            set { SetField(ref  _collation, value); }
+        }
+        
 
         public int? DuplicateRecordResolutionOrder
         {
@@ -211,6 +216,7 @@ namespace CatalogueLibrary.Data
             Digitisation_specs = r["Digitisation_specs"].ToString();
             Source = r["Source"].ToString();
             Description = r["Description"].ToString();
+            Collation = r["Collation"] as string;
 
             //try to turn string value in database into enum value
             ColumnStatus dbStatus;

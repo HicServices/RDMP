@@ -19,6 +19,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public bool AutoIncrement { get; set; }
         public MandatoryScalarFunctions Default { get; set; }
+        public string Collation { get; set; }
 
         public DatabaseColumnRequest(string columnName, DatabaseTypeRequest typeRequested, bool allowNulls = true)
         {

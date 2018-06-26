@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Drawing.Text;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibrary
 {
@@ -161,12 +156,15 @@ namespace CatalogueLibrary
 
             if (IsSynched)
                 IsSynched = SynchronizeTypes(notifier,liveColumns);
-
+            
             if (IsSynched && !_tableToSync.IsTableValuedFunction)//table valued functions don't have primary keys!
-                IsSynched = SynchronizePrimaryKeys(liveColumns,notifier);
+                IsSynched = SynchronizeField(liveColumns, _tableToSync.ColumnInfos, notifier, "IsPrimaryKey");
 
             if (IsSynched && !_tableToSync.IsTableValuedFunction)//table valued functions don't have autonum
-                IsSynched = SynchronizeAutoIncrement(liveColumns,notifier);
+                IsSynched = SynchronizeField(liveColumns, _tableToSync.ColumnInfos, notifier, "IsAutoIncrement");
+
+            if (IsSynched)
+                IsSynched = SynchronizeField(liveColumns, _tableToSync.ColumnInfos, notifier, "Collation");
 
             if (IsSynched && _tableToSync.IsTableValuedFunction)
                 IsSynched = SynchronizeParameters((TableValuedFunctionImporter)importer,notifier);
@@ -250,113 +248,37 @@ namespace CatalogueLibrary
 
         }
 
-        private bool SynchronizePrimaryKeys(DiscoveredColumn[] liveColumns, ICheckNotifier notifier)
+        private bool SynchronizeField(DiscoveredColumn[] liveColumns,ColumnInfo[] columnsInCatalogue, ICheckNotifier notifier,string property)
         {
             bool IsSynched = true;
 
-            ColumnInfo[] columnsInCatalogue = _tableToSync.ColumnInfos.ToArray();
-            DiscoveredColumn[] pksInLive = liveColumns.Where(c => c.IsPrimaryKey).ToArray();
+            var discoveredPropertyGetter = typeof (DiscoveredColumn).GetProperty(property);
+            var cataloguePropertyGetter = typeof(ColumnInfo).GetProperty(property);
             
-            //if there are live pks that are not know to the catalogue
-            foreach (string key in pksInLive.Select(pk=>pk.GetRuntimeName()))
+            foreach (var cataColumn in columnsInCatalogue)
             {
-                //find the corresponding ColumnInfo
-                ColumnInfo matchingColumnInfo = columnsInCatalogue.Single(ci=>ci.GetRuntimeName().Equals(key));
+                var catalogueValue = cataloguePropertyGetter.GetValue(cataColumn);
+                
+                //find the corresponding DiscoveredColumn
+                var matchingLiveColumn = liveColumns.Single(ci => ci.GetRuntimeName().Equals(cataColumn.GetRuntimeName()));
+                var liveValue = discoveredPropertyGetter.GetValue(matchingLiveColumn);
 
-                //if it is not currently already flagged as pk
-                if(!matchingColumnInfo.IsPrimaryKey)
-                    if (
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            "Field in table " + _tableToSync + " has a primary key including " + key +
-                            "(that the Catalogue does not know about)",CheckResult.Fail,null, "Mark ColumnInfo " + key+ " as IsPrimaryKey=1")))
-                        //see if the user wants to flag it as one
+                if (!Equals(catalogueValue, liveValue))
+                {
+                    var fix = notifier.OnCheckPerformed(new CheckEventArgs(
+                        property + " in ColumnInfo " + cataColumn + " is '" + catalogueValue +
+                        " but in live table it is '" + liveValue + "'", CheckResult.Fail, null, "Update to live value?"));
+
+                    if (fix)
                     {
-                        matchingColumnInfo.IsPrimaryKey = true; //he does
-                        matchingColumnInfo.SaveToDatabase();
+                        cataloguePropertyGetter.SetValue(cataColumn, liveValue);
+                        cataColumn.SaveToDatabase();
                     }
                     else
                         IsSynched = false;
-            }
-
-            //get columnInfos that are flaggaed as primary key but are not in the live primary key collection (Catalogue thinks they are pk but they aint)
-            ColumnInfo[] redundantPrimaryKeysInCatalogue 
-                = columnsInCatalogue.Where(ci=>ci.IsPrimaryKey //that are pk in catalogue
-                    && 
-                    !pksInLive.Any(pk=>pk.GetRuntimeName().Equals(ci.GetRuntimeName())) //and there are not any pks in the actual table that have the same runtime names
-                    ).ToArray();
-
-            foreach (ColumnInfo columnInfo in redundantPrimaryKeysInCatalogue)
-            {
-                if (
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        "ColumnInfo " + columnInfo.GetRuntimeName() +
-                        " is marked as primary key but the underlying table does not indicate it as a primary key ",CheckResult.Fail,null,
-                        " Set "+columnInfo.GetRuntimeName()+" IsPrimaryKey=0")))
-                {
-
-                    columnInfo.IsPrimaryKey = false;
-                    columnInfo.SaveToDatabase();
-                }
-                else
-                {
-                    IsSynched = false;
                 }
             }
-            return IsSynched;
-        }
 
-        private bool SynchronizeAutoIncrement(DiscoveredColumn[] liveColumns, ICheckNotifier notifier)
-        {
-            bool IsSynched = true;
-
-            ColumnInfo[] columnsInCatalogue = _tableToSync.ColumnInfos.ToArray();
-            DiscoveredColumn[] autoIncrementInLive = liveColumns.Where(c => c.IsAutoIncrement).ToArray();
-
-            //if there are live ai that are not know to the catalogue
-            foreach (string key in autoIncrementInLive.Select(ai => ai.GetRuntimeName()))
-            {
-                //find the corresponding ColumnInfo
-                ColumnInfo matchingColumnInfo = columnsInCatalogue.Single(ci => ci.GetRuntimeName().Equals(key));
-
-                //if it is not currently already flagged as ai
-                if (!matchingColumnInfo.IsAutoIncrement)
-                    if (
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            "Field in table " + _tableToSync + " is marked as auto increment " + key +
-                            "(that the Catalogue does not know about)", CheckResult.Fail, null, "Mark ColumnInfo " + key + " as IsAutoIncrement=1")))
-                    //see if the user wants to flag it as one
-                    {
-                        matchingColumnInfo.IsAutoIncrement = true; //he does
-                        matchingColumnInfo.SaveToDatabase();
-                    }
-                    else
-                        IsSynched = false;
-            }
-
-            //get columnInfos that are flaggaed as auto increment but are not in the live auto increment collection (Catalogue thinks they are ai but they aint)
-            ColumnInfo[] redundantAutoIncrementsInCatalogue
-                = columnsInCatalogue.Where(ci => ci.IsAutoIncrement //that are ai in catalogue
-                    &&
-                    !autoIncrementInLive.Any(ai => ai.GetRuntimeName().Equals(ci.GetRuntimeName())) //and there are not any ais in the actual table that have the same runtime names
-                    ).ToArray();
-
-            foreach (ColumnInfo columnInfo in redundantAutoIncrementsInCatalogue)
-            {
-                if (
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        "ColumnInfo " + columnInfo.GetRuntimeName() +
-                        " is marked as auto increment but the underlying table does not indicate it as an auto increment column ", CheckResult.Fail, null,
-                        " Set " + columnInfo.GetRuntimeName() + " IsAutoIncrement=0")))
-                {
-
-                    columnInfo.IsAutoIncrement = false;
-                    columnInfo.SaveToDatabase();
-                }
-                else
-                {
-                    IsSynched = false;
-                }
-            }
             return IsSynched;
         }
         

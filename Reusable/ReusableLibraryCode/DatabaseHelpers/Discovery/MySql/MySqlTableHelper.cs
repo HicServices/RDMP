@@ -16,7 +16,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             List<DiscoveredColumn> columns = new List<DiscoveredColumn>();
             var tableName = discoveredTable.GetRuntimeName();
 
-            DbCommand cmd = DatabaseCommandHelper.GetCommand("DESCRIBE `" + database + "`.`" + tableName + "`", connection.Connection);
+            DbCommand cmd = DatabaseCommandHelper.GetCommand("SHOW FULL COLUMNS FROM `" + database + "`.`" + tableName + "`", connection.Connection);
             cmd.Transaction = connection.Transaction;
 
             using(DbDataReader r = cmd.ExecuteReader())
@@ -32,7 +32,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                         toAdd.IsPrimaryKey = true;
                     
                     toAdd.IsAutoIncrement = r["Extra"] as string == "auto_increment";
-
+                    toAdd.Collation = r["Collation"] as string;
+                    
                     toAdd.DataType = new DiscoveredDataType(r,SensibleTypeFromMySqlType(r["Type"].ToString()),toAdd);
                     columns.Add(toAdd);
 

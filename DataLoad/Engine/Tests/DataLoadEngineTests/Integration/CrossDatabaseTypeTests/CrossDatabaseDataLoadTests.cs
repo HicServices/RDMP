@@ -49,11 +49,13 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         {
             Normal,
             LowPrivilegeLoaderAccount,
-            ForeignKeyOrphans
+            ForeignKeyOrphans,
+            DodgyCollation
         }
 
         [TestCase(DatabaseType.Oracle,TestCase.Normal)]
         [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
@@ -76,10 +78,15 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             dt.Rows.Add("Bob", "2001-01-01","Pink");
             dt.Rows.Add("Frank", "2001-01-01","Orange");
             dt.Rows.Add("Frank", "2001-01-01","Orange");
-            
+
+            var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 20), false);
+
+            if (testCase == TestCase.DodgyCollation)
+                nameCol.Collation = "Latin1_General_CS_AS_KS_WS";
+
             var tbl = db.CreateTable("MyTable",dt,new []
             {
-                new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),20),false),
+                nameCol,
                 new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false)
             });
             Assert.AreEqual(3,tbl.GetRowCount());

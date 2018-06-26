@@ -600,8 +600,7 @@ CREATE TABLE [dbo].[TestResizing](
             Assert.AreEqual("bit", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col3").DataType.SQLType);
             Assert.AreEqual("tinyint", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col4").DataType.SQLType);
             
-            //apparently this is varbinary(max) - go figure
-            Assert.AreEqual("image(2147483647)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col5").DataType.SQLType);
+            Assert.AreEqual("varbinary(max)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col5").DataType.SQLType);
         }
 
 

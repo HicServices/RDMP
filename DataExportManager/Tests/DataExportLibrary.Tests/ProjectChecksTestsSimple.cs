@@ -215,6 +215,8 @@ namespace DataExportLibrary.Tests
             dir = new DirectoryInfo(assemblyFolder );
             p.ExtractionDirectory = assemblyFolder;
             p.ProjectNumber = -5000;
+            p.SaveToDatabase();
+
             return p;
         }
     }

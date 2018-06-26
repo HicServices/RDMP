@@ -34,10 +34,9 @@ namespace DataExportLibrary.Tests.CustomData
                 IExecuteDatasetExtractionDestination results;
                 Execute(out useCase, out results);
 
-                var customDataCsv = results.DirectoryPopulated.GetFiles().Single();
+                var customDataCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("custTable99.csv"));
 
                 Assert.IsNotNull(customDataCsv);
-                Assert.AreEqual("custTable99.csv",customDataCsv.Name);
             
                 var lines = File.ReadAllLines(customDataCsv.FullName);
 
@@ -101,7 +100,7 @@ namespace DataExportLibrary.Tests.CustomData
             IExecuteDatasetExtractionDestination results;
             Execute(out useCase, out results);
 
-            var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single();
+            var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
             Assert.IsNotNull(mainDataTableCsv);
             Assert.AreEqual("TestTable.csv", mainDataTableCsv.Name);

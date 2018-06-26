@@ -22,7 +22,8 @@ sys.columns.name AS COLUMN_NAME,
    sys.columns.scale as SCALE,
     sys.columns.is_identity,
     sys.columns.is_nullable,
-   sys.columns.precision as PRECISION
+   sys.columns.precision as PRECISION,
+sys.columns.collation_name
 from sys.columns 
 join 
 sys.types on sys.columns.user_type_id = sys.types.user_type_id
@@ -44,6 +45,7 @@ where object_id =OBJECT_ID('" + discoveredTable.GetRuntimeName() + "')", connect
                     var toAdd = new DiscoveredColumn(discoveredTable, columnName, isNullable);
                     toAdd.IsAutoIncrement = Convert.ToBoolean(r["is_identity"]);
                     toAdd.DataType = new DiscoveredDataType(r, GetSQLType_FromSpColumnsResult(r), toAdd);
+                    toAdd.Collation = r["collation_name"] as string;
                     toReturn.Add(toAdd);
                 }
 
@@ -229,10 +231,10 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             return columnType + lengthQualifier;
         }
 
-        private int AdjustForUnicodeAndNegativeOne(string columnType, int length)
+        private object AdjustForUnicodeAndNegativeOne(string columnType, int length)
         {
             if (length == -1)
-                return int.MaxValue;
+                return "max";
 
             if (columnType.Contains("nvarchar") || columnType.Contains("nchar") || columnType.Contains("ntext"))
                 return length/2;

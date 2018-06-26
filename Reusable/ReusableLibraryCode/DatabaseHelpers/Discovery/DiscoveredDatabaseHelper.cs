@@ -91,14 +91,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             foreach (var col in columns)
             {
                 var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
-
+                
                 //add the column name and accompanying datatype
-                bodySql += string.Format("{0} {1} {2} {3} {4},"+ Environment.NewLine,
+                bodySql += string.Format("{0} {1} {2} {3} {4} {5},"+ Environment.NewLine,
                     syntaxHelper.EnsureWrapped(col.ColumnName),
                     datatype,
                     col.Default != MandatoryScalarFunctions.None ? "default " + syntaxHelper.GetScalarFunctionSql(col.Default):"",
+                    string.IsNullOrWhiteSpace(col.Collation) ?"": "COLLATE " + col.Collation,
                     col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL",
-                    col.AutoIncrement ? syntaxHelper.GetAutoIncrementKeywordIfAny():"");
+                    col.AutoIncrement ? syntaxHelper.GetAutoIncrementKeywordIfAny():""
+                    );
             }
 
             var pks = columns.Where(c => c.IsPrimaryKey).ToArray();

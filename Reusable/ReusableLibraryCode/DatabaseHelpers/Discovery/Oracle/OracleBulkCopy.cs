@@ -43,12 +43,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
             var tt = _server.GetQuerySyntaxHelper().TypeTranslater;
             
-            using(var _cmd = _server.GetCommand(sql, _connection))
+            using(var cmd = _server.GetCommand(sql, _connection))
             {
 
                 foreach (var c in availableColumns)
                 {
-                    var p = _server.AddParameterWithValueToCommand(ParameterSymbol + c, _cmd, DBNull.Value);
+                    var p = _server.AddParameterWithValueToCommand(ParameterSymbol + c, cmd, DBNull.Value);
 
                     var matching = _discoveredColumns.SingleOrDefault(d => d.GetRuntimeName().Equals(c,StringComparison.CurrentCultureIgnoreCase));
 
@@ -58,14 +58,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
                     p.DbType = tt.GetDbTypeForSQLDBType(matching.DataType.SQLType);
                 }
 
-                _cmd.Prepare();
+                cmd.Prepare();
 
                 foreach (DataRow dataRow in dt.Rows)
                 {
                     //populate parameters for current row
                     foreach (var col in availableColumns)
                     {
-                        var param = _cmd.Parameters[ParameterSymbol + col];
+                        var param = cmd.Parameters[ParameterSymbol + col];
 
                         //oracle isn't too bright when it comes to these kinds of things, see Test CreateDateColumnFromDataTable
                         if (param.DbType == DbType.DateTime)
@@ -77,7 +77,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
                     }
 
                     //send query
-                    affectedRows += _cmd.ExecuteNonQuery();
+                    affectedRows += cmd.ExecuteNonQuery();
                 }
                 
             }
