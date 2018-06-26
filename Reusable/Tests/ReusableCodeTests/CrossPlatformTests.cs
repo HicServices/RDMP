@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using Tests.Common;
@@ -654,8 +655,45 @@ namespace ReusableCodeTests
             Import(tbl, out ti, out cis);
 
             Assert.IsTrue(cis.Single().IsAutoIncrement);
-
         }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void CreateTable_DefaultTest(DatabaseType type)
+        {
+            database = GetCleanedServer(type);
+
+            var tbl = database.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string),100)), 
+                new DatabaseColumnRequest("myDt", new DatabaseTypeRequest(typeof (DateTime)))
+                {
+                    AllowNulls = false,
+                    Default = MandatoryScalarFunctions.GetTodaysDate
+                }
+            });
+            DateTime currentValue;
+            
+            using (var insert = tbl.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("Name");
+                dt.Rows.Add("Hi");
+
+                currentValue = DateTime.Now;
+                insert.Upload(dt);
+            }
+
+            var dt2 = tbl.GetDataTable();
+
+            var databaseValue = (DateTime)dt2.Rows.Cast<DataRow>().Single()["myDt"];
+            
+            Assert.AreEqual(currentValue.Year,databaseValue.Year);
+            Assert.AreEqual(currentValue.Month, databaseValue.Month);
+            Assert.AreEqual(currentValue.Day, databaseValue.Day);
+            Assert.AreEqual(currentValue.Hour, databaseValue.Hour);}
+
 
         [TestFixtureTearDown]
         public void TearDown()

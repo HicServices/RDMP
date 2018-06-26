@@ -56,8 +56,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
 
     public enum MandatoryScalarFunctions
     {
+        None = 0,
+
         /// <summary>
-        /// A scalar function which must return todays datetime.
+        /// A scalar function which must return todays datetime.  Must be valid as a column default too
         /// </summary>
         GetTodaysDate,
         

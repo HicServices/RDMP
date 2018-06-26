@@ -26,13 +26,19 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             loader.FieldTerminator = ",";
             loader.LineTerminator = "\r\n";
             loader.FieldQuotationCharacter = '"';
+
+            //for all columns not appearing in the DataTable provided
+            var unmatchedColumns = _discoveredTable.DiscoverColumns().Where(c=>!dt.Columns.Contains(c.GetRuntimeName()));
+
+            //use the system default
+            foreach (var column in unmatchedColumns)
+                loader.Expressions.Add(column + " = DEFAULT");
             
             var sw = new StreamWriter(tempFile);
             Rfc4180Writer.WriteDataTable(dt,sw,false, new MySqlQuerySyntaxHelper());
             sw.Flush();
             sw.Close();
 
-            
             loader.FileName = tempFile;
             loader.Timeout = Timeout;
             try

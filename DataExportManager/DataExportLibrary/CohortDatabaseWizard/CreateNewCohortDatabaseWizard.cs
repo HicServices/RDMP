@@ -85,7 +85,7 @@ namespace DataExportLibrary.CohortDatabaseWizard
                          new DatabaseColumnRequest("projectNumber",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
                          new DatabaseColumnRequest("version",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
                          new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),3000)){AllowNulls =  false},
-                         new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){AllowNulls =  false}
+                         new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){AllowNulls =  false,Default=MandatoryScalarFunctions.GetTodaysDate}
                     });
 
                 

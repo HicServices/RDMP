@@ -43,7 +43,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             switch (function)
             {
                 case MandatoryScalarFunctions.GetTodaysDate:
-                    return "SYSDATE";
+                    return "CURRENT_TIMESTAMP";
                     case MandatoryScalarFunctions.GetGuid:
                     return "SYS_GUID()";
                 default:

@@ -93,9 +93,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
 
                 //add the column name and accompanying datatype
-                bodySql += string.Format("{0} {1} {2} {3},"+ Environment.NewLine,
+                bodySql += string.Format("{0} {1} {2} {3} {4},"+ Environment.NewLine,
                     syntaxHelper.EnsureWrapped(col.ColumnName),
                     datatype,
+                    col.Default != MandatoryScalarFunctions.None ? "default " + syntaxHelper.GetScalarFunctionSql(col.Default):"",
                     col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL",
                     col.AutoIncrement ? syntaxHelper.GetAutoIncrementKeywordIfAny():"");
             }

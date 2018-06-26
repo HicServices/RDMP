@@ -1,3 +1,4 @@
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
@@ -17,6 +18,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public bool IsPrimaryKey { get; set; }
 
         public bool AutoIncrement { get; set; }
+        public MandatoryScalarFunctions Default { get; set; }
 
         public DatabaseColumnRequest(string columnName, DatabaseTypeRequest typeRequested, bool allowNulls = true)
         {
