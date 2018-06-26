@@ -174,10 +174,9 @@ namespace DataExportLibrary.Tests.CustomData
             IExecuteDatasetExtractionDestination results;
             Execute(out useCase, out results);
 
-            var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single();
+            var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
             Assert.IsNotNull(mainDataTableCsv);
-            Assert.AreEqual("TestTable.csv", mainDataTableCsv.Name);
 
             var lines = File.ReadAllLines(mainDataTableCsv.FullName);
 

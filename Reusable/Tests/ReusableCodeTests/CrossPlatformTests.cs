@@ -697,7 +697,7 @@ namespace ReusableCodeTests
 
         [TestCase(DatabaseType.MicrosoftSQLServer, "Latin1_General_CS_AS_KS_WS")]
         [TestCase(DatabaseType.MYSQLServer, "latin1_german1_ci")]
-        [TestCase(DatabaseType.Oracle, "BINARY_CI")] //Requires 12.2+ oracle https://www.experts-exchange.com/questions/29102764/SQL-Statement-to-create-case-insensitive-columns-and-or-tables-in-Oracle.html
+        //[TestCase(DatabaseType.Oracle, "BINARY_CI")] //Requires 12.2+ oracle https://www.experts-exchange.com/questions/29102764/SQL-Statement-to-create-case-insensitive-columns-and-or-tables-in-Oracle.html
         public void CreateTable_CollationTest(DatabaseType type,string collation)
         {
             database = GetCleanedServer(type);
