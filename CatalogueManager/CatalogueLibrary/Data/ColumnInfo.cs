@@ -27,7 +27,7 @@ namespace CatalogueLibrary.Data
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
     /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).</para>
     /// </summary>
-    public class ColumnInfo : VersionedDatabaseEntity, IDeleteable, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo
+    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo
     {
         public static int Name_MaxLength;
         public static int Data_type_MaxLength;
@@ -52,8 +52,11 @@ namespace CatalogueLibrary.Data
         private string _regexPattern;
         private string _validationRules;
         private bool _isPrimaryKey;
+        private bool _isAutoIncrement;
         private int? _duplicateRecordResolutionOrder;
         private bool _duplicateRecordResolutionIsAscending;
+
+
         public int TableInfo_ID
         {
             get { return _tableInfoID; }
@@ -125,6 +128,13 @@ namespace CatalogueLibrary.Data
         {
             get { return _isPrimaryKey; }
             set { SetField(ref  _isPrimaryKey, value); }
+        }
+
+        public bool IsAutoIncrement
+        {
+            get { return _isAutoIncrement; }
+            set { SetField(ref  _isAutoIncrement, value); }
+
         }
 
         public int? DuplicateRecordResolutionOrder
@@ -209,6 +219,7 @@ namespace CatalogueLibrary.Data
             RegexPattern = r["RegexPattern"].ToString();
             ValidationRules = r["ValidationRules"].ToString();
             IsPrimaryKey = Boolean.Parse(r["IsPrimaryKey"].ToString());
+            IsAutoIncrement = Boolean.Parse(r["IsAutoIncrement"].ToString());
 
             if (r["ANOTable_ID"] != DBNull.Value)
                 ANOTable_ID = int.Parse(r["ANOTable_ID"].ToString());

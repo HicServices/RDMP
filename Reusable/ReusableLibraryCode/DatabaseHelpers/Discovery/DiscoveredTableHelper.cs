@@ -9,12 +9,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     {
         public abstract string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX);
 
-        public abstract DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database,
-            string tableName);
-
-        public abstract DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction,
-            IManagedConnection connection, string database, string tableName);
-
+        public abstract DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database);
+        
         public abstract IDiscoveredColumnHelper GetColumnHelper();
         public abstract void DropTable(DbConnection connection, DiscoveredTable tableToDrop);
         public abstract void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop);
@@ -52,7 +48,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             {
                 string sqlType = c.DataType.SQLType;
 
-                if (c.DataType.IsAutoIncrement() && convertIdentityToInt)
+                if (c.IsAutoIncrement && convertIdentityToInt)
                     sqlType = "int";
 
                 var colRequest = new DatabaseColumnRequest(c.GetRuntimeName(),sqlType , c.AllowNulls || dropNullability);

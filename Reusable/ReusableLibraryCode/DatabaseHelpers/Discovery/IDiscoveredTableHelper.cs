@@ -15,8 +15,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     {
         string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX);
 
-        DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName);
-        DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction, IManagedConnection connection, string database, string tableName);
+        DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database);
 
         IDiscoveredColumnHelper GetColumnHelper();
         

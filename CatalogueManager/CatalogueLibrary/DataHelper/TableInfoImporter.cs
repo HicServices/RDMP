@@ -185,6 +185,7 @@ namespace CatalogueLibrary.DataHelper
             
             //if it is a primary key
             col.IsPrimaryKey = discoveredColumn.IsPrimaryKey;
+            col.IsAutoIncrement = discoveredColumn.IsAutoIncrement;
 
             col.SaveToDatabase();
         

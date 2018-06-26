@@ -37,7 +37,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
         public bool IsPrimaryKey {get; set;}
-        public bool AutoIncrement { get; set; }
+        public bool IsAutoIncrement { get; set; }
 
         public DiscoveredDataType DataType { get; set; }
         public string Format { get; set; }

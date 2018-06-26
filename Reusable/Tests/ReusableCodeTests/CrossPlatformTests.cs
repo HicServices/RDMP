@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using CatalogueLibrary.Data;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -646,8 +647,14 @@ namespace ReusableCodeTests
                 }
             });
 
-            Assert.IsTrue(tbl.DiscoverColumn("IdColumn").DataType.IsAutoIncrement());
-            
+            Assert.IsTrue(tbl.DiscoverColumn("IdColumn").IsAutoIncrement);
+
+            TableInfo ti;
+            ColumnInfo[] cis;
+            Import(tbl, out ti, out cis);
+
+            Assert.IsTrue(cis.Single().IsAutoIncrement);
+
         }
 
         [TestFixtureTearDown]

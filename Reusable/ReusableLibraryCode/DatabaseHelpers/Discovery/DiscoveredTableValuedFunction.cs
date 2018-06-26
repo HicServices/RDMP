@@ -39,13 +39,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             //Note that we do not give the parameters values, the client must decide appropriate values and put them in correspondingly named variables
             return Database.GetRuntimeName() + ".." + GetRuntimeName() + "(" + parameters + ")";
         }
-
-        public override DiscoveredColumn[] DiscoverColumns(IManagedTransaction managedTransaction = null)
-        {
-            using (var connection = Database.Server.GetManagedConnection(managedTransaction))
-                return Helper.DiscoverColumns(this, connection, Database.GetRuntimeName(), GetRuntimeName());
-        }
-
+        
         public override string ToString()
         {
             return _functionName;

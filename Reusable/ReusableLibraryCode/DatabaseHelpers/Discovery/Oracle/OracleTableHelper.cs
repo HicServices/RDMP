@@ -15,12 +15,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             return "SELECT * FROM " + table.GetFullyQualifiedName() + " WHERE ROWNUM <= " + topX;
         }
 
-        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName)
+        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database)
         {
             List<DiscoveredColumn> columns = new List<DiscoveredColumn>();
-
+            var tableName = discoveredTable.GetRuntimeName();
             
-
                 DbCommand cmd = DatabaseCommandHelper.GetCommand(@"SELECT *
 FROM   all_tab_cols
 WHERE  table_name = :table_name AND owner =:owner
@@ -154,13 +153,7 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
         {
             throw new NotImplementedException();
         }
-
-        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction,
-            IManagedConnection connection, string database, string tableName)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override DiscoveredParameter[] DiscoverTableValuedFunctionParameters(DbConnection connection,
             DiscoveredTableValuedFunction discoveredTableValuedFunction, DbTransaction transaction)
         {

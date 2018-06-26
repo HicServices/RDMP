@@ -58,7 +58,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public virtual DiscoveredColumn[] DiscoverColumns(IManagedTransaction managedTransaction=null)
         {
             using (var connection = Database.Server.GetManagedConnection(managedTransaction))
-                return Helper.DiscoverColumns(this, connection, Database.GetRuntimeName(), GetRuntimeName());
+                return Helper.DiscoverColumns(this, connection, Database.GetRuntimeName());
         }
 
         public override string ToString()
