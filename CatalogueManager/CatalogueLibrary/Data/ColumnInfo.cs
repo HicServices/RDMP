@@ -10,6 +10,7 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 
@@ -332,18 +333,12 @@ namespace CatalogueLibrary.Data
             //The user is asking about a stage other than RAW so tell them about the final column type state
             return Data_type;
         }
-
-        public int? GetColumnLengthIfAny()
+        
+        public DiscoveredColumn Discover(DataAccessContext context)
         {
-            Regex r = new Regex(@"\(\d+\)");
-
-            if (string.IsNullOrWhiteSpace(Data_type))
-                return null;
-            Match match = r.Match(Data_type);
-            if (match.Success)
-                return int.Parse(match.Value.TrimStart(new[] {'('}).TrimEnd(new[] {')'}));
-
-            return null;
+            var ti = TableInfo;
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, context);
+            return db.ExpectTable(ti.GetRuntimeName()).DiscoverColumn(GetRuntimeName());
         }
 
         public IHasDependencies[] GetObjectsThisDependsOn()
@@ -355,8 +350,7 @@ namespace CatalogueLibrary.Data
 
             if (ANOTable_ID != null)
               iDependOn.Add(ANOTable);
-
-
+            
             return iDependOn.ToArray();
         }
 

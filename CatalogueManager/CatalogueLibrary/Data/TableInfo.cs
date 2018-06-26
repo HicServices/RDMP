@@ -403,5 +403,12 @@ select 0", con.Connection, con.Transaction);
         {
             return Repository.GetAllObjectsWithParent<ColumnInfo>(this);
         }
+
+        public DiscoveredTable Discover(DataAccessContext context)
+        {
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+            return db.ExpectTable(GetRuntimeName());
+        }
+
     }
 }

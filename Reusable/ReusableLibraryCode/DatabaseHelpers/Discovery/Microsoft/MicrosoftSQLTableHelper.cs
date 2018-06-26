@@ -219,7 +219,9 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
                 lengthQualifier = "(" + r["PRECISION"] + "," + r["SCALE"] + ")";
             else
                 if (UsefulStuff.RequiresLength(columnType))
-                    lengthQualifier = "(" + AdjustForUnicode(columnType,Convert.ToInt32(r["LENGTH"])) + ")";
+                {
+                    lengthQualifier = "(" + AdjustForUnicodeAndNegativeOne(columnType,Convert.ToInt32(r["LENGTH"])) + ")";
+                }
 
             if (columnType == "text")
                 return "varchar(max)";
@@ -227,8 +229,11 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             return columnType + lengthQualifier;
         }
 
-        private int AdjustForUnicode(string columnType, int length)
+        private int AdjustForUnicodeAndNegativeOne(string columnType, int length)
         {
+            if (length == -1)
+                return int.MaxValue;
+
             if (columnType.Contains("nvarchar") || columnType.Contains("nchar") || columnType.Contains("ntext"))
                 return length/2;
 
