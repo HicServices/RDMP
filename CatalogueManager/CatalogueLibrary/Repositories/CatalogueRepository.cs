@@ -51,7 +51,7 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         public static bool? SuppressHelpLoading;
 
-        public Dictionary<string,string> HelpText = new Dictionary<string, string>();
+        public readonly Dictionary<string,string> HelpText = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
         
         public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
         {

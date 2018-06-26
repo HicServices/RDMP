@@ -145,6 +145,8 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                     dt.Rows.Add(kvp.Key, kvp.Value,Request.NewCohortDefinition.ID);
 
                 bulkCopy.Upload(dt);
+
+                connection.Transaction.Commit();
             }
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Succesfully uploaded " + _cohortDictionary.Count + " records"));
