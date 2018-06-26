@@ -81,7 +81,7 @@ namespace DataExportLibrary.CohortDatabaseWizard
             {
                 var definitionTable = _targetDatabase.CreateTable("CohortDefinition", new[]
                     {
-                         new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){AllowNulls = false,AutoIncrement = true,IsPrimaryKey = true}, 
+                         new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){AllowNulls = false,IsAutoIncrement = true,IsPrimaryKey = true}, 
                          new DatabaseColumnRequest("projectNumber",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
                          new DatabaseColumnRequest("version",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
                          new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),3000)){AllowNulls =  false},

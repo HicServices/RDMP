@@ -53,7 +53,19 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
                 var colRequest = new DatabaseColumnRequest(c.GetRuntimeName(),sqlType , c.AllowNulls || dropNullability);
                 colRequest.IsPrimaryKey = c.IsPrimaryKey && !dropPrimaryKeys;
-                
+
+                //if there is a collation
+                if (!string.IsNullOrWhiteSpace(c.Collation))
+                {
+                    //if the script is to be run on a database of the same type
+                    if (toCreateTable == null ||
+                        toCreateTable.Database.Server.DatabaseType == table.Database.Server.DatabaseType)
+                    {
+                        //then specify that the column should use the live collation
+                        colRequest.Collation = c.Collation;
+                    }
+                }
+
                 columns.Add(colRequest);
             }
 

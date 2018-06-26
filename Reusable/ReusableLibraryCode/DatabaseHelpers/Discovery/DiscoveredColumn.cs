@@ -7,7 +7,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     /// <summary>
     /// Cross database type reference to a Column in a Table
     /// </summary>
-    public class DiscoveredColumn:ISupplementalColumnInformation
+    public class DiscoveredColumn : IHasFullyQualifiedNameToo,ISupplementalColumnInformation
     {
         public IDiscoveredColumnHelper Helper;
         internal readonly DiscoveredTable Table;

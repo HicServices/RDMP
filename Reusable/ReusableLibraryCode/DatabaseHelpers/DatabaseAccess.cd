@@ -76,7 +76,7 @@
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredColumn">
     <Position X="19.25" Y="2.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AARAIAAAAAIAAEAEgAAAQAAAABwAAACAAAAAAAAABAA=</HashCode>
+      <HashCode>AARAIAAAAAIAAEAEgAAAQAAAABwAAACAAAAAAAACBAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\DiscoveredColumn.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -419,9 +419,10 @@
   <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DatabaseColumnRequest" Collapsed="true">
     <Position X="13.75" Y="10.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAgAAAAAACgABAKAAAABAAAAAAAAAAAAACAAA=</HashCode>
+      <HashCode>AAQAAAAAAAAAAAACgABAKAAAABAAAAAAAAAAAAACAAA=</HashCode>
       <FileName>DatabaseHelpers\Discovery\DatabaseColumnRequest.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Interface Name="ReusableLibraryCode.DataAccess.IDataAccessCredentials">
     <Position X="3.75" Y="4.5" Width="2.25" />

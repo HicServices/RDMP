@@ -643,7 +643,7 @@ namespace ReusableCodeTests
                 new DatabaseColumnRequest("IdColumn", new DatabaseTypeRequest(typeof (int)))
                 {
                     AllowNulls = false,
-                    AutoIncrement = true,
+                    IsAutoIncrement = true,
                     IsPrimaryKey = true
                 }
             });

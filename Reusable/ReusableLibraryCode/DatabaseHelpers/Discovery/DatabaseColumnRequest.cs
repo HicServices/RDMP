@@ -9,7 +9,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     /// 
     /// <para>Type specification is defined in the DatabaseTypeRequest but can also be specified explicitly (e.g. 'varchar(10)').</para>
     /// </summary>
-    public class DatabaseColumnRequest
+    public class DatabaseColumnRequest:ISupplementalColumnInformation
     {
         private readonly string _explicitDbType;
         public string ColumnName { get; set; }
@@ -17,7 +17,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public bool AllowNulls { get; set; }
         public bool IsPrimaryKey { get; set; }
 
-        public bool AutoIncrement { get; set; }
+        public bool IsAutoIncrement { get; set; }
         public MandatoryScalarFunctions Default { get; set; }
         public string Collation { get; set; }
 

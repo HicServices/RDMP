@@ -99,7 +99,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                     col.Default != MandatoryScalarFunctions.None ? "default " + syntaxHelper.GetScalarFunctionSql(col.Default):"",
                     string.IsNullOrWhiteSpace(col.Collation) ?"": "COLLATE " + col.Collation,
                     col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL",
-                    col.AutoIncrement ? syntaxHelper.GetAutoIncrementKeywordIfAny():""
+                    col.IsAutoIncrement ? syntaxHelper.GetAutoIncrementKeywordIfAny():""
                     );
             }
 
