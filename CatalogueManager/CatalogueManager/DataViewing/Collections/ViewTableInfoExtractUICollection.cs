@@ -60,11 +60,6 @@ namespace CatalogueManager.DataViewing.Collections
             return (IFilter) DatabaseObjects.SingleOrDefault(o => o is IFilter);
         }
 
-        public IHasDependencies GetAutocompleteObject()
-        {
-            return TableInfo;
-        }
-
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
         {
             ribbon.Add(TableInfo);
@@ -113,7 +108,7 @@ namespace CatalogueManager.DataViewing.Collections
 
         public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
         {
-            
+            autoComplete.Add(TableInfo);
         }
 
         public TableInfo TableInfo { get { return DatabaseObjects.OfType<TableInfo>().SingleOrDefault(); } }

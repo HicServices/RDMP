@@ -347,8 +347,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private void PopulateHavingText()
         {
-            var autoComplete = new AutoCompleteProviderFactory(_activator).Create(_aggregate,_aggregate.GetQuerySyntaxHelper());
+            var autoComplete = new AutoCompleteProviderFactory(_activator).Create(_aggregate.GetQuerySyntaxHelper());
             autoComplete.RegisterForEvents(QueryHaving);
+            autoComplete.Add(_aggregate);
 
             QueryHaving.Text = _aggregate.HavingSQL;
         }

@@ -111,7 +111,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         {
             //if theres an old one dispose it
             if (_autoComplete == null)
-                _autoComplete = new AutoCompleteProviderFactory(_activator).Create(null,_processTask.LoadMetadata.GetQuerySyntaxHelper());
+                _autoComplete = new AutoCompleteProviderFactory(_activator).Create(_processTask.LoadMetadata.GetQuerySyntaxHelper());
             
             foreach (var table in _processTask.LoadMetadata.GetDistinctTableInfoList(false))
                 _autoComplete.Add(table, _processTask.LoadStage);

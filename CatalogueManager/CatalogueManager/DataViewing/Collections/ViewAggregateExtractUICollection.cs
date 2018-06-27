@@ -43,11 +43,6 @@ namespace CatalogueManager.DataViewing.Collections
             
         }
 
-        public IHasDependencies GetAutocompleteObject()
-        {
-            return AggregateConfiguration;
-        }
-
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
         {
             ribbon.Add(AggregateConfiguration);
@@ -121,7 +116,8 @@ namespace CatalogueManager.DataViewing.Collections
 
         public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
         {
-            
+            if(AggregateConfiguration != null)
+                autoComplete.Add(AggregateConfiguration);
         }
 
         AggregateConfiguration AggregateConfiguration { get

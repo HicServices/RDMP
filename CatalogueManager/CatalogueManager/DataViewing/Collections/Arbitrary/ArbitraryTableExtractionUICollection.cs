@@ -66,12 +66,7 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
             var server = new DiscoveredServer(new SqlConnectionStringBuilder() {DataSource = Server, InitialCatalog = Database});
             _table = server.ExpectDatabase(Database).ExpectTable(_arguments[TableKey]);
         }
-
-        public IHasDependencies GetAutocompleteObject()
-        {
-            return null;
-        }
-
+        
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
         {
             ribbon.Add( _table.GetRuntimeName() + " ("+_arguments[ServerKey] +")");

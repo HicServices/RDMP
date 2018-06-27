@@ -9,7 +9,6 @@ namespace CatalogueManager.DataViewing.Collections
 {
     public interface IViewSQLAndResultsCollection:IPersistableObjectCollection, IHasQuerySyntaxHelper
     {
-        IHasDependencies GetAutocompleteObject();
         void SetupRibbon(RDMPObjectsRibbonUI ribbon);
         IDataAccessPoint GetDataAccessPoint();
         string GetSql();

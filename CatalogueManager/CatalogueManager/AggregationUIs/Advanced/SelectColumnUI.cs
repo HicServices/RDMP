@@ -242,14 +242,13 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 {
                     var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCommandFactory());
 
-                    var hasDependencies = col as IHasDependencies ?? _aggregate; //if col isn't IHasDependencies then it's count col presumably? use the aggregate for autocomplete
                     var querySyntaxSource = col as IHasQuerySyntaxHelper ?? _aggregate;
 
-                    var autoComplete = new AutoCompleteProviderFactory(_activator).Create(hasDependencies,querySyntaxSource.GetQuerySyntaxHelper());
-                    autoComplete.RegisterForEvents(dialog.QueryEditor);
+                    var autoComplete = new AutoCompleteProviderFactory(_activator).Create(querySyntaxSource.GetQuerySyntaxHelper());
+                    autoComplete.Add(col);
+                    autoComplete.Add(_aggregate);
 
-                    foreach (ExtractionInformation extractionInformation in _aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
-                        autoComplete.Add(extractionInformation);
+                    autoComplete.RegisterForEvents(dialog.QueryEditor);
                     
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {

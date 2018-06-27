@@ -47,12 +47,7 @@ namespace CatalogueManager.DataViewing.Collections
             string value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
             ViewType = (ViewType) Enum.Parse(typeof (ViewType), value);
         }
-
-        public IHasDependencies GetAutocompleteObject()
-        {
-            return ColumnInfo;
-        }
-
+        
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
         {
             ribbon.Add(ColumnInfo);
@@ -103,7 +98,7 @@ namespace CatalogueManager.DataViewing.Collections
 
         public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
         {
-            
+            autoComplete.Add(ColumnInfo);
         }
 
         public ColumnInfo ColumnInfo

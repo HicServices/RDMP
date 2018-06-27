@@ -1,27 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using AutocompleteMenuNS;
-using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Migration;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
 namespace CatalogueManager.AutoComplete
@@ -53,7 +44,7 @@ namespace CatalogueManager.AutoComplete
         }
 
 
-        private void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName,LoadStage stage)
+        public void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName,LoadStage stage)
         {
             var runtimeName = columnInfo.GetRuntimeName(stage);
 
@@ -65,6 +56,18 @@ namespace CatalogueManager.AutoComplete
             
             AddUnlessDuplicate(snip);
         }
+
+        public void Add(ColumnInfo columnInfo)
+        {
+            var snip = new SubstringAutocompleteItem(columnInfo.GetRuntimeName());
+            snip.MenuText = columnInfo.GetRuntimeName();
+            snip.Text = columnInfo.GetFullyQualifiedName();
+            snip.Tag = columnInfo;
+            snip.ImageIndex = GetIndexFor(columnInfo, RDMPConcept.ColumnInfo.ToString());
+
+            AddUnlessDuplicate(snip);
+        }
+
         private void Add(PreLoadDiscardedColumn discardedColumn, TableInfo tableInfo, string rawDbName)
         {
             var snip = new SubstringAutocompleteItem(discardedColumn.GetRuntimeName());
@@ -286,6 +289,17 @@ namespace CatalogueManager.AutoComplete
         public void UnRegister()
         {
             _autocomplete.TargetControlWrapper = null;
+        }
+
+        public void Add(AggregateConfiguration aggregateConfiguration)
+        {
+            Add(aggregateConfiguration.Catalogue);
+        }
+
+        public void Add(ICatalogue catalogue)
+        {
+            foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+                Add(ei);
         }
     }
 }
