@@ -362,6 +362,10 @@ namespace DataExportLibrary.Providers
         private void AddChildren(ExternalCohortTable externalCohortTable, DescendancyList descendancy)
         {
             var cohorts = Cohorts.Where(c => c.ExternalCohortTable_ID == externalCohortTable.ID).ToArray();
+            
+            foreach (ExtractableCohort cohort in cohorts)
+                cohort.InjectKnown(externalCohortTable);
+
             AddToDictionaries(new HashSet<object>(cohorts), descendancy);
         }
 
@@ -395,7 +399,7 @@ namespace DataExportLibrary.Providers
 
                     //tell them not to bother looking for the cohort data because its inaccessible
                     foreach (ExtractableCohort cohort in Cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).ToArray())
-                        cohort.InjectKnown(null);
+                        cohort.InjectKnown((ExternalCohortDefinitionData)null);
 
                     continue;
                 }

@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
@@ -164,6 +165,50 @@ namespace DataExportLibrary.Tests.Cohort
 
             var cohort = request.CohortCreatedIfAny;
             Assert.IsNotNull(cohort);
+
+            var externalData = cohort.GetExternalData();
+            Assert.AreEqual(10,externalData.ExternalProjectNumber);
+            Assert.IsNotNullOrEmpty( externalData.ExternalDescription);
+
+
+            Assert.AreEqual(DateTime.Now.Year, externalData.ExternalCohortCreationDate.Value.Year);
+            Assert.AreEqual(DateTime.Now.Month, externalData.ExternalCohortCreationDate.Value.Month);
+            Assert.AreEqual(DateTime.Now.Day,  externalData.ExternalCohortCreationDate.Value.Day);
+            Assert.AreEqual(DateTime.Now.Hour, externalData.ExternalCohortCreationDate.Value.Hour);
+
+            cohort.AppendToAuditLog("Test");
+            
+            Assert.IsTrue(cohort.AuditLog.Contains("Test"));
+
+            Assert.AreEqual(1,cohort.Count); 
+            Assert.AreEqual(1,cohort.CountDistinct);
+
+            var cohortTable = cohort.FetchEntireCohort();
+
+            Assert.AreEqual(1,cohortTable.Rows.Count);
+
+            var helper = ect.GetQuerySyntaxHelper();
+
+            Assert.AreEqual(101243, cohortTable.Rows[0][helper.GetRuntimeName(ect.PrivateIdentifierField)]);
+            var aguid = cohortTable.Rows[0][helper.GetRuntimeName(ect.ReleaseIdentifierField)].ToString();
+            Assert.IsNotNullOrEmpty(aguid); //should be a guid
+
+            //test reversing the anonymisation of something
+            var dtAno = new DataTable();
+            dtAno.Columns.Add(cohort.GetReleaseIdentifier(true));
+            dtAno.Columns.Add("Age");
+            dtAno.Rows.Add(aguid, 23);
+            dtAno.Rows.Add(aguid, 99);
+
+            cohort.ReverseAnonymiseDataTable(dtAno, new ThrowImmediatelyDataLoadEventListener(), true);
+
+            Assert.AreEqual(2, dtAno.Columns.Count);
+            Assert.IsTrue(dtAno.Columns.Contains(cohort.GetPrivateIdentifier(true)));
+
+            Assert.AreEqual("101243", dtAno.Rows[0][cohort.GetPrivateIdentifier(true)]);
+            Assert.AreEqual("101243", dtAno.Rows[1][cohort.GetPrivateIdentifier(true)]);
+
+
         }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
@@ -33,7 +32,7 @@ namespace DataExportLibrary.Data.DataTables
     /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
     /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>
+    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>
     {
         #region Database Properties
         private int _externalCohortTable_ID;
@@ -119,7 +118,7 @@ namespace DataExportLibrary.Data.DataTables
         [NoMappingToDatabase]
         public IExternalCohortTable ExternalCohortTable
         {
-            get { return Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID);}
+            get { return _knownExternalCohortTable.Value;}
         }
 
         #endregion
@@ -135,16 +134,6 @@ namespace DataExportLibrary.Data.DataTables
             AuditLog = r["AuditLog"] as string;
 
             ClearAllInjections();
-            /*
-            try
-            {
-                if (!ExternalCohortTable.IDExistsInCohortTable(OriginID))
-                    throw new Exception("A cohort is defined with OriginID " + OriginID + " but there is no record of it in " + ExternalCohortTable.TableName);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("ExtractableCohort with OriginID " + OriginID + " (ID=" + ID +") crashed while attempting to confirm the existence of the OriginID in the underlying Cohort table '" + ExternalCohortTable.TableName + "'",e);
-            }*/
         }
 
         public IExternalCohortDefinitionData GetExternalData()
@@ -154,6 +143,7 @@ namespace DataExportLibrary.Data.DataTables
 
         
         private Lazy<IExternalCohortDefinitionData> _cacheData;
+        private Lazy<IExternalCohortTable> _knownExternalCohortTable;
         private int _originID;
 
         public ExtractableCohort(IDataExportRepository repository, ExternalCohortTable externalSource, int originalId)
@@ -191,6 +181,7 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
+        
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             if (_cachedQuerySyntaxHelper == null)
@@ -205,26 +196,47 @@ namespace DataExportLibrary.Data.DataTables
         {
             var ect = ExternalCohortTable;
 
-            SqlConnection con = (SqlConnection) ect.Discover().Server.GetConnection();
-
-            con.Open();
-            try
+            var db = ect.Discover();
+            using (var con = db.Server.GetConnection())
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM " + ect.TableName + " WHERE " + this.WhereSQL(), con); // this method looks incredibly complicated when we could just do top 10 but it is legacy from when you could define a cohort by query so it can stay in incase we want that functionality again
+                con.Open();
+                string sql = "SELECT * FROM " + ect.TableName + " WHERE " + this.WhereSQL();
 
-                DataTable dtReturn = new DataTable();
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                var da = db.Server.GetDataAdapter(sql, con);
+                var dtReturn = new DataTable();
                 da.Fill(dtReturn);
 
                 dtReturn.TableName = ect.GetQuerySyntaxHelper().GetRuntimeName(ect.TableName);
                 
                 return dtReturn;
             }
-            finally
+        }
+
+        [Obsolete("Use FetchEntireCohort instea")]
+        public DataTable GetReleaseIdentifierMap(IDataLoadEventListener listener)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch release map as data table"));
+            DataTable toReturn = new DataTable();
+
+            var db = ExternalCohortTable.Discover();
+            using (var con = db.Server.GetConnection())
             {
-                con.Close();
+                con.Open();
+
+                string sql =
+                    string.Format(
+                        "SELECT {0},{1} FROM {2} where " + ExternalCohortTable.DefinitionTableForeignKeyField + "=" +
+                        OriginID
+                        , GetPrivateIdentifier()
+                        , GetReleaseIdentifier()
+                        , ExternalCohortTable.TableName);
+
+                var da = db.Server.GetDataAdapter(sql, con);
+                da.Fill(toReturn);
             }
+
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Release map data table fetched, it has " + toReturn.Rows.Count + " rows"));
+            return toReturn;
         }
 
         /// <summary>
@@ -243,56 +255,42 @@ namespace DataExportLibrary.Data.DataTables
         {
             var ect = ExternalCohortTable;
 
-            SqlConnection con = (SqlConnection)ect.Discover().Server.GetConnection();
-
-            con.Open();
-            try
+            var db = ect.Discover();
+            using (var con = db.Server.GetConnection())
             {
-                SqlCommand cmd = new SqlCommand("SELECT count(*) FROM " + ect.TableName + " WHERE " + WhereSQL(), con); 
+                con.Open();
 
-                return int.Parse(cmd.ExecuteScalar().ToString());
-            }
-            finally
-            {
-                con.Close();
+                return Convert.ToInt32(db.Server.GetCommand("SELECT count(*) FROM " + ect.TableName + " WHERE " + WhereSQL(), con).ExecuteScalar());
             }
         }
 
         private int CountDISTINCTCohortInDatabase()
         {
+            return Convert.ToInt32(ExecuteScalar("SELECT count(DISTINCT "+GetReleaseIdentifier(true)+") FROM " + ExternalCohortTable.TableName + " WHERE " + WhereSQL()));
+        }
+
+        private object ExecuteScalar(string sql)
+        {
             var ect = ExternalCohortTable;
-            SqlConnection con = (SqlConnection)ect.Discover().Server.GetConnection();
 
-            con.Open();
-            try
+            var db = ect.Discover();
+            using (var con = db.Server.GetConnection())
             {
-                SqlCommand cmd = new SqlCommand("SELECT  count(DISTINCT " + GetReleaseIdentifier() + ") FROM " + ect.TableName + " WHERE " + WhereSQL(), con);
+                con.Open();
 
-                return int.Parse(cmd.ExecuteScalar().ToString());
-            }
-            finally
-            {
-                con.Close();
+                return db.Server.GetCommand(sql, con).ExecuteScalar();
             }
         }
 
+        [Obsolete("This is super HIC specific, the first 3 digits of every release identifier is a project code")]
         public string GetFirstProCHIPrefix()
         {
             var ect = ExternalCohortTable;
 
-            SqlConnection con = (SqlConnection)ect.Discover().Server.GetConnection();
+            if (ect.DatabaseType != DatabaseType.MicrosoftSQLServer)
+                return "";
 
-            con.Open();
-            try
-            {
-                SqlCommand cmd = new SqlCommand("SELECT  TOP 1 LEFT(" + GetReleaseIdentifier() + ",3) FROM " + ect.TableName + " WHERE " + WhereSQL(), con);
-
-                return cmd.ExecuteScalar().ToString();
-            }
-            finally
-            {
-                con.Close();
-            }
+            return (string)ExecuteScalar("SELECT  TOP 1 LEFT(" + GetReleaseIdentifier() + ",3) FROM " + ect.TableName + " WHERE " +WhereSQL());
         }
         
         #endregion
@@ -380,32 +378,7 @@ namespace DataExportLibrary.Data.DataTables
             return ExternalCohortTable.Discover();
         }
 
-        public DataTable GetReleaseIdentifierMap(IDataLoadEventListener listener)
-        {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch release map as data table"));
-
-            SqlConnection con = (SqlConnection)ExternalCohortTable.Discover().Server.GetConnection();
-
-            con.Open();
-
-            SqlCommand cmdGetMap = new SqlCommand(
-                string.Format("SELECT {0},{1} FROM {2} where " + ExternalCohortTable.DefinitionTableForeignKeyField + "=" + OriginID
-                , GetPrivateIdentifier()
-                , GetReleaseIdentifier()
-                , ExternalCohortTable.TableName
-                ), con);
-
-            DataTable toReturn = new DataTable();
-
-            SqlDataAdapter da = new SqlDataAdapter(cmdGetMap);
-            da.Fill(toReturn);
-
-            con.Close();
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Release map data table fetched, it has " + toReturn.Rows.Count + " rows"));
-            return toReturn;
-        }
-
+        
 
         public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
         {
@@ -419,8 +392,8 @@ namespace DataExportLibrary.Data.DataTables
             //if we don't want to support caching or there is no cached value yet
             if (!allowCaching || _releaseToPrivateKeyDictionary == null)
             {
-                
-                DataTable map = GetReleaseIdentifierMap(listener);
+
+                DataTable map = FetchEntireCohort();
 
                 int progress = 0;
                 Stopwatch sw = new Stopwatch();
@@ -518,9 +491,15 @@ namespace DataExportLibrary.Data.DataTables
             _cacheData = new Lazy<IExternalCohortDefinitionData>(() => instance);
         }
 
+        public void InjectKnown(ExternalCohortTable instance)
+        {
+            _knownExternalCohortTable = new Lazy<IExternalCohortTable>(() => instance);
+        }
+
         public void ClearAllInjections()
         {
             _cacheData = new Lazy<IExternalCohortDefinitionData>(GetExternalData);
+            _knownExternalCohortTable = new Lazy<IExternalCohortTable>(()=>Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID));
         }
     }
         public enum OneToMErrorResolutionStrategy
