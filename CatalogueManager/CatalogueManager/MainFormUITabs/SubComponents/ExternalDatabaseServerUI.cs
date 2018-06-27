@@ -108,7 +108,8 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
         private void tbPassword_TextChanged(object sender, EventArgs e)
         {
-            _server.Password = tbPassword.Text;
+            if(!bloading)
+                _server.Password = tbPassword.Text;
         }
 
         private void ddSetKnownType_SelectedIndexChanged(object sender, EventArgs e)
