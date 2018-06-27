@@ -32,7 +32,7 @@ namespace DataExportLibrary.Data.DataTables
     /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
     /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>
+    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>, IHasDependencies
     {
         #region Database Properties
         private int _externalCohortTable_ID;
@@ -500,6 +500,16 @@ namespace DataExportLibrary.Data.DataTables
         {
             _cacheData = new Lazy<IExternalCohortDefinitionData>(GetExternalData);
             _knownExternalCohortTable = new Lazy<IExternalCohortTable>(()=>Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID));
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new[] { ExternalCohortTable };
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            return Repository.GetAllObjects<ExtractionConfiguration>("WHERE Cohort_ID = " + ID);
         }
     }
         public enum OneToMErrorResolutionStrategy

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Update;
@@ -45,6 +46,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
         public override string GetAutoIncrementKeywordIfAny()
         {
             return "IDENTITY(1,1)";
+        }
+
+        public override Dictionary<string, string> GetSQLFunctionsDictionary()
+        {
+            return new Dictionary<string, string>()
+            {
+                { "left", "LEFT ( character_expression , integer_expression )" },
+                { "right", "RIGHT ( character_expression , integer_expression )" },
+                { "upper", "UPPER ( character_expression )" },
+                { "substring","SUBSTRING ( expression ,start , length ) "},
+                { "dateadd","DATEADD (datepart , number , date )"},
+                { "datediff", "DATEDIFF ( datepart , startdate , enddate )  "},
+                { "getdate", "GETDATE()"},
+                { "cast", "CAST ( expression AS data_type [ ( length ) ] )"},
+                { "convert","CONVERT ( data_type [ ( length ) ] , expression [ , style ] ) "},
+                { "case","CASE WHEN x=y THEN 'something' WHEN x=z THEN 'something2' ELSE 'something3' END"}
+            };
         }
 
         public override string EnsureWrappedImpl(string databaseOrTableName)

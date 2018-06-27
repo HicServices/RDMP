@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update;
@@ -52,6 +53,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         /// </summary>
         /// <returns></returns>
         string GetAutoIncrementKeywordIfAny();
+
+        /// <summary>
+        /// Get a list of functions to SQL code (including parameter names).  This is used primarily in autocomplete situations where the user wants to
+        /// know the available functions within the targeted dbms.
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<string, string> GetSQLFunctionsDictionary();
     }
 
     public enum MandatoryScalarFunctions

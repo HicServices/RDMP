@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
+using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
 using CohortManagerLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections
 {
@@ -117,9 +119,20 @@ namespace CatalogueManager.DataViewing.Collections
             return "View Top 100 " + AggregateConfiguration;
         }
 
+        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        {
+            
+        }
+
         AggregateConfiguration AggregateConfiguration { get
         {
             return DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
         } }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var a = AggregateConfiguration;
+            return a != null?a.GetQuerySyntaxHelper():null;
+        }
     }
 }

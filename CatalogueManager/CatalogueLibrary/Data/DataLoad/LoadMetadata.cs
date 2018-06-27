@@ -11,6 +11,7 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
@@ -45,7 +46,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// <para>A LoadMetadata also allows you to override various settings such as forcing a specific alternate server to load - for when you want to overule
     /// the location that TableInfo thinks data is on e.g. into a test environment mirror of live.</para>
     /// </summary>
-    public class LoadMetadata : VersionedDatabaseEntity, IDeleteable, ILoadMetadata, IHasDependencies, IRevertable, INamed
+    public class LoadMetadata : VersionedDatabaseEntity, IDeleteable, ILoadMetadata, IHasDependencies, IRevertable, INamed, IHasQuerySyntaxHelper
     {
 
         #region Database Properties
@@ -287,7 +288,15 @@ namespace CatalogueLibrary.Data.DataLoad
                 lm.CreateNewLoggingTaskIfNotExists(loggingTaskName);
                 catalogue.LoggingDataTask = loggingTaskName;
             }
+        }
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var syntax = GetAllCatalogues().Select(c => c.GetQuerySyntaxHelper()).ToArray();
+            if (syntax.Length > 1)
+                throw new Exception("LoadMetadata '" + this + "' has multiple underlying Catalogue Live Database Type(s) - not allowed");
+
+            return syntax.SingleOrDefault();
         }
     }
 }

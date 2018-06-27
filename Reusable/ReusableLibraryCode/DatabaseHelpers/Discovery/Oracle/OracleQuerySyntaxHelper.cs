@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -55,6 +56,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         {
             //https://stackoverflow.com/questions/11296361/how-to-create-id-with-auto-increment-on-oracle
             return null;
+        }
+
+        public override Dictionary<string, string> GetSQLFunctionsDictionary()
+        {
+            return new Dictionary<string, string>();
         }
 
         public override string DatabaseTableSeparator

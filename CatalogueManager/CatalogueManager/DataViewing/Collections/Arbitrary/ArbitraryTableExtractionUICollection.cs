@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using CatalogueLibrary.Data.Dashboarding;
+using CatalogueLibrary.QueryBuilding;
+using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -82,12 +84,29 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
 
         public string GetSql()
         {
-            return "Select top 100 * from " + _table.GetFullyQualifiedName();
+            var response = _table.GetQuerySyntaxHelper().HowDoWeAchieveTopX(100);
+            
+            switch (response.Location)
+            {
+                case QueryComponent.SELECT:
+                    return "Select " + response.SQL + " * from " + _table.GetFullyQualifiedName();
+                case QueryComponent.WHERE:
+                    return "Select * from " + _table.GetFullyQualifiedName() + " WHERE " + response.SQL;
+                case QueryComponent.Postfix:
+                    return "Select * from " + _table.GetFullyQualifiedName() + " " + response.SQL ;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public string GetTabName()
         {
             return "View " + _table.GetRuntimeName();
+        }
+
+        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        {
+            autoComplete.Add(_table);
         }
 
         public string Server { get { return _arguments[ServerKey]; } }

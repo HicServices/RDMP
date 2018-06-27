@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ScintillaNET;
 
 namespace CatalogueManager.AutoComplete
@@ -22,17 +23,17 @@ namespace CatalogueManager.AutoComplete
 
         public AutoCompleteProvider Create()
         {
-            return Create(null);
+            return Create(null,null);
         }
 
-        public AutoCompleteProvider Create(IHasDependencies forObject)
+        public AutoCompleteProvider Create(IHasDependencies forObject, IQuerySyntaxHelper helper)
         {
             var provider = new AutoCompleteProvider(_activator);
 
             if(forObject != null)
                 RecursiveAdd(provider, forObject, 0);
 
-            provider.AddSQLKeywords();
+            provider.AddSQLKeywords(helper);
 
             return provider;
         }

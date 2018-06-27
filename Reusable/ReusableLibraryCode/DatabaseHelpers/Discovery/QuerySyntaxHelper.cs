@@ -263,5 +263,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
         public abstract string GetAutoIncrementKeywordIfAny();
+        public abstract Dictionary<string, string> GetSQLFunctionsDictionary();
     }
 }

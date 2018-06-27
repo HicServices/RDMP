@@ -454,6 +454,16 @@ dtCreated as dtCreated
         {
             return Discover();
         }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new IHasDependencies[0];
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            return new IHasDependencies[0];
+        }
     }
 }
 

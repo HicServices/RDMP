@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.Design.WebControls.WebParts;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.AutoComplete;
@@ -110,11 +111,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         {
             //if theres an old one dispose it
             if (_autoComplete == null)
-                _autoComplete = new AutoCompleteProviderFactory(_activator).Create();
-
-            _autoComplete.Clear();
-
-            _autoComplete.AddSQLKeywords();
+                _autoComplete = new AutoCompleteProviderFactory(_activator).Create(null,_processTask.LoadMetadata.GetQuerySyntaxHelper());
             
             foreach (var table in _processTask.LoadMetadata.GetDistinctTableInfoList(false))
                 _autoComplete.Add(table, _processTask.LoadStage);

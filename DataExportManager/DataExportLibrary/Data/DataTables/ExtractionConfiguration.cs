@@ -665,5 +665,15 @@ namespace DataExportLibrary.Data.DataTables
 
             base.DeleteInDatabase();
         }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new[] {Project};
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            return new IHasDependencies[0];
+        }
     }
 }

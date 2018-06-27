@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
+using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -100,6 +101,11 @@ namespace CatalogueManager.DataViewing.Collections
             return ColumnInfo + "(" + ViewType + ")";
         }
 
+        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        {
+            
+        }
+
         public ColumnInfo ColumnInfo
         {
             get { return DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault(); }
@@ -108,6 +114,12 @@ namespace CatalogueManager.DataViewing.Collections
         private IFilter GetFilterIfAny()
         {
             return (IFilter) DatabaseObjects.SingleOrDefault(o => o is IFilter);
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var c = ColumnInfo;
+            return c != null ? c.GetQuerySyntaxHelper() : null;
         }
     }
 }

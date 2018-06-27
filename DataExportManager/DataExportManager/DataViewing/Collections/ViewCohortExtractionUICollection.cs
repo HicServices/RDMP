@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data.Dashboarding;
+using CatalogueManager.AutoComplete;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ObjectVisualisation;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportManager.DataViewing.Collections
 {
@@ -39,9 +41,9 @@ namespace DataExportManager.DataViewing.Collections
 
         public IHasDependencies GetAutocompleteObject()
         {
-            return null;
+            return Cohort;
         }
-
+        
         public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
 
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
@@ -63,6 +65,17 @@ namespace DataExportManager.DataViewing.Collections
         public string GetTabName()
         {
             return "Top 100 " + Cohort;
+        }
+
+        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        {
+            
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var c = Cohort;
+            return c != null ? c.GetQuerySyntaxHelper() : null;
         }
     }
 }

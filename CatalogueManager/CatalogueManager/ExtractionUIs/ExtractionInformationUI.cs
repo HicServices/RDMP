@@ -179,7 +179,7 @@ namespace CatalogueManager.ExtractionUIs
                 if (ExtractionInformation.CatalogueItem.Name.Equals(ExtractionInformation.ToString()))
                     _namesMatchedWhenDialogWasLaunched = true;
 
-                var autoComplete = new AutoCompleteProviderFactory(_activator).Create(ExtractionInformation);
+                var autoComplete = new AutoCompleteProviderFactory(_activator).Create(ExtractionInformation,ExtractionInformation.GetQuerySyntaxHelper());
                 autoComplete.RegisterForEvents(QueryEditor);
             }
 

@@ -78,10 +78,13 @@ namespace CatalogueManager.DataViewing
 
             //the autocomplete supporting object
             var autoCompleteObject = _collection.GetAutocompleteObject();
-
-            if(autoCompleteObject != null && _autoComplete == null)
+            
+            if(_autoComplete == null)
             {
-                _autoComplete = new AutoCompleteProviderFactory(activator).Create();
+                _autoComplete = new AutoCompleteProviderFactory(activator).Create(autoCompleteObject, _collection.GetQuerySyntaxHelper());
+
+                _collection.AdjustAutocomplete(_autoComplete);
+
                 _autoComplete.RegisterForEvents(_scintilla);
             }
             

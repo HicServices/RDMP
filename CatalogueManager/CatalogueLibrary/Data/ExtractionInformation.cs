@@ -8,6 +8,8 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -27,7 +29,7 @@ namespace CatalogueLibrary.Data
     /// is the column which will be joined against cohorts in data extraction linkages.  This should be the private identifier you use to identify people
     /// in your datasets (e.g. Community Health Index or NHS Number).</para>
     /// </summary>
-    public class ExtractionInformation : ConcreteColumn, IDeleteable, IComparable, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>
+    public class ExtractionInformation : ConcreteColumn, IDeleteable, IComparable, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
     {
         private bool _columnInfoFoundToBeNull = false;
 
@@ -219,5 +221,12 @@ namespace CatalogueLibrary.Data
             return !SelectSQL.Equals(ColumnInfo.Name);
         }
 
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            if (ColumnInfo == null)
+                return null;
+
+            return ColumnInfo.GetQuerySyntaxHelper();
+        }
     }
 }
