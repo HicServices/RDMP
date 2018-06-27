@@ -67,7 +67,7 @@ namespace DataExportManager.DataViewing.Collections
                 case QueryComponent.WHERE:
                     return "Select * from " + tableName + " WHERE " + response.SQL + " AND " + Cohort.WhereSQL();
                 case QueryComponent.Postfix:
-                    return "Select * from " + tableName + " " + response.SQL + " WHERE " + Cohort.WhereSQL();
+                    return "Select * from " + tableName + " WHERE " + Cohort.WhereSQL() + " " + response.SQL;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
