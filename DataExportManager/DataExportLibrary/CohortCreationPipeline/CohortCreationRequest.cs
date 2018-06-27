@@ -23,7 +23,7 @@ namespace DataExportLibrary.CohortCreationPipeline
     /// </summary>
     public class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest, ICheckable
     {
-        private readonly DataExportRepository _repository;
+        private readonly IDataExportRepository _repository;
         private DataFlowPipelineContext<DataTable> _context;
 
         //for pipeline editing initialization when no known cohort is available
@@ -36,7 +36,7 @@ namespace DataExportLibrary.CohortCreationPipeline
         public ICohortDefinition NewCohortDefinition { get; set; }
         public ExtractableCohort CohortCreatedIfAny { get; set; }
 
-        public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, DataExportRepository repository, string descriptionForAuditLog):this()
+        public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog):this()
         {
             _repository = repository;
             Project = project;

@@ -16,6 +16,7 @@ using DataExportManager.CohortUI;
 using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
@@ -38,7 +39,7 @@ namespace DataExportManager.Menus
         
         private void AddBlankExternalCohortTable()
         {
-            var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"Blank Cohort Source " + Guid.NewGuid());
+            var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"Blank Cohort Source " + Guid.NewGuid(),DatabaseType.MicrosoftSQLServer);
             Publish(newExternalCohortTable);
             Activate(newExternalCohortTable);
         }

@@ -1,13 +1,20 @@
-﻿using System.Data.SqlClient;
+﻿using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.DataFlowPipeline;
+using DataExportLibrary.CohortCreationPipeline;
+using DataExportLibrary.CohortCreationPipeline.Destinations;
+using DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation;
 using DataExportLibrary.CohortDatabaseWizard;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace DataExportLibrary.Tests.Cohort
@@ -123,9 +130,40 @@ namespace DataExportLibrary.Tests.Cohort
             //database should exist
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseName);
             Assert.IsTrue(db.Exists());
+            
+            //did it create the correct type?
+            Assert.AreEqual(type,ect.DatabaseType);
 
             //the ExternalCohortTable should pass tests
             ect.Check(new ThrowImmediatelyCheckNotifier());
+            
+            //now try putting someone in it
+            //the project it will go under
+            var project = new Project(DataExportRepository, "MyProject");
+            project.ProjectNumber = 10;
+            project.SaveToDatabase();
+
+            //the request to put it under there
+            var request = new CohortCreationRequest(project, new CohortDefinition(null, "My cohort", 1, 10, ect), DataExportRepository,"Blah");
+            
+            //the actual cohort data
+            DataTable dt = new DataTable();
+            dt.Columns.Add(_extractionInfo2.GetRuntimeName());
+            dt.Rows.Add(101243); //_extractionInfo2 is of type int
+
+            //the destination component that will put it there
+            var dest = new BasicCohortDestination();
+
+            dest.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
+            
+            //tell it to use the guid allocator
+            dest.ReleaseIdentifierAllocator = typeof (GuidReleaseIdentifierAllocator);
+            
+            dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+
+            var cohort = request.CohortCreatedIfAny;
+            Assert.IsNotNull(cohort);
         }
     }
 }

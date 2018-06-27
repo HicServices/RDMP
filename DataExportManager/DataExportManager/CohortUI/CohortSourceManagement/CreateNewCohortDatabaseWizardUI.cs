@@ -33,8 +33,13 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
     {
         Screen1 screen1;
         Screen2 screen2;
-        
-        public ExternalCohortTable ExternalCohortTableCreatedIfAny { get; set; }
+
+        public ExternalCohortTable ExternalCohortTableCreatedIfAny
+        {
+            get
+        {
+            return screen2.ExternalCohortTableCreatedIfAny;
+        } }
 
         public CreateNewCohortDatabaseWizardUI()
         {

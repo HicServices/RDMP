@@ -420,7 +420,7 @@ namespace DataExportLibrary.Providers
                         foreach (ExtractableCohort c in cohorts)
                         {
                             //load external data from the result set
-                            var externalData = new ExternalCohortDefinitionData((SqlDataReader)r, source.Name);
+                            var externalData = new ExternalCohortDefinitionData(r, source.Name);
 
                             //tell the cohort about the data
                             c.InjectKnown(externalData);

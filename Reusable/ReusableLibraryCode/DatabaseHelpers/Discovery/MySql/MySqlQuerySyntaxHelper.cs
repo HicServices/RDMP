@@ -1,10 +1,7 @@
 ﻿using System;
-using CommandLine;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
@@ -17,7 +14,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         public override string GetRuntimeName(string s)
         {
             var result =  base.GetRuntimeName(s);
-            
+
+            if (string.IsNullOrWhiteSpace(result))
+                return result;
+
             //nothing is in caps in mysql ever
             return result.ToLower();
         }

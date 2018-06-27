@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using System.Data.SqlClient;
 using ADOX;
 using DataExportLibrary.Interfaces.Data;
@@ -14,7 +15,7 @@ namespace DataExportLibrary.Data
     /// </summary>
     public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
     {
-        public ExternalCohortDefinitionData(SqlDataReader r, string tableName)
+        public ExternalCohortDefinitionData(DbDataReader r, string tableName)
         {
             ExternalProjectNumber = Convert.ToInt32(r["projectNumber"]);
             ExternalDescription = r["description"].ToString();

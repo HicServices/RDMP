@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortDatabaseWizard;
+using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.ChecksUI;
 
@@ -57,6 +58,8 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
         public CreateNewCohortDatabaseWizard Wizard { get; private set; }
         public PrivateIdentifierPrototype PrivateIdentifierPrototype { get; private set; }
 
+        public ExternalCohortTable ExternalCohortTableCreatedIfAny { get; private set; }
+
         private void btnDiscoverExtractionIdentifiers_Click(object sender, EventArgs e)
         {
             listView1.ClearObjects();
@@ -82,12 +85,16 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
 
             Wizard = new CreateNewCohortDatabaseWizard(db, RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository);
             var popup = new PopupChecksUI("Creating Cohort Table", false);
-            Wizard.CreateDatabase(PrivateIdentifierPrototype, popup);
+            ExternalCohortTableCreatedIfAny = Wizard.CreateDatabase(PrivateIdentifierPrototype, popup);
+
+            
 
             if(popup.GetWorst() <= CheckResult.Warning)
                 if(MessageBox.Show("Close Form?","Close",MessageBoxButtons.YesNo ) == DialogResult.Yes)
                     ParentForm.Close();
         }
+
+        
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {

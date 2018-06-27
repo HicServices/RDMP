@@ -325,6 +325,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DataRelease\DataRelease.cd" />
+    <None Include="Data\DataTables\Cohorts.cd" />
     <None Include="ExecuteDatasetExtraction.cd" />
     <None Include="ExtractionTimeColumns.cd" />
     <None Include="ExtractionTime\UserPicks\Bundles.cd" />

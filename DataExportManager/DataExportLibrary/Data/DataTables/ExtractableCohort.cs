@@ -149,25 +149,7 @@ namespace DataExportLibrary.Data.DataTables
 
         public IExternalCohortDefinitionData GetExternalData()
         {
-            string sql = @"select [projectNumber], [description],[version],[dtCreated] from " + ExternalCohortTable.DefinitionTableName + " where id = " + OriginID;
-
-            SqlConnection conToCohort = (SqlConnection) ExternalCohortTable.GetExpectDatabase().Server.GetConnection();
-            conToCohort.Open();
-            try
-            {
-                SqlCommand cmdGetDescriptionOfCohortFromConsus = new SqlCommand(sql, conToCohort);
-
-                SqlDataReader r = cmdGetDescriptionOfCohortFromConsus.ExecuteReader();
-
-                if (!r.Read())
-                    throw new Exception("No records returned for Cohort OriginID " + OriginID);
-
-                return new ExternalCohortDefinitionData(r, ExternalCohortTable.Name);
-            }
-            finally
-            {
-                conToCohort.Close();
-            }
+            return ExternalCohortTable.GetExternalData(this);
         }
 
         
@@ -223,7 +205,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             var ect = ExternalCohortTable;
 
-            SqlConnection con = (SqlConnection) ect.GetExpectDatabase().Server.GetConnection();
+            SqlConnection con = (SqlConnection) ect.Discover().Server.GetConnection();
 
             con.Open();
             try
@@ -261,7 +243,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             var ect = ExternalCohortTable;
 
-            SqlConnection con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection();
+            SqlConnection con = (SqlConnection)ect.Discover().Server.GetConnection();
 
             con.Open();
             try
@@ -279,7 +261,7 @@ namespace DataExportLibrary.Data.DataTables
         private int CountDISTINCTCohortInDatabase()
         {
             var ect = ExternalCohortTable;
-            SqlConnection con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection();
+            SqlConnection con = (SqlConnection)ect.Discover().Server.GetConnection();
 
             con.Open();
             try
@@ -298,7 +280,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             var ect = ExternalCohortTable;
 
-            SqlConnection con = (SqlConnection)ect.GetExpectDatabase().Server.GetConnection();
+            SqlConnection con = (SqlConnection)ect.Discover().Server.GetConnection();
 
             con.Open();
             try
@@ -376,7 +358,7 @@ namespace DataExportLibrary.Data.DataTables
 
         public string GetPrivateIdentifierDataType()
         {
-            DiscoveredTable table = ExternalCohortTable.GetExpectDatabase().ExpectTable(ExternalCohortTable.TableName);
+            DiscoveredTable table = ExternalCohortTable.Discover().ExpectTable(ExternalCohortTable.TableName);
             
             //discover the column
             return table.DiscoverColumn(GetPrivateIdentifier(true))
@@ -386,7 +368,7 @@ namespace DataExportLibrary.Data.DataTables
 
         public string GetReleaseIdentifierDataType()
         {
-            DiscoveredTable table = ExternalCohortTable.GetExpectDatabase().ExpectTable(ExternalCohortTable.TableName);
+            DiscoveredTable table = ExternalCohortTable.Discover().ExpectTable(ExternalCohortTable.TableName);
 
             //discover the column
             return table.DiscoverColumn(GetReleaseIdentifier(true))
@@ -395,14 +377,14 @@ namespace DataExportLibrary.Data.DataTables
         
         public DiscoveredDatabase GetDatabaseServer()
         {
-            return ExternalCohortTable.GetExpectDatabase();
+            return ExternalCohortTable.Discover();
         }
 
         public DataTable GetReleaseIdentifierMap(IDataLoadEventListener listener)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch release map as data table"));
 
-            SqlConnection con = (SqlConnection)ExternalCohortTable.GetExpectDatabase().Server.GetConnection();
+            SqlConnection con = (SqlConnection)ExternalCohortTable.Discover().Server.GetConnection();
 
             con.Open();
 
