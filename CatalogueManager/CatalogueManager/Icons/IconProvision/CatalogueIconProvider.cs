@@ -143,6 +143,9 @@ namespace CatalogueManager.Icons.IconProvision
             if(Enum.TryParse(conceptTypeName,out t))
                 return GetImage(ImagesCollection[t],kind);
 
+            if (concept is IMasqueradeAs)
+                return GetImage(((IMasqueradeAs)concept).MasqueradingAs(), kind);
+
             return ImagesCollection[RDMPConcept.NoIconAvailable];
             
         }
