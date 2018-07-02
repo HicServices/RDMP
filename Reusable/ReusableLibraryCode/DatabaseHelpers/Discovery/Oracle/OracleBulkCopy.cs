@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using Oracle.ManagedDataAccess.Client;
 
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
@@ -35,6 +36,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             int affectedRows = 0;
 
             var availableColumns = new HashSet<string>(dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName),System.StringComparer.CurrentCultureIgnoreCase);
+            var dateColumns = new HashSet<string>();
 
             var sql = string.Format("INSERT INTO " + _discoveredTable.GetFullyQualifiedName() + "({0}) VALUES ({1})",
                 string.Join(",", availableColumns),
@@ -43,8 +45,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
             var tt = _server.GetQuerySyntaxHelper().TypeTranslater;
             
-            using(var cmd = _server.GetCommand(sql, _connection))
+            using(OracleCommand cmd = (OracleCommand) _server.GetCommand(sql, _connection))
             {
+                //send all the data at once
+                cmd.ArrayBindCount = dt.Rows.Count;
 
                 foreach (var c in availableColumns)
                 {
@@ -56,30 +60,44 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
                         throw new Exception("Unmatched column '" + c + "' in DataTable when compared to table " + _discoveredTable + " (with columns:" + string.Join(",",availableColumns) +")");
 
                     p.DbType = tt.GetDbTypeForSQLDBType(matching.DataType.SQLType);
-                }
 
-                cmd.Prepare();
+                    if (p.DbType == DbType.DateTime)
+                        dateColumns.Add(c);
+                }
+                
+                var values = new Dictionary<string, List<object>>();
+
+                foreach (string c in availableColumns)
+                    values.Add(c, new List<object>());
+
 
                 foreach (DataRow dataRow in dt.Rows)
                 {
                     //populate parameters for current row
                     foreach (var col in availableColumns)
                     {
-                        var param = cmd.Parameters[ParameterSymbol + col];
+                        var val = dataRow[col];
 
-                        //oracle isn't too bright when it comes to these kinds of things, see Test CreateDateColumnFromDataTable
-                        if (param.DbType == DbType.DateTime)
-                            param.Value = Convert.ToDateTime(dataRow[col]);
+                        if (val is string && string.IsNullOrWhiteSpace((string) val))
+                            val = null;
                         else
-                        {
-                            param.Value = dataRow[col];
-                        }
+                        if (val == null || val == DBNull.Value)
+                            val = null;
+                        else if (dateColumns.Contains(col))
+                            val = Convert.ToDateTime(dataRow[col]);
+                        
+                        values[col].Add(val);
                     }
-
-                    //send query
-                    affectedRows += cmd.ExecuteNonQuery();
                 }
-                
+
+                foreach (string col in availableColumns)
+                {
+                    var param = cmd.Parameters[ParameterSymbol + col];
+                    param.Value = values[col].ToArray();
+                }
+
+                //send query
+                affectedRows += cmd.ExecuteNonQuery();
             }
             return affectedRows;
         }

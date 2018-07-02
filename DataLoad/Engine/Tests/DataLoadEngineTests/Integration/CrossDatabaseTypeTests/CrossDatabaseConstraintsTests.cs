@@ -53,7 +53,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle)]
         public void UnmatchedColumnsBulkInsertTest_UsesDefaultValues_TwoLargeBatches_Passes(DatabaseType type)
         {
-            const int numberOfRowsPerBatch = 10000;
+            const int numberOfRowsPerBatch = 100000;
 
             var db = GetCleanedServer(type);
 
@@ -76,7 +76,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 
             using (var blk = tbl.BeginBulkInsert())
             {
-                blk.Upload(dt);
+                Assert.AreEqual(numberOfRowsPerBatch,blk.Upload(dt)); //affected rows should match batch size
             }
             sw.Stop();
             Console.WriteLine("Time taken:" + sw.ElapsedMilliseconds + "ms");
@@ -90,7 +90,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 
             using (var blk = tbl.BeginBulkInsert())
             {
-                blk.Upload(dt);
+                Assert.AreEqual(numberOfRowsPerBatch,blk.Upload(dt));
             }
             sw.Stop();
             Console.WriteLine("Time taken:" + sw.ElapsedMilliseconds + "ms");
