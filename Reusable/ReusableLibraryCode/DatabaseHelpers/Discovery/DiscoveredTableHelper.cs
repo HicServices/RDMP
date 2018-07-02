@@ -51,6 +51,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 if (c.IsAutoIncrement && convertIdentityToInt)
                     sqlType = "int";
 
+                bool isToDifferentDatabaseType = toCreateTable != null && toCreateTable.Database.Server.DatabaseType != table.Database.Server.DatabaseType;
+
+
+                //translate types
+                if (isToDifferentDatabaseType)
+                {
+                    var fromtt = table.Database.Server.GetQuerySyntaxHelper().TypeTranslater;
+                    var tott = toCreateTable.Database.Server.GetQuerySyntaxHelper().TypeTranslater;
+
+                    sqlType = fromtt.TranslateSQLDBType(c.DataType.SQLType, tott);
+                }
+
                 var colRequest = new DatabaseColumnRequest(c.GetRuntimeName(),sqlType , c.AllowNulls || dropNullability);
                 colRequest.IsPrimaryKey = c.IsPrimaryKey && !dropPrimaryKeys;
 
@@ -58,8 +70,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 if (!string.IsNullOrWhiteSpace(c.Collation))
                 {
                     //if the script is to be run on a database of the same type
-                    if (toCreateTable == null ||
-                        toCreateTable.Database.Server.DatabaseType == table.Database.Server.DatabaseType)
+                    if (toCreateTable == null || !isToDifferentDatabaseType)
                     {
                         //then specify that the column should use the live collation
                         colRequest.Collation = c.Collation;
