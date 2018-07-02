@@ -127,5 +127,39 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
                 Assert.Throws(Is.InstanceOf<Exception>(),()=>blk.Upload(dt));
             }
         }
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void AutoIncrementPrimaryKey_Passes(DatabaseType type)
+        {
+            var db = GetCleanedServer(type);
+
+            var tbl = db.CreateTable("Test", new DatabaseColumnRequest[]
+            {
+                new DatabaseColumnRequest("bob",new DatabaseTypeRequest(typeof(int),100)){IsPrimaryKey =  true,AllowNulls = false,IsAutoIncrement = true},
+                new DatabaseColumnRequest("frank",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey =  true,AllowNulls = false}
+            });
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("frank");
+            dt.Rows.Add("fish");
+            dt.Rows.Add("fish");
+            dt.Rows.Add("tank");
+
+            using (var blk = tbl.BeginBulkInsert())
+            {
+                Assert.AreEqual(3,blk.Upload(dt));
+            }
+
+
+            var result = tbl.GetDataTable();
+
+            Assert.AreEqual(2, result.Columns.Count);
+            Assert.AreEqual(3, result.Rows.Count);
+            Assert.AreEqual(1, result.Rows.Cast<DataRow>().Count(r => Convert.ToInt32(r["bob"]) == 1));
+            Assert.AreEqual(1, result.Rows.Cast<DataRow>().Count(r => Convert.ToInt32(r["bob"]) == 2));
+            Assert.AreEqual(1, result.Rows.Cast<DataRow>().Count(r => Convert.ToInt32(r["bob"]) == 3));
+            
+        }
     }
 }
