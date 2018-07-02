@@ -91,10 +91,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             AddReplacement(replacementStrings, sourceDb, sourceTable, sourceCohortDefinitionId, sourceSyntax, destinationSyntax);
             AddReplacement(replacementStrings, sourceDb, sourceTable, sourceSyntax, destinationSyntax);
             
-            //don't collate if we are switching away from a MicrosoftSQLServer
-            if(_server.DatabaseType != DatabaseType.MicrosoftSQLServer)
-                replacementStrings.Add("collate Latin1_General_BIN","");
-
             foreach (KeyValuePair<string, string> r in replacementStrings)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Replacing '" + r.Key + "' with '" + r.Value + "'", null));

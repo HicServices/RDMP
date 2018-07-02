@@ -82,7 +82,7 @@ SELECT DISTINCT
 [{0}ScratchArea]..[TestTable].[DateOfBirth]
 FROM 
 [{0}ScratchArea]..[TestTable]
-INNER JOIN [tempdb]..[Cohort] ON [{0}ScratchArea]..[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID] collate Latin1_General_BIN
+INNER JOIN [tempdb]..[Cohort] ON [{0}ScratchArea]..[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID]
 WHERE
 [tempdb]..[Cohort].[cohortDefinition_id]=-599
 ", TestDatabaseNames.Prefix);
