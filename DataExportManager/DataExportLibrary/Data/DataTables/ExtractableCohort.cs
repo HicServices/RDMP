@@ -378,7 +378,9 @@ namespace DataExportLibrary.Data.DataTables
             return ExternalCohortTable.Discover();
         }
 
-        
+        //these need to be private since ReverseAnonymiseDataTable will likely be called in batch
+        private int _reverseAnonymiseProgressFetchingMap = 0;
+        private int _reverseAnonymiseProgressReversing = 0;
 
         public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
         {
@@ -395,7 +397,7 @@ namespace DataExportLibrary.Data.DataTables
 
                 DataTable map = FetchEntireCohort();
 
-                int progress = 0;
+                
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
                 //dictionary of released values (for the cohort) back to private values
@@ -418,23 +420,21 @@ namespace DataExportLibrary.Data.DataTables
                                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Top 1-ing error message disabled due to flood of messages"));
                             }
                         }
-                        
                     }
                     else
                         _releaseToPrivateKeyDictionary.Add(r[releaseIdentifier].ToString().Trim(), r[privateIdentifier].ToString().Trim());
 
-                    progress++;
+                    _reverseAnonymiseProgressFetchingMap++;
 
-                    if(progress%500 == 0)
-                        listener.OnProgress(this, new ProgressEventArgs("Assembling Release Map Dictionary", new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
+                    if(_reverseAnonymiseProgressFetchingMap%500 == 0)
+                        listener.OnProgress(this, new ProgressEventArgs("Assembling Release Map Dictionary", new ProgressMeasurement(_reverseAnonymiseProgressFetchingMap, ProgressType.Records), sw.Elapsed));
                 }
 
-                listener.OnProgress(this, new ProgressEventArgs("Assembling Release Map Dictionary", new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
+                listener.OnProgress(this, new ProgressEventArgs("Assembling Release Map Dictionary", new ProgressMeasurement(_reverseAnonymiseProgressFetchingMap, ProgressType.Records), sw.Elapsed));
             }
             int nullsFound = 0;
             int substitutions = 0;
             
-            int progress2 = 0;
             Stopwatch sw2 = new Stopwatch();
             sw2.Start();
 
@@ -454,10 +454,10 @@ namespace DataExportLibrary.Data.DataTables
                     row[releaseIdentifier] = _releaseToPrivateKeyDictionary[value.ToString().Trim()].Trim();//swap release value for private value (reversing the anonymisation)
                     substitutions++;
 
-                    progress2++;
+                    _reverseAnonymiseProgressReversing++;
 
-                    if (progress2 % 500 == 0)
-                        listener.OnProgress(this, new ProgressEventArgs("Substituting Release Identifiers For Private Identifiers", new ProgressMeasurement(progress2, ProgressType.Records), sw2.Elapsed));
+                    if (_reverseAnonymiseProgressReversing % 500 == 0)
+                        listener.OnProgress(this, new ProgressEventArgs("Substituting Release Identifiers For Private Identifiers", new ProgressMeasurement(_reverseAnonymiseProgressReversing, ProgressType.Records), sw2.Elapsed));
                 }
                 catch (KeyNotFoundException e)
                 {
@@ -466,7 +466,7 @@ namespace DataExportLibrary.Data.DataTables
             }
             
             //final value
-            listener.OnProgress(this, new ProgressEventArgs("Substituting Release Identifiers For Private Identifiers", new ProgressMeasurement(progress2, ProgressType.Records), sw2.Elapsed));
+            listener.OnProgress(this, new ProgressEventArgs("Substituting Release Identifiers For Private Identifiers", new ProgressMeasurement(_reverseAnonymiseProgressReversing, ProgressType.Records), sw2.Elapsed));
             
             if(nullsFound > 0)
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"Found " + nullsFound + " null release identifiers amongst the " + toProcess.Rows.Count + " rows of the input data table (on which we were attempting to reverse annonymise)"));
