@@ -22,6 +22,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public ReleaseData(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             RepositoryLocator = repositoryLocator;
+            ConfigurationsForRelease = new Dictionary<IExtractionConfiguration, List<ReleasePotential>>();
         }
         
     }

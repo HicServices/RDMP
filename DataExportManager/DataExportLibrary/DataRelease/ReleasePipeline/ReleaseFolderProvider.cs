@@ -28,6 +28,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             if (releaseAudit == null)
                 return null;
 
+            if(_releaseFolder == null)
+                PrepareAndCheckReleaseFolder(new FromDataLoadEventListenerToCheckNotifier(listener));
+
             releaseAudit.ReleaseFolder = _releaseFolder;
             return releaseAudit;
         }

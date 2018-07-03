@@ -54,24 +54,26 @@ namespace DataExportLibrary.DataRelease
         public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
         {
             ConfigurationsToRelease = toRelease;
-            
-            StreamWriter sw = PrepareAuditFile();
 
-            ReleaseGlobalFolder();
-
-            // Audit Global Folder if there are any
-            if (ReleaseAudit.SourceGlobalFolder != null)
+            using (StreamWriter sw = PrepareAuditFile())
             {
-                AuditDirectoryCreation(ReleaseAudit.SourceGlobalFolder.FullName, sw, 0);
+                ReleaseGlobalFolder();
 
-                foreach (FileInfo fileInfo in ReleaseAudit.SourceGlobalFolder.GetFiles())
-                    AuditFileCreation(fileInfo.Name, sw, 1);
+                // Audit Global Folder if there are any
+                if (ReleaseAudit.SourceGlobalFolder != null)
+                {
+                    AuditDirectoryCreation(ReleaseAudit.SourceGlobalFolder.FullName, sw, 0);
+
+                    foreach (FileInfo fileInfo in ReleaseAudit.SourceGlobalFolder.GetFiles())
+                        AuditFileCreation(fileInfo.Name, sw, 1);
+                }
+
+                ReleaseAllExtractionConfigurations(toRelease, sw, environment, isPatch);
+
+                sw.Flush();
+                sw.Close();
             }
-
-            ReleaseAllExtractionConfigurations(toRelease, sw, environment, isPatch);
-
-            sw.Flush();
-            sw.Close();
+            
             ReleaseSuccessful = true;
         }
         

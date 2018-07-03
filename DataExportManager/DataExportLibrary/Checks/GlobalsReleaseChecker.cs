@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
 
@@ -19,7 +20,11 @@ namespace DataExportLibrary.Checks
 
         public void Check(ICheckNotifier notifier)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Globals might not exist yet, not sure", CheckResult.Fail,new NotImplementedException()));
+            if(_configurations.Any(c=>c.GetGlobals().Any()))
+                notifier.OnCheckPerformed(new CheckEventArgs("Globals might not exist yet, not sure", CheckResult.Warning,new NotImplementedException()));
+            else
+                notifier.OnCheckPerformed(new CheckEventArgs("There are no globals", CheckResult.Success));
+            
         }
     }
 }
