@@ -8,6 +8,7 @@ using CatalogueManager.ObjectVisualisation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
@@ -23,7 +24,7 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
         private const string DatabaseKey = "Database";
         private const string ServerKey = "Server";
         private const string TableKey = "Table";
-
+        private const string DatabaseTypeKey = "DatabaseType";
 
         public string Username { get; private set; }
         public string Password { get; set; }
@@ -49,6 +50,9 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
             _arguments.Add(TableKey,_table.GetRuntimeName());
             DatabaseType = table.Database.Server.DatabaseType;
 
+            _arguments.Add(DatabaseTypeKey,DatabaseType.ToString());
+
+
             Username = table.Database.Server.ExplicitUsernameIfAny;
             Password = table.Database.Server.ExplicitPasswordIfAny;
         }
@@ -63,7 +67,12 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
         public void LoadExtraText(string s)
         {
             _arguments = Helper.LoadDictionaryFromString(s);
-            var server = new DiscoveredServer(new SqlConnectionStringBuilder() {DataSource = Server, InitialCatalog = Database});
+
+            DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), _arguments[DatabaseTypeKey]);
+
+            var builder = new DatabaseHelperFactory(DatabaseType).CreateInstance().GetConnectionStringBuilder(Server,Database,null,null);
+
+            var server = new DiscoveredServer(builder);
             _table = server.ExpectDatabase(Database).ExpectTable(_arguments[TableKey]);
         }
         
