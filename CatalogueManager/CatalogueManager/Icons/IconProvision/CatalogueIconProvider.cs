@@ -123,6 +123,9 @@ namespace CatalogueManager.Icons.IconProvision
             if (concept is DatabaseType)
                 return _databaseTypeIconProvider.GetImage((DatabaseType)concept);
 
+            if (concept is ArbitraryFolderNode)
+                return GetImage(RDMPConcept.CatalogueFolder, kind);
+
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {
                 var bmp = stateBasedIconProvider.GetImageIfSupportedObject(concept);

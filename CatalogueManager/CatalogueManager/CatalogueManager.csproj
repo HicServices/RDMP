@@ -385,6 +385,7 @@
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="Collections\Providers\IDColumnProvider.cs" />
     <Compile Include="Collections\RDMPCollection.cs" />
+    <Compile Include="Collections\RDMPCollectionCommonFunctionalitySettings.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionalityTreeHijacker.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddJoinInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />

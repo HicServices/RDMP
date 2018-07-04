@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CatalogueLibrary.Checks;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.Checks;
@@ -13,6 +14,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using HIC.Logging.Listeners;
 using RDMPAutomationService.Options;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Runners
 {
@@ -63,13 +65,18 @@ namespace RDMPAutomationService.Runners
         {
             List<ICheckable> toReturn = new List<ICheckable>();
 
-            List<ReleasePotential> ReleasePotentials = new List<ReleasePotential>();
-
             if(_options.ReleaseGlobals)
                 toReturn.Add(new GlobalsReleaseChecker(_configurations));
 
             foreach (IExtractionConfiguration configuration in _configurations)
                 toReturn.AddRange(GetReleasePotentials(configuration));
+
+            if(_pipeline == null)
+                throw new Exception("No Pipeline has been picked");
+
+            var useCase = GetReleaseUseCase();
+            var engine = useCase.GetEngine(_pipeline, new ThrowImmediatelyDataLoadEventListener());
+            toReturn.Add(engine);
 
             return toReturn.ToArray();
         }
@@ -99,11 +106,16 @@ namespace RDMPAutomationService.Runners
                     toReturn.Add(releasePotential);
                 }
             }
-
+            
             return toReturn;
         }
 
         protected override object[] GetRunnables()
+        {
+            return new[] { GetReleaseUseCase() };
+        }
+
+        private ReleaseUseCase GetReleaseUseCase()
         {
             var data = new ReleaseData(RepositoryLocator);
 
@@ -115,7 +127,7 @@ namespace RDMPAutomationService.Runners
                 data.ConfigurationsForRelease.Add(configuration,potentials);
             }
 
-            return new []{new ReleaseUseCase(_project,data)};
+            return new ReleaseUseCase(_project, data);
         }
 
         protected override void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener)

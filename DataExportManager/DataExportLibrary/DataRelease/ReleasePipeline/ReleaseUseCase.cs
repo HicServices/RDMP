@@ -42,17 +42,23 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 if (releaseTypes.Count() != 1)
                     throw new Exception("How did you manage to have multiple (or zero) types in the extraction?");
 
-                var releasePotential = releasePotentials.First();
+                var releasePotentialWithKnownDestination = releasePotentials.FirstOrDefault(rp => rp.DatasetExtractionResult!= null);
 
-                var destinationType = _catalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(
-                    releasePotential.DatasetExtractionResult.DestinationType, typeof(IExecuteDatasetExtractionDestination));
-                ObjectConstructor constructor = new ObjectConstructor();
+                if(releasePotentialWithKnownDestination == null)
+                    ExplicitSource = new NullReleaseSource<ReleaseAudit>();
+                else
+                {
+                    var destinationType = _catalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(
+                    releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType, typeof(IExecuteDatasetExtractionDestination));
+                    ObjectConstructor constructor = new ObjectConstructor();
 
-                var destinationUsedAtExtraction = (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, _catalogueRepository);
+                    var destinationUsedAtExtraction = (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, _catalogueRepository);
 
-                FixedReleaseSource<ReleaseAudit> fixedReleaseSource = destinationUsedAtExtraction.GetReleaseSource(_catalogueRepository);
+                    FixedReleaseSource<ReleaseAudit> fixedReleaseSource = destinationUsedAtExtraction.GetReleaseSource(_catalogueRepository);
 
-                ExplicitSource = fixedReleaseSource;// destinationUsedAtExtraction.GetReleaseSource(); // new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));    
+                    ExplicitSource = fixedReleaseSource;// destinationUsedAtExtraction.GetReleaseSource(); // new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));    
+                }
+                
             }
             
             var contextFactory = new DataFlowPipelineContextFactory<ReleaseAudit>();

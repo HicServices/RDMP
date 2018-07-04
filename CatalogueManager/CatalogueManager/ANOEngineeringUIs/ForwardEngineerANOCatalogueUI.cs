@@ -329,16 +329,18 @@ namespace CatalogueManager.ANOEngineeringUIs
             {
                 _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator,databaseObject);
 
+                var settings = new RDMPCollectionCommonFunctionalitySettings {AddFavouriteColumn = false, AllowPinning = false};
+
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
-                tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables,activator,olvANOTablesName,null,false,false);
+                tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables, activator, olvANOTablesName, null, settings);
                 
                 tlvANOTables.AddObject(activator.CoreChildProvider.AllANOTablesNode);
                 tlvANOTables.ExpandAll();
                 
                 //Setup tree view to show all TableInfos that you are trying to Migrate
                 tlvTableInfoMigrationsCommonFunctionality = new RDMPCollectionCommonFunctionality();
-                tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None,tlvTableInfoMigrations,activator,olvTableInfoName,null,false,false);
+                tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None, tlvTableInfoMigrations, activator, olvTableInfoName, null, settings);
                 
                 //don't display anything below ColumnInfo
                 tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] {typeof (ColumnInfo)};

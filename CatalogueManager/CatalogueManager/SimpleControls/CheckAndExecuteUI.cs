@@ -142,8 +142,9 @@ namespace CatalogueManager.SimpleControls
             
             _runningTask =
                 //run the data load in a Thread
-                Task.Factory.StartNew(() => Run(runner))
+                Task.Factory.StartNew(() => Run(runner));
 
+            _runningTask
                 //then on the main UI thread (after load completes with success/error
                 .ContinueWith((t) =>
                 {

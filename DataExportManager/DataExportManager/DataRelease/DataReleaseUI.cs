@@ -1,23 +1,18 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Ticketing;
+using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Checks;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Providers;
-using DataExportManager.Icons.IconProvision;
-using DataExportManager.ProjectUI;
-using DataExportLibrary;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
 using MapsDirectlyToDatabaseTable;
@@ -45,14 +40,15 @@ namespace DataExportManager.DataRelease
         private IExtractionConfiguration[] _unreleasedConfigurations;
         private IMapsDirectlyToDatabaseTable[] _globals;
         private DataExportChildProvider _childProvider;
+        
+
+        private ArbitraryFolderNode _globalsNode = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME);
 
         public DataReleaseUI()
         {
             InitializeComponent();
 
             AssociatedCollection = RDMPCollection.DataExport;
-
-            olvName.ImageGetter = Name_ImageGetter;
 
             tlvReleasePotentials.CanExpandGetter = CanExpandGetter;
             tlvReleasePotentials.ChildrenGetter = ChildrenGetter;
@@ -61,11 +57,24 @@ namespace DataExportManager.DataRelease
             olvReleaseability.AspectGetter = Releaseability_AspectGetter;
             olvReleaseability.ImageGetter = Releaseability_ImageGetter;
             checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
+
+            _commonFunctionality = new RDMPCollectionCommonFunctionality();
         }
+        
+        private bool _isExecuting;
+        private RDMPCollectionCommonFunctionality _commonFunctionality;
 
         private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
         {
             tlvReleasePotentials.RefreshObjects(tlvReleasePotentials.Objects.Cast<object>().ToArray());
+
+            if (_isExecuting && !checkAndExecuteUI1.IsExecuting)
+            {
+                //if it was executing before and now no longer executing the status of the ExtractionConfigurations / Projects might have changed
+                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_project));
+            }
+
+            _isExecuting = checkAndExecuteUI1.IsExecuting;
         }
 
         private object Releaseability_ImageGetter(object rowObject)
@@ -93,7 +102,7 @@ namespace DataExportManager.DataRelease
             if (sds != null)
                 key = releaseRunner.ChecksDictionary.Keys.OfType<ReleasePotential>().ToArray().SingleOrDefault(rp => rp.SelectedDataSet.ID == sds.ID);
             else
-                if (rowObject as string == ExtractionDirectory.GLOBALS_DATA_NAME)
+                if (Equals(rowObject, _globalsNode))
                     key = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().SingleOrDefault();
 
             if (key != null)
@@ -111,7 +120,7 @@ namespace DataExportManager.DataRelease
                 Configurations = tlvReleasePotentials.CheckedObjects.OfType<ExtractionConfiguration>().Select(ec => ec.ID).ToArray(),
                 SelectedDataSets = tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
                 Command = activityRequested,
-                ReleaseGlobals = tlvReleasePotentials.IsChecked(ExtractionDirectory.GLOBALS_DATA_NAME),
+                ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
             };
         }
 
@@ -127,7 +136,7 @@ namespace DataExportManager.DataRelease
             if (ec != null)
                 return _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
 
-            if (model as string == ExtractionDirectory.GLOBALS_DATA_NAME)
+            if (Equals(model, _globalsNode))
                 return _globals;
 
             return null;
@@ -138,21 +147,18 @@ namespace DataExportManager.DataRelease
 
             return c != null && c.Cast<object>().Any();
         }
-        private object Name_ImageGetter(object rowObject)
-        {
-            if (_activator == null)
-                return null;
-
-            if (rowObject is string)
-                return _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder);
-
-
-            return _activator.CoreIconProvider.GetImage(rowObject);
-        }
-
         public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
+            
+            if(!_commonFunctionality.IsSetup)
+                _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, _activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
+                {
+                    AddFavouriteColumn = false,
+                    AllowPinning = false,
+                    SuppressChildrenAdder = true
+                });
+
             _childProvider = (DataExportChildProvider)_activator.CoreChildProvider;
             _project = databaseObject;
 
@@ -172,7 +178,7 @@ namespace DataExportManager.DataRelease
             }
 
             tlvReleasePotentials.ClearObjects();
-            tlvReleasePotentials.AddObject(ExtractionDirectory.GLOBALS_DATA_NAME);
+            tlvReleasePotentials.AddObject(_globalsNode);
             tlvReleasePotentials.AddObject(_project);
             tlvReleasePotentials.ExpandAll();
             tlvReleasePotentials.CheckAll();
@@ -219,7 +225,7 @@ namespace DataExportManager.DataRelease
         {
             tlvReleasePotentials.UncheckAll();
             tlvReleasePotentials.CheckObject(configuration);
-            tlvReleasePotentials.CheckObject(ExtractionDirectory.GLOBALS_DATA_NAME);
+            tlvReleasePotentials.CheckObject(_globalsNode);
         }
     }
 

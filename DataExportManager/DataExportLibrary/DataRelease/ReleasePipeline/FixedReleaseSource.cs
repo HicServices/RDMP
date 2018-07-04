@@ -57,6 +57,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 return;
             }
 
+            if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Value.OfType<NoReleasePotential>().Any()))
+                throw new Exception("There are DataSets with NoReleasePotential in the ReleaseData");
+
             var staleDatasets = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).Where(
                    p => p.DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
 
