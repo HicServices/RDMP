@@ -150,11 +150,11 @@ namespace RDMPAutomationService.Runners
             return _configuration.SelectedDataSets.Where(ds => _options.Datasets.Contains(ds.ExtractableDataSet_ID)).ToArray();
         }
 
-        public object GetState(ExtractableDataSet rowObject)
+        public object GetState(IExtractableDataSet extractableData)
         {
             if(_options.Command == CommandLineActivity.check)
             {
-                var sds = ChecksDictionary.Keys.OfType<SelectedDataSetsChecker>().SingleOrDefault(k => k.SelectedDataSet.ExtractableDataSet_ID == rowObject.ID);
+                var sds = ChecksDictionary.Keys.OfType<SelectedDataSetsChecker>().SingleOrDefault(k => k.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
 
                 if (sds == null)
                     return null;
@@ -164,7 +164,7 @@ namespace RDMPAutomationService.Runners
 
             if(_options.Command == CommandLineActivity.run)
             {
-                var sds = ExtractCommands.Keys.FirstOrDefault(k => k.ExtractableDataSet_ID == rowObject.ID);
+                var sds = ExtractCommands.Keys.FirstOrDefault(k => k.ExtractableDataSet_ID == extractableData.ID);
 
                 if (sds == null)
                     return null;

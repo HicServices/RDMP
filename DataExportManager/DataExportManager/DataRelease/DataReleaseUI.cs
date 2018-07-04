@@ -61,6 +61,7 @@ namespace DataExportManager.DataRelease
 
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
+            checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
             pictureBox1.BackColor = Color.FromArgb(240,240,240);
         }
         

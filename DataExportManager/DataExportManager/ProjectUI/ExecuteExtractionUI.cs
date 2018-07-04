@@ -54,8 +54,8 @@ namespace DataExportManager.ProjectUI
         private ExtractionConfiguration _extractionConfiguration;
         
         private IMapsDirectlyToDatabaseTable[] _globals;
-        private IExtractableDataSet[] _datasets;
-        private HashSet<ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>> _bundledStuff;
+        private ISelectedDataSets[] _datasets;
+        private HashSet<ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>> _bundledStuff;
 
         private RDMPCollectionCommonFunctionality _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
@@ -81,7 +81,9 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.ChildrenGetter = ChildrenGetter;
             tlvDatasets.CanExpandGetter = CanExpandGetter;
             tlvDatasets.HierarchicalCheckboxes = true;
-
+            
+            checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
+            pictureBox1.BackColor = Color.FromArgb(240, 240, 240);
         }
 
         private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
@@ -101,10 +103,10 @@ namespace DataExportManager.ProjectUI
                 return _globals;
 
             if (model == _coreDatasetsFolder)
-                return _datasets.Where(ds => ds.Project_ID == null);
+                return _datasets.Where(sds => sds.ExtractableDataSet.Project_ID == null);
 
             if (model == _projectSpecificDatasetsFolder)
-                return _datasets.Where(ds => ds.Project_ID != null);
+                return _datasets.Where(sds => sds.ExtractableDataSet.Project_ID != null);
 
             var eds = model as IExtractableDataSet;
 
@@ -127,10 +129,10 @@ namespace DataExportManager.ProjectUI
             if (rowObject == _globalsFolder && extractionRunner != null)
                 return extractionRunner.GetGlobalsState();
 
-            var eds = rowObject as ExtractableDataSet;
+            var sds = rowObject as SelectedDataSets;
 
-            if (extractionRunner != null && eds != null) 
-                return extractionRunner.GetState(eds);
+            if (extractionRunner != null && sds != null) 
+                return extractionRunner.GetState(sds.ExtractableDataSet);
             
             return null;
         }
@@ -146,7 +148,7 @@ namespace DataExportManager.ProjectUI
             return new ExtractionOptions() { 
                 Command = activityRequested,
                 ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
-                Datasets = _datasets.Where(tlvDatasets.IsChecked).Select(ds => ds.ID).ToArray(),
+                Datasets = _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray(),
                 ExtractionConfiguration = _extractionConfiguration.ID,
                 Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 :_pipelineSelectionUI1.Pipeline.ID
             };
@@ -167,14 +169,27 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.ClearObjects();
 
             _globals = _extractionConfiguration.GetGlobals();
-            _datasets = databaseObject.SelectedDataSets.Select(ds => ds.ExtractableDataSet).ToArray();
+            _datasets = databaseObject.SelectedDataSets.ToArray();
+
             GetBundledStuff();
+
+            //add the folders
+            tlvDatasets.AddObjects(new object[] { _globalsFolder, _coreDatasetsFolder, _projectSpecificDatasetsFolder });
 
             tlvDatasets.DisableObjects(_globals);
             tlvDatasets.DisableObjects(_bundledStuff);
 
-            //add the folders
-            tlvDatasets.AddObjects(new object[] { _globalsFolder,_coreDatasetsFolder,_projectSpecificDatasetsFolder });
+            //if there are no globals disable this option
+            if(!_globals.Any())
+                tlvDatasets.DisableObject(_globalsFolder);
+
+            //if there are no project specific datasets
+            if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID == null))
+                tlvDatasets.DisableObject(_projectSpecificDatasetsFolder); //disable this option
+
+            //if all the datasets are project specific
+            if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID != null))
+                tlvDatasets.DisableObject(_coreDatasetsFolder);
             
             //don't accept refresh while executing
             if (checkAndExecuteUI1.IsExecuting)
@@ -241,25 +256,27 @@ namespace DataExportManager.ProjectUI
 
         private void GetBundledStuff()
         {
-            _bundledStuff = new HashSet<ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>>();
+            _bundledStuff = new HashSet<ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>>();
 
-            foreach (IExtractableDataSet dataset in _datasets)
+            foreach (ISelectedDataSets sds in _datasets)
             {
-                foreach (var document in dataset.Catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals))
-                    _bundledStuff.Add( new ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>(dataset,document));
+                var eds = sds.ExtractableDataSet;
 
-                foreach (var supportingSQLTable in dataset.Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals))
-                    _bundledStuff.Add(new ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>(dataset, supportingSQLTable));
+                foreach (var document in eds.Catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals))
+                    _bundledStuff.Add( new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds,document));
 
-                foreach (var lookup in dataset.Catalogue.GetLookupTableInfoList())
-                    _bundledStuff.Add(new ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>(dataset, lookup));
+                foreach (var supportingSQLTable in eds.Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals))
+                    _bundledStuff.Add(new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds, supportingSQLTable));
+
+                foreach (var lookup in eds.Catalogue.GetLookupTableInfoList())
+                    _bundledStuff.Add(new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds, lookup));
             }
         }
 
         private void olvDatasets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var eds =  tlvDatasets.SelectedObject as ExtractableDataSet;
-            checkAndExecuteUI1.GroupBySender(eds != null ? eds.ToString() : null);
+            var sds =  tlvDatasets.SelectedObject as SelectedDataSets;
+            checkAndExecuteUI1.GroupBySender(sds != null ? sds.ToString() : null);
         }
     }
 

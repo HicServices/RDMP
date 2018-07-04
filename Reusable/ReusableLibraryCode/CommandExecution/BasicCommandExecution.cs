@@ -14,7 +14,8 @@ namespace ReusableLibraryCode.CommandExecution
     {
         public bool IsImpossible { get; private set; }
         public string ReasonCommandImpossible { get; private set; }
-        
+        public string OverrideCommandName { get; set; }
+
         public virtual void Execute()
         {
             if(IsImpossible)
@@ -23,6 +24,9 @@ namespace ReusableLibraryCode.CommandExecution
 
         public virtual string GetCommandName()
         {
+            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+                return OverrideCommandName;
+
             var name = GetType().Name;
             var adjusted = name.Replace("ExecuteCommand", "");
             return UsefulStuff.PascalCaseStringToHumanReadable(adjusted);

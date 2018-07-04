@@ -369,6 +369,11 @@ namespace ReusableUIComponents.Progress
         {
             ddGroupBy.SelectedItem = "Sender";
             tbTextFilter.Text = filter;
+
+            //clear the renderers filter so that we don't see yellow text highlighting all over the Sender column etc.
+            var renderer = olvProgressEvents.DefaultRenderer as HighlightTextRenderer;
+            if (renderer != null)
+                renderer.Filter = null;
         }
 
         private void SetFilterFromTextBox()
