@@ -99,21 +99,7 @@ namespace CatalogueLibrary.DataFlowPipeline
             finally
             {
                 _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Preparing to Dispose of DataFlowPipelineEngine components"));
-
-                foreach (IDataFlowComponent<T> dataLoadComponent in Components)
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + dataLoadComponent));
-                    try
-                    {
-
-                        dataLoadComponent.Dispose(_listener, exception);
-                    }
-                    catch (Exception e)
-                    {
-                        _listener.OnNotify(dataLoadComponent,new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Component",e));
-                    }
-                }
-
+                
                 _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + Source));
                 try
                 {
@@ -121,17 +107,41 @@ namespace CatalogueLibrary.DataFlowPipeline
                 }
                 catch (Exception e)
                 {
+                    //dispose crashing is only a dealbreaker if there wasn't already an exception in the pipeline
+                    if (exception == null)
+                        throw;
+
                     _listener.OnNotify(Source, new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Source Component", e));
+                }
+
+                foreach (IDataFlowComponent<T> dataLoadComponent in Components)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + dataLoadComponent));
+                    try
+                    {
+                        dataLoadComponent.Dispose(_listener, exception);
+                    }
+                    catch (Exception e)
+                    {
+                        //dispose crashing is only a dealbreaker if there wasn't already an exception in the pipeline
+                        if (exception == null)
+                            throw;
+
+                        _listener.OnNotify(dataLoadComponent,new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Component",e));
+                    }
                 }
 
                 _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, "About to Dispose " + Destination));
                 try
                 {
-
                     Destination.Dispose(_listener, exception);
                 }
                 catch (Exception e)
                 {
+                    //dispose crashing is only a dealbreaker if there wasn't already an exception in the pipeline
+                    if (exception == null)
+                        throw;
+
                     _listener.OnNotify(Destination, new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Destination Component", e));
                 }
             }
