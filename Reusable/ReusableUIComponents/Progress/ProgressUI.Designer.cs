@@ -32,6 +32,7 @@ namespace ReusableUIComponents.Progress
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.lblCrashed = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -84,6 +85,7 @@ namespace ReusableUIComponents.Progress
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.lblCrashed);
             this.splitContainer1.Panel1.Controls.Add(this.progressBar1);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
@@ -96,6 +98,20 @@ namespace ReusableUIComponents.Progress
             this.splitContainer1.Size = new System.Drawing.Size(880, 572);
             this.splitContainer1.SplitterDistance = 294;
             this.splitContainer1.TabIndex = 3;
+            // 
+            // lblCrashed
+            // 
+            this.lblCrashed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCrashed.BackColor = System.Drawing.Color.IndianRed;
+            this.lblCrashed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCrashed.ForeColor = System.Drawing.Color.Orange;
+            this.lblCrashed.Location = new System.Drawing.Point(3, 274);
+            this.lblCrashed.Name = "lblCrashed";
+            this.lblCrashed.Size = new System.Drawing.Size(874, 15);
+            this.lblCrashed.TabIndex = 7;
+            this.lblCrashed.Text = "Crashed";
+            this.lblCrashed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // progressBar1
             // 
@@ -291,5 +307,6 @@ namespace ReusableUIComponents.Progress
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
         private System.Windows.Forms.ToolStripComboBox ddGroupBy;
+        private System.Windows.Forms.Label lblCrashed;
     }
 }

@@ -121,6 +121,8 @@ namespace ReusableUIComponents.Progress
             
             progressBar1.Style = ProgressBarStyle.Continuous;
             progressBar1.Value = 0;
+
+            lblCrashed.Visible = false;
         }
         
         Dictionary<object, HashSet<string>> JobsreceivedFromSender = new Dictionary<object, HashSet<string>>();
@@ -379,6 +381,10 @@ namespace ReusableUIComponents.Progress
         private void SetFilterFromTextBox()
         {
             olvProgressEvents.ModelFilter = new TextMatchFilter(olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
+        }
+        public void SetFatal()
+        {
+            lblCrashed.Visible = true;
         }
     }
     internal class QueuedProgressMessage

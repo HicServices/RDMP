@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.ItemActivation;
 using HIC.Logging;
+using MapsDirectlyToDatabaseTable.RepositoryResultCaching;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
@@ -139,10 +140,12 @@ namespace CatalogueManager.SimpleControls
 
             loadProgressUI1.Clear();
             loadProgressUI1.ShowRunning(true);
+
+            int exitCode = 0;
             
             _runningTask =
                 //run the data load in a Thread
-                Task.Factory.StartNew(() => Run(runner));
+                Task.Factory.StartNew(() => { exitCode = Run(runner); });
 
             _runningTask
                 //then on the main UI thread (after load completes with success/error
@@ -152,6 +155,10 @@ namespace CatalogueManager.SimpleControls
                     ChecksPassed = false;
 
                     loadProgressUI1.ShowRunning(false);
+
+                    if (exitCode != 0)
+                        loadProgressUI1.SetFatal();
+                    
                     //adjust the buttons accordingly
                     SetButtonStates();
                 }
@@ -160,16 +167,22 @@ namespace CatalogueManager.SimpleControls
             SetButtonStates();
         }
 
-        private void Run(IRunner runner)
+        private int Run(IRunner runner)
         {
             try
             {
-                runner.Run(_activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
+                int exitCode = runner.Run(_activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
+
+                loadProgressUI1.OnNotify(this,new NotifyEventArgs(exitCode == 0 ? ProgressEventType.Information : ProgressEventType.Error,"Exit code was " + exitCode));
+
+                return exitCode;
             }
             catch (Exception ex)
             {
                 loadProgressUI1.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Fatal Error",ex));
-            }  
+            }
+
+            return -1;
         }
 
         private void SetButtonStates()
