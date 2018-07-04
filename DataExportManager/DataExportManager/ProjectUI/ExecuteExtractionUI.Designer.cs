@@ -33,11 +33,11 @@ namespace DataExportManager.ProjectUI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExecuteExtractionUI));
             this.cbSkipValidation = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.tbTopX = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
@@ -46,12 +46,15 @@ namespace DataExportManager.ProjectUI
             this.olvState = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvID = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // cbSkipValidation
@@ -95,14 +98,6 @@ namespace DataExportManager.ProjectUI
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Options";
             // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(964, 27);
-            this.panel1.TabIndex = 27;
-            // 
             // splitContainer1
             // 
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -118,10 +113,11 @@ namespace DataExportManager.ProjectUI
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
             this.splitContainer1.Panel2.Controls.Add(this.groupBox2);
             this.splitContainer1.Panel2.Controls.Add(this.checkAndExecuteUI1);
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1292, 576);
+            this.splitContainer1.Size = new System.Drawing.Size(1025, 650);
             this.splitContainer1.SplitterDistance = 320;
             this.splitContainer1.TabIndex = 29;
             // 
@@ -129,7 +125,7 @@ namespace DataExportManager.ProjectUI
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 552);
+            this.label1.Location = new System.Drawing.Point(13, 626);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 30;
@@ -139,13 +135,13 @@ namespace DataExportManager.ProjectUI
             // 
             this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(51, 549);
+            this.tbFilter.Location = new System.Drawing.Point(51, 623);
             this.tbFilter.Name = "tbFilter";
             this.tbFilter.Size = new System.Drawing.Size(262, 20);
             this.tbFilter.TabIndex = 29;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
-            // olvDatasets
+            // tlvDatasets
             // 
             this.tlvDatasets.AllColumns.Add(this.olvName);
             this.tlvDatasets.AllColumns.Add(this.olvState);
@@ -164,7 +160,7 @@ namespace DataExportManager.ProjectUI
             this.tlvDatasets.RowHeight = 19;
             this.tlvDatasets.ShowGroups = false;
             this.tlvDatasets.ShowImagesOnSubItems = true;
-            this.tlvDatasets.Size = new System.Drawing.Size(318, 543);
+            this.tlvDatasets.Size = new System.Drawing.Size(318, 617);
             this.tlvDatasets.TabIndex = 28;
             this.tlvDatasets.UseCompatibleStateImageBehavior = false;
             this.tlvDatasets.View = System.Windows.Forms.View.Details;
@@ -196,8 +192,27 @@ namespace DataExportManager.ProjectUI
             this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 27);
             this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
-            this.checkAndExecuteUI1.Size = new System.Drawing.Size(964, 545);
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(697, 619);
             this.checkAndExecuteUI1.TabIndex = 28;
+            // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(697, 27);
+            this.panel1.TabIndex = 30;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+            this.pictureBox1.Location = new System.Drawing.Point(404, 33);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(290, 94);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 29;
+            this.pictureBox1.TabStop = false;
             // 
             // ExecuteExtractionUI
             // 
@@ -205,7 +220,7 @@ namespace DataExportManager.ProjectUI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "ExecuteExtractionUI";
-            this.Size = new System.Drawing.Size(1292, 576);
+            this.Size = new System.Drawing.Size(1025, 650);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -214,6 +229,7 @@ namespace DataExportManager.ProjectUI
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -224,7 +240,6 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbTopX;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private TreeListView tlvDatasets;
         private System.Windows.Forms.Label label1;
@@ -233,5 +248,7 @@ namespace DataExportManager.ProjectUI
         private OLVColumn olvName;
         private OLVColumn olvState;
         private OLVColumn olvID;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

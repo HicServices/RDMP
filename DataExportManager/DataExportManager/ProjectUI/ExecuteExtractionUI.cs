@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Nodes;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
@@ -56,8 +57,14 @@ namespace DataExportManager.ProjectUI
         private IExtractableDataSet[] _datasets;
         private HashSet<ObjectUsedByOtherObjectNode<IExtractableDataSet, IMapsDirectlyToDatabaseTable>> _bundledStuff;
 
+        private RDMPCollectionCommonFunctionality _commonFunctionality = new RDMPCollectionCommonFunctionality();
+
         private const string CoreDatasets = "Core";
         private const string ProjectSpecificDatasets = "Project Specific";
+
+        private ArbitraryFolderNode _coreDatasetsFolder = new ArbitraryFolderNode(CoreDatasets);
+        private ArbitraryFolderNode _projectSpecificDatasetsFolder = new ArbitraryFolderNode(ProjectSpecificDatasets);
+        private ArbitraryFolderNode _globalsFolder = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME);
 
         public ExecuteExtractionUI()
         {
@@ -67,9 +74,7 @@ namespace DataExportManager.ProjectUI
             checkAndExecuteUI1.CommandGetter = CommandGetter;
             checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
             checkAndExecuteUI1.GroupBySender();
-
-            olvName.ImageGetter = Name_ImageGetter;
-
+            
             olvState.ImageGetter = State_ImageGetter;
             olvState.AspectGetter = State_AspectGetter;
 
@@ -92,13 +97,13 @@ namespace DataExportManager.ProjectUI
 
         private IEnumerable ChildrenGetter(object model)
         {
-            if (model as string == ExtractionDirectory.GLOBALS_DATA_NAME)
+            if (model == _globalsFolder)
                 return _globals;
 
-            if (model as string == CoreDatasets)
+            if (model == _coreDatasetsFolder)
                 return _datasets.Where(ds => ds.Project_ID == null);
 
-            if (model as string == ProjectSpecificDatasets)
+            if (model == _projectSpecificDatasetsFolder)
                 return _datasets.Where(ds => ds.Project_ID != null);
 
             var eds = model as IExtractableDataSet;
@@ -119,7 +124,7 @@ namespace DataExportManager.ProjectUI
         {
             var extractionRunner = checkAndExecuteUI1.CurrentRunner as ExtractionRunner;
 
-            if (rowObject as string == "Globals" && extractionRunner != null)
+            if (rowObject == _globalsFolder && extractionRunner != null)
                 return extractionRunner.GetGlobalsState();
 
             var eds = rowObject as ExtractableDataSet;
@@ -135,32 +140,28 @@ namespace DataExportManager.ProjectUI
             var state = GetState(rowobject);
             return state == null ? null : state.ToString();
         }
-
-        private object Name_ImageGetter(object rowobject)
-        {
-            if (rowobject is string)
-                return _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder);
-            
-            return _activator.CoreIconProvider.GetImage(rowobject);
-        }
-
+        
         private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
         {
             return new ExtractionOptions() { 
                 Command = activityRequested,
-                ExtractGlobals = tlvDatasets.IsChecked(ExtractionDirectory.GLOBALS_DATA_NAME),
+                ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
                 Datasets = _datasets.Where(tlvDatasets.IsChecked).Select(ds => ds.ID).ToArray(),
                 ExtractionConfiguration = _extractionConfiguration.ID,
                 Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 :_pipelineSelectionUI1.Pipeline.ID
             };
         }
 
+        
         public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
             
             _extractionConfiguration = databaseObject;
             
+            if(!_commonFunctionality.IsSetup)
+                _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings(){AddFavouriteColumn = false,AllowPinning=false,SuppressChildrenAdder=true});
+
             checkAndExecuteUI1.SetItemActivator(activator);
 
             tlvDatasets.ClearObjects();
@@ -172,7 +173,8 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.DisableObjects(_globals);
             tlvDatasets.DisableObjects(_bundledStuff);
 
-            tlvDatasets.AddObjects(new object[] { ExtractionDirectory.GLOBALS_DATA_NAME, CoreDatasets, ProjectSpecificDatasets });
+            //add the folders
+            tlvDatasets.AddObjects(new object[] { _globalsFolder,_coreDatasetsFolder,_projectSpecificDatasetsFolder });
             
             //don't accept refresh while executing
             if (checkAndExecuteUI1.IsExecuting)

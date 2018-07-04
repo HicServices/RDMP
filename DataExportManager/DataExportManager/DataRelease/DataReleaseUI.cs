@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Nodes;
@@ -59,6 +60,8 @@ namespace DataExportManager.DataRelease
             checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
 
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
+
+            pictureBox1.BackColor = Color.FromArgb(240,240,240);
         }
         
         private bool _isExecuting;
