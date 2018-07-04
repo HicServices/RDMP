@@ -67,7 +67,7 @@ namespace HIC.Logging
 
             RecordNewTableLoadInDatabase(parent,destinationTable, sources, expectedInserts);
 
-            parent.TableLoads.Add(this.ID,this);
+            parent.AddTableLoad(this);
         }
 
         private void RecordNewTableLoadInDatabase(DataLoadInfo parent,string destinationTable, DataSource[] sources, int expectedInserts)
