@@ -16,7 +16,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
         public override string GetRuntimeName(string s)
         {
-            //upper it because oracle is stupid
+            if (string.IsNullOrWhiteSpace(s))
+                return s;
+
+            //upper it because oracle loves uppercase stuff
             string toReturn =  s.Substring(s.LastIndexOf(".") + 1).Trim('"').ToUpper();
 
             //truncate it to 30 maximum because oracle cant count higher than 30
@@ -52,9 +55,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             }
         }
 
+        /// <summary>
+        /// Always returns null for Oracle since this is handled by <see cref="OracleTableHelper.GetCreateTableSql"/>
+        /// </summary>
+        /// <returns></returns>
         public override string GetAutoIncrementKeywordIfAny()
         {
-            //https://stackoverflow.com/questions/11296361/how-to-create-id-with-auto-increment-on-oracle
             return null;
         }
 

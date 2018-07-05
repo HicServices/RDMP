@@ -111,6 +111,7 @@ namespace DataExportLibrary.Tests.Cohort
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
         public void TestActuallyCreatingIt(DatabaseType type)
         {
             var db = GetCleanedServer(type);

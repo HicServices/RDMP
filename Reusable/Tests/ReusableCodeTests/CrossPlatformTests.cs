@@ -634,6 +634,7 @@ namespace ReusableCodeTests
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
         public void CreateTable_AutoIncrementColumnTest(DatabaseType type)
         {
             database = GetCleanedServer(type);
@@ -645,8 +646,23 @@ namespace ReusableCodeTests
                     AllowNulls = false,
                     IsAutoIncrement = true,
                     IsPrimaryKey = true
-                }
+                },
+                new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),100))
+
             });
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Name");
+            dt.Rows.Add("Frank");
+
+            using (var bulkInsert = tbl.BeginBulkInsert())
+                bulkInsert.Upload(dt);
+
+            Assert.AreEqual(1,tbl.GetRowCount());
+
+            var result = tbl.GetDataTable();
+            Assert.AreEqual(1,result.Rows.Count);
+            Assert.AreEqual(1,result.Rows[0]["IdColumn"]);
 
             Assert.IsTrue(tbl.DiscoverColumn("IdColumn").IsAutoIncrement);
 
@@ -654,7 +670,7 @@ namespace ReusableCodeTests
             ColumnInfo[] cis;
             Import(tbl, out ti, out cis);
 
-            Assert.IsTrue(cis.Single().IsAutoIncrement);
+            Assert.IsTrue(cis.Single(c => c.GetRuntimeName().Equals("IdColumn",StringComparison.InvariantCultureIgnoreCase)).IsAutoIncrement);
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]

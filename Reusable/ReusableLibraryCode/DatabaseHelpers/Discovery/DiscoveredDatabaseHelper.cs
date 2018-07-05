@@ -67,7 +67,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             using(var con = server.GetConnection())
             {
                 con.Open();
-                server.GetCommand(bodySql, con).ExecuteNonQuery();
+
+                UsefulStuff.ExecuteBatchNonQuery(bodySql,con);
             }
             
             return database.ExpectTable(tableName);
