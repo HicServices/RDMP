@@ -108,7 +108,7 @@ namespace ReusableUIComponents.Progress
             this.lblCrashed.ForeColor = System.Drawing.Color.Orange;
             this.lblCrashed.Location = new System.Drawing.Point(3, 274);
             this.lblCrashed.Name = "lblCrashed";
-            this.lblCrashed.Size = new System.Drawing.Size(874, 15);
+            this.lblCrashed.Size = new System.Drawing.Size(874, 17);
             this.lblCrashed.TabIndex = 7;
             this.lblCrashed.Text = "Crashed";
             this.lblCrashed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

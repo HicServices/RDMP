@@ -1,6 +1,6 @@
 ﻿using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
-using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

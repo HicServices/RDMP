@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
@@ -82,9 +83,10 @@ namespace RDMPAutomationService.Runners
                         //OnDemand
                         dataLoadProcess = new DataLoadProcess(loadMetadata, checkable, logManager, listener, execution);
 
-                    dataLoadProcess.Run(token);
+                    var exitCode = dataLoadProcess.Run(token);
             
-                    return 0;
+                    //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
+                    return exitCode == ExitCodeType.Success || exitCode == ExitCodeType.OperationNotRequired? 0: (int)exitCode;
                 case CommandLineActivity.check:
                     
                     checkable.Check(checkNotifier);
