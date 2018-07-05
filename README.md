@@ -11,6 +11,7 @@ The RDMP UserManual is available on GitHub at <https://github.com/HicServices/RD
 You can build directly through Visual Studio by opening HIC.DataManagementPlatform.sln.  The startup project for the main RDMP user interface is ResearchDataManagementPlatform.csproj.
 
 Or alternatively you can run build.bat to perform a console build
+	
 	cd .\Uppercut
 	.\build.bat [TEST|LIVE]
 
