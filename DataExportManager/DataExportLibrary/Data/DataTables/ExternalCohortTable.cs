@@ -306,10 +306,12 @@ namespace DataExportLibrary.Data.DataTables
         
         public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
         {
-            var cmdInsert = DatabaseCommandHelper.GetCommand("INSERT INTO " + DefinitionTableName + "(projectNumber,version,description) VALUES (@projectNumber,@version,@description); SELECT @@IDENTITY;", connection.Connection,connection.Transaction);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@projectNumber",cmdInsert,newCohortDefinition.ProjectNumber);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@version",cmdInsert,newCohortDefinition.Version);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@description",cmdInsert,newCohortDefinition.Description);
+            var parameterSymbol = GetQuerySyntaxHelper().ParameterSymbol;
+            
+            var cmdInsert = DatabaseCommandHelper.GetCommand(string.Format("INSERT INTO " + DefinitionTableName + "(projectNumber,version,description) VALUES ({0}projectNumber,{0}version,{0}description); SELECT @@IDENTITY;", parameterSymbol), connection.Connection, connection.Transaction);
+            DatabaseCommandHelper.AddParameterWithValueToCommand(parameterSymbol + "projectNumber",cmdInsert,newCohortDefinition.ProjectNumber);
+            DatabaseCommandHelper.AddParameterWithValueToCommand(parameterSymbol + "version", cmdInsert, newCohortDefinition.Version);
+            DatabaseCommandHelper.AddParameterWithValueToCommand(parameterSymbol + "description", cmdInsert, newCohortDefinition.Description);
             
             newCohortDefinition.ID = Convert.ToInt32(cmdInsert.ExecuteScalar());
         }

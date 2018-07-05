@@ -26,6 +26,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public IAggregateHelper AggregateHelper { get; private set; }
         public IUpdateHelper UpdateHelper { get; set; }
 
+        public virtual char ParameterSymbol { get { return '@'; }}
+
         protected virtual Regex GetAliasRegex()
         {
             return new Regex(@"\s+as\s+(\w+)$", RegexOptions.IgnoreCase);

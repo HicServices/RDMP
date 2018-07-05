@@ -14,6 +14,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         {
         }
 
+        public override char ParameterSymbol
+        {
+            get { return ':'; }
+        }
+
         public override string GetRuntimeName(string s)
         {
             if (string.IsNullOrWhiteSpace(s))
@@ -61,6 +66,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         /// <returns></returns>
         public override string GetAutoIncrementKeywordIfAny()
         {
+            //this is handled in 
             return null;
         }
 

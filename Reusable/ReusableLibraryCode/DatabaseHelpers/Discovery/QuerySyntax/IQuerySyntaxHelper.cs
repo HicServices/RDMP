@@ -22,6 +22,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         IAggregateHelper AggregateHelper { get; }
         IUpdateHelper UpdateHelper { get; set; }
 
+        char ParameterSymbol { get; }
+
         string GetRuntimeName(string s);
         
         /// <summary>
