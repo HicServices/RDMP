@@ -12,6 +12,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
+using ScintillaNET;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -33,30 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
             
-            try
-            {
-                Activator.DeleteWithConfirmation(this, _deletable);
-            }
-            catch (SqlException e)
-            {
-                Regex fk = new Regex("FK_([A-Za-z_]*)");
-                var match = fk.Match(e.Message);
-
-                if(match.Success)
-                {
-                    var helpDict = Activator.RepositoryLocator.CatalogueRepository.HelpText;
-
-                    if(helpDict != null && helpDict.ContainsKey(match.Value))
-                    {
-                        ExceptionViewer.Show("Cannot delete because of:" + match.Value + Environment.NewLine + "Purpose:" + helpDict[match.Value],e);
-                        return;
-                    }
-
-                    throw;
-                }
-
-                throw;
-            }
+            Activator.DeleteWithConfirmation(this, _deletable);
         }
     }
 }

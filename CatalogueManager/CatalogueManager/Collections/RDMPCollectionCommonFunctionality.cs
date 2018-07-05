@@ -368,7 +368,7 @@ namespace CatalogueManager.Collections
             {
                 //it's a right click in whitespace (nothing right clicked)
 
-                AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+                AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator);
 
                 if (WhitespaceRightClickMenuCommands != null)
                     return factory.CreateMenu(WhitespaceRightClickMenuCommands);

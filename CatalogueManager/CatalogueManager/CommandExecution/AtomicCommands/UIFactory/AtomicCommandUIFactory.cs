@@ -19,16 +19,18 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 {
     public class AtomicCommandUIFactory
     {
+        private readonly IActivateItems _activator;
         private readonly IIconProvider _iconProvider;
 
-        public AtomicCommandUIFactory(IIconProvider iconProvider)
+        public AtomicCommandUIFactory(IActivateItems activator)
         {
-            _iconProvider = iconProvider;
+            _activator = activator;
+            _iconProvider = activator.CoreIconProvider;
         }
 
         public ToolStripMenuItem CreateMenuItem(IAtomicCommand command)
         {
-             return new AtomicCommandMenuItem(command,_iconProvider);
+            return new AtomicCommandMenuItem(command, _activator);
         }
 
         public AtomicCommandLinkLabel CreateLinkLabel(IAtomicCommand command)

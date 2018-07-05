@@ -55,7 +55,7 @@ namespace CatalogueManager.Menus
 
             _activator = _args.ItemActivator;
 
-            AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+            AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
             RepositoryLocator = _activator.RepositoryLocator;
         }

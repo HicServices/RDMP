@@ -266,7 +266,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             _windowManager = windowManager;
             _activator = _windowManager.ContentManager;
-            _atomicCommandUIFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+            _atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
 
             //top menu strip setup / adjustment

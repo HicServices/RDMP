@@ -44,7 +44,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
         public HomeUI(ToolboxWindowManager windowManager)
         {
             this._windowManager = windowManager;
-            _uiFactory = new AtomicCommandUIFactory(windowManager.ContentManager.CoreIconProvider);
+            _uiFactory = new AtomicCommandUIFactory(windowManager.ContentManager);
             InitializeComponent();
         }
 

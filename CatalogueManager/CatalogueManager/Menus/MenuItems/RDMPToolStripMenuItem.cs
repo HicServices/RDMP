@@ -25,7 +25,7 @@ namespace CatalogueManager.Menus.MenuItems
         protected RDMPToolStripMenuItem(IActivateItems activator,string text):base(text)
         {
             _activator = activator;
-            AtomicCommandUIFactory = new AtomicCommandUIFactory(activator.CoreIconProvider);
+            AtomicCommandUIFactory = new AtomicCommandUIFactory(activator);
         }
         
         protected void Activate(DatabaseEntity o)

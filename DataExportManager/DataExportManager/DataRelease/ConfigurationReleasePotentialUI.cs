@@ -361,7 +361,7 @@ namespace DataExportManager.DataRelease
 
         private ContextMenuStrip ShowRightClickMenuFor(object model, OLVColumn column)
         {
-            var atomicCommandExecutionFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+            var atomicCommandExecutionFactory = new AtomicCommandUIFactory(_activator);
 
             //create right click context menu
             RightClickMenu = new ContextMenuStrip();
