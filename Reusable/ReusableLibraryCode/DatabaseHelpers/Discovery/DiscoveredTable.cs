@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -77,7 +79,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             try
             {
-                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName)));
+                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName),StringComparison.CurrentCultureIgnoreCase));
             }
             catch (Exception e)
             {
@@ -207,6 +209,45 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             using (IManagedConnection connection = Database.Server.GetManagedConnection())
             {
                 Helper.CreatePrimaryKey(this,discoverColumns, connection);
+            }
+        }
+
+
+        /// <summary>
+        /// Inserts the values specified into the database table and returns the last autonum identity generated (or 0 if none present)
+        /// </summary>
+        /// <param name="toInsert"></param>
+        /// <returns></returns>
+        public int Insert(Dictionary<DiscoveredColumn,object> toInsert)
+        {
+            var syntaxHelper = GetQuerySyntaxHelper();
+
+            using (var con = Database.Server.BeginNewTransactedConnection())
+            {
+                string sql = 
+                    string.Format("INSERT INTO {0}({1}) VALUES ({2})",
+                    GetFullyQualifiedName(),
+                    string.Join(",",toInsert.Keys.Select(c=>c.GetRuntimeName())),
+                    string.Join(",",toInsert.Keys.Select(c=>syntaxHelper.ParameterSymbol + c.GetRuntimeName()))
+                    );
+
+                var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection,con.Transaction);
+
+                foreach (KeyValuePair<DiscoveredColumn, object> kvp in toInsert)
+                {
+                    var p = DatabaseCommandHelper.GetParameter(kvp.Key.GetRuntimeName(),cmd);
+
+                    p.DbType = syntaxHelper.TypeTranslater.GetDbTypeForSQLDBType(kvp.Key.DataType.SQLType);
+                    p.Value = kvp.Value;
+
+                    cmd.Parameters.Add(p);
+                }
+
+                int result = Helper.ExecuteInsertReturningIdentity(this,cmd,con.ManagedTransaction);
+
+                con.ManagedTransaction.CommitAndCloseConnection();
+
+                return result;
             }
         }
     }

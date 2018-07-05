@@ -108,6 +108,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             cmd.ExecuteNonQuery();
         }
 
+        public virtual int ExecuteInsertReturningIdentity(DiscoveredTable discoveredTable, DbCommand cmd, IManagedTransaction transaction=null)
+        {
+            cmd.CommandText += ";SELECT @@IDENTITY";
+
+            var result = cmd.ExecuteScalar();
+
+            if (result == DBNull.Value || result == null)
+                return 0;
+
+            return Convert.ToInt32(result);
+        }
+
         protected abstract string GetRenameTableSql(DiscoveredTable discoveredTable, string newName);
 
         public virtual void MakeDistinct(DiscoveredTable discoveredTable)

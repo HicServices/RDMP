@@ -265,6 +265,7 @@
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseDataLoadTests.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseMergeCommandTest.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseConstraintsTests.cs" />
+    <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseInsertTests.cs" />
     <Compile Include="Integration\DatabaseClonerTests.cs" />
     <Compile Include="Integration\DataLoadProgressUpdateInfoTests.cs" />
     <Compile Include="Integration\DataTableUploadDestinationTests.cs" />

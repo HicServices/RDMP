@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using Oracle.ManagedDataAccess.Client;
@@ -163,6 +164,26 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
         public override IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection)
         {
             return new OracleBulkCopy(discoveredTable,connection);
+        }
+
+        public override int ExecuteInsertReturningIdentity(DiscoveredTable discoveredTable, DbCommand cmd, IManagedTransaction transaction = null)
+        {
+            var autoIncrement = discoveredTable.DiscoverColumns(transaction).SingleOrDefault(c => c.IsAutoIncrement);
+
+            if (autoIncrement == null)
+                return Convert.ToInt32(cmd.ExecuteScalar());
+
+            var p = DatabaseCommandHelper.GetParameter("identityOut", cmd);
+            p.Direction = ParameterDirection.Output;
+
+            cmd.Parameters.Add(p);
+
+            cmd.CommandText += " RETURNING " + autoIncrement + " INTO :identityOut;";
+
+            cmd.ExecuteNonQuery();
+            
+
+            return Convert.ToInt32(p.Value);
         }
 
         protected override string GetRenameTableSql(DiscoveredTable discoveredTable, string newName)
