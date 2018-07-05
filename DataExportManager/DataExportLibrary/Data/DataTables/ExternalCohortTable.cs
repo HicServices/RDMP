@@ -306,14 +306,12 @@ namespace DataExportLibrary.Data.DataTables
         
         public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
         {
-            var parameterSymbol = GetQuerySyntaxHelper().ParameterSymbol;
-            
-            var cmdInsert = DatabaseCommandHelper.GetCommand(string.Format("INSERT INTO " + DefinitionTableName + "(projectNumber,version,description) VALUES ({0}projectNumber,{0}version,{0}description); SELECT @@IDENTITY;", parameterSymbol), connection.Connection, connection.Transaction);
-            DatabaseCommandHelper.AddParameterWithValueToCommand(parameterSymbol + "projectNumber",cmdInsert,newCohortDefinition.ProjectNumber);
-            DatabaseCommandHelper.AddParameterWithValueToCommand(parameterSymbol + "version", cmdInsert, newCohortDefinition.Version);
-            DatabaseCommandHelper.AddParameterWithValueToCommand(parameterSymbol + "description", cmdInsert, newCohortDefinition.Description);
-            
-            newCohortDefinition.ID = Convert.ToInt32(cmdInsert.ExecuteScalar());
+            newCohortDefinition.ID = Discover().ExpectTable(DefinitionTableName).Insert(new Dictionary<string, object>()
+            {
+                {"projectNumber",newCohortDefinition.ProjectNumber},
+                {"version",newCohortDefinition.Version},
+                {"description",newCohortDefinition.Description},
+            },connection.ManagedTransaction);
         }
         #endregion
 

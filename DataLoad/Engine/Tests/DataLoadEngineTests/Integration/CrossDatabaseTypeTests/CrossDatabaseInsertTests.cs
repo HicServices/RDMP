@@ -31,7 +31,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.MicrosoftSQLServer, 1.5)]
         [TestCase(DatabaseType.MYSQLServer, 1.5)]
         [TestCase(DatabaseType.Oracle, 1.5)]
-        public void CreateTableAndInsertAValue(DatabaseType type, object value)
+        public void CreateTableAndInsertAValue_ColumnOverload(DatabaseType type, object value)
         {
             var db = GetCleanedServer(type);
             var tbl = db.CreateTable("InsertTable",
@@ -50,6 +50,30 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             var result = tbl.GetDataTable();
             Assert.AreEqual(1,result.Rows.Count);
             Assert.AreEqual(value,result.Rows[0][0]);
+
+            tbl.Drop();
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer, 1.5)]
+        [TestCase(DatabaseType.MYSQLServer, 1.5)]
+        [TestCase(DatabaseType.Oracle, 1.5)]
+        public void CreateTableAndInsertAValue_StringOverload(DatabaseType type, object value)
+        {
+            var db = GetCleanedServer(type);
+            var tbl = db.CreateTable("InsertTable",
+                new[]
+                {
+                    new DatabaseColumnRequest("Name",new DatabaseTypeRequest(value.GetType(),100,new DecimalSize(5,5)))
+                });
+
+            tbl.Insert(new Dictionary<string, object>()
+            {
+                {"Name",value}
+            });
+
+            var result = tbl.GetDataTable();
+            Assert.AreEqual(1, result.Rows.Count);
+            Assert.AreEqual(value, result.Rows[0][0]);
 
             tbl.Drop();
         }

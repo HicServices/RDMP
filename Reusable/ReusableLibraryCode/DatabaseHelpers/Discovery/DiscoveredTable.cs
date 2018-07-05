@@ -218,11 +218,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// </summary>
         /// <param name="toInsert"></param>
         /// <returns></returns>
-        public int Insert(Dictionary<DiscoveredColumn,object> toInsert)
+        public int Insert(Dictionary<DiscoveredColumn,object> toInsert, IManagedTransaction transaction = null)
         {
             var syntaxHelper = GetQuerySyntaxHelper();
 
-            using (var con = Database.Server.BeginNewTransactedConnection())
+            using (IManagedConnection connection = Database.Server.GetManagedConnection(transaction))
             {
                 string sql = 
                     string.Format("INSERT INTO {0}({1}) VALUES ({2})",
@@ -231,7 +231,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                     string.Join(",",toInsert.Keys.Select(c=>syntaxHelper.ParameterSymbol + c.GetRuntimeName()))
                     );
 
-                var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection,con.Transaction);
+                var cmd = DatabaseCommandHelper.GetCommand(sql, connection.Connection, connection.Transaction);
 
                 foreach (KeyValuePair<DiscoveredColumn, object> kvp in toInsert)
                 {
@@ -243,12 +243,34 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                     cmd.Parameters.Add(p);
                 }
 
-                int result = Helper.ExecuteInsertReturningIdentity(this,cmd,con.ManagedTransaction);
-
-                con.ManagedTransaction.CommitAndCloseConnection();
+                int result = Helper.ExecuteInsertReturningIdentity(this, cmd, connection.ManagedTransaction);
 
                 return result;
             }
+        }
+
+        /// <summary>
+        /// Overload which will discover the columns by name for you.
+        /// </summary>
+        /// <param name="toInsert"></param>
+        /// <param name="connection"></param>
+        /// <returns></returns>
+        public int Insert(Dictionary<string, object> toInsert, IManagedTransaction transaction = null)
+        {
+            var cols = DiscoverColumns(transaction);
+
+            var foundColumns = new Dictionary<DiscoveredColumn, object>();
+
+            foreach (var k in toInsert.Keys)
+            {
+                var match = cols.SingleOrDefault(c => c.GetRuntimeName().Equals(k, StringComparison.CurrentCultureIgnoreCase));
+                if(match == null)
+                    throw new Exception("Could not find column called " + k);
+
+                foundColumns.Add(match,toInsert[k]);
+            }
+
+            return Insert(foundColumns, transaction);
         }
     }
 
