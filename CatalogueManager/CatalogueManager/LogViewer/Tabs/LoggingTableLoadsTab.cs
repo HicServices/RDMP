@@ -17,20 +17,10 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingTableLoadsTab:LoggingTab
     {
-        
-        public LoggingTableLoadsTab()
+        protected override IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
         {
-            base.InitializeComponent();
-            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
-        }
-        void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex == -1)
-                return;
-
-            var tableId = (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value;
-            var cmd = new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.DataSources, new LogViewerFilter { Table = tableId });
-            cmd.Execute();
+            var tableId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
+            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.DataSources, new LogViewerFilter { Table = tableId });
         }
 
         protected override DataTable FetchDataTable(LogManager lm)

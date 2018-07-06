@@ -8,11 +8,6 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingProgressMessagesTab : LoggingTab
     {
-        public LoggingProgressMessagesTab()
-        {
-            base.InitializeComponent();
-        }
-
         protected override DataTable FetchDataTable(LogManager lm)
         {
             return lm.ListProgressMessagesAsTable(null);

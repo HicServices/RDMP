@@ -8,11 +8,6 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingFatalErrorsTab : LoggingTab
     {
-        public LoggingFatalErrorsTab()
-        {
-            base.InitializeComponent();
-        }
-        
         protected override DataTable FetchDataTable(LogManager lm)
         {
             return lm.ListFatalErrorsAsDataTable(null);

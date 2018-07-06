@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
 using CatalogueManager.CommandExecution;
@@ -12,20 +13,13 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingRunsTab : LoggingTab
     {
-        public LoggingRunsTab()
+        protected override IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
         {
-            base.InitializeComponent();
-            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
-        }
 
-        void dataGridView1_CellDoubleClick(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex == -1)
-                return;
-            
-            var taskId = (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value;
-            var cmd = new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.ProgressMessages, new LogViewerFilter { Run = taskId });
-            cmd.Execute();
+            var taskId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
+            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.ProgressMessages, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.FatalErrors, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.TableLoadRuns, new LogViewerFilter { Run = taskId });
         }
 
         protected override DataTable FetchDataTable(LogManager lm)

@@ -9,11 +9,6 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingDataSourcesTab : LoggingTab
     {
-        public LoggingDataSourcesTab()
-        {
-            base.InitializeComponent();
-        }
-
         protected override DataTable FetchDataTable(LogManager lm)
         {
             return lm.ListDataSourcesAsTable(null);

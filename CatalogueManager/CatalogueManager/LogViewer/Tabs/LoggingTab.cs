@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Windows.Input;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
 using ReusableUIComponents;
+using Cursor = System.Windows.Forms.Cursor;
 
 namespace CatalogueManager.LogViewer.Tabs
 {
@@ -22,6 +28,52 @@ namespace CatalogueManager.LogViewer.Tabs
         private PictureBox pbRemoveFilter;
         private Label lblFilter;
         protected DataGridView dataGridView1;
+
+        public LoggingTab()
+        {
+            InitializeComponent();
+
+            
+            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
+            dataGridView1.CellMouseClick += DataGridView1OnCellMouseClick;
+        }
+
+        private void DataGridView1OnCellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex == -1)
+                return;
+
+            if (e.Button == MouseButtons.Right)
+            {
+                var menu = new ContextMenuStrip();
+                
+                foreach (ExecuteCommandViewLoggedData cmd in GetCommands(e.RowIndex))
+                {
+                    ExecuteCommandViewLoggedData cmd1 = cmd;
+                    var mi = new ToolStripMenuItem(cmd.GetCommandName(), null, (s, x) => cmd1.Execute());
+                    menu.Items.Add(mi);
+                }
+                
+                menu.Show(Cursor.Position.X, Cursor.Position.Y);
+            }
+        }
+
+        void dataGridView1_CellDoubleClick(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1)
+                return;
+            
+            var cmd = GetCommands(e.RowIndex).FirstOrDefault();
+
+            if(cmd != null)
+                cmd.Execute();
+        }
+
+
+        protected virtual IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
+        {
+            return new ExecuteCommandViewLoggedData[0];
+        }
 
         private void AddFreeTextSearchColumn(DataTable dt)
         {
@@ -54,9 +106,9 @@ namespace CatalogueManager.LogViewer.Tabs
             // 
             this.tbContentFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbContentFilter.Location = new System.Drawing.Point(73, 542);
+            this.tbContentFilter.Location = new System.Drawing.Point(35, 542);
             this.tbContentFilter.Name = "tbContentFilter";
-            this.tbContentFilter.Size = new System.Drawing.Size(766, 20);
+            this.tbContentFilter.Size = new System.Drawing.Size(804, 20);
             this.tbContentFilter.TabIndex = 8;
             this.tbContentFilter.TextChanged += new System.EventHandler(this.tbContentFilter_TextChanged);
             // 
@@ -66,9 +118,9 @@ namespace CatalogueManager.LogViewer.Tabs
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(-3, 545);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(72, 13);
+            this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 7;
-            this.label1.Text = "Content Filter:";
+            this.label1.Text = "Filter:";
             // 
             // dataGridView1
             // 
@@ -79,11 +131,11 @@ namespace CatalogueManager.LogViewer.Tabs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 25);
+            this.dataGridView1.Location = new System.Drawing.Point(3, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(836, 511);
+            this.dataGridView1.Size = new System.Drawing.Size(836, 536);
             this.dataGridView1.TabIndex = 6;
             // 
             // pbRemoveFilter
@@ -97,6 +149,7 @@ namespace CatalogueManager.LogViewer.Tabs
             this.pbRemoveFilter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbRemoveFilter.TabIndex = 10;
             this.pbRemoveFilter.TabStop = false;
+            this.pbRemoveFilter.Visible = false;
             this.pbRemoveFilter.Click += new System.EventHandler(this.pbRemoveFilter_Click);
             // 
             // lblFilter
@@ -111,6 +164,7 @@ namespace CatalogueManager.LogViewer.Tabs
             this.lblFilter.TabIndex = 9;
             this.lblFilter.Text = "Filtered Object";
             this.lblFilter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblFilter.Visible = false;
             // 
             // LoggingTab
             // 
