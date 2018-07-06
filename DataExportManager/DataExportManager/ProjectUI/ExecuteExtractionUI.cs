@@ -175,6 +175,9 @@ namespace DataExportManager.ProjectUI
 
             //add the folders
             tlvDatasets.AddObjects(new object[] { _globalsFolder, _coreDatasetsFolder, _projectSpecificDatasetsFolder });
+            
+            //enable all to start with 
+            tlvDatasets.EnableObjects(tlvDatasets.Objects);
 
             tlvDatasets.DisableObjects(_globals);
             tlvDatasets.DisableObjects(_bundledStuff);

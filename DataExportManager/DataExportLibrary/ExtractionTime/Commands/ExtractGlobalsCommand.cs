@@ -30,6 +30,8 @@ namespace DataExportLibrary.ExtractionTime.Commands
             this.RepositoryLocator = repositoryLocator;
             this.project = project;
             this.Globals = globals;
+
+            ExtractionResults = new List<IExtractionResults>();
         }
 
         public override DirectoryInfo GetExtractionDirectory()
@@ -42,5 +44,9 @@ namespace DataExportLibrary.ExtractionTime.Commands
             return String.Join(";", Globals.Contents);
         }
 
+        public override string ToString()
+        {
+            return ExtractionDirectory.GLOBALS_DATA_NAME;
+        }
     }
 }

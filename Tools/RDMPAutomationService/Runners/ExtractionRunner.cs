@@ -36,6 +36,7 @@ namespace RDMPAutomationService.Runners
         ExtractGlobalsCommand _globalsCommand;
         private Pipeline _pipeline;
         private DataLoadInfo _dataLoadInfo;
+        private LogManager _logManager;
 
         public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
 
@@ -95,17 +96,22 @@ namespace RDMPAutomationService.Runners
             var globalCommand = runnable as ExtractGlobalsCommand;
             var datasetCommand = runnable as ExtractDatasetCommand;
 
+            var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, _dataLoadInfo);
+            var fork = new ForkDataLoadEventListener(logging,listener);
+
             if(globalCommand != null)
             {
                 var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, _pipeline, _dataLoadInfo) { Token = Token };
-                useCase.Execute(new OverrideSenderIDataLoadEventListener(ExtractionDirectory.GLOBALS_DATA_NAME, listener));
+                useCase.Execute(fork);
             }
 
             if (datasetCommand != null)
             {
                 var executeUseCase = new ExtractionPipelineUseCase(_project,datasetCommand, _pipeline, _dataLoadInfo) { Token = Token };
-                executeUseCase.Execute(listener);
+                executeUseCase.Execute(fork);
             }
+
+            logging.FinalizeTableLoadInfos();
         }
 
         protected override ICheckable[] GetCheckables()
@@ -197,7 +203,7 @@ namespace RDMPAutomationService.Runners
         {
             DataLoadInfo dataLoadInfo;
 
-            var logManager = _configuration.GetExplicitLoggingDatabaseServerOrDefault();
+            _logManager = _configuration.GetExplicitLoggingDatabaseServerOrDefault();
 
             try
             {
@@ -206,11 +212,11 @@ namespace RDMPAutomationService.Runners
                                                      Process.GetCurrentProcess().ProcessName,
                                                      _project.Name + "(ExtractionConfiguration ID=" +
                                                      _configuration.ID + ")",
-                                                     "", false, logManager.Server);
+                                                     "", false, _logManager.Server);
             }
             catch (Exception e)
             {
-                throw new Exception("Problem occurred trying to create Logging Component:" + e.Message + " (check user has access to " + logManager.Server + " and that the DataLoadTask '" + ExecuteDatasetExtractionSource.AuditTaskName + "' exists)", e);
+                throw new Exception("Problem occurred trying to create Logging Component:" + e.Message + " (check user has access to " + _logManager.Server + " and that the DataLoadTask '" + ExecuteDatasetExtractionSource.AuditTaskName + "' exists)", e);
             }
 
             return dataLoadInfo;

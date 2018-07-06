@@ -23,6 +23,11 @@ namespace HIC.Logging.Listeners
         private readonly string _runDescription;
 
         /// <summary>
+        /// true if we were passed an IDataLoadInfo that was created by someone else (in which case we shouldn't just arbitrarily close it at any point).
+        /// </summary>
+        private bool _wasAlreadyOpen = false;
+
+        /// <summary>
         /// The root logging object under which all events will be stored, will be null if logging has not started yet (first call to OnNotify/StartLogging).
         /// </summary>
         public IDataLoadInfo DataLoadInfo { get; private set; }
@@ -39,6 +44,7 @@ namespace HIC.Logging.Listeners
         {
             DataLoadInfo = dataLoadInfo;
             _logManager = logManager;
+            _wasAlreadyOpen = true;
         }
 
         public virtual void StartLogging()
@@ -102,7 +108,8 @@ namespace HIC.Logging.Listeners
             foreach (var tableLoadInfo in TableLoads.Values)
                 tableLoadInfo.CloseAndArchive();
 
-            DataLoadInfo.CloseAndMarkComplete();
+            if(!_wasAlreadyOpen)
+                DataLoadInfo.CloseAndMarkComplete();
         }
     }
 }
