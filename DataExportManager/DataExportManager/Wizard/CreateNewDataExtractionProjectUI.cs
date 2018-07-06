@@ -223,6 +223,7 @@ namespace DataExportManager.Wizard
                     tbCohortName.Text = cic.ToString();
 
                     var source = new CohortIdentificationConfigurationSource();
+                    source.Timeout = 5;
                     source.PreInitialize(cic,new ThrowImmediatelyDataLoadEventListener());
                     source.Check(ragCic);
 
