@@ -1,9 +1,11 @@
-﻿using System;
-using System.Text;
-using CatalogueLibrary.Data;
+﻿using System.Text;
 
 namespace CatalogueManager.LogViewer
 {
+    /// <summary>
+    /// Storage class that indicates a <see cref="CatalogueManager.LogViewer.Tabs.LoggingTab"/> should not show all records but only those
+    /// relating to the specified run / task etc
+    /// </summary>
     public class LogViewerFilter
     {
         public bool IsEmpty { get { return Run == null && Table == null && Task == null; } }

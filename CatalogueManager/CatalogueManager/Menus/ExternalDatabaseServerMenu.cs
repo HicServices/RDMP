@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections.Arbitrary;
 using CatalogueManager.Icons.IconProvision;
-using HIC.Logging;
+using CatalogueManager.LogViewer;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueManager.Menus
