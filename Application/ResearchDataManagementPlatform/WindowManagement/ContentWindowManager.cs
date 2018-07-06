@@ -493,18 +493,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 floatable.Show(_mainDockPanel, DockState.Document);
                 try
                 {
-                    var setDatabaseObjectMethod = uiInstance.GetType().GetMethods().Where(m => 
-                        m.Name.Equals("SetDatabaseObject") 
-                        && m.DeclaringType == uiInstance.GetType()).ToArray();
-                    
-                    if(setDatabaseObjectMethod.Length == 0)
-                        throw new Exception("Class did not have a method called SetDatabaseObject");
-
-                    if (setDatabaseObjectMethod.Length > 1)
-                        throw new AmbiguousMatchException("Class had "+setDatabaseObjectMethod.Length+" Generic methods called SetDatabaseObject");
-
-                    setDatabaseObjectMethod[0].Invoke(uiInstance, new object[] { this, databaseObject });
-
+                    uiInstance.SetDatabaseObject(this,(DatabaseEntity) databaseObject);
                     floatable.TabText = uiInstance.GetTabName();
                 }
                 catch (Exception e)
