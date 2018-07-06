@@ -240,5 +240,10 @@ namespace CatalogueLibrary.Data
 
             return databaseAssembly.GetName().Name == CreatedByAssembly;
         }
+
+        public DiscoveredDatabase Discover(DataAccessContext context)
+        {
+            return DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+        }
     }
 }

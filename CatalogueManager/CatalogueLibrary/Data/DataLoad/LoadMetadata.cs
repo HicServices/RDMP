@@ -226,6 +226,9 @@ namespace CatalogueLibrary.Data.DataLoad
         {
             Catalogue[] catalogues = GetAllCatalogues().Cast<Catalogue>().ToArray();
 
+            if (catalogues.Length == 0)
+                return true;
+
             int? liveID = catalogues.Select(c => c.LiveLoggingServer_ID).Distinct().Single();
             int? testID = catalogues.Select(c => c.TestLoggingServer_ID).Distinct().Single();
 
