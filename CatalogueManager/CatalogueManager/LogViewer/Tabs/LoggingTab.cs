@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Windows.Input;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.ItemActivation;
@@ -33,7 +30,6 @@ namespace CatalogueManager.LogViewer.Tabs
         {
             InitializeComponent();
 
-            
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             dataGridView1.CellMouseClick += DataGridView1OnCellMouseClick;
         }
@@ -53,7 +49,20 @@ namespace CatalogueManager.LogViewer.Tabs
                     var mi = new ToolStripMenuItem(cmd.GetCommandName(), null, (s, x) => cmd1.Execute());
                     menu.Items.Add(mi);
                 }
-                
+
+                var row = dataGridView1.Rows[e.RowIndex];
+
+                StringBuilder sb = new StringBuilder();
+
+                foreach (DataGridViewColumn c in dataGridView1.Columns)
+                    if (c.Visible)
+                        sb.AppendLine(c.Name + ":" + row.Cells[c.Name].Value);
+
+                if(menu.Items.Count != 0)
+                    menu.Items.Add(new ToolStripSeparator());
+
+                menu.Items.Add("View as Text", null, (s, ex) => WideMessageBox.Show(sb.ToString()));
+
                 menu.Show(Cursor.Position.X, Cursor.Position.Y);
             }
         }
