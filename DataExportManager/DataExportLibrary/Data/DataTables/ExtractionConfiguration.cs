@@ -567,13 +567,8 @@ namespace DataExportLibrary.Data.DataTables
             else
                 addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1, query); // its custom column of some kind, not tied to a catalogue entry
 
-            //Add new things you want to copy from the Catalogue here
-            addMe.HashOnDataRelease = item.HashOnDataRelease;
-            addMe.IsExtractionIdentifier = item.IsExtractionIdentifier;
-            addMe.IsPrimaryKey = item.IsPrimaryKey;
-            addMe.Order = item.Order;
-            addMe.Alias = item.Alias;
-            addMe.SaveToDatabase();
+            addMe.UpdateValuesToMatch(item);
+
             return addMe;
         }
 
