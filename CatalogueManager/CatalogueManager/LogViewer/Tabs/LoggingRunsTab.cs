@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data;
 using System.Windows.Forms;
+using CatalogueManager.CommandExecution;
 using HIC.Logging;
 
 namespace CatalogueManager.LogViewer.Tabs
@@ -10,8 +12,6 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingRunsTab : LoggingTab
     {
-        public event NavigatePaneToEntityHandler NavigationPaneGoto;
-
         public LoggingRunsTab()
         {
             base.InitializeComponent();
@@ -22,29 +22,31 @@ namespace CatalogueManager.LogViewer.Tabs
         {
             if (e.RowIndex == -1)
                 return;
-
-            NavigationPaneGoto(this, new NavigatePaneToEntityArgs(LogViewerNavigationTarget.DataLoadRuns, (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value));
+            
+            var taskId = (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value;
+            var cmd = new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.ProgressMessages, new LogViewerFilter { Run = taskId });
+            cmd.Execute();
         }
 
-        public void SetStateTo(LogManager lm, LogViewerFilterCollection filters)
+        protected override DataTable FetchDataTable(LogManager lm)
         {
-            _filters = filters;
-            if (!_bLoaded)
-            {
-                var dt = lm.ListDataLoadRunsAsTable(null);
-                LoadDataTable(dt);    
-            }
+            return lm.ListDataLoadRunsAsTable(null);
+        }
+
+        public override void SetFilter(LogViewerFilter filter)
+        {
+            base.SetFilter(filter);
 
             string f = null;
-            
-            if (_filters.Task != null)
-                f = "dataLoadTaskID=" + filters.Task;
 
-            if(_filters.Run != null)
+            if (filter.Task != null)
+                f = "dataLoadTaskID=" + filter.Task;
+
+            if (filter.Run != null)
                 if(string.IsNullOrEmpty(f))
-                    f = " ID=" + _filters.Run;
+                    f = " ID=" + filter.Run;
                 else
-                    f += " AND ID="+_filters.Run;
+                    f += " AND ID=" + filter.Run;
 
             SetFilter(f);
         }

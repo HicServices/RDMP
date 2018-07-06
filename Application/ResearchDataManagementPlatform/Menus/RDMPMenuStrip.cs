@@ -6,8 +6,8 @@ using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Reports;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.FindAndReplace;
@@ -38,6 +38,7 @@ using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
+using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
@@ -123,24 +124,8 @@ namespace ResearchDataManagementPlatform.Menus
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var servers = RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.Logging);
-
-            LogViewerForm form = null;
-
-            if (!servers.Any())
-                MessageBox.Show("None of your ExternalDatabaseServers are Logging servers, maybe you have yet to create a Logging server? go to Locations=>Manage External Servers and configure/create a Logging server", "No Logging Servers Found");
-            else
-                if (servers.Count() == 1)
-                    form = new LogViewerForm(servers.Single());
-                else
-                {
-                    SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(servers, false, false);
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                        form = new LogViewerForm((ExternalDatabaseServer)dialog.Selected);
-                }
-
-            if (form != null)
-                form.Show();
+            var cmd = new ExecuteCommandViewLoggedData(_activator,LogViewerNavigationTarget.DataLoadTasks);
+            cmd.Execute();
         }
         
         private void databaseAccessComplexToolStripMenuItem_Click(object sender, EventArgs e)

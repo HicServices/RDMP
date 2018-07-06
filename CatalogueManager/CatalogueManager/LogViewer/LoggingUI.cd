@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Obsolete">
+    <Position X="1" Y="8.5" Height="0.432" Width="14.784" />
+  </Comment>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingDataSourcesTab" Collapsed="true">
+    <Position X="4.75" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingDataSourcesTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingFatalErrorsTab" Collapsed="true">
+    <Position X="7" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingFatalErrorsTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingProgressMessagesTab" Collapsed="true">
+    <Position X="11.5" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingProgressMessagesTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingRunsTab" Collapsed="true">
+    <Position X="16.25" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAgAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingRunsTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingTab" Collapsed="true">
+    <Position X="10.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAABAAAACAAABDAASAAQAECABwAgIAAAAAAAIAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingTableLoadsTab" Collapsed="true">
+    <Position X="9.25" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAgAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingTableLoadsTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingTasksTab" Collapsed="true">
+    <Position X="14" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAgAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingTasksTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.LogViewerFilter" Collapsed="true">
+    <Position X="4.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAIAAAAAAAgAEAAAAQAAAABAAAAAAAEAAAABAAAI=</HashCode>
+      <FileName>LogViewer\LogViewerFilter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

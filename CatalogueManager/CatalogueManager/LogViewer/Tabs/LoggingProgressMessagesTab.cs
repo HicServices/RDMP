@@ -1,4 +1,5 @@
-﻿using HIC.Logging;
+﻿using System.Data;
+using HIC.Logging;
 
 namespace CatalogueManager.LogViewer.Tabs
 {
@@ -7,34 +8,22 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingProgressMessagesTab : LoggingTab
     {
-        public event NavigatePaneToEntityHandler NavigationPaneGoto;
-
         public LoggingProgressMessagesTab()
         {
             base.InitializeComponent();
-            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
         }
 
-        void dataGridView1_CellDoubleClick(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+        protected override DataTable FetchDataTable(LogManager lm)
         {
-            if (e.RowIndex == -1)
-                return;
-
-            NavigationPaneGoto(this, new NavigatePaneToEntityArgs(LogViewerNavigationTarget.ProgressMessages, (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value));
+            return lm.ListProgressMessagesAsTable(null);
         }
 
-        public void SetStateTo(LogManager logManager, LogViewerFilterCollection filter)
+        public override void SetFilter(LogViewerFilter filter)
         {
-            _filters = filter;
-
-            if (!_bLoaded)
-            {
-                var dt = logManager.ListProgressMessagesAsTable(null);
-                base.LoadDataTable(dt);    
-            }
+            base.SetFilter(filter);
 
             if (filter.Run == null)
-                SetFilter(null);
+                SetFilter("");
             else
                 SetFilter("dataLoadRunID=" + filter.Run);
         }

@@ -1,3 +1,4 @@
+using System.Data;
 using HIC.Logging;
 
 namespace CatalogueManager.LogViewer.Tabs
@@ -8,35 +9,22 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingDataSourcesTab : LoggingTab
     {
-
-        public event NavigatePaneToEntityHandler NavigationPaneGoto;
-
         public LoggingDataSourcesTab()
         {
             base.InitializeComponent();
-            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
         }
 
-        void dataGridView1_CellDoubleClick(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+        protected override DataTable FetchDataTable(LogManager lm)
         {
-            if (e.RowIndex == -1)
-                return;
-
-            NavigationPaneGoto(this, new NavigatePaneToEntityArgs(LogViewerNavigationTarget.DataSources, (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value));
+            return lm.ListDataSourcesAsTable(null);
         }
 
-        public void SetStateTo(LogManager logManager, LogViewerFilterCollection filter)
+        public override void SetFilter(LogViewerFilter filter)
         {
-            _filters = filter;
-            
-            if (!_bLoaded)
-            {
-                var dt = logManager.ListDataSourcesAsTable(null);
-                base.LoadDataTable(dt);
-            }
+            base.SetFilter(filter);
 
             if (filter.Table == null)
-                SetFilter(null);
+                SetFilter("");
             else
                 SetFilter("tableLoadRunID=" + filter.Table);
         }

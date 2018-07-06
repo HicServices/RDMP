@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueManager.CommandExecution;
 using HIC.Logging;
 
 namespace CatalogueManager.LogViewer.Tabs
@@ -15,9 +17,7 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingTableLoadsTab:LoggingTab
     {
-
-        public event NavigatePaneToEntityHandler NavigationPaneGoto;
-
+        
         public LoggingTableLoadsTab()
         {
             base.InitializeComponent();
@@ -28,27 +28,30 @@ namespace CatalogueManager.LogViewer.Tabs
             if (e.RowIndex == -1)
                 return;
 
-            NavigationPaneGoto(this,new NavigatePaneToEntityArgs(LogViewerNavigationTarget.TableLoadRuns,(int) dataGridView1.Rows[e.RowIndex].Cells["ID"].Value));
+            var tableId = (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value;
+            var cmd = new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.DataSources, new LogViewerFilter { Table = tableId });
+            cmd.Execute();
         }
-        public void SetStateTo(LogManager lm,LogViewerFilterCollection filters)
+
+        protected override DataTable FetchDataTable(LogManager lm)
         {
-            _filters = filters;
-            if (!_bLoaded)
-            {
-                var dt = lm.ListTableLoadsAsTable(null);
-                base.LoadDataTable(dt);    
-            }
+            return lm.ListTableLoadsAsTable(null);
+        }
+
+        public override void SetFilter(LogViewerFilter filter)
+        {
+            base.SetFilter(filter);
 
             string f = null;
-            
-            if (filters.Run != null)
-                f = "dataLoadRunID=" + filters.Run;
 
-            if (_filters.Table != null)
+            if (filter.Run != null)
+                f = "dataLoadRunID=" + filter.Run;
+
+            if (filter.Table != null)
                 if (string.IsNullOrEmpty(f))
-                    f = " ID=" + _filters.Table;
+                    f = " ID=" + filter.Table;
                 else
-                    f += " AND ID=" + _filters.Table;
+                    f += " AND ID=" + filter.Table;
 
              SetFilter(f);
         }

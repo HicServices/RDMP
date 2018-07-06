@@ -62,14 +62,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if (Activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(requiredType))
             {
-                var selected = SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>());
+                var selected = SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
                 if (selected != null)
                     return selected.ID;
             }
 
             if (Activator.RepositoryLocator.DataExportRepository.SupportsObjectType(requiredType))
             {
-                var selected = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>());
+                var selected = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
                 if (selected != null)
                     return selected.ID;
             }

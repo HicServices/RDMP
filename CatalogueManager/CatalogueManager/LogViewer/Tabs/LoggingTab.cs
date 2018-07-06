@@ -1,22 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
+using CatalogueManager.ItemActivation;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
+using HIC.Logging;
+using ReusableUIComponents;
 
 namespace CatalogueManager.LogViewer.Tabs
 {
     /// <summary>
     /// TECHNICAL:Base class for all the other logging tabs e.g. LoggingDataSourcesTab
     /// </summary>
-    public class LoggingTab :UserControl
+    public class LoggingTab : LoggingTab_Design
     {
         private TextBox tbContentFilter;
         private Label label1;
+        private PictureBox pbRemoveFilter;
+        private Label lblFilter;
         protected DataGridView dataGridView1;
-        protected LogViewerFilterCollection _filters;
 
         private void AddFreeTextSearchColumn(DataTable dt)
         {
@@ -35,10 +40,14 @@ namespace CatalogueManager.LogViewer.Tabs
         
         protected void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoggingTab));
             this.tbContentFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.pbRemoveFilter = new System.Windows.Forms.PictureBox();
+            this.lblFilter = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).BeginInit();
             this.SuspendLayout();
             // 
             // tbContentFilter
@@ -70,36 +79,61 @@ namespace CatalogueManager.LogViewer.Tabs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.Location = new System.Drawing.Point(3, 25);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(836, 528);
+            this.dataGridView1.Size = new System.Drawing.Size(836, 511);
             this.dataGridView1.TabIndex = 6;
+            // 
+            // pbRemoveFilter
+            // 
+            this.pbRemoveFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbRemoveFilter.BackColor = System.Drawing.Color.Goldenrod;
+            this.pbRemoveFilter.Image = ((System.Drawing.Image)(resources.GetObject("pbRemoveFilter.Image")));
+            this.pbRemoveFilter.Location = new System.Drawing.Point(820, 3);
+            this.pbRemoveFilter.Name = "pbRemoveFilter";
+            this.pbRemoveFilter.Size = new System.Drawing.Size(19, 19);
+            this.pbRemoveFilter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbRemoveFilter.TabIndex = 10;
+            this.pbRemoveFilter.TabStop = false;
+            this.pbRemoveFilter.Click += new System.EventHandler(this.pbRemoveFilter_Click);
+            // 
+            // lblFilter
+            // 
+            this.lblFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblFilter.BackColor = System.Drawing.Color.Goldenrod;
+            this.lblFilter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblFilter.Location = new System.Drawing.Point(2, 3);
+            this.lblFilter.Name = "lblFilter";
+            this.lblFilter.Size = new System.Drawing.Size(821, 19);
+            this.lblFilter.TabIndex = 9;
+            this.lblFilter.Text = "Filtered Object";
+            this.lblFilter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // LoggingTab
             // 
+            this.Controls.Add(this.pbRemoveFilter);
+            this.Controls.Add(this.lblFilter);
             this.Controls.Add(this.tbContentFilter);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dataGridView1);
             this.Name = "LoggingTab";
             this.Size = new System.Drawing.Size(842, 571);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
-        protected bool _bLoaded = false;
         private string _customFilter;
         private string _freeTextFilter;
+        private LogViewerFilter _filter;
 
-        protected void LoadDataTable(DataTable dt)
+        private void LoadDataTable(DataTable dt)
         {
-            if(_bLoaded)
-                throw new Exception("Data table already loaded, why are you trying to load it again?");
-
-            _bLoaded = true;
             AddFreeTextSearchColumn(dt);
 
             dataGridView1.DataSource = dt;
@@ -120,6 +154,25 @@ namespace CatalogueManager.LogViewer.Tabs
             RegenerateFilters();
         }
 
+        public virtual void SetFilter(LogViewerFilter filter)
+        {
+            if (filter.IsEmpty)
+            {
+                lblFilter.Visible = false;
+                pbRemoveFilter.Visible = false;
+                dataGridView1.Top = 0;
+                dataGridView1.Height += lblFilter.Bottom;
+            }
+            else
+            {
+                lblFilter.Visible = true;
+                pbRemoveFilter.Visible = true;
+                lblFilter.Text = filter.ToString();
+                dataGridView1.Top = lblFilter.Bottom;
+                dataGridView1.Height = tbContentFilter.Top - dataGridView1.Top;
+            }
+        }
+
         private void RegenerateFilters()
         {
             string rowFilter = "";
@@ -134,6 +187,24 @@ namespace CatalogueManager.LogViewer.Tabs
             ((DataTable)dataGridView1.DataSource).DefaultView.RowFilter = rowFilter;
         }
 
+        public override void SetDatabaseObject(IActivateItems activator, ExternalDatabaseServer databaseObject)
+        {
+            base.SetDatabaseObject(activator, databaseObject);
+
+            var lm = new LogManager(databaseObject);
+            var dt = FetchDataTable(lm);
+            LoadDataTable(dt);
+        }
+
+        public override string GetTabName()
+        {
+            return GetType().Name.Replace("Logging","").Replace("Tab","") + "(" +base.GetTabName() + ")";
+        }
+
+        protected virtual DataTable FetchDataTable(LogManager lm)
+        {
+            return null;
+        }
 
         public void SelectRowWithID(int rowIDToSelect)
         {
@@ -153,7 +224,17 @@ namespace CatalogueManager.LogViewer.Tabs
                     break;
                 }
             }
-            
         }
+
+        private void pbRemoveFilter_Click(object sender, EventArgs e)
+        {
+            SetFilter(new LogViewerFilter());
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoggingTab_Design, UserControl>))]
+    public abstract class LoggingTab_Design : RDMPSingleDatabaseObjectControl<ExternalDatabaseServer>
+    {
+
     }
 }

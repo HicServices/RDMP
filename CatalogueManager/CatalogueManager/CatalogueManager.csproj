@@ -419,6 +419,8 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\ExecuteCommandViewLoggedData.cs" />
+    <Compile Include="CommandExecution\LogViewerNavigationTarget.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemIssue.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDataAccessCredentials.cs" />
@@ -444,6 +446,7 @@
       <DependentUpon>CatalogueIcons.resx</DependentUpon>
     </Compile>
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
+    <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -870,28 +873,7 @@
     <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.Designer.cs">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LogViewer\BreadcrumbNavigation.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LogViewer\BreadcrumbNavigation.Designer.cs">
-      <DependentUpon>BreadcrumbNavigation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerFilterCollection.cs" />
-    <Compile Include="LogViewer\LogViewerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerForm.Designer.cs">
-      <DependentUpon>LogViewerForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerNavigationPane.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerNavigationPane.Designer.cs">
-      <DependentUpon>LogViewerNavigationPane.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerNavigationRequestHandler.cs" />
-    <Compile Include="LogViewer\NavigatePaneToEntityArgs.cs" />
-    <Compile Include="LogViewer\LogViewerNavigateToCollection.cs" />
+    <Compile Include="LogViewer\LogViewerFilter.cs" />
     <Compile Include="LogViewer\Tabs\LoggingDataSourcesTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1278,6 +1260,7 @@
     <Compile Include="Validation\ValidationSetupForm.Designer.cs">
       <DependentUpon>ValidationSetupForm.cs</DependentUpon>
     </Compile>
+    <None Include="LogViewer\LoggingUI.cd" />
     <None Include="SimpleControls\CheckAndExecuteUI.cd" />
     <None Include="TestsAndSetup\StartupUI\YellowFace.png" />
     <None Include="TestsAndSetup\StartupUI\RedFace.png" />
@@ -1694,15 +1677,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LocationsMenu\PasswordEncryptionKeyLocationUI.resx">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LogViewer\BreadcrumbNavigation.resx">
-      <DependentUpon>BreadcrumbNavigation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LogViewer\LogViewerForm.resx">
-      <DependentUpon>LogViewerForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LogViewer\LogViewerNavigationPane.resx">
-      <DependentUpon>LogViewerNavigationPane.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LogViewer\Tabs\LoggingTab.resx">
       <DependentUpon>LoggingTab.cs</DependentUpon>
