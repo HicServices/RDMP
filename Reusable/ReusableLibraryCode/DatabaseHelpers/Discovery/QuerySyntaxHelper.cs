@@ -266,5 +266,28 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public abstract string GetAutoIncrementKeywordIfAny();
         public abstract Dictionary<string, string> GetSQLFunctionsDictionary();
+
+        #region Equality Members
+        protected bool Equals(QuerySyntaxHelper other)
+        {
+            if (other == null)
+                return false;
+
+            return GetType() == other.GetType();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((QuerySyntaxHelper) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return GetType().GetHashCode();
+        }
+        #endregion
     }
 }

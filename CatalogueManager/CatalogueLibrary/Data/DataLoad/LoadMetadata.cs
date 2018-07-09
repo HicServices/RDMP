@@ -295,7 +295,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            var syntax = GetAllCatalogues().Select(c => c.GetQuerySyntaxHelper()).ToArray();
+            var syntax = GetAllCatalogues().Select(c => c.GetQuerySyntaxHelper()).Distinct().ToArray();
             if (syntax.Length > 1)
                 throw new Exception("LoadMetadata '" + this + "' has multiple underlying Catalogue Live Database Type(s) - not allowed");
 
