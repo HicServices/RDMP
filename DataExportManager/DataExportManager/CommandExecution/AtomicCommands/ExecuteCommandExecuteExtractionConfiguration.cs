@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Linq;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
@@ -13,12 +14,17 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecution,IAtomicCommandWithTarget
     {
-        private readonly bool _autoStart;
         private ExtractionConfiguration _extractionConfiguration;
 
-        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, bool autoStart = false) : base(activator)
+        [ImportingConstructor]
+        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
         {
-            _autoStart = autoStart;
+            _extractionConfiguration = extractionConfiguration;
+        }
+
+        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator) : base(activator)
+        {
+            
         }
 
         public Image GetImage(IIconProvider iconProvider)

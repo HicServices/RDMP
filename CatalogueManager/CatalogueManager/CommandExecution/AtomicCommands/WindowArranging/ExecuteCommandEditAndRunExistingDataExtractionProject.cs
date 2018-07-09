@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel.Composition;
+using System.Drawing;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconOverlays;
@@ -13,6 +14,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
     public class ExecuteCommandEditAndRunExistingDataExtractionProject : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         public Project Project { get; set; }
+
+        [ImportingConstructor]
+        public ExecuteCommandEditAndRunExistingDataExtractionProject(IActivateItems activator, Project project) : base(activator)
+        {
+            Project = project;
+        }
 
         public ExecuteCommandEditAndRunExistingDataExtractionProject(IActivateItems activator) : base(activator)
         {

@@ -40,7 +40,7 @@ namespace CohortManager.Menus
             
             Items.Add(new ToolStripSeparator());
 
-            _executeCommandClone = new ExecuteCommandCloneConfiguration(_activator).SetTarget(cic);
+            _executeCommandClone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator).SetTarget(cic);
             Add(_executeCommandClone);
 
             var freeze = new ToolStripMenuItem("Freeze Configuration",

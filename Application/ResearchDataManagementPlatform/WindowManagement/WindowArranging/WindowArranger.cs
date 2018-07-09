@@ -81,7 +81,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
                 //execute all unreleased configurations... what could possibly go wrong?
                 foreach (var config in project.ExtractionConfigurations.Cast<ExtractionConfiguration>())
                     if (!config.IsReleased)
-                        new ExecuteCommandExecuteExtractionConfiguration(_activator, true).SetTarget(config).Execute();
+                        new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(config).Execute();
 
                 if(!foundAtLeastOneConfiguration)
                     new ExecuteCommandActivate(_activator,project).Execute();

@@ -1,10 +1,9 @@
+using System.ComponentModel.Composition;
 using System.Drawing;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
@@ -12,6 +11,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
     public class ExecuteCommandEditExistingCatalogue : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         public Catalogue Catalogue { get; set; }
+
+        [ImportingConstructor]
+        public ExecuteCommandEditExistingCatalogue(IActivateItems activator,Catalogue catalogue)
+            : base(activator)
+        {
+            Catalogue = catalogue;
+        }
+
 
         public ExecuteCommandEditExistingCatalogue(IActivateItems activator) : base(activator)
         {

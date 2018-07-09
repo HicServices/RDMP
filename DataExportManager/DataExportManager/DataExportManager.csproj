@@ -330,7 +330,7 @@
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortFromCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportFileAsNewCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneCohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractableDataSetPackage.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
@@ -390,6 +390,7 @@
     <Compile Include="ChangesSavedHandler.cs" />
     <Compile Include="Menus\AllCataloguesUsedByLoadMetadataNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortDatabaseUsingWizard.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneExtractionConfiguration.cs" />
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />

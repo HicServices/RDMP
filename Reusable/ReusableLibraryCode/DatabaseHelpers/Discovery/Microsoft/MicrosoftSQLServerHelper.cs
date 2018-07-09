@@ -22,6 +22,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
         protected override string ServerKeyName { get { return "Data Source"; }}
         protected override string DatabaseKeyName { get { return "Initial Catalog"; }}
 
+        protected override string ConnectionTimeoutKeyName { get { return "Connect Timeout";} }
+
         #region Up Typing
         public override DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null)
         {

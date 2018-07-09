@@ -1,4 +1,4 @@
-using System.Configuration;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
@@ -8,7 +8,6 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using Dashboard.CatalogueSummary;
 using DataQualityEngine.Data;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Dashboard.CommandExecution.AtomicCommands
@@ -16,6 +15,13 @@ namespace Dashboard.CommandExecution.AtomicCommands
     public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         private Catalogue _catalogue;
+
+        [ImportingConstructor]
+        public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator,Catalogue catalogue)
+            : base(activator)
+        {
+            SetTarget(catalogue);
+        }
 
         public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator):base(activator)
         {
@@ -33,7 +39,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
             //must have both of these things to be DQEd
             if (_catalogue.TimeCoverage_ExtractionInformation_ID == null)
             {
-                SetImpossible("Catalogue does not have an ExtractionInformation");
+                SetImpossible("Catalogue does not have a Time Coverage column set");
                 return this;
             }
 

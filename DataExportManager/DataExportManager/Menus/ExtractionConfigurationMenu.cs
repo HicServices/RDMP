@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
@@ -94,30 +92,14 @@ namespace DataExportManager.Menus
 
             if (extractionConfiguration.IsReleased)
                 Add(new ExecuteCommandUnfreezeExtractionConfiguration(_activator, extractionConfiguration));
-            
-            var clone = new ToolStripMenuItem("Clone Extraction", CatalogueIcons.CloneExtractionConfiguration,(s, e) => Clone());
-            clone.Enabled = _datasets.Any();
-            Items.Add(clone);
+
+            Add(new ExecuteCommandCloneExtractionConfiguration(_activator, extractionConfiguration));
 
             Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
             ReBrandActivateAs("Check and Execute", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
         }
 
-
-        private void Clone()
-        {
-            try
-            {
-                var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-                Publish((DatabaseEntity) clone.Project);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-
-        }
 
         private void Freeze()
         {

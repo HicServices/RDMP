@@ -1,12 +1,10 @@
-﻿using System;
+﻿using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.DataTables;
-using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
@@ -20,7 +18,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         {
             SetExtractionIdentifierColumn(extractionInformation);
         }
-
+        
+        [ImportingConstructor]
         public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, Catalogue catalogue): base(activator)
         {
             SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(catalogue));

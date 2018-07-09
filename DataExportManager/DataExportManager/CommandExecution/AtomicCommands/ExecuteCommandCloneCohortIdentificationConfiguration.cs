@@ -1,6 +1,5 @@
+using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
@@ -15,13 +14,21 @@ using ReusableUIComponents.ChecksUI;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCloneConfiguration : BasicUICommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         private readonly IActivateItems activator;
         private CohortIdentificationConfiguration _cic;
         private Project _project;
 
-        public ExecuteCommandCloneConfiguration(IActivateItems activator) : base(activator)
+        [ImportingConstructor]
+        public ExecuteCommandCloneCohortIdentificationConfiguration(IActivateItems activator,CohortIdentificationConfiguration cic)
+            : base(activator)
+        {
+            this.activator = activator;
+            _cic = cic;
+        }
+
+        public ExecuteCommandCloneCohortIdentificationConfiguration(IActivateItems activator) : base(activator)
         {
             this.activator = activator;
         }

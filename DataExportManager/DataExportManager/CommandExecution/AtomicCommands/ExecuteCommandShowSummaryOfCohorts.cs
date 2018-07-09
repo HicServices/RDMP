@@ -1,3 +1,4 @@
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -32,6 +33,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 _onlyCohorts = projectSource.CohortsUsed.Select(u => u.ObjectBeingUsed).ToArray();
         }
 
+        [ImportingConstructor]
         public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
         {
             _commandName = "Show Detailed Summary of Cohorts";
