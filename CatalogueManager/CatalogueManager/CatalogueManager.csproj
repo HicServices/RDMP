@@ -994,6 +994,12 @@
     <Compile Include="SimpleDialogs\NavigateTo\NavigateToObjectUI.Designer.cs">
       <DependentUpon>NavigateToObjectUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="SimpleDialogs\NavigateTo\RunUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SimpleDialogs\NavigateTo\RunUI.Designer.cs">
+      <DependentUpon>RunUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="SimpleDialogs\PerformanceCounterUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1023,12 +1029,6 @@
     </Compile>
     <Compile Include="SimpleDialogs\Governance\GovernanceUI.Designer.cs">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.Designer.cs">
-      <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\Remoting\RemoteRDMPUI.cs">
       <SubType>UserControl</SubType>
@@ -1741,6 +1741,9 @@
     <EmbeddedResource Include="SimpleDialogs\NavigateTo\NavigateToObjectUI.resx">
       <DependentUpon>NavigateToObjectUI.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SimpleDialogs\NavigateTo\RunUI.resx">
+      <DependentUpon>RunUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\PerformanceCounterUI.resx">
       <DependentUpon>PerformanceCounterUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -1755,9 +1758,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Governance\GovernanceUI.resx">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.resx">
-      <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Remoting\RemoteRDMPUI.resx">
       <DependentUpon>RemoteRDMPUI.cs</DependentUpon>

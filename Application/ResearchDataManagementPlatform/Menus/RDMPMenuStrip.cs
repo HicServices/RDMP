@@ -345,7 +345,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dialog = new LaunchAnyDialogUI(_windowManager.ContentManager.DocumentationStore.TypeDocumentation,_activator);
+            var dialog = new RunUI(_windowManager.ContentManager);
             dialog.Show();
         }
 
