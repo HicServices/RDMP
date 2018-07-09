@@ -98,9 +98,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var manageExternalServers = new ManageExternalServers(_activator.CoreIconProvider);
-            manageExternalServers.RepositoryLocator = RepositoryLocator;
-            manageExternalServers.ShowDialog(this);
+            new ExecuteCommandConfigureDefaultServers(_activator).Execute();
         }
 
         private void setTicketingSystemToolStripMenuItem_Click(object sender, EventArgs e)

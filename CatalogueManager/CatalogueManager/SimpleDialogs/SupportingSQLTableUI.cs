@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LocationsMenu;
 using CatalogueManager.SimpleControls;
@@ -176,10 +177,7 @@ namespace CatalogueManager.SimpleDialogs
         
         private void btnManageExternalServers_Click(object sender, EventArgs e)
         {
-            ManageExternalServers dialog = new ManageExternalServers(_activator.CoreIconProvider);
-            dialog.RepositoryLocator = RepositoryLocator;
-            dialog.ShowDialog(this);
-            RefreshUIFromDatabase();
+            
         }
 
         private void ddExternalServers_SelectedIndexChanged(object sender, EventArgs e)
@@ -204,6 +202,13 @@ namespace CatalogueManager.SimpleDialogs
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null, ServerDefaults.PermissableDefaults.None);
+            cmd.Execute();
+            RefreshUIFromDatabase();
         }
     }
     

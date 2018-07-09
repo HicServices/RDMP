@@ -45,6 +45,13 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+
+            if (_cic == null)
+                _cic = SelectOne<CohortIdentificationConfiguration>(activator.RepositoryLocator.CatalogueRepository);
+
+            if(_cic == null)
+                return;
+
             if (MessageBox.Show(
                     "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, " +
                     "filters, parameters and set operations. Are you sure this is what you want?",

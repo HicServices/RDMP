@@ -446,6 +446,7 @@
       <DependentUpon>CatalogueIcons.resx</DependentUpon>
     </Compile>
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureDefaultServers.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>

@@ -313,11 +313,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<ReOrderCatalogueItems, Catalogue>(catalogue);
         }
 
-        public void ActivateConfigureValidation(object sender, Catalogue catalogue)
-        {
-            Activate<ValidationSetupForm, Catalogue>(catalogue);
-        }
-
         public void ViewFilterGraph(object sender,FilterGraphObjectCollection collection)
         {
             var aggFilter = collection.GetFilter() as AggregateFilter;

@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -175,6 +170,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             if (IsSmallInt(sqlType))
                 return typeof (short);
 
+            if (IsLong(sqlType))
+                return typeof (long);
+
             if (IsBit(sqlType))
                 return typeof (bool);
 
@@ -188,6 +186,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 return typeof (Guid);
 
             throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
+        }
+
+        private bool IsLong(string sqlType)
+        {
+            return sqlType.ToLower().Contains(GetBigIntDataType().ToLower());
         }
 
         /// <inheritdoc/>

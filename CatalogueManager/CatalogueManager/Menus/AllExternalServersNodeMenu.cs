@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -18,7 +17,6 @@ using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -37,9 +35,12 @@ namespace CatalogueManager.Menus
             var iconProvider = new ExternalDatabaseServerStateBasedIconProvider(overlayProvider);
 
             var assemblyDictionary = new Dictionary<ServerDefaults.PermissableDefaults, Assembly>();
-            
-            Items.Add(new ToolStripMenuItem("Create New External Server Reference",_activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Add),CreateNewBlankServer));
+
+            Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null,ServerDefaults.PermissableDefaults.None));
+
             Items.Add(new ToolStripSeparator());
+
+            //Add(new ExecuteCommandConfigureDefaultServers());
 
             assemblyDictionary.Add(ServerDefaults.PermissableDefaults.DQE, typeof(DataQualityEngine.Database.Class1).Assembly);
             assemblyDictionary.Add(ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
@@ -71,12 +72,6 @@ namespace CatalogueManager.Menus
                 Add((IAtomicCommand)instance);
             }
                
-        }
-
-        private void CreateNewBlankServer(object sender, EventArgs e)
-        {
-            var newServer = new ExternalDatabaseServer(_activator.RepositoryLocator.CatalogueRepository, "New ExternalDatabaseServer " + Guid.NewGuid());
-            Publish(newServer);
         }
 
         private string GetHumanReadableNameFromPermissableDefault(ServerDefaults.PermissableDefaults def)

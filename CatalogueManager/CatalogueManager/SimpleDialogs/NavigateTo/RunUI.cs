@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
@@ -47,30 +48,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         }
 
-        private bool IsSupported(Type t)
-        {
-
-            bool acceptableType = typeof (IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface;
-
-            if (!acceptableType)
-                return false;
-
-            try
-            {
-                var constructors =  t.GetConstructors();
-
-                if (constructors.Length == 0)
-                    return false;
-
-                return IsSupported(constructors[0]);
-
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         private void comboBox1_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             var key = (string)comboBox1.SelectedItem;
@@ -84,8 +61,14 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 {
                     var type = _commandsDictionary[key];
                     var constructors = type.GetConstructors();
-
-                    CallConstructor(constructors[0]);
+                    try
+                    {
+                        CallConstructor(constructors[0]);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
                 }
             }
         }
@@ -102,14 +85,21 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 var value = GetValueForParameterOfType(parameterInfo,paramType);
                 
                 if(value == null)
-                    throw new Exception("Could not figure out a value for property '" + parameterInfo + "' for constructor '" + constructorInfo + "'.  Parameter Type was '" + paramType + "'");
+                    throw new OperationCanceledException("Could not figure out a value for property '" + parameterInfo + "' for constructor '" + constructorInfo + "'.  Parameter Type was '" + paramType + "'");
 
                 parameterValues.Add(value);
             }
 
             var instance = constructorInfo.Invoke(parameterValues.ToArray());
-            
-            ((IAtomicCommand)instance).Execute();
+            try
+            {
+                ((IAtomicCommand)instance).Execute();
+                Close();
+            }
+            catch (Exception e)
+            {
+                ExceptionViewer.Show(e);
+            }
         }
 
         public static bool IsSupported(ConstructorInfo c)
@@ -126,6 +116,41 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     p.ParameterType.IsValueType
                 );
         }
+
+        public static bool IsSupported(Type t)
+        {
+            bool acceptableType = typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface;
+
+            if (!acceptableType)
+                return false;
+
+            if (GetIgnoredCommands().Contains(t))
+                return false;
+
+            try
+            {
+                var constructors = t.GetConstructors();
+
+                if (constructors.Length == 0)
+                    return false;
+
+                return IsSupported(constructors[0]);
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static IEnumerable<Type> GetIgnoredCommands()
+        {
+            yield return typeof(ExecuteCommandPin);
+            yield return typeof(ExecuteCommandUnpin);
+            yield return typeof(ExecuteCommandRefreshObject);
+            yield return typeof(ExecuteCommandChangeExtractability);
+        }
+
 
         private object GetValueForParameterOfType(ParameterInfo parameterInfo, Type paramType)
         {

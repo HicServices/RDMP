@@ -41,10 +41,10 @@ namespace CatalogueManager.SimpleDialogs
             this.label5 = new System.Windows.Forms.Label();
             this.cbGlobal = new System.Windows.Forms.CheckBox();
             this.ddExternalServers = new System.Windows.Forms.ComboBox();
-            this.btnManageExternalServers = new System.Windows.Forms.Button();
             this.gbSelectedEntity = new System.Windows.Forms.GroupBox();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.tcTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
+            this.btnAdd = new System.Windows.Forms.Button();
             this.gbSelectedEntity.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -156,27 +156,16 @@ namespace CatalogueManager.SimpleDialogs
             this.ddExternalServers.FormattingEnabled = true;
             this.ddExternalServers.Location = new System.Drawing.Point(199, 246);
             this.ddExternalServers.Name = "ddExternalServers";
-            this.ddExternalServers.Size = new System.Drawing.Size(1049, 21);
+            this.ddExternalServers.Size = new System.Drawing.Size(990, 21);
             this.ddExternalServers.TabIndex = 34;
             this.ddExternalServers.SelectedIndexChanged += new System.EventHandler(this.ddExternalServers_SelectedIndexChanged);
             // 
-            // btnManageExternalServers
-            // 
-            this.btnManageExternalServers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnManageExternalServers.Location = new System.Drawing.Point(1084, 270);
-            this.btnManageExternalServers.Name = "btnManageExternalServers";
-            this.btnManageExternalServers.Size = new System.Drawing.Size(164, 23);
-            this.btnManageExternalServers.TabIndex = 35;
-            this.btnManageExternalServers.Text = "Manage External Servers";
-            this.btnManageExternalServers.UseVisualStyleBackColor = true;
-            this.btnManageExternalServers.Click += new System.EventHandler(this.btnManageExternalServers_Click);
-            // 
             // gbSelectedEntity
             // 
+            this.gbSelectedEntity.Controls.Add(this.btnAdd);
             this.gbSelectedEntity.Controls.Add(this.objectSaverButton1);
             this.gbSelectedEntity.Controls.Add(this.tcTicket);
             this.gbSelectedEntity.Controls.Add(this.label2);
-            this.gbSelectedEntity.Controls.Add(this.btnManageExternalServers);
             this.gbSelectedEntity.Controls.Add(this.tbID);
             this.gbSelectedEntity.Controls.Add(this.ddExternalServers);
             this.gbSelectedEntity.Controls.Add(this.label3);
@@ -210,6 +199,17 @@ namespace CatalogueManager.SimpleDialogs
             this.tcTicket.TabIndex = 37;
             this.tcTicket.TicketText = "";
             // 
+            // btnAdd
+            // 
+            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAdd.Location = new System.Drawing.Point(1192, 244);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(59, 23);
+            this.btnAdd.TabIndex = 39;
+            this.btnAdd.Text = "Add";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
             // SupportingSQLTableUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -236,9 +236,9 @@ namespace CatalogueManager.SimpleDialogs
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox cbGlobal;
         private System.Windows.Forms.ComboBox ddExternalServers;
-        private System.Windows.Forms.Button btnManageExternalServers;
         private System.Windows.Forms.GroupBox gbSelectedEntity;
         private TicketingControl tcTicket;
         private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private System.Windows.Forms.Button btnAdd;
     }
 }

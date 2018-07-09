@@ -142,7 +142,6 @@ namespace CatalogueManager.ItemActivation
 
         void ActivateReOrderCatalogueItems(Catalogue catalogue);
 
-        void ActivateConfigureValidation(object sender, Catalogue catalogue);
         void ViewFilterGraph(object sender,FilterGraphObjectCollection collection);
 
         void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic);

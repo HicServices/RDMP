@@ -1,17 +1,12 @@
+using System;
 using System.Drawing;
 using System.Reflection;
-using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -22,8 +17,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public ExternalDatabaseServer ServerCreatedIfAny { get; private set; }
         
-        public string OverrideCommandName { get; set; }
-
         public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator, Assembly databaseAssembly, ServerDefaults.PermissableDefaults defaultToSet) : base(activator)
         {
             _databaseAssembly = databaseAssembly;
@@ -47,18 +40,23 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
             
             //user wants to create a new server e.g. a new Logging server
-            
-            //create the new server
-            ServerCreatedIfAny = CreatePlatformDatabase.CreateNewExternalServer(
-                Activator.RepositoryLocator.CatalogueRepository,
-                _defaultToSet,
-                _databaseAssembly);
+            if (_databaseAssembly == null)
+                ServerCreatedIfAny = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository,"New ExternalDatabaseServer " + Guid.NewGuid());
+            else
+            {
+                //create the new server
+                ServerCreatedIfAny = CreatePlatformDatabase.CreateNewExternalServer(
+                    Activator.RepositoryLocator.CatalogueRepository,
+                    _defaultToSet,
+                    _databaseAssembly);   
+            }
 
             //user cancelled creating a server
             if (ServerCreatedIfAny == null)
                 return;
             
             Publish(ServerCreatedIfAny);
+            Activate(ServerCreatedIfAny);
         }
 
         public Image GetImage(IIconProvider iconProvider)

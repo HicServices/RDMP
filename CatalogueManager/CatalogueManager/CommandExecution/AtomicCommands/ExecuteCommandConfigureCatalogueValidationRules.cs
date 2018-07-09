@@ -36,6 +36,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+
+            if (_catalogue == null)
+                _catalogue = SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
+
+            if(_catalogue == null)
+                return;
+
             Activator.Activate<ValidationSetupForm, Catalogue>(_catalogue);
         }
     }

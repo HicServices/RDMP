@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.SimpleDialogs.NavigateTo;
 using CohortManager.CommandExecution.AtomicCommands;
@@ -17,8 +19,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 {
     public class RunUITests:DatabaseTests
     {
-        private Type[] allowedToBeIncompatible
-            = new[]
+        private List<Type> allowedToBeIncompatible
+            = new List<Type>(new[]
             {
                 typeof(ExecuteCommandExportObjectsToFileUI),
                 typeof(ExecuteCommandRunChecksInPopupWindow),
@@ -37,17 +39,31 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandViewDependencies),
                 typeof(ExecuteCommandViewCohortAggregateGraph),
                 typeof(ExecuteCommandExecuteExtractionAggregateGraph)
-            };
+            });
 
         [Test]
         public void AllCommandsCompatible()
         {
             List<Exception> ex;
-            IEnumerable<Type> commands = RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex).Where(t => typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
-
-            var notSupported = commands.Where(c => !RunUI.IsSupported(c.GetConstructors()[0])).Except(allowedToBeIncompatible).ToList();
             
-            Assert.AreEqual(0,notSupported.Count,"The following commands were not compatible with RunUI:" + Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
+            Console.WriteLine("Looking in"+ typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
+            Console.WriteLine("Looking in" + typeof(ExecuteCommandViewCohortAggregateGraph).Assembly);
+            Console.WriteLine("Looking in" + typeof(ExecuteCommandUnpin).Assembly);
+            Console.WriteLine("Looking in" + typeof(PluginAtomicCommand).Assembly);
+
+            allowedToBeIncompatible.AddRange(RunUI.GetIgnoredCommands());
+
+            var notSupported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex)
+                .Where(t=>typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface) //must be something we would normally expect to be a supported Type
+                .Where(t => !RunUI.IsSupported(t)) //but for some reason isn't
+                .Except(allowedToBeIncompatible) //and isn't a permissable one
+                .ToArray();
+            
+            Assert.AreEqual(0,notSupported.Length,"The following commands were not compatible with RunUI:" + Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
+
+            var supported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex).Where(RunUI.IsSupported).ToArray();
+
+            Console.WriteLine("The following commands are supported:" + Environment.NewLine + string.Join(Environment.NewLine,supported.Select(cmd=>cmd.Name)));
 
         }
     }
