@@ -19,6 +19,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
             var remote = new RemoteRDMP(Activator.RepositoryLocator.CatalogueRepository);
             Publish(remote);
+            Emphasise(remote);
+            Activate(remote);
         }
 
         public Image GetImage(IIconProvider iconProvider)

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel.Composition;
+using System.Drawing;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.DataQualityUIs;
@@ -11,6 +12,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     public class ExecuteCommandRunDQEOnCatalogue:BasicUICommandExecution,IAtomicCommandWithTarget
     {
         private Catalogue _catalogue;
+        
+        [ImportingConstructor]
+        public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator,Catalogue catalogue): base(activator)
+        {
+            _catalogue = catalogue;
+        }
 
         public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator):base(activator)
         {

@@ -32,6 +32,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             var c = new Catalogue(Activator.RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
             Publish(c);
+            Emphasise(c);
         }
     }
 }

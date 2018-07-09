@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
@@ -11,7 +7,6 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LoadExecutionUIs;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -19,10 +14,17 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     {
         private CacheProgress _cp;
 
-        public ExecuteCommandExecuteCacheProgress(IActivateItems activator) : base(activator)
+        [ImportingConstructor]
+        public ExecuteCommandExecuteCacheProgress(IActivateItems activator, CacheProgress cp) : base(activator)
         {
+            _cp = cp;
         }
+        
+        public ExecuteCommandExecuteCacheProgress(IActivateItems activator)
+            : base(activator)
+        {
 
+        }
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Execute);
@@ -38,6 +40,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
+            if (_cp == null)
+                _cp = SelectOne<CacheProgress>(Activator.RepositoryLocator.CatalogueRepository);
+            
+            if(_cp == null)
+                return;
+            
             Activator.Activate<ExecuteCacheProgressUI, CacheProgress>(_cp);
         }
     }

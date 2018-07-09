@@ -22,7 +22,7 @@ namespace CatalogueManager.CommandExecution
         private readonly LogViewerFilter _filter;
         private ExternalDatabaseServer[] _loggingServers;
 
-        public ExecuteCommandViewLoggedData(IActivateItems activator,LogViewerNavigationTarget target, LogViewerFilter filter = null) : base(activator)
+        public ExecuteCommandViewLoggedData(IActivateItems activator,LogViewerNavigationTarget target = LogViewerNavigationTarget.DataLoadTasks, LogViewerFilter filter = null) : base(activator)
         {
             _target = target;
             _filter = filter ?? new LogViewerFilter();

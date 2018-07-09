@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -68,8 +59,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 else
                     return;
 
-                Create(name, dataType);
+                var created = Create(name, dataType);
                 Publish();
+                Emphasise(created);
+                Activate(created);
 
             }
             else
@@ -86,11 +79,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Publish(_tableInfo);
         }
 
-        private void Create(string name, string dataType)
+        private PreLoadDiscardedColumn Create(string name, string dataType)
         {
             var discCol = new PreLoadDiscardedColumn(Activator.RepositoryLocator.CatalogueRepository, _tableInfo, name);
             discCol.SqlDataType = dataType;
             discCol.SaveToDatabase();
+            return discCol;
         }
 
         public override string GetCommandName()

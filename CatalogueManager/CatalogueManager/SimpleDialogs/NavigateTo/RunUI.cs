@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Input;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -24,7 +19,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
     public partial class RunUI : Form
     {
         private readonly IActivateItems _activator;
-        private Dictionary<string, Type> _commandsDictionary;
+        private readonly Dictionary<string, Type> _commandsDictionary;
 
         public RunUI(IActivateItems activator)
         {
@@ -45,7 +40,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             }
 
             comboBox1.Items.AddRange(_commandsDictionary.Keys.ToArray());
-
         }
 
         private void comboBox1_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -60,14 +54,12 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 if (_commandsDictionary.ContainsKey(key))
                 {
                     var type = _commandsDictionary[key];
-                    var constructors = type.GetConstructors();
                     try
                     {
-                        CallConstructor(constructors[0]);
+                        CallConstructor(GetConstructor(type));
                     }
                     catch (OperationCanceledException)
                     {
-                        return;
                     }
                 }
             }
@@ -84,16 +76,23 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
                 var value = GetValueForParameterOfType(parameterInfo,paramType);
                 
-                if(value == null)
+                //if it's a null and not a default null
+                if(value == null && !parameterInfo.HasDefaultValue)
                     throw new OperationCanceledException("Could not figure out a value for property '" + parameterInfo + "' for constructor '" + constructorInfo + "'.  Parameter Type was '" + paramType + "'");
 
                 parameterValues.Add(value);
             }
 
-            var instance = constructorInfo.Invoke(parameterValues.ToArray());
+            var instance = (IAtomicCommand)constructorInfo.Invoke(parameterValues.ToArray());
             try
             {
-                ((IAtomicCommand)instance).Execute();
+                if (instance.IsImpossible)
+                {
+                    MessageBox.Show(instance.ReasonCommandImpossible);
+                    return;
+                }
+
+                instance.Execute();
                 Close();
             }
             catch (Exception e)
@@ -129,12 +128,12 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             try
             {
-                var constructors = t.GetConstructors();
+                var constructor = GetConstructor(t);
 
-                if (constructors.Length == 0)
+                if (constructor == null)
                     return false;
 
-                return IsSupported(constructors[0]);
+                return IsSupported(constructor);
 
             }
             catch (Exception)
@@ -143,12 +142,28 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             }
         }
 
+        private static ConstructorInfo GetConstructor(Type type)
+        {
+            var constructors = type.GetConstructors();
+
+            if (constructors.Length == 0)
+                return null;
+
+            var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(ImportingConstructorAttribute))).ToArray();
+
+            if (importDecorated.Any())
+                return importDecorated[0];
+
+            return constructors[0];
+        }
+
         public static IEnumerable<Type> GetIgnoredCommands()
         {
             yield return typeof(ExecuteCommandPin);
             yield return typeof(ExecuteCommandUnpin);
             yield return typeof(ExecuteCommandRefreshObject);
             yield return typeof(ExecuteCommandChangeExtractability);
+            yield return typeof (ExecuteCommandOpenInExplorer);
         }
 
 
@@ -177,15 +192,22 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             if (typeof(DatabaseEntity).IsAssignableFrom(paramType))
             {
-                IEnumerable<IMapsDirectlyToDatabaseTable> availableObjects;
+                IMapsDirectlyToDatabaseTable[] availableObjects;
                 if (_activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(paramType))
-                    availableObjects = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects(paramType);
+                    availableObjects = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects(paramType).ToArray();
                 else if (_activator.RepositoryLocator.DataExportRepository.SupportsObjectType(paramType))
-                    availableObjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjects(paramType);
+                    availableObjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjects(paramType).ToArray();
                 else
                     return null;
 
+                if(!availableObjects.Any())
+                {
+                    MessageBox.Show("There are no '" + paramType.Name + "' objects in your RMDP");
+                    return null;
+                }
+                
                 SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+                selectDialog.Text = parameterInfo.Name;
 
                 if (selectDialog.ShowDialog() == DialogResult.OK)
                     return selectDialog.Selected;
@@ -198,7 +220,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             if (paramType.IsValueType)
             {
-                var typeTextDialog = new TypeTextOrCancelDialog("Enter value for '" + parameterInfo.Name + "' (" + paramType + ")","Value",1000);
+                var typeTextDialog = new TypeTextOrCancelDialog("Enter Value","Enter value for '" + parameterInfo.Name + "' (" + paramType.Name + ")",1000);
 
                 if (typeTextDialog.ShowDialog() == DialogResult.OK)
                     return Convert.ChangeType(typeTextDialog.ResultText, paramType);
