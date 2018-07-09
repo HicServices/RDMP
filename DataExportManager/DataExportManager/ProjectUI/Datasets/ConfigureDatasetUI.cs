@@ -86,9 +86,8 @@ namespace DataExportManager.ProjectUI.Datasets
 
             if (ec != null && ec.IsOutOfSync())
             {
-
-                var ms =new ContextMenuStrip();
-                ms.Items.Add(new ToolStripMenuItem("Revert Local Changes", null,(s,x)=> ec.UpdateValuesToMatch(ec.CatalogueExtractionInformation)));
+                var ms = new ContextMenuStrip();
+                ms.Items.Add(new ToolStripMenuItem("Update With Catalogue Settings", null,(s,x)=> ec.UpdateValuesToMatch(ec.CatalogueExtractionInformation)));
 
                 e.MenuStrip = ms;
             }

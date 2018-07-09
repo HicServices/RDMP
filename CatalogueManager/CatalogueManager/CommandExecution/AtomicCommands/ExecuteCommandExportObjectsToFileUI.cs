@@ -13,7 +13,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandExportObjectsToFileUI : BasicUICommandExecution, IAtomicCommand
     {
-        private ExecuteCommandExportObjectsToFile _cmd;
+        private readonly ExecuteCommandExportObjectsToFile _cmd;
 
         public ExecuteCommandExportObjectsToFileUI(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport,DirectoryInfo targetDirectoryInfo = null) : base(activator)
         {
@@ -37,11 +37,18 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 var fb = new FolderBrowserDialog();
                 if (fb.ShowDialog() == DialogResult.OK)
                     _cmd.TargetDirectoryInfo = new DirectoryInfo(fb.SelectedPath);
+                else
+                    return;
             }
             
             _cmd.Execute();
 
             Process.Start("explorer.exe", _cmd.TargetDirectoryInfo.FullName);
+        }
+
+        public override string GetCommandName()
+        {
+            return "Export Object(s) to File...";
         }
     }
 }
