@@ -23,6 +23,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible(_cmd.ReasonCommandImpossible);
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Creates a share file with definitions for the supplied objects and all children";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return FamFamFamIcons.page_white_put;

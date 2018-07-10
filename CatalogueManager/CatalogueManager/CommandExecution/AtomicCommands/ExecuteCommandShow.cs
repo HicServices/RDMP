@@ -25,6 +25,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activator.RequestItemEmphasis(this, new EmphasiseRequest(_objectToShow,_expansionDepth));
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Opens the containing toolbox collection and shows the object";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return null;

@@ -1,13 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Menus
 {
@@ -34,6 +31,7 @@ namespace CatalogueManager.Menus
             foreach (KeyValuePair<ServerDefaults.PermissableDefaults, Assembly> kvp in assemblyDictionary)
                 Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, kvp.Value, kvp.Key));
 
+            Add(new ExecuteCommandConfigureDefaultServers(_activator));
 
             AddAll<PluginAtomicCommand>();
         }
