@@ -144,7 +144,10 @@ namespace CohortManagerLibrary.Execution
 
             //if there are some cached but not all queries are cached
             if(SubqueriesCached > 0 && _cacheServerIfAny != null)
-                return DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints.Union(new []{_cacheServerIfAny}).ToArray(), DataAccessContext.InternalDataProcessing, false);    
+                return DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints.Union(new []{_cacheServerIfAny}).ToArray(), DataAccessContext.InternalDataProcessing, false);
+
+            if (accessPoints.Length == 1)
+                return DataAccessPortal.GetInstance().ExpectServer(accessPoints[0], DataAccessContext.InternalDataProcessing);
 
             return DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.InternalDataProcessing, false);
         }
