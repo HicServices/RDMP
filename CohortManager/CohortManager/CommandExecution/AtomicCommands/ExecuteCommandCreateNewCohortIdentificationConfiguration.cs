@@ -4,18 +4,11 @@ using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
 using CohortManager.Wizard;
-using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CohortManager.CommandExecution.AtomicCommands
 {

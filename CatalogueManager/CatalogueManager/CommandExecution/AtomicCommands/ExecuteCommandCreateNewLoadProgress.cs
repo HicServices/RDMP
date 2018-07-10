@@ -1,17 +1,11 @@
 using System.Drawing;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -22,6 +16,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandCreateNewLoadProgress(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
             _loadMetadata = loadMetadata;
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Defines that the data load configuration has too much data to load in one go and that it must be loaded in date based batches (e.g. load 2001-01-01 to 2001-01-31)";
         }
 
         public override void Execute()

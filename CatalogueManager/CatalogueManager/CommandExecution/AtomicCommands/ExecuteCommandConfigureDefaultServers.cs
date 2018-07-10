@@ -18,6 +18,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return null;
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Change which server is the default for a given use case e.g. Logging, DQE etc";
+        }
+
         public override void Execute()
         {
             base.Execute();

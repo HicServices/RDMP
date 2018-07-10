@@ -48,7 +48,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
         public override string GetCommandHelp()
         {
             return
-                "This will take you to the Data Extraction Projects list and allow you to Run the selected project immediately.\r\n" +
+                "This will take you to the Data Extraction Projects list and allow you to Run the selected project.\r\n" +
                 "You must choose a Project from the list before proceeding.";
         }
     }

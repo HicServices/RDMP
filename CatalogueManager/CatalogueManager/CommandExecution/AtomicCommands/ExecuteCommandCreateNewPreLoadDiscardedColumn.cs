@@ -37,6 +37,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
           
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Creates a virtual column that will be created in RAW during data load but not your LIVE database";
+        }
+
         public override void Execute()
         {
             base.Execute();

@@ -28,6 +28,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             _cic = cic;
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
+        }
+
         public ExecuteCommandCloneCohortIdentificationConfiguration(IActivateItems activator) : base(activator)
         {
             this.activator = activator;

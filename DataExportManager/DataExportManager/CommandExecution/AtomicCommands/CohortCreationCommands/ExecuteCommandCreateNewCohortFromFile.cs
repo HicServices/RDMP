@@ -24,6 +24,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             ExternalCohortTable = externalCohortTable;
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Create a cohort containing ALL the patient identifiers in the chosen file";
+        }
+
         public override Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.ImportFile;

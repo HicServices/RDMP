@@ -32,6 +32,11 @@ namespace CatalogueManager.CommandExecution
                 SetImpossible("There are no logging servers");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "View the hierarchical audit log of all data flows through RDMP (data load, extraction, dqe runs etc) including progress, errors etc";
+        }
+
         public override void Execute()
         {
             base.Execute();

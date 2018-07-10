@@ -25,6 +25,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
         }
 
+        public override string GetCommandHelp()
+        {
+            return "View the query that would be executed during extraction of the dataset with the current extractable columns/transforms";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL);

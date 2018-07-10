@@ -28,6 +28,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Restrict use of the dataset only to extractions of the specified Project";
+        }
+
         public override void Execute()
         {
             base.Execute();

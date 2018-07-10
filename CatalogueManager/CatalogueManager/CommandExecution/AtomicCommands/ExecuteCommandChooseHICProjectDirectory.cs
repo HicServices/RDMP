@@ -1,16 +1,11 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -21,6 +16,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandChooseHICProjectDirectory(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
             _loadMetadata = loadMetadata;
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Changes the load location\\working directory for the DLE load configuration";
         }
 
         public override void Execute()

@@ -22,7 +22,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator):base(activator)
         {
         }
-        
+
+        public override string GetCommandHelp()
+        {
+            return "Runs the data quality engine on the dataset using the currently configured validation rules and stores the results in the default DQE results database";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Execute);

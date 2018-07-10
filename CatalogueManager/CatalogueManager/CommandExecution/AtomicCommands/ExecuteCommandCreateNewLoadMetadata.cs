@@ -1,14 +1,11 @@
 ﻿using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
@@ -24,6 +21,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
             if(!_availableCatalogues.Any())
                 SetImpossible("There are no Catalogues that are not associated with another Load already");
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Create a new data load configuration for loading data into a given set of datasets through RAW=>STAGING=>LIVE migration / adjustment";
         }
 
         public override void Execute()

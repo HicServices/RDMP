@@ -19,7 +19,12 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         {
             SetExtractionIdentifierColumn(extractionInformation);
         }
-        
+
+        public override string GetCommandHelp()
+        {
+            return "Creates a cohort using ALL of the patient identifiers in the referenced dataset";
+        }
+
         [ImportingConstructor]
         public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, Catalogue catalogue): base(activator)
         {

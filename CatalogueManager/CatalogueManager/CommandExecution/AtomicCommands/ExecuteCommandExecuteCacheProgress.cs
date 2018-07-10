@@ -25,6 +25,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
 
         }
+
+        public override string GetCommandHelp()
+        {
+            return "Runs the caching activity.  This usually involves long term incremental fetching and storing data ready for load";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Execute);
