@@ -13,7 +13,7 @@ namespace CatalogueLibraryTests.Unit
     public class ObjectConstructorTests
     {
         [Test]
-        public void ConstructValid()
+        public void ConstructValidTests()
         {
             var constructor =new ObjectConstructor();
             var testarg = new TestArg(){Text = "amagad"};
@@ -47,6 +47,26 @@ namespace CatalogueLibraryTests.Unit
             //exactly the same as the above case but one constructor has been decorated with ImportingConstructor
             constructor.Construct(typeof (TestClass5), testarg3);
         }
+
+        [Test]
+        public void ConstructIfPossibleTests_BlankConstructors()
+        {
+            var constructor = new ObjectConstructor();
+            
+            //blank constructors are only used if no params are specified
+            Assert.IsNotNull(constructor.ConstructIfPossible(typeof(TestClassDefaultConstructor)));
+            
+            //no constructor taking an int
+            Assert.IsNull(constructor.ConstructIfPossible(typeof(TestClassDefaultConstructor),8));
+
+
+        }
+
+        class TestClassDefaultConstructor
+        {
+            
+        }
+
 
         class TestClass1
         {
