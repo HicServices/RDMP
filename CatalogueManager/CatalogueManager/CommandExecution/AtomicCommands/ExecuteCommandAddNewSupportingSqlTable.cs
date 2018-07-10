@@ -4,10 +4,8 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -18,6 +16,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandAddNewSupportingSqlTable(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _catalogue = catalogue;
+        }
+
+        public override string ToString()
+        {
+            return "Allows you to specify some freeform SQL that helps understand / interact with a dataset.  Optionally this SQL can be run and the results provided in project extractions.";
         }
 
         public override void Execute()

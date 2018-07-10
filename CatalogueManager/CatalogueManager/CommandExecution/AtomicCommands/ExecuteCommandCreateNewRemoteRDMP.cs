@@ -23,6 +23,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activate(remote);
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Tell RDMP about another instance of RDMP that is available for communication with via a web service";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.RemoteRDMP, OverlayKind.Add);

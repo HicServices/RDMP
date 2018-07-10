@@ -21,6 +21,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return base.GetCommandName() + "(Not Recommended)";
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Create a new dataset not yet linked to any underlying database columns\tables";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Problem);

@@ -30,6 +30,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return iconProvider.GetImage(RDMPConcept.Help);
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Displays the code documentation for the menu object or the Type name of the object if it has none";
+        }
+
         public override void Execute()
         {
             base.Execute();

@@ -35,6 +35,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Executes an existing cohort set, patient index table or graph and stores the results in a new table (which is imported as a new dataset)";
+        }
+
         public override void Execute()
         {
             base.Execute();

@@ -17,6 +17,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Allows you to specify validation rules for columns in the dataset and pick the time coverage/pivot fields";
+        }
+
         public override string GetCommandName()
         {
             return _catalogue == null || string.IsNullOrWhiteSpace(_catalogue.ValidatorXML)? "Configure Validation Rules" : "Change Configuration Rules";

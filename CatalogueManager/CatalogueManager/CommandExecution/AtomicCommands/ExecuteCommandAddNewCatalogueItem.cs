@@ -4,11 +4,8 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -21,6 +18,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             _activator = activator;
             _catalogue = catalogue;
+        }
+
+        public string GetCommandHelp()
+        {
+            return "Creates a new virtual column in the dataset, this is the first stage to making a new column extractable or defining a new extraction transform";
         }
 
         public override void Execute()
@@ -40,7 +42,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                     ci.SetColumnInfo(colInfo);
                     ci.SaveToDatabase();
 
-                    Publish(_catalogue);   
+                    Publish(_catalogue);
+                    Emphasise(ci,int.MaxValue);
                 }
         }
 

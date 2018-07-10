@@ -9,7 +9,6 @@ using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -22,6 +21,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
              _activator = activator;
             _catalogue = catalogue;
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Marks a file on disk as useful for understanding the dataset and (optionally) copies into project extractions";
         }
 
         public override void Execute()

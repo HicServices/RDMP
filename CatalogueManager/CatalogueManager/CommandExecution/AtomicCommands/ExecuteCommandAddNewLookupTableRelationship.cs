@@ -4,11 +4,9 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -26,6 +24,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if(catalogueIfKnown == null && lookupTableInfoIfKnown == null)
                 throw new NotSupportedException("You must know either the lookup table or the Catalogue you want to configure it on");
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Tells RDMP that a table contains code/description mappings for one of the columns in your dataset and that you (may) want them linked in when extracting the dataset";
         }
 
         public override void Execute()
