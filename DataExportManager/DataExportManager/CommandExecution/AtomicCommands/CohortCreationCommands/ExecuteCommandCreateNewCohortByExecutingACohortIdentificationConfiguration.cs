@@ -14,14 +14,15 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
 {
-    public class ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults:CohortCreationCommandExecution
+    public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration:CohortCreationCommandExecution
     {
         private CohortIdentificationConfiguration _cic;
         private CohortIdentificationConfiguration[] _allConfigurations;
 
-        public ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(IActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IActivateItems activator,ExternalCohortTable externalCohortTable = null) : base(activator)
         {
             _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+            ExternalCohortTable = externalCohortTable;
 
             if (!_allConfigurations.Any())
                 SetImpossible("You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");

@@ -31,7 +31,7 @@ namespace CohortManager.Menus
                 
             Items.Add(new ToolStripSeparator());
 
-            _executeAndImportCommand = new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator).SetTarget(cic);
+            _executeAndImportCommand = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator).SetTarget(cic);
             
             Add(_executeAndImportCommand);
             

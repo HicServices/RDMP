@@ -5,6 +5,7 @@ using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
@@ -28,6 +29,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator): base(activator)
         {
             
+        }
+
+        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
+        {
+            ExternalCohortTable = externalCohortTable;
         }
 
         public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -69,6 +75,15 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
         public override void Execute()
         {
+            if (_extractionIdentifierColumn == null)
+            {
+                var cata = SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+
+                if(cata == null)
+                    return;
+                SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(cata));
+            }
+
             base.Execute();
 
             var request = GetCohortCreationRequest("All patient identifiers in ExtractionInformation '" + _extractionIdentifierColumn.CatalogueItem.Catalogue + "." + _extractionIdentifierColumn.GetRuntimeName() + "'  (ID=" + _extractionIdentifierColumn.ID +")");

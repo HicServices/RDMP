@@ -289,8 +289,9 @@ namespace ResearchDataManagementPlatform.Menus
 
             //cohort creation
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator));
-            AddToNew(new ExecuteCommandImportFileAsNewCohort(_activator));
+            AddToNew(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator));
+            AddToNew(new ExecuteCommandCreateNewCohortFromFile(_activator));
+            AddToNew(new ExecuteCommandCreateNewCohortFromCatalogue(_activator));
             
             //Data export commands
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());

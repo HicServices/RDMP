@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
 {
-    public class ExecuteCommandImportFileAsNewCohort:CohortCreationCommandExecution
+    public class ExecuteCommandCreateNewCohortFromFile:CohortCreationCommandExecution
     {
         private FileInfo _file;
 
-        public ExecuteCommandImportFileAsNewCohort(IActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewCohortFromFile(IActivateItems activator, ExternalCohortTable externalCohortTable = null) : base(activator)
         {
+            ExternalCohortTable = externalCohortTable;
         }
-        public ExecuteCommandImportFileAsNewCohort(IActivateItems activator,FileInfo file)
+        public ExecuteCommandCreateNewCohortFromFile(IActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable = null)
             : base(activator)
         {
             _file = file;
+            ExternalCohortTable = externalCohortTable;
         }
 
         public override Image GetImage(IIconProvider iconProvider)

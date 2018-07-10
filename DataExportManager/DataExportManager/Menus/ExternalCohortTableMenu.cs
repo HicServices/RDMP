@@ -44,9 +44,12 @@ namespace DataExportManager.Menus
         public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable): base(args, externalCohortTable)
         {
             _externalCohortTable = externalCohortTable;
-            Add(new ExecuteCommandImportFileAsNewCohort(_activator));
 
-            Add(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator));
+            Items.Add(new ToolStripSeparator());
+            Add(new ExecuteCommandCreateNewCohortFromFile(_activator,_externalCohortTable));
+            Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,_externalCohortTable));
+            Add(new ExecuteCommandCreateNewCohortFromCatalogue(_activator,externalCohortTable));
+            Items.Add(new ToolStripSeparator());
 
             var projectOnlyNode = args.Masquerader as CohortSourceUsedByProjectNode;
 

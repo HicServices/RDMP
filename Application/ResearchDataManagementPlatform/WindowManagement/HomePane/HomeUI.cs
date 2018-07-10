@@ -74,7 +74,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
             /////////////////////////////////////Cohort Creation/////////////////////////////////
 
-            AddCommand(new ExecuteCommandImportFileAsNewCohort(activator),
+            AddCommand(new ExecuteCommandCreateNewCohortFromFile(activator),
                 tlpCohortCreation);
 
             AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator),tlpCohortCreation);
@@ -84,7 +84,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                     cic => cic.Name,
                     tlpCohortCreation);
             
-            AddCommand(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(activator), 
+            AddCommand(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator), 
                     activator.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
