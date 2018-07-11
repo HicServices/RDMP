@@ -1,20 +1,16 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LogViewer;
 using CatalogueManager.LogViewer.Tabs;
-using HIC.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandViewLoggedData : BasicUICommandExecution,IAtomicCommand
     {
