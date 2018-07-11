@@ -27,6 +27,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Extract all the datasets in the configuration linking each against the configuration's cohort";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.ExecuteArrow;

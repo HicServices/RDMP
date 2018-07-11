@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -12,10 +7,8 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Repositories;
 using DataExportManager.ProjectUI;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -33,6 +26,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandViewSelectedDataSetsExtractionSql(IActivateItems activator) : base(activator)
         {
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
         }
 
         public Image GetImage(IIconProvider iconProvider)

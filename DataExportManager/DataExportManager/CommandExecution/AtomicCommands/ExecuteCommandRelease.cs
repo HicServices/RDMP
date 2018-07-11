@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.DataRelease;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
@@ -26,6 +18,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandRelease(IActivateItems activator) : base(activator)
         {
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Gather all the extracted files into one releasable package and freeze the extraction configuration";
         }
 
         public Image GetImage(IIconProvider iconProvider)

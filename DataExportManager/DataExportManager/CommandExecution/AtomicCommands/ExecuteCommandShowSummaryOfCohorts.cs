@@ -40,6 +40,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             _onlyCohorts = activator.CoreChildProvider.GetChildren(externalCohortTable).OfType<ExtractableCohort>().ToArray();
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Show information about the cohort lists stored in your cohort database (number of patients etc)";
+        }
+
         public override string GetCommandName()
         {
             return _commandName;

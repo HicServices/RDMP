@@ -24,6 +24,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 SetImpossible("ExtractionConfiguration does not have any selected datasets");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Creates an exact copy of the Extraction Configuration including the cohort selection, all selected datasets, parameters, filter containers, filters etc";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.CloneExtractionConfiguration;

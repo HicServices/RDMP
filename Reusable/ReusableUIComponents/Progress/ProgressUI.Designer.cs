@@ -112,6 +112,7 @@ namespace ReusableUIComponents.Progress
             this.lblCrashed.TabIndex = 7;
             this.lblCrashed.Text = "Crashed";
             this.lblCrashed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblCrashed.Visible = false;
             // 
             // progressBar1
             // 

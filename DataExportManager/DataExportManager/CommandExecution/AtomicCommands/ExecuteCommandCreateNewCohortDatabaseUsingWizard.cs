@@ -15,6 +15,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Create a new empty cohort list storage database with a private identifier that matches your datasets extraction identifier column name\\type (e.g. PatientId varchar(10)";
+        }
+
         public override void Execute()
         {
             base.Execute(); 

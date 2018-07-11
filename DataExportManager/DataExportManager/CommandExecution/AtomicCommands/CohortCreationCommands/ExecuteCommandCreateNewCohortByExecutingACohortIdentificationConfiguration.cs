@@ -28,6 +28,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
                 SetImpossible("You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
+        }
+
         public override void Execute()
         {
             base.Execute();

@@ -26,7 +26,12 @@ namespace Dashboard.CommandExecution.AtomicCommands
         public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator):base(activator)
         {
         }
-        
+
+        public override string GetCommandHelp()
+        {
+            return "View the results of all data quality engine runs that have ever been run on the dataset";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.DQE;

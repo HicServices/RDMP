@@ -1,35 +1,19 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
-using DataExportLibrary.DataRelease;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Providers;
-using DataExportManager.CohortUI;
-using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
-using DataExportManager.ProjectUI.Graphs;
-using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying.Commands;
-using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.SqlDialogs;
 
 namespace DataExportManager.Menus
 {
@@ -48,11 +32,9 @@ namespace DataExportManager.Menus
             _extractionConfiguration = extractionConfiguration;
             _childProvider = (DataExportChildProvider) _activator.CoreChildProvider;
             
-            var extractionResults =  _extractionConfiguration.CumulativeExtractionResults.ToArray();
-
             _datasets = _childProvider.GetDatasets(extractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
 
-            Items.Add("Edit Description", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
+            Items.Add("Edit", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
 
             _importableDataSets = _childProvider.ExtractableDataSets.Except(_datasets).Where(ds=>ds.Project_ID == null || ds.Project_ID == extractionConfiguration.Project_ID).ToArray();
             
