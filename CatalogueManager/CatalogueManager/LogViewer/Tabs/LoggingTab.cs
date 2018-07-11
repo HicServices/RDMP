@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;

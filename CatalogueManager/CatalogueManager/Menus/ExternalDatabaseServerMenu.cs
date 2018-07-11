@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections.Arbitrary;
 using CatalogueManager.Icons.IconProvision;
