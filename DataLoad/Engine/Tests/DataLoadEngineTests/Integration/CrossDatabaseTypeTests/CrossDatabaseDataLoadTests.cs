@@ -50,16 +50,19 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             Normal,
             LowPrivilegeLoaderAccount,
             ForeignKeyOrphans,
-            DodgyCollation
+            DodgyCollation,
+            AllPrimaryKeys
         }
 
         [TestCase(DatabaseType.Oracle,TestCase.Normal)]
         [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.AllPrimaryKeys)]
         [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.AllPrimaryKeys)]
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
             var defaults = new ServerDefaults(CatalogueRepository);
@@ -78,9 +81,8 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             dt.Columns.Add("FavouriteColour");
             dt.Rows.Add("Bob", "2001-01-01","Pink");
             dt.Rows.Add("Frank", "2001-01-01","Orange");
-            dt.Rows.Add("Frank", "2001-01-01","Orange");
 
-            var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 20), false);
+            var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 20), false){IsPrimaryKey = true};
 
             if (testCase == TestCase.DodgyCollation)
                 if(databaseType == DatabaseType.MicrosoftSQLServer)
@@ -88,19 +90,26 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
                 else if (databaseType == DatabaseType.MYSQLServer)
                     nameCol.Collation = "latin1_german1_ci";
 
-            var tbl = db.CreateTable("MyTable",dt,new []
+
+            DiscoveredTable tbl;
+
+            if (testCase == TestCase.AllPrimaryKeys)
             {
-                nameCol,
-                new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false)
-            });
-            Assert.AreEqual(3,tbl.GetRowCount());
-            
-            tbl.MakeDistinct();
+                dt.PrimaryKey = dt.Columns.Cast<DataColumn>().ToArray();
+                tbl = db.CreateTable("MyTable",dt,new []{nameCol}); //upload the column as is 
+                Assert.IsTrue(tbl.DiscoverColumns().All(c => c.IsPrimaryKey));
+            }
+            else
+            {
+                tbl = db.CreateTable("MyTable", dt, new[]
+                {
+                    nameCol,
+                    new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}
+                });
+            }
 
             Assert.AreEqual(2, tbl.GetRowCount());
-
-            tbl.CreatePrimaryKey(tbl.DiscoverColumn("Name"), tbl.DiscoverColumn("DateOfBirth"));
-
+            
             //define a new load configuration
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
 
@@ -147,6 +156,12 @@ MrMurder,2001-01-01,Yella");
                     new GracefulCancellationToken());
 
                 Assert.AreEqual(ExitCodeType.Success,exitCode);
+
+                if(testCase == TestCase.AllPrimaryKeys)
+                {
+                    Assert.AreEqual(4, tbl.GetRowCount()); //Bob, Frank, Frank (with also pk Neon) & MrMurder
+                    Assert.Pass();
+                }
 
                 //frank should be updated to like Neon instead of Orange
                 Assert.AreEqual(3,tbl.GetRowCount());

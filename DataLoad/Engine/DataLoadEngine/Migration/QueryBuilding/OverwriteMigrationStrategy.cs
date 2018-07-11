@@ -104,7 +104,7 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
 
                 if(!toSet.Any())
                 {
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Table " + columnsToMigrate.DestinationTable + " is entirely composed of PrimaryKey columns or hic_ columns so UPDATE will take place"));
+                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Table " + columnsToMigrate.DestinationTable + " is entirely composed of PrimaryKey columns or hic_ columns so UPDATE will NOT take place"));
                     return;
                 }
 
