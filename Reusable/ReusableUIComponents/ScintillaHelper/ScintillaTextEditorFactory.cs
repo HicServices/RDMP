@@ -72,7 +72,16 @@ namespace ReusableUIComponents.ScintillaHelper
 
             if (command == null)
                 return;
-            
+
+            //if it has a Form give it focus
+            var form = editor.FindForm();
+
+            if(form != null)
+            {
+                form.Activate();
+                editor.Focus();
+            }
+
             editor.InsertText(pos,command.GetSqlString());
         }
 
