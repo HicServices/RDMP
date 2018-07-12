@@ -20,7 +20,6 @@ namespace DataExportLibrary.ExtractionTime.Commands
 
         public GlobalsBundle Globals { get; set; }
 
-        public string Name { get; private set; }
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         
         public List<IExtractionResults> ExtractionResults { get; private set; }
