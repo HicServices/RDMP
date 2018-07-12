@@ -15,8 +15,7 @@ using ReusableUIComponents;
 namespace CatalogueManager.LoadExecutionUIs
 {
     /// <summary>
-    /// Runs the Data Load Engine on a single LoadMetadata.  This user interface is intended for manually executing and debugging loads.  If you have a stable load and you want
-    /// to execute it automatically you can set up a periodic execution (See LoadPeriodicallyUI / AutomationServiceSlotUI).
+    /// Runs the Data Load Engine on a single LoadMetadata.  This user interface is intended for manually executing and debugging loads.
     /// 
     /// <para>You can only attempt to launch a data load if the checks are all passing (or giving Warnings that you understand and are not concerned about).  </para>
     /// 

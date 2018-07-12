@@ -18,6 +18,18 @@ namespace CatalogueManager.LogViewer.Tabs
 {
     /// <summary>
     /// TECHNICAL:Base class for all the other logging tabs e.g. LoggingDataSourcesTab
+    ///
+    /// <para>Displays all the activity going on within the RDMP that has been recorded in the logging database.  This includes data extractions, data loads, data quality runs etc.  This 
+    /// information is stored in a relational database format including:</para>
+    /// 
+    /// <para>Task - The overarching type of task e.g. 'Data Extraction', 'Loading Biochemistry' etc</para>
+    /// <para>Run - Each time data has flown from one set of locations to another, this encapsulates one execution e.g. An attempt to load 3 Biochemistry files on 2016-02-05 at 5AM</para>
+    /// <para>Table Loads - Each run will have 0 or more Table Loads, these are destinations for the data being handled and may include flat file locations such as during data export to csv</para>
+    /// <para>Data Sources - Each table can have an explicit source which might be a flat file being loaded or an SQL query in the case of data extraction.</para>
+    /// <para>Fatal Errors - Any crash that happened during a run should appear in this view</para>
+    /// <para>Progress Messages - A log of every progress message generated during the run will appear here</para>
+    /// 
+    /// <para>The LogViewerNavigationPane on the right and the BreadcrumbNavigation controls allow you to rapidly zip around the logging database to see what has been going on / going wrong</para>
     /// </summary>
     public class LoggingTab : LoggingTab_Design
     {

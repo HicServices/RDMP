@@ -25,8 +25,8 @@ using ReusableUIComponents;
 namespace Dashboard.Overview
 {
     /// <summary>
-    /// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  This includes a division between data loads
-    /// configured for automation (See LoadPeriodicallyUI) and those run manually.  If you have not configured any data loads yet then this control will be blank.
+    /// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  If you have not configured any data
+    /// loads yet then this control will be blank.
     /// </summary>
     public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
     {
@@ -159,9 +159,10 @@ namespace Dashboard.Overview
                             //while we were fetching data from database the form was closed
                             if (IsDisposed || !IsHandleCreated)
                                 return;
+
                             if (lastLoadWasError)
                                 countManualLoadFailure++;
-                            if (lastLoadWasError)
+                            else
                                 countManualLoadsuccessful++;
 
                             this.Invoke(new MethodInvoker(() =>

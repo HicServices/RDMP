@@ -7,6 +7,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.LogViewer.Tabs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataQualityEngine.Data;
 using ReusableUIComponents;
@@ -17,7 +18,7 @@ namespace Dashboard.CatalogueSummary
     /// Summarises the state of a single dataset (Catalogue).  This includes:
     /// 
     /// <para>Loads - A history of all the loads you have ever made to the dataset (highlighted according to whether they were successful or failed).  Expanding nodes will let you see the progress
-    /// messages, error messages, tables loaded and data sources etc (See LogViewerForm for more information about the RDMP logging structure).</para>
+    /// messages, error messages, tables loaded and data sources etc (See <see cref="LoggingTab"/> for more information about the RDMP logging structure).</para>
     /// 
     /// <para>Descriptions / Issues - Pie charts showing how many of the extractable columns are lacking descriptions and how many outstanding issues there are on the dataset (See IssueUI)</para>
     /// 

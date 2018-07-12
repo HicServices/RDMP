@@ -16,6 +16,9 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.SimpleDialogs.NavigateTo
 {
+    /// <summary>
+    /// Allows you to search through and run any command (<see cref="IAtomicCommand"/>) in RDMP and lets you pick which object(s) to apply it to.
+    /// </summary>
     public partial class RunUI : Form
     {
         private readonly IActivateItems _activator;

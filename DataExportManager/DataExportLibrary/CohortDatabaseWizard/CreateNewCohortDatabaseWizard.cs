@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -17,8 +13,8 @@ namespace DataExportLibrary.CohortDatabaseWizard
 {
     /// <summary>
     /// Creates an ExternalCohortTable database implementation.  The implementation will be based on your live IsExtractionIdentifier columns 
-    /// (PrivateIdentifierPrototype) and a release identifier strategy (ReleaseIdentifierAssignmentStrategy) e.g. varchar(10) private patient identifier
-    /// gets mapped to a new GUID.
+    /// (PrivateIdentifierPrototype) and a release identifier allocation strategy (<see cref="DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation.IAllocateReleaseIdentifiers"/>)
+    ///  e.g. varchar(10) private patient identifier gets mapped to a new GUID.
     /// 
     /// <para>This implementation is intended to be a basic solution only and lacks advanced features such having the same release identifier for the same primary
     /// key in subsequent versions of the same cohort (generally you want 1 - m private identifiers because you don't want people to be able to link patients
