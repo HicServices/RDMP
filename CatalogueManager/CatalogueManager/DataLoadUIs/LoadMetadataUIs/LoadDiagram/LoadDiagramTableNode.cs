@@ -110,6 +110,10 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         public void SetStateNotFound()
         {
             State = LoadDiagramState.NotFound;
+
+            foreach (var c in _anticipatedChildren)
+                c.State = LoadDiagramState.NotFound;
+
             _unplannedChildren.Clear();
         }
 
