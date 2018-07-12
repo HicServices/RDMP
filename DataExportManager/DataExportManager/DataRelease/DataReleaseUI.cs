@@ -29,8 +29,22 @@ using ReusableUIComponents;
 namespace DataExportManager.DataRelease
 {
     /// <summary>
-    /// Lists all the active (unreleased) configurations in a project extraction and allows you to start a data release with one or more of them.  Each configuration is hosted in a
-    /// ConfigurationReleasePotentialUI (See ConfigurationReleasePotentialUI) which shows whether it is in a releasable state and allows you to add it to the Release.
+    /// The ultimate end point of the Data Export Manager is the provision of a packaged up Release of all the anonymised datasets for all the cohort(s) (e.g. 'Cases' and 'Controls') in
+    /// a research project.  There is no going back once you have sent the package to the researcher, if you have accidentally included the wrong datasets or supplied identifiable data
+    /// (e.g. in a free text field) then you are in big trouble.  For this reason the 'Release' process is a tightly controlled sequence which the RDMP undertakes to try to reduce error.
+    /// 
+    /// <para>In this control you will see all the currently selected datasets in a project's configuration(s) and the state of the dataset extraction (from the RDMP's perspective) as well 
+    /// as the status of the 'Environment' (Ticketing System).  Right clicking on a dataset will give you options appropriate to it's state.</para>
+    /// 
+    /// <para>Extraction of large datasets can take days or weeks and a project extraction is an ongoing exercise.  It is possible that by the time you come to release a project some of the
+    /// early datasets have been changed or the files deleted etc.  The status of each extracted dataset is shown in the list box.  You can only do an extraction once all the datasets in
+    /// the configuration are releasable.</para>
+    /// 
+    /// <para>In addition to verifying the datasets you can tie the RDMP into your ticketing system.  For example if you have tickets for each project extraction with stages for validation
+    /// (so that data analysts can log time against validation and sign off on it etc) then you can setup Data Export Manager when the 'Release' Ticket is at a certain state (e.g. validated).
+    /// To configure a ticketing system see TicketingSystemConfigurationUI.</para>
+    /// 
+    /// <para>If you haven't configured a Ticketing System then you shouldn't have to worry about the Environment State.</para>
     /// 
     /// <para> Once you have selected all the configurations you want to release click Release.</para>
     /// </summary>

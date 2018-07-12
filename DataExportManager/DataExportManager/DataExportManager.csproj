@@ -357,12 +357,6 @@
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractableDataSetStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractionConfigurationStateBasedIconProvider.cs" />
-    <Compile Include="DataRelease\CleanupConfirmationDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DataRelease\CleanupConfirmationDialog.Designer.cs">
-      <DependentUpon>CleanupConfirmationDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="DataRelease\ConfigurationReleasePotentialUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -511,10 +505,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\SavedCohortsCollectionUI.resx">
       <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DataRelease\CleanupConfirmationDialog.resx">
-      <DependentUpon>CleanupConfirmationDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DataRelease\ConfigurationReleasePotentialUI.resx">
       <DependentUpon>ConfigurationReleasePotentialUI.cs</DependentUpon>
