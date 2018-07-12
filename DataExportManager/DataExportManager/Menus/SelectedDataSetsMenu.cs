@@ -29,6 +29,8 @@ namespace DataExportManager.Menus
 
             Add(new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue, int.MaxValue) { OverrideCommandName = "Show Catalogue" });
 
+            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
+
             /////////////////// Extraction Graphs //////////////////////////////
             var graphs = new ToolStripMenuItem("View Extraction Graphs", CatalogueIcons.Graph);
             

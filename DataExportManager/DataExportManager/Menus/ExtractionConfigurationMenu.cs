@@ -66,8 +66,6 @@ namespace DataExportManager.Menus
 
             Add(new ExecuteCommandGenerateReleaseDocument(_activator, extractionConfiguration));
             
-            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(_extractionConfiguration));
-
             var freeze = new ToolStripMenuItem("Freeze Extraction", CatalogueIcons.FrozenExtractionConfiguration,(s, e) => Freeze());
             freeze.Enabled = !extractionConfiguration.IsReleased && _datasets.Any();
             Items.Add(freeze);
@@ -79,7 +77,7 @@ namespace DataExportManager.Menus
 
             Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
-            ReBrandActivateAs("Check and Execute", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
+            ReBrandActivateAs("Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
         }
 
 

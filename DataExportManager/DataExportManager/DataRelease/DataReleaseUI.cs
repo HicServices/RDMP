@@ -187,6 +187,8 @@ namespace DataExportManager.DataRelease
 
             return c != null && c.Cast<object>().Any();
         }
+
+        private bool _isFirstTime = true;
         public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
@@ -217,11 +219,19 @@ namespace DataExportManager.DataRelease
                 _pipelineSelectionUI1.Pipeline = null;
             }
 
+            var checkedBefore = tlvReleasePotentials.CheckedObjects;
+
             tlvReleasePotentials.ClearObjects();
             tlvReleasePotentials.AddObject(_globalsNode);
             tlvReleasePotentials.AddObject(_project);
             tlvReleasePotentials.ExpandAll();
-            tlvReleasePotentials.CheckAll();
+            
+            if (_isFirstTime)
+                tlvReleasePotentials.CheckAll();
+            else if (checkedBefore.Count > 0)
+                tlvReleasePotentials.CheckObjects(checkedBefore);
+
+            _isFirstTime = false;
 
             tlvReleasePotentials.DisableObjects(_globals);
         }

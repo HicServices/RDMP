@@ -7,6 +7,7 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Data.LinkCreators;
 using DataExportManager.ProjectUI;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -15,16 +16,24 @@ namespace DataExportManager.CommandExecution.AtomicCommands
     public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecution,IAtomicCommandWithTarget
     {
         private ExtractionConfiguration _extractionConfiguration;
+        private SelectedDataSets _selectedDataSet;
 
         [ImportingConstructor]
-        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
+        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : this(activator)
         {
             _extractionConfiguration = extractionConfiguration;
         }
 
         public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator) : base(activator)
         {
-            
+            OverrideCommandName = "Extract...";
+        }
+
+        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, SelectedDataSets selectedDataSet) : this(activator)
+        {
+            _extractionConfiguration = (ExtractionConfiguration)selectedDataSet.ExtractionConfiguration;
+            _selectedDataSet = selectedDataSet;
+
         }
 
         public override string GetCommandHelp()
@@ -34,7 +43,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.ExecuteArrow;
+            return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration,OverlayKind.Execute);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -64,7 +73,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            Activator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(_extractionConfiguration);
+            var ui = Activator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(_extractionConfiguration);
+
+            ui.TickAllFor(_selectedDataSet);
         }
     }
 }

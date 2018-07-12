@@ -151,7 +151,7 @@ namespace DataExportManager.ProjectUI
             };
         }
 
-        
+        private bool _isFirstTime = true;
         public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
@@ -162,6 +162,8 @@ namespace DataExportManager.ProjectUI
                 _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings(){AddFavouriteColumn = false,AllowPinning=false,SuppressChildrenAdder=true});
 
             checkAndExecuteUI1.SetItemActivator(activator);
+
+            var checkedBefore = tlvDatasets.CheckedObjects;
 
             tlvDatasets.ClearObjects();
 
@@ -214,7 +216,13 @@ namespace DataExportManager.ProjectUI
             TopX = -1;
 
             tlvDatasets.ExpandAll();
-            tlvDatasets.CheckAll();
+
+            if (_isFirstTime)
+                tlvDatasets.CheckAll();
+            else if (checkedBefore.Count > 0)
+                tlvDatasets.CheckObjects(checkedBefore);
+
+            _isFirstTime = false;
         }
 
         private void ResetChecksUI(object sender, EventArgs e)
@@ -277,6 +285,13 @@ namespace DataExportManager.ProjectUI
         {
             var sds =  tlvDatasets.SelectedObject as SelectedDataSets;
             checkAndExecuteUI1.GroupBySender(sds != null ? sds.ToString() : null);
+        }
+
+        public void TickAllFor(SelectedDataSets selectedDataSet)
+        {
+            tlvDatasets.UncheckAll();
+            tlvDatasets.CheckObject(_globalsFolder);
+            tlvDatasets.CheckObject(selectedDataSet);
         }
     }
 
