@@ -1,9 +1,8 @@
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.DataRelease
+namespace DataExportLibrary.DataRelease.Potential
 {
     /// <summary>
     /// Release Potential class to be used when nothing has ever been extracted

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Remoting.Contexts;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.Interfaces.Data.DataTables;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline

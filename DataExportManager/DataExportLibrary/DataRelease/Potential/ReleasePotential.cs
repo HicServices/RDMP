@@ -4,15 +4,15 @@ using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.DataRelease
+namespace DataExportLibrary.DataRelease.Potential
 {
     /// <summary>
     /// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release. 
@@ -238,17 +238,5 @@ namespace DataExportLibrary.DataRelease
                 notifier.OnCheckPerformed(new CheckEventArgs(kvp.Key + " is " + kvp.Value, checkResult));
             }
         }
-    }
-
-    public enum Releaseability
-    {
-        Undefined = 0,
-        ExceptionOccurredWhileEvaluatingReleaseability,
-        NeverBeenSuccessfullyExecuted,
-        ExtractFilesMissing,
-        ExtractionSQLDesynchronisation,
-        CohortDesynchronisation,
-        ColumnDifferencesVsCatalogue,
-        Releaseable
     }
 }

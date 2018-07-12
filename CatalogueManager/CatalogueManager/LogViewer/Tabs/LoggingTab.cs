@@ -29,7 +29,6 @@ namespace CatalogueManager.LogViewer.Tabs
     /// <para>Fatal Errors - Any crash that happened during a run should appear in this view</para>
     /// <para>Progress Messages - A log of every progress message generated during the run will appear here</para>
     /// 
-    /// <para>The LogViewerNavigationPane on the right and the BreadcrumbNavigation controls allow you to rapidly zip around the logging database to see what has been going on / going wrong</para>
     /// </summary>
     public class LoggingTab : LoggingTab_Design
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;

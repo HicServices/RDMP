@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CatalogueLibrary.Ticketing;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
