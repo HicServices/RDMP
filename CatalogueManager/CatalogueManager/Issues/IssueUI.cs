@@ -396,7 +396,7 @@ namespace CatalogueManager.Issues
         {
             try
             {
-                Process.Start(tbPathToExcelSheetWithAdditionalInformation.Text);
+                UsefulStuff.GetInstance().ShowFileInWindowsExplorer(new FileInfo(tbPathToExcelSheetWithAdditionalInformation.Text));
             }
             catch (Exception ex)
             {
@@ -410,8 +410,7 @@ namespace CatalogueManager.Issues
 
             try
             {
-                Process.Start(f.DirectoryName);
-
+                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(f.Directory);
             }
             catch (Exception ex)
             {

@@ -26,6 +26,7 @@ using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.DataRelease;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Repositories;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
@@ -333,7 +334,7 @@ namespace DataExportManager.ProjectUI
             {
                 try
                 {
-                    Process.Start(tbExtractionDirectory.Text);
+                    UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(tbExtractionDirectory.Text));
                 }
                 catch (Exception ex)
                 {

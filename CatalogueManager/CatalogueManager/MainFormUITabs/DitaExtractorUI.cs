@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueManager.MainFormUITabs
@@ -91,8 +92,8 @@ namespace CatalogueManager.MainFormUITabs
                 return;
 
             DirectoryInfo d = new DirectoryInfo(tbExtractionDirectory.Text);
-            if (d.Exists)
-                Process.Start(d.FullName);
+
+            UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(d);
         }
 
         private void btnCheck_Click(object sender, EventArgs e)

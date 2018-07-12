@@ -29,6 +29,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.DataRelease;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
@@ -396,7 +397,7 @@ namespace DataExportManager.DataRelease
             if (potential.ExtractDirectory != null && potential.ExtractDirectory.Exists)
             {
                 RightClickMenu.Items.Add("Open Folder", CatalogueIcons.ExtractionDirectoryNode,
-                    (sender, args) => Process.Start(potential.ExtractDirectory.FullName));
+                    (sender, args) => UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(potential.ExtractDirectory));
 
                 //if (listView1.SelectedItems.Count <= 1)
                 //    RightClickMenu.Items.Add("Add file as Patch (Not Recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.Release, OverlayKind.Problem),

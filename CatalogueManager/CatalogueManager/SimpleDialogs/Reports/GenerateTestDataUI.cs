@@ -14,6 +14,8 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
 using Diagnostics.TestData.Exercises;
+using MapsDirectlyToDatabaseTable.Attributes;
+using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
 using ReusableUIComponents.TransparentHelpSystem;
@@ -193,7 +195,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 sizePrescribing.BeginGeneration(identifiers, new FileInfo(prescribing));
                 sizeDemography.BeginGeneration(identifiers, new FileInfo(demography));
 
-                Process.Start(_extractDirectory.FullName);
+                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_extractDirectory);
 
                 sizeBiochemistry.Completed += () => { Executing.Remove(sizeBiochemistry); AnnounceIfComplete(); };
                 sizePrescribing.Completed += () => { Executing.Remove(sizePrescribing); AnnounceIfComplete(); };

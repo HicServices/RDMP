@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using ReusableLibraryCode;
 using Cursors = System.Windows.Forms.Cursors;
 
 namespace ReusableUIComponents.LinkLabels
@@ -21,9 +23,7 @@ namespace ReusableUIComponents.LinkLabels
             if(!string.IsNullOrWhiteSpace(Text))
                 try
                 {
-                    string toLaunch = Text.Trim();
-
-                    Process.Start(toLaunch);
+                    UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(Text));
                 }
                 catch (Exception exception)
                 {

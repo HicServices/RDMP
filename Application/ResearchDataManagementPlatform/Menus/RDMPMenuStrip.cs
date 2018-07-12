@@ -180,7 +180,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             try
             {
-                Process.Start(Environment.CurrentDirectory);
+                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(Environment.CurrentDirectory));
             }
             catch (Exception exception)
             {
