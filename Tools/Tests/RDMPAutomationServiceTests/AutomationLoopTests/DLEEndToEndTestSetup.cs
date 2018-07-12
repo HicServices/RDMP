@@ -1,10 +1,7 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
-using System.Threading;
 using CatalogueLibrary.Data;
-
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
@@ -12,11 +9,8 @@ using Diagnostics;
 using HIC.Logging;
 using HIC.Logging.PastEvents;
 using NUnit.Framework;
-using RDMPAutomationService;
-using RDMPAutomationService.Logic.DLE;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Runners;
-using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;

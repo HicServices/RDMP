@@ -1,26 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DataProvider;
 using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngineTests.Integration;
 using DataLoadEngineTests.Integration.Cache;
 using DataLoadEngineTests.Integration.PipelineTests;
-using Diagnostics;
 using NUnit.Framework;
-using RDMPAutomationService.Logic.Cache;
-using RDMPAutomationService.Logic.DLE;
-using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
