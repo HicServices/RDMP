@@ -105,13 +105,34 @@ namespace DataExportManager.DataRelease
             ICheckable key = null;
 
             if (sds != null)
-                key = releaseRunner.ChecksDictionary.Keys.OfType<ReleasePotential>().ToArray().SingleOrDefault(rp => rp.SelectedDataSet.ID == sds.ID);
+            {
+
+                var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<ReleasePotential>().ToArray().SingleOrDefault(rp => rp.SelectedDataSet.ID == sds.ID);
+
+                //not been released ever
+                if (releasePotential is NoReleasePotential)
+                    return Releaseability.NeverBeenSuccessfullyExecuted;
+
+                //do we know the release state of the assesments
+                if (releasePotential != null && releasePotential.Assessments != null && releasePotential.Assessments.Any())
+                {
+                    var releasability = releasePotential.Assessments.Values.Min();
+
+                    if (releasability != Releaseability.Undefined)
+                        return releasability;
+                }
+
+                //otherwise use the checks of it
+                key = releasePotential;
+            }
             else
                 if (Equals(rowObject, _globalsNode))
                     key = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().SingleOrDefault();
 
             if (key != null)
+            {
                 return releaseRunner.ChecksDictionary[key].GetWorst();
+            }
 
             return null;
         }

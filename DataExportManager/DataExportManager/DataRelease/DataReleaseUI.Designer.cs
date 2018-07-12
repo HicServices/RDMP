@@ -33,9 +33,9 @@ namespace DataExportManager.DataRelease
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataReleaseUI));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
             this.pnlPipeline = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tlvReleasePotentials = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -60,6 +60,17 @@ namespace DataExportManager.DataRelease
             this.panel1.Size = new System.Drawing.Size(697, 646);
             this.panel1.TabIndex = 19;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+            this.pictureBox1.Location = new System.Drawing.Point(195, 38);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(265, 101);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 20;
+            this.pictureBox1.TabStop = false;
+            // 
             // checkAndExecuteUI1
             // 
             this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -75,17 +86,6 @@ namespace DataExportManager.DataRelease
             this.pnlPipeline.Name = "pnlPipeline";
             this.pnlPipeline.Size = new System.Drawing.Size(697, 32);
             this.pnlPipeline.TabIndex = 21;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(195, 38);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(265, 101);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 20;
-            this.pictureBox1.TabStop = false;
             // 
             // splitContainer1
             // 
@@ -137,7 +137,7 @@ namespace DataExportManager.DataRelease
             // olvReleaseability
             // 
             this.olvReleaseability.Text = "Releaseability";
-            this.olvReleaseability.Width = 100;
+            this.olvReleaseability.Width = 150;
             // 
             // DataReleaseUI
             // 

@@ -59,6 +59,7 @@ namespace CatalogueManager.Icons.IconProvision
             StateBasedIconProviders.Add(new ProcessTaskStateBasedIconProvider());
             StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new CatalogueItemStateBasedIconProvider(OverlayProvider));
+            StateBasedIconProviders.Add(new ReleaseabilityStateBasedIconProvider());
 
             StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
         }
