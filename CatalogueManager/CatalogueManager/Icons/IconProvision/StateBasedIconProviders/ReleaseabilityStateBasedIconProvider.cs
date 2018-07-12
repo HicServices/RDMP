@@ -15,11 +15,11 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 
             _images.Add(Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, CatalogueIcons.TinyRed);
             _images.Add(Releaseability.NeverBeenSuccessfullyExecuted, CatalogueIcons.Failed);
-            _images.Add(Releaseability.ExtractFilesMissing, CatalogueIcons.Failed);
-            _images.Add(Releaseability.ExtractionSQLDesynchronisation, CatalogueIcons.Failed);
+            _images.Add(Releaseability.ExtractFilesMissing, CatalogueIcons.FileMissing);
+            _images.Add(Releaseability.ExtractionSQLDesynchronisation, CatalogueIcons.Diff);
             _images.Add(Releaseability.CohortDesynchronisation, CatalogueIcons.Failed);
             _images.Add(Releaseability.ColumnDifferencesVsCatalogue, CatalogueIcons.TinyYellow);
-            _images.Add(Releaseability.Releaseable, CatalogueIcons.TinyRed);
+            _images.Add(Releaseability.Releaseable, CatalogueIcons.TinyGreen);
        
         }
 

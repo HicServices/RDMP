@@ -218,6 +218,9 @@ namespace DataExportLibrary.DataRelease.Potential
 
         public virtual void Check(ICheckNotifier notifier)
         {
+            if (Exception != null)
+                notifier.OnCheckPerformed(new CheckEventArgs("Exception occured evaluating ReleasePotential", CheckResult.Fail, Exception));
+
             //todo : call MakeAssesment here instead of constructor
             foreach (KeyValuePair<IExtractionResults, Releaseability> kvp in Assessments)
             {

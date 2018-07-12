@@ -543,6 +543,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Diff {
+            get {
+                object obj = ResourceManager.GetObject("Diff", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap DocumentationNode {
             get {
                 object obj = ResourceManager.GetObject("DocumentationNode", resourceCulture);
@@ -876,6 +886,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap File {
             get {
                 object obj = ResourceManager.GetObject("File", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap FileMissing {
+            get {
+                object obj = ResourceManager.GetObject("FileMissing", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

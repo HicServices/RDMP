@@ -145,6 +145,8 @@ namespace CatalogueManager.Icons.IconProvision
         Waiting,
         WaitingForDatabase,
         Writing,
-        Warning
+        Warning,
+        Diff,
+        FileMissing,
     }
 }

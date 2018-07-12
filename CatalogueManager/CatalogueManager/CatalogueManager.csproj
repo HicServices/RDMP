@@ -1423,11 +1423,13 @@
     <None Include="Icons\ExtractionInformation_ProjectSpecific.png" />
     <None Include="Icons\AllLoadMetadatasNode.png" />
     <None Include="Icons\AllPermissionWindowsNode.png" />
+    <None Include="Icons\Diff.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
     <None Include="Icons\GetFilesStage.png" />
     <None Include="Icons\FrozenExtractionConfigurationsNode.png" />
+    <None Include="Icons\FileMissing.png" />
     <Content Include="Icons\importFile.png" />
     <None Include="Icons\Parameter1.bmp" />
     <None Include="Icons\ParameterSet.png" />
