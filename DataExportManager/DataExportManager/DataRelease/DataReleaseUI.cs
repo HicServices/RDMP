@@ -225,7 +225,11 @@ namespace DataExportManager.DataRelease
 
             tlvReleasePotentials.DisableObjects(_globals);
         }
-
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        {
+            base.ConsultAboutClosing(sender, e);
+            checkAndExecuteUI1.ConsultAboutClosing(sender, e);
+        }
         public override string GetTabName()
         {
             return "Release: " + _project;

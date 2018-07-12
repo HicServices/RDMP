@@ -115,11 +115,8 @@ namespace CatalogueManager.LoadExecutionUIs
 
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
-            if(checkAndExecuteUI1.IsExecuting)
-            {
-                e.Cancel = true;
-                MessageBox.Show("Load is running so you cannot close this window, try clicking Abort first");
-            }
+            base.ConsultAboutClosing(sender, e);
+            checkAndExecuteUI1.ConsultAboutClosing(sender, e);
         }
         
         private LoadProgress GetLoadProgressIfAny()

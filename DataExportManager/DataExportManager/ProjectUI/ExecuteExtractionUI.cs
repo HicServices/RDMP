@@ -2,36 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.Providers.Nodes.UsedByNodes;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
 using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
-using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace DataExportManager.ProjectUI
@@ -114,6 +105,12 @@ namespace DataExportManager.ProjectUI
                 return _bundledStuff.Where(s => s.User.Equals(eds));
 
             return null;
+        }
+
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        {
+            base.ConsultAboutClosing(sender, e);
+            checkAndExecuteUI1.ConsultAboutClosing(sender, e);
         }
 
         private object State_ImageGetter(object rowObject)

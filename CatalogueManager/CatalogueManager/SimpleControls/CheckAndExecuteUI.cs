@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.ItemActivation;
-using HIC.Logging;
-using MapsDirectlyToDatabaseTable.RepositoryResultCaching;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.SimpleControls
 {
@@ -18,7 +16,7 @@ namespace CatalogueManager.SimpleControls
     /// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the 
     /// UI will show the checking/executing progress messages).  This class ensures that the behaviour is the same between console run rdmp and the UI applications.
     /// </summary>
-    public partial class CheckAndExecuteUI : UserControl
+    public partial class CheckAndExecuteUI : UserControl, IConsultableBeforeClosing
     {
         //things you have to set for it to work
         public event EventHandler StateChanged;
@@ -252,6 +250,15 @@ namespace CatalogueManager.SimpleControls
                 ChecksPassed = false;
                 _runningTask = null;
                 SetButtonStates();
+            }
+        }
+
+        public void ConsultAboutClosing(object sender, FormClosingEventArgs formClosingEventArgs)
+        {
+            if (IsExecuting)
+            {
+                MessageBox.Show("Control is still executing, please abort first");
+                formClosingEventArgs.Cancel = true;
             }
         }
     }

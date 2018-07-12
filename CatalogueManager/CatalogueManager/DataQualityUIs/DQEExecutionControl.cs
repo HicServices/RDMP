@@ -56,6 +56,12 @@ namespace CatalogueManager.DataQualityUIs
             rdmpObjectsRibbonUI1.Add(_catalogue);
         }
 
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        {
+            base.ConsultAboutClosing(sender,e);
+            checkAndExecuteUI1.ConsultAboutClosing(sender,e);
+        }
+
         public override string GetTabName()
         {
             return "DQE Execution:" + base.GetTabName();

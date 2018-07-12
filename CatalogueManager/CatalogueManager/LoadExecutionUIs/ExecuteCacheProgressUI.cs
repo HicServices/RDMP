@@ -59,7 +59,11 @@ namespace CatalogueManager.LoadExecutionUIs
 
             checkAndExecuteUI1.SetItemActivator(activator);
         }
-        
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        {
+            base.ConsultAboutClosing(sender, e);
+            checkAndExecuteUI1.ConsultAboutClosing(sender, e);
+        }
         private void btnViewFailures_Click(object sender, EventArgs e)
         {
             // for now just show a modal dialog with a data grid view of all the failure rows
