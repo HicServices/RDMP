@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,10 +13,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
-using MySql.Data.MySqlClient;
-using Oracle.ManagedDataAccess.Client;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 
@@ -40,257 +35,6 @@ namespace ReusableLibraryCode
             return _instance;
         }
         
-        public int GetColumnLength(DbConnection connection, string tableName, string columnName)
-        {
-            if (connection is MySqlConnection)
-                return GetColumnLengthMySql(connection, tableName, columnName);
-
-            tableName = tableName.Trim(new char[]{'[',']'});
-            columnName = columnName.Trim(new char[] { '[', ']' });
-
-            bool hadToOpen = false;
-            if (connection.State != ConnectionState.Open)
-            {
-                connection.Open();
-                hadToOpen = true;
-            }
-
-            try
-            {
-                using (DbCommand cmd = DatabaseCommandHelper.GetCommand("sp_columns", connection))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    DatabaseCommandHelper.AddParameterWithValueToCommand("@table_name", cmd, tableName);
-                    using (DbDataReader r = cmd.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            if (r["COLUMN_NAME"].ToString() == columnName)
-                            {
-                                return Int32.Parse(r["PRECISION"].ToString()); // deals with weird mssql datatypes like decimal
-                            }
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                if(hadToOpen)
-                    connection.Close();
-            }
-            
-            
-            throw new Exception("Could not find column named " + columnName + " in table " + tableName );
-        }
-
-        [Obsolete("Not used by anyone, use Discovery instead")]
-        public int GetColumnLengthMySql(DbConnection connection,string tableName, string columnName)
-        {
-            tableName = tableName.Trim('`');
-
-            bool hadToOpen = false;
-            if(connection.State != ConnectionState.Open)
-            {
-                hadToOpen = true;
-                connection.Open();
-            }
-
-            DbCommand cmd = DatabaseCommandHelper.GetCommand("DESCRIBE `" + tableName + "`", connection);
-            DbDataReader r = cmd.ExecuteReader();
-
-            try
-            {
-                while (r.Read())
-                    if (((string)r["Field"]).Equals(columnName))
-                    {
-                        string type = r["Type"] as string;
-
-                        if (type.Equals("longtext"))
-                            return 50000;
-
-                        Match result = Regex.Match(type, "\\([0-9]+\\)");
-
-                        if(result.Success)
-                            return Int32.Parse(result.Value.Trim('(',')'));
-                        else
-                            throw new FormatException("According to MySQL type of column " + columnName + " is " + type + ", we cannot determine what the fields length is.");
-                    }
-            }
-            finally
-            {
-                r.Close();
-
-                //leave it in the same state we received it in
-                if(hadToOpen)
-                    connection.Close();
-            }
-            throw new MissingFieldException("Could not find field " + columnName + " in table " + tableName);
-        }
-
-        [Obsolete("Not used by anyone, use Discovery instead")]
-        public string GetColumnTypeMySql(string connectionString, string databaseName, string tableName, string columnName)
-        {
-            MySqlConnection con = new MySqlConnection(connectionString);
-            
-            databaseName = databaseName.Trim('`');
-            tableName = tableName.Trim('`');
-
-            con.Open();
-
-            DbCommand cmd = DatabaseCommandHelper.GetCommand("DESCRIBE `" + databaseName + "`.`" + tableName + "`", con);
-            DbDataReader r = cmd.ExecuteReader();
-
-            try
-            {
-                while (r.Read())
-                    if( ((string) r["Field"]).Equals(columnName))
-                        return r["Type"] as string;
-            }
-            finally
-            {
-                r.Close();
-                con.Close();   
-            }
-            throw new MissingFieldException("Could not find field " + columnName + " in table " + tableName);
-        }
-
-        [Obsolete("Not used by anyone, use Discovery instead")]
-        public string GetColumnCollationType(string connectionString, string tableName, string columnName)
-        {
-            if (!connectionString.Contains("Initial Catalog") && !connectionString.Contains("Database"))
-                throw new Exception("You need to set 'Initial Catalog' in order to use GetColumnLength method in UsefulStuff");
-
-            tableName = tableName.Trim(new char[] { '[', ']' });
-            columnName = columnName.Trim(new char[] { '[', ']' });
-
-            //list the tables on in the database 
-            DbConnection con = new SqlConnection(connectionString);
-
-
-            try
-            {
-                con.Open();
-
-                DbCommand cmd =  DatabaseCommandHelper.GetCommand(@"select c.collation_name FROM 
-    sys.columns c 
-INNER JOIN 
-    sys.tables t ON c.object_id = t.object_id
-INNER JOIN 
-    sys.types ty ON c.system_type_id = ty.system_type_id  
-WHERE 
-t.name = @table_name AND
-c.name = @column_name", con);
-
-
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@table_name", cmd, tableName);
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@column_name", cmd, columnName);
-                
-
-                object result = cmd.ExecuteScalar();
-
-                if (result == null || result == DBNull.Value)
-                    return null;
-                
-                return result.ToString();
-
-            }
-            finally
-            {
-                con.Close();
-            }
-            
-        }
-
-        [Obsolete("Not used by anyone, use Discovery instead")]
-        public string GetColumnCollationTypeMySql(string connectionString,string databaseName, string tableName, string columnName)
-        {
-            MySqlConnection con = new MySqlConnection(connectionString);
-            
-            databaseName = databaseName.Trim('`');
-            tableName = tableName.Trim('`');
-            con.Open();
-
-        //SHOW FULL COLUMNS FROM sprintfourdatacatalogue.catalogue
-            DbCommand cmd = DatabaseCommandHelper.GetCommand("SHOW FULL COLUMNS FROM  `" + databaseName + "`.`" + tableName + "`", con);
-            DbDataReader r = cmd.ExecuteReader();
-
-            try
-            {
-                while (r.Read())
-                    if( ((string) r["Field"]).Equals(columnName))
-                        return r["Collation"] as string;
-            }
-            finally
-            {
-                r.Close();
-                con.Close();   
-            }
-            throw new MissingFieldException("Could not find field " + columnName + " in table " + tableName);
-        }
-
-        [Obsolete("Not used by anyone, use Discovery instead")]
-        public string[] ListStoredProcedures(string connectionString,string databaseName )
-        {
-            databaseName = databaseName.Trim(new char[] {'[', ']'});
-
-            List<string> procs = new List<string>();
-
-            //list the tables on in the database 
-            DbConnection con = new SqlConnection(connectionString);
-            con.Open();
-
-            DbCommand cmd =  DatabaseCommandHelper.GetCommand("use ["+databaseName+"]; exec sp_stored_procedures ", con);
-            
-            
-            DbDataReader r = cmd.ExecuteReader();
-
-
-            while (r.Read())
-            {
-                //these come back with ;x where x is the number of parameters for some unknown reason
-                string procName = (string) r["PROCEDURE_NAME"];
-                procName = procName.Split(new char[]{';'})[0];
-                procs.Add(procName);
-            }
-
-            
-            con.Close();
-
-            return procs.ToArray();
-        }
-
-        [Obsolete("Not used by anyone, use Discovery instead")]
-        public string ValidateQuery(string connectionString, string query)
-        {
-            if (!query.StartsWith("SELECT"))
-                throw new Exception("ValidateQuery expects a string that starts with SELECT");
-
-            //list the tables on in the database 
-            DbConnection con = new SqlConnection(connectionString);
-            con.Open();
-
-            DbTransaction t = con.BeginTransaction(IsolationLevel.ReadCommitted);
-
-            DbCommand cmdParseOn =  DatabaseCommandHelper.GetCommand("SET PARSEONLY ON", con,t);
-            DbCommand cmdToTest =  DatabaseCommandHelper.GetCommand(query, con,t);
-            DbCommand cmdParseOff =  DatabaseCommandHelper.GetCommand("SET PARSEONLY OFF", con,t);
-
-
-            cmdParseOn.ExecuteNonQuery();
-            string result = (string)cmdToTest.ExecuteScalar();
-            
-            if (result == null)
-                return "The SQL syntax is valid";
-
-            cmdParseOff.ExecuteNonQuery();
-
-            t.Rollback();
-
-            con.Close();
-
-            return result;
-        }
-
         internal DateTime LooseConvertToDate(object iO)
         {
             DateTime sDate;
@@ -467,20 +211,6 @@ c.name = @column_name", con);
                 default: return false;
             }
         }
-
-        [Obsolete("Not used by anyone")]
-        public Dictionary<string, object> DbDataReaderToDictionary(DbDataReader r)
-        {
-            var dict = new Dictionary<string, object>();
-
-            for (int lp = 0; lp < r.FieldCount; lp++)
-            {
-                object value = r.GetValue(lp);
-                value = value == DBNull.Value ? null : value;
-                dict.Add(r.GetName(lp), value);
-            }
-            return dict;
-        }
         
         public static string RemoveIllegalFilenameCharacters(string value)
         {
@@ -559,42 +289,6 @@ c.name = @column_name", con);
         }
 
 
-        public string[] ListTablesOracle(OracleConnectionStringBuilder builder)
-        {
-            OracleConnection con = new OracleConnection(builder.ConnectionString);
-            con.Open();
-            try
-            {
-                return ListTablesOracle(con).ToArray();
-            }
-            finally
-            {
-                con.Close();   
-            }
-            
-        }
-        /// <summary>
-        /// Requires an open and available connection.  Displays all the tables that the current user can access
-        /// </summary>
-        /// <param name="con"></param>
-        /// <returns></returns>
-        private string[] ListTablesOracle(OracleConnection con)
-        {
-            OracleCommand cmd = new OracleCommand(@"SELECT table_name FROM all_tables where owner not in 
-(
-'SYS','SYSTEM','MDSYS','OUTLN','CTXSYS','OLAPSYS','FLOWS_FILES','DVSYS','AUDSYS','DBSNMP','GSMADMIN_INTERNAL','OJVMSYS','ORDSYS','APPQOSSYS','XDB','ORDDATA','WMSYS','LBACSYS'
-)", con);
-
-            OracleDataReader r = cmd.ExecuteReader();
-
-            List<string> toReturn = new List<string>();
-            while (r.Read())
-                toReturn.Add((string) r["table_name"]);
-
-            return toReturn.ToArray();
-        }
-
-        
         public static int BulkInsertWithBetterErrorMessages(SqlBulkCopy insert, DataTable dt, DiscoveredServer serverForLineByLineInvestigation)
         {
             int rowsWritten = 0;
