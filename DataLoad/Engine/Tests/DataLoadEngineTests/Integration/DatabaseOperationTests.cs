@@ -65,7 +65,7 @@ namespace DataLoadEngineTests.Integration
 
                 //now clone the catalogue data structures to MachineName
                 foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
-                    cloner.CreateTablesInDatabaseFromCatalogueInfo(tableInfo, LoadBubble.Raw);
+                    cloner.CreateTablesInDatabaseFromCatalogueInfo(new ThrowImmediatelyDataLoadEventListener(), tableInfo, LoadBubble.Raw);
                 
                 Assert.IsTrue(raw.Exists());
                 Assert.IsTrue(raw.ExpectTable("Table_1").Exists());

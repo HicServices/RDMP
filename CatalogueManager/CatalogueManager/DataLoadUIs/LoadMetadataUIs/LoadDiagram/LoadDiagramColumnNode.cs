@@ -95,6 +95,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             State = _discoveredDataType.Equals(_expectedDataType) ? LoadDiagramState.Found : LoadDiagramState.Different;
         }
 
+        #region equality
         protected bool Equals(LoadDiagramColumnNode other)
         {
             return _bubble == other._bubble && Equals(_tableNode, other._tableNode) && string.Equals(ColumnName, other.ColumnName);
@@ -118,5 +119,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 return hashCode;
             }
         }
+        #endregion
     }
 }

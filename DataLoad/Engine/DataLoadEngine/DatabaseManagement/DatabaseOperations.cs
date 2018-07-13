@@ -6,6 +6,7 @@ using System.Linq;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Triggers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace DataLoadEngine.DatabaseManagement
 {
@@ -135,23 +136,6 @@ AND    object_id = object_id('" + table.GetRuntimeName()+ "');";
             return new SqlDataAdapter(command);
         }
 
-        public static void AddColumnToTable(DiscoveredDatabase discoveredDatabase, string tableName, string desiredColumnName, string desiredColumnType)
-        {
-            using (var conn = (SqlConnection)discoveredDatabase.Server.GetConnection())
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand("Alter table " + tableName + " ADD [" + desiredColumnName + "] " + desiredColumnType ,conn);
-                cmd.ExecuteNonQuery();
-                conn.Close();
-            }
-        }
-
-
-        public static void DropColumnFromTable(DiscoveredDatabase server, string tableName, string columnName)
-        {
-            var todrop = server.ExpectTable(tableName).DiscoverColumn(columnName);
-            server.ExpectTable(tableName).DropColumn(todrop);
-        }
 
 
         public static void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)

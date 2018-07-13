@@ -94,7 +94,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             //discover children and marry them up to planned/ new unplanned ones
             foreach (var discoveredColumn in Table.DiscoverColumns())
             {
-                var match = _anticipatedChildren.SingleOrDefault(c => c.ColumnName.Equals(discoveredColumn.GetRuntimeName()));
+                var match = _anticipatedChildren.SingleOrDefault(c => c.ColumnName.Equals(discoveredColumn.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase));
                 if (match != null)
                     match.SetState(discoveredColumn);
                 else
@@ -117,6 +117,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             _unplannedChildren.Clear();
         }
 
+        #region equality
         protected bool Equals(LoadDiagramTableNode other)
         {
             return Equals(_databaseNode, other._databaseNode) && Bubble == other.Bubble && string.Equals(TableName, other.TableName);
@@ -140,5 +141,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 return hashCode;
             }
         }
+        #endregion
     }
 }
