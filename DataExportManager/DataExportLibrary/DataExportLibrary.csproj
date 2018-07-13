@@ -180,11 +180,6 @@
     <Reference Include="Npgsql">
       <HintPath>..\..\libs\Npgsql\Npgsql.dll</HintPath>
     </Reference>
-    <Reference Include="Office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\libs\Microsoft.Office.Interop\Office.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -214,6 +209,9 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Checks\ExtractionConfigurationChecker.cs" />
+    <Compile Include="Checks\GlobalExtractionChecker.cs" />
+    <Compile Include="Checks\GlobalsReleaseChecker.cs" />
     <Compile Include="Checks\ProjectChecker.cs" />
     <Compile Include="Checks\SelectedDataSetsChecker.cs" />
     <Compile Include="Checks\SupportingSQLTableChecker.cs" />
@@ -221,6 +219,9 @@
     <Compile Include="CohortCreationPipeline\CohortRefreshEngine.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\BasicCohortDestination.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\CustomCohortDataDestination.cs" />
+    <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\GuidReleaseIdentifierAllocator.cs" />
+    <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\IAllocateReleaseIdentifiers.cs" />
+    <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\NullAllocateReleaseIdentifiers.cs" />
     <Compile Include="CohortCreationPipeline\Sources\AggregateConfigurationTableSource.cs" />
     <Compile Include="CohortCreationPipeline\Sources\PatientIdentifierColumnSource.cs" />
     <Compile Include="CohortCreationPipeline\Sources\PatientIndexTableSource.cs" />
@@ -233,7 +234,8 @@
     <Compile Include="CohortDescribing\ExtractableCohortDescription.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogWriter.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogEntry.cs" />
-    <Compile Include="DataRelease\NoReleasePotential.cs" />
+    <Compile Include="DataRelease\Potential\NoReleasePotential.cs" />
+    <Compile Include="DataRelease\Potential\Releaseability.cs" />
     <Compile Include="DataRelease\ReleaseEngine.cs" />
     <Compile Include="DataRelease\ReleaseFolderSettings.cs" />
     <Compile Include="DataRelease\ReleaseEngineSettings.cs" />
@@ -253,15 +255,17 @@
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackageContents.cs" />
     <Compile Include="Data\DataTables\DeployedExtractionFilterFactory.cs" />
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackage.cs" />
+    <Compile Include="Data\DataTables\SupplementalExtractionResults.cs" />
     <Compile Include="Data\DataTables\SelectedDataSetsForcedJoin.cs" />
     <Compile Include="Data\Hierarchy\DataExportFilterHierarchy.cs" />
     <Compile Include="Data\ProjectCohortIdentificationConfigurationAssociation.cs" />
+    <Compile Include="ExtractionTime\Commands\ExtractCommand.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollection.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollectionFactory.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractGlobalsCommand.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\ExecuteFullExtractionToDatabaseMSSql.cs" />
-    <Compile Include="DataRelease\FlatFileReleasePotential.cs" />
-    <Compile Include="DataRelease\MsSqlExtractionReleasePotential.cs" />
+    <Compile Include="DataRelease\Potential\FlatFileReleasePotential.cs" />
+    <Compile Include="DataRelease\Potential\MsSqlExtractionReleasePotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\FlatFileReleaseSource.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecutePkSynthesizerDatasetExtractionSource.cs" />
     <Compile Include="Spontaneous\SpontaneousColumn.cs" />
@@ -305,7 +309,7 @@
     <Compile Include="ExtractionTime\ReleaseIdentifierSubstitution.cs" />
     <Compile Include="ExtractionTime\WordDataWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataRelease\ReleasePotential.cs" />
+    <Compile Include="DataRelease\Potential\ReleasePotential.cs" />
     <Compile Include="Providers\DataExportChildProvider.cs" />
     <Compile Include="Providers\DataExportProblemProvider.cs" />
     <Compile Include="Providers\Nodes\AllCohortsNode.cs" />
@@ -318,13 +322,14 @@
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
+    <Compile Include="Providers\Nodes\UsedByNodes\IObjectUsedByOtherObjectNode.cs" />
+    <Compile Include="Providers\Nodes\UsedByNodes\ObjectUsedByOtherObjectNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
-    <Compile Include="Providers\Nodes\UsedByProject\ExtractableCohortUsedByProjectNode.cs" />
-    <Compile Include="Providers\Nodes\UsedByProject\IObjectUsedByProjectNode.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DataRelease\DataRelease.cd" />
+    <None Include="Data\DataTables\Cohorts.cd" />
     <None Include="ExecuteDatasetExtraction.cd" />
     <None Include="ExtractionTimeColumns.cd" />
     <None Include="ExtractionTime\UserPicks\Bundles.cd" />

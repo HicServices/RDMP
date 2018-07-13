@@ -67,7 +67,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             using(var con = server.GetConnection())
             {
                 con.Open();
-                server.GetCommand(bodySql, con).ExecuteNonQuery();
+
+                UsefulStuff.ExecuteBatchNonQuery(bodySql,con);
             }
             
             return database.ExpectTable(tableName);
@@ -91,9 +92,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             foreach (var col in columns)
             {
                 var datatype = col.GetSQLDbType(syntaxHelper.TypeTranslater);
-
+                
                 //add the column name and accompanying datatype
-                bodySql += syntaxHelper.EnsureWrapped(col.ColumnName) + " " + datatype + (col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL") + "," + Environment.NewLine;
+                bodySql += string.Format("{0} {1} {2} {3} {4} {5},"+ Environment.NewLine,
+                    syntaxHelper.EnsureWrapped(col.ColumnName),
+                    datatype,
+                    col.Default != MandatoryScalarFunctions.None ? "default " + syntaxHelper.GetScalarFunctionSql(col.Default):"",
+                    string.IsNullOrWhiteSpace(col.Collation) ?"": "COLLATE " + col.Collation,
+                    col.AllowNulls && !col.IsPrimaryKey ? " NULL" : " NOT NULL",
+                    col.IsAutoIncrement ? syntaxHelper.GetAutoIncrementKeywordIfAny():""
+                    );
             }
 
             var pks = columns.Where(c => c.IsPrimaryKey).ToArray();

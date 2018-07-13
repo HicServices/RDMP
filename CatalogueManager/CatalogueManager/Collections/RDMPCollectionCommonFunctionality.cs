@@ -1,20 +1,10 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Net.Mime;
-using System.Windows.Automation;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Activation;
-using System.Text;
-using System.Threading.Tasks;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
@@ -27,17 +17,11 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Menus.MenuItems;
-using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Theme;
-using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
@@ -83,8 +67,21 @@ namespace CatalogueManager.Collections
         /// </summary>
         public Type[] AxeChildren { get; set; }
 
-        public bool AllowPinning { get; set; }
         public Type[] MaintainRootObjects { get; set; }
+
+        public RDMPCollectionCommonFunctionalitySettings Settings { get; private set; }
+
+        /// <summary>
+        /// Sets up common functionality for an RDMPCollectionUI with the default settings
+        /// </summary>
+        /// <param name="tree">The main tree in the collection UI</param>
+        /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
+        /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
+        /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
+        public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn, OLVColumn renameableColumn)
+        {
+            SetUp(collection,tree,activator,iconColumn,renameableColumn,new RDMPCollectionCommonFunctionalitySettings());
+        }
 
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI
@@ -93,8 +90,10 @@ namespace CatalogueManager.Collections
         /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
         /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-        public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn, OLVColumn renameableColumn, bool addFavouriteColumn = true, bool allowPinning = true, bool addIDColumn = true)
+        /// <param name="settings">Customise which common behaviorurs are turned on</param>
+        public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn, OLVColumn renameableColumn,RDMPCollectionCommonFunctionalitySettings settings)
         {
+            Settings = settings;
             _collection = collection;
             IsSetup = true;
             _activator = activator;
@@ -107,17 +106,24 @@ namespace CatalogueManager.Collections
             Tree.HideSelection = false;
 
             Tree.RevealAfterExpand = true;
-            
-            Tree.CanExpandGetter += CanExpandGetter;
-            Tree.ChildrenGetter += ChildrenGetter;
 
-            Tree.ItemActivate += CommonItemActivation;
+            if (!Settings.SuppressChildrenAdder)
+            {
+                Tree.CanExpandGetter += CanExpandGetter;
+                Tree.ChildrenGetter += ChildrenGetter;
+            }
+
+            if(!Settings.SuppressActivate)
+                Tree.ItemActivate += CommonItemActivation;
+
             Tree.CellRightClick += CommonRightClick;
             Tree.SelectionChanged += (s,e)=>RefreshContextMenuStrip();
             
-
-            iconColumn.ImageGetter += ImageGetter;
-            Tree.RowHeight = 19;
+            if(iconColumn != null)
+                iconColumn.ImageGetter += ImageGetter;
+            
+            if(Tree.RowHeight != 19)
+                Tree.RowHeight = 19;
 
             //add colour indicator bar
             Tree.Location = new Point(Tree.Location.X, tree.Location.Y+3);
@@ -141,13 +147,13 @@ namespace CatalogueManager.Collections
                 RenameProvider.RegisterEvents();
             }
 
-            if (addFavouriteColumn)
+            if (Settings.AddFavouriteColumn)
             {
                 FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
                 FavouriteColumn = FavouriteColumnProvider.CreateColumn();
             }
 
-            if (addIDColumn)
+            if (settings.AddIDColumn)
             {
                 IDColumnProvider = new IDColumnProvider(tree);
                 IDColumn = IDColumnProvider.CreateColumn();
@@ -165,8 +171,6 @@ namespace CatalogueManager.Collections
             
             _activator.Emphasise += _activator_Emphasise;
 
-            AllowPinning = allowPinning;
-            
             Tree.TreeFactory = TreeFactoryGetter;
             Tree.RebuildAll(true);
             
@@ -257,7 +261,7 @@ namespace CatalogueManager.Collections
             if (args.Request.ExpansionDepth > 0)
                 ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
 
-            if (args.Request.Pin && AllowPinning)
+            if (args.Request.Pin && Settings.AllowPinning)
                 Pin(args.Request.ObjectToEmphasise, decendancyList);
 
             //update index now pin filter is applied
@@ -344,7 +348,7 @@ namespace CatalogueManager.Collections
                 //found a menu with compatible constructor arguments
                 if (menu != null)
                 {
-                    if (!AllowPinning)
+                    if (!Settings.AllowPinning)
                     {
                         var miPin = menu.Items.OfType<AtomicCommandMenuItem>().SingleOrDefault(mi => mi.Tag is ExecuteCommandPin);
 
@@ -357,12 +361,17 @@ namespace CatalogueManager.Collections
 
                     return menu;
                 }
+
+                //no compatible menus so just return default menu
+                var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
+                defaultMenu.AddCommonMenuItems(Settings);
+                return defaultMenu;
             }
             else
             {
                 //it's a right click in whitespace (nothing right clicked)
 
-                AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+                AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator);
 
                 if (WhitespaceRightClickMenuCommands != null)
                     return factory.CreateMenu(WhitespaceRightClickMenuCommands);
@@ -394,15 +403,13 @@ namespace CatalogueManager.Collections
                 //find first menu that's compatible
                 if (menu != null)
                 {
-                    menu.AddCommonMenuItems();
+                    menu.AddCommonMenuItems(Settings);
                     return menu;
                 }
             }
-
-            //there are no derrived classes with compatible constructors so just use the basic one
-            var defaultMenu = new RDMPContextMenuStrip(args,o);
-            defaultMenu.AddCommonMenuItems();
-            return defaultMenu;
+            
+            //there are no derrived classes with compatible constructors
+            return null;
         }
 
 

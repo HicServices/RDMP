@@ -9,12 +9,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     {
         public abstract string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX);
 
-        public abstract DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database,
-            string tableName);
-
-        public abstract DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction,
-            IManagedConnection connection, string database, string tableName);
-
+        public abstract DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database);
+        
         public abstract IDiscoveredColumnHelper GetColumnHelper();
         public abstract void DropTable(DbConnection connection, DiscoveredTable tableToDrop);
         public abstract void DropFunction(DbConnection connection, DiscoveredTableValuedFunction functionToDrop);
@@ -43,7 +39,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             }
         }
 
-        public string ScriptTableCreation(DiscoveredTable table, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt)
+        /// <inheritdoc/>
+        public string ScriptTableCreation(DiscoveredTable table, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt, DiscoveredTable toCreateTable = null)
         {
             List<DatabaseColumnRequest> columns = new List<DatabaseColumnRequest>();
 
@@ -51,16 +48,41 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             {
                 string sqlType = c.DataType.SQLType;
 
-                if (c.DataType.IsIdentity() && convertIdentityToInt)
+                if (c.IsAutoIncrement && convertIdentityToInt)
                     sqlType = "int";
+
+                bool isToDifferentDatabaseType = toCreateTable != null && toCreateTable.Database.Server.DatabaseType != table.Database.Server.DatabaseType;
+
+
+                //translate types
+                if (isToDifferentDatabaseType)
+                {
+                    var fromtt = table.Database.Server.GetQuerySyntaxHelper().TypeTranslater;
+                    var tott = toCreateTable.Database.Server.GetQuerySyntaxHelper().TypeTranslater;
+
+                    sqlType = fromtt.TranslateSQLDBType(c.DataType.SQLType, tott);
+                }
 
                 var colRequest = new DatabaseColumnRequest(c.GetRuntimeName(),sqlType , c.AllowNulls || dropNullability);
                 colRequest.IsPrimaryKey = c.IsPrimaryKey && !dropPrimaryKeys;
-                
+
+                //if there is a collation
+                if (!string.IsNullOrWhiteSpace(c.Collation))
+                {
+                    //if the script is to be run on a database of the same type
+                    if (toCreateTable == null || !isToDifferentDatabaseType)
+                    {
+                        //then specify that the column should use the live collation
+                        colRequest.Collation = c.Collation;
+                    }
+                }
+
                 columns.Add(colRequest);
             }
 
-            return table.Database.Helper.GetCreateTableSql(table.Database, table.GetRuntimeName(), columns.ToArray(),null,false);
+            var destinationTable = toCreateTable ?? table;
+
+            return table.Database.Helper.GetCreateTableSql(destinationTable.Database, destinationTable.GetRuntimeName(), columns.ToArray(), null, false);
         }
 
         public virtual bool IsEmpty(DbConnection connection, DiscoveredTable discoveredTable, DbTransaction transaction)
@@ -84,6 +106,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
             DbCommand cmd = DatabaseCommandHelper.GetCommand(sql,connection.Connection,connection.Transaction);
             cmd.ExecuteNonQuery();
+        }
+
+        public virtual int ExecuteInsertReturningIdentity(DiscoveredTable discoveredTable, DbCommand cmd, IManagedTransaction transaction=null)
+        {
+            cmd.CommandText += ";SELECT @@IDENTITY";
+
+            var result = cmd.ExecuteScalar();
+
+            if (result == DBNull.Value || result == null)
+                return 0;
+
+            return Convert.ToInt32(result);
         }
 
         protected abstract string GetRenameTableSql(DiscoveredTable discoveredTable, string newName);

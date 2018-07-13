@@ -25,6 +25,7 @@ using LoadModules.Generic.LoadProgressUpdating;
 using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
 using Newtonsoft.Json;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.ANOEngineeringUIs
@@ -328,16 +329,18 @@ namespace CatalogueManager.ANOEngineeringUIs
             {
                 _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator,databaseObject);
 
+                var settings = new RDMPCollectionCommonFunctionalitySettings {AddFavouriteColumn = false, AllowPinning = false};
+
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
-                tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables,activator,olvANOTablesName,null,false,false);
+                tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables, activator, olvANOTablesName, null, settings);
                 
                 tlvANOTables.AddObject(activator.CoreChildProvider.AllANOTablesNode);
                 tlvANOTables.ExpandAll();
                 
                 //Setup tree view to show all TableInfos that you are trying to Migrate
                 tlvTableInfoMigrationsCommonFunctionality = new RDMPCollectionCommonFunctionality();
-                tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None,tlvTableInfoMigrations,activator,olvTableInfoName,null,false,false);
+                tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None, tlvTableInfoMigrations, activator, olvTableInfoName, null, settings);
                 
                 //don't display anything below ColumnInfo
                 tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] {typeof (ColumnInfo)};
@@ -467,15 +470,16 @@ namespace CatalogueManager.ANOEngineeringUIs
             var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
             pt.ProcessTaskType = ProcessTaskType.Attacher;
             pt.Name = "Read from " + t;
-            pt.Path = typeof (RemoteSqlServerTableAttacher).FullName;
+            pt.Path = typeof(RemoteTableAttacher).FullName;
             pt.SaveToDatabase();
 
-            pt.CreateArgumentsForClassIfNotExists<RemoteSqlServerTableAttacher>();
+            pt.CreateArgumentsForClassIfNotExists<RemoteTableAttacher>();
+
 
             pt.SetArgumentValue("RemoteServer", t.Server);
             pt.SetArgumentValue("RemoteDatabaseName", t.GetDatabaseRuntimeName());
             pt.SetArgumentValue("RemoteTableName", t.GetRuntimeName());
-
+            pt.SetArgumentValue("DatabaseType", DatabaseType.MicrosoftSQLServer);
             pt.SetArgumentValue("RemoteSelectSQL", qb.SQL);
 
             pt.SetArgumentValue("RAWTableName", t.GetRuntimeName(LoadBubble.Raw));
@@ -562,6 +566,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                 var fi = new FileInfo(sfd.FileName);
                 
                 var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFileUI(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
+                cmdAnoTablesToo.ShowInExplorer = false;
 
                 if (!cmdAnoTablesToo.IsImpossible)
                     cmdAnoTablesToo.Execute();

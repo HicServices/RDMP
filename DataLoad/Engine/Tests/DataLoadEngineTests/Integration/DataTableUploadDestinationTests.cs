@@ -600,8 +600,7 @@ CREATE TABLE [dbo].[TestResizing](
             Assert.AreEqual("bit", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col3").DataType.SQLType);
             Assert.AreEqual("tinyint", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col4").DataType.SQLType);
             
-            //apparently this is varbinary(max) - go figure
-            Assert.AreEqual("image(2147483647)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col5").DataType.SQLType);
+            Assert.AreEqual("varbinary(max)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col5").DataType.SQLType);
         }
 
 
@@ -642,12 +641,8 @@ CREATE TABLE [dbo].[TestResizing](
         public void MySqlTest_Simple()
         {
             var token = new GracefulCancellationToken();
-
-            if (DiscoveredMySqlServer == null)
-                Assert.Inconclusive();
-
-            var db = DiscoveredMySqlServer.ExpectDatabase(TestDatabaseNames.GetConsistentName("DataTableUploadTests"));
-            db.Create(true);
+            
+            var db = GetCleanedServer(DatabaseType.MYSQLServer);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
@@ -698,12 +693,8 @@ CREATE TABLE [dbo].[TestResizing](
         public void MySqlTest_Resize()
         {
             var token = new GracefulCancellationToken();
-
-            if(DiscoveredMySqlServer == null)
-                Assert.Inconclusive();
-
-            var db = DiscoveredMySqlServer.ExpectDatabase(TestDatabaseNames.GetConsistentName("DataTableUploadTests"));
-            db.Create(true);
+            
+            var db = GetCleanedServer(DatabaseType.MYSQLServer);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);

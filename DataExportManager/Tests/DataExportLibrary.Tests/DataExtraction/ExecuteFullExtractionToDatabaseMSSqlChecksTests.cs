@@ -84,7 +84,7 @@ namespace DataExportLibrary.Tests.DataExtraction
                 var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
                 destination.Check(tomemory);
 
-                Assert.AreEqual(CheckResult.Success,tomemory.GetWorst());
+                Assert.AreEqual(CheckResult.Warning,tomemory.GetWorst());
 
             }
             finally

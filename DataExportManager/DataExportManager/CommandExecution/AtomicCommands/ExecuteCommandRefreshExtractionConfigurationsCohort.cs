@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System.Drawing;
 using System.Threading.Tasks;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Repositories;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.Progress;
-using ReusableUIComponents.SingleControlForms;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -44,6 +29,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
             if(!_project.ProjectNumber.HasValue)
                 SetImpossible("Project '"+_project+"' does not have a Project Number");
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Update the cohort to a new version by rerunning the associated Cohort Identification Configuration (query).  This is useful if you have to do yearly\\monthly releases and update the cohort based on new data";
         }
 
         public override void Execute()

@@ -22,6 +22,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("ColumnInfo is already set");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Resolve an orphaned virtual column by matching it up to an actual column in the underlying database";
+        }
+
         public ExecuteCommandLinkCatalogueItemToColumnInfo(IActivateItems activator, ColumnInfoCommand cmd, CatalogueItem catalogueItem) : base(activator)
         {
             _catalogueItem = catalogueItem;

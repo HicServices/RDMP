@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Remoting.Contexts;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.Interfaces.Data.DataTables;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
@@ -22,6 +23,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public ReleaseData(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             RepositoryLocator = repositoryLocator;
+            ConfigurationsForRelease = new Dictionary<IExtractionConfiguration, List<ReleasePotential>>();
         }
         
     }

@@ -36,6 +36,8 @@ namespace CatalogueManager.Icons.IconProvision
 
         protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
 
+        private DatabaseTypeIconProvider _databaseTypeIconProvider = new DatabaseTypeIconProvider();
+
         public CatalogueIconProvider(IIconProvider[] pluginIconProviders)
         {
             _pluginIconProviders = pluginIconProviders;
@@ -57,13 +59,13 @@ namespace CatalogueManager.Icons.IconProvision
             StateBasedIconProviders.Add(new ProcessTaskStateBasedIconProvider());
             StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new CatalogueItemStateBasedIconProvider(OverlayProvider));
+            StateBasedIconProviders.Add(new ReleaseabilityStateBasedIconProvider());
+
+            StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
         }
 
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
-            if(IsLockedLockable(concept) && (kind == OverlayKind.None || kind == OverlayKind.Link))
-                kind = OverlayKind.Locked;
-
             //the only valid strings are "Catalogue" etc where the value exactly maps to an RDMPConcept
             if(concept is string)
             {
@@ -119,6 +121,12 @@ namespace CatalogueManager.Icons.IconProvision
             if (ConceptIs(typeof (DashboardObjectUse),concept))
                 return GetImage(RDMPConcept.DashboardControl, OverlayKind.Link);
 
+            if (concept is DatabaseType)
+                return _databaseTypeIconProvider.GetImage((DatabaseType)concept);
+
+            if (concept is ArbitraryFolderNode)
+                return GetImage(RDMPConcept.CatalogueFolder, kind);
+
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {
                 var bmp = stateBasedIconProvider.GetImageIfSupportedObject(concept);
@@ -138,6 +146,9 @@ namespace CatalogueManager.Icons.IconProvision
             //It is an instance of something, get the System.Type and see if theres a corresponding image
             if(Enum.TryParse(conceptTypeName,out t))
                 return GetImage(ImagesCollection[t],kind);
+
+            if (concept is IMasqueradeAs)
+                return GetImage(((IMasqueradeAs)concept).MasqueradingAs(), kind);
 
             return ImagesCollection[RDMPConcept.NoIconAvailable];
             
@@ -181,11 +192,6 @@ namespace CatalogueManager.Icons.IconProvision
             return false;
         }
 
-        private bool IsLockedLockable(object concept)
-        {
-            var lockable = concept as ILockable;
-            return lockable != null && lockable.LockedBecauseRunning;
-        }
 
         /// <summary>
         /// Returns an image list dictionary with string keys that correspond to the names of all the RDMPConcept Enums.

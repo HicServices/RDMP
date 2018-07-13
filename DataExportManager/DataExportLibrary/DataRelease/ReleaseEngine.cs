@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CatalogueLibrary.Ticketing;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
@@ -54,24 +55,26 @@ namespace DataExportLibrary.DataRelease
         public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
         {
             ConfigurationsToRelease = toRelease;
-            
-            StreamWriter sw = PrepareAuditFile();
 
-            ReleaseGlobalFolder();
-
-            // Audit Global Folder if there are any
-            if (ReleaseAudit.SourceGlobalFolder != null)
+            using (StreamWriter sw = PrepareAuditFile())
             {
-                AuditDirectoryCreation(ReleaseAudit.SourceGlobalFolder.FullName, sw, 0);
+                ReleaseGlobalFolder();
 
-                foreach (FileInfo fileInfo in ReleaseAudit.SourceGlobalFolder.GetFiles())
-                    AuditFileCreation(fileInfo.Name, sw, 1);
+                // Audit Global Folder if there are any
+                if (ReleaseAudit.SourceGlobalFolder != null)
+                {
+                    AuditDirectoryCreation(ReleaseAudit.SourceGlobalFolder.FullName, sw, 0);
+
+                    foreach (FileInfo fileInfo in ReleaseAudit.SourceGlobalFolder.GetFiles())
+                        AuditFileCreation(fileInfo.Name, sw, 1);
+                }
+
+                ReleaseAllExtractionConfigurations(toRelease, sw, environment, isPatch);
+
+                sw.Flush();
+                sw.Close();
             }
-
-            ReleaseAllExtractionConfigurations(toRelease, sw, environment, isPatch);
-
-            sw.Flush();
-            sw.Close();
+            
             ReleaseSuccessful = true;
         }
         
@@ -177,7 +180,7 @@ namespace DataExportLibrary.DataRelease
             sw.WriteLine("ExtractionConfiguration.ID:" + kvp.Key.ID);
             sw.WriteLine("ExtractionConfiguration Identifier:" + extractionIdentifier);
             sw.WriteLine("CumulativeExtractionResult.ID(s):" +
-                         kvp.Value.Select(v => v.ExtractionResults.ID)
+                         kvp.Value.Select(v => v.DatasetExtractionResult.ID)
                              .Distinct()
                              .Aggregate("", (s, n) => s + n + ",")
                              .TrimEnd(','));

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -92,12 +88,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return "tinyint";
         }
 
-        protected virtual string GetFloatingPointDataType(Tuple<int, int> decimalPlacesBeforeAndAfter)
+        protected virtual string GetFloatingPointDataType(DecimalSize decimalSize)
         {
-            if (decimalPlacesBeforeAndAfter == null)
+            if (decimalSize == null || decimalSize.IsEmpty)
                 return "decimal(20,10)";
-            
-            return "decimal(" + (decimalPlacesBeforeAndAfter.Item1 + decimalPlacesBeforeAndAfter.Item2) + "," + decimalPlacesBeforeAndAfter.Item2 + ")";
+
+            return "decimal(" + decimalSize.Precision + "," + decimalSize.Scale + ")";
         }
 
         protected virtual string GetDateDateTimeDataType()
@@ -174,6 +170,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             if (IsSmallInt(sqlType))
                 return typeof (short);
 
+            if (IsLong(sqlType))
+                return typeof (long);
+
             if (IsBit(sqlType))
                 return typeof (bool);
 
@@ -187,6 +186,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 return typeof (Guid);
 
             throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
+        }
+
+        private bool IsLong(string sqlType)
+        {
+            return sqlType.ToLower().Contains(GetBigIntDataType().ToLower());
         }
 
         /// <inheritdoc/>
@@ -229,13 +233,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         {
             var cSharpType = GetCSharpTypeForSQLDBType(sqlType);
 
-            Tuple<int, int> digits = GetDigitsBeforeAndAfterDecimalPointIfDecimal(sqlType);
+            var digits = GetDigitsBeforeAndAfterDecimalPointIfDecimal(sqlType);
 
             int lengthIfString = GetLengthIfString(sqlType);
 
             //lengthIfString should still be populated even for digits etc because it might be that we have to fallback from "1.2" which is decimal(2,1) to varchar(3) if we see "F" appearing
             if (digits != null)
-                lengthIfString = Math.Max(lengthIfString, digits.Item1 + digits.Item2 + 1);
+                lengthIfString = Math.Max(lengthIfString, digits.ToStringLength());
 
             if (cSharpType == typeof(DateTime))
                 lengthIfString = GetStringLengthForDateTime();
@@ -271,7 +275,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             return -1;
         }
 
-        public Tuple<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType)
+        public DecimalSize GetDigitsBeforeAndAfterDecimalPointIfDecimal(string sqlType)
         {
             if (string.IsNullOrWhiteSpace(sqlType))
                 return null;
@@ -283,7 +287,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 int precision = int.Parse(match.Groups[1].Value);
                 int scale = int.Parse(match.Groups[2].Value);
 
-                return new Tuple<int, int>(precision - scale, scale);
+                return new DecimalSize(precision - scale, scale);
 
             }
 
@@ -298,24 +302,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             //this then returns datetime (e.g. mysql)
             return destinationTypeTranslater.GetSQLDBTypeForCSharpType(requested);
         }
-
-        public virtual bool IsIdentity(string sqlType)
-        {
-            if (string.IsNullOrWhiteSpace(sqlType))
-                return false;
-
-            var s = sqlType.ToLower();
-
-            var identityTypes = new []
-            {
-                "autoincrement",
-                "identity",
-                "auto_increment"
-            };
-
-            return identityTypes.Any(s.Contains);
-        }
-
+        
 
         /// <summary>
         /// Return the number of characters required to not truncate/loose any data when altering a column from time (e.g. TIME etc) to varchar(x).  Return

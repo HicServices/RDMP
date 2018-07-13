@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Handles running SQL to generate the appropriate DataTable and setting up the navigation commands for double click;/right click">
+    <Position X="1.273" Y="6.175" Height="0.474" Width="13.189" />
+  </Comment>
+  <Comment CommentText="Logging tabs shared base UI class handles setting up datagrid, adding the freetext search column etc">
+    <Position X="4.689" Y="4.026" Height="0.364" Width="6.136" />
+  </Comment>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingDataSourcesTab" Collapsed="true">
+    <Position X="1.25" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingDataSourcesTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingFatalErrorsTab" Collapsed="true">
+    <Position X="3.5" Y="5.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingFatalErrorsTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingProgressMessagesTab" Collapsed="true">
+    <Position X="8" Y="5.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingProgressMessagesTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingRunsTab" Collapsed="true">
+    <Position X="12.75" Y="5.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAgAAAgAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingRunsTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingTab" Collapsed="true">
+    <Position X="6.75" Y="3.25" Width="1.5" />
+    <InheritanceLine Type="CatalogueManager.LogViewer.Tabs.LoggingTab_Design" FixedToPoint="true">
+      <Path>
+        <Point X="7.375" Y="2.691" />
+        <Point X="7.375" Y="2.95" />
+        <Point X="7.562" Y="2.95" />
+        <Point X="7.562" Y="3.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ABAABQAAACAAABDAASAAQAECAAwCgIQAgAAAAIAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingTableLoadsTab" Collapsed="true">
+    <Position X="5.75" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAgAAAgAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingTableLoadsTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingTasksTab" Collapsed="true">
+    <Position X="10.5" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAgAAAgAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingTasksTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.LogViewerFilter">
+    <Position X="1.25" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAEAAAAQAAAAAAAAAAAAEAAAAAAAAI=</HashCode>
+      <FileName>LogViewer\LogViewerFilter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
+    <Position X="6.5" Y="1" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAACQAAAAAAEAAAghAAAACAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.LogViewer.Tabs.LoggingTab_Design" Collapsed="true">
+    <Position X="6.5" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\Tabs\LoggingTab.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="CatalogueManager.LogViewer.LogViewerNavigationTarget">
+    <Position X="3.25" Y="1.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEEAAAAAAEgAAABAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LogViewer\LogViewerNavigationTarget.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update;
@@ -20,6 +21,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         ITypeTranslater TypeTranslater { get; }
         IAggregateHelper AggregateHelper { get; }
         IUpdateHelper UpdateHelper { get; set; }
+
+        char ParameterSymbol { get; }
 
         string GetRuntimeName(string s);
         
@@ -46,11 +49,33 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
 
         string GetScalarFunctionSql(MandatoryScalarFunctions function);
         string GetSensibleTableNameFromString(string potentiallyDodgyName);
+        
+        /// <summary>
+        /// The SQL that would be valid for a CREATE TABLE statement that would result in a given column becoming auto increment e.g. "IDENTITY(1,1)"
+        /// </summary>
+        /// <returns></returns>
+        string GetAutoIncrementKeywordIfAny();
+
+        /// <summary>
+        /// Get a list of functions to SQL code (including parameter names).  This is used primarily in autocomplete situations where the user wants to
+        /// know the available functions within the targeted dbms.
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<string, string> GetSQLFunctionsDictionary();
     }
 
     public enum MandatoryScalarFunctions
     {
-        GetTodaysDate
+        None = 0,
+
+        /// <summary>
+        /// A scalar function which must return todays datetime.  Must be valid as a column default too
+        /// </summary>
+        GetTodaysDate,
         
+        /// <summary>
+        /// A scalar function which must return a new random GUID.
+        /// </summary>
+        GetGuid
     }
 }

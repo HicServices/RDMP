@@ -37,6 +37,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             this.treeView1 = new BrightIdeasSoftware.TreeListView();
             this.olvDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.treeView1)).BeginInit();
             this.SuspendLayout();
@@ -101,10 +102,21 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             this.olvDescription.FillsFreeSpace = true;
             this.olvDescription.Text = "Description";
             // 
+            // ragSmiley1
+            // 
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Location = new System.Drawing.Point(678, 3);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 173;
+            // 
             // LoadEventsTreeView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.pbLoading);
             this.Controls.Add(this.llLoading);
             this.Controls.Add(this.treeView1);
@@ -124,5 +136,6 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         private TreeListView treeView1;
         private OLVColumn olvDescription;
         private OLVColumn olvDate;
+        private ReusableUIComponents.RAGSmiley ragSmiley1;
     }
 }

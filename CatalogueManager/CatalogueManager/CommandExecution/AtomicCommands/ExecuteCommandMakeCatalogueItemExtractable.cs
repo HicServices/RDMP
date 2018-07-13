@@ -22,6 +22,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("CatalougeItem is already extractable");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Make the column/transform available for extraction to researchers";
+        }
+
         public override void Execute()
         {
             base.Execute();

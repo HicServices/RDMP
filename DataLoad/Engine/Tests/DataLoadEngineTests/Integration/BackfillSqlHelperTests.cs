@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
@@ -8,14 +9,15 @@ using CatalogueLibrary.Triggers;
 using LoadModules.Generic.Mutilators.QueryBuilders;
 using NUnit.Framework;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
 {
     public class BackfillSqlHelperTests : DatabaseTests
     {
-        private TestDatabaseHelper _stagingDatabaseHelper;
-        private TestDatabaseHelper _liveDatabaseHelper;
+        private DiscoveredDatabase _stagingDatabase;
+        private DiscoveredDatabase _liveDatabase;
         private Catalogue _catalogue;
 
         private const string DatabaseName = "BackfillSqlHelperTests";
@@ -35,12 +37,12 @@ namespace DataLoadEngineTests.Integration
                 _catalogue.DeleteInDatabase();
             }
 
-            _stagingDatabaseHelper = new TestDatabaseHelper(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName + "_STAGING"));
-            _liveDatabaseHelper = new TestDatabaseHelper(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName));
+            _stagingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName + "_STAGING");
+            _liveDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName);
             
             // ensure the test staging and live databases are empty
-            _stagingDatabaseHelper.Create();
-            _liveDatabaseHelper.Create();
+            _stagingDatabase.Create(true);
+            _liveDatabase.Create(true);
             
             CleanCatalogueDatabase();
         }
@@ -68,8 +70,8 @@ namespace DataLoadEngineTests.Integration
         [TearDown]
         public void AfterEachTest()
         {
-            _stagingDatabaseHelper.Destroy();
-            _liveDatabaseHelper.Destroy();
+            _stagingDatabase.ForceDrop();
+            _liveDatabase.ForceDrop();
 
             CleanCatalogueDatabase();
         }
@@ -84,11 +86,11 @@ namespace DataLoadEngineTests.Integration
             if (ciTimePeriodicity == null)
                 throw new InvalidOperationException("Could not find TimePeriodicity column");
 
-            var sqlHelper = new BackfillSqlHelper(ciTimePeriodicity, _stagingDatabaseHelper.DiscoveredDatabase, _liveDatabaseHelper.DiscoveredDatabase);
+            var sqlHelper = new BackfillSqlHelper(ciTimePeriodicity, _stagingDatabase, _liveDatabase);
 
-            var tiHeader = CatalogueRepository.GetTableWithNameApproximating("Headers", _liveDatabaseHelper.DiscoveredDatabase.GetRuntimeName());
-            var tiSamples = CatalogueRepository.GetTableWithNameApproximating("Samples", _liveDatabaseHelper.DiscoveredDatabase.GetRuntimeName());
-            var tiResults = CatalogueRepository.GetTableWithNameApproximating("Results", _liveDatabaseHelper.DiscoveredDatabase.GetRuntimeName());
+            var tiHeader = CatalogueRepository.GetTableWithNameApproximating("Headers", _liveDatabase.GetRuntimeName());
+            var tiSamples = CatalogueRepository.GetTableWithNameApproximating("Samples", _liveDatabase.GetRuntimeName());
+            var tiResults = CatalogueRepository.GetTableWithNameApproximating("Results", _liveDatabase.GetRuntimeName());
 
             var joinInfos = CatalogueRepository.JoinInfoFinder.GetAllJoinInfos();
             var joinPath = new List<JoinInfo>
@@ -97,7 +99,7 @@ namespace DataLoadEngineTests.Integration
                 joinInfos.Single(info => info.PrimaryKey.TableInfo_ID == tiSamples.ID)
             };
 
-            var sql = sqlHelper.CreateSqlForJoinToTimePeriodicityTable("CurrentTable", tiResults, "TimePeriodicityTable", _stagingDatabaseHelper.DiscoveredDatabase, joinPath);
+            var sql = sqlHelper.CreateSqlForJoinToTimePeriodicityTable("CurrentTable", tiResults, "TimePeriodicityTable", _stagingDatabase, joinPath);
 
             Assert.AreEqual(@"SELECT CurrentTable.*, TimePeriodicityTable.HeaderDate AS TimePeriodicityField 
 FROM [BackfillSqlHelperTests_STAGING]..[Results] CurrentTable
@@ -156,8 +158,8 @@ LEFT JOIN [BackfillSqlHelperTests_STAGING]..[Headers] TimePeriodicityTable ON Ti
                 liveTableDefinition += ", " + fkConstraintString;
             }
 
-            _stagingDatabaseHelper.CreateTableWithColumnDefinitions(tableName, stagingTableDefinition);
-            _liveDatabaseHelper.CreateTableWithColumnDefinitions(tableName, liveTableDefinition);
+            CreateTableWithColumnDefinitions(_stagingDatabase,tableName, stagingTableDefinition);
+            CreateTableWithColumnDefinitions(_liveDatabase,tableName, liveTableDefinition);
         }
 
         private TableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName, out ColumnInfo[] ciList, bool createCatalogue = false)
@@ -186,6 +188,21 @@ LEFT JOIN [BackfillSqlHelperTests_STAGING]..[Headers] TimePeriodicityTable ON Ti
                 forwardEngineer.ExecuteForwardEngineering(_catalogue);
 
             return ti;
+        }
+
+        public void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions)
+        {
+            using (var conn = db.Server.GetConnection())
+            {
+                conn.Open();
+                CreateTableWithColumnDefinitions(db,tableName, columnDefinitions, conn);
+            }
+        }
+
+        public void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions, DbConnection conn)
+        {
+            var sql = "CREATE TABLE " + tableName + " (" + columnDefinitions + ")";
+            db.Server.GetCommand(sql, conn).ExecuteNonQuery();
         }
     }
 }

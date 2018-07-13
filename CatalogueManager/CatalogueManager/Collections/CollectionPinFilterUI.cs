@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Remoting;
@@ -48,7 +48,6 @@ namespace CatalogueManager.Collections
             typeof(CohortIdentificationConfiguration),
             
             //TableInfoCollectionUI pinnables
-            typeof(AutomationServiceSlot),
             typeof(ExtractableDataSetPackage),
             typeof(RemoteRDMP),
             typeof(ExternalDatabaseServer),

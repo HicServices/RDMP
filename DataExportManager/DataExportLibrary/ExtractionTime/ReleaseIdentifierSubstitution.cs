@@ -47,13 +47,36 @@ namespace DataExportLibrary.ExtractionTime
         {
             if(!extractionIdentifierToSubFor.IsExtractionIdentifier)
                 throw new Exception("Column " + extractionIdentifierToSubFor + " is not marked IsExtractionIdentifier so cannot be substituted for a ReleaseIdentifier");
-
+            
             OriginalDatasetColumn = extractionIdentifierToSubFor;
+            
+            if(OriginalDatasetColumn.ColumnInfo == null)
+                throw new Exception("The column " + OriginalDatasetColumn.GetRuntimeName() + " references a ColumnInfo that has been deleted");
 
             var syntaxHelper = extractableCohort.GetQuerySyntaxHelper();
 
             //the externally referenced Cohort table
             var externalCohortTable = extractableCohort.ExternalCohortTable;
+            
+            var privateIdentifierFieldDiscovered = externalCohortTable.Discover().ExpectTable(externalCohortTable.TableName).DiscoverColumn(externalCohortTable.PrivateIdentifierField);
+
+            string collateStatement = "";
+            
+            //the release identifier join might require collation
+
+            //if the private has a collation
+            if (!string.IsNullOrWhiteSpace(privateIdentifierFieldDiscovered.Collation))
+            {
+                var cohortCollation = privateIdentifierFieldDiscovered.Collation;
+                var otherTableCollation = OriginalDatasetColumn.ColumnInfo.Collation;
+
+                //if the other column has a collation and it is different than this one
+                if (!string.IsNullOrWhiteSpace(otherTableCollation) && !string.Equals(cohortCollation, otherTableCollation))
+                {
+                    collateStatement = " collate " + cohortCollation;
+                }
+            }
+
 
             if (!isPartOfMultiCHISubstitution)
             {
@@ -65,7 +88,7 @@ namespace DataExportLibrary.ExtractionTime
                 SelectSQL = "(SELECT DISTINCT " +
                     extractableCohort.GetReleaseIdentifier() + 
                     " FROM " +
-                    externalCohortTable.TableName + " WHERE " + extractableCohort.WhereSQL() + " AND " + externalCohortTable.PrivateIdentifierField + "=" + OriginalDatasetColumn.SelectSQL + " collate Latin1_General_BIN)";
+                    externalCohortTable.TableName + " WHERE " + extractableCohort.WhereSQL() + " AND " + externalCohortTable.PrivateIdentifierField + "=" + OriginalDatasetColumn.SelectSQL + collateStatement +")";
                 
                 if(!string.IsNullOrWhiteSpace(OriginalDatasetColumn.Alias))
                 {
@@ -87,18 +110,7 @@ namespace DataExportLibrary.ExtractionTime
                     throw new Exception("In cases where you have multiple columns marked IsExtractionIdentifier, they must all have Aliases, the column " + OriginalDatasetColumn.SelectSQL + " does not have one");
             }
 
-            //the release identifier join might require collation
-            string collationStatement = "";
-            
-            if(OriginalDatasetColumn.ColumnInfo == null)
-                throw new Exception("The column " + OriginalDatasetColumn.GetRuntimeName() + " references a ColumnInfo that has been deleted");
-
-            //if we know the original dataset columns datatype
-            if (OriginalDatasetColumn.ColumnInfo.Data_type != null &&
-                OriginalDatasetColumn.ColumnInfo.Data_type.ToLower().Contains("char"))//and it is a character based datatype
-                collationStatement = " collate Latin1_General_BIN";//collate it, bit hacky but still better than before which always collated!
-
-            JoinSQL = OriginalDatasetColumn.SelectSQL + "=" + externalCohortTable.PrivateIdentifierField + collationStatement;
+            JoinSQL = OriginalDatasetColumn.SelectSQL + "=" + externalCohortTable.PrivateIdentifierField + collateStatement;
 
         }
 

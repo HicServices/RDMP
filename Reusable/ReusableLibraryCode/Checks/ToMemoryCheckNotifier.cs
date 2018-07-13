@@ -14,6 +14,8 @@ namespace ReusableLibraryCode.Checks
         private readonly ICheckNotifier _childToPassEventsTo;
         public List<CheckEventArgs> Messages { get; private set; }
 
+        public object lockList = new object();
+
         /// <summary>
         /// Sometimes you want to know what the messages and the worst event encountered were but you still want to pass the messages to a third party e.g.
         /// checksUI, use this constructor to record all messages in memory as they go through but also let the supplied child check notifier actually handle
@@ -33,7 +35,10 @@ namespace ReusableLibraryCode.Checks
 
         public bool OnCheckPerformed(CheckEventArgs args)
         {
-            Messages.Add(args);
+            lock (lockList)
+            {
+                Messages.Add(args);
+            }
 
             if (_childToPassEventsTo != null)
                 return _childToPassEventsTo.OnCheckPerformed(args);
@@ -43,22 +48,13 @@ namespace ReusableLibraryCode.Checks
 
         public CheckResult GetWorst()
         {
-            if (!Messages.Any())
-                return CheckResult.Success;
-
-            return Messages.Max(e => e.Result);
-        }
-
-        public void WriteToConsole()
-        {
-            foreach (var msg in Messages)
+            lock (lockList)
             {
-                Console.WriteLine("(" + msg.Result + ")" + msg.Message);
+                if (!Messages.Any())
+                    return CheckResult.Success;
 
-                if (msg.Ex != null)
-                    Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(msg.Ex));
+                return Messages.Max(e => e.Result);
             }
-
         }
     }
 }

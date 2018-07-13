@@ -8,6 +8,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Refreshing;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary;
@@ -100,7 +101,7 @@ namespace DataExportManager.DataRelease
 
         private void CheckForMixedReleaseTypes(IEnumerable<ReleasePotential> datasetReleasePotentials)
         {
-            if (datasetReleasePotentials.Select(rp => rp.ExtractionResults.DestinationType).Distinct().Count() > 1)
+            if (datasetReleasePotentials.Select(rp => rp.DatasetExtractionResult.DestinationType).Distinct().Count() > 1)
                 throw new Exception(
                     "There is a mix of extraction types (DB and filesystem) in the datasets you are trying to add. This is not allowed.");
         }
@@ -108,7 +109,7 @@ namespace DataExportManager.DataRelease
         private void CheckForCumulativeExtractionResults(ReleasePotential[] datasetReleasePotentials)
         {
             var staleDatasets = datasetReleasePotentials.Where(
-                p => p.ExtractionResults.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
+                p => p.DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
            
             if (staleDatasets.Any())
                 throw new Exception(
@@ -163,7 +164,7 @@ namespace DataExportManager.DataRelease
                 {
                     TreeNode datasetReleaseNode = new TreeNode();
                     datasetReleaseNode.Tag = potential;
-                    datasetReleaseNode.Text = potential.DataSet + " (" + potential.Assesment + ")";
+                    datasetReleaseNode.Text = potential.DataSet + " (" + potential.DatasetExtractionResult + ")";
                     configurationNode.Nodes.Add(datasetReleaseNode);
                 }
             }

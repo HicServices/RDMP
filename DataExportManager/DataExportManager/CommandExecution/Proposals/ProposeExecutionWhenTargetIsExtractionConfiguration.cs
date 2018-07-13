@@ -29,7 +29,7 @@ namespace DataExportManager.CommandExecution.Proposals
         public override void Activate(ExtractionConfiguration target)
         {
             if (!target.IsReleased)
-                ItemActivator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(target);
+                ItemActivator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(target);
         }
 
         public override ICommandExecution ProposeExecution(ICommand cmd, ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)

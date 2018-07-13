@@ -100,9 +100,17 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
 
                 List<CustomLine> sqlLines = new List<CustomLine>();
 
-                //t1.Name = t2.Name, t1.Age=T2.Age etc
-                sqlLines.Add(new CustomLine(string.Join(",", columnsToMigrate.FieldsToUpdate.Where(c=>!c.IsPrimaryKey).Select(c=>string.Format("t1.{0} = t2.{0}",c.GetRuntimeName()))), QueryComponent.SET));
+                var toSet = columnsToMigrate.FieldsToUpdate.Where(c => !c.IsPrimaryKey).Select(c => string.Format("t1.{0} = t2.{0}", c.GetRuntimeName())).ToArray();
 
+                if(!toSet.Any())
+                {
+                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Table " + columnsToMigrate.DestinationTable + " is entirely composed of PrimaryKey columns or hic_ columns so UPDATE will NOT take place"));
+                    return;
+                }
+
+                //t1.Name = t2.Name, t1.Age=T2.Age etc
+                sqlLines.Add(new CustomLine(string.Join(",",toSet), QueryComponent.SET));
+                
                 //also update the hic_dataLoadRunID field
                 sqlLines.Add(new CustomLine(string.Format("t1.{0}={1}", SpecialFieldNames.DataLoadRunID,dataLoadInfoID),QueryComponent.SET));
 
@@ -129,7 +137,7 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                 {
                     updates = updateCmd.ExecuteNonQuery();
                 }
-                catch (SqlException e)
+                catch (Exception e)
                 {
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Did not successfully perform the update queries: " + updateQuery, e));
                     throw new Exception("Did not successfully perform the update queries: " + updateQuery + " - " + e);

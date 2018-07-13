@@ -23,6 +23,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("No default ANOStore has been set");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);

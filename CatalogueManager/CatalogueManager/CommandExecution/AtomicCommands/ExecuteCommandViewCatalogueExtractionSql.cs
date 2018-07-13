@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueManager.ExtractionUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
@@ -19,9 +14,20 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     {
         private Catalogue _catalogue;
 
+        [ImportingConstructor]
+        public ExecuteCommandViewCatalogueExtractionSql(IActivateItems activator,Catalogue catalogue): base(activator)
+        {
+            _catalogue = catalogue;
+        }
+
         public ExecuteCommandViewCatalogueExtractionSql(IActivateItems activator) : base(activator)
         {
             
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "View the query that would be executed during extraction of the dataset with the current extractable columns/transforms";
         }
 
         public Image GetImage(IIconProvider iconProvider)

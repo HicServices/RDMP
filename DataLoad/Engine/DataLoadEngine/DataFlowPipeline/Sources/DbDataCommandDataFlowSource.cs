@@ -55,7 +55,7 @@ namespace DataLoadEngine.DataFlowPipeline.Sources
                 cmd = DatabaseCommandHelper.GetCommand(_sql, _con);
                 cmd.CommandTimeout = _timeout;
                 
-                _reader = cmd.ExecuteReader();
+                _reader = cmd.ExecuteReaderAsync(cancellationToken.AbortToken).Result;
                 _numberOfColumns = _reader.FieldCount;
             }
 

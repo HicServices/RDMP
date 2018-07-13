@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using Oracle.ManagedDataAccess.Client;
@@ -15,21 +16,24 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             return "SELECT * FROM " + table.GetFullyQualifiedName() + " WHERE ROWNUM <= " + topX;
         }
 
-        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName)
+        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database)
         {
             List<DiscoveredColumn> columns = new List<DiscoveredColumn>();
-
+            var tableName = discoveredTable.GetRuntimeName();
             
-
                 DbCommand cmd = DatabaseCommandHelper.GetCommand(@"SELECT *
 FROM   all_tab_cols
-WHERE  table_name = :table_name
+WHERE  table_name = :table_name AND owner =:owner
 ", connection.Connection);
                 cmd.Transaction = connection.Transaction;
 
                 DbParameter p = new OracleParameter("table_name", OracleDbType.Varchar2);
                 p.Value = tableName;
                 cmd.Parameters.Add(p);
+
+                DbParameter p2 = new OracleParameter("owner", OracleDbType.Varchar2);
+                p2.Value = database;
+                cmd.Parameters.Add(p2);
 
                 using (var r = cmd.ExecuteReader())
                 {
@@ -50,7 +54,7 @@ WHERE  table_name = :table_name
                 //get primary key information 
                 cmd = new OracleCommand(@"SELECT cols.table_name, cols.column_name, cols.position, cons.status, cons.owner
 FROM all_constraints cons, all_cons_columns cols
-WHERE cols.table_name = :table_name
+WHERE cols.table_name = :table_name AND cols.owner = :owner
 AND cons.constraint_type = 'P'
 AND cons.constraint_name = cols.constraint_name
 AND cons.owner = cols.owner
@@ -62,6 +66,10 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
                 p.Value = tableName;
                 cmd.Parameters.Add(p);
 
+
+                p2 = new OracleParameter("owner", OracleDbType.Varchar2);
+                p2.Value = database;
+                cmd.Parameters.Add(p2);
 
                 using (var r = cmd.ExecuteReader())
                 {
@@ -146,13 +154,7 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
         {
             throw new NotImplementedException();
         }
-
-        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction,
-            IManagedConnection connection, string database, string tableName)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override DiscoveredParameter[] DiscoverTableValuedFunctionParameters(DbConnection connection,
             DiscoveredTableValuedFunction discoveredTableValuedFunction, DbTransaction transaction)
         {
@@ -162,6 +164,26 @@ ORDER BY cols.table_name, cols.position", (OracleConnection) connection.Connecti
         public override IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection)
         {
             return new OracleBulkCopy(discoveredTable,connection);
+        }
+
+        public override int ExecuteInsertReturningIdentity(DiscoveredTable discoveredTable, DbCommand cmd, IManagedTransaction transaction = null)
+        {
+            var autoIncrement = discoveredTable.DiscoverColumns(transaction).SingleOrDefault(c => c.IsAutoIncrement);
+
+            if (autoIncrement == null)
+                return Convert.ToInt32(cmd.ExecuteScalar());
+
+            var p = DatabaseCommandHelper.GetParameter("identityOut", cmd);
+            p.Direction = ParameterDirection.Output;
+
+            cmd.Parameters.Add(p);
+
+            cmd.CommandText += " RETURNING " + autoIncrement + " INTO :identityOut;";
+
+            cmd.ExecuteNonQuery();
+            
+
+            return Convert.ToInt32(p.Value);
         }
 
         protected override string GetRenameTableSql(DiscoveredTable discoveredTable, string newName)

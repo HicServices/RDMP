@@ -50,6 +50,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         DragDropProvider _dragDropProvider;
         private LoadDiagramServerNode _raw;
 
+        RDMPCollectionCommonFunctionality _commonFunctionality = new RDMPCollectionCommonFunctionality();
+
         public LoadDiagram()
         {
             InitializeComponent();
@@ -298,6 +300,16 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
+
+            if (!_commonFunctionality.IsSetup)
+                _commonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables,activator,null,null,new RDMPCollectionCommonFunctionalitySettings()
+                {
+                    AddFavouriteColumn = false,
+                    AddIDColumn = true,
+                    AllowPinning = false,
+                    SuppressChildrenAdder = true,
+                    SuppressActivate = true
+                });
 
             if (_dragDropProvider == null)
                 _dragDropProvider = new DragDropProvider(new RDMPCommandFactory(), new RDMPCommandExecutionFactory(_activator), tlvLoadedTables);

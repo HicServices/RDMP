@@ -6,13 +6,13 @@
     public enum ExtractCommandState
     {
         NotLaunched,
+        WaitingToExecute,
         WaitingForSQLServer,
         WritingToFile,
-        Crashed,
-        UserAborted,
+        WritingMetadata,
         Completed,
         Warning,
-        WritingMetadata,
-        WaitingToExecute
+        UserAborted,
+        Crashed
     }
 }

@@ -32,7 +32,7 @@ namespace DataExportManager.Menus
             _project = project;
 
             Add(new ExecuteCommandRunChecksInPopupWindow(_activator, new ProjectChecker(RepositoryLocator, _project)));
-            Add(new ExecuteCommandReleaseProject(_activator).SetTarget(project));
+            Add(new ExecuteCommandRelease(_activator).SetTarget(project));
             Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator).SetTarget(_project));
         }
 

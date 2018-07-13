@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,12 +6,11 @@ using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Reports;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.FindAndReplace;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.LocationsMenu;
@@ -24,7 +21,6 @@ using CatalogueManager.PluginManagement;
 using CatalogueManager.PluginManagement.CodeGeneration;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.Automation;
 using CatalogueManager.SimpleDialogs.Governance;
 using CatalogueManager.SimpleDialogs.NavigateTo;
 using CatalogueManager.SimpleDialogs.Reports;
@@ -36,13 +32,13 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using DataQualityEngine;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
+using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
@@ -102,9 +98,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var manageExternalServers = new ManageExternalServers(_activator.CoreIconProvider);
-            manageExternalServers.RepositoryLocator = RepositoryLocator;
-            manageExternalServers.ShowDialog(this);
+            new ExecuteCommandConfigureDefaultServers(_activator).Execute();
         }
 
         private void setTicketingSystemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -128,24 +122,8 @@ namespace ResearchDataManagementPlatform.Menus
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var servers = RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.Logging);
-
-            LogViewerForm form = null;
-
-            if (!servers.Any())
-                MessageBox.Show("None of your ExternalDatabaseServers are Logging servers, maybe you have yet to create a Logging server? go to Locations=>Manage External Servers and configure/create a Logging server", "No Logging Servers Found");
-            else
-                if (servers.Count() == 1)
-                    form = new LogViewerForm(servers.Single());
-                else
-                {
-                    SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(servers, false, false);
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                        form = new LogViewerForm((ExternalDatabaseServer)dialog.Selected);
-                }
-
-            if (form != null)
-                form.Show();
+            var cmd = new ExecuteCommandViewLoggedData(_activator,LogViewerNavigationTarget.DataLoadTasks);
+            cmd.Execute();
         }
         
         private void databaseAccessComplexToolStripMenuItem_Click(object sender, EventArgs e)
@@ -202,7 +180,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             try
             {
-                Process.Start(Environment.CurrentDirectory);
+                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(Environment.CurrentDirectory));
             }
             catch (Exception exception)
             {
@@ -271,7 +249,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             _windowManager = windowManager;
             _activator = _windowManager.ContentManager;
-            _atomicCommandUIFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+            _atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
 
             //top menu strip setup / adjustment
@@ -311,14 +289,15 @@ namespace ResearchDataManagementPlatform.Menus
 
             //cohort creation
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator));
-            AddToNew(new ExecuteCommandImportFileAsNewCohort(_activator));
+            AddToNew(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator));
+            AddToNew(new ExecuteCommandCreateNewCohortFromFile(_activator));
+            AddToNew(new ExecuteCommandCreateNewCohortFromCatalogue(_activator));
             
             //Data export commands
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             AddToNew(new ExecuteCommandCreateNewExtractableDataSetPackage(_activator));
             AddToNew(new ExecuteCommandCreateNewDataExtractionProject(_activator));
-            AddToNew(new ExecuteCommandReleaseProject(_activator));
+            AddToNew(new ExecuteCommandRelease(_activator));
 
         }
 
@@ -365,7 +344,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dialog = new LaunchAnyDialogUI(_windowManager.ContentManager.DocumentationStore.TypeDocumentation,_activator);
+            var dialog = new RunUI(_windowManager.ContentManager);
             dialog.Show();
         }
 

@@ -12,6 +12,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
 
@@ -34,6 +35,8 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Tables;
+
+            ddDatabaseType.DataSource = Enum.GetValues(typeof(DatabaseType));
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ExternalDatabaseServer databaseObject)
@@ -56,6 +59,9 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
                 tbUsername.Text = _server.Username;
                 tbPassword.Text = _server.GetDecryptedPassword();
                 ddSetKnownType.Text = _server.CreatedByAssembly;
+
+                ddDatabaseType.SelectedItem = _server.DatabaseType;
+                pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(_server.DatabaseType);
 
                 pbServer.Image = _activator.CoreIconProvider.GetImage(_server);
             }
@@ -102,7 +108,8 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
         private void tbPassword_TextChanged(object sender, EventArgs e)
         {
-            _server.Password = tbPassword.Text;
+            if(!bloading)
+                _server.Password = tbPassword.Text;
         }
 
         private void ddSetKnownType_SelectedIndexChanged(object sender, EventArgs e)
@@ -142,6 +149,16 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
+        }
+
+        private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_server == null)
+                return;
+
+            var type = (DatabaseType)ddDatabaseType.SelectedValue;
+            _server.DatabaseType = type;
+            pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(type);
         }
     }
 

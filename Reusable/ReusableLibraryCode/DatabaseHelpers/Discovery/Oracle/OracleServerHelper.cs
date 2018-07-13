@@ -106,12 +106,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         {
             throw new NotImplementedException();
         }
-
-        public override bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds, out Exception exception)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)
         {
             return ((OracleConnectionStringBuilder) builder).UserID;

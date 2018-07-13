@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
+using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -59,11 +60,6 @@ namespace CatalogueManager.DataViewing.Collections
             return (IFilter) DatabaseObjects.SingleOrDefault(o => o is IFilter);
         }
 
-        public IHasDependencies GetAutocompleteObject()
-        {
-            return TableInfo;
-        }
-
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
         {
             ribbon.Add(TableInfo);
@@ -110,6 +106,16 @@ namespace CatalogueManager.DataViewing.Collections
             return TableInfo + "(" + ViewType + ")";
         }
 
+        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        {
+            autoComplete.Add(TableInfo);
+        }
+
         public TableInfo TableInfo { get { return DatabaseObjects.OfType<TableInfo>().SingleOrDefault(); } }
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var t = TableInfo;
+            return t != null ? t.GetQuerySyntaxHelper() : null;
+        }
     }
 }

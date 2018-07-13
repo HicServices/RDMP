@@ -73,7 +73,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             bool problemsWithColumnSets = false;
 
             foreach (DataColumn colInSource in chunk.Columns)
-                if (!listColumns.Any(c=>c.GetRuntimeName().Equals(colInSource.ColumnName)))//there is something wicked this way coming, down the pipeline but not in the target table
+                if (!listColumns.Any(c=>c.GetRuntimeName().Equals(colInSource.ColumnName,StringComparison.CurrentCultureIgnoreCase)))//there is something wicked this way coming, down the pipeline but not in the target table
                 {
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                         "Column " + colInSource.ColumnName + " appears in pipeline but not destination table (" + Table + ") which is on (Database=" + _dbInfo.GetRuntimeName() + ",Server=" + _dbInfo.Server + ")"));

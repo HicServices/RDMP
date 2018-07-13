@@ -53,10 +53,7 @@ namespace RDMPObjectVisualisation.DataObjects
         {
             try
             {
-                // combine the arguments together
-                string argument = "/select, \"" + _value.File.FullName + "\"";
-
-                Process.Start("explorer.exe", argument);
+                UsefulStuff.GetInstance().ShowFileInWindowsExplorer(_value.File);
             }
             catch (Exception exception)
             {

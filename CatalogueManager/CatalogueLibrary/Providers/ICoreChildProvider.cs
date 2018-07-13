@@ -36,7 +36,6 @@ namespace CatalogueLibrary.Providers
         PermissionWindow[] AllPermissionWindows { get;}
         IEnumerable<CatalogueItem> AllCatalogueItems { get; }
         AggregateConfiguration[] AllAggregateConfigurations { get;}
-        AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; }
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
         AllObjectSharingNode AllObjectSharingNode { get; }
         ObjectImport[] AllImports { get; }

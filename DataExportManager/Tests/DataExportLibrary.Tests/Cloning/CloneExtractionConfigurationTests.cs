@@ -76,7 +76,7 @@ SELECT DISTINCT
 [{0}ScratchArea]..[TestTable].[Name],
 [{0}ScratchArea]..[TestTable].[DateOfBirth]
 FROM 
-[{0}ScratchArea]..[TestTable] INNER JOIN [{0}CohortDatabase]..[Cohort] ON [{0}ScratchArea]..[TestTable].[PrivateID]=[{0}CohortDatabase]..[Cohort].[PrivateID] collate Latin1_General_BIN
+[{0}ScratchArea]..[TestTable] INNER JOIN [{0}CohortDatabase]..[Cohort] ON [{0}ScratchArea]..[TestTable].[PrivateID]=[{0}CohortDatabase]..[Cohort].[PrivateID]
 
 WHERE
 (

@@ -1,4 +1,6 @@
-﻿namespace DataExportManager.DataRelease
+﻿using BrightIdeasSoftware;
+
+namespace DataExportManager.DataRelease
 {
     partial class DataReleaseUI
     {
@@ -28,76 +30,62 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.scLeft = new System.Windows.Forms.SplitContainer();
-            this.btnRefresh = new System.Windows.Forms.Button();
-            this.lblLoading = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataReleaseUI));
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
+            this.pnlPipeline = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.dataReleaseKeyUI1 = new DataExportManager.DataRelease.DataReleaseKeyUI();
-            this.doReleaseAndAuditUI1 = new DataExportManager.DataRelease.DoReleaseAndAuditUI();
-            ((System.ComponentModel.ISupportInitialize)(this.scLeft)).BeginInit();
-            this.scLeft.Panel1.SuspendLayout();
-            this.scLeft.Panel2.SuspendLayout();
-            this.scLeft.SuspendLayout();
+            this.tlvReleasePotentials = new BrightIdeasSoftware.TreeListView();
+            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvReleaseability = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tlvReleasePotentials)).BeginInit();
             this.SuspendLayout();
             // 
-            // scLeft
+            // panel1
             // 
-            this.scLeft.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.scLeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scLeft.Location = new System.Drawing.Point(0, 0);
-            this.scLeft.Name = "scLeft";
-            this.scLeft.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.panel1.Controls.Add(this.pictureBox1);
+            this.panel1.Controls.Add(this.checkAndExecuteUI1);
+            this.panel1.Controls.Add(this.pnlPipeline);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(697, 646);
+            this.panel1.TabIndex = 19;
             // 
-            // scLeft.Panel1
+            // pictureBox1
             // 
-            this.scLeft.Panel1.Controls.Add(this.flowLayoutPanel1);
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+            this.pictureBox1.Location = new System.Drawing.Point(195, 38);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(265, 101);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 20;
+            this.pictureBox1.TabStop = false;
             // 
-            // scLeft.Panel2
+            // checkAndExecuteUI1
             // 
-            this.scLeft.Panel2.Controls.Add(this.btnRefresh);
-            this.scLeft.Panel2.Controls.Add(this.lblLoading);
-            this.scLeft.Panel2.Controls.Add(this.label2);
-            this.scLeft.Panel2.Controls.Add(this.dataReleaseKeyUI1);
-            this.scLeft.Size = new System.Drawing.Size(579, 653);
-            this.scLeft.SplitterDistance = 481;
-            this.scLeft.TabIndex = 1;
+            this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 32);
+            this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(697, 614);
+            this.checkAndExecuteUI1.TabIndex = 19;
             // 
-            // btnRefresh
+            // pnlPipeline
             // 
-            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnRefresh.Location = new System.Drawing.Point(5, 141);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(53, 23);
-            this.btnRefresh.TabIndex = 3;
-            this.btnRefresh.Text = "Reload";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
-            // lblLoading
-            // 
-            this.lblLoading.AutoSize = true;
-            this.lblLoading.Font = new System.Drawing.Font("Microsoft Sans Serif", 72F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLoading.Location = new System.Drawing.Point(32, 34);
-            this.lblLoading.Name = "lblLoading";
-            this.lblLoading.Size = new System.Drawing.Size(391, 108);
-            this.lblLoading.TabIndex = 2;
-            this.lblLoading.Text = "Loading";
-            this.lblLoading.Visible = false;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(2, 5);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(28, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Key:";
+            this.pnlPipeline.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlPipeline.Location = new System.Drawing.Point(0, 0);
+            this.pnlPipeline.Name = "pnlPipeline";
+            this.pnlPipeline.Size = new System.Drawing.Size(697, 32);
+            this.pnlPipeline.TabIndex = 21;
             // 
             // splitContainer1
             // 
@@ -108,40 +96,48 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.scLeft);
+            this.splitContainer1.Panel1.Controls.Add(this.tlvReleasePotentials);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.doReleaseAndAuditUI1);
-            this.splitContainer1.Size = new System.Drawing.Size(1092, 653);
-            this.splitContainer1.SplitterDistance = 579;
-            this.splitContainer1.TabIndex = 2;
+            this.splitContainer1.Panel2.Controls.Add(this.panel1);
+            this.splitContainer1.Size = new System.Drawing.Size(1025, 650);
+            this.splitContainer1.SplitterDistance = 320;
+            this.splitContainer1.TabIndex = 20;
             // 
-            // flowLayoutPanel1
+            // tlvReleasePotentials
             // 
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(575, 477);
-            this.flowLayoutPanel1.TabIndex = 0;
-            this.flowLayoutPanel1.Resize += new System.EventHandler(this.flowLayoutPanel1_Resize);
+            this.tlvReleasePotentials.AllColumns.Add(this.olvName);
+            this.tlvReleasePotentials.AllColumns.Add(this.olvReleaseability);
+            this.tlvReleasePotentials.CellEditUseWholeCell = false;
+            this.tlvReleasePotentials.CheckBoxes = true;
+            this.tlvReleasePotentials.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvName,
+            this.olvReleaseability});
+            this.tlvReleasePotentials.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tlvReleasePotentials.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlvReleasePotentials.HierarchicalCheckboxes = true;
+            this.tlvReleasePotentials.Location = new System.Drawing.Point(0, 0);
+            this.tlvReleasePotentials.Name = "tlvReleasePotentials";
+            this.tlvReleasePotentials.RowHeight = 19;
+            this.tlvReleasePotentials.ShowGroups = false;
+            this.tlvReleasePotentials.ShowImagesOnSubItems = true;
+            this.tlvReleasePotentials.Size = new System.Drawing.Size(316, 646);
+            this.tlvReleasePotentials.TabIndex = 17;
+            this.tlvReleasePotentials.UseCompatibleStateImageBehavior = false;
+            this.tlvReleasePotentials.View = System.Windows.Forms.View.Details;
+            this.tlvReleasePotentials.VirtualMode = true;
             // 
-            // dataReleaseKeyUI1
+            // olvName
             // 
-            this.dataReleaseKeyUI1.AutoScroll = true;
-            this.dataReleaseKeyUI1.Location = new System.Drawing.Point(3, 21);
-            this.dataReleaseKeyUI1.Name = "dataReleaseKeyUI1";
-            this.dataReleaseKeyUI1.Size = new System.Drawing.Size(432, 144);
-            this.dataReleaseKeyUI1.TabIndex = 0;
+            this.olvName.AspectName = "ToString";
+            this.olvName.FillsFreeSpace = true;
+            this.olvName.Text = "Name";
             // 
-            // doReleaseAndAuditUI1
+            // olvReleaseability
             // 
-            this.doReleaseAndAuditUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.doReleaseAndAuditUI1.Location = new System.Drawing.Point(0, 0);
-            this.doReleaseAndAuditUI1.Name = "doReleaseAndAuditUI1";
-            this.doReleaseAndAuditUI1.Size = new System.Drawing.Size(505, 649);
-            this.doReleaseAndAuditUI1.TabIndex = 0;
+            this.olvReleaseability.Text = "Releaseability";
+            this.olvReleaseability.Width = 150;
             // 
             // DataReleaseUI
             // 
@@ -149,31 +145,29 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "DataReleaseUI";
-            this.Size = new System.Drawing.Size(1092, 653);
-            this.Load += new System.EventHandler(this.DataReleaseManagementUI_Load);
-            this.scLeft.Panel1.ResumeLayout(false);
-            this.scLeft.Panel2.ResumeLayout(false);
-            this.scLeft.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.scLeft)).EndInit();
-            this.scLeft.ResumeLayout(false);
+            this.Size = new System.Drawing.Size(1025, 650);
+            this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tlvReleasePotentials)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer scLeft;
-        private System.Windows.Forms.Button btnRefresh;
-        private System.Windows.Forms.Label lblLoading;
-        private System.Windows.Forms.Label label2;
-        private DataReleaseKeyUI dataReleaseKeyUI1;
+        private System.Windows.Forms.Panel panel1;
+        private CatalogueManager.SimpleControls.CheckAndExecuteUI checkAndExecuteUI1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private DoReleaseAndAuditUI doReleaseAndAuditUI1;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private BrightIdeasSoftware.TreeListView tlvReleasePotentials;
+        private OLVColumn olvName;
+        private OLVColumn olvReleaseability;
+        private System.Windows.Forms.Panel pnlPipeline;
+        private System.Windows.Forms.PictureBox pictureBox1;
+
 
     }
 }

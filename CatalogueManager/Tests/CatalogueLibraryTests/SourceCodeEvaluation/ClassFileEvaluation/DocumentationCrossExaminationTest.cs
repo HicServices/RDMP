@@ -170,6 +170,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "RecordLoadedDate",
             "TblPatIndx",
             "DataLoadRunId",
+
+            "DataStructures", //class diagram
+            "MyYetToExistTable"
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

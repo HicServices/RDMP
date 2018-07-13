@@ -30,7 +30,10 @@ namespace ReusableUIComponents.Progress
         
         private string FormatSender(object sender)
         {
-            return sender != null ? sender.GetType().Name : "Unknown";
+            if (sender == null)
+                return "Unknown";
+            
+            return sender as string ?? sender.GetType().Name;
         }
     }
 }

@@ -19,6 +19,7 @@ using LoadModules.Generic.Attachers;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
@@ -26,20 +27,49 @@ using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 {
-    public class CrossDatabaseDataLoadTests :DatabaseTests
+
+    /*
+     Test currently requires for LowPrivilegeLoaderAccount (e.g. minion)
+     ---------------------------------------------------
+     
+        create database DLE_STAGING
+
+        use DLE_STAGING
+
+        CREATE USER [minion] FOR LOGIN [minion]
+
+        ALTER ROLE [db_datareader] ADD MEMBER [minion]
+        ALTER ROLE [db_ddladmin] ADD MEMBER [minion]
+        ALTER ROLE [db_datawriter] ADD MEMBER [minion]
+    */
+
+    public class CrossDatabaseDataLoadTests : DatabaseTests
     {
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
-        public void Load(DatabaseType databaseType)
+        public enum TestCase
+        {
+            Normal,
+            LowPrivilegeLoaderAccount,
+            ForeignKeyOrphans,
+            DodgyCollation,
+            AllPrimaryKeys
+        }
+
+        [TestCase(DatabaseType.Oracle,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.AllPrimaryKeys)]
+        [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.DodgyCollation)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.AllPrimaryKeys)]
+        public void Load(DatabaseType databaseType, TestCase testCase)
         {
             var defaults = new ServerDefaults(CatalogueRepository);
-            defaults.ClearDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer);
-
             var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             
-            var db = GetCleanedServer(databaseType, "CrossDatabaseLoadTest");
+            var db = GetCleanedServer(databaseType);
 
             var raw = db.Server.ExpectDatabase(db.GetRuntimeName() + "_RAW");
             if(raw.Exists())
@@ -51,26 +81,40 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             dt.Columns.Add("FavouriteColour");
             dt.Rows.Add("Bob", "2001-01-01","Pink");
             dt.Rows.Add("Frank", "2001-01-01","Orange");
-            dt.Rows.Add("Frank", "2001-01-01","Orange");
-            
-            var tbl = db.CreateTable("MyTable",dt,new []
+
+            var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 20), false){IsPrimaryKey = true};
+
+            if (testCase == TestCase.DodgyCollation)
+                if(databaseType == DatabaseType.MicrosoftSQLServer)
+                    nameCol.Collation = "Latin1_General_CS_AS_KS_WS";
+                else if (databaseType == DatabaseType.MYSQLServer)
+                    nameCol.Collation = "latin1_german1_ci";
+
+
+            DiscoveredTable tbl;
+
+            if (testCase == TestCase.AllPrimaryKeys)
             {
-                new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),20),false),
-                new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false)
-            });
-            Assert.AreEqual(3,tbl.GetRowCount());
-            
-            tbl.MakeDistinct();
+                dt.PrimaryKey = dt.Columns.Cast<DataColumn>().ToArray();
+                tbl = db.CreateTable("MyTable",dt,new []{nameCol}); //upload the column as is 
+                Assert.IsTrue(tbl.DiscoverColumns().All(c => c.IsPrimaryKey));
+            }
+            else
+            {
+                tbl = db.CreateTable("MyTable", dt, new[]
+                {
+                    nameCol,
+                    new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}
+                });
+            }
 
             Assert.AreEqual(2, tbl.GetRowCount());
-
-            tbl.CreatePrimaryKey(tbl.DiscoverColumn("Name"), tbl.DiscoverColumn("DateOfBirth"));
-
+            
             //define a new load configuration
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
 
             TableInfo ti = Import(tbl, lmd,logManager);
-
+            
             var projectDirectory = SetupLoadDirectory(lmd);
 
             CreateCSVProcessTask(lmd,ti,"*.csv");
@@ -83,10 +127,18 @@ Frank,2001-01-01,Neon
 MrMurder,2001-01-01,Yella");
 
             
+            //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
+
             //clean up RAW / STAGING etc and generally accept proposed cleanup operations
             var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(),CatalogueRepository.MEF);
             checker.Check(new AcceptAllCheckNotifier());
-            
+
+            //create a reader
+            if (testCase == TestCase.LowPrivilegeLoaderAccount)
+            {
+                SetupLowPrivilegeUserRightsFor(ti, TestLowPrivilegePermissions.Reader|TestLowPrivilegePermissions.Writer);
+                SetupLowPrivilegeUserRightsFor(db.Server.ExpectDatabase("DLE_STAGING"),TestLowPrivilegePermissions.All);
+            }
             var loadFactory = new HICDataLoadFactory(
                 lmd,
                 new HICDatabaseConfiguration(lmd),
@@ -94,6 +146,7 @@ MrMurder,2001-01-01,Yella");
                 CatalogueRepository,
                 logManager
                 );
+
             try
             {
                 var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
@@ -103,6 +156,12 @@ MrMurder,2001-01-01,Yella");
                     new GracefulCancellationToken());
 
                 Assert.AreEqual(ExitCodeType.Success,exitCode);
+
+                if(testCase == TestCase.AllPrimaryKeys)
+                {
+                    Assert.AreEqual(4, tbl.GetRowCount()); //Bob, Frank, Frank (with also pk Neon) & MrMurder
+                    Assert.Pass();
+                }
 
                 //frank should be updated to like Neon instead of Orange
                 Assert.AreEqual(3,tbl.GetRowCount());
@@ -129,6 +188,8 @@ MrMurder,2001-01-01,Yella");
             }
             finally
             {
+                Directory.Delete(lmd.LocationOfFlatFiles, true);
+
                 foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                     c.DeleteInDatabase();
 
@@ -146,12 +207,10 @@ MrMurder,2001-01-01,Yella");
         {
             //setup the data tables
             var defaults = new ServerDefaults(CatalogueRepository);
-            defaults.ClearDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer);
-
             var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
 
-            var db = GetCleanedServer(databaseType, "CrossDatabaseLoadTest");
+            var db = GetCleanedServer(databaseType);
 
             var dtParent = new DataTable();
             dtParent.Columns.Add("ID");
@@ -216,7 +275,7 @@ MrMurder,2001-01-01,Yella");
                 Path.Combine(projectDirectory.ForLoading.FullName, "child.csv"),
 @"Parent_ID,ChildNumber,Name,DateOfBirth,Age,Height
 1,1,UpdC1,2001-01-01,20,3.5
-2,1,NewC1,200-01-01,19,null");
+2,1,NewC1,2000-01-01,19,null");
             
             
             //clean up RAW / STAGING etc and generally accept proposed cleanup operations
@@ -265,6 +324,8 @@ MrMurder,2001-01-01,Yella");
             }
             finally
             {
+                Directory.Delete(lmd.LocationOfFlatFiles,true);
+
                 foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                     c.DeleteInDatabase();
 

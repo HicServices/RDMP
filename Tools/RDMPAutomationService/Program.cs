@@ -1,57 +1,71 @@
 ﻿using System;
-using System.Configuration.Install;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection;
-using System.ServiceProcess;
-using RDMPStartup;
+using CatalogueLibrary.DataFlowPipeline;
+using CommandLine;
+using HIC.Logging.Listeners.NLogListeners;
+using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
+using RDMPAutomationService.Runners;
+using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
+using LogLevel = NLog.LogLevel;
 
 namespace RDMPAutomationService
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
-            if (Environment.UserInteractive)
+           try
             {
-                if (args.Length > 0)
-                {
-                    switch (args[0])
-                    {
-                        case "-install":
-                            {
-                                if (ServiceController.GetServices().Any(s => s.ServiceName == "RDMPAutomationService"))
-                                {
-                                    ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
-                                }
-                                ManagedInstallerClass.InstallHelper(new string[] { Assembly.GetExecutingAssembly().Location });
-                                break;
-                            }
-                        case "-uninstall":
-                            {
-                                ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
-                                break;
-                            }
-                        default:
-                        {
-                            Console.WriteLine("Use -install to install or -uninstall to uninstall" +
-                                              "\r\n" +
-                                              "No command line options will run in console.");
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    var autoRDMP = new AutoRDMP();
-                    autoRDMP.Start();
-                }
+               var returnCode = 
+                    UsefulStuff.GetParser().ParseArguments<DleOptions, DqeOptions, CacheOptions,ListOptions,ExtractionOptions,ReleaseOptions>(args)
+                        .MapResult(
+                            //Add new verbs as options here and invoke relevant runner
+                            (DleOptions opts) => Run(opts),
+                            (DqeOptions opts)=> Run(opts),
+                            (CacheOptions opts)=>Run(opts),
+                            (ListOptions opts)=>Run(opts),
+                            (ExtractionOptions opts)=>Run(opts),
+                            (ReleaseOptions opts)=>Run(opts),
+                            errs => 1);
+
+               NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
+                return returnCode;
             }
-            else
+            catch (Exception e)
             {
-                var servicesToRun = new ServiceBase[] { new RDMPAutomationService() };
-                ServiceBase.Run(servicesToRun);
+                NLog.LogManager.GetCurrentClassLogger().Info(e,"Fatal error occurred so returning -1");
+                return -1;
             }
+        }
+
+        private static int Run(RDMPCommandLineOptions opts)
+        {
+            var factory = new RunnerFactory();
+
+            opts.LoadFromAppConfig();
+            opts.DoStartup();
+
+            var runner = factory.CreateRunner(opts);
+
+            var listener = new NLogIDataLoadEventListener(false);
+            var checker = new NLogICheckNotifier(true, false);
+
+            int runExitCode = runner.Run(opts.GetRepositoryLocator(), listener, checker, new GracefulCancellationToken());
+
+            if (opts.Command == CommandLineActivity.check)
+                checker.OnCheckPerformed(checker.Worst <= LogLevel.Warn
+                    ? new CheckEventArgs("Checks Passed", CheckResult.Success)
+                    : new CheckEventArgs("Checks Failed", CheckResult.Fail));
+
+            if (runExitCode != 0)
+                return runExitCode;
+
+            //or if either listener reports error
+            if (listener.Worst >= LogLevel.Error || checker.Worst >= LogLevel.Error)
+                return -1;
+
+            return 0;
         }
     }
 }

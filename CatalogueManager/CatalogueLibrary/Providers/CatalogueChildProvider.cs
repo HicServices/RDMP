@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
@@ -44,7 +44,6 @@ namespace CatalogueLibrary.Providers
 
         public LoadProgress[] AllLoadProgresses { get; set; }
         public CacheProgress[] AllCacheProgresses { get; set; }
-        public LoadPeriodically[] AllLoadPeriodicallies { get; set; }
 
         public PermissionWindow[] AllPermissionWindows { get; set; }
 
@@ -67,9 +66,6 @@ namespace CatalogueLibrary.Providers
         private Dictionary<int,ColumnInfo> _allColumnInfos;
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
         
-        public AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; private set; }
-        public AutomationServiceSlot[] AllAutomationServiceSlots { get; set; }
-
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
         public RemoteRDMP[] AllRemoteRDMPs { get; set; }
 
@@ -141,15 +137,11 @@ namespace CatalogueLibrary.Providers
             AllProcessTasks = repository.GetAllObjects<ProcessTask>();
             AllLoadProgresses = repository.GetAllObjects<LoadProgress>();
             AllCacheProgresses = repository.GetAllObjects<CacheProgress>();
-            AllLoadPeriodicallies = repository.GetAllObjects<LoadPeriodically>();
-
             
             AllPermissionWindows = repository.GetAllObjects<PermissionWindow>();
             AllPermissionWindowsNode = new AllPermissionWindowsNode();
             AddChildren(AllPermissionWindowsNode);
 
-
-            AllAutomationServiceSlots = repository.GetAllObjects<AutomationServiceSlot>();
             AllRemoteRDMPs = repository.GetAllObjects<RemoteRDMP>();
 
             AllExternalServers = repository.GetAllObjects<ExternalDatabaseServer>();
@@ -213,10 +205,6 @@ namespace CatalogueLibrary.Providers
 
             AllExternalServersNode = new AllExternalServersNode();
             AddChildren(AllExternalServersNode);
-
-
-            AllAutomationServerSlotsNode = new AllAutomationServerSlotsNode();
-            AddChildren(AllAutomationServerSlotsNode);
 
             AllRDMPRemotesNode = new AllRDMPRemotesNode();
             AddChildren(AllRDMPRemotesNode);
@@ -293,11 +281,6 @@ namespace CatalogueLibrary.Providers
         private void AddChildren(AllExternalServersNode allExternalServersNode)
         {
             AddToDictionaries(new HashSet<object>(AllExternalServers), new DescendancyList(allExternalServersNode));
-        }
-
-        private void AddChildren(AllAutomationServerSlotsNode allAutomationServerSlotsNode)
-        {
-            AddToDictionaries(new HashSet<object>(AllAutomationServiceSlots), new DescendancyList(allAutomationServerSlotsNode));
         }
 
         private void AddChildren(AllRDMPRemotesNode allRDMPRemotesNode)
@@ -431,10 +414,7 @@ namespace CatalogueLibrary.Providers
             HashSet<object> childObjects = new HashSet<object>();
 
             var lmd = allSchedulesNode.LoadMetadata;
-
-            foreach (var p in AllLoadPeriodicallies.Where(p => p.LoadMetadata_ID == lmd.ID))
-                childObjects.Add(p);
-
+            
             foreach (var lp in AllLoadProgresses.Where(p => p.LoadMetadata_ID == lmd.ID))
             {
                 AddChildren(lp,descendancy.Add(lp));

@@ -86,6 +86,9 @@ namespace CatalogueLibrary.DataHelper
                             discoveredColumn.DataType.SQLType, parent);
 
             toAdd.Format = discoveredColumn.Format;
+            toAdd.Collation = discoveredColumn.Collation;
+            toAdd.IsPrimaryKey = discoveredColumn.IsPrimaryKey;
+            toAdd.IsAutoIncrement = discoveredColumn.IsAutoIncrement;
             toAdd.SaveToDatabase();
 
             return toAdd;

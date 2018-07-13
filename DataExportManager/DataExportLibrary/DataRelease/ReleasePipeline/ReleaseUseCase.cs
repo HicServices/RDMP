@@ -7,6 +7,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode.Checks;
 
@@ -14,13 +15,13 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
     public class ReleaseUseCase : PipelineUseCase
     {
-        private readonly Project _project;
+        private readonly IProject _project;
         private readonly ReleaseData _releaseData;
         private readonly DataFlowPipelineContext<ReleaseAudit> _context;
         private readonly object[] _initObjects;
         private CatalogueRepository _catalogueRepository;
 
-        public ReleaseUseCase(Project project, ReleaseData releaseData)
+        public ReleaseUseCase(IProject project, ReleaseData releaseData)
         {
             ExplicitDestination = null;
 
@@ -41,16 +42,23 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 if (releaseTypes.Count() != 1)
                     throw new Exception("How did you manage to have multiple (or zero) types in the extraction?");
 
-                var releasePotential = releasePotentials.First();
+                var releasePotentialWithKnownDestination = releasePotentials.FirstOrDefault(rp => rp.DatasetExtractionResult!= null);
 
-                var destinationType = _catalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(releasePotential.ExtractionResults.DestinationType, typeof(IExecuteDatasetExtractionDestination));
-                ObjectConstructor constructor = new ObjectConstructor();
+                if(releasePotentialWithKnownDestination == null)
+                    ExplicitSource = new NullReleaseSource<ReleaseAudit>();
+                else
+                {
+                    var destinationType = _catalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(
+                    releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType, typeof(IExecuteDatasetExtractionDestination));
+                    ObjectConstructor constructor = new ObjectConstructor();
 
-                var destinationUsedAtExtraction = (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, _catalogueRepository);
+                    var destinationUsedAtExtraction = (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, _catalogueRepository);
 
-                FixedReleaseSource<ReleaseAudit> fixedReleaseSource = destinationUsedAtExtraction.GetReleaseSource(_catalogueRepository);
+                    FixedReleaseSource<ReleaseAudit> fixedReleaseSource = destinationUsedAtExtraction.GetReleaseSource(_catalogueRepository);
 
-                ExplicitSource = fixedReleaseSource;// destinationUsedAtExtraction.GetReleaseSource(); // new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));    
+                    ExplicitSource = fixedReleaseSource;// destinationUsedAtExtraction.GetReleaseSource(); // new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));    
+                }
+                
             }
             
             var contextFactory = new DataFlowPipelineContextFactory<ReleaseAudit>();
@@ -80,7 +88,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             var staleDatasets = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).Where(
-                   p => p.ExtractionResults.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
+                   p => p.DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
 
             if (staleDatasets.Any())
                 throw new Exception(

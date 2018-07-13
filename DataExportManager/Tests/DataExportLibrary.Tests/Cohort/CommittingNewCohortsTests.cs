@@ -74,39 +74,6 @@ namespace DataExportLibrary.Tests.Cohort
         }
 
         [Test]
-        public void BasicCohortDestination_NullReleaseIdentifiersTest()
-        {
-            var dest = new BasicCohortDestination();
-
-            var dt = new DataTable();
-            dt.TableName = "beforeName";
-            dt.Columns.Add("priv");
-            dt.Columns.Add("release");
-
-            dt.Rows.Add("123", 23);
-
-            var result1 = dest.GetDistinctNotNullTable(dt);
-            Assert.AreEqual(dt.TableName,result1.TableName);
-            Assert.AreEqual(1,result1.Rows.Count);
-
-            dt.Rows.Add("123", 23);
-            dt.Rows.Add("123", 23);
-
-            Assert.AreEqual(1,dest.GetDistinctNotNullTable(dt).Rows.Count);
-
-
-            dt.Rows.Add("123", null);
-            var ex = Assert.Throws<Exception>(()=>dest.GetDistinctNotNullTable(dt));
-            Assert.AreEqual("Cohort DataTable contained null row:123,<null>",ex.Message);
-
-            dt.Rows.Clear();
-            dt.Rows.Add("123", 23);
-            dt.Rows.Add(null, DBNull.Value); //row is fully null so gets ignored
-
-            Assert.AreEqual(1, dest.GetDistinctNotNullTable(dt).Rows.Count);
-        }
-
-        [Test]
         public void CommittingNewCohortFile_CallPipeline()
         {
             var listener = new ThrowImmediatelyDataLoadEventListener();

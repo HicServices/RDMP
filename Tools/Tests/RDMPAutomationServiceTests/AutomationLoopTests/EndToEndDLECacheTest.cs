@@ -1,30 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DataProvider;
 using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngineTests.Integration;
 using DataLoadEngineTests.Integration.Cache;
 using DataLoadEngineTests.Integration.PipelineTests;
-using Diagnostics;
 using NUnit.Framework;
-using RDMPAutomationService.Logic.Cache;
-using RDMPAutomationService.Logic.DLE;
-using RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
+using Tests.Common;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
-    public class EndToEndDLECacheTest:AutomationTests
+    public class EndToEndDLECacheTest:DatabaseTests
     {
         [Test]
         public void RunEndToEndDLECacheTest()
@@ -46,7 +36,6 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             LoadProgress lp = new LoadProgress(CatalogueRepository,lmd);
             lp.DataLoadProgress = new DateTime(2001,1,1);
             lp.DefaultNumberOfDaysToLoadEachTime = 10;
-            lp.AllowAutomation = true;
             lp.SaveToDatabase();
 
             var cp = new CacheProgress(CatalogueRepository, lp);
@@ -68,9 +57,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             patternArgument.SetValue("*.csv");
             patternArgument.SaveToDatabase();
 
-            //The run finder should be suggesting this run - See DLECacheRunFinderTest.cs
-            Assert.AreEqual(lp, new DLERunFinder(CatalogueRepository, new ToMemoryDataLoadEventListener(false)).SuggestLoadBecauseCacheAvailable());
-
+            
             var hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
 
             //take the forLoading file

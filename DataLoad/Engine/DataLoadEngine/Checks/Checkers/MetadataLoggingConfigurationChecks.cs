@@ -11,10 +11,10 @@ namespace DataLoadEngine.Checks.Checkers
 {
     class MetadataLoggingConfigurationChecks : ICheckable
     {
-        private readonly LoadMetadata _loadMetadata;
+        private readonly ILoadMetadata _loadMetadata;
 
 
-        public MetadataLoggingConfigurationChecks(LoadMetadata loadMetadata)
+        public MetadataLoggingConfigurationChecks(ILoadMetadata loadMetadata)
         {
             _loadMetadata = loadMetadata;
         }
@@ -85,7 +85,11 @@ namespace DataLoadEngine.Checks.Checkers
                     if (dataTasks.Contains(distinctLoggingTask))
                         notifier.OnCheckPerformed(new CheckEventArgs("Found Logging Task " + distinctLoggingTask + " in Logging database",CheckResult.Success, null));
                     else
-                        notifier.OnCheckPerformed(new CheckEventArgs("Could not find Logging Task " + distinctLoggingTask + " in Logging database, you must enter the CatalogueManager and choose a new Logging Task by right clicking the Catalogue and selecting 'Configure Logging'", CheckResult.Fail, null));
+                    {
+                        var fix = notifier.OnCheckPerformed(new CheckEventArgs("Could not find Logging Task " + distinctLoggingTask + " in Logging database", CheckResult.Fail, null, "Create Logging Task '" + distinctLoggingTask +"'"));
+                        if(fix)
+                            lm.CreateNewLoggingTaskIfNotExists(distinctLoggingTask);
+                    }
                 }
 
             }

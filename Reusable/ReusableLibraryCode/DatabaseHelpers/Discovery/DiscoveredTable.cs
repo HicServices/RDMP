@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -58,7 +60,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public virtual DiscoveredColumn[] DiscoverColumns(IManagedTransaction managedTransaction=null)
         {
             using (var connection = Database.Server.GetManagedConnection(managedTransaction))
-                return Helper.DiscoverColumns(this, connection, Database.GetRuntimeName(), GetRuntimeName());
+                return Helper.DiscoverColumns(this, connection, Database.GetRuntimeName());
         }
 
         public override string ToString()
@@ -77,7 +79,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             try
             {
-                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName)));
+                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName),StringComparison.CurrentCultureIgnoreCase));
             }
             catch (Exception e)
             {
@@ -100,10 +102,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             if (enforceTypesAndNullness)
                 foreach (DiscoveredColumn c in DiscoverColumns(transaction))
                 {
-                    var cSharpDataType = _querySyntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(c.DataType.SQLType);
-
                     var name = c.GetRuntimeName();
-                    dt.Columns[name].DataType = cSharpDataType;
                     dt.Columns[name].AllowDBNull = c.AllowNulls;
                 }
 
@@ -175,9 +174,20 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             Helper.MakeDistinct(this);
         }
 
-        public string ScriptTableCreation(bool dropPrimaryKeys,bool dropNullability, bool convertIdentityToInt)
+
+        /// <summary>
+        /// Scripts the table columns, optionally adjusting for nullability / identity etc.  Optionally translates the SQL to run and create
+        /// a table in a different database / database language / table name
+        /// </summary>
+        /// <param name="dropPrimaryKeys">True if the resulting script should exclude any primary keys</param>
+        /// <param name="dropNullability">True if the resulting script should always allow nulls into columns</param>
+        /// <param name="convertIdentityToInt">True if the resulting script should replace identity columns with int in the generated SQL</param>
+        /// <param name="toCreateTable">Optional, If provided the SQL generated will be adjusted to create the alternate table instead (which could include going cross server type e.g. MySql to Sql Server)
+        /// <para>When using this parameter the table must not exist yet, use destinationDiscoveredDatabase.ExpectTable("MyYetToExistTable")</para></param>
+        /// <returns></returns>
+        public string ScriptTableCreation(bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt, DiscoveredTable toCreateTable = null)
         {
-            return Helper.ScriptTableCreation(this, dropPrimaryKeys, dropNullability, convertIdentityToInt);
+            return Helper.ScriptTableCreation(this, dropPrimaryKeys, dropNullability, convertIdentityToInt, toCreateTable);
         }
 
         public void Rename(string newName)
@@ -200,6 +210,67 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             {
                 Helper.CreatePrimaryKey(this,discoverColumns, connection);
             }
+        }
+
+
+        /// <summary>
+        /// Inserts the values specified into the database table and returns the last autonum identity generated (or 0 if none present)
+        /// </summary>
+        /// <param name="toInsert"></param>
+        /// <returns></returns>
+        public int Insert(Dictionary<DiscoveredColumn,object> toInsert, IManagedTransaction transaction = null)
+        {
+            var syntaxHelper = GetQuerySyntaxHelper();
+
+            using (IManagedConnection connection = Database.Server.GetManagedConnection(transaction))
+            {
+                string sql = 
+                    string.Format("INSERT INTO {0}({1}) VALUES ({2})",
+                    GetFullyQualifiedName(),
+                    string.Join(",",toInsert.Keys.Select(c=>c.GetRuntimeName())),
+                    string.Join(",",toInsert.Keys.Select(c=>syntaxHelper.ParameterSymbol + c.GetRuntimeName()))
+                    );
+
+                var cmd = DatabaseCommandHelper.GetCommand(sql, connection.Connection, connection.Transaction);
+
+                foreach (KeyValuePair<DiscoveredColumn, object> kvp in toInsert)
+                {
+                    var p = DatabaseCommandHelper.GetParameter(kvp.Key.GetRuntimeName(),cmd);
+
+                    p.DbType = syntaxHelper.TypeTranslater.GetDbTypeForSQLDBType(kvp.Key.DataType.SQLType);
+                    p.Value = kvp.Value;
+
+                    cmd.Parameters.Add(p);
+                }
+
+                int result = Helper.ExecuteInsertReturningIdentity(this, cmd, connection.ManagedTransaction);
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Overload which will discover the columns by name for you.
+        /// </summary>
+        /// <param name="toInsert"></param>
+        /// <param name="connection"></param>
+        /// <returns></returns>
+        public int Insert(Dictionary<string, object> toInsert, IManagedTransaction transaction = null)
+        {
+            var cols = DiscoverColumns(transaction);
+
+            var foundColumns = new Dictionary<DiscoveredColumn, object>();
+
+            foreach (var k in toInsert.Keys)
+            {
+                var match = cols.SingleOrDefault(c => c.GetRuntimeName().Equals(k, StringComparison.CurrentCultureIgnoreCase));
+                if(match == null)
+                    throw new Exception("Could not find column called " + k);
+
+                foundColumns.Add(match,toInsert[k]);
+            }
+
+            return Insert(foundColumns, transaction);
         }
     }
 

@@ -223,6 +223,17 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dashboard">
+      <HintPath>..\..\DataLoad\Applications\Dashboard\obj\Debug\Dashboard.dll</HintPath>
+    </Reference>
+    <Reference Include="DataQualityEngine, Version=2.9.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DataQualityEngine\DataQualityEngine\bin\Debug\DataQualityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="DataQualityEngine.Database, Version=2.9.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DataQualityEngine\DataQualityEngine.Database\bin\Debug\DataQualityEngine.Database.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -285,12 +296,6 @@
     <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.Designer.cs">
       <DependentUpon>Screen2.cs</DependentUpon>
     </Compile>
-    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen3.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen3.Designer.cs">
-      <DependentUpon>Screen3.cs</DependentUpon>
-    </Compile>
     <Compile Include="CohortUI\ExtractableCohortCollection.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -323,20 +328,20 @@
     </Compile>
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\CohortCreationCommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortFromCatalogue.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportFileAsNewCohort.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortFromFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneCohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractableDataSetPackage.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateReleaseDocument.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReleaseProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRelease.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetProjectExtractionDirectory.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowDetailedSummaryOfAllCohorts.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowSummaryOfCohorts.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSelectedDataSetsExtractionSql.cs" />
     <Compile Include="CommandExecution\DataExportPluginUserInterface.cs" />
@@ -352,23 +357,11 @@
     <Compile Include="Icons\IconProvision\DataExportIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractableDataSetStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractionConfigurationStateBasedIconProvider.cs" />
-    <Compile Include="DataRelease\CleanupConfirmationDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DataRelease\CleanupConfirmationDialog.Designer.cs">
-      <DependentUpon>CleanupConfirmationDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="DataRelease\ConfigurationReleasePotentialUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DataRelease\ConfigurationReleasePotentialUI.Designer.cs">
       <DependentUpon>ConfigurationReleasePotentialUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DataRelease\DataReleaseKeyUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DataRelease\DataReleaseKeyUI.Designer.cs">
-      <DependentUpon>DataReleaseKeyUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataRelease\DataReleaseUI.cs">
       <SubType>UserControl</SubType>
@@ -384,8 +377,8 @@
     </Compile>
     <Compile Include="ChangesSavedHandler.cs" />
     <Compile Include="Menus\AllCataloguesUsedByLoadMetadataNodeMenu.cs" />
-    <Compile Include="Menus\CohortSourceUsedByProjectNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortDatabaseUsingWizard.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneExtractionConfiguration.cs" />
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
@@ -420,12 +413,6 @@
     </Compile>
     <Compile Include="ProjectUI\DataUsers\DataUserManagement.Designer.cs">
       <DependentUpon>DataUserManagement.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProjectUI\ExecuteDatasetExtractionHostUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProjectUI\ExecuteDatasetExtractionHostUI.Designer.cs">
-      <DependentUpon>ExecuteDatasetExtractionHostUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ProjectUI\ExecuteExtractionUI.cs">
       <SubType>UserControl</SubType>
@@ -503,9 +490,6 @@
     <EmbeddedResource Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.resx">
       <DependentUpon>Screen2.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CohortUI\CohortSourceManagement\WizardScreens\Screen3.resx">
-      <DependentUpon>Screen3.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="CohortUI\ExtractableCohortCollection.resx">
       <DependentUpon>ExtractableCohortCollection.cs</DependentUpon>
     </EmbeddedResource>
@@ -522,16 +506,8 @@
     <EmbeddedResource Include="Collections\SavedCohortsCollectionUI.resx">
       <DependentUpon>SavedCohortsCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataRelease\CleanupConfirmationDialog.resx">
-      <DependentUpon>CleanupConfirmationDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="DataRelease\ConfigurationReleasePotentialUI.resx">
       <DependentUpon>ConfigurationReleasePotentialUI.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DataRelease\DataReleaseKeyUI.resx">
-      <DependentUpon>DataReleaseKeyUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DataRelease\DataReleaseUI.resx">
@@ -551,10 +527,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectUI\DataUsers\DataUserManagement.resx">
       <DependentUpon>DataUserManagement.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProjectUI\ExecuteDatasetExtractionHostUI.resx">
-      <DependentUpon>ExecuteDatasetExtractionHostUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectUI\ExecuteExtractionUI.resx">
@@ -687,6 +659,10 @@
     <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
       <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
       <Name>ReusableUIComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
+      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
+      <Name>RDMPAutomationService</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>

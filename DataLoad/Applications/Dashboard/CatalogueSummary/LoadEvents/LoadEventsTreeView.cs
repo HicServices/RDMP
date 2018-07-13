@@ -240,19 +240,24 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         void _populateLoadHistory_DoWork(object sender, DoWorkEventArgs e)
         {
             ArchivalDataLoadInfo[] results;
-
             try
             {
-                _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabaseSettings());
-                results = _logManager.GetArchivalLoadInfoFor(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
+                try
+                {
+                    _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabaseSettings());
+                    results = _logManager.GetArchivalLoadInfoFor(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
+                }
+                catch (OperationCanceledException)//user cancels
+                {
+                    results = new ArchivalDataLoadInfo[0];
+                }
+
+                _populateLoadHistoryResults = results;
             }
-            catch (OperationCanceledException)//user cancels
+            catch (Exception exception)
             {
-                results = new ArchivalDataLoadInfo[0];
+                ragSmiley1.Fatal(exception);
             }
-
-            _populateLoadHistoryResults = results;
-
         }
 
         private void PopulateLoadHistory()
@@ -379,6 +384,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
+            ragSmiley1.Reset();
+
             LoadMetadata = databaseObject;
         }
     }

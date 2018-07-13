@@ -42,10 +42,12 @@ using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
 using Dashboard.Automation;
+using Dashboard.CommandExecution.AtomicCommands;
 using DataExportLibrary.Providers;
 using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using RDMPAutomationService.Runners;
 using RDMPObjectVisualisation.Copying;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
@@ -98,7 +100,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _toolboxWindowManager = toolboxWindowManager;
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
             RepositoryLocator = repositoryLocator;
-
+            
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
 
@@ -311,11 +313,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<ReOrderCatalogueItems, Catalogue>(catalogue);
         }
 
-        public void ActivateConfigureValidation(object sender, Catalogue catalogue)
-        {
-            Activate<ValidationSetupForm, Catalogue>(catalogue);
-        }
-
         public void ViewFilterGraph(object sender,FilterGraphObjectCollection collection)
         {
             var aggFilter = collection.GetFilter() as AggregateFilter;
@@ -344,6 +341,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             var log = Activate<SingleDataLoadLogView, ExternalDatabaseServer>(loggingServer);
             log.ShowDataLoadRunID(dataLoadRunID);
+        }
+
+        public void ActivateViewLog(LoadMetadata loadMetadata)
+        {
+            new ExecuteCommandViewLoadMetadataLogs(this).SetTarget(loadMetadata).Execute();
         }
 
         public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
@@ -398,6 +400,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return objectToEmphasise;
         }
+
+        public void ActivateViewDQEResultsForCatalogue(Catalogue catalogue)
+        {
+            new ExecuteCommandViewDQEResultsForCatalogue(this).SetTarget(catalogue).Execute();
+        }
+
 
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {
@@ -480,18 +488,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 floatable.Show(_mainDockPanel, DockState.Document);
                 try
                 {
-                    var setDatabaseObjectMethod = uiInstance.GetType().GetMethods().Where(m => 
-                        m.Name.Equals("SetDatabaseObject") 
-                        && m.DeclaringType == uiInstance.GetType()).ToArray();
-                    
-                    if(setDatabaseObjectMethod.Length == 0)
-                        throw new Exception("Class did not have a method called SetDatabaseObject");
-
-                    if (setDatabaseObjectMethod.Length > 1)
-                        throw new AmbiguousMatchException("Class had "+setDatabaseObjectMethod.Length+" Generic methods called SetDatabaseObject");
-
-                    setDatabaseObjectMethod[0].Invoke(uiInstance, new object[] { this, databaseObject });
-
+                    uiInstance.SetDatabaseObject(this,(DatabaseEntity) databaseObject);
                     floatable.TabText = uiInstance.GetTabName();
                 }
                 catch (Exception e)

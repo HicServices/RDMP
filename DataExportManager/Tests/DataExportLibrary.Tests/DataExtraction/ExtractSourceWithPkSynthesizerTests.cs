@@ -107,7 +107,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
             ColumnInfo descLine1 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Description");
 
-            var cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, fk, pk, null, true); 
+            var cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk, null, true); 
             cmd.Execute();
         }
 

@@ -6,7 +6,6 @@ using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -17,6 +16,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         public ExecuteCommandSetProjectExtractionDirectory(IActivateItems activator, Project project) : base(activator)
         {
             _project = project;
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Change the location on disk where extracted artifacts are put when you run extraction configurations of this project";
         }
 
         public override void Execute()

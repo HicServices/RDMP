@@ -31,10 +31,6 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigurationReleasePotentialUI));
             this.lbConfigurationName = new System.Windows.Forms.Label();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.State = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Dataset = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.LastExecution = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.lbCohortName = new System.Windows.Forms.Label();
             this.lblConfigurationInvalid = new System.Windows.Forms.Label();
@@ -42,6 +38,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnRelease = new System.Windows.Forms.Button();
             this.ragSmileyEnvironment = new ReusableUIComponents.RAGSmiley();
+            this.tlvDatasets = new BrightIdeasSoftware.TreeListView();
+            this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).BeginInit();
             this.SuspendLayout();
             // 
             // lbConfigurationName
@@ -53,39 +53,6 @@
             this.lbConfigurationName.Size = new System.Drawing.Size(86, 13);
             this.lbConfigurationName.TabIndex = 0;
             this.lbConfigurationName.Text = "Configuration:";
-            // 
-            // listView1
-            // 
-            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.State,
-            this.Dataset,
-            this.LastExecution});
-            this.listView1.FullRowSelect = true;
-            this.listView1.Location = new System.Drawing.Point(6, 73);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(414, 282);
-            this.listView1.SmallImageList = this.imageList1;
-            this.listView1.TabIndex = 2;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
-            // 
-            // State
-            // 
-            this.State.Text = "State";
-            this.State.Width = 58;
-            // 
-            // Dataset
-            // 
-            this.Dataset.Text = "Dataset";
-            this.Dataset.Width = 150;
-            // 
-            // LastExecution
-            // 
-            this.LastExecution.Text = "Last Execution";
-            this.LastExecution.Width = 170;
             // 
             // imageList1
             // 
@@ -158,27 +125,68 @@
             this.ragSmileyEnvironment.AlwaysShowHandCursor = false;
             this.ragSmileyEnvironment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ragSmileyEnvironment.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmileyEnvironment.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.ragSmileyEnvironment.Location = new System.Drawing.Point(368, 369);
             this.ragSmileyEnvironment.Name = "ragSmileyEnvironment";
             this.ragSmileyEnvironment.Size = new System.Drawing.Size(37, 38);
             this.ragSmileyEnvironment.TabIndex = 7;
             this.ragSmileyEnvironment.Visible = false;
             // 
+            // tlvDatasets
+            // 
+            this.tlvDatasets.AllColumns.Add(this.olvColumn1);
+            this.tlvDatasets.AllColumns.Add(this.olvColumn2);
+            this.tlvDatasets.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tlvDatasets.CellEditUseWholeCell = false;
+            this.tlvDatasets.CheckBoxes = true;
+            this.tlvDatasets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvColumn1,
+            this.olvColumn2});
+            this.tlvDatasets.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tlvDatasets.HierarchicalCheckboxes = true;
+            this.tlvDatasets.Location = new System.Drawing.Point(6, 73);
+            this.tlvDatasets.Name = "tlvDatasets";
+            this.tlvDatasets.RowHeight = 19;
+            this.tlvDatasets.ShowGroups = false;
+            this.tlvDatasets.ShowImagesOnSubItems = true;
+            this.tlvDatasets.Size = new System.Drawing.Size(414, 282);
+            this.tlvDatasets.SmallImageList = this.imageList1;
+            this.tlvDatasets.TabIndex = 26;
+            this.tlvDatasets.Text = "label1";
+            this.tlvDatasets.UseCompatibleStateImageBehavior = false;
+            this.tlvDatasets.View = System.Windows.Forms.View.Details;
+            this.tlvDatasets.VirtualMode = true;
+            // 
+            // olvColumn1
+            // 
+            this.olvColumn1.AspectName = "ToString";
+            this.olvColumn1.FillsFreeSpace = true;
+            this.olvColumn1.Text = "Extractables";
+            // 
+            // olvColumn2
+            // 
+            this.olvColumn2.AspectName = "ToString";
+            this.olvColumn2.Text = "Status";
+            this.olvColumn2.Width = 120;
+            // 
             // ConfigurationReleasePotentialUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Controls.Add(this.tlvDatasets);
             this.Controls.Add(this.ragSmileyEnvironment);
             this.Controls.Add(this.btnRelease);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lblConfigurationInvalid);
-            this.Controls.Add(this.listView1);
             this.Controls.Add(this.lbCohortName);
             this.Controls.Add(this.lbConfigurationName);
             this.Name = "ConfigurationReleasePotentialUI";
             this.Size = new System.Drawing.Size(423, 416);
+            ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -187,10 +195,6 @@
         #endregion
 
         private System.Windows.Forms.Label lbConfigurationName;
-        private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.ColumnHeader Dataset;
-        private System.Windows.Forms.ColumnHeader LastExecution;
-        private System.Windows.Forms.ColumnHeader State;
         private System.Windows.Forms.Label lbCohortName;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Label lblConfigurationInvalid;
@@ -198,5 +202,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnRelease;
         private ReusableUIComponents.RAGSmiley ragSmileyEnvironment;
+        private BrightIdeasSoftware.TreeListView tlvDatasets;
+        private BrightIdeasSoftware.OLVColumn olvColumn1;
+        private BrightIdeasSoftware.OLVColumn olvColumn2;
     }
 }

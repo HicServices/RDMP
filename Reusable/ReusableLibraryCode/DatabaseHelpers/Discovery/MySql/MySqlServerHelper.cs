@@ -39,6 +39,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public override DbConnection GetConnection(DbConnectionStringBuilder builder)
         {
+            EnforceSensibleOptions((MySqlConnectionStringBuilder)builder);
             return new MySqlConnection(builder.ConnectionString);
         }
 
@@ -113,12 +114,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
             throw new NotImplementedException();
         }
-
-        public override bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds, out Exception exception)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)
         {
             return ((MySqlConnectionStringBuilder) builder).UserID;

@@ -69,7 +69,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 tbDataLoadProgress.Text = _loadProgress.DataLoadProgress != null ? _loadProgress.DataLoadProgress.ToString() : "";
 
                 nDefaultNumberOfDaysToLoadEachTime.Value = _loadProgress.DefaultNumberOfDaysToLoadEachTime;
-                cbEnableAutomation.Checked = _loadProgress.AllowAutomation;
             }
         }
 
@@ -122,12 +121,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             {
                 tbOriginDate.ForeColor = Color.Red;
             }
-        }
-
-        private void cbEnableAutomation_CheckedChanged(object sender, EventArgs e)
-        {
-            _loadProgress.AllowAutomation = cbEnableAutomation.Enabled;
-            _loadProgress.SaveToDatabase();
         }
 
         public override void SetDatabaseObject(IActivateItems activator, LoadProgress databaseObject)

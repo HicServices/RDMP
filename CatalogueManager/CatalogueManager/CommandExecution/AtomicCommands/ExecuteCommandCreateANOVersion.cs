@@ -27,6 +27,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return iconProvider.GetImage(RDMPConcept.ANOTable);
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Create an anonymous version of the dataset.  This will be an initially empty anonymous schema and a load configuration for migrating the data.";
+        }
+
         public override void Execute()
         {
             base.Execute();

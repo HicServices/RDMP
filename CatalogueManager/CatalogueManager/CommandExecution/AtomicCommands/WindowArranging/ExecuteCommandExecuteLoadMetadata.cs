@@ -1,11 +1,10 @@
+using System.ComponentModel.Composition;
 using System.Drawing;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
@@ -14,6 +13,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
     {
         public LoadMetadata LoadMetadata{ get; set; }
 
+        [ImportingConstructor]
+        public ExecuteCommandExecuteLoadMetadata(IActivateItems activator,LoadMetadata loadMetadata)
+            : base(activator)
+        {
+            LoadMetadata = loadMetadata;
+
+
+        }
         public ExecuteCommandExecuteLoadMetadata(IActivateItems activator) : base(activator)
         {
             

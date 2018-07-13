@@ -1,36 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
-using DataExportLibrary.DataRelease;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Providers;
-using DataExportManager.CohortUI;
-using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
-using DataExportManager.ProjectUI.Graphs;
-using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying.Commands;
-using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.SqlDialogs;
 
 namespace DataExportManager.Menus
 {
@@ -49,17 +32,17 @@ namespace DataExportManager.Menus
             _extractionConfiguration = extractionConfiguration;
             _childProvider = (DataExportChildProvider) _activator.CoreChildProvider;
             
-            var extractionResults =  _extractionConfiguration.CumulativeExtractionResults.ToArray();
-
             _datasets = _childProvider.GetDatasets(extractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
-            
-            
+
+            Items.Add("Edit", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
+
             _importableDataSets = _childProvider.ExtractableDataSets.Except(_datasets).Where(ds=>ds.Project_ID == null || ds.Project_ID == extractionConfiguration.Project_ID).ToArray();
             
             ///////////////////Change Cohorts//////////////
             string message = extractionConfiguration.Cohort_ID == null ? "Choose Cohort" : "Change Cohort";
 
-
+            Add(new ExecuteCommandRelease(_activator).SetTarget(extractionConfiguration));
+            
             var cohortMenuItem = new ToolStripMenuItem(message, _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Link), (s, e) => LinkCohortToExtractionConfiguration());
             cohortMenuItem.Enabled = !extractionConfiguration.IsReleased;
             Items.Add(cohortMenuItem);
@@ -83,38 +66,20 @@ namespace DataExportManager.Menus
 
             Add(new ExecuteCommandGenerateReleaseDocument(_activator, extractionConfiguration));
             
-            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(_extractionConfiguration));
-
-
             var freeze = new ToolStripMenuItem("Freeze Extraction", CatalogueIcons.FrozenExtractionConfiguration,(s, e) => Freeze());
             freeze.Enabled = !extractionConfiguration.IsReleased && _datasets.Any();
             Items.Add(freeze);
 
             if (extractionConfiguration.IsReleased)
                 Add(new ExecuteCommandUnfreezeExtractionConfiguration(_activator, extractionConfiguration));
-            
-            var clone = new ToolStripMenuItem("Clone Extraction", CatalogueIcons.CloneExtractionConfiguration,(s, e) => Clone());
-            clone.Enabled = _datasets.Any();
-            Items.Add(clone);
+
+            Add(new ExecuteCommandCloneExtractionConfiguration(_activator, extractionConfiguration));
 
             Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
+            ReBrandActivateAs("Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
         }
 
-
-        private void Clone()
-        {
-            try
-            {
-                var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-                Publish((DatabaseEntity) clone.Project);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-
-        }
 
         private void Freeze()
         {

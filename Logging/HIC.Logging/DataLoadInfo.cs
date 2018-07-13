@@ -273,5 +273,13 @@ SELECT SCOPE_IDENTITY();", con);
         private DataLoadInfo()
         {
         }
+
+        public void AddTableLoad(TableLoadInfo tableLoadInfo)
+        {
+            lock (oLock)
+            {
+                TableLoads.Add(tableLoadInfo.ID, tableLoadInfo);
+            }
+        }
     }
 }

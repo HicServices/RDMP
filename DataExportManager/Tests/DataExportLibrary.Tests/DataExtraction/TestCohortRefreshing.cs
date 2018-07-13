@@ -81,6 +81,11 @@ namespace DataExportLibrary.Tests.DataExtraction
             freezeArg.SaveToDatabase();
                  
             var dest = new PipelineComponent(CatalogueRepository, pipe, typeof (BasicCohortDestination), 0);
+            var argsDest = dest.CreateArgumentsForClassIfNotExists<BasicCohortDestination>();
+            var allocatorArg = argsDest.Single(a => a.Name.Equals("ReleaseIdentifierAllocator"));
+            allocatorArg.SetValue(null);
+            allocatorArg.SaveToDatabase();
+
             pipe.SourcePipelineComponent_ID = source.ID;
             pipe.DestinationPipelineComponent_ID = dest.ID;
             pipe.SaveToDatabase();

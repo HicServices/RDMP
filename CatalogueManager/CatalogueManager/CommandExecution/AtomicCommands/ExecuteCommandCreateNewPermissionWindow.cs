@@ -22,7 +22,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Add);
+        }
 
+        public override string GetCommandHelp()
+        {
+            return "Creates a new time window restriction on when loads can occur";
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)

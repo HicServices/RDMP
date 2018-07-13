@@ -17,6 +17,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using HIC.Logging;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -57,8 +58,9 @@ namespace DataExportLibrary.Tests.DataExtraction
             _configuration.Cohort_ID = _extractableCohort.ID;
             _configuration.SaveToDatabase();
 
-            _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
-                _extractableColumns, new HICProjectSalt(_project), "",
+
+            _request = new ExtractDatasetCommand(RepositoryLocator,_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
+                _extractableColumns, new HICProjectSalt(_project),
                 new ExtractionDirectory(@"C:\temp\", _configuration));
         }
 
@@ -68,7 +70,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             RunBlitzDatabases(RepositoryLocator);
         }
 
-        protected void SetupDataExport()
+        private void SetupDataExport()
         {
             _extractableDataSet = new ExtractableDataSet(DataExportRepository, _catalogue);
 
@@ -90,8 +92,9 @@ namespace DataExportLibrary.Tests.DataExtraction
             {
                 var col = new ExtractableColumn(DataExportRepository, _extractableDataSet, _configuration, toSelect, toSelect.Order, toSelect.SelectSQL);
 
-                col.IsExtractionIdentifier = toSelect.IsExtractionIdentifier;
-                col.IsPrimaryKey = toSelect.IsPrimaryKey;
+                if (col.GetRuntimeName().Equals("PrivateID"))
+                    col.IsExtractionIdentifier = true;
+
                 col.SaveToDatabase();
                 
                 _extractableColumns.Add(col);
@@ -110,11 +113,12 @@ namespace DataExportLibrary.Tests.DataExtraction
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
             
             CatalogueItem[] cataItems;
-            _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems, out _extractionInformations);
-
+            _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);
+            
             ExtractionInformation _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
             _privateID.IsExtractionIdentifier = true;
             _privateID.SaveToDatabase();
+            
         }
 
         protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results)
@@ -133,7 +137,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
                 Assert.IsNotEmpty(pipelineUseCase.Source.Request.QueryBuilder.SQL);
 
-                Assert.IsFalse(pipelineUseCase.Crashed);
+                Assert.IsTrue(pipelineUseCase.ExtractCommand.State == ExtractCommandState.Completed);
             }
             finally
             {

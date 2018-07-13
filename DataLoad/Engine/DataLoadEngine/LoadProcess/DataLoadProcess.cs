@@ -74,7 +74,7 @@ namespace DataLoadEngine.LoadProcess
             try
             {
                 DataLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Performing pre-execution checks"));
-                var thrower = new ThrowImmediatelyCheckNotifier();
+                var thrower = new ThrowImmediatelyCheckNotifier(){WriteToConsole = false};
                 _preExecutionChecker.Check(thrower);
             }
             catch (Exception e)

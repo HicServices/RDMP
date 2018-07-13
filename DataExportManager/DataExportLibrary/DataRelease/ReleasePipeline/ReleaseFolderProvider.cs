@@ -28,6 +28,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             if (releaseAudit == null)
                 return null;
 
+            if(_releaseFolder == null)
+                PrepareAndCheckReleaseFolder(new FromDataLoadEventListenerToCheckNotifier(listener));
+
             releaseAudit.ReleaseFolder = _releaseFolder;
             return releaseAudit;
         }
@@ -74,7 +77,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 _releaseFolder = GetFromProjectFolder();// new DirectoryInfo(_project.ExtractionDirectory);
             }
 
-            if (_releaseFolder.Exists)
+            if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
             {
                 if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Release folder {0} already exists!", _releaseFolder.FullName), 
                                                                  CheckResult.Warning, 

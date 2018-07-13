@@ -1,14 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 
@@ -21,14 +18,19 @@ namespace DataExportLibrary.Checks
     public class ProjectChecker:ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        private readonly Project _project;
+        private readonly IProject _project;
         IExtractionConfiguration[] _extractionConfigurations;
         private DirectoryInfo _projectDirectory;
 
-        public ProjectChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator, Project project)
+        public bool CheckConfigurations { get; set; }
+        public bool CheckDatasets { get; set; }
+
+        public ProjectChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project)
         {
             _repositoryLocator = repositoryLocator;
             _project = project;
+            CheckDatasets = true;
+            CheckConfigurations = true;
         }
 
         public void Check(ICheckNotifier notifier)
@@ -68,110 +70,15 @@ namespace DataExportLibrary.Checks
                 notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory is on a mapped network drive (" + _projectDirectory.Root +") which might not be accessible to other data analysts",CheckResult.Warning));
             else
                 notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory is not a network drive (which is a good thing)", CheckResult.Success));
-            
-            foreach (ExtractionConfiguration config in _extractionConfigurations)
-            {
-                if (config.IsReleased)
-                    CheckReleaseConfiguration(config,notifier);
-                else
-                    CheckInProgressConfiguration(config,notifier);
-            }
+
+            if (CheckConfigurations)
+                foreach (IExtractionConfiguration extractionConfiguration in _extractionConfigurations)
+                {
+                    var extractionConfigurationChecker = new ExtractionConfigurationChecker(_repositoryLocator,extractionConfiguration) {CheckDatasets = CheckDatasets};
+                    extractionConfigurationChecker.Check(notifier);
+                }
             
             notifier.OnCheckPerformed(new CheckEventArgs("All Project Checks Finished (Not necessarily without errors)", CheckResult.Success));
         }
-
-        private void CheckInProgressConfiguration(ExtractionConfiguration config, ICheckNotifier notifier)
-        {
-            var repo = (DataExportRepository)config.Repository;
-            notifier.OnCheckPerformed(new CheckEventArgs("Found configuration '" + config +"'", CheckResult.Success));
-
-            var datasets = config.GetAllExtractableDataSets().ToArray();
-
-            foreach (ExtractableDataSet dataSet in datasets)
-                if (dataSet.DisableExtraction)
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Dataset " + dataSet +
-                            " is set to DisableExtraction=true, probably someone doesn't want you extracting this dataset at the moment",
-                            CheckResult.Fail));
-
-            if (!datasets.Any())
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        "There are no datasets selected for open configuration '" + config +"'",
-                        CheckResult.Fail));
-
-            if(config.Cohort_ID == null)
-            {
-
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        "Open configuration '" + config + "' does not have a cohort yet",
-                        CheckResult.Fail));
-                return;
-            }
-
-
-            var cohort = repo.GetObjectByID<ExtractableCohort>((int) config.Cohort_ID);
-
-
-            foreach (SelectedDataSets s in config.SelectedDataSets)
-                new SelectedDataSetsChecker(s, _repositoryLocator).Check(notifier);
-
-            //globals
-            if(datasets.Any())
-                foreach (SupportingSQLTable table in datasets.First().Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableGlobals))
-                    new SupportingSQLTableChecker(table).Check(notifier);
-        }
-
-        
-
-        
-
-        private void CheckReleaseConfiguration(ExtractionConfiguration config, ICheckNotifier notifier)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("Found Frozen/Released configuration '" + config +"'",CheckResult.Success));
-
-            foreach (DirectoryInfo directoryInfo in _projectDirectory.GetDirectories(ExtractionDirectory.GetExtractionDirectoryPrefix(config) + "*").ToArray())
-            {
-                string firstFileFound;
-
-                if (DirectoryIsEmpty(directoryInfo, out firstFileFound))
-                {
-                    bool deleteIt =
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs(
-                                "Found empty folder " + directoryInfo.Name +
-                                " which is left over extracted folder after data release", CheckResult.Warning, null,
-                                "Delete empty folder"));
-
-                    if (deleteIt)
-                        directoryInfo.Delete(true);
-                }
-                else
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Found non-empty folder " + directoryInfo.Name +
-                            " which is left over extracted folder after data release (First file found was '" + firstFileFound + "' but there may be others)", CheckResult.Fail));
-            }
-        }
-
-        private bool DirectoryIsEmpty(DirectoryInfo d, out string firstFileFound)
-        {
-            var found = d.GetFiles().FirstOrDefault();
-            if (found != null)
-            {
-                firstFileFound = found.FullName;
-                return false;
-            }
-
-            foreach (DirectoryInfo directory in d.GetDirectories())
-                if (!DirectoryIsEmpty(directory, out firstFileFound))
-                    return false;
-
-            firstFileFound = null;
-            return true;
-        }
-
     }
 }

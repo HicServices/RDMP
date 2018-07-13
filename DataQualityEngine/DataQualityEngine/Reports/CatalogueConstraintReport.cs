@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataQualityEngine.Data;
@@ -49,7 +49,7 @@ namespace DataQualityEngine.Reports
             
         }
 
-        private void SetupLogging(CatalogueRepository repository,AutomationJob job = null)
+        private void SetupLogging(CatalogueRepository repository)
         {
             //if we have already setup logging successfully then don't worry about doing it again
             if (_loggingServer != null && _logManager != null && _loggingTask != null)
@@ -61,9 +61,6 @@ namespace DataQualityEngine.Reports
             {
                 _logManager = new LogManager(_loggingServer);
                 _loggingTask = _logManager.ListDataTasks().SingleOrDefault(task => task.ToLower().Equals("dqe"));
-
-                if (job != null)
-                    _logManager.DataLoadInfoCreated += (s, d) => job.SetLoggingInfo(_loggingServer, d.ID);
 
                 if (_loggingTask == null)
                 {
@@ -78,9 +75,9 @@ namespace DataQualityEngine.Reports
 
         private bool haveComplainedAboutNullCategories = false;
 
-        public override void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken,AutomationJob job = null)
+        public override void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken)
         {
-            SetupLogging((CatalogueRepository) c.Repository,job);
+            SetupLogging((CatalogueRepository) c.Repository);
 
             var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask, "DQE evaluation of " + c);
 
@@ -91,26 +88,23 @@ namespace DataQualityEngine.Reports
                 _catalogue = c;
                 var dqeRepository = new DQERepository((CatalogueRepository) c.Repository);
 
-                byPivotCategoryCubesOverTime.Add("ALL",new PeriodicityCubesOverTime("ALL"));
+                byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
                 byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
 
                 Check(new FromDataLoadEventListenerToCheckNotifier(forker));
-
-                if (job != null)
-                    job.SetLastKnownStatus(AutomationJobStatus.Running);
 
                 var sw = Stopwatch.StartNew();
                 using (var con = _server.GetConnection())
                 {
                     con.Open();
-                    
+
                     var cmd = _server.GetCommand(_queryBuilder.SQL, con);
                     cmd.CommandTimeout = 500000;
 
                     var t = cmd.ExecuteReaderAsync(cancellationToken);
                     t.Wait(cancellationToken);
 
-                    if(cancellationToken.IsCancellationRequested)
+                    if (cancellationToken.IsCancellationRequested)
                         throw new OperationCanceledException("User cancelled DQE while fetching data");
 
                     var r = t.Result;
@@ -122,7 +116,8 @@ namespace DataQualityEngine.Reports
                         cancellationToken.ThrowIfCancellationRequested();
 
                         progress++;
-                        int dataLoadRunIDOfCurrentRecord = 0;//to start with assume we will pass the results for the 'unknown batch' (where data load run ID is null or not available)
+                        int dataLoadRunIDOfCurrentRecord = 0;
+                            //to start with assume we will pass the results for the 'unknown batch' (where data load run ID is null or not available)
 
                         //if the DataReader is likely to have a data load run ID column
                         if (_containsDataLoadID)
@@ -144,55 +139,61 @@ namespace DataQualityEngine.Reports
 
                             if (!haveComplainedAboutNullCategories && string.IsNullOrWhiteSpace(pivotValue))
                             {
-                                forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found a null/empty value for pivot category '" + _pivotCategory + "', this record will ONLY be recorded under ALL and not it's specific category, you will not be warned of further nulls because there are likely to be many if there are any"));
+                                forker.OnNotify(this,
+                                    new NotifyEventArgs(ProgressEventType.Warning,
+                                        "Found a null/empty value for pivot category '" + _pivotCategory +
+                                        "', this record will ONLY be recorded under ALL and not it's specific category, you will not be warned of further nulls because there are likely to be many if there are any"));
                                 haveComplainedAboutNullCategories = true;
                                 pivotValue = null;
                             }
                         }
-                        
+
                         //always increase the "ALL" category
-                        ProcessRecord(dqeRepository,dataLoadRunIDOfCurrentRecord, r, byPivotCategoryCubesOverTime["ALL"], byPivotRowStatesOverDataLoadRunId["ALL"]);
-                        
+                        ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
+                            byPivotCategoryCubesOverTime["ALL"], byPivotRowStatesOverDataLoadRunId["ALL"]);
+
                         //if there is a value in the current record for the pivot column
-                        if(pivotValue != null)
+                        if (pivotValue != null)
                         {
                             //if it is a novel 
                             if (!byPivotCategoryCubesOverTime.ContainsKey(pivotValue))
                             {
                                 //we will need to expand the dictionaries 
-                                if(byPivotCategoryCubesOverTime.Keys.Count>30)//IMPORTANT: this value of 30 is in the documentation, dont change it without also changing UserManual.docx
-                                    throw new OverflowException("Encountered more than 30 values for the pivot column " + _pivotCategory + " this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
-                                
+                                if (byPivotCategoryCubesOverTime.Keys.Count > 30)
+                                    //IMPORTANT: this value of 30 is in the documentation, dont change it without also changing UserManual.docx
+                                    throw new OverflowException(
+                                        "Encountered more than 30 values for the pivot column " + _pivotCategory +
+                                        " this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
+
                                 //expand both the time periodicity and the state results
-                                byPivotRowStatesOverDataLoadRunId.Add(pivotValue, new DQEStateOverDataLoadRunId(pivotValue));
+                                byPivotRowStatesOverDataLoadRunId.Add(pivotValue,
+                                    new DQEStateOverDataLoadRunId(pivotValue));
                                 byPivotCategoryCubesOverTime.Add(pivotValue, new PeriodicityCubesOverTime(pivotValue));
-                                
+
                             }
 
                             //now we are sure that the dictionaries have the category field we can increment it
-                            ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord,r, byPivotCategoryCubesOverTime[pivotValue], byPivotRowStatesOverDataLoadRunId[pivotValue]);
+                            ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
+                                byPivotCategoryCubesOverTime[pivotValue], byPivotRowStatesOverDataLoadRunId[pivotValue]);
                         }
 
-                        if (progress % 5000 == 0)
-                        {
-                            forker.OnProgress(this, new ProgressEventArgs("Processing " + _catalogue, new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
-                            
-                            if(job != null)
-                            {
-                                job.SetLastKnownStatus(AutomationJobStatus.Running);
-                                job.TickLifeline();
-                            }
-                        }
-                     }
+                        if (progress%5000 == 0)
+                            forker.OnProgress(this,
+                                new ProgressEventArgs("Processing " + _catalogue,
+                                    new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
+
+                    }
                     //final value
-                    forker.OnProgress(this, new ProgressEventArgs("Processing " + _catalogue, new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
+                    forker.OnProgress(this,
+                        new ProgressEventArgs("Processing " + _catalogue,
+                            new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
                     con.Close();
                 }
                 sw.Stop();
 
                 foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
                     state.CalculateFinalValues();
-                
+
                 //now commit results
                 using (var con = dqeRepository.BeginNewTransactedConnection())
                 {
@@ -200,10 +201,10 @@ namespace DataQualityEngine.Reports
                     {
                         //mark down that we are beginning an evaluation on this the day of our lord etc...
                         Evaluation evaluation = new Evaluation(dqeRepository, _catalogue);
-                        
+
                         foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
-                            state.CommitToDatabase(evaluation,_catalogue,con.Connection,con.Transaction);
-                        
+                            state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
+
                         if (_timePeriodicityField != null)
                             foreach (PeriodicityCubesOverTime periodicity in byPivotCategoryCubesOverTime.Values)
                                 periodicity.CommitToDatabase(evaluation);
@@ -218,29 +219,22 @@ namespace DataQualityEngine.Reports
                     }
                 }
 
-                forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CatalogueConstraintReport completed successfully  and committed results to DQE server"));
+                forker.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        "CatalogueConstraintReport completed successfully  and committed results to DQE server"));
 
-                if (job != null)
-                    job.SetLastKnownStatus(AutomationJobStatus.Finished);
             }
             catch (Exception e)
             {
-                if(job != null) //Automation is on
-                {
-                    job.SetLastKnownStatus(e is OperationCanceledException ? AutomationJobStatus.Cancelled : AutomationJobStatus.Crashed); //record automation state
-
-                    //dont record cancellations at automation error level just at job level
-                    if (!(e is OperationCanceledException))
-                        new AutomationServiceException((ICatalogueRepository) job.Repository, e);//push Exception up to automation level
-                }
-
                 if (!(e is OperationCanceledException))
                     forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Fatal Crash", e));
                 else
                     forker.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "DQE Execution Cancelled", e));
             }
-
-            toDatabaseLogger.FinalizeTableLoadInfos();
+            finally
+            {
+                toDatabaseLogger.FinalizeTableLoadInfos();
+            }
         }
 
         private bool _haveComplainedAboutTrailingWhitespaces = false;

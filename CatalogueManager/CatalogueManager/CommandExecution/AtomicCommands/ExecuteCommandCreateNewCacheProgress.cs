@@ -1,15 +1,10 @@
 ﻿using System.Drawing;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -23,6 +18,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if(_loadProgress.CacheProgress != null)
                 SetImpossible("LoadProgress already has a CacheProgress associated with it");
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Defines that the load requires data that is intensive/expensive to fetch and that this fetching and storing to disk should happen independently of the loading";
         }
 
         public override void Execute()

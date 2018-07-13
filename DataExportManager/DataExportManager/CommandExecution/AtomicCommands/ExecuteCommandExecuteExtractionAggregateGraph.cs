@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportManager.ProjectUI.Graphs;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -21,6 +15,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         public ExecuteCommandExecuteExtractionAggregateGraph(IActivateItems activator,ExtractionAggregateGraphObjectCollection collection) : base(activator)
         {
             _collection = collection;
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Shows a subset of the main graph as it applies to the records that will be extracted";
         }
 
         public Image GetImage(IIconProvider iconProvider)

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
+using CatalogueLibrary.CommandExecution;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -240,5 +243,90 @@ namespace CatalogueLibraryTests.Integration
             }
         }
 
+        [TestCase(LookupTestCase.SingleKeySingleDescriptionNoVirtualColumn)]
+        [TestCase(LookupTestCase.SingleKeySingleDescription)]
+        public void TestLookupCommand(LookupTestCase testCase)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID");
+            dt.Columns.Add("SendingLocation");
+            dt.Columns.Add("DischargeLocation");
+            dt.Columns.Add("Country");
+
+            var maintbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("MainDataset", dt);
+
+            var mainCata = Import(maintbl);
+
+            DataTable dtLookup = new DataTable();
+            dtLookup.Columns.Add("LocationCode");
+            dtLookup.Columns.Add("Line1");
+            dtLookup.Columns.Add("Line2");
+            dtLookup.Columns.Add("Postcode");
+            dtLookup.Columns.Add("Country");
+
+            var lookuptbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("Lookup", dtLookup);
+
+            var lookupCata = Import(lookuptbl);
+
+            ExtractionInformation fkEi = mainCata.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "SendingLocation");
+            ColumnInfo fk = mainCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "SendingLocation");
+            ColumnInfo pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "LocationCode");
+
+            ColumnInfo descLine1 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Line1");
+            ColumnInfo descLine2 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Line2");
+
+            ExecuteCommandCreateLookup cmd = null;
+
+            var sqlBefore = GetSql(mainCata);
+
+            switch (testCase)
+            {
+                case LookupTestCase.SingleKeySingleDescriptionNoVirtualColumn:
+                    cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk,null, false);
+                    cmd.Execute();
+
+                    //sql should not have changed because we didn't create an new ExtractionInformation virtual column
+                    Assert.AreEqual(sqlBefore,GetSql(mainCata));
+                    break;
+                case LookupTestCase.SingleKeySingleDescription:
+                    cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk,null, true);
+                    cmd.Execute();
+
+                    //should have the lookup join and the virtual column _Desc
+                    var sqlAfter = GetSql(mainCata);
+                    Assert.IsTrue(sqlAfter.Contains("JOIN"));
+                    Assert.IsTrue(sqlAfter.Contains("SendingLocation_Desc"));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("testCase");
+            }
+            
+            foreach (var d in CatalogueRepository.GetAllObjects<Lookup>())
+                d.DeleteInDatabase();
+            foreach (var d in CatalogueRepository.GetAllObjects<LookupCompositeJoinInfo>())
+                d.DeleteInDatabase();
+            foreach (var d in CatalogueRepository.GetAllObjects<TableInfo>())
+                d.DeleteInDatabase();
+            foreach (var d in CatalogueRepository.GetAllObjects<Catalogue>())
+                d.DeleteInDatabase();
+
+            maintbl.Drop();
+            lookuptbl.Drop();
+        }
+
+        private string GetSql(Catalogue mainCata)
+        {
+            mainCata.ClearAllInjections();
+
+            var qb = new QueryBuilder(null, null);
+            qb.AddColumnRange(mainCata.GetAllExtractionInformation(ExtractionCategory.Any));
+            return qb.SQL;
+        }
+    }
+
+    public enum LookupTestCase
+    {
+        SingleKeySingleDescriptionNoVirtualColumn,
+        SingleKeySingleDescription,
     }
 }

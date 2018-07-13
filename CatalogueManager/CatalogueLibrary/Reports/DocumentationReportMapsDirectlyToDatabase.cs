@@ -57,7 +57,7 @@ namespace CatalogueLibrary.Reports
 
                             string toFind = t.Name + ".cs";
 
-                            var entries = z.Entries.Where(e => e.Name == toFind).ToArray();
+                            var entries = z.Entries.Where(e => e.Name.Equals(toFind,StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
                             if (entries.Length != 1)
                             {

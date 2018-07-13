@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -18,7 +20,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return Column.Table.Database.Server.Helper.GetQuerySyntaxHelper().TypeTranslater.GetLengthIfString(SQLType);
         }
 
-        public Tuple<int, int> GetDigitsBeforeAndAfterDecimalPointIfDecimal()
+        public DecimalSize GetDecimalSize()
         {
             return Column.Table.Database.Server.Helper.GetQuerySyntaxHelper().TypeTranslater.GetDigitsBeforeAndAfterDecimalPointIfDecimal(SQLType);
         }
@@ -71,26 +73,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <param name="managedTransaction"></param>
         public void Resize(int numberOfDigitsBeforeDecimalPoint, int numberOfDigitsAfterDecimalPoint, IManagedTransaction managedTransaction = null)
         {
-            Tuple<int, int> toReplace = GetDigitsBeforeAndAfterDecimalPointIfDecimal();
+            DecimalSize toReplace = GetDecimalSize();
 
-            if (toReplace == null)
+            if (toReplace == null || toReplace.IsEmpty)
                 throw new Exception("DataType cannot be resized to decimal because it is of data type " + SQLType);
 
-            if (toReplace.Item1 > numberOfDigitsBeforeDecimalPoint)
-                throw new Exception("Cannot shrink column, number of digits before the decimal point is currently " + toReplace.Item1 + " and you asked to set it to " + numberOfDigitsBeforeDecimalPoint + " (Current SQLType is " + SQLType + ")");
+            if (toReplace.NumbersBeforeDecimalPlace > numberOfDigitsBeforeDecimalPoint)
+                throw new Exception("Cannot shrink column, number of digits before the decimal point is currently " + toReplace.NumbersBeforeDecimalPlace + " and you asked to set it to " + numberOfDigitsBeforeDecimalPoint + " (Current SQLType is " + SQLType + ")");
 
-            if (toReplace.Item2> numberOfDigitsAfterDecimalPoint)
-                throw new Exception("Cannot shrink column, number of digits after the decimal point is currently " + toReplace.Item2 + " and you asked to set it to " + numberOfDigitsAfterDecimalPoint + " (Current SQLType is " + SQLType + ")");
+            if (toReplace.NumbersAfterDecimalPlace> numberOfDigitsAfterDecimalPoint)
+                throw new Exception("Cannot shrink column, number of digits after the decimal point is currently " + toReplace.NumbersAfterDecimalPlace + " and you asked to set it to " + numberOfDigitsAfterDecimalPoint + " (Current SQLType is " + SQLType + ")");
+            
+            var newDataType = Column.Table.GetQuerySyntaxHelper()
+                .TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (decimal), null,
+                    new DecimalSize(numberOfDigitsBeforeDecimalPoint, numberOfDigitsAfterDecimalPoint)));
 
-            int newPrecision = numberOfDigitsAfterDecimalPoint + numberOfDigitsBeforeDecimalPoint;
-            int newScale = numberOfDigitsAfterDecimalPoint;
-
-            int oldPrecision = toReplace.Item1 + toReplace.Item2;
-            int oldScale = toReplace.Item2;
-
-            string newType = SQLType.Replace(oldPrecision + "," + oldScale, newPrecision + "," + newScale);
-
-            AlterTypeTo(newType, managedTransaction);
+            
+            AlterTypeTo(newDataType, managedTransaction);
 
 
         }
@@ -131,11 +130,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((DiscoveredDataType)obj);
-        }
-        
-        public bool IsIdentity()
-        {
-            return Column.Table.Database.Server.Helper.GetQuerySyntaxHelper().TypeTranslater.IsIdentity(SQLType);
         }
     }
 }

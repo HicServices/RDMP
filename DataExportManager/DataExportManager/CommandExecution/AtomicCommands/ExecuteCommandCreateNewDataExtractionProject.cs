@@ -1,21 +1,13 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
-using DataExportManager.ProjectUI;
 using DataExportManager.Wizard;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -36,7 +28,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
                 
                 //now execute it
-                var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator,true).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
+                var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
                 if(!executeCommand.IsImpossible)
                     executeCommand.Execute(); 
 

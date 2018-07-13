@@ -89,6 +89,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
@@ -104,19 +105,6 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Automation\AutomationServerMonitorUIRenderArea.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Automation\AutomationServerMonitorUIRenderArea.Designer.cs">
-      <DependentUpon>AutomationServerMonitorUIRenderArea.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Automation\AutomationServerMonitorUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Automation\AutomationServerMonitorUI.Designer.cs">
-      <DependentUpon>AutomationServerMonitorUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Automation\AutomationServerMonitorUIObjectCache.cs" />
     <Compile Include="Automation\LogView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -197,8 +185,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewDQEResultsForCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadMetadataLogs.cs" />
     <Compile Include="DQEPluginUserInterface.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandStartAutomationServerMonitorUI.cs" />
     <Compile Include="Menus\MenuItems\DQEMenuItem.cs" />
     <Compile Include="Overview\DataLoadsGraph.cs">
       <SubType>UserControl</SubType>
@@ -215,12 +201,6 @@
     </Compile>
     <Compile Include="Raceway\DatasetRaceway.Designer.cs">
       <DependentUpon>DatasetRaceway.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Overview\DueLoads.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Overview\DueLoads.Designer.cs">
-      <DependentUpon>DueLoads.cs</DependentUpon>
     </Compile>
     <Compile Include="CatalogueSummary\LoadEvents\AllLoadEventsUI.cs">
       <SubType>UserControl</SubType>
@@ -248,12 +228,6 @@
     <Compile Include="Raceway\RacewayRenderAreaUI.Designer.cs">
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Automation\AutomationServerMonitorUIRenderArea.resx">
-      <DependentUpon>AutomationServerMonitorUIRenderArea.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Automation\AutomationServerMonitorUI.resx">
-      <DependentUpon>AutomationServerMonitorUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Automation\LogView.resx">
       <DependentUpon>LogView.cs</DependentUpon>
     </EmbeddedResource>
@@ -295,9 +269,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Raceway\DatasetRaceway.resx">
       <DependentUpon>DatasetRaceway.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Overview\DueLoads.resx">
-      <DependentUpon>DueLoads.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CatalogueSummary\LoadEvents\AllLoadEventsUI.resx">
       <DependentUpon>AllLoadEventsUI.cs</DependentUpon>

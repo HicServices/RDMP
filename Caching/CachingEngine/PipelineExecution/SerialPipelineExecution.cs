@@ -25,9 +25,7 @@ namespace CachingEngine.PipelineExecution
                     continue;
                 }
 
-                EngineLockProvider.Lock(engine);
                 engine.ExecutePipeline(cancellationToken);
-                EngineLockProvider.Unlock(engine);
                 
                 if (cancellationToken.IsCancellationRequested)
                     break;

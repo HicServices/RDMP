@@ -64,9 +64,7 @@ namespace Dashboard.Menus.MenuItems
         
         private void LaunchManageExternalServers()
         {
-            var manageServers = new ManageExternalServers(_activator.CoreIconProvider);
-            manageServers.RepositoryLocator = _activator.RepositoryLocator;
-            manageServers.Show();
+            new ExecuteCommandConfigureDefaultServers(_activator).Execute();
         }
     }
 }

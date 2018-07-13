@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.DataRelease.Audit;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -32,8 +19,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
             if(!_configuration.IsReleased)
                 SetImpossible("Extraction Configuration is not Frozen");
+        }
 
-            
+        public override string GetCommandHelp()
+        {
+            return "Reopens a released extraction configuration and deletes all record of it ever having been released";
         }
 
         public override void Execute()

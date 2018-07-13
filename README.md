@@ -6,22 +6,34 @@ RDMP is available as a ClickOnce package at <https://hic.dundee.ac.uk/Installers
 ## User Manual
 The RDMP UserManual is available on GitHub at <https://github.com/HicServices/RDMP/raw/master/Documentation/UserManual.docx>
 
+## Developer FAQ
+In addition to the User Manual, RDMP has a comprehensive developer orientated [Frequently Asked Questions List](Documentation/CodeTutorials/FAQ.md)
+
 ## Build
 
 You can build directly through Visual Studio by opening HIC.DataManagementPlatform.sln.
 
 Or alternatively you can run build.bat to perform a console build
-	cd .\Uppercut
-	.\build.bat [TEST|LIVE]
+
+```
+cd .\Uppercut
+.\build.bat [TEST|LIVE]
+```
 
 ## Integration Test Database
-Before running integration tests you to run DatabaseCreation.exe with appropriate parameters
+Before running tests you should run DatabaseCreation.exe with appropriate parameters
 
-For example if you have a local server you can run 
-		cd .\DatabaseCreation\bin\Debug\
-		DatabaseCreation.exe localhost\sqlexpress TEST_ -D"
+For example if you have a local sql server express instance on your development PC you can run 
+```
+cd .\Tools\DatabaseCreation\bin\Debug\
+DatabaseCreation.exe localhost\sqlexpress TEST_ -D
+```
+
 If you need to change the server name or database prefix from the above example then before running the integration tests you will have to update ".\Tests.Common\DatabaseTests.txt" to have a matching servername and prefix.
-	__WARNING__:Integration tests will delete the contents of the TEST_ databases before each test is run 
+
+__WARNING__:DatabaseTests will delete the contents of the TEST_ databases before each test is run and some will create temporary databases/tables during runtime, therefore it is important that you do not use a production server for integration testing
+
+See also [Tests.md](Documentation/CodeTutorials/Tests.md) for a full write up.
 
 ## Running the software
 The easiest way to run RDMP is via the click once package (See Install) but if you want to run it directly from source then launch the startup project 

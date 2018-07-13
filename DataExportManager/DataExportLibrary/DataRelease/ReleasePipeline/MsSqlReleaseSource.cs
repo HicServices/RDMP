@@ -7,6 +7,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;

@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using GraphX.PCL.Logic.Algorithms.LayoutAlgorithms;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents.Icons;
 
@@ -37,7 +33,6 @@ namespace ReusableUIComponents.Progress
         private const int MaxNumberOfJobsAcceptableFromSenderBeforeThrottlingKicksIn = 5000;
 
         private int _processingTimeColIndex;
-
 
         private Bitmap _information;
         private Bitmap _warning;
@@ -78,6 +73,9 @@ namespace ReusableUIComponents.Progress
             olvSender.ImageGetter += ImageGetter;
             olvProgressEvents.ItemActivate += olvProgressEvents_ItemActivate;
             olvProgressEvents.UseFiltering = true;
+
+            ddGroupBy.Items.Add("None");
+            ddGroupBy.Items.Add(olvSender.Text);
         }
 
 
@@ -123,6 +121,8 @@ namespace ReusableUIComponents.Progress
             
             progressBar1.Style = ProgressBarStyle.Continuous;
             progressBar1.Value = 0;
+
+            lblCrashed.Visible = false;
         }
         
         Dictionary<object, HashSet<string>> JobsreceivedFromSender = new Dictionary<object, HashSet<string>>();
@@ -351,7 +351,40 @@ namespace ReusableUIComponents.Progress
 
         private void tbTextFilter_TextChanged(object sender, EventArgs e)
         {
-            olvProgressEvents.ModelFilter = new TextMatchFilter(olvProgressEvents,tbTextFilter.Text,StringComparison.CurrentCultureIgnoreCase);
+            SetFilterFromTextBox();
+        }
+
+        
+
+        private void ddGroupBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var dd = ddGroupBy.SelectedItem as string;
+
+            var c = olvProgressEvents.Columns.OfType<OLVColumn>().SingleOrDefault(col => col.Text.Equals(dd));
+
+            olvProgressEvents.AlwaysGroupByColumn = c;
+            olvProgressEvents.ShowGroups = c != null;
+            olvProgressEvents.BuildGroups();
+        }
+
+        public void GroupBySender(string filter = null)
+        {
+            ddGroupBy.SelectedItem = "Sender";
+            tbTextFilter.Text = filter;
+
+            //clear the renderers filter so that we don't see yellow text highlighting all over the Sender column etc.
+            var renderer = olvProgressEvents.DefaultRenderer as HighlightTextRenderer;
+            if (renderer != null)
+                renderer.Filter = null;
+        }
+
+        private void SetFilterFromTextBox()
+        {
+            olvProgressEvents.ModelFilter = new TextMatchFilter(olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
+        }
+        public void SetFatal()
+        {
+            lblCrashed.Visible = true;
         }
     }
     internal class QueuedProgressMessage

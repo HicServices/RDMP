@@ -289,7 +289,10 @@ namespace CatalogueLibrary.Repositories.Construction
         /// <summary>
         /// Attempts to construct an instance of Type typeToConstruct using the provided constructorValues.  This must match on parameter number but ignores order
         /// so if you pass new Obj1(),new Obj2() it could invoke either MyClass(Obj1 a,Obj2 b) or MyClass(Obj2 a, Obj1 b).  
-        /// <para>Throws <see cref="ObjectLacksCompatibleConstructorException"/> if there is no clear single constructor to use</para>
+        /// <para>Throws <see cref="ObjectLacksCompatibleConstructorException"/> if there are multiple constructors that match the constructorValues</para>
+        /// 
+        /// <para>Does not invoke the default constructor unless you leave constructorValues blank</para>
+        /// <para>returns null if no compatible constructor is found</para>
         /// </summary>
         /// <param name="typeToConstruct"></param>
         /// <param name="constructorValues"></param>

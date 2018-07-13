@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
     /// <summary>
     /// See ExtractionConfiguration
     /// </summary>
-    public interface IExtractionConfiguration:INamed
+    public interface IExtractionConfiguration:INamed,IHasDependencies
     {
         DateTime? dtCreated { get; set; }
         int? Cohort_ID { get; set; }
@@ -41,5 +42,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
 
         void RemoveDatasetFromConfiguration(IExtractableDataSet extractableDataSet);
         void Unfreeze();
+        IMapsDirectlyToDatabaseTable[] GetGlobals();
     }
 }

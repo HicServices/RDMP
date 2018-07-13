@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using CatalogueLibrary.Data;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using Tests.Common;
 
 namespace ReusableCodeTests
@@ -40,7 +43,7 @@ namespace ReusableCodeTests
                 new DatabaseColumnRequest("address", new DatabaseTypeRequest(typeof (string), 500)),
                 new DatabaseColumnRequest("dob", new DatabaseTypeRequest(typeof (DateTime)),false),
                 new DatabaseColumnRequest("score",
-                    new DatabaseTypeRequest(typeof (decimal), null, new Tuple<int, int>(5, 3))) //<- e.g. 12345.123 
+                    new DatabaseTypeRequest(typeof (decimal), null, new DecimalSize(5, 3))) //<- e.g. 12345.123 
 
             });
 
@@ -75,8 +78,8 @@ namespace ReusableCodeTests
 
             var score = colsDictionary["score"];
             Assert.AreEqual(true, score.AllowNulls);
-            Assert.AreEqual(5,score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().Item1);
-            Assert.AreEqual(3, score.DataType.GetDigitsBeforeAndAfterDecimalPointIfDecimal().Item2);
+            Assert.AreEqual(5,score.DataType.GetDecimalSize().NumbersBeforeDecimalPlace);
+            Assert.AreEqual(3, score.DataType.GetDecimalSize().NumbersAfterDecimalPlace);
 
             Assert.AreEqual(typeof(decimal), syntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(score.DataType.SQLType));
 
@@ -464,6 +467,87 @@ namespace ReusableCodeTests
             Assert.AreEqual(1, tbl.Database.DiscoverTables(false).Count());
         }
 
+        [Test]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void TestIntDataTypes(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var dt = new DataTable();
+            dt.Columns.Add("MyCol"); ;
+
+            dt.Rows.Add(new[] { "100" });
+            dt.Rows.Add(new[] { "105" });
+            dt.Rows.Add(new[] { "1" });
+
+            var tbl = database.CreateTable("IntTestTable", dt);
+
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToInt32(r[0]) == 100));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToInt32(r[0]) == 105));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToInt32(r[0]) == 1));
+
+            var col = tbl.DiscoverColumn("MyCol");
+            var size = col.DataType.GetDecimalSize();
+            //ints are not decimals so null
+            Assert.IsNull(size);
+
+            col.DataType.AlterTypeTo("decimal(5,2)");
+
+            size = tbl.DiscoverColumn("MyCol").DataType.GetDecimalSize();
+            Assert.AreEqual(new DecimalSize(3, 2), size); //3 before decimal place 2 after;
+            Assert.AreEqual(3, size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, size.Precision);
+            Assert.AreEqual(2, size.Scale);
+            
+            dt = tbl.GetDataTable();
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(100.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(105.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(1.0f)));
+        }
+
+        [Test]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void TestFloatDataTypes(DatabaseType type)
+        {
+            database = GetCleanedServer(type, _dbName, out server, out database);
+
+            var dt = new DataTable();
+            dt.Columns.Add("MyCol");;
+
+            dt.Rows.Add(new[] { "100"});
+            dt.Rows.Add(new[] { "105"});
+            dt.Rows.Add(new[] { "2.1"});
+
+            var tbl = database.CreateTable("DecimalTestTable", dt);
+
+            dt =tbl.GetDataTable();
+            Assert.AreEqual(1,dt.Rows.OfType<DataRow>().Count(r=>Convert.ToDecimal(r[0]) == new decimal(100.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(105.0f)));
+            Assert.AreEqual(1, dt.Rows.OfType<DataRow>().Count(r => Convert.ToDecimal(r[0]) == new decimal(2.1f)));
+            
+
+            var col = tbl.DiscoverColumn("MyCol");
+            var size = col.DataType.GetDecimalSize();
+            Assert.AreEqual(new DecimalSize(3, 1), size); //3 before decimal place 2 after;
+            Assert.AreEqual(3,size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(1,size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(4, size.Precision);
+            Assert.AreEqual(1, size.Scale);
+            
+            col.DataType.AlterTypeTo("decimal(5,2)");
+
+            size = tbl.DiscoverColumn("MyCol").DataType.GetDecimalSize();
+            Assert.AreEqual(new DecimalSize(3,2),size); //3 before decimal place 2 after;
+            Assert.AreEqual(3, size.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, size.NumbersAfterDecimalPlace);
+            Assert.AreEqual(5, size.Precision);
+            Assert.AreEqual(2, size.Scale);
+        }
+
         [TestCase(DatabaseType.MYSQLServer, "_-o-_",":>0<:")]
         [TestCase(DatabaseType.MicrosoftSQLServer, "_-o-_", ":>0<:")]
         public void HorribleDatabaseAndTableNames(DatabaseType type,string horribleDatabaseName, string horribleTableName)
@@ -546,6 +630,104 @@ namespace ReusableCodeTests
             {
                 database.ForceDrop();
             }
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void CreateTable_AutoIncrementColumnTest(DatabaseType type)
+        {
+            database = GetCleanedServer(type);
+
+            var tbl =  database.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("IdColumn", new DatabaseTypeRequest(typeof (int)))
+                {
+                    AllowNulls = false,
+                    IsAutoIncrement = true,
+                    IsPrimaryKey = true
+                },
+                new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),100))
+
+            });
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Name");
+            dt.Rows.Add("Frank");
+
+            using (var bulkInsert = tbl.BeginBulkInsert())
+                bulkInsert.Upload(dt);
+
+            Assert.AreEqual(1,tbl.GetRowCount());
+
+            var result = tbl.GetDataTable();
+            Assert.AreEqual(1,result.Rows.Count);
+            Assert.AreEqual(1,result.Rows[0]["IdColumn"]);
+
+            Assert.IsTrue(tbl.DiscoverColumn("IdColumn").IsAutoIncrement);
+
+            TableInfo ti;
+            ColumnInfo[] cis;
+            Import(tbl, out ti, out cis);
+
+            Assert.IsTrue(cis.Single(c => c.GetRuntimeName().Equals("IdColumn",StringComparison.InvariantCultureIgnoreCase)).IsAutoIncrement);
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void CreateTable_DefaultTest(DatabaseType type)
+        {
+            database = GetCleanedServer(type);
+
+            var tbl = database.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string),100)), 
+                new DatabaseColumnRequest("myDt", new DatabaseTypeRequest(typeof (DateTime)))
+                {
+                    AllowNulls = false,
+                    Default = MandatoryScalarFunctions.GetTodaysDate
+                }
+            });
+            DateTime currentValue;
+            
+            using (var insert = tbl.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("Name");
+                dt.Rows.Add("Hi");
+
+                currentValue = DateTime.Now;
+                insert.Upload(dt);
+            }
+
+            var dt2 = tbl.GetDataTable();
+
+            var databaseValue = (DateTime)dt2.Rows.Cast<DataRow>().Single()["myDt"];
+            
+            Assert.AreEqual(currentValue.Year,databaseValue.Year);
+            Assert.AreEqual(currentValue.Month, databaseValue.Month);
+            Assert.AreEqual(currentValue.Day, databaseValue.Day);
+            Assert.AreEqual(currentValue.Hour, databaseValue.Hour);
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer, "Latin1_General_CS_AS_KS_WS")]
+        [TestCase(DatabaseType.MYSQLServer, "latin1_german1_ci")]
+        //[TestCase(DatabaseType.Oracle, "BINARY_CI")] //Requires 12.2+ oracle https://www.experts-exchange.com/questions/29102764/SQL-Statement-to-create-case-insensitive-columns-and-or-tables-in-Oracle.html
+        public void CreateTable_CollationTest(DatabaseType type,string collation)
+        {
+            database = GetCleanedServer(type);
+
+            var tbl = database.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string),100))
+                {
+                    AllowNulls = false,
+                    Collation = collation
+                }
+            });
+
+            Assert.AreEqual(collation, tbl.DiscoverColumn("Name").Collation);
         }
 
         [TestFixtureTearDown]

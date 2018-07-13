@@ -19,6 +19,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         protected abstract string ServerKeyName { get; }
         protected abstract string DatabaseKeyName { get; }
+        protected virtual string ConnectionTimeoutKeyName { get { return "ConnectionTimeout"; } }
 
         public string GetServerName(DbConnectionStringBuilder builder)
         {
@@ -76,7 +77,30 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public DatabaseType DatabaseType { get; private set; }
         public abstract Dictionary<string, string> DescribeServer(DbConnectionStringBuilder builder);
-        public abstract bool RespondsWithinTime(DbConnectionStringBuilder inSeconds, int timeoutInSeconds, out Exception exception);
+
+        public bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds,out Exception exception)
+        {
+            try
+            {
+                var copyBuilder = GetConnectionStringBuilder(builder.ConnectionString);
+                copyBuilder[ConnectionTimeoutKeyName] = timeoutInSeconds;
+
+                using (var con = GetConnection(copyBuilder))
+                {
+                    con.Open();
+
+                    con.Close();
+
+                    exception = null;
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                return false;
+            }
+        }
         public abstract string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder);
         public abstract string GetExplicitPasswordIfAny(DbConnectionStringBuilder builder);
 

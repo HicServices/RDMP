@@ -22,6 +22,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
         protected override string ServerKeyName { get { return "Data Source"; }}
         protected override string DatabaseKeyName { get { return "Initial Catalog"; }}
 
+        protected override string ConnectionTimeoutKeyName { get { return "Connect Timeout";} }
+
         #region Up Typing
         public override DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null)
         {
@@ -147,30 +149,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             
 
             return toReturn;
-        }
-
-        public override bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds, out Exception exception)
-        {
-            try
-            {
-                var copyBuilder = new SqlConnectionStringBuilder(builder.ConnectionString);
-                copyBuilder.ConnectTimeout = timeoutInSeconds;
-
-                using (var con = GetConnection(copyBuilder))
-                {
-                    con.Open();
-
-                    con.Close();
-
-                    exception = null;
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                exception = e;
-                return false;
-            }
         }
 
         public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)

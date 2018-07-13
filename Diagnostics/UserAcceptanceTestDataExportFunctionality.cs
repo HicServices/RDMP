@@ -16,6 +16,7 @@ using DataExportLibrary.ExtractionTime.UserPicks;
 using DataLoadEngine.DatabaseManagement.Operations;
 using Diagnostics.TestData;
 using RDMPStartup;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -437,7 +438,7 @@ GO
 
             try
             {
-                ExtractDatasetCommand request = new ExtractDatasetCommand(RepositoryLocator,_extractionConfiguration,_extractableCohort,new ExtractableDatasetBundle(_extractableDataSet),_extractableColumns,new HICProjectSalt(_project),"", null);
+                ExtractDatasetCommand request = new ExtractDatasetCommand(RepositoryLocator,_extractionConfiguration,_extractableCohort,new ExtractableDatasetBundle(_extractableDataSet),_extractableColumns,new HICProjectSalt(_project), null);
                 request.GenerateQueryBuilder();
 
                 ISqlQueryBuilder extractionCommand = request.QueryBuilder;
@@ -534,7 +535,7 @@ GO
 
             try
             {
-                _externalCohortTable = new ExternalCohortTable(repository, "")
+                _externalCohortTable = new ExternalCohortTable(repository, "",DatabaseType.MicrosoftSQLServer)
                 {
                     Server = _liveDataServer.Name,
                     Database = _cohortDatabaseName,

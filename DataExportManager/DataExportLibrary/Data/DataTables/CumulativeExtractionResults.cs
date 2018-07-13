@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.DataRelease.Audit;
@@ -43,22 +44,22 @@ namespace DataExportLibrary.Data.DataTables
         public int ExtractableDataSet_ID
         {
             get { return _extractableDataSet_ID; }
-            set { SetField(ref _extractableDataSet_ID, value); }
+            private set { SetField(ref _extractableDataSet_ID, value); }
         }
         public DateTime DateOfExtraction
         {
             get { return _dateOfExtraction; }
-            set { SetField(ref _dateOfExtraction, value); }
+            private set { SetField(ref _dateOfExtraction, value); }
         }
         public string DestinationType
         {
             get { return _destinationType; }
-            set { SetField(ref _destinationType, value); }
+            private set { SetField(ref _destinationType, value); }
         }
         public string DestinationDescription
         {
             get { return _destinationDescription; }
-            set { SetField(ref _destinationDescription, value); }
+            private set { SetField(ref _destinationDescription, value); }
         }
         public int RecordsExtracted
         {
@@ -83,12 +84,12 @@ namespace DataExportLibrary.Data.DataTables
         public string SQLExecuted
         {
             get { return _sQLExecuted; }
-            set { SetField(ref _sQLExecuted, value); }
+            private set { SetField(ref _sQLExecuted, value); }
         }
         public int CohortExtracted
         {
             get { return _cohortExtracted; }
-            set { SetField(ref _cohortExtracted, value); }
+            private set { SetField(ref _cohortExtracted, value); }
         }
 
         #endregion
@@ -104,16 +105,35 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
-       #endregion
+        [NoMappingToDatabase]
+        public List<ISupplementalExtractionResults> SupplementalExtractionResults
+        {
+            get { return new List<ISupplementalExtractionResults>(Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this)); }
+        }
 
-        public CumulativeExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration, IExtractableDataSet dataset, string SQL)
+        public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject)
+        {
+            var result = new SupplementalExtractionResults(Repository, this, sqlExecuted, extractedObject);
+            SupplementalExtractionResults.Add(result);
+            return result;
+        }
+
+        public bool IsFor(ISelectedDataSets selectedDataSet)
+        {
+            return selectedDataSet.ExtractableDataSet_ID == ExtractableDataSet_ID &&
+                   selectedDataSet.ExtractionConfiguration_ID == ExtractionConfiguration_ID;
+        }
+
+        #endregion
+
+        public CumulativeExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration, IExtractableDataSet dataset, string sql)
         {
             Repository = repository;
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"ExtractionConfiguration_ID", configuration.ID},
                 {"ExtractableDataSet_ID", dataset.ID},
-                {"SQLExecuted", SQL},
+                {"SQLExecuted", sql},
                 {"CohortExtracted", configuration.Cohort_ID}
             });
         }
@@ -139,14 +159,14 @@ namespace DataExportLibrary.Data.DataTables
             var repo = (DataExportRepository)Repository;
             using (var con = repo.GetConnection())
             {
-                var cmdselect = DatabaseCommandHelper.GetCommand(@"SELECT *
-  FROM ReleaseLog
-  where
-  CumulativeExtractionResults_ID = " + ID,
-                    con.Connection, con.Transaction);
-                
+                var cmdselect = DatabaseCommandHelper
+                    .GetCommand(@"SELECT *
+                                    FROM ReleaseLog
+                                    where
+                                    CumulativeExtractionResults_ID = " + ID, con.Connection, con.Transaction);
+
                 var r = cmdselect.ExecuteReader();
-                if(r.Read())
+                if (r.Read())
                     return new ReleaseLogEntry(Repository, r);
 
                 return null;
@@ -156,6 +176,20 @@ namespace DataExportLibrary.Data.DataTables
         public Type GetDestinationType()
         {
             return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(_destinationType);
+        }
+        
+        public void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted)
+        {
+            DestinationType = destinationType.FullName;
+            DestinationDescription = destinationDescription;
+            RecordsExtracted = recordsExtracted;
+
+            SaveToDatabase();
+        }
+
+        public override string ToString()
+        {
+            return ExtractableDataSet.Catalogue.Name;
         }
     }
 }

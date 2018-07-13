@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel.Composition;
+using System.Drawing;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
@@ -14,8 +15,19 @@ namespace Dashboard.CommandExecution.AtomicCommands
     {
         private LoadMetadata _loadmetadata;
 
+        [ImportingConstructor]
+        public ExecuteCommandViewLoadMetadataLogs(IActivateItems activator, LoadMetadata loadMetadata): base(activator)
+        {
+            SetTarget(loadMetadata);
+        }
+        
         public ExecuteCommandViewLoadMetadataLogs(IActivateItems activator) : base(activator)
         {
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "View the hierarchical audit log of all executions of the data load configuration";
         }
 
         public Image GetImage(IIconProvider iconProvider)

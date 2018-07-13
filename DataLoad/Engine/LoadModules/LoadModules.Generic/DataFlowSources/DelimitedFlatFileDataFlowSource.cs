@@ -493,6 +493,12 @@ namespace LoadModules.Generic.DataFlowSources
                 _reader.Configuration.HasHeaderRecord = false;
             }
 
+            //at least trim them
+            for (int i = 0; i < _headers.Length; i++)
+                if (!string.IsNullOrWhiteSpace(_headers[i]))
+                    _headers[i] =_headers[i].Trim();
+
+            //and maybe also help them out with a bit of sanity fixing
             if(MakeHeaderNamesSane)
                 for (int i = 0; i < _headers.Length; i++)
                     _headers[i] = QuerySyntaxHelper.MakeHeaderNameSane(_headers[i]);

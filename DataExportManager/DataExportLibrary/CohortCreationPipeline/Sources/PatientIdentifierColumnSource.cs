@@ -34,12 +34,14 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
             
             _haveSentData = true;
 
-            return GetDataTable(Timeout);
+            return GetDataTable(Timeout,null);
         }
 
-        private DataTable GetDataTable(int timeout)
+        private DataTable GetDataTable(int timeout, int? topX)
         {
             var qb = new QueryBuilder("distinct", null);
+            if(topX != null)
+                qb.TopX = topX.Value;
             qb.AddColumn(_extractionInformation);
 
             var server = _extractionInformation.CatalogueItem.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, true);
@@ -76,7 +78,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
         public DataTable TryGetPreview()
         {
-            return GetDataTable(10);
+            return GetDataTable(10,1000);
         }
 
         public void Check(ICheckNotifier notifier)
@@ -86,7 +88,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
             try
             {
-                var dt = GetDataTable(5);
+                var dt = GetDataTable(5,1000);
 
                 if (dt.Rows.Count == 0)
                     notifier.OnCheckPerformed(new CheckEventArgs("The table is empty!", CheckResult.Fail));

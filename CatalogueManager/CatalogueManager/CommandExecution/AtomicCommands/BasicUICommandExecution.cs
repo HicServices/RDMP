@@ -49,8 +49,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// <typeparam name="T"></typeparam>
         /// <param name="availableObjects"></param>
         /// <returns></returns>
-        protected T SelectOne<T>(IEnumerable<T> availableObjects) where T : DatabaseEntity
+        protected T SelectOne<T>(IList<T> availableObjects) where T : DatabaseEntity
         {
+            if (availableObjects.Count == 1)
+                return availableObjects[0];
+
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -66,8 +69,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// <param name="availableObjects"></param>
         /// <param name="selected"></param>
         /// <returns></returns>
-        protected bool SelectOne<T>(IEnumerable<T> availableObjects, out T selected) where T : DatabaseEntity
+        protected bool SelectOne<T>(IList<T> availableObjects, out T selected) where T : DatabaseEntity
         {
+            if (availableObjects.Count == 1)
+            {
+                selected = availableObjects[0];
+                return true;
+            }
+
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
             
             selected = dialog.ShowDialog() == DialogResult.OK? (T) dialog.Selected:null;
@@ -83,7 +92,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// <returns></returns>
         protected T SelectOne<T>(IRepository repository) where T : DatabaseEntity
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(repository.GetAllObjects<T>(), false, false);
+            var availableObjects = repository.GetAllObjects<T>();
+            
+            if (availableObjects.Length == 1)
+                return availableObjects[0];
+
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 return (T)dialog.Selected;

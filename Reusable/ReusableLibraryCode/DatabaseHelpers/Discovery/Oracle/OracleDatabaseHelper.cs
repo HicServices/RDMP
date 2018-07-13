@@ -32,6 +32,48 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             throw new NotImplementedException();
         }
 
+        public override string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns,
+            Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete)
+        {
+            var bodySql = base.GetCreateTableSql(database, tableName, columns, foreignKeyPairs, cascadeDelete);
+
+
+            var server = database.Server;
+            var syntaxHelper = server.GetQuerySyntaxHelper();
+
+            //the name sans brackets (hopefully they didn't pass any brackets)
+            var tableRuntimeName = syntaxHelper.GetRuntimeName(tableName);
+            var tableNameFullyQualified = database.ExpectTable(tableRuntimeName).GetFullyQualifiedName();
+            
+            var autoIncrementColumn = columns.SingleOrDefault(c => c.IsAutoIncrement);
+
+            if (autoIncrementColumn == null)
+                return bodySql;
+            
+            var sequenceName = string.Format("\"{0}\".\"{1}_{2}_seq\"", database.GetRuntimeName() , tableRuntimeName , autoIncrementColumn.ColumnName );
+            var triggerName = string.Format("\"{0}\".\"{1}_bir\"",database.GetRuntimeName() ,tableRuntimeName);
+
+            bodySql += "GO" + Environment.NewLine;
+
+            bodySql += string.Format("CREATE SEQUENCE {0} START WITH 1",sequenceName) + Environment.NewLine;
+
+            bodySql += "GO" + Environment.NewLine;
+
+            bodySql += string.Format(
+@"CREATE OR REPLACE TRIGGER {0} 
+BEFORE INSERT ON {1} 
+FOR EACH ROW
+
+BEGIN
+  SELECT {2}.NEXTVAL
+  INTO   :new.{3}
+  FROM   dual;
+END;", triggerName, tableNameFullyQualified, sequenceName, autoIncrementColumn.ColumnName) + Environment.NewLine;
+
+            return bodySql;
+
+        }
+
         public override DirectoryInfo Detach(DiscoveredDatabase database)
         {
             throw new NotImplementedException();

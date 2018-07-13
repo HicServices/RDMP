@@ -114,7 +114,6 @@ namespace CatalogueManager.Collections
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
 
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllAutomationServerSlotsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllObjectSharingNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
@@ -135,7 +134,6 @@ namespace CatalogueManager.Collections
         public static bool IsRootObject(object root)
         {
             return
-                root is AllAutomationServerSlotsNode ||
                 root is AllRDMPRemotesNode ||
                 root is AllObjectSharingNode ||
                 root is AllExternalServersNode ||

@@ -4,10 +4,8 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -21,7 +19,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _activator = activator;
             _catalogue = catalogue;
         }
-        
+
+        public override string GetCommandHelp()
+        {
+            return "Add a new graph for understanding the data in a dataset e.g. number of records per year";
+        }
+
         public override void Execute()
         {
             base.Execute();

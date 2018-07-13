@@ -207,6 +207,9 @@ namespace CatalogueManager.Validation
             if(bSuppressChangeEvents)
                 return;
 
+            if (SelectedColumnItemValidator == null)
+                return;
+
             bSuppressChangeEvents = true;
 
             if (ddPrimaryConstraints.Text == _noPrimaryConstraintText)
@@ -230,10 +233,17 @@ namespace CatalogueManager.Validation
 
 
             bSuppressChangeEvents = false;
+            objectSaverButton1.Enable(true);
         }
 
         private void btnAddSecondaryConstraint_Click(object sender, EventArgs e)
         {
+            if (SelectedColumnItemValidator == null)
+            {
+                MessageBox.Show("You must select a column on the left first");
+                return;
+            }
+
             if (ddSecondaryConstraints.SelectedItem != null)
             {
                 var secondaryConstriant =
@@ -241,6 +251,7 @@ namespace CatalogueManager.Validation
                 
                 SelectedColumnItemValidator.SecondaryConstraints.Add(secondaryConstriant);
                 AddSecondaryConstraintControl(secondaryConstriant);
+                objectSaverButton1.Enable(true);
             }
         }
 
@@ -250,6 +261,7 @@ namespace CatalogueManager.Validation
 
             SelectedColumnItemValidator.SecondaryConstraints.Remove(toDelete);
             tableLayoutPanel1.Controls.Remove(sender as Control);
+            objectSaverButton1.Enable(true);
         }
 
         private void AddSecondaryConstraintControl(SecondaryConstraint secondaryConstriant)
@@ -275,7 +287,10 @@ namespace CatalogueManager.Validation
             
             if (SelectedColumnItemValidator != null)
                 if (SelectedColumnItemValidator.PrimaryConstraint != null)
+                {
                     SelectedColumnItemValidator.PrimaryConstraint.Consequence = (Consequence) ddConsequence.SelectedValue;
+                    objectSaverButton1.Enable(true);
+                }
                 else
                 {
                     MessageBox.Show("you must select a primary constraint first");

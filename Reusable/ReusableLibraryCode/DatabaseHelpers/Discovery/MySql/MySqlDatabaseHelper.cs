@@ -39,7 +39,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public override Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database)
         {
-            throw new NotImplementedException();
+            var mysqlBuilder = (MySqlConnectionStringBuilder) builder;
+
+            var toReturn = new Dictionary<string, string>();
+            toReturn.Add("UserID", mysqlBuilder.UserID);
+            toReturn.Add("Server", mysqlBuilder.Server);
+            toReturn.Add("Database", mysqlBuilder.Database);
+
+            return toReturn;
         }
 
         public override DirectoryInfo Detach(DiscoveredDatabase database)

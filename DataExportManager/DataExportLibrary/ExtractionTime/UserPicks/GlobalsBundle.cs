@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.ExtractionTime.UserPicks
 {
