@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Screen2));
             this.listView1 = new BrightIdeasSoftware.ObjectListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDataType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -37,6 +38,8 @@
             this.btnBack = new System.Windows.Forms.Button();
             this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
             this.label2 = new System.Windows.Forms.Label();
+            this.cbAllowNullReleaseIdentifiers = new System.Windows.Forms.CheckBox();
+            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.listView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -132,10 +135,30 @@
             this.label2.TabIndex = 12;
             this.label2.Text = "2. Pick Destination Database";
             // 
+            // cbAllowNullReleaseIdentifiers
+            // 
+            this.cbAllowNullReleaseIdentifiers.AutoSize = true;
+            this.cbAllowNullReleaseIdentifiers.Location = new System.Drawing.Point(6, 428);
+            this.cbAllowNullReleaseIdentifiers.Name = "cbAllowNullReleaseIdentifiers";
+            this.cbAllowNullReleaseIdentifiers.Size = new System.Drawing.Size(162, 17);
+            this.cbAllowNullReleaseIdentifiers.TabIndex = 13;
+            this.cbAllowNullReleaseIdentifiers.Text = "Allow Null Release Identifiers";
+            this.cbAllowNullReleaseIdentifiers.UseVisualStyleBackColor = true;
+            // 
+            // helpIcon1
+            // 
+            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
+            this.helpIcon1.Location = new System.Drawing.Point(175, 428);
+            this.helpIcon1.Name = "helpIcon1";
+            this.helpIcon1.Size = new System.Drawing.Size(19, 19);
+            this.helpIcon1.TabIndex = 14;
+            // 
             // Screen2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.helpIcon1);
+            this.Controls.Add(this.cbAllowNullReleaseIdentifiers);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.btnNext);
@@ -161,5 +184,7 @@
         public System.Windows.Forms.Button btnBack;
         private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox cbAllowNullReleaseIdentifiers;
+        private ReusableUIComponents.HelpIcon helpIcon1;
     }
 }

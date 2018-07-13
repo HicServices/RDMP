@@ -45,6 +45,8 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
         public Screen2()
         {
             InitializeComponent();
+            helpIcon1.SetHelpText("Null Release Identifiers",
+                @"In RMDP a cohort is a list of private identifiers paired to release identifiers.  Normally these release identifiers are allocated as part of the committing pipeline (e.g. as a new GUID).  If you want to allocate these later yourself e.g. with a stored proceedure then you can tick 'AllowNullReleaseIdentifiers' to create a cohort schema where the release identifier can be null.");
         }
 
         protected override void OnLoad(EventArgs e)
@@ -52,7 +54,7 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
             base.OnLoad(e);
 
             serverDatabaseTableSelector1.HideTableComponents();
-            Wizard = new CreateNewCohortDatabaseWizard(null,RepositoryLocator.CatalogueRepository,RepositoryLocator.DataExportRepository);
+            Wizard = new CreateNewCohortDatabaseWizard(null,RepositoryLocator.CatalogueRepository,RepositoryLocator.DataExportRepository,false);
         }
 
         public CreateNewCohortDatabaseWizard Wizard { get; private set; }
@@ -83,7 +85,8 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
                 return;
             }
 
-            Wizard = new CreateNewCohortDatabaseWizard(db, RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository);
+            Wizard = new CreateNewCohortDatabaseWizard(db, RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository,cbAllowNullReleaseIdentifiers.Checked);
+
             var popup = new PopupChecksUI("Creating Cohort Table", false);
             ExternalCohortTableCreatedIfAny = Wizard.CreateDatabase(PrivateIdentifierPrototype, popup);
 

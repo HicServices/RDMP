@@ -24,21 +24,23 @@ namespace DataExportLibrary.CohortDatabaseWizard
     /// </summary>
     public class CreateNewCohortDatabaseWizard
     {
+        public bool AllowNullReleaseIdentifiers { get; set; }
         private readonly CatalogueRepository _catalogueRepository;
         private readonly IDataExportRepository _dataExportRepository;
         private readonly DiscoveredDatabase _targetDatabase;
 
         private string _releaseIdentifierFieldName = "ReleaseId";
         private string _definitionTableForeignKeyField = "cohortDefinition_id";
+        
 
-
-        public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase,CatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository)
+        public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase,CatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository,bool allowNullReleaseIdentifiers)
         {
+            AllowNullReleaseIdentifiers = allowNullReleaseIdentifiers;
             _catalogueRepository = catalogueRepository;
             _dataExportRepository = dataExportRepository;
             _targetDatabase = targetDatabase;
         }
-
+        
         public PrivateIdentifierPrototype[] GetPrivateIdentifierCandidates()
         {
             //get the extraction identifiers
@@ -92,7 +94,7 @@ namespace DataExportLibrary.CohortDatabaseWizard
                 var cohortTable = _targetDatabase.CreateTable("Cohort",new []
                 {
                  new DatabaseColumnRequest(privateIdentifierPrototype.RuntimeName,privateIdentifierPrototype.DataType,false){IsPrimaryKey = true},
-                 new DatabaseColumnRequest(_releaseIdentifierFieldName,new DatabaseTypeRequest(typeof(string),300)), 
+                 new DatabaseColumnRequest(_releaseIdentifierFieldName,new DatabaseTypeRequest(typeof(string),300)){AllowNulls = AllowNullReleaseIdentifiers}, 
                  foreignKey
                 }
                 ,

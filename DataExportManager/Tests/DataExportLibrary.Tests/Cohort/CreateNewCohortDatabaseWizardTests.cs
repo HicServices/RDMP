@@ -78,7 +78,7 @@ namespace DataExportLibrary.Tests.Cohort
         {
             _extractionInfo1.IsExtractionIdentifier = true;
             _extractionInfo1.SaveToDatabase();
-            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository);
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository,false);
 
             //it finds it!
             Assert.IsTrue(wizard.GetPrivateIdentifierCandidates().Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));
@@ -94,7 +94,7 @@ namespace DataExportLibrary.Tests.Cohort
         [Test]
         public void ProposePrivateIdentifierDatatypes()
         {
-            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository);
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository,false);
 
             var candidates = wizard.GetPrivateIdentifierCandidates();
 
@@ -119,7 +119,7 @@ namespace DataExportLibrary.Tests.Cohort
             //drop it
             db.ForceDrop();
 
-            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository);
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
 
             _extractionInfo2.IsExtractionIdentifier = true;
             _extractionInfo2.SaveToDatabase();

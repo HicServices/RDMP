@@ -68,7 +68,7 @@ namespace DataExportLibrary.Tests.TableValuedFunctionTests
             CreateANormalCatalogue();
             
             //create a cohort database using wizard
-            CreateNewCohortDatabaseWizard cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase,CatalogueRepository,DataExportRepository);
+            CreateNewCohortDatabaseWizard cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase,CatalogueRepository,DataExportRepository,false);
             
             _externalCohortTable = cohortDatabaseWizard.CreateDatabase(
                 new PrivateIdentifierPrototype(_nonTvfExtractionIdentifier)
