@@ -7,7 +7,7 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueLibrary.CommandExecution
 {
-    internal class ExecuteCommandCreateLookup : BasicCommandExecution
+    public class ExecuteCommandCreateLookup : BasicCommandExecution
     {
         private readonly ICatalogueRepository _catalogueRepository;
         private readonly ExtractionInformation _foreignKeyExtractionInformation;
@@ -19,7 +19,10 @@ namespace CatalogueLibrary.CommandExecution
         private readonly ExtractionInformation[] _allExtractionInformations;
 
         /// <summary>
+        /// Creates a knowledge that one <see cref="TableInfo"/> provides a description for a code in a column of a <see cref="Catalogue"/> (<see cref="ExtractionInformation"/>).  
+        /// There can be multiple join keys and multiple descriptions can be selected at once (e.g. SendingLocationCode=> LocationTable.AddressLine1, LocationTable.AddressLine2) etc.
         /// 
+        /// <para>See parameter descriptions for help</para>
         /// </summary>
         /// <param name="catalogueRepository"></param>
         /// <param name="foreignKeyExtractionInformation">The extractable column in the main dataset which contains the lookup code foreign key e.g. PatientSexCode </param>
@@ -27,7 +30,8 @@ namespace CatalogueLibrary.CommandExecution
         /// <param name="fkToPkTuples">Must have at least 1, Item1 must be the foreign key column in the main dataset, Item2 must be the primary key column in the lookup. 
         ///     <para>MOST lookups have 1 column paring only e.g. genderCode but some crazy lookups have duplication of code with another column e.g. TestCode+Healthboard as primary keys into lookup</para></param>
         /// <param name="collation"></param>
-        /// <param name="alsoCreateExtractionInformations"></param>
+        /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of 
+        /// the column(s) in the dataset (when the SELECT query is built)</param>
         public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository, ExtractionInformation foreignKeyExtractionInformation, ColumnInfo[] lookupDescriptionColumns, List<Tuple<ColumnInfo, ColumnInfo>> fkToPkTuples, string collation, bool alsoCreateExtractionInformations)
         {
             _catalogueRepository = catalogueRepository;
@@ -42,10 +46,24 @@ namespace CatalogueLibrary.CommandExecution
             if(!_fkToPkTuples.Any())
                 throw new Exception("You must pass at least 1 pair of keys");
 
+            if(_fkToPkTuples.Any(t=>t.Item1 == null || t.Item2 == null))
+                throw new Exception("Tuples list contained null entries");
+
         }
 
-        public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository, ExtractionInformation foreignKeyExtractionInformation, ColumnInfo lookupDescriptionColumn, ColumnInfo mainDatasetForeignKey, ColumnInfo lookupTablePrimaryKey, string collation, bool alsoCreateExtractionInformations)
-            :this(catalogueRepository, foreignKeyExtractionInformation, new []{lookupDescriptionColumn},new List<Tuple<ColumnInfo, ColumnInfo>> {Tuple.Create(mainDatasetForeignKey,lookupTablePrimaryKey)},collation, alsoCreateExtractionInformations)
+        /// <summary>
+        /// Creates a knowledge that one <see cref="TableInfo"/> provides a description for a code in a column of a <see cref="Catalogue"/> (<see cref="ExtractionInformation"/>).
+        /// </summary>
+        /// <param name="catalogueRepository"></param>
+        /// <param name="foreignKeyExtractionInformation">The extractable column in the main dataset which contains the lookup code foreign key e.g. PatientSexCode </param>
+        /// <param name="lookupDescriptionColumn">The column in the lookup table containing the code description that you want</param>
+        /// <param name="mainDatasetForeignKey">The column in the main dataset which contains the code e.g. SendingLocationCode</param>
+        /// <param name="lookupTablePrimaryKey">The column in the lookup which contains the code e.g. LocationCode</param>
+        /// <param name="collation">Optional - the collation to use when linking the columns</param>
+        /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of 
+        /// the columns in the dataset (when the SELECT query is built)</param>
+        public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository, ExtractionInformation foreignKeyExtractionInformation, ColumnInfo lookupDescriptionColumn, ColumnInfo lookupTablePrimaryKey, string collation, bool alsoCreateExtractionInformations)
+            : this(catalogueRepository, foreignKeyExtractionInformation, new[] { lookupDescriptionColumn }, new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(foreignKeyExtractionInformation.ColumnInfo, lookupTablePrimaryKey) }, collation, alsoCreateExtractionInformations)
         {
             
         }
@@ -87,6 +105,8 @@ namespace CatalogueLibrary.CommandExecution
                     newExtractionInformation.SaveToDatabase();
                 }
             }
+
+            _catalogue.ClearAllInjections();
         }
     }
 }
