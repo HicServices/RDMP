@@ -22,30 +22,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
             // let's look for primary keys in the Extraction Information
             var allPrimaryKeys = request.ColumnsToExtract.Union(request.ReleaseIdentifierSubstitutions).Where(col => col.IsPrimaryKey).ToList();
-            if (allPrimaryKeys.Any())
-            {
-                string newSql;
-                if (allPrimaryKeys.Count > 1)
-                    newSql = "CONCAT(" + String.Join(",'_',", allPrimaryKeys.Select(apk => apk.SelectSQL)) + ")";
-                else 
-                    newSql = allPrimaryKeys.First().GetRuntimeName();
-
-                request.QueryBuilder.AddColumn(new SpontaneousColumn()
-                {
-                    Alias = SYNTH_PK_COLUMN,
-                    HashOnDataRelease = true,
-                    IsPrimaryKey = true,
-                    Order = -1,
-                    SelectSQL = newSql
-                });
-                
-                request.QueryBuilder.RegenerateSQL();
-                _synthesizePkCol = true;
-                return;
-            }
             
-            // no primary keys in Extraction Informations, get them from the ColumnInfos:
-            if (request.QueryBuilder.TablesUsedInQuery.Count == 1) // EASY mode
+            // if there are some they will be marked in the "GetChunk".
+            // If there are none, then we need to synth a new column here.
+            if (!allPrimaryKeys.Any() && request.QueryBuilder.TablesUsedInQuery.Count == 1) // EASY mode
             {
                 var table = Request.QueryBuilder.TablesUsedInQuery.First();
                 var primaryKeys = table.ColumnInfos.Where(ci => ci.IsPrimaryKey).ToList();
@@ -56,7 +36,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                         newSql = "CONCAT(" + String.Join(",'_',", primaryKeys.Select(apk => apk.ToString())) + ")";
                     else
                         newSql = primaryKeys.First().ToString();
-                
+
                     request.QueryBuilder.AddColumn(new SpontaneousColumn()
                     {
                         Alias = SYNTH_PK_COLUMN,
@@ -79,34 +59,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             if (chunk == null)
                 return null;
 
-
-
             var allPrimaryKeys = Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions).Where(col => col.IsPrimaryKey).Select(c=>c.GetRuntimeName()).ToList();
-            chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c=>allPrimaryKeys.Contains(c.ColumnName,StringComparer.CurrentCultureIgnoreCase)).ToArray();
-
-
-            if (_synthesizePkCol)
-                chunk.PrimaryKey = new[] {chunk.Columns[SYNTH_PK_COLUMN]};
-
+            if (allPrimaryKeys.Any())
+                chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c=>allPrimaryKeys.Contains(c.ColumnName,StringComparer.CurrentCultureIgnoreCase)).ToArray();
+            else 
+                if (_synthesizePkCol)
+                    chunk.PrimaryKey = new[] { chunk.Columns[SYNTH_PK_COLUMN] };
+                
             return chunk;
         }
-
-        //public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
-        //{
-        //    //if (GlobalsRequest == null && Request.QueryBuilder.TablesUsedInQuery.Count == 1) // EASY mode
-        //    //{
-        //    //    var table = Request.QueryBuilder.TablesUsedInQuery.First();
-        //    //    var primaryKeys = table.ColumnInfos.Where(ci => ci.IsPrimaryKey).ToList();
-
-        //    //    var primaryKeySQL = String.Join(",'_',", primaryKeys);
-
-        //    //    var insertPoint = sql.IndexOf("FROM", StringComparison.InvariantCultureIgnoreCase);
-
-        //    //    var newSql = sql.Insert(insertPoint, ",CONCAT(" + primaryKeySQL + ") AS SynthPK ");
-        //    //    return newSql;
-        //    //}
-
-        //    return base.HackExtractionSQL(sql, listener);
-        //}
     }
 }

@@ -7,7 +7,7 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueLibrary.CommandExecution
 {
-    internal class ExecuteCommandCreateLookup : BasicCommandExecution
+    public class ExecuteCommandCreateLookup : BasicCommandExecution
     {
         private readonly ICatalogueRepository _catalogueRepository;
         private readonly ExtractionInformation _foreignKeyExtractionInformation;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using CatalogueLibrary.CommandExecution;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
@@ -35,12 +36,9 @@ namespace DataExportLibrary.Tests.DataExtraction
             var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             Assert.That(chunk.PrimaryKey, Is.Not.Null);
-            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 1));
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count())); // NO new column added
             Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
-            Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
-
-            var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
+            Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("DateOfBirth"));
         }
 
         [Test]
@@ -53,12 +51,9 @@ namespace DataExportLibrary.Tests.DataExtraction
             var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             Assert.That(chunk.PrimaryKey, Is.Not.Null);
-            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 1));
-            Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
-            Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
-
-            var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000_" + _cohortKeysGenerated.Values.First()));
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count()));
+            Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(2));
+            Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("ReleaseID"));
         }
 
         [Test]
@@ -71,7 +66,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             Assert.That(chunk.PrimaryKey, Is.Not.Null);
-            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 1));
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 1)); // synth PK is added
             Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
             Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
@@ -89,15 +84,11 @@ namespace DataExportLibrary.Tests.DataExtraction
             var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             Assert.That(chunk.PrimaryKey, Is.Not.Null);
-            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 1));
-            Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
-            Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
-
-            var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 1)); // the "desc" column is added to the existing ones
+            Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(0)); // MultiTable does not synthetise a new PK
         }
 
-        private void SetupLookupTable(out Lookup lookup, out ExtractionInformation extractionInfo)
+        private void SetupLookupTable()
         {
             DataTable dt = new DataTable();
 
@@ -105,21 +96,19 @@ namespace DataExportLibrary.Tests.DataExtraction
             dt.Columns.Add("Description");
 
             dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
-            var catalogue = CatalogueRepository.GetAllCatalogues().First();
+            
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("SimpleLookup", dt, new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
 
-            TableInfo lookupTbl;
-            ColumnInfo[] lookupInfos;
-            Import(tbl, out lookupTbl, out lookupInfos);
-             
-            var cataItem = new CatalogueItem(CatalogueRepository, catalogue, "name_description");
-            var tblInfo = catalogue.GetTableInfoList(true).First();
+            var lookupCata = Import(tbl);
 
-            var colInfo = new ColumnInfo(CatalogueRepository, "name_description", "VARCHAR(20)", tblInfo);
-            cataItem.ColumnInfo_ID = colInfo.ID;
+            ExtractionInformation fkEi = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "Name");
+            ColumnInfo fk = _catalogue.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Name");
+            ColumnInfo pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Name");
 
-            lookup = new Lookup(CatalogueRepository, colInfo, lookupInfos.First(), tblInfo.ColumnInfos.First(), ExtractionJoinType.Left, "");
-            extractionInfo = new ExtractionInformation(CatalogueRepository, cataItem, colInfo, "name_description");
+            ColumnInfo descLine1 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Description");
+
+            var cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, fk, pk, null, true); 
+            cmd.Execute();
         }
 
         private ExtractDatasetCommand SetupExtractDatasetCommand(string testTableName, string[] pkExtractionColumns, string[] pkColumnInfos = null, bool withLookup = false)
@@ -142,11 +131,17 @@ namespace DataExportLibrary.Tests.DataExtraction
             ColumnInfo[] columnInfos;
             CatalogueItem[] cataItems;
             ExtractionInformation[] extractionInformations;
-            var catalogue = Import(tbl, out tableInfo, out columnInfos, out cataItems, out extractionInformations);
+            _catalogue = Import(tbl, out tableInfo, out columnInfos, out cataItems, out extractionInformations);
 
             ExtractionInformation privateID = extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
             privateID.IsExtractionIdentifier = true;
             privateID.SaveToDatabase();
+
+            if (withLookup)
+                SetupLookupTable();
+
+            _catalogue.ClearAllInjections();
+            extractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
             foreach (var pkExtractionColumn in pkExtractionColumns)
             {
@@ -156,30 +151,19 @@ namespace DataExportLibrary.Tests.DataExtraction
             }
 
             ExtractionConfiguration configuration;
-            var extractableColumns = new List<IColumn>();
             IExtractableDataSet extractableDataSet;
             Project project;
 
-            if (withLookup)
-            {
-                Lookup lookup;
-                ExtractionInformation extractionInfo;
-                SetupLookupTable(out lookup, out extractionInfo);
-                extractionInformations = extractionInformations.Concat(new[] {extractionInfo}).ToArray();
-            }
-
-            SetupDataExport(testTableName, catalogue, extractionInformations, extractableColumns, 
+            SetupDataExport(testTableName, _catalogue,
                             out configuration, out extractableDataSet, out project);
 
             configuration.Cohort_ID = _extractableCohort.ID;
             configuration.SaveToDatabase();
 
-            return new ExtractDatasetCommand(RepositoryLocator, configuration, _extractableCohort, new ExtractableDatasetBundle(extractableDataSet),
-                                             extractableColumns, new HICProjectSalt(project), "",
-                                             new ExtractionDirectory(@"C:\temp\", configuration));
+            return new ExtractDatasetCommand(RepositoryLocator, configuration, new ExtractableDatasetBundle(extractableDataSet));
         }
 
-        private void SetupDataExport(string testDbName, Catalogue catalogue, IEnumerable<ExtractionInformation> extractionInformations, List<IColumn> extractableColumns, out ExtractionConfiguration extractionConfiguration, out IExtractableDataSet extractableDataSet, out Project project)
+        private void SetupDataExport(string testDbName, Catalogue catalogue, out ExtractionConfiguration extractionConfiguration, out IExtractableDataSet extractableDataSet, out Project project)
         {
             extractableDataSet = new ExtractableDataSet(DataExportRepository, catalogue);
 
@@ -192,22 +176,12 @@ namespace DataExportLibrary.Tests.DataExtraction
             project.SaveToDatabase();
 
             extractionConfiguration = new ExtractionConfiguration(DataExportRepository, project);
+            extractionConfiguration.AddDatasetToConfiguration(extractableDataSet);
 
-            //select the dataset for extraction under this configuration
-            var selectedDataSet = new SelectedDataSets(RepositoryLocator.DataExportRepository, extractionConfiguration, extractableDataSet, null);
-
-            //select all the columns for extraction
-            foreach (var toSelect in extractionInformations)
+            foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental))
             {
-                var col = new ExtractableColumn(DataExportRepository, extractableDataSet, extractionConfiguration, toSelect, toSelect.Order, toSelect.SelectSQL);
-
-                col.IsExtractionIdentifier = toSelect.IsExtractionIdentifier;
-                col.IsPrimaryKey = toSelect.IsPrimaryKey;
-                col.SaveToDatabase();
-
-                extractableColumns.Add(col);
+                extractionConfiguration.AddColumnToExtraction(extractableDataSet, ei);   
             }
         }
-
     }
 }
