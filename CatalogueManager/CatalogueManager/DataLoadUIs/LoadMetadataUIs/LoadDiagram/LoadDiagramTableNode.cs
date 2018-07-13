@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
-using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
-    public class LoadDiagramTableNode:ICommandSource, IHasLoadDiagramState
+    public class LoadDiagramTableNode:ICommandSource, IHasLoadDiagramState, IMasqueradeAs
     {
         private readonly LoadDiagramDatabaseNode _databaseNode;
         public readonly TableInfo TableInfo;
@@ -141,6 +136,12 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 return hashCode;
             }
         }
+
+        public object MasqueradingAs()
+        {
+            return Bubble == LoadBubble.Live ? TableInfo: null;
+        }
+
         #endregion
     }
 }

@@ -13,6 +13,7 @@ using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -118,7 +119,7 @@ namespace CatalogueManager.Menus
             }
         }
 
-        public void AddCommonMenuItems()
+        public void AddCommonMenuItems(RDMPCollectionCommonFunctionalitySettings settings)
         {
             var deletable = _o as IDeleteable;
             var nameable = _o as INamed;
@@ -169,7 +170,7 @@ namespace CatalogueManager.Menus
                 }
             }
 
-            if (_args.Tree != null)
+            if (_args.Tree != null && !settings.SuppressChildrenAdder)
             {
                 Add(new ExecuteCommandExpandAllNodes(_activator, _args.Tree, _args.Model));
                 Add(new ExecuteCommandCollapseChildNodes(_activator, _args.Tree, _args.Model));

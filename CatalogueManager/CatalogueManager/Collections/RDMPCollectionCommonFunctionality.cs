@@ -113,11 +113,14 @@ namespace CatalogueManager.Collections
                 Tree.ChildrenGetter += ChildrenGetter;
             }
 
-            Tree.ItemActivate += CommonItemActivation;
+            if(!Settings.SuppressActivate)
+                Tree.ItemActivate += CommonItemActivation;
+
             Tree.CellRightClick += CommonRightClick;
             Tree.SelectionChanged += (s,e)=>RefreshContextMenuStrip();
             
-            iconColumn.ImageGetter += ImageGetter;
+            if(iconColumn != null)
+                iconColumn.ImageGetter += ImageGetter;
             
             if(Tree.RowHeight != 19)
                 Tree.RowHeight = 19;
@@ -361,7 +364,7 @@ namespace CatalogueManager.Collections
 
                 //no compatible menus so just return default menu
                 var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
-                defaultMenu.AddCommonMenuItems();
+                defaultMenu.AddCommonMenuItems(Settings);
                 return defaultMenu;
             }
             else
@@ -400,7 +403,7 @@ namespace CatalogueManager.Collections
                 //find first menu that's compatible
                 if (menu != null)
                 {
-                    menu.AddCommonMenuItems();
+                    menu.AddCommonMenuItems(Settings);
                     return menu;
                 }
             }
