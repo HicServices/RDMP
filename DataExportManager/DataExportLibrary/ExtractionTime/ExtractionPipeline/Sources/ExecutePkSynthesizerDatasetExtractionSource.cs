@@ -12,7 +12,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 {
     public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtractionSource
     {
-        public const string SYNTH_PK_COLUMN = "SynthesizedPk";
+        private const string SYNTH_PK_COLUMN = "SynthesizedPk";
         private bool _synthesizePkCol = false;
 
         protected override void Initialize(ExtractDatasetCommand request)
@@ -25,7 +25,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             if (allPrimaryKeys.Any())
             {
                 string newSql;
-                if (allPrimaryKeys.Count > 1) // no need to do anything if there is only one.
+                if (allPrimaryKeys.Count > 1)
                     newSql = "CONCAT(" + String.Join(",'_',", allPrimaryKeys.Select(apk => apk.SelectSQL)) + ")";
                 else 
                     newSql = allPrimaryKeys.First().GetRuntimeName();
@@ -78,6 +78,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
             if (chunk == null)
                 return null;
+
+
+
+            var allPrimaryKeys = Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions).Where(col => col.IsPrimaryKey).Select(c=>c.GetRuntimeName()).ToList();
+            chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c=>allPrimaryKeys.Contains(c.ColumnName,StringComparer.CurrentCultureIgnoreCase)).ToArray();
+
 
             if (_synthesizePkCol)
                 chunk.PrimaryKey = new[] {chunk.Columns[SYNTH_PK_COLUMN]};

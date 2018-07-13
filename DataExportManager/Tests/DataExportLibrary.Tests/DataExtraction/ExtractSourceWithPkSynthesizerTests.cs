@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataHelper;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
@@ -14,6 +15,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using NUnit.Framework;
+using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
@@ -80,8 +82,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void Test_CatalogueItems_NonExtractedPrimaryKey_MultiTable_IsImpossible()
         {
-            var request = SetupExtractDatasetCommand("MultiTable_IsImpossible", new string[] { }, new[] { "DateOfBirth" });
-            SetupLookupTable();
+            var request = SetupExtractDatasetCommand("MultiTable_IsImpossible", new string[] { }, new[] { "DateOfBirth" }, true);
 
             var source = new ExecutePkSynthesizerDatasetExtractionSource();
             source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
@@ -96,7 +97,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
         }
 
-        private void SetupLookupTable()
+        private void SetupLookupTable(out Lookup lookup, out ExtractionInformation extractionInfo)
         {
             DataTable dt = new DataTable();
 
@@ -104,19 +105,24 @@ namespace DataExportLibrary.Tests.DataExtraction
             dt.Columns.Add("Description");
 
             dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
-
             var catalogue = CatalogueRepository.GetAllCatalogues().First();
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("SimpleLookup", dt, new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
 
+            TableInfo lookupTbl;
+            ColumnInfo[] lookupInfos;
+            Import(tbl, out lookupTbl, out lookupInfos);
+             
             var cataItem = new CatalogueItem(CatalogueRepository, catalogue, "name_description");
             var tblInfo = catalogue.GetTableInfoList(true).First();
 
             var colInfo = new ColumnInfo(CatalogueRepository, "name_description", "VARCHAR(20)", tblInfo);
             cataItem.ColumnInfo_ID = colInfo.ID;
 
+            lookup = new Lookup(CatalogueRepository, colInfo, lookupInfos.First(), tblInfo.ColumnInfos.First(), ExtractionJoinType.Left, "");
+            extractionInfo = new ExtractionInformation(CatalogueRepository, cataItem, colInfo, "name_description");
         }
 
-        private ExtractDatasetCommand SetupExtractDatasetCommand(string testTableName, string[] pkExtractionColumns, string[] pkColumnInfos = null)
+        private ExtractDatasetCommand SetupExtractDatasetCommand(string testTableName, string[] pkExtractionColumns, string[] pkColumnInfos = null, bool withLookup = false)
         {
             DataTable dt = new DataTable();
 
@@ -153,6 +159,14 @@ namespace DataExportLibrary.Tests.DataExtraction
             var extractableColumns = new List<IColumn>();
             IExtractableDataSet extractableDataSet;
             Project project;
+
+            if (withLookup)
+            {
+                Lookup lookup;
+                ExtractionInformation extractionInfo;
+                SetupLookupTable(out lookup, out extractionInfo);
+                extractionInformations = extractionInformations.Concat(new[] {extractionInfo}).ToArray();
+            }
 
             SetupDataExport(testTableName, catalogue, extractionInformations, extractableColumns, 
                             out configuration, out extractableDataSet, out project);

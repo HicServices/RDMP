@@ -434,6 +434,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
                 if (actuallyDoIt)
                 {
+
                     foreach (var descCol in descs)
                     {
                         var repo = (CatalogueRepository)_catalogue.Repository;
