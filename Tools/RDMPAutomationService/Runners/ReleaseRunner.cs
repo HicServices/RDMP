@@ -127,8 +127,7 @@ namespace RDMPAutomationService.Runners
 
             foreach (IExtractionConfiguration configuration in _configurations)
             {
-                var potentials = GetReleasePotentials(configuration);
-                data.ConfigurationsForRelease.Add(configuration,potentials);
+                data.ConfigurationsForRelease.Add(configuration, GetReleasePotentials(configuration));
                 data.EnvironmentPotentials.Add(configuration, new ReleaseEnvironmentPotential(configuration));
             }
 

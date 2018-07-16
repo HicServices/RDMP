@@ -28,7 +28,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         protected override void RunSpecificChecks(ICheckNotifier notifier)
         {
-            throw new NotImplementedException();
         }
 
         public override string ToString()

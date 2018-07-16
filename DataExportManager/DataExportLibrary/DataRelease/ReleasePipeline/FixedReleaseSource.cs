@@ -69,20 +69,20 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 return;
             }
 
-            if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Value.OfType<NoReleasePotential>().Any()))
-                throw new Exception("There are DataSets with NoReleasePotential in the ReleaseData");
-
-            var allPotentials = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).ToList();
-            var staleDatasets = allPotentials.Where(
-                   p => p.DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
-
-            if (staleDatasets.Any())
-                throw new Exception(
-                    "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
-                    string.Join(",", staleDatasets.Select(ds => ds.ToString())) + ").  You can probably fix this problem by reloading/refreshing the Releaseability window.  If you have already added them to a planned Release you will need to add the newly recalculated one instead.");
-
             if (isRunTime)
             {
+                var allPotentials = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).ToList();
+                var staleDatasets = allPotentials.Where(
+                       p => p.DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
+
+                if (staleDatasets.Any())
+                    throw new Exception(
+                        "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
+                        string.Join(",", staleDatasets.Select(ds => ds.ToString())) + ").  You can probably fix this problem by reloading/refreshing the Releaseability window.  If you have already added them to a planned Release you will need to add the newly recalculated one instead.");
+
+                if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Value.OfType<NoReleasePotential>().Any()))
+                    throw new Exception("There are DataSets with NoReleasePotential in the ReleaseData");
+
                 foreach (var releasePotentials in allPotentials)
                     releasePotentials.Check(notifier);
 
