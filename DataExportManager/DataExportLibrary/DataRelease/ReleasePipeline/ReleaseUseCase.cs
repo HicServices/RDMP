@@ -78,22 +78,5 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         {
             return _context;
         }
-
-        private void CheckRelease(ICheckNotifier notifier)
-        {
-            if (_releaseData.IsDesignTime)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Stale datasets will be checked at runtime...", CheckResult.Success));
-                return;
-            }
-
-            var staleDatasets = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).Where(
-                   p => p.DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
-
-            if (staleDatasets.Any())
-                throw new Exception(
-                    "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
-                    string.Join(",", staleDatasets.Select(ds => ds.ToString())) + ").  You can probably fix this problem by reloading/refreshing the Releaseability window.  If you have already added them to a planned Release you will need to add the newly recalculated one instead.");
-        }
     }
 }

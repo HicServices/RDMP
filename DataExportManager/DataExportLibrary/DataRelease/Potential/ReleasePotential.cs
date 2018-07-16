@@ -67,80 +67,59 @@ namespace DataExportLibrary.DataRelease.Potential
             Assessments = new Dictionary<IExtractionResults, Releaseability>();
 
             //see what has been extracted before
-            var extractionResults = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
-            if (extractionResults == null || extractionResults.DestinationDescription == null)
-                return;
-
-            DatasetExtractionResult = extractionResults;
-
-            Assessments.Add(extractionResults, MakeAssesment(extractionResults));
-
-            foreach (var supplementalResult in extractionResults.SupplementalExtractionResults)
-                Assessments.Add(supplementalResult, MakeSupplementalAssesment(supplementalResult));
+            DatasetExtractionResult = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
         }
 
         private Releaseability MakeAssesment(ICumulativeExtractionResults extractionResults)
         {
-            try
-            {
-                //always try to figure out what the current SQL is
-                SqlCurrentConfiguration = GetCurrentConfigurationSQL();
+            //always try to figure out what the current SQL is
+            SqlCurrentConfiguration = GetCurrentConfigurationSQL();
 
-                //let the user know when the data was extracted
-                DateOfExtraction = extractionResults.DateOfExtraction;
-                SqlExtracted = extractionResults.SQLExecuted;
+            //let the user know when the data was extracted
+            DateOfExtraction = extractionResults.DateOfExtraction;
+            SqlExtracted = extractionResults.SQLExecuted;
 
-                //the cohort has been changed in the configuration in the time elapsed since the file we are evaluating was generated (that was when CummatliveExtractionResults was populated)
-                if (extractionResults.CohortExtracted != Configuration.Cohort_ID)
-                    return Releaseability.CohortDesynchronisation;
+            //the cohort has been changed in the configuration in the time elapsed since the file we are evaluating was generated (that was when CummatliveExtractionResults was populated)
+            if (extractionResults.CohortExtracted != Configuration.Cohort_ID)
+                return Releaseability.CohortDesynchronisation;
 
-                if (SqlOutOfSyncWithDataExportManagerConfiguration(extractionResults))
-                    return Releaseability.ExtractionSQLDesynchronisation;
+            if (SqlOutOfSyncWithDataExportManagerConfiguration(extractionResults))
+                return Releaseability.ExtractionSQLDesynchronisation;
 
-                var finalAssessment = GetSpecificAssessment(extractionResults);
+            var finalAssessment = GetSpecificAssessment(extractionResults);
 
-                if (finalAssessment == Releaseability.Undefined)
-                    return SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
+            if (finalAssessment == Releaseability.Undefined)
+                return SqlDifferencesVsLiveCatalogue()
+                    ? Releaseability.ColumnDifferencesVsCatalogue
+                    : Releaseability.Releaseable;
 
-                return finalAssessment;
-            }
-            catch (Exception e)
-            {
-                Exception = e;
-                return Releaseability.ExceptionOccurredWhileEvaluatingReleaseability;
-            }
+            return finalAssessment;
         }
 
         private Releaseability MakeSupplementalAssesment(ISupplementalExtractionResults supplementalExtractionResults)
         {
-            try
+            var extractedObject = _repositoryLocator.GetArbitraryDatabaseObject(
+                supplementalExtractionResults.RepositoryType,
+                supplementalExtractionResults.ExtractedType,
+                supplementalExtractionResults.ExtractedId) as INamed;
+
+            if (extractedObject == null)
+                return Releaseability.Undefined;
+
+            if (extractedObject is SupportingSQLTable)
             {
-                var extractedObject = _repositoryLocator.GetArbitraryDatabaseObject(
-                        supplementalExtractionResults.RepositoryType,
-                        supplementalExtractionResults.ExtractedType, 
-                        supplementalExtractionResults.ExtractedId) as INamed;
-
-                if (extractedObject == null)
-                    return Releaseability.Undefined;
-                    
-                if (extractedObject is SupportingSQLTable)
-                {
-                    if ((extractedObject as SupportingSQLTable).SQL != supplementalExtractionResults.SQLExecuted)
-                        return Releaseability.ExtractionSQLDesynchronisation;
-                }
-
-                var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
-
-                if (finalAssessment == Releaseability.Undefined)
-                    return (extractedObject.Name != supplementalExtractionResults.ExtractedName ? Releaseability.ExtractionSQLDesynchronisation : Releaseability.Releaseable);
-
-                return finalAssessment;
+                if ((extractedObject as SupportingSQLTable).SQL != supplementalExtractionResults.SQLExecuted)
+                    return Releaseability.ExtractionSQLDesynchronisation;
             }
-            catch (Exception e)
-            {
-                Exception = e;
-                return Releaseability.ExceptionOccurredWhileEvaluatingReleaseability;
-            }
+
+            var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
+
+            if (finalAssessment == Releaseability.Undefined)
+                return (extractedObject.Name != supplementalExtractionResults.ExtractedName
+                    ? Releaseability.ExtractionSQLDesynchronisation
+                    : Releaseability.Releaseable);
+
+            return finalAssessment;
         }
 
         protected abstract Releaseability GetSupplementalSpecificAssessment(ISupplementalExtractionResults supplementalExtractionResults);
@@ -203,6 +182,9 @@ namespace DataExportLibrary.DataRelease.Potential
         
         public override string ToString()
         {
+            if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
+                return "Never extracted...";
+
             switch (Assessments[DatasetExtractionResult])
             {
                 case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability:
@@ -218,10 +200,45 @@ namespace DataExportLibrary.DataRelease.Potential
 
         public virtual void Check(ICheckNotifier notifier)
         {
-            if (Exception != null)
-                notifier.OnCheckPerformed(new CheckEventArgs("Exception occured evaluating ReleasePotential", CheckResult.Fail, Exception));
+            if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
+                return;
 
-            //todo : call MakeAssesment here instead of constructor
+            var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
+            if (existingReleaseLog != null)
+            {
+                if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Dataset {0} has probably already been released as per {1}!",
+                                                DataSet, existingReleaseLog),
+                                                CheckResult.Warning,
+                                                null,
+                                                "Do you want to delete the old release Log? You should check the values first.")))
+                    existingReleaseLog.DeleteInDatabase();
+            }
+
+            if (!Assessments.ContainsKey(DatasetExtractionResult))
+                try
+                {
+                    Assessments.Add(DatasetExtractionResult, MakeAssesment(DatasetExtractionResult));
+                }
+                catch (Exception e)
+                {
+                    Assessments.Add(DatasetExtractionResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
+                    notifier.OnCheckPerformed(new CheckEventArgs("Exception occured evaluating ReleasePotential", CheckResult.Fail, e));
+                }
+
+            foreach (var supplementalResult in DatasetExtractionResult.SupplementalExtractionResults)
+            {
+                if (!Assessments.ContainsKey(supplementalResult))
+                    try
+                    {
+                        Assessments.Add(supplementalResult, MakeSupplementalAssesment(supplementalResult));
+                    }
+                    catch (Exception e)
+                    {
+                        Assessments.Add(supplementalResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
+                        notifier.OnCheckPerformed(new CheckEventArgs("Exception occured evaluating ReleasePotential", CheckResult.Fail, e));
+                    }
+            }
+
             foreach (KeyValuePair<IExtractionResults, Releaseability> kvp in Assessments)
             {
                 CheckResult checkResult;

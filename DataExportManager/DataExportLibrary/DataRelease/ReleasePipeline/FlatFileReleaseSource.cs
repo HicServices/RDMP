@@ -11,20 +11,12 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
     public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
     {
-        private bool firstTime = true;
-
-        public override ReleaseAudit GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (firstTime)
+            return flowData ?? new ReleaseAudit()
             {
-                firstTime = false;
-                return flowData ?? new ReleaseAudit()
-                {
-                    SourceGlobalFolder = PrepareSourceGlobalFolder()
-                };
-            }
-
-            return null;
+                SourceGlobalFolder = PrepareSourceGlobalFolder()
+            };
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)

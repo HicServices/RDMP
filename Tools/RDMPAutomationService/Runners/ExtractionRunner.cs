@@ -114,7 +114,7 @@ namespace RDMPAutomationService.Runners
             logging.FinalizeTableLoadInfos();
         }
 
-        protected override ICheckable[] GetCheckables()
+        protected override ICheckable[] GetCheckables(ICheckNotifier checkNotifier)
         {
             ChecksDictionary.Clear();
             var checkables = new List<ICheckable>();

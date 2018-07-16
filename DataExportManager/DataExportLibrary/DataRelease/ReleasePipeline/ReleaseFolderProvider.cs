@@ -79,21 +79,10 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
             if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
             {
-                if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Release folder {0} already exists!", _releaseFolder.FullName), 
-                                                                 CheckResult.Warning, 
-                                                                 null, 
-                                                                 "Do you want to delete it? You should check the contents first.")))
-                {
+                if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Release folder {0} already exists!", _releaseFolder.FullName), CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
                     _releaseFolder.Delete(true);
-                    notifier.OnCheckPerformed(new CheckEventArgs("Cleaned non-empty existing release folder: " + _releaseFolder.FullName,
-                                                                 CheckResult.Success));
-                }
                 else
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Intended release folder was existing and I was forbidden to delete it: " + _releaseFolder.FullName,
-                                                                 CheckResult.Fail));
                     return;
-                }
             }
 
             if (FolderSettings.CreateReleaseDirectoryIfNotFound)

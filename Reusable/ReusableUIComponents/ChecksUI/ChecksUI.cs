@@ -52,6 +52,7 @@ namespace ReusableUIComponents.ChecksUI
             olvChecks.PrimarySortOrder = SortOrder.Descending;
 
             olvChecks.UseFiltering = true;
+            AllowsYesNoToAll = true;
         }
 
         private object ImageGetter(object rowObject)
@@ -75,10 +76,11 @@ namespace ReusableUIComponents.ChecksUI
         }
 
         public bool CheckingInProgress { get; private set; }
+        public bool AllowsYesNoToAll { get; set; }
 
         public event AllChecksCompleteHandler AllChecksComplete;
         
-        Thread _checkingThread;
+        Thread _checkingThread; 
         private YesNoYesToAllDialog yesNoYesToAllDialog = new YesNoYesToAllDialog();
         
 
@@ -139,9 +141,9 @@ namespace ReusableUIComponents.ChecksUI
                 AllChecksComplete(this,new AllChecksCompleteHandlerArgs(listener));
         }
 
-        public bool OnCheckPerformed(CheckEventArgs args, bool allowYesNoToAll = true)
+        public bool OnCheckPerformed(CheckEventArgs args)
         {
-            bool shouldApplyFix = DoesUserWantToApplyFix(args, allowYesNoToAll);
+            bool shouldApplyFix = DoesUserWantToApplyFix(args);
 
             AddToListbox(shouldApplyFix
                 ? new CheckEventArgs("Fix will be applied for message:" + args.Message, CheckResult.Warning, args.Ex)
@@ -150,7 +152,7 @@ namespace ReusableUIComponents.ChecksUI
             return shouldApplyFix;
         }
         
-        private bool DoesUserWantToApplyFix(CheckEventArgs args, bool allowYesNoToAll)
+        private bool DoesUserWantToApplyFix(CheckEventArgs args)
         {
             //if there is a fix and a request handler for whether or not to apply the fix
             if (args.ProposedFix != null)
@@ -160,7 +162,7 @@ namespace ReusableUIComponents.ChecksUI
                                         "(dont specify a proposedFix if you are passing in CheckResult.Success)");
 
                 //there is a suggested fix, see if the user has subscribed to the fix handler (i.e. the fix handler tells the class whether the user wants to apply this specific fix, like maybe a messagebox or something gets shown and it returns true to apply the fix)
-                bool applyFix = MakeChangePopup.ShowYesNoMessageBoxToApplyFix(allowYesNoToAll ? yesNoYesToAllDialog : null, 
+                bool applyFix = MakeChangePopup.ShowYesNoMessageBoxToApplyFix(AllowsYesNoToAll ? yesNoYesToAllDialog : null, 
                                                                               args.Message, args.ProposedFix);
 
                 //user wants to apply fix so don't raise any more events
@@ -217,11 +219,6 @@ namespace ReusableUIComponents.ChecksUI
         private void btnAbortChecking_Click(object sender, EventArgs e)
         {
             TerminateWithExtremePrejudice();
-        }
-
-        public bool OnCheckPerformed(CheckEventArgs args)
-        {
-            return OnCheckPerformed(args, true);
         }
     }
 }
