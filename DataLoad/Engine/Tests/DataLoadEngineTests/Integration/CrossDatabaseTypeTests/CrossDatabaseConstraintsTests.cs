@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -16,6 +13,34 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 {
     class CrossDatabaseConstraintsTests : DatabaseTests
     {
+
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void BulkInsert_MixedCase(DatabaseType type)
+        {
+            var db = GetCleanedServer(type);
+
+            var tbl = db.CreateTable("Test", new []
+            {
+                new DatabaseColumnRequest("bob",new DatabaseTypeRequest(typeof(string),100)),
+                new DatabaseColumnRequest("Frank", new DatabaseTypeRequest(typeof(string),100))
+            });
+
+            DataTable dt = new DataTable(); //note that the column order here is reversed i.e. the DataTable column order doesn't match the database (intended)
+            dt.Columns.Add("BoB");
+            dt.Columns.Add("fRAnk");
+            dt.Rows.Add("no", "yes");
+            dt.Rows.Add("no", "no");
+
+            using (var blk = tbl.BeginBulkInsert())
+                blk.Upload(dt);
+
+            var result = tbl.GetDataTable();
+            Assert.AreEqual(2, result.Columns.Count);  //2 rows inserted
+        }
+
+
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.Oracle)]

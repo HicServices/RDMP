@@ -277,6 +277,7 @@
     <Compile Include="DatabaseHelpers\Discovery\IDiscoveredColumnHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\ISupplementalColumnInformation.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Microsoft\Aggregation\MicrosoftSQLAggregateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\BulkCopy.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Microsoft\Update\MicrosoftSQLUpdateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\MySql\Update\MySqlUpdateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Oracle\OracleBulkCopy.cs" />

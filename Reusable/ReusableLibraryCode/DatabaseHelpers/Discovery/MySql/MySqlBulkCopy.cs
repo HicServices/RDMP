@@ -1,35 +1,25 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.IO;
 using System.Linq;
 using MySql.Data.MySqlClient;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
-    public class MySqlBulkCopy : IBulkCopy
+    public class MySqlBulkCopy : BulkCopy
     {
-        private readonly DiscoveredTable _discoveredTable;
-        private IManagedConnection _connection;
-        
-        public MySqlBulkCopy(DiscoveredTable discoveredTable, IManagedConnection connection)
+        public MySqlBulkCopy(DiscoveredTable targetTable, IManagedConnection connection) : base(targetTable, connection)
         {
-            _discoveredTable = discoveredTable;
-            _connection = connection;
+            
         }
 
-        public int Upload(DataTable dt)
+        public override int Upload(DataTable dt)
         {
-            var availableColumns = _discoveredTable.DiscoverColumns().ToArray();
-
             //for all columns not appearing in the DataTable provided
-            var unmatchedColumns = availableColumns.Where(c=>!dt.Columns.Contains(c.GetRuntimeName())).ToArray();
-            
-            Dictionary<DiscoveredColumn, DataColumn> matchedColumns = availableColumns.Where(c=>dt.Columns.Contains(c.GetRuntimeName())).ToDictionary(
-                k=>k,
-                v=>dt.Columns[v.GetRuntimeName()]);
+            DiscoveredColumn[] unmatchedColumns;
 
+            var matchedColumns = GetMapping(dt.Columns.Cast<DataColumn>(), out unmatchedColumns);
+            
             var unmatchedPks = unmatchedColumns.Where(c => c.IsPrimaryKey).ToArray();
 
             if (unmatchedPks.Any())
@@ -41,11 +31,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             {
                 //MySqlBulkLoader does upsert and ignore but no Throw option, so we have to enforce primary keys in memory instead
                 if (dt.PrimaryKey.Length == 0)
-                    dt.PrimaryKey = matchedColumns.Keys.Where(k => k.IsPrimaryKey).Select(c => matchedColumns[c]).ToArray();
+                    dt.PrimaryKey = matchedColumns.Where(kvp => kvp.Value.IsPrimaryKey).Select(kvp=>kvp.Key).ToArray();
             }
             
-            var loader = new MySqlBulkLoader((MySqlConnection)_connection.Connection);
-            loader.TableName = "`" + _discoveredTable.GetRuntimeName() +"`";
+            var loader = new MySqlBulkLoader((MySqlConnection)Connection.Connection);
+            loader.TableName = "`" + TargetTable.GetRuntimeName() +"`";
             
             var tempFile = Path.GetTempFileName();
             loader.FieldTerminator = ",";
@@ -77,13 +67,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             {
                 File.Delete(tempFile);
             }
-        }
-
-        public int Timeout { get; set; }
-
-        public void Dispose()
-        {
-           _connection.Dispose();
         }
     }
 }

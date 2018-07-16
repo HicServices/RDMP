@@ -1,44 +1,31 @@
-﻿using System.Data;
-using System.Data.Common;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 {
-    public class MicrosoftSQLBulkCopy : IBulkCopy
+    public class MicrosoftSQLBulkCopy : BulkCopy
     {
-        private readonly DiscoveredTable _discoveredTable;
-        private readonly IManagedConnection _connection;
-
         private SqlBulkCopy _bulkcopy;
 
-        public MicrosoftSQLBulkCopy(DiscoveredTable discoveredTable, IManagedConnection connection)
+        public MicrosoftSQLBulkCopy(DiscoveredTable targetTable, IManagedConnection connection): base(targetTable, connection)
         {
-            _discoveredTable = discoveredTable;
-            _connection = connection;
-
             _bulkcopy = new SqlBulkCopy((SqlConnection)connection.Connection, SqlBulkCopyOptions.KeepIdentity, (SqlTransaction)connection.Transaction);
             _bulkcopy.BulkCopyTimeout = 50000;
-            _bulkcopy.DestinationTableName = _discoveredTable.GetFullyQualifiedName();
+            _bulkcopy.DestinationTableName = targetTable.GetFullyQualifiedName();
         }
 
-        public int Upload(DataTable dt)
+        public override int Upload(DataTable dt)
         {
-            if (_bulkcopy.ColumnMappings.Count == 0)
-                foreach (DataColumn col in dt.Columns)
-                    _bulkcopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);
+            _bulkcopy.BulkCopyTimeout = Timeout;
 
-            return UsefulStuff.BulkInsertWithBetterErrorMessages(_bulkcopy, dt, _discoveredTable.Database.Server);
-        }
+            _bulkcopy.ColumnMappings.Clear();
 
-        public int Timeout
-        {
-            get { return _bulkcopy.BulkCopyTimeout; } 
-            set { _bulkcopy.BulkCopyTimeout = value; }
-        }
-
-        public void Dispose()
-        {
-            _connection.Dispose();
+            foreach (KeyValuePair<DataColumn, DiscoveredColumn> kvp in GetMapping(dt.Columns.Cast<DataColumn>()))
+                _bulkcopy.ColumnMappings.Add(kvp.Key.ColumnName, kvp.Value.GetRuntimeName());
+            
+            return UsefulStuff.BulkInsertWithBetterErrorMessages(_bulkcopy, dt, TargetTable.Database.Server);
         }
     }
 }
