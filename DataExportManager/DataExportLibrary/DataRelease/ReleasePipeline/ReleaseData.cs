@@ -16,7 +16,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     {
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsForRelease { get; set; }
-        public ReleaseEnvironmentPotential EnvironmentPotential { get; set; }
+        public Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> EnvironmentPotentials { get; set; }
         public ReleaseState ReleaseState { get; set; }
         public bool IsDesignTime { get; set; }
 
@@ -24,6 +24,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         {
             RepositoryLocator = repositoryLocator;
             ConfigurationsForRelease = new Dictionary<IExtractionConfiguration, List<ReleasePotential>>();
+            EnvironmentPotentials = new Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential>();
         }
         
     }

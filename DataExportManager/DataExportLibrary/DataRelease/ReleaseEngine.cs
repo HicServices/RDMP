@@ -52,7 +52,7 @@ namespace DataExportLibrary.DataRelease
             ReleaseAudit = releaseAudit;
         }
 
-        public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
+        public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
         {
             ConfigurationsToRelease = toRelease;
 
@@ -69,7 +69,7 @@ namespace DataExportLibrary.DataRelease
                         AuditFileCreation(fileInfo.Name, sw, 1);
                 }
 
-                ReleaseAllExtractionConfigurations(toRelease, sw, environment, isPatch);
+                ReleaseAllExtractionConfigurations(toRelease, sw, environments, isPatch);
 
                 sw.Flush();
                 sw.Close();
@@ -103,7 +103,7 @@ namespace DataExportLibrary.DataRelease
             }
         }
 
-        protected virtual void ReleaseAllExtractionConfigurations(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, StreamWriter sw, ReleaseEnvironmentPotential environment, bool isPatch)
+        protected virtual void ReleaseAllExtractionConfigurations(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, StreamWriter sw, Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
         {
             //for each configuration, all the release potentials can be released
             foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp in toRelease)
@@ -140,7 +140,7 @@ namespace DataExportLibrary.DataRelease
                     AuditDirectoryCreation(rpDirectory.Name, sw, 1);
 
                     CutTreeRecursive(rp.ExtractDirectory, rpDirectory, sw, 2);
-                    AuditProperRelease(rp, environment, rpDirectory, isPatch);
+                    AuditProperRelease(rp, environments[kvp.Key], rpDirectory, isPatch);
                 }
 
                 ConfigurationsReleased.Add(kvp.Key);

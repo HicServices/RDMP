@@ -61,7 +61,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             _releaseData = value;
         }
 
-        private void Check(ICheckNotifier notifier, bool checkDatasets)
+        private void Check(ICheckNotifier notifier, bool isRunTime)
         {
             if (_releaseData.IsDesignTime)
             {
@@ -81,7 +81,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
                     string.Join(",", staleDatasets.Select(ds => ds.ToString())) + ").  You can probably fix this problem by reloading/refreshing the Releaseability window.  If you have already added them to a planned Release you will need to add the newly recalculated one instead.");
 
-            if (checkDatasets)
+            if (isRunTime)
             {
                 foreach (var releasePotentials in allPotentials)
                     releasePotentials.Check(notifier);
@@ -107,6 +107,13 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     }
 
                     throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable. The following Release Potentials were at a dodgy state:" + sb);
+                }
+
+                foreach (var environmentPotential in _releaseData.EnvironmentPotentials.Values)
+                {
+                    environmentPotential.Check(notifier);
+                    if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
+                        throw new Exception("Ticketing system decided that the Environment is not ready for release. Reason: " + environmentPotential.Reason);
                 }
             }
 

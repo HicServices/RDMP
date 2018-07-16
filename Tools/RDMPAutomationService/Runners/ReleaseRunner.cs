@@ -125,12 +125,11 @@ namespace RDMPAutomationService.Runners
         {
             var data = new ReleaseData(RepositoryLocator);
 
-            data.EnvironmentPotential = new ReleaseEnvironmentPotential(_configurations.First());
-
             foreach (IExtractionConfiguration configuration in _configurations)
             {
                 var potentials = GetReleasePotentials(configuration);
                 data.ConfigurationsForRelease.Add(configuration,potentials);
+                data.EnvironmentPotentials.Add(configuration, new ReleaseEnvironmentPotential(configuration));
             }
 
             return new ReleaseUseCase(_project, data);

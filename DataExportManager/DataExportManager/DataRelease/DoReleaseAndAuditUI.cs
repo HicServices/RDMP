@@ -260,7 +260,6 @@ namespace DataExportManager.DataRelease
             return new ReleaseData(_activator.RepositoryLocator)
             {
                 ConfigurationsForRelease = ConfigurationsForRelease,
-                EnvironmentPotential = _environmentPotential,
                 ReleaseState = _releaseState
             };
         }
