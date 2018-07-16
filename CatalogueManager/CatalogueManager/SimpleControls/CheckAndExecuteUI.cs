@@ -31,6 +31,12 @@ namespace CatalogueManager.SimpleControls
 
         public IRunner CurrentRunner { get; private set; }
 
+        public bool AllowsYesNoToAll
+        {
+            get { return checksUI1.AllowsYesNoToAll; }
+            set { checksUI1.AllowsYesNoToAll = value; }
+        }
+
         public void SetItemActivator(IActivateItems activator)
         {
             _factory = new RunnerFactory();

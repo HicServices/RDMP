@@ -8,6 +8,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.DataRelease
 {
@@ -15,7 +16,7 @@ namespace DataExportLibrary.DataRelease
     /// Evaluates things that are not within the control area of the DataExportManager but which might prevent a release e.g. ticketing system is not available
     ///  / tickets in wrong status / safehaven down for maintencence etc.
     /// </summary>
-    public class ReleaseEnvironmentPotential
+    public class ReleaseEnvironmentPotential : ICheckable
     {
         private readonly DataExportRepository _repository;
         public IExtractionConfiguration Configuration { get; private set; }
@@ -31,7 +32,6 @@ namespace DataExportLibrary.DataRelease
             _repository = (DataExportRepository) configuration.Repository;
             Configuration = configuration;
             Project = configuration.Project;
-            MakeAssessment();
         }
         
         private void MakeAssessment()
@@ -62,6 +62,32 @@ namespace DataExportLibrary.DataRelease
 
                 Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryCrashed;
                 Exception = e;
+            }
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            MakeAssessment();
+            
+            notifier.OnCheckPerformed(new CheckEventArgs("Environment Releasability is " + Assesment, GetCheckResultFor(Assesment), Exception));
+        }
+
+        private CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)
+        {
+            switch (assesment)
+            {
+                case TicketingReleaseabilityEvaluation.TicketingLibraryCrashed:
+                case TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer:
+                case TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer:
+                case TicketingReleaseabilityEvaluation.NotReleaseable:
+                    return CheckResult.Fail;
+                case TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly:
+                    return CheckResult.Warning;
+                case TicketingReleaseabilityEvaluation.Releaseable:
+                    return CheckResult.Success;
+
+                default:
+                    throw new ArgumentOutOfRangeException("assesment");
             }
         }
     }

@@ -71,7 +71,7 @@ namespace RDMPAutomationService.Runners
                     break;
                 case CommandLineActivity.check:
 
-                    ICheckable[] checkables = GetCheckables();
+                    ICheckable[] checkables = GetCheckables(checkNotifier);
                     foreach (ICheckable checkable in checkables)
                     {
                         if (semaphore != null)
@@ -111,7 +111,7 @@ namespace RDMPAutomationService.Runners
         protected abstract void Initialize();
         protected abstract void AfterRun();
 
-        protected abstract ICheckable[] GetCheckables();
+        protected abstract ICheckable[] GetCheckables(ICheckNotifier checkNotifier);
         
         protected abstract object[] GetRunnables();
         protected abstract void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener);

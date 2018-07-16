@@ -41,7 +41,15 @@ namespace ReusableLibraryCode.Checks
             }
 
             if (_childToPassEventsTo != null)
-                return _childToPassEventsTo.OnCheckPerformed(args);
+            {
+                bool fix = _childToPassEventsTo.OnCheckPerformed(args);
+
+                //if child accepted the fix
+                if(fix && !string.IsNullOrWhiteSpace(args.ProposedFix) && args.Result == CheckResult.Fail)
+                    args.Result = CheckResult.Warning;
+                
+                return fix;
+            }
 
             return false;
         }

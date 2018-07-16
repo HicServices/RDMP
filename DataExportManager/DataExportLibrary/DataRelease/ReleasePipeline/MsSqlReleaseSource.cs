@@ -27,41 +27,35 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         private readonly CatalogueRepository _catalogueRepository;
         private DiscoveredDatabase _database;
         private DirectoryInfo _dataPathMap;
-        private bool firstTime = true;
 
-        public MsSqlReleaseSource(CatalogueRepository catalogueRepository) : base()
+        public MsSqlReleaseSource(CatalogueRepository catalogueRepository)
         {
             _catalogueRepository = catalogueRepository;
         }
 
-        public override ReleaseAudit GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (firstTime)
+            DirectoryInfo sourceFolder = GetSourceFolder();
+            Debug.Assert(sourceFolder != null, "sourceFolder != null");
+            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MasterDataFolderName);
+
+            var releaseAudit = new ReleaseAudit()
             {
-                firstTime = false;
-                DirectoryInfo sourceFolder = GetSourceFolder();
-                Debug.Assert(sourceFolder != null, "sourceFolder != null");
-                var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MasterDataFolderName);
+                SourceGlobalFolder = PrepareSourceGlobalFolder()
+            };
 
-                var releaseAudit = new ReleaseAudit()
-                {
-                    SourceGlobalFolder = PrepareSourceGlobalFolder()
-                };
+            if (_database != null)
+            {
+                _database.Detach();
+                var databaseName = _database.GetRuntimeName();
 
-                if (_database != null)
-                {
-                    _database.Detach();
-                    var databaseName = _database.GetRuntimeName();
-
-                    File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"), Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
-                    File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"), Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
-                    File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"));
-                    File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"));
-                }
-
-                return releaseAudit;
+                File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"), Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
+                File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"), Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
+                File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"));
+                File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"));
             }
-            return null;
+
+            return releaseAudit;
         }
 
         private DirectoryInfo GetSourceFolder()

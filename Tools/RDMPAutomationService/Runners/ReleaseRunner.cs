@@ -62,7 +62,7 @@ namespace RDMPAutomationService.Runners
             
         }
 
-        protected override ICheckable[] GetCheckables()
+        protected override ICheckable[] GetCheckables(ICheckNotifier checkNotifier)
         {
             List<ICheckable> toReturn = new List<ICheckable>();
 
@@ -70,10 +70,16 @@ namespace RDMPAutomationService.Runners
                 toReturn.Add(new GlobalsReleaseChecker(_configurations));
 
             foreach (IExtractionConfiguration configuration in _configurations)
+            {
                 toReturn.AddRange(GetReleasePotentials(configuration));
+                toReturn.Add(new ReleaseEnvironmentPotential(configuration));
+            }
 
             if(_pipeline == null)
-                throw new Exception("No Pipeline has been picked");
+            {
+                checkNotifier.OnCheckPerformed(new CheckEventArgs("No Pipeline has been picked", CheckResult.Fail));
+                return new ICheckable[0];
+            }
 
             var useCase = GetReleaseUseCase();
             var engine = useCase.GetEngine(_pipeline, new ThrowImmediatelyDataLoadEventListener());
@@ -89,7 +95,6 @@ namespace RDMPAutomationService.Runners
             //create new ReleaseAssesments
             foreach (ISelectedDataSets selectedDataSet in GetSelectedDataSets(configuration))//todo only the ones user ticked
             {
-
                 var extractionResults = configuration.CumulativeExtractionResults.FirstOrDefault(r => r.IsFor(selectedDataSet));
 
                 //if it has never been extracted
