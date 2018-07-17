@@ -136,7 +136,7 @@ namespace DataExportManager.DataRelease
             // 
             // olvReleaseability
             // 
-            this.olvReleaseability.Text = "Releaseability";
+            this.olvReleaseability.Text = "Releasability";
             this.olvReleaseability.Width = 150;
             // 
             // DataReleaseUI

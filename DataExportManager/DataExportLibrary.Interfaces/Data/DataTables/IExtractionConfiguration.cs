@@ -34,6 +34,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         ISqlParameter[] GlobalExtractionFilterParameters { get; }
         IReleaseLogEntry[] ReleaseLogEntries { get; }
         IEnumerable<ICumulativeExtractionResults> CumulativeExtractionResults { get; }
+        IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults { get; }
 
         ConcreteColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset);
         IContainer GetFilterContainerFor(IExtractableDataSet dataset);

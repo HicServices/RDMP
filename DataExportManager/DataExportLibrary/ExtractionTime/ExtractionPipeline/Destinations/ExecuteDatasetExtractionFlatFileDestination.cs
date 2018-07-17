@@ -24,6 +24,7 @@ using DataExportLibrary.ExtractionTime.FileOutputFormats;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataLoadEngine.DataFlowPipeline;
 using HIC.Logging;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
@@ -152,7 +153,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     {
                         var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
                         var supplementalResult = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup.TableInfo.Name, lookup.TableInfo);
-                        supplementalResult.CompleteAudit(extractTableVerbatim.OutputFilename, linesWritten);
+                        supplementalResult.CompleteAudit(this.GetType(), extractTableVerbatim.OutputFilename, linesWritten);
                     }
 
                     datasetBundle.States[lookup] = ExtractCommandState.Completed;
@@ -293,7 +294,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     : ExtractCommandState.Crashed;
         }
         
-        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ISelectedDataSets selectedDataSet)
+        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
         {
             return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
         }
@@ -301,6 +302,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)
         {
             return new FlatFileReleaseSource<ReleaseAudit>();
+        }
+
+        public GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+        {
+            return new FlatFileGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
         }
 
         private bool TryExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
@@ -315,7 +321,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 {
                     var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
                     var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
-                    supplementalResult.CompleteAudit(outputPath, 0);
+                    supplementalResult.CompleteAudit(this.GetType(), outputPath, 0);
                 }
                 else
                 {
@@ -325,7 +331,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                                                                    extractGlobalsCommand.Configuration,
                                                                    null,
                                                                    doc);
-                    result.CompleteAudit(outputPath, 0);
+                    result.CompleteAudit(this.GetType(), outputPath, 0);
                     extractGlobalsCommand.ExtractionResults.Add(result);
                 }
 
@@ -366,7 +372,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 {
                     var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
                     var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
-                    supplementalResult.CompleteAudit(extractor.OutputFilename, sqlLinesWritten);
+                    supplementalResult.CompleteAudit(this.GetType(), extractor.OutputFilename, sqlLinesWritten);
                 }
                 else
                 {
@@ -377,7 +383,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                                                           extractGlobalsCommand.Configuration,
                                                           sql.SQL,
                                                           sql);
-                    result.CompleteAudit(extractor.OutputFilename, sqlLinesWritten);
+                    result.CompleteAudit(this.GetType(), extractor.OutputFilename, sqlLinesWritten);
                     extractGlobalsCommand.ExtractionResults.Add(result);
                 }
 
@@ -415,4 +421,5 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             }
         }
     }
+
 }

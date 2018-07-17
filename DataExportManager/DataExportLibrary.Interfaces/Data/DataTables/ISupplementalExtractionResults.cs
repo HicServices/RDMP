@@ -17,7 +17,8 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         string ExtractedName { get; }
         string RepositoryType { get; }
 
-        void CompleteAudit(string destinationDescription, int uniqueIdentifiers);
+        void CompleteAudit(Type destinationType, string destinationDescription, int uniqueIdentifiers);
         Type GetExtractedType();
+        Type GetDestinationType();
     }
 }

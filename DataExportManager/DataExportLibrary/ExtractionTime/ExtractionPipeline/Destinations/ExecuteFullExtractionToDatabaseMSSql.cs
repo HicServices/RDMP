@@ -22,6 +22,7 @@ using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using HIC.Logging;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -344,6 +345,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
         }
 
+        public GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+        {
+            return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+        }
+
         private ExtractCommandState ExtractSupportingSql(SupportingSQLTable sql, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
             try
@@ -384,7 +390,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     {
                         var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
                         var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
-                        supplementalResult.CompleteAudit(TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
+                        supplementalResult.CompleteAudit(this.GetType(), TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
                     }
                     else
                     {
@@ -395,7 +401,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                                                               extractGlobalsCommand.Configuration,
                                                               sql.SQL,
                                                               sql);
-                        result.CompleteAudit(TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
+                        result.CompleteAudit(this.GetType(), TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
                         extractGlobalsCommand.ExtractionResults.Add(result);
                     }
                 }
@@ -421,7 +427,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 {
                     var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
                     var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
-                    supplementalResult.CompleteAudit(outputPath, 0);
+                    supplementalResult.CompleteAudit(this.GetType(), outputPath, 0);
                 }
                 else
                 {
@@ -431,7 +437,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                                                                    extractGlobalsCommand.Configuration,
                                                                    null,
                                                                    doc);
-                    result.CompleteAudit(outputPath, 0);
+                    result.CompleteAudit(this.GetType(), outputPath, 0);
                     extractGlobalsCommand.ExtractionResults.Add(result);
                 }
                 return ExtractCommandState.Completed;
@@ -486,7 +492,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     {
                         var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
                         var supplementalResult = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup.TableInfo.Name, lookup.TableInfo);
-                        supplementalResult.CompleteAudit(TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
+                        supplementalResult.CompleteAudit(this.GetType(), TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
                     }
                 }
             }

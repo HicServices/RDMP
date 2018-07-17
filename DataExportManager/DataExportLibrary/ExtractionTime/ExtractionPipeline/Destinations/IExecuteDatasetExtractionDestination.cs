@@ -16,6 +16,7 @@ using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using HIC.Logging;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
@@ -37,5 +38,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
         FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository);
+        GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck);
     }
 }

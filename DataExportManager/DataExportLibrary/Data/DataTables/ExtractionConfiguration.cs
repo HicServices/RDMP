@@ -167,7 +167,16 @@ namespace DataExportLibrary.Data.DataTables
                 return Repository.GetAllObjectsWithParent<CumulativeExtractionResults>(this);
             }
         }
-        
+
+        [NoMappingToDatabase]
+        public IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults
+        {
+            get
+            {
+                return Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this);
+            }
+        }
+
         /// <inheritdoc cref="Cohort_ID"/>
         [NoMappingToDatabase]
         public IExtractableCohort Cohort

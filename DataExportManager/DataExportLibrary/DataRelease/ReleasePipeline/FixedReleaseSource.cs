@@ -119,10 +119,10 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
             var projects = _releaseData.ConfigurationsForRelease.Keys.Select(cfr => cfr.Project_ID).Distinct().ToList();
             if (projects.Count() != 1)
-                throw new Exception("How is it possible that you are doing a release for multiple different projects?");
+                notifier.OnCheckPerformed(new CheckEventArgs("How is it possible that you are doing a release for multiple different projects?", CheckResult.Fail));
 
             if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Key.Project_ID != projects.First()))
-                throw new Exception("Mismatch between project passed into constructor and DoRelease projects");
+                notifier.OnCheckPerformed(new CheckEventArgs("Mismatch between project passed into constructor and DoRelease projects", CheckResult.Fail));
 
             RunSpecificChecks(notifier);
         }

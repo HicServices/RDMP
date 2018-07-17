@@ -15,6 +15,7 @@ begin
 	    [ExtractedType] [varchar](max) NULL,
 	    [ExtractedId] [int] NULL,
 	    [RepositoryType] [varchar](max) NULL,
+        [DestinationType] [varchar](500) NULL
      CONSTRAINT [PK_SupplementalExtractionResults] PRIMARY KEY CLUSTERED 
     (
 	    [ID] ASC
