@@ -54,6 +54,8 @@ namespace DataExportManager.DataRelease
     {
         private Project _project;
 
+        private bool _isFirstTime = true;
+
         private IPipelineSelectionUI _pipelineSelectionUI1;
         private IExtractionConfiguration[] _unreleasedConfigurations;
         private IMapsDirectlyToDatabaseTable[] _globals;
@@ -182,7 +184,6 @@ namespace DataExportManager.DataRelease
             };
         }
 
-
         private IEnumerable ChildrenGetter(object model)
         {
             var p = model as Project;
@@ -206,7 +207,6 @@ namespace DataExportManager.DataRelease
             return c != null && c.Cast<object>().Any();
         }
 
-        private bool _isFirstTime = true;
         public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
@@ -253,12 +253,15 @@ namespace DataExportManager.DataRelease
             _isFirstTime = false;
 
             tlvReleasePotentials.DisableObjects(_globals);
+            //tlvReleasePotentials.DisableObject(_globalsNode);
         }
+        
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             base.ConsultAboutClosing(sender, e);
             checkAndExecuteUI1.ConsultAboutClosing(sender, e);
         }
+        
         public override string GetTabName()
         {
             return "Release: " + _project;

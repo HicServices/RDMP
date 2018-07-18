@@ -134,7 +134,17 @@ namespace RDMPAutomationService.Runners
             {
                 data.ConfigurationsForRelease.Add(configuration, GetReleasePotentials(configuration));
                 data.EnvironmentPotentials.Add(configuration, new ReleaseEnvironmentPotential(configuration));
+                data.SelectedDatasets.Add(configuration, GetSelectedDataSets(configuration));
             }
+
+            data.ReleaseGlobals = _options.ReleaseGlobals;
+
+            var allDdatasets = _configurations.SelectMany(ec => ec.GetAllExtractableDataSets()).ToList();
+            var selectedDatasets = data.SelectedDatasets.Values.SelectMany(sd => sd.ToList()).ToList();
+
+            data.ReleaseState = allDdatasets.Count != selectedDatasets.Count 
+                                    ? ReleaseState.DoingPatch 
+                                    : ReleaseState.DoingProperRelease;
 
             return new ReleaseUseCase(_project, data);
         }
@@ -148,8 +158,6 @@ namespace RDMPAutomationService.Runners
 
         private IEnumerable<ISelectedDataSets> GetSelectedDataSets(IExtractionConfiguration configuration)
         {
-            //todo only the ones user ticked
-
             //are we only releasing some of the datasets?
             var onlySomeDatasets = _selectedDatasets.Where(sds => sds.ExtractionConfiguration_ID == configuration.ID).ToArray();
 

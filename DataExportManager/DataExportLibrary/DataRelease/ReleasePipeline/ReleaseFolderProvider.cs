@@ -74,7 +74,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
             else
             {
-                _releaseFolder = GetFromProjectFolder();// new DirectoryInfo(_project.ExtractionDirectory);
+                _releaseFolder = GetFromProjectFolder();
             }
 
             if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())

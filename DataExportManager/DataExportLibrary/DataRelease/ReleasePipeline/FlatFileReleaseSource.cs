@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -32,6 +33,14 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         protected override void RunSpecificChecks(ICheckNotifier notifier)
         {
             
+        }
+
+        protected override DirectoryInfo PrepareSourceGlobalFolder()
+        {
+            if (_releaseData.ReleaseGlobals)
+                return base.PrepareSourceGlobalFolder();
+
+            return null;
         }
     }
 }

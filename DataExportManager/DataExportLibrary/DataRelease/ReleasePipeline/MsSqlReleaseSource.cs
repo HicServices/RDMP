@@ -37,7 +37,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         {
             DirectoryInfo sourceFolder = GetSourceFolder();
             Debug.Assert(sourceFolder != null, "sourceFolder != null");
-            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MasterDataFolderName);
+            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MASTER_DATA_FOLDER_NAME);
 
             var releaseAudit = new ReleaseAudit()
             {
@@ -60,14 +60,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         private DirectoryInfo GetSourceFolder()
         {
-            foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> releasePotentials in _releaseData.ConfigurationsForRelease)
-            {
-                foreach (ReleasePotential releasePotential in releasePotentials.Value)
-                {
-                    return releasePotential.ExtractDirectory.Parent;
-                }
-            }
-            return null;
+            return _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent;
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -134,7 +127,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             DirectoryInfo sourceFolder = GetSourceFolder();
-            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MasterDataFolderName);
+            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MASTER_DATA_FOLDER_NAME);
 
             var databaseName = _database.GetRuntimeName();
 
@@ -157,6 +150,14 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     throw new Exception("Release aborted by user.");
                 }
             }
+        }
+
+        protected override DirectoryInfo PrepareSourceGlobalFolder()
+        {
+            if (_releaseData.ReleaseGlobals)
+                return base.PrepareSourceGlobalFolder();
+
+            return null;
         }
     }
 }
