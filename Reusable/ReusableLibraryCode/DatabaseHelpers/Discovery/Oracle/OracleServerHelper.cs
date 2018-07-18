@@ -99,6 +99,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
                 cmd = new OracleCommand("ALTER USER " + newDatabaseName.GetRuntimeName() + " quota unlimited on system", (OracleConnection)con);
                 cmd.ExecuteNonQuery();
+
+                cmd = new OracleCommand("ALTER USER " + newDatabaseName.GetRuntimeName() + " quota unlimited on users", (OracleConnection)con);
+                cmd.ExecuteNonQuery();
             }
         }
 
