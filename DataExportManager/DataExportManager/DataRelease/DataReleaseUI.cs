@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
@@ -114,6 +116,7 @@ namespace DataExportManager.DataRelease
             var releaseRunner = checkAndExecuteUI1.CurrentRunner as ReleaseRunner;
             var sds = rowObject as ISelectedDataSets;
             var configuration = rowObject as IExtractionConfiguration;
+            var global = rowObject as IMapsDirectlyToDatabaseTable;
 
             if (releaseRunner == null)
                 return null;
@@ -123,9 +126,11 @@ namespace DataExportManager.DataRelease
             if (configuration != null)
             {
                 var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<ReleaseEnvironmentPotential>().ToArray().SingleOrDefault(rp => rp.Configuration.Equals(configuration));
-                
-                //otherwise use the checks of it
                 key = releasePotential;
+                if (key != null)
+                    return releaseRunner.ChecksDictionary[key].GetWorst();
+                
+                return null;
             }
 
             if (sds != null)
@@ -147,19 +152,23 @@ namespace DataExportManager.DataRelease
 
                 //otherwise use the checks of it
                 key = releasePotential;
+                if (key != null)
+                    return releaseRunner.ChecksDictionary[key].GetWorst();
+
+                return null;
             }
 
-            if (Equals(rowObject, _globalsNode))
-                key = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().SingleOrDefault();
-
-            if (key != null)
+            if (global != null && (global is SupportingDocument || global is SupportingSQLTable))
             {
-                return releaseRunner.ChecksDictionary[key].GetWorst();
+                var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<GlobalReleasePotential>().ToList().SingleOrDefault(rp => rp.RelatedGlobal.Equals(global));
+                if (releasePotential != null)
+                    return releasePotential.Releasability;
+
+                return null;
             }
 
             return null;
         }
-
 
         private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
         {
@@ -216,7 +225,6 @@ namespace DataExportManager.DataRelease
             //figure out the globals
             var ec = _project.ExtractionConfigurations.FirstOrDefault();
             _globals = ec != null ? ec.GetGlobals() : new IMapsDirectlyToDatabaseTable[0];
-
 
             checkAndExecuteUI1.SetItemActivator(activator);
 

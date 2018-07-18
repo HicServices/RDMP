@@ -27,6 +27,7 @@ namespace DataExportLibrary.Data.DataTables
         private int _extractedId;
         private string _repositoryType;
         private string _extractedName;
+        private string _destinationType;
 
         public int? CumulativeExtractionResults_ID
         {
@@ -79,6 +80,12 @@ namespace DataExportLibrary.Data.DataTables
         {
             get { return _extractedId; }
             set { SetField(ref _extractedId, value); }
+        }
+
+        public string DestinationType
+        {
+            get { return _destinationType; }
+            private set { SetField(ref _destinationType, value); }
         }
 
         #endregion
@@ -140,7 +147,8 @@ namespace DataExportLibrary.Data.DataTables
             ExtractedType = r["ExtractedType"] as string;
             ExtractedId = r["ExtractedId"] is DBNull ? 0 : Convert.ToInt32(r["ExtractedId"]);
             ExtractedName = r["ExtractedName"] as string;
-            RepositoryType = r["RepositoryType"] as string; 
+            RepositoryType = r["RepositoryType"] as string;
+            DestinationType = r["DestinationType"] as string; 
 
             IsGlobal = CumulativeExtractionResults_ID == null && ExtractionConfiguration_ID != null;
         }
@@ -150,13 +158,21 @@ namespace DataExportLibrary.Data.DataTables
             return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(ExtractedType);
         }
 
-        public void CompleteAudit(string destinationDescription, int distinctIdentifiers)
+        public Type GetDestinationType()
         {
+            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(DestinationType);
+        }
+
+        public void CompleteAudit(Type destinationType, string destinationDescription, int distinctIdentifiers)
+        {
+            DestinationType = destinationType.FullName;
             DestinationDescription = destinationDescription;
             RecordsExtracted = distinctIdentifiers;
 
             SaveToDatabase();
         }
+
+        
 
         public override string ToString()
         {

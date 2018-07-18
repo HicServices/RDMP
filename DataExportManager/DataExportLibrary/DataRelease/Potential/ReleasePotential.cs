@@ -204,12 +204,12 @@ namespace DataExportLibrary.DataRelease.Potential
             if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
                 return;
 
-            if (DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                "Release potential relates to expired (stale) extraction; you or someone else has executed another data extraction since you added this dataset to the release." +
-                "Offending dataset was (" + DataSet +
-                ").  You can probably fix this problem by reloading/refreshing the Releaseability window. " +
-                "If you have already added them to a planned Release you will need to add the newly recalculated one instead.", CheckResult.Fail));
+            if (DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted)
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    "Release potential relates to expired (stale) extraction; you or someone else has executed another data extraction since you added this dataset to the release." +
+                    "Offending dataset was (" + DataSet +
+                    ").  You can probably fix this problem by reloading/refreshing the Releaseability window. " +
+                    "If you have already added them to a planned Release you will need to add the newly recalculated one instead.", CheckResult.Fail));
 
             var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
             if (existingReleaseLog != null)

@@ -234,6 +234,10 @@
     <Compile Include="CohortDescribing\ExtractableCohortDescription.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogWriter.cs" />
     <Compile Include="DataRelease\Audit\ReleaseLogEntry.cs" />
+    <Compile Include="DataRelease\Potential\FlatFileGlobalsReleasePotential.cs" />
+    <Compile Include="DataRelease\Potential\GlobalReleasePotential.cs" />
+    <Compile Include="DataRelease\Potential\MsSqlGlobalsReleasePotential.cs" />
+    <Compile Include="DataRelease\Potential\NoGlobalReleasePotential.cs" />
     <Compile Include="DataRelease\Potential\NoReleasePotential.cs" />
     <Compile Include="DataRelease\Potential\Releaseability.cs" />
     <Compile Include="DataRelease\ReleaseEngine.cs" />

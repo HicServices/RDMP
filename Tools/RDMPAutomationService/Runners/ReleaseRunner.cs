@@ -66,8 +66,13 @@ namespace RDMPAutomationService.Runners
         {
             List<ICheckable> toReturn = new List<ICheckable>();
 
-            if(_options.ReleaseGlobals)
-                toReturn.Add(new GlobalsReleaseChecker(_configurations));
+            if (_options.ReleaseGlobals)
+            {
+                toReturn.AddRange(_configurations.First()
+                                                 .GetGlobals()
+                                                 .Select(availableGlobal => 
+                                                     new GlobalsReleaseChecker(RepositoryLocator, _configurations, availableGlobal).GetEvaluator()));
+            }
 
             foreach (IExtractionConfiguration configuration in _configurations)
             {
