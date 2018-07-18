@@ -8,6 +8,7 @@ using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 
 namespace DataExportLibrary.Data.DataTables
@@ -21,7 +22,7 @@ namespace DataExportLibrary.Data.DataTables
     /// then adjust the others to correct issues and be confident that the system is tracking those changes to ensure that the current state of the system always matches the extracted
     /// files at release time.
     /// </summary>
-    public class CumulativeExtractionResults : VersionedDatabaseEntity, ICumulativeExtractionResults
+    public class CumulativeExtractionResults : VersionedDatabaseEntity, ICumulativeExtractionResults, IInjectKnown<IExtractableDataSet>
     {
         #region Database Properties
         private int _extractionConfiguration_ID;
@@ -35,6 +36,7 @@ namespace DataExportLibrary.Data.DataTables
         private string _exception;
         private string _sQLExecuted;
         private int _cohortExtracted;
+        private Lazy<IExtractableDataSet> _knownExtractableDataSet;
 
         public int ExtractionConfiguration_ID
         {
@@ -101,7 +103,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             get
             {
-                return Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
+                return _knownExtractableDataSet.Value;
             }
         }
 
@@ -136,6 +138,8 @@ namespace DataExportLibrary.Data.DataTables
                 {"SQLExecuted", sql},
                 {"CohortExtracted", configuration.Cohort_ID}
             });
+
+            ClearAllInjections();
         }
 
         internal CumulativeExtractionResults(IDataExportRepository repository, DbDataReader r)
@@ -152,6 +156,8 @@ namespace DataExportLibrary.Data.DataTables
             DestinationDescription = r["DestinationDescription"] as string;
             SQLExecuted = r["SQLExecuted"] as string;
             CohortExtracted = int.Parse(r["CohortExtracted"].ToString());
+
+            ClearAllInjections();
         }
 
         public IReleaseLogEntry GetReleaseLogEntryIfAny()
@@ -190,6 +196,16 @@ namespace DataExportLibrary.Data.DataTables
         public override string ToString()
         {
             return ExtractableDataSet.Catalogue.Name;
+        }
+
+        public void InjectKnown(IExtractableDataSet instance)
+        {
+            _knownExtractableDataSet = new Lazy<IExtractableDataSet>(()=>instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownExtractableDataSet = new Lazy<IExtractableDataSet>(() => Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID));
         }
     }
 }
