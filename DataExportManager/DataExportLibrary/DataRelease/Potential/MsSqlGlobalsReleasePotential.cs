@@ -7,6 +7,10 @@ using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.DataRelease.Potential
 {
+    /// <summary>
+    /// Determines the releasability of global objects (e.g. <see cref="SupportingDocument"/>) that should have been extracted as
+    /// part of a project extraction.  For <see cref="SupportingSQLTable"/> it will confirm that the table exists in the database
+    /// </summary>
     public class MsSqlGlobalsReleasePotential : GlobalReleasePotential
     {
         public MsSqlGlobalsReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)

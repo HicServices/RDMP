@@ -10,6 +10,7 @@ using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
+using DataExportLibrary.Providers.Nodes.UsedByNodes;
 using NUnit.Framework;
 using ReusableUIComponents.CommandExecution.Proposals;
 
@@ -23,7 +24,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         private Type[] excusedNodeClasses = new Type[]
         {
             //it's a singleton because you can only have one decryption certificate for an RDMP as opposed to other SingletonNode classses that represent collections e.g. AllTableInfos is the only collection of TableInfos but it's a collection
-            typeof(DecryptionPrivateKeyNode)
+            typeof(DecryptionPrivateKeyNode),
+            typeof(ArbitraryFolderNode)
         };
 
         public void FindProblems(List<string> csFilesList,MEF mef)
@@ -40,6 +42,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                 //it's something like ProposeExecutionWhenTargetIsIDirectoryNode.cs i.e. it's not a Node!
                 if (typeof (ICommandExecutionProposal).IsAssignableFrom(nodeClass))
+                    continue;
+
+                //if it's an ObjectUsedByOtherObjectNode then it will already have GetHashCode implemented
+                if (typeof (IObjectUsedByOtherObjectNode).IsAssignableFrom(nodeClass))
                     continue;
 
                 //these are all supported at base class level

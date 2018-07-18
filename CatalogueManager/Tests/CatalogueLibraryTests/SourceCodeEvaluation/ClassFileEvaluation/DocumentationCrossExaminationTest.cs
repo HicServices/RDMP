@@ -172,7 +172,19 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "DataLoadRunId",
 
             "DataStructures", //class diagram
-            "MyYetToExistTable"
+            "MyYetToExistTable",
+
+            "SexCode",
+            "SexCode_Desc",
+            "SendingLocationCode",
+            "LocationTable",
+            "AddressLine1",
+            "AddressLine2",
+            "PatientSexCode",
+            "SexDescription",
+            "SexDescriptionLong",
+
+
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
@@ -271,7 +283,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
             if (problems.Any())
             {
-                Console.WriteLine("Found problem words in comments (Scroll down to see by file):");
+                Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._whitelist):");
                 foreach (var pLine in problems.Select(p => p.Split('\n')))
                     Console.WriteLine("\"" + pLine[1] + "\",");
                 

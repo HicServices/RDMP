@@ -272,7 +272,6 @@
     <Compile Include="DataRelease\Potential\MsSqlExtractionReleasePotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\FlatFileReleaseSource.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecutePkSynthesizerDatasetExtractionSource.cs" />
-    <Compile Include="Spontaneous\SpontaneousColumn.cs" />
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />

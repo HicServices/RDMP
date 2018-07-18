@@ -7,6 +7,10 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueLibrary.CommandExecution
 {
+    /// <summary>
+    /// Creates a new Lookup relationship between two <see cref="TableInfo"/>.  This will allow you to optionally extract code descriptions side by side code values (e.g. SexCode, SexCode_Desc)
+    /// by joining the two tables.  It also allows you to extract the <see cref="Lookup"/> <see cref="TableInfo"/> along side the main dataset when it is extracted for research projects.
+    /// </summary>
     public class ExecuteCommandCreateLookup : BasicCommandExecution
     {
         private readonly ICatalogueRepository _catalogueRepository;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -33,7 +34,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 if (dt.PrimaryKey.Length == 0)
                     dt.PrimaryKey = matchedColumns.Where(kvp => kvp.Value.IsPrimaryKey).Select(kvp=>kvp.Key).ToArray();
             }
-            
+
+            //make the column names in the data table match the destination columns in case etc
+            foreach (KeyValuePair<DataColumn, DiscoveredColumn> kvp in matchedColumns)
+                if (!kvp.Key.ColumnName.Equals(kvp.Value.GetRuntimeName()))
+                    kvp.Key.ColumnName = kvp.Value.GetRuntimeName();
+
             var loader = new MySqlBulkLoader((MySqlConnection)Connection.Connection);
             loader.TableName = "`" + TargetTable.GetRuntimeName() +"`";
             
@@ -50,7 +56,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             foreach (var column in unmatchedColumns)
                 loader.Expressions.Add(column + " = DEFAULT");
             
-            loader.Columns.AddRange(dt.Columns.Cast<DataColumn>().Select(c=>c.ColumnName));
+            loader.Columns.AddRange(dt.Columns.Cast<DataColumn>().Select(c=>"`"+c.ColumnName+"`"));
 
             var sw = new StreamWriter(tempFile);
             Rfc4180Writer.WriteDataTable(dt,sw,false, new MySqlQuerySyntaxHelper());

@@ -49,14 +49,5 @@ namespace RDMPAutomationService.Properties {
                 return ((string)(this["DataExportDB"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int ForceSlot {
-            get {
-                return ((int)(this["ForceSlot"]));
-            }
-        }
     }
 }

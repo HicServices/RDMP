@@ -24,7 +24,7 @@ using Tests.Common;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {
-    public class ExtractSourceWithPkSynthesizerTests : TestsRequiringAnExtractionConfiguration
+    public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAnExtractionConfiguration
     {
         [Test]
         public void Test_CatalogueItems_ExtractionInformationPrimaryKey_IsRespected()

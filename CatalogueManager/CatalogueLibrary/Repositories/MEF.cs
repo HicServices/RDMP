@@ -303,7 +303,7 @@ namespace CatalogueLibrary.Repositories
         }
 
 
-        public Type GetTypeByNameFromAnyLoadedAssembly(string name, Type expectedBaseClassType = null)
+        public Type GetTypeByNameFromAnyLoadedAssembly(string name, Type expectedBaseClassType = null, StringComparison comparisonType = StringComparison.CurrentCulture)
         {
             SetupMEFIfRequired();
 
@@ -316,7 +316,7 @@ namespace CatalogueLibrary.Repositories
                 if (type == null)
                     throw new InvalidOperationException("The type array produced by GetAllTypes should not contain any nulls");
 
-                if (type.FullName.Equals(name))
+                if (type.FullName.Equals(name,comparisonType))
                     return type;
             }
 
@@ -335,10 +335,10 @@ namespace CatalogueLibrary.Repositories
                             if (!expectedBaseClassType.IsAssignableFrom(type))
                                 continue;
 
-                        if (type.FullName.Equals(name))
+                        if (type.FullName.Equals(name, comparisonType))
                             fullMatches.Add(type);
                         else
-                            if (type.Name.Equals(name))
+                            if (type.Name.Equals(name, comparisonType))
                                 matches.Add(type);
                     }
                 }
