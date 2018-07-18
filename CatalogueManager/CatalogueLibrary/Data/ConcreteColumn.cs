@@ -66,6 +66,11 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _isExtractionIdentifier , value); }
         }
 
+        /// <summary>
+        /// Indicates whether this column is the Primary Key (or part of a composite Primary Key) when extracted.  This flag is not copied / imputed from 
+        /// <see cref="CatalogueLibrary.Data.ColumnInfo.IsPrimaryKey"/> because primary keys can often contain sensitive information (e.g. lab number) and
+        /// you may have a transform or hash configured or your <see cref="Catalogue"/> may involve joining multiple <see cref="TableInfo"/> together.
+        /// </summary>
         public bool IsPrimaryKey
         {
             get { return _isPrimaryKey; }

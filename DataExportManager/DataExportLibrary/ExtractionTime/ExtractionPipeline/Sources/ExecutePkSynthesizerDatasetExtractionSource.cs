@@ -2,14 +2,18 @@
 using System.Data;
 using System.Linq;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.QueryBuilding;
-using DataExportLibrary.Data.DataTables;
+using CatalogueLibrary.Spontaneous;
 using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.Spontaneous;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 {
+    /// <summary>
+    /// Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on <see cref="CatalogueLibrary.Data.ExtractionInformation.IsPrimaryKey"/> of the
+    /// columns extracted and is not garuanteed to actually be unique (depending on how you have configured the flags).  
+    /// 
+    /// <para>The primary use case for this is when extracting to database where you want to have meaningful primary keys</para>
+    /// </summary>
     public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtractionSource
     {
         private const string SYNTH_PK_COLUMN = "SynthesizedPk";
@@ -37,13 +41,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                     else
                         newSql = primaryKeys.First().ToString();
 
-                    request.QueryBuilder.AddColumn(new SpontaneousColumn()
+                    request.QueryBuilder.AddColumn(new SpontaneouslyInventedColumn(SYNTH_PK_COLUMN, newSql)
                     {
-                        Alias = SYNTH_PK_COLUMN,
                         HashOnDataRelease = true,
                         IsPrimaryKey = true,
                         Order = -1,
-                        SelectSQL = newSql
                     });
                     _synthesizePkCol = true;
                 }

@@ -165,7 +165,7 @@
     <Compile Include="DataExtraction\ExecuteCrossServerDatasetExtractionSourceTest.cs" />
     <Compile Include="DataExtraction\ExecuteFullExtractionToDatabaseMSSqlChecksTests.cs" />
     <Compile Include="DataExtraction\ExecuteFullExtractionToDatabaseMSSqlDestinationTest.cs" />
-    <Compile Include="DataExtraction\ExtractSourceWithPkSynthesizerTests.cs" />
+    <Compile Include="DataExtraction\ExecutePkSynthesizerDatasetExtractionSourceTests.cs" />
     <Compile Include="DataExtraction\NormalDataExtractionTests.cs" />
     <Compile Include="DataExtraction\TestCohortRefreshing.cs" />
     <Compile Include="DataExtraction\TestsRequiringAnExtractionConfiguration.cs" />
