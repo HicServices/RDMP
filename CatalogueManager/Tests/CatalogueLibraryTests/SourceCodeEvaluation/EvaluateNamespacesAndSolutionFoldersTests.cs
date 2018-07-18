@@ -193,7 +193,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
     {
         public void FindProblems(MEF mef, List<string> csFilesFound)
         {
-            Dictionary<string, string> suggestedNewFileContents = new Dictionary<string, string>();
+            Dictionary<string, string> suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
             foreach (var f in csFilesFound)
             {
@@ -231,7 +231,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                     {
                         var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
 
-                        Type t = mef.GetTypeByNameFromAnyLoadedAssembly(currentClassName);
+                        Type t = mef.GetTypeByNameFromAnyLoadedAssembly(currentClassName,null,StringComparison.CurrentCultureIgnoreCase);
 
                         //if the previous line isn't a summary comment
                         if (!text[i - 1].Trim().StartsWith("///"))
