@@ -128,9 +128,8 @@ namespace DataExportManager.DataRelease
             if (configuration != null)
             {
                 var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<ReleaseEnvironmentPotential>().ToArray().SingleOrDefault(rp => rp.Configuration.Equals(configuration));
-                key = releasePotential;
-                if (key != null)
-                    return releaseRunner.ChecksDictionary[key].GetWorst();
+                if (releasePotential != null)
+                    return releasePotential.Assesment;
                 
                 return null;
             }

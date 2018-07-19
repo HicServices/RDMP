@@ -230,7 +230,7 @@ namespace DataExportLibrary.DataRelease.Potential
                 catch (Exception e)
                 {
                     Assessments.Add(DatasetExtractionResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
-                    notifier.OnCheckPerformed(new CheckEventArgs("Exception occured evaluating ReleasePotential", CheckResult.Fail, e));
+                    notifier.OnCheckPerformed(new CheckEventArgs("FAILURE: " + e.Message, CheckResult.Fail, e));
                 }
 
             foreach (var supplementalResult in DatasetExtractionResult.SupplementalExtractionResults)
@@ -243,7 +243,7 @@ namespace DataExportLibrary.DataRelease.Potential
                     catch (Exception e)
                     {
                         Assessments.Add(supplementalResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
-                        notifier.OnCheckPerformed(new CheckEventArgs("Exception occured evaluating ReleasePotential", CheckResult.Fail, e));
+                        notifier.OnCheckPerformed(new CheckEventArgs("FAILURE: " + e.Message, CheckResult.Fail, e));
                     }
             }
 

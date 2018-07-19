@@ -64,6 +64,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         [DemandsInitialization("Naming of flat files is usually based on Catalogue.Name, if this is true then the Catalogue.Acronym will be used instead",defaultValue:false)]
         public bool UseAcronymForFileNaming { get; set; }
+
+        [DemandsInitialization("If this is true, the dataset extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: true)]
+        public bool CleanExtractionFolderBeforeExtraction { get; set; }
         
         private bool haveOpened = false;
         private bool haveWrittenBundleContents = false;
@@ -116,6 +119,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         private void WriteBundleContents(IExtractableDatasetBundle datasetBundle, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
             var rootDir = _request.GetExtractionDirectory();
+            if (CleanExtractionFolderBeforeExtraction)
+            {
+                rootDir.Delete(true);
+                rootDir.Create();
+            }
             var supportingSQLFolder = new DirectoryInfo(Path.Combine(rootDir.FullName, SupportingSQLTable.ExtractionFolderName));
             var lookupDir = rootDir.CreateSubdirectory("Lookups");
                     
@@ -282,6 +290,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         private void ExtractGlobals(ExtractGlobalsCommand request, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
             var globalsDirectory = request.GetExtractionDirectory();
+            if (CleanExtractionFolderBeforeExtraction)
+            {
+                globalsDirectory.Delete(true);
+                globalsDirectory.Create();
+            }
 
             foreach (var doc in request.Globals.Documents)
                 request.Globals.States[doc] = TryExtractSupportingDocument(globalsDirectory, doc, listener)
