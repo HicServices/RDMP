@@ -68,6 +68,7 @@ namespace RDMPAutomationService.Runners
 
             if (_options.ReleaseGlobals)
             {
+                toReturn.Add(new GlobalsReleaseChecker(RepositoryLocator, _configurations));
                 toReturn.AddRange(_configurations.First()
                                                  .GetGlobals()
                                                  .Select(availableGlobal => 

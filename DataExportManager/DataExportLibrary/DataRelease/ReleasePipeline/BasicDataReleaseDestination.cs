@@ -92,7 +92,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 }
             }
 
-            if(pipelineFailureExceptionIfAny == null && _destinationFolder != null)
+            if (pipelineFailureExceptionIfAny == null && _destinationFolder != null)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
                 //mark configuration as released

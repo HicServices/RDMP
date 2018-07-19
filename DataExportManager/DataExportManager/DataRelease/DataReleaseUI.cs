@@ -168,6 +168,13 @@ namespace DataExportManager.DataRelease
                 return null;
             }
 
+            if (rowObject.Equals(_globalsNode))
+            {
+                var globalChecker = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().ToList().SingleOrDefault();
+                if (globalChecker != null)
+                    return releaseRunner.ChecksDictionary[globalChecker].GetWorst();
+            }
+
             return null;
         }
 
