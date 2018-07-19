@@ -75,6 +75,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         protected override void RunSpecificChecks(ICheckNotifier notifier)
         {
+            if (!_releaseData.ReleaseGlobals || _releaseData.ReleaseState == ReleaseState.DoingPatch)
+                notifier.OnCheckPerformed(new CheckEventArgs("You cannot untick globals or release a subset of datasets when releasing from a DB", CheckResult.Fail));
+
             var foundConnection = String.Empty;
             var tables = new List<string>();
             foreach (var configs in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.CumulativeExtractionResults))

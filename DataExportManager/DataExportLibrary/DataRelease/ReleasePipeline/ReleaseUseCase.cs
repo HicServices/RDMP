@@ -39,8 +39,11 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             {
                 var releasePotentials = releaseData.ConfigurationsForRelease.Values.SelectMany(x => x).ToList();
                 var releaseTypes = releasePotentials.Select(rp => rp.GetType().FullName).Distinct().ToList();
-                if (releaseTypes.Count() != 1)
-                    throw new Exception("How did you manage to have multiple (or zero) types in the extraction?");
+                if (releaseTypes.Count == 0)
+                    throw new Exception("How did you manage to have multiple ZERO types in the extraction?");
+                if (releaseTypes.Count > 1)
+                    throw new Exception("You cannot release multiple configurations which have been extracted in multiple ways; e.g. " +
+                                        "one to DB and one to disk");
 
                 var releasePotentialWithKnownDestination = releasePotentials.FirstOrDefault(rp => rp.DatasetExtractionResult != null);
 

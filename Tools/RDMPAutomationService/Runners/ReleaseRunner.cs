@@ -86,9 +86,12 @@ namespace RDMPAutomationService.Runners
                 return new ICheckable[0];
             }
 
-            var useCase = GetReleaseUseCase();
-            var engine = useCase.GetEngine(_pipeline, new ThrowImmediatelyDataLoadEventListener());
-            toReturn.Add(engine);
+            var useCase = GetReleaseUseCase(checkNotifier);
+            if (useCase != null)
+            {
+                var engine = useCase.GetEngine(_pipeline, new ThrowImmediatelyDataLoadEventListener());
+                toReturn.Add(engine);
+            }
 
             return toReturn.ToArray();
         }
@@ -123,10 +126,10 @@ namespace RDMPAutomationService.Runners
 
         protected override object[] GetRunnables()
         {
-            return new[] { GetReleaseUseCase() };
+            return new[] { GetReleaseUseCase(new ThrowImmediatelyCheckNotifier()) };
         }
 
-        private ReleaseUseCase GetReleaseUseCase()
+        private ReleaseUseCase GetReleaseUseCase(ICheckNotifier checkNotifier)
         {
             var data = new ReleaseData(RepositoryLocator);
 
@@ -146,7 +149,16 @@ namespace RDMPAutomationService.Runners
                                     ? ReleaseState.DoingPatch 
                                     : ReleaseState.DoingProperRelease;
 
-            return new ReleaseUseCase(_project, data);
+            try
+            {
+                return new ReleaseUseCase(_project, data);
+            }
+            catch (Exception ex)
+            {
+                checkNotifier.OnCheckPerformed(new CheckEventArgs("FAIL: " + ex.Message, CheckResult.Fail, ex));
+            }
+
+            return null;
         }
 
         protected override void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener)
