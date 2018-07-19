@@ -21,6 +21,7 @@ namespace DataExportLibrary.Data.DataTables
         private int? _extractionConfiguration_ID;
         private string _destinationDescription;
         private int _recordsExtracted;
+        private DateTime _dateOfExtraction;
         private string _exception;
         private string _sQLExecuted;
         private string _extractedType;
@@ -49,6 +50,13 @@ namespace DataExportLibrary.Data.DataTables
             get { return _recordsExtracted; }
             set { SetField(ref _recordsExtracted, value); }
         }
+
+        public DateTime DateOfExtraction
+        {
+            get { return _dateOfExtraction; }
+            private set { SetField(ref _dateOfExtraction, value); }
+        }
+
         public string Exception
         {
             get { return _exception; }
@@ -142,6 +150,7 @@ namespace DataExportLibrary.Data.DataTables
             ExtractionConfiguration_ID = ObjectToNullableInt(r["ExtractionConfiguration_ID"]);
             DestinationDescription = r["DestinationDescription"] as string;
             RecordsExtracted = r["RecordsExtracted"] is DBNull ? 0 : Convert.ToInt32(r["RecordsExtracted"]);
+            DateOfExtraction = (DateTime)r["DateOfExtraction"];
             Exception = r["Exception"] as string;
             SQLExecuted = r["SQLExecuted"] as string;
             ExtractedType = r["ExtractedType"] as string;

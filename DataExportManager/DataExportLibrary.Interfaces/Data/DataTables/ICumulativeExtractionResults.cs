@@ -14,7 +14,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         int ExtractionConfiguration_ID { get; set; }
         int ExtractableDataSet_ID { get; }
 
-        DateTime DateOfExtraction { get; }
         int DistinctReleaseIdentifiersEncountered { get; set; }
         string FiltersUsed { get; set; }
         int CohortExtracted { get; }

@@ -12,6 +12,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         string DestinationDescription { get; }
         string DestinationType { get; }
         int RecordsExtracted { get; }
+        DateTime DateOfExtraction { get; }
         string Exception { get; set; }
         string SQLExecuted { get; }
 

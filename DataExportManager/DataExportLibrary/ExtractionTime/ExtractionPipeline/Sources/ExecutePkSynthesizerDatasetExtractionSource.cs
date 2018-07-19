@@ -22,6 +22,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         protected override void Initialize(ExtractDatasetCommand request)
         {
             base.Initialize(request);
+            if (request == ExtractDatasetCommand.EmptyCommand)
+                return;
+
             request.QueryBuilder.RegenerateSQL();
 
             // let's look for primary keys in the Extraction Information

@@ -9,6 +9,7 @@ begin
 	    [ExtractionConfiguration_ID] [int] NULL,
 	    [DestinationDescription] [varchar](max) NULL,
 	    [RecordsExtracted] [int] NULL,
+	    [DateOfExtraction] [datetime] NOT NULL,
 	    [Exception] [varchar](max) NULL,
 	    [SQLExecuted] [varchar](max) NULL,
         [ExtractedName] [varchar](max) NULL,
@@ -23,6 +24,9 @@ begin
     ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 end
 go
+
+ALTER TABLE [dbo].[SupplementalExtractionResults] ADD  CONSTRAINT [DF_SupplementalExtractionResults_DateOfExtraction]  DEFAULT (getdate()) FOR [DateOfExtraction]
+GO
 
 if not exists (select 1 from sys.foreign_keys where name = 'FK_SupplementalExtractionResults_CumulativeExtractionResults') 
 begin
