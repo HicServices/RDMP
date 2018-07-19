@@ -20,7 +20,7 @@ namespace DataExportLibrary.DataRelease.Potential
         {
         }
 
-        protected override Releaseability GetSupplementalSpecificAssessment(ISupplementalExtractionResults supplementalExtractionResults)
+        protected override Releaseability GetSupplementalSpecificAssessment(IExtractionResults supplementalExtractionResults)
         {
             if (File.Exists(supplementalExtractionResults.DestinationDescription))
                 return Releaseability.Undefined;
@@ -28,7 +28,7 @@ namespace DataExportLibrary.DataRelease.Potential
             return Releaseability.ExtractFilesMissing;
         }
 
-        protected override Releaseability GetSpecificAssessment(ICumulativeExtractionResults extractionResults)
+        protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults)
         {
             ExtractDirectory = new FileInfo(extractionResults.DestinationDescription).Directory;
             if (FilesAreMissing(extractionResults))
@@ -38,7 +38,7 @@ namespace DataExportLibrary.DataRelease.Potential
             return Releaseability.Undefined;// Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
         }
 
-        private bool FilesAreMissing(ICumulativeExtractionResults extractionResults)
+        private bool FilesAreMissing(IExtractionResults extractionResults)
         {
             ExtractFile = new FileInfo(extractionResults.DestinationDescription);
             var metadataFile = new FileInfo(extractionResults.DestinationDescription.Replace(".csv", ".docx"));

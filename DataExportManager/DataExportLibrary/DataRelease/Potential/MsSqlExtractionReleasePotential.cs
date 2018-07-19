@@ -1,3 +1,4 @@
+using System.IO;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.ExtractionTime;
@@ -16,12 +17,22 @@ namespace DataExportLibrary.DataRelease.Potential
         {
         }
 
-        protected override Releaseability GetSupplementalSpecificAssessment(ISupplementalExtractionResults supplementalExtractionResults)
+        protected override Releaseability GetSupplementalSpecificAssessment(IExtractionResults supplementalExtractionResults)
         {
+            if (supplementalExtractionResults.GetExtractedType() == typeof(SupportingDocument))
+                if (File.Exists(supplementalExtractionResults.DestinationDescription))
+                    return Releaseability.Undefined;
+                else
+                    return Releaseability.ExtractFilesMissing;
+
+            if (supplementalExtractionResults.GetExtractedType() == typeof (SupportingSQLTable) ||
+                supplementalExtractionResults.GetExtractedType() == typeof (TableInfo))
+                return GetSpecificAssessment(supplementalExtractionResults);
+
             return Releaseability.Undefined;
         }
 
-        protected override Releaseability GetSpecificAssessment(ICumulativeExtractionResults extractionResults)
+        protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults)
         {
             var _extractDir = Configuration.GetProject().ExtractionDirectory;
 

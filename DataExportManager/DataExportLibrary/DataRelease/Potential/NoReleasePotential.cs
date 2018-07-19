@@ -13,12 +13,12 @@ namespace DataExportLibrary.DataRelease.Potential
         {
         }
 
-        protected override Releaseability GetSupplementalSpecificAssessment(ISupplementalExtractionResults supplementalExtractionResults)
+        protected override Releaseability GetSupplementalSpecificAssessment(IExtractionResults supplementalExtractionResults)
         {
             return Releaseability.NeverBeenSuccessfullyExecuted;
         }
 
-        protected override Releaseability GetSpecificAssessment(ICumulativeExtractionResults extractionResults)
+        protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults)
         {
             return Releaseability.NeverBeenSuccessfullyExecuted;
         }

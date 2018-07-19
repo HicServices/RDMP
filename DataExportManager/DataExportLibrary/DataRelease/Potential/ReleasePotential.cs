@@ -123,9 +123,9 @@ namespace DataExportLibrary.DataRelease.Potential
             return finalAssessment;
         }
 
-        protected abstract Releaseability GetSupplementalSpecificAssessment(ISupplementalExtractionResults supplementalExtractionResults);
+        protected abstract Releaseability GetSupplementalSpecificAssessment(IExtractionResults supplementalExtractionResults);
 
-        protected abstract Releaseability GetSpecificAssessment(ICumulativeExtractionResults extractionResults);
+        protected abstract Releaseability GetSpecificAssessment(IExtractionResults extractionResults);
 
         private bool SqlDifferencesVsLiveCatalogue()
         {

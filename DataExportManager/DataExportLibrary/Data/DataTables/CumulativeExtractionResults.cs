@@ -183,7 +183,12 @@ namespace DataExportLibrary.Data.DataTables
         {
             return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(_destinationType);
         }
-        
+
+        public Type GetExtractedType()
+        {
+            return typeof (ExtractableDataSet);
+        }
+
         public void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted)
         {
             DestinationType = destinationType.FullName;

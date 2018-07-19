@@ -15,14 +15,12 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         int ExtractableDataSet_ID { get; }
 
         DateTime DateOfExtraction { get; }
-        string DestinationType { get; }
         int DistinctReleaseIdentifiersEncountered { get; set; }
         string FiltersUsed { get; set; }
         int CohortExtracted { get; }
         IExtractableDataSet ExtractableDataSet { get; }
 
         IReleaseLogEntry GetReleaseLogEntryIfAny();
-        Type GetDestinationType();
         void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted);
 
         List<ISupplementalExtractionResults> SupplementalExtractionResults { get; }

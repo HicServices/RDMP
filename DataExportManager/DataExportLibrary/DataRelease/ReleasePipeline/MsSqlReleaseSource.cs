@@ -60,7 +60,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         private DirectoryInfo GetSourceFolder()
         {
-            return _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent;
+            var extractDir = _releaseData.ConfigurationsForRelease.First().Key.GetProject().ExtractionDirectory;
+
+            return new ExtractionDirectory(extractDir, _releaseData.ConfigurationsForRelease.First().Key).ExtractionDirectoryInfo;
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -80,16 +82,48 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
             var foundConnection = String.Empty;
             var tables = new List<string>();
-            foreach (var configs in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.CumulativeExtractionResults))
+            foreach (var cumulativeResult in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.CumulativeExtractionResults))
             {
-                var candidate = configs.DestinationDescription.Split('|')[0] + "|" +
-                                configs.DestinationDescription.Split('|')[1];
+                string candidate = cumulativeResult.DestinationDescription.Split('|')[0] + "|" +
+                                   cumulativeResult.DestinationDescription.Split('|')[1];
 
-                tables.Add(configs.DestinationDescription.Split('|')[2]);
+                tables.Add(cumulativeResult.DestinationDescription.Split('|')[2]);
 
-                if (String.IsNullOrEmpty(foundConnection))
+                if (String.IsNullOrEmpty(foundConnection)) // the first time we use the candidate as our connection...
                     foundConnection = candidate;
-                if (foundConnection != candidate)
+
+                if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
+                    throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
+                                        "Please re-run the extracts against the same database.");
+
+                foreach (var supplementalResult in cumulativeResult.SupplementalExtractionResults
+                                                                   .Where(x => x.GetExtractedType() == typeof(SupportingSQLTable) || 
+                                                                               x.GetExtractedType() == typeof(TableInfo)))
+                {
+                    candidate = supplementalResult.DestinationDescription.Split('|')[0] + "|" +
+                                supplementalResult.DestinationDescription.Split('|')[1];
+
+                    tables.Add(supplementalResult.DestinationDescription.Split('|')[2]);
+
+                    if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
+                        throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
+                                            "Please re-run the extracts against the same database.");
+                }
+            }
+
+            foreach (var globalResult in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.SupplementalExtractionResults)
+                                                                              .Where(x => x.GetExtractedType() == typeof(SupportingSQLTable) ||
+                                                                                          x.GetExtractedType() == typeof(TableInfo)))
+            {
+                string candidate = globalResult.DestinationDescription.Split('|')[0] + "|" +
+                                   globalResult.DestinationDescription.Split('|')[1];
+
+                tables.Add(globalResult.DestinationDescription.Split('|')[2]);
+
+                if (String.IsNullOrEmpty(foundConnection)) // the first time we use the candidate as our connection...
+                    foundConnection = candidate;
+
+                if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
                     throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
                                         "Please re-run the extracts against the same database.");
             }
@@ -121,7 +155,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             var spuriousTables = _database.DiscoverTables(false).Where(t => !tables.Contains(t.GetRuntimeName())).ToList();
-            if (spuriousTables.Any() && !notifier.OnCheckPerformed(new CheckEventArgs("Spurious table(s): " + String.Join(",", spuriousTables) + " found in the DB.",
+            if (spuriousTables.Any() && !notifier.OnCheckPerformed(new CheckEventArgs("Spurious table(s): " + String.Join(",", spuriousTables) + " found in the DB." +
+                                                                                      "These WILL BE released, you may want to check them before proceeding.",
                                                                                       CheckResult.Warning,
                                                                                       null,
                                                                                       "Are you sure you want to continue the release process?")))

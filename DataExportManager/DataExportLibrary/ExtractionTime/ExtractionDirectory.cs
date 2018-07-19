@@ -18,7 +18,6 @@ namespace DataExportLibrary.ExtractionTime
     public class ExtractionDirectory : IExtractionDirectory
     {
         private readonly DirectoryInfo root;
-        private readonly DirectoryInfo extractionDirectory;
         
         public const string EXTRACTION_SUB_FOLDER_NAME = "Extractions";
         public const string STANDARD_EXTRACTION_PREFIX = "Extr_";
@@ -27,6 +26,8 @@ namespace DataExportLibrary.ExtractionTime
         public const string MASTER_DATA_FOLDER_NAME = "MasterData";
         public const string METADATA_FOLDER_NAME = "MetadataShareDefs";
 
+        public DirectoryInfo ExtractionDirectoryInfo { get; private set; }
+        
         public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
             : this(rootExtractionDirectory, configuration, DateTime.Now)
         {
@@ -48,9 +49,9 @@ namespace DataExportLibrary.ExtractionTime
             string subdirectoryName = GetExtractionDirectoryPrefix(configuration);
 
             if (!Directory.Exists(Path.Combine(root.FullName, subdirectoryName)))
-                extractionDirectory = root.CreateSubdirectory(subdirectoryName);
+                ExtractionDirectoryInfo = root.CreateSubdirectory(subdirectoryName);
             else
-                extractionDirectory = new DirectoryInfo(Path.Combine(root.FullName, subdirectoryName));
+                ExtractionDirectoryInfo = new DirectoryInfo(Path.Combine(root.FullName, subdirectoryName));
         }
 
         public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
@@ -70,17 +71,17 @@ namespace DataExportLibrary.ExtractionTime
             var datasetDirectory = dataset.ToString();
             try
             {
-                return extractionDirectory.CreateSubdirectory(datasetDirectory);
+                return ExtractionDirectoryInfo.CreateSubdirectory(datasetDirectory);
             }
             catch (Exception e)
             {
-                throw new Exception("Could not create a directory called '" + datasetDirectory +"' as a subfolder of Project extraction directory " + extractionDirectory.Root ,e);
+                throw new Exception("Could not create a directory called '" + datasetDirectory +"' as a subfolder of Project extraction directory " + ExtractionDirectoryInfo.Root ,e);
             }
         }
 
         public DirectoryInfo GetGlobalsDirectory()
         {
-            return extractionDirectory.CreateSubdirectory(GLOBALS_DATA_NAME);
+            return ExtractionDirectoryInfo.CreateSubdirectory(GLOBALS_DATA_NAME);
         }
 
         public static bool IsOwnerOf(IExtractionConfiguration configuration, DirectoryInfo directory)
@@ -100,12 +101,12 @@ namespace DataExportLibrary.ExtractionTime
 
         public DirectoryInfo GetDirectoryForCohortCustomData()
         {
-            return extractionDirectory.CreateSubdirectory(CUSTOM_COHORT_DATA_FOLDER_NAME);
+            return ExtractionDirectoryInfo.CreateSubdirectory(CUSTOM_COHORT_DATA_FOLDER_NAME);
         }
 
         public DirectoryInfo GetDirectoryForMasterData()
         {
-            return extractionDirectory.CreateSubdirectory(MASTER_DATA_FOLDER_NAME);
+            return ExtractionDirectoryInfo.CreateSubdirectory(MASTER_DATA_FOLDER_NAME);
         }
 
         public static void CleanupExtractionDirectory(object sender, string extractionDirectory, IEnumerable<IExtractionConfiguration> configurations, IDataLoadEventListener listener)
