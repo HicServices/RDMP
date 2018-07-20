@@ -132,6 +132,7 @@ namespace CatalogueManager.Icons.IconProvision
         AllObjectSharingNode,
         AllObjectImportsNode,
         AllObjectExportsNode,
+        AllConnectionStringKeywordsNode,
 
         ExtractableColumn,
         ProjectCohortsNode,
@@ -148,5 +149,7 @@ namespace CatalogueManager.Icons.IconProvision
         Warning,
         Diff,
         FileMissing,
+
+        ConnectionStringKeyword,
     }
 }

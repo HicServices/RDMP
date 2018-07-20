@@ -47,6 +47,7 @@ namespace CatalogueLibrary.Providers
         
         AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
         AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
+        AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
     }

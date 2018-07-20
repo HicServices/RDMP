@@ -120,6 +120,7 @@ namespace CatalogueManager.Collections
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllConnectionStringKeywordsNode);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

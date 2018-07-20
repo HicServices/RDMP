@@ -267,6 +267,7 @@
     <Compile Include="Data\Cohort\SetOperation.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
     <Compile Include="Data\ContainerHelper.cs" />
+    <Compile Include="Data\ConnectionStringKeyword.cs" />
     <Compile Include="Data\Dashboarding\DashboardControl.cs" />
     <Compile Include="Data\Dashboarding\DashboardLayout.cs" />
     <Compile Include="Data\Dashboarding\DashboardObjectUse.cs" />
@@ -333,6 +334,7 @@
     <Compile Include="ExternalDatabaseServerPatching\IdentifierDumpDatabasePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
+    <Compile Include="Nodes\AllConnectionStringKeywordsNode.cs" />
     <Compile Include="Nodes\AllLoadMetadatasNode.cs" />
     <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />

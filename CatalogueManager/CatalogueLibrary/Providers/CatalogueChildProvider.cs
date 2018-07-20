@@ -109,6 +109,9 @@ namespace CatalogueLibrary.Providers
         public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
         public AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
 
+        public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
+        public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
+
         protected Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary;
 
         private readonly CatalogueFilterHierarchy _filterChildProvider;
@@ -150,6 +153,10 @@ namespace CatalogueLibrary.Providers
             AllDataAccessCredentials = repository.GetAllObjects<DataAccessCredentials>();
             AllDataAccessCredentialsNode = new AllDataAccessCredentialsNode();
             AddChildren(AllDataAccessCredentialsNode);
+
+            AllConnectionStringKeywordsNode = new AllConnectionStringKeywordsNode();
+            AllConnectionStringKeywords = repository.GetAllObjects<ConnectionStringKeyword>().ToArray();
+            AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords), new DescendancyList(AllConnectionStringKeywordsNode));
             
             //which TableInfos use which Credentials under which DataAccessContexts
             AllDataAccessCredentialUsages = repository.TableInfoToCredentialsLinker.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);

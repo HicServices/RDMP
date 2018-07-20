@@ -399,6 +399,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
@@ -420,6 +421,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
     <Compile Include="LogViewer\LogViewerNavigationTarget.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
@@ -448,6 +450,13 @@
     </Compile>
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureDefaultServers.cs" />
+    <Compile Include="MainFormUITabs\ConnectionStringKeywordUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainFormUITabs\ConnectionStringKeywordUI.Designer.cs">
+      <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menus\AllConnectionStringKeywordsNodeMenu.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
@@ -1424,6 +1433,9 @@
     <None Include="Icons\AllLoadMetadatasNode.png" />
     <None Include="Icons\AllPermissionWindowsNode.png" />
     <None Include="Icons\Diff.png" />
+    <None Include="Icons\ConnectionStringKeyword.png" />
+    <None Include="Icons\AllConnectionStringKeywords.png" />
+    <None Include="Icons\AllConnectionStringKeywordsNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1584,6 +1596,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainFormUITabs\ConnectionStringKeywordUI.resx">
+      <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleControls\CheckAndExecuteUI.resx">
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>

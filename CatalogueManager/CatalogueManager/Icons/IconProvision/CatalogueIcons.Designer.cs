@@ -153,6 +153,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllConnectionStringKeywordsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllConnectionStringKeywordsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllDataAccessCredentialsNode {
             get {
                 object obj = ResourceManager.GetObject("AllDataAccessCredentialsNode", resourceCulture);
@@ -486,6 +496,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap ColumnInfo {
             get {
                 object obj = ResourceManager.GetObject("ColumnInfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ConnectionStringKeyword {
+            get {
+                object obj = ResourceManager.GetObject("ConnectionStringKeyword", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
