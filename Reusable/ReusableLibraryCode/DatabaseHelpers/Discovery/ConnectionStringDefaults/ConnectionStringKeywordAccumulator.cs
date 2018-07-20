@@ -8,7 +8,7 @@ using Oracle.ManagedDataAccess.Client;
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults
 {
     /// <summary>
-    /// Gathers keywords for use in building DbConnectionStrings for a given <see cref="DatabaseType"/>
+    /// Gathers keywords for use in building connection strings for a given <see cref="DatabaseType"/> in a priority overriding manner.
     /// </summary>
     public class ConnectionStringKeywordAccumulator
     {
@@ -115,13 +115,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults
         SystemDefaultHigh,
 
         /// <summary>
-        /// User specified overrides for SystemDefault settings.
+        /// User specified overrides for System Default settings.
         /// </summary>
         UserOverride,
 
         /// <summary>
         /// High level priority, the C# object being used is specifying a required keyword for it to operate correctly.  This overrides
-        /// user settings and system defaults (but not <see cref="APIRule"/>)
+        /// user settings and system defaults (but not <see cref="ApiRule"/>)
         /// </summary>
         ObjectOverride,
 
@@ -129,6 +129,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults
         /// Highest priority for keywords.  This is settings that cannot be unset/overriden by anyone else and are required
         /// for the API to work e.g.  AllowUserVariables in MySql
         /// </summary>
-        APIRule
+        ApiRule
     }
 }

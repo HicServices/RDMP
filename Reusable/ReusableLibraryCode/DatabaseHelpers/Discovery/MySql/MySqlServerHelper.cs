@@ -16,8 +16,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
             ConnectionStringKeywordAccumulators.Add(DatabaseType.MYSQLServer,new ConnectionStringKeywordAccumulator(DatabaseType.MYSQLServer));
             
-            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("AllowUserVariables","True",ConnectionStringKeywordPriority.APIRule);
-            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("AllowBatch", "True", ConnectionStringKeywordPriority.APIRule);
+            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("AllowUserVariables","True",ConnectionStringKeywordPriority.ApiRule);
+            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("AllowBatch", "True", ConnectionStringKeywordPriority.ApiRule);
             ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("SslMode", "None", ConnectionStringKeywordPriority.SystemDefaultLow);
 
         }

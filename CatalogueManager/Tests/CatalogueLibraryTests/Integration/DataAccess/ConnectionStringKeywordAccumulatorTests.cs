@@ -70,7 +70,7 @@ namespace CatalogueLibraryTests.Integration.DataAccess
             StringAssert.Contains(key1 + "=" + value1, connectionStringBuilder.ConnectionString, "ConnectionStringKeywordAccumulator did not realise that keywords are equivalent");
         }
         [TestCase(ConnectionStringKeywordPriority.SystemDefaultHigh)] //same as current (still results in override)
-        [TestCase(ConnectionStringKeywordPriority.APIRule)]
+        [TestCase(ConnectionStringKeywordPriority.ApiRule)]
         public void TestKeywords_OverrideWithHigherPriority_Respected(ConnectionStringKeywordPriority newPriority)
         {
             var acc = new ConnectionStringKeywordAccumulator(DatabaseType.MicrosoftSQLServer);
