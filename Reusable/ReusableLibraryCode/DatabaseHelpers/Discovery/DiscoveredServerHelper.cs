@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
@@ -9,13 +10,34 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
     public abstract class DiscoveredServerHelper:IDiscoveredServerHelper
     {
+        public static Dictionary<DatabaseType,ConnectionStringKeywordAccumulator> ConnectionStringKeywordAccumulators = new Dictionary<DatabaseType, ConnectionStringKeywordAccumulator>();
+
         public abstract DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null);
         public abstract DbDataAdapter GetDataAdapter(DbCommand cmd);
         public abstract DbCommandBuilder GetCommandBuilder(DbCommand cmd);
         public abstract DbParameter GetParameter(string parameterName);
+        
         public abstract DbConnection GetConnection(DbConnectionStringBuilder builder);
-        public abstract DbConnectionStringBuilder GetConnectionStringBuilder(string connectionString);
-        public abstract DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database, string username, string password);
+
+        public DbConnectionStringBuilder GetConnectionStringBuilder(string connectionString)
+        {
+            var builder = GetConnectionStringBuilderImpl(connectionString);
+            ConnectionStringKeywordAccumulators[DatabaseType].EnforceOptions(builder);
+            return builder;
+        }
+
+        public DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database,
+            string username, string password)
+        {
+            var builder = GetConnectionStringBuilderImpl(server,database,username,password);
+            ConnectionStringKeywordAccumulators[DatabaseType].EnforceOptions(builder);
+            return builder;
+        }
+
+        protected abstract DbConnectionStringBuilder GetConnectionStringBuilderImpl(string connectionString, string database, string username, string password);
+        protected abstract DbConnectionStringBuilder GetConnectionStringBuilderImpl(string connectionString);
+        
+        
 
         protected abstract string ServerKeyName { get; }
         protected abstract string DatabaseKeyName { get; }

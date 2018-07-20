@@ -3,12 +3,25 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using MySql.Data.MySqlClient;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
     public class MySqlServerHelper : DiscoveredServerHelper
     {
+        
+
+        static MySqlServerHelper()
+        {
+            ConnectionStringKeywordAccumulators.Add(DatabaseType.MYSQLServer,new ConnectionStringKeywordAccumulator(DatabaseType.MYSQLServer));
+            
+            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("AllowUserVariables","True",ConnectionStringKeywordPriority.ApiRule);
+            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("AllowBatch", "True", ConnectionStringKeywordPriority.ApiRule);
+            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("SslMode", "None", ConnectionStringKeywordPriority.SystemDefaultLow);
+
+        }
+
         public MySqlServerHelper() : base(DatabaseType.MYSQLServer)
         {
         }
@@ -39,38 +52,22 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
         public override DbConnection GetConnection(DbConnectionStringBuilder builder)
         {
-            EnforceSensibleOptions((MySqlConnectionStringBuilder)builder);
             return new MySqlConnection(builder.ConnectionString);
         }
 
-        public override DbConnectionStringBuilder GetConnectionStringBuilder(string connectionString)
+        protected override DbConnectionStringBuilder GetConnectionStringBuilderImpl(string connectionString)
         {
-            return EnforceSensibleOptions(new MySqlConnectionStringBuilder(connectionString));
+            return new MySqlConnectionStringBuilder(connectionString);
         }
 
-        private MySqlConnectionStringBuilder EnforceSensibleOptions(MySqlConnectionStringBuilder builder)
-        {
-            builder.AllowUserVariables = true;
-            builder.AllowBatch = true;
-
-            if(builder.Server == "localhost")
-                builder.SslMode = MySqlSslMode.None;
-
-            return builder;
-        }
-
-        #endregion
-
-        public override DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database, string username, string password)
+        protected override DbConnectionStringBuilder GetConnectionStringBuilderImpl(string server, string database, string username, string password)
         {
             var toReturn = new MySqlConnectionStringBuilder()
             {
-                Server = server, Database = database
+                Server = server,
+                Database = database
 
             };
-
-            //makes variables to work
-            toReturn.AllowUserVariables = true;
 
             if (!string.IsNullOrWhiteSpace(username))
             {
@@ -82,7 +79,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
             return toReturn;
         }
-        
+
+        #endregion
+                
         public override DbConnectionStringBuilder EnableAsync(DbConnectionStringBuilder builder)
         {
             return builder; //no special stuff required?

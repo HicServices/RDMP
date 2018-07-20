@@ -37,10 +37,9 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
                 blk.Upload(dt);
 
             var result = tbl.GetDataTable();
-            Assert.AreEqual(2, result.Columns.Count);  //2 rows inserted
+            Assert.AreEqual(2, result.Rows.Count);  //2 rows inserted
         }
-
-
+                
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.Oracle)]
@@ -78,7 +77,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle)]
         public void UnmatchedColumnsBulkInsertTest_UsesDefaultValues_TwoLargeBatches_Passes(DatabaseType type)
         {
-            const int numberOfRowsPerBatch = 100000;
+            const int numberOfRowsPerBatch = 100010;
 
             var db = GetCleanedServer(type);
 

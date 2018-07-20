@@ -23,7 +23,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             
                 DbCommand cmd = DatabaseCommandHelper.GetCommand(@"SELECT *
 FROM   all_tab_cols
-WHERE  table_name = :table_name AND owner =:owner
+WHERE  table_name = :table_name AND owner =:owner AND HIDDEN_COLUMN <> 'YES'
 ", connection.Connection);
                 cmd.Transaction = connection.Transaction;
 
