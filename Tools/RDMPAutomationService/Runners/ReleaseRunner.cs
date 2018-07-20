@@ -55,6 +55,8 @@ namespace RDMPAutomationService.Runners
                 throw new Exception("No Configurations have been selected for release");
 
             _project = _configurations.Select(c => c.Project).Distinct().Single();
+
+            
         }
 
         protected override void AfterRun()
@@ -64,6 +66,9 @@ namespace RDMPAutomationService.Runners
 
         protected override ICheckable[] GetCheckables(ICheckNotifier checkNotifier)
         {
+            foreach (var configuration in _configurations)
+                IdentifyAndRemoveOldExtractionResults(checkNotifier, configuration);
+
             List<ICheckable> toReturn = new List<ICheckable>();
 
             if (_options.ReleaseGlobals)
@@ -95,6 +100,54 @@ namespace RDMPAutomationService.Runners
             }
 
             return toReturn.ToArray();
+        }
+
+        private void IdentifyAndRemoveOldExtractionResults(ICheckNotifier checkNotifier, IExtractionConfiguration configuration)
+        {
+            var oldResults = configuration.CumulativeExtractionResults
+                .Where(cer => !configuration.GetAllExtractableDataSets().Contains(cer.ExtractableDataSet))
+                .ToArray();
+
+            if (oldResults.Any())
+            {
+                string message = "In Configuration " + configuration + ":" + Environment.NewLine + Environment.NewLine +
+                                 "The following CumulativeExtractionResults reflect datasets that were previously extracted under the existing Configuration but are no longer in the CURRENT configuration:";
+
+                message = oldResults.Aggregate(message, (s, n) => s + Environment.NewLine + n);
+
+                if (
+                    checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
+                        "Delete expired CumulativeExtractionResults for configuration." + Environment.NewLine +
+                        "Not doing so may result in failures at Release time.")))
+                {
+                    foreach (var result in oldResults)
+                        result.DeleteInDatabase();
+                }
+            }
+
+            var oldLostSupplemental = configuration.CumulativeExtractionResults
+                .SelectMany(c => c.SupplementalExtractionResults)
+                .Union(configuration.SupplementalExtractionResults)
+                .Where(s => !RepositoryLocator.ArbitraryDatabaseObjectExists(s.RepositoryType, s.ExtractedType, s.ExtractedId))
+                .ToArray();
+
+            if (oldLostSupplemental.Any())
+            {
+                string message = "In Configuration " + configuration + ":" + Environment.NewLine + Environment.NewLine +
+                                 "The following list reflect objects (supporting sql, lookups or documents) " +
+                                 "that were previously extracted but have since been deleted:";
+
+                message = oldLostSupplemental.Aggregate(message, (s, n) => s + Environment.NewLine + n.DestinationDescription);
+
+                if (
+                    checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
+                        "Delete expired Extraction Results for configuration." + Environment.NewLine +
+                        "Not doing so may result in failures at Release time.")))
+                {
+                    foreach (var result in oldLostSupplemental)
+                        result.DeleteInDatabase();
+                }
+            }
         }
 
         private List<ReleasePotential> GetReleasePotentials(IExtractionConfiguration configuration)
