@@ -93,11 +93,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             foreach(DataRow dr in dt.Rows)
             {
                 sb.Append('(');
+                int col = 0;
 
-                sb.Append(string.Join(",", matchedColumns.Keys.Select(k => "@" + k.ColumnName + row)));
+                sb.Append(string.Join(",", matchedColumns.Keys.Select(k => "@c" + (++col) +"r" + row)));
 
                 foreach (var k in matchedColumns.Keys)
-                    cmd.Parameters.Add(new MySqlParameter("@" + k.ColumnName + row, dr[k]));
+                    cmd.Parameters.Add(new MySqlParameter("@c" + col +"r" + row, dr[k]));
 
                 sb.AppendLine("),");
                 row++;
