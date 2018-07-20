@@ -32,10 +32,16 @@ namespace CatalogueManager.MainFormUITabs
             ddDatabaseType.SelectedItem = _keyword.DatabaseType;
             tbName.Text = _keyword.Name;
             tbValue.Text = _keyword.Value;
+            tbID.Text = _keyword.ID.ToString();
 
             pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(_keyword.DatabaseType);
 
             objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+
+            tbCommandToDelete.Text = "DELETE FROM " + 
+                activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase()
+                    .ExpectTable("ConnectionStringKeyword")
+                    .GetFullyQualifiedName();
         }
 
         private void ddDatabaseType_SelectedIndexChanged(object sender, System.EventArgs e)

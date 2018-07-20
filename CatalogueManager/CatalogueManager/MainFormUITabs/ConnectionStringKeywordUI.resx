@@ -117,4 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label4.Text" xml:space="preserve">
+    <value>WARNING: Setting a keyword will apply it system wide to all objects and database operations in RDMP.  This is a great way to break everything! Only do this if you are certain about what you are doing.  
+
+Changes will only take effect on RESTART.
+
+The following database table contains these values incase you need to change them manually through Sql Management Studio etc:</value>
+  </data>
 </root>
