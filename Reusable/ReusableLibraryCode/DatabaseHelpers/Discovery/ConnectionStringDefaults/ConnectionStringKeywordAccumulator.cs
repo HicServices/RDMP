@@ -39,9 +39,19 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults
 
         public void AddOrUpdateKeyword(string keyword, string value, ConnectionStringKeywordPriority priority)
         {
-            //Make sure it is supported by the connection string builder
-            _builder.Add(keyword, value);
-            _builder.Clear();
+            var collision = GetCollisionWithKeyword(keyword,value);
+
+            if (collision != null)
+            {
+                //if there is already a semantically equivalent keyword.... 
+
+                //if it is of lower or equal priority
+                if (_keywords[collision].Item2 <= priority)
+                    _keywords[collision] = Tuple.Create(value, priority); //update it 
+                
+                //either way don't record it as a new keyword
+                return;
+            }
 
             //if we have not got that keyword yet
             if(!_keywords.ContainsKey(keyword))
@@ -52,6 +62,31 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults
                 if (_keywords[keyword].Item2 <= priority)
                     _keywords[keyword] = Tuple.Create(value, priority); //update it with the new value
             }
+        }
+
+        private string GetCollisionWithKeyword(string keyword, string value)
+        {
+            //lets evaluate this alleged keyword!
+            _builder.Clear();
+
+            //Make sure it is supported by the connection string builder
+            _builder.Add(keyword, value);
+
+            //now iterate all the keys we had before and add those too, if the key count doesn't change for any of them we know it's a duplicate semantically
+            if (_builder.Keys != null)
+                foreach (var current in _keywords)
+                {
+                    int keysBefore = _builder.Keys.Count;
+
+                    _builder.Add(current.Key, current.Value.Item1);
+
+                    //key count in builder didn't change dispite there being new values added
+                    if (_builder.Keys.Count == keysBefore)
+                        return current.Key;
+                }
+
+            //no collisions
+            return null;
         }
 
         /// <summary>
