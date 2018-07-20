@@ -81,52 +81,48 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
             var matchedColumns = GetMapping(dt.Columns.Cast<DataColumn>());
 
-            using (var con = TargetTable.Database.Server.GetConnection())
-            {
-                con.Open();
+            MySqlCommand cmd = new MySqlCommand("", (MySqlConnection)Connection.Connection,(MySqlTransaction) Connection.Transaction);
 
-                MySqlCommand cmd = new MySqlCommand("", (MySqlConnection)con);
+            string commandPrefix = string.Format("INSERT INTO {0}({1}) VALUES ", TargetTable.GetFullyQualifiedName(),string.Join(",", matchedColumns.Values.Select(c => "`" + c.GetRuntimeName() + "`")));
 
-                string commandPrefix = string.Format("INSERT INTO TEST({0}) VALUES ", string.Join(",", matchedColumns.Values.Select(c => "`" + c.GetRuntimeName() + "`")));
-
-                StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
                 
-                int affected = 0;
-                int row = 0;
+            int affected = 0;
+            int row = 0;
 
-                foreach(DataRow dr in dt.Rows)
-                {
-                    sb.Append('(');
+            foreach(DataRow dr in dt.Rows)
+            {
+                sb.Append('(');
 
-                    sb.Append(string.Join(",", matchedColumns.Keys.Select(k => "@" + k.ColumnName + row)));
+                sb.Append(string.Join(",", matchedColumns.Keys.Select(k => "@" + k.ColumnName + row)));
 
-                    foreach (var k in matchedColumns.Keys)
-                        cmd.Parameters.Add(new MySqlParameter("@" + k.ColumnName + row, dr[k]));
+                foreach (var k in matchedColumns.Keys)
+                    cmd.Parameters.Add(new MySqlParameter("@" + k.ColumnName + row, dr[k]));
 
-                    sb.AppendLine("),");
-                    row++;
+                sb.AppendLine("),");
+                row++;
 
-                    //don't let command get too long
-                    if (row%1000 == 0)
-                    {
-                        cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
-                        affected += cmd.ExecuteNonQuery();
-                        
-                        cmd.Parameters.Clear();
-                        sb.Clear();
-                    }
-                }
-
-                //send final batch
-                if(sb.Length > 0)
+                //don't let command get too long
+                if (row%1000 == 0)
                 {
                     cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
                     affected += cmd.ExecuteNonQuery();
+                        
+                    cmd.Parameters.Clear();
                     sb.Clear();
                 }
-               
-                return affected;
             }
+
+            //send final batch
+            if(sb.Length > 0)
+            {
+                cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
+                affected += cmd.ExecuteNonQuery();
+                sb.Clear();
+            }
+               
+            return affected;
+            
         }
     }
 }
