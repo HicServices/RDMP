@@ -25,7 +25,8 @@ begin
 end
 go
 
-ALTER TABLE [dbo].[SupplementalExtractionResults] ADD  CONSTRAINT [DF_SupplementalExtractionResults_DateOfExtraction]  DEFAULT (getdate()) FOR [DateOfExtraction]
+if not exists (select 1 from sys.default_constraints where name = 'DF_SupplementalExtractionResults_DateOfExtraction')
+	ALTER TABLE [dbo].[SupplementalExtractionResults] ADD  CONSTRAINT [DF_SupplementalExtractionResults_DateOfExtraction]  DEFAULT (getdate()) FOR [DateOfExtraction]
 GO
 
 if not exists (select 1 from sys.foreign_keys where name = 'FK_SupplementalExtractionResults_CumulativeExtractionResults') 
