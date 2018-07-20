@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
 
 namespace CatalogueLibrary.Data
 {
-    public class ConnectionStringKeyword : DatabaseEntity, INamed
+    public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     {
         #region Database Properties
 
@@ -53,6 +55,20 @@ namespace CatalogueLibrary.Data
         public override string ToString()
         {
             return Name;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            try
+            {
+                var accumulator = new ConnectionStringKeywordAccumulator(DatabaseType);
+                accumulator.AddOrUpdateKeyword(Name, Value, ConnectionStringKeywordPriority.SystemDefaultLow);
+                notifier.OnCheckPerformed(new CheckEventArgs("Integrity of keyword is ok according to ConnectionStringKeywordAccumulator", CheckResult.Success));
+            }
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+            }
         }
     }
 }

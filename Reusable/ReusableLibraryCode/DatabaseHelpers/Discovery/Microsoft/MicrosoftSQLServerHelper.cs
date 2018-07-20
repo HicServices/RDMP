@@ -16,8 +16,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
     {
         static MicrosoftSQLServerHelper()
         {
-            ConnectionStringKeywordAccumulators.Add(DatabaseType.MicrosoftSQLServer, new ConnectionStringKeywordAccumulator(DatabaseType.MicrosoftSQLServer));
-
             //add any keywords that are required to make Oracle work properly here (at API level if it won't work period without it or SystemDefaultLow if it's just recommended)
         }
 

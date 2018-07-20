@@ -10,7 +10,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
     public abstract class DiscoveredServerHelper:IDiscoveredServerHelper
     {
-        public static Dictionary<DatabaseType,ConnectionStringKeywordAccumulator> ConnectionStringKeywordAccumulators = new Dictionary<DatabaseType, ConnectionStringKeywordAccumulator>();
+        private static Dictionary<DatabaseType,ConnectionStringKeywordAccumulator> ConnectionStringKeywordAccumulators = new Dictionary<DatabaseType, ConnectionStringKeywordAccumulator>();
+
+        public static void AddConnectionStringKeyword(DatabaseType databaseType, string keyword, string value,ConnectionStringKeywordPriority priority)
+        {
+            if(!ConnectionStringKeywordAccumulators.ContainsKey(databaseType))
+                ConnectionStringKeywordAccumulators.Add(databaseType,new ConnectionStringKeywordAccumulator(databaseType));
+
+            ConnectionStringKeywordAccumulators[databaseType].AddOrUpdateKeyword(keyword,value,priority);
+        }
 
         public abstract DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null);
         public abstract DbDataAdapter GetDataAdapter(DbCommand cmd);
@@ -22,18 +30,25 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public DbConnectionStringBuilder GetConnectionStringBuilder(string connectionString)
         {
             var builder = GetConnectionStringBuilderImpl(connectionString);
-            ConnectionStringKeywordAccumulators[DatabaseType].EnforceOptions(builder);
+            EnforceKeywords(builder);
+
             return builder;
         }
-
+        
         public DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database,
             string username, string password)
         {
             var builder = GetConnectionStringBuilderImpl(server,database,username,password);
-            ConnectionStringKeywordAccumulators[DatabaseType].EnforceOptions(builder);
+            EnforceKeywords(builder);
             return builder;
         }
 
+        private void EnforceKeywords(DbConnectionStringBuilder builder)
+        {
+            //if we have any keywords to enforce
+            if (ConnectionStringKeywordAccumulators.ContainsKey(DatabaseType))
+                ConnectionStringKeywordAccumulators[DatabaseType].EnforceOptions(builder);
+        }
         protected abstract DbConnectionStringBuilder GetConnectionStringBuilderImpl(string connectionString, string database, string username, string password);
         protected abstract DbConnectionStringBuilder GetConnectionStringBuilderImpl(string connectionString);
         

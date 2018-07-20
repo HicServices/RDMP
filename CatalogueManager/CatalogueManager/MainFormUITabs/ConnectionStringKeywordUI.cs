@@ -67,16 +67,7 @@ namespace CatalogueManager.MainFormUITabs
 
         private void Check()
         {
-            ragSmiley.Reset();
-            try
-            {
-                var accumulator = new ConnectionStringKeywordAccumulator(_keyword.DatabaseType);
-                accumulator.AddOrUpdateKeyword(_keyword.Name,_keyword.Value,ConnectionStringKeywordPriority.SystemDefaultLow);
-            }
-            catch (Exception e)
-            {
-                ragSmiley.Fatal(e);
-            }
+            ragSmiley.StartChecking(_keyword);
         }
     }
 

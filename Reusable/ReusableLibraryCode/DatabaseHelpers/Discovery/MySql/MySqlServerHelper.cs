@@ -10,16 +10,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
     public class MySqlServerHelper : DiscoveredServerHelper
     {
-        
-
         static MySqlServerHelper()
         {
-            ConnectionStringKeywordAccumulators.Add(DatabaseType.MYSQLServer,new ConnectionStringKeywordAccumulator(DatabaseType.MYSQLServer));
-            
-            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("AllowUserVariables","True",ConnectionStringKeywordPriority.ApiRule);
-            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("AllowBatch", "True", ConnectionStringKeywordPriority.ApiRule);
-            ConnectionStringKeywordAccumulators[DatabaseType.MYSQLServer].AddOrUpdateKeyword("SslMode", "None", ConnectionStringKeywordPriority.SystemDefaultLow);
-
+            AddConnectionStringKeyword(DatabaseType.MYSQLServer, "AllowUserVariables","True",ConnectionStringKeywordPriority.ApiRule);
+            AddConnectionStringKeyword(DatabaseType.MYSQLServer, "AllowBatch", "True", ConnectionStringKeywordPriority.ApiRule);
+            AddConnectionStringKeyword(DatabaseType.MYSQLServer, "SslMode", "None", ConnectionStringKeywordPriority.SystemDefaultLow);
         }
 
         public MySqlServerHelper() : base(DatabaseType.MYSQLServer)
