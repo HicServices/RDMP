@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using MySql.Data.MySqlClient;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
@@ -14,6 +16,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             
         }
 
+        /* //Old method that used LOAD DATA IN FILE LOCAL (MySqlBulkLoader).  This requires local infile to be enabled on the server (and is generally a pain) : https://dev.mysql.com/doc/refman/5.7/en/load-data-local.html
         public override int Upload(DataTable dt)
         {
             //for all columns not appearing in the DataTable provided
@@ -48,7 +51,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             loader.LineTerminator = "\r\n";
             loader.FieldQuotationCharacter = '"';
 
-
             loader.Expressions.Clear();
             loader.Columns.Clear();
 
@@ -72,6 +74,58 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             finally
             {
                 File.Delete(tempFile);
+            }
+        }
+        */
+                public override int Upload(DataTable dt)
+        {
+            var matchedColumns = GetMapping(dt.Columns.Cast<DataColumn>());
+
+            using (var con = TargetTable.Database.Server.GetConnection())
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand("", (MySqlConnection)con);
+
+                string commandPrefix = string.Format("INSERT INTO TEST({0}) VALUES ", string.Join(",", matchedColumns.Values.Select(c => "`" + c.GetRuntimeName() + "`")));
+
+                StringBuilder sb = new StringBuilder();
+                
+                int affected = 0;
+                int row = 0;
+
+                foreach(DataRow dr in dt.Rows)
+                {
+                    sb.Append('(');
+
+                    sb.Append(string.Join(",", matchedColumns.Keys.Select(k => "@" + k.ColumnName + row)));
+
+                    foreach (var k in matchedColumns.Keys)
+                        cmd.Parameters.Add(new MySqlParameter("@" + k.ColumnName + row, dr[k]));
+
+                    sb.AppendLine("),");
+                    row++;
+
+                    //don't let command get too long
+                    if (row%1000 == 0)
+                    {
+                        cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
+                        affected += cmd.ExecuteNonQuery();
+                        
+                        cmd.Parameters.Clear();
+                        sb.Clear();
+                    }
+                }
+
+                //send final batch
+                if(sb.Length > 0)
+                {
+                    cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
+                    affected += cmd.ExecuteNonQuery();
+                    sb.Clear();
+                }
+               
+                return affected;
             }
         }
     }
