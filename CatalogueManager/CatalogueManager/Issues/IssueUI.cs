@@ -207,20 +207,6 @@ namespace CatalogueManager.Issues
             objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
         }
 
-        protected override bool ProcessKeyPreview(ref Message m)
-        {
-
-            PreviewKey p = new PreviewKey(ref m, ModifierKeys);
-
-            if (p.IsKeyDownMessage && p.e.KeyCode == Keys.S && p.e.Control)
-            {
-                btnSave_Click(null, null);
-                p.Trap(this);
-            }
-
-            return base.ProcessKeyPreview(ref m);
-        }
-
         private void QueryPreview_TextChanged(object sender, EventArgs e)
         {
             if(bloading)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ namespace CatalogueLibrary.Data.Serialization
     /// </summary>
     /// <typeparam name="TK"></typeparam>
     /// <typeparam name="TV"></typeparam>
+    [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
     public class JsonCompatibleDictionary<TK, TV> : Dictionary<TK, TV>
     {

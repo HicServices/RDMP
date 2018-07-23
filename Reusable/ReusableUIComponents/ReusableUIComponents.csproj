@@ -211,9 +211,6 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AbstractControlDescriptionProvider.cs" />
-    <Compile Include="BetterListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="BetterListBoxScrollArgs.cs" />
     <Compile Include="ChecksUI\AllChecksCompleteHandler.cs" />
     <Compile Include="ChecksUI\AllChecksCompleteHandlerArgs.cs" />
