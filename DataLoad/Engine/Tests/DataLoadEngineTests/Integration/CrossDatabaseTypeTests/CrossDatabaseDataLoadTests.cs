@@ -51,15 +51,18 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             LowPrivilegeLoaderAccount,
             ForeignKeyOrphans,
             DodgyCollation,
-            AllPrimaryKeys
+            AllPrimaryKeys,
+            WithNonPrimaryKeyIdentityColumn
         }
 
         [TestCase(DatabaseType.Oracle,TestCase.Normal)]
         [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.AllPrimaryKeys)]
         [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
+        //[TestCase(DatabaseType.MYSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)] //Not supported by MySql:Incorrect table definition; there can be only one auto column and it must be defined as a key
         [TestCase(DatabaseType.MYSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.AllPrimaryKeys)]
@@ -92,7 +95,23 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 
 
             DiscoveredTable tbl;
+            if (testCase == TestCase.WithNonPrimaryKeyIdentityColumn)
+            {
+                tbl = db.CreateTable("MyTable",new []
+                {
+                    new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int)),false){IsPrimaryKey = false,IsAutoIncrement = true}, 
+                    nameCol, 
+                    new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}, 
+                    new DatabaseColumnRequest("FavouriteColour",new DatabaseTypeRequest(typeof(string))), 
+                });
+                
+                using (var blk = tbl.BeginBulkInsert())
+                    blk.Upload(dt);
 
+                Assert.AreEqual(1,tbl.DiscoverColumns().Count(c=>c.GetRuntimeName().Equals("ID",StringComparison.CurrentCultureIgnoreCase)),"Table created did not contain ID column");
+                
+            }
+            else
             if (testCase == TestCase.AllPrimaryKeys)
             {
                 dt.PrimaryKey = dt.Columns.Cast<DataColumn>().ToArray();

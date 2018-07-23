@@ -65,6 +65,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
                 var colRequest = new DatabaseColumnRequest(c.GetRuntimeName(),sqlType , c.AllowNulls || dropNullability);
                 colRequest.IsPrimaryKey = c.IsPrimaryKey && !dropPrimaryKeys;
+                
+                colRequest.IsAutoIncrement = c.IsAutoIncrement && !convertIdentityToInt;
+                colRequest.AllowNulls = colRequest.AllowNulls && !colRequest.IsAutoIncrement;
 
                 //if there is a collation
                 if (!string.IsNullOrWhiteSpace(c.Collation))

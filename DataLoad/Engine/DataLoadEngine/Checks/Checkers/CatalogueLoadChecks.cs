@@ -184,7 +184,10 @@ namespace DataLoadEngine.Checks.Checkers
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "TableInfo " + tableInfo.Name + " has no IsPrimaryKey columns", CheckResult.Fail, null));
 
-            var primaryKeys = live.ExpectTable(tableInfo.GetRuntimeName()).DiscoverColumns().Where(c => c.IsPrimaryKey);
+            var primaryKeys = live.ExpectTable(tableInfo.GetRuntimeName()).DiscoverColumns().Where(c => c.IsPrimaryKey).ToArray();
+
+            if(primaryKeys.Any(k=>k.IsAutoIncrement))
+                notifier.OnCheckPerformed(new CheckEventArgs("AutoIncrement columns "+string.Join(",",primaryKeys.Where(k=>k.IsAutoIncrement))+" are not allowed as Primary Keys for your table because there is no way to differentiate new data being loaded from duplicate old data being loaded (the entire purpose of the RDMP DLE)",CheckResult.Fail));
 
             //confirm primary keys match underlying table
             //sort pks alphabetically and confirm they match the underlying live system table
