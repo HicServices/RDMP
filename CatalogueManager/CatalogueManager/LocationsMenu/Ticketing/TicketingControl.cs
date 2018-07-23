@@ -86,8 +86,9 @@ namespace CatalogueManager.LocationsMenu.Ticketing
                 tbTicket.ForeColor = IsValidTicketName ? Color.Black : Color.Red;
             }
 
-            if(TicketTextChanged != null)
-                TicketTextChanged(sender, e);
+            var h = TicketTextChanged;
+            if(h != null)
+                h(sender, e);
         }
 
         private void btnShowTicket_Click(object sender, EventArgs e)

@@ -149,8 +149,10 @@ namespace CohortManagerLibrary.Execution
         private void SetPhase(Phase p)
         {
             ExecutionPhase = p;
-            if (PhaseChanged != null)
-                PhaseChanged(this,new EventArgs());
+
+            var h = PhaseChanged;
+            if (h != null)
+                h(this,new EventArgs());
         }
     }
 }

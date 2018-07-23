@@ -320,8 +320,10 @@
                 // set the Text of the TextBox to the selected item of the ListBox
                 this.Text = this.listBox.SelectedItem.ToString();
                 this.SelectedItem = AutoCompleteList.First(obj=>obj.ToString().Equals(this.listBox.SelectedItem.ToString()));
-                if (SelectedItemChanged!=null)
-                    SelectedItemChanged(this, new EventArgs());
+
+                EventHandler h = SelectedItemChanged;
+                if (h!=null)
+                    h(this, new EventArgs());
 
                 // and hide the ListBox
                 this.HideSuggestionListBox();

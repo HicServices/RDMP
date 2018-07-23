@@ -154,8 +154,9 @@ namespace CatalogueManager.Collections
             _tree.ModelFilter = _beforeModelFilter;
             _tree = null;
 
-            if(UnApplied != null)
-                UnApplied(this,new EventArgs());
+            var h = UnApplied;
+            if(h != null)
+                h(this,new EventArgs());
         }
 
         private void pbRemoveFilter_Click(object sender, EventArgs e)

@@ -288,10 +288,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 _toolboxWindowManager.ShowCollectionWhichSupportsRootObjectType(root);
 
             //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
-            if (Emphasise != null)
+            var h = Emphasise;
+            if (h != null)
             {
                 var args = new EmphasiseEventArgs(request);
-                Emphasise(this, args);
+                h(this, args);
 
                 var content = args.FormRequestingActivation as DockContent;
 

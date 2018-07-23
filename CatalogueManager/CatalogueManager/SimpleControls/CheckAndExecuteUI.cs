@@ -191,8 +191,9 @@ namespace CatalogueManager.SimpleControls
 
         private void SetButtonStates()
         {
-            if (StateChanged != null)
-                StateChanged(this, new EventArgs());
+            var h = StateChanged;
+            if (h != null)
+                h(this, new EventArgs());
 
             if (!ChecksPassed)
             {
