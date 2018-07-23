@@ -142,7 +142,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
             if (!_database.Exists())
             {
-                throw new Exception("Database does not exist!");
+                throw new Exception("Database " + _database + " does not exist!");
             }
 
             foreach (var table in tables)
@@ -150,7 +150,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 var foundTable = _database.ExpectTable(table);
                 if (!foundTable.Exists())
                 {
-                    throw new Exception("Table does not exist!");
+                    throw new Exception("Table " + table + " does not exist!");
                 }
             }
 
