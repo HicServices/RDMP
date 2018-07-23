@@ -114,8 +114,8 @@ namespace DataExportManager.Collections
             //it doesn't solve the refresh problem where we get told to refresh the ExtractableCohort but we miss out the project users.  So let's refresh them now.
             if (dataExportChildProvider != null)
             {
-                foreach (IObjectUsedByProjectNode user in dataExportChildProvider.DuplicateObjectsButUsedByProjects.Where(d => d.ObjectBeingUsed.Equals(e.Object)).ToArray())
-                    tlvDataExport.RefreshObject(user.Project);//refresh the entire Project
+                foreach (var user in dataExportChildProvider.DuplicatesByProject.Where(d => d.ObjectBeingUsed.Equals(e.Object)).ToArray())
+                    tlvDataExport.RefreshObject(user.User);//refresh the entire Project
 
                 foreach (ProjectCohortIdentificationConfigurationAssociation assoc in dataExportChildProvider.AllProjectAssociatedCics.Where(d => d.GetCohortIdentificationConfigurationCached().Equals(e.Object)).ToArray())
                     tlvDataExport.RefreshObject(assoc.Project);//refresh linked cic

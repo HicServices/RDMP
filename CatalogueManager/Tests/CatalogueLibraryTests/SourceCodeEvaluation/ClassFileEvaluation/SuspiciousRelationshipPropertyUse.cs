@@ -43,7 +43,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                 var relationshipProperties = type.GetProperties().Where(p => p.CanRead && !p.CanWrite);
                 
                 string expectedFileName = type.Name + ".cs";
-                var files = csFilesFound.Where(f => f.EndsWith("\\" + expectedFileName)).ToArray();
+                var files = csFilesFound.Where(f => f.EndsWith("\\" + expectedFileName,StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
                 if (files.Length == 0)
                 {

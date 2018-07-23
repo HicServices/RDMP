@@ -1,11 +1,10 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel.Composition;
+using System.Drawing;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
@@ -13,6 +12,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
     public class ExecuteCommandEditExistingCohortIdentificationConfiguration : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         public CohortIdentificationConfiguration CohortIdConfig { get; set; }
+
+        [ImportingConstructor]
+        public ExecuteCommandEditExistingCohortIdentificationConfiguration(IActivateItems activator,CohortIdentificationConfiguration cohortIdentificationConfiguration)
+            : base(activator)
+        {
+            CohortIdConfig = cohortIdentificationConfiguration;
+        }
 
         public ExecuteCommandEditExistingCohortIdentificationConfiguration(IActivateItems activator) : base(activator)
         {

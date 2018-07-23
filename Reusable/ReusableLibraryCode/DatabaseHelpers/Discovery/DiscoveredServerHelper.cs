@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
@@ -9,16 +10,53 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
     public abstract class DiscoveredServerHelper:IDiscoveredServerHelper
     {
+        private static Dictionary<DatabaseType,ConnectionStringKeywordAccumulator> ConnectionStringKeywordAccumulators = new Dictionary<DatabaseType, ConnectionStringKeywordAccumulator>();
+
+        public static void AddConnectionStringKeyword(DatabaseType databaseType, string keyword, string value,ConnectionStringKeywordPriority priority)
+        {
+            if(!ConnectionStringKeywordAccumulators.ContainsKey(databaseType))
+                ConnectionStringKeywordAccumulators.Add(databaseType,new ConnectionStringKeywordAccumulator(databaseType));
+
+            ConnectionStringKeywordAccumulators[databaseType].AddOrUpdateKeyword(keyword,value,priority);
+        }
+
         public abstract DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null);
         public abstract DbDataAdapter GetDataAdapter(DbCommand cmd);
         public abstract DbCommandBuilder GetCommandBuilder(DbCommand cmd);
         public abstract DbParameter GetParameter(string parameterName);
+        
         public abstract DbConnection GetConnection(DbConnectionStringBuilder builder);
-        public abstract DbConnectionStringBuilder GetConnectionStringBuilder(string connectionString);
-        public abstract DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database, string username, string password);
+
+        public DbConnectionStringBuilder GetConnectionStringBuilder(string connectionString)
+        {
+            var builder = GetConnectionStringBuilderImpl(connectionString);
+            EnforceKeywords(builder);
+
+            return builder;
+        }
+        
+        public DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database,
+            string username, string password)
+        {
+            var builder = GetConnectionStringBuilderImpl(server,database,username,password);
+            EnforceKeywords(builder);
+            return builder;
+        }
+
+        private void EnforceKeywords(DbConnectionStringBuilder builder)
+        {
+            //if we have any keywords to enforce
+            if (ConnectionStringKeywordAccumulators.ContainsKey(DatabaseType))
+                ConnectionStringKeywordAccumulators[DatabaseType].EnforceOptions(builder);
+        }
+        protected abstract DbConnectionStringBuilder GetConnectionStringBuilderImpl(string connectionString, string database, string username, string password);
+        protected abstract DbConnectionStringBuilder GetConnectionStringBuilderImpl(string connectionString);
+        
+        
 
         protected abstract string ServerKeyName { get; }
         protected abstract string DatabaseKeyName { get; }
+        protected virtual string ConnectionTimeoutKeyName { get { return "ConnectionTimeout"; } }
 
         public string GetServerName(DbConnectionStringBuilder builder)
         {
@@ -76,7 +114,30 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public DatabaseType DatabaseType { get; private set; }
         public abstract Dictionary<string, string> DescribeServer(DbConnectionStringBuilder builder);
-        public abstract bool RespondsWithinTime(DbConnectionStringBuilder inSeconds, int timeoutInSeconds, out Exception exception);
+
+        public bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds,out Exception exception)
+        {
+            try
+            {
+                var copyBuilder = GetConnectionStringBuilder(builder.ConnectionString);
+                copyBuilder[ConnectionTimeoutKeyName] = timeoutInSeconds;
+
+                using (var con = GetConnection(copyBuilder))
+                {
+                    con.Open();
+
+                    con.Close();
+
+                    exception = null;
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                return false;
+            }
+        }
         public abstract string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder);
         public abstract string GetExplicitPasswordIfAny(DbConnectionStringBuilder builder);
 

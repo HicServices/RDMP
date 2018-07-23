@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -22,6 +16,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         public ExecuteCommandCreateNewExtractionConfigurationForProject(IActivateItems activator,Project project) : base(activator)
         {
             _project = project;
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Starts a new extraction for the project containing one or more datasets linked against a given cohort";
         }
 
         public Image GetImage(IIconProvider iconProvider)

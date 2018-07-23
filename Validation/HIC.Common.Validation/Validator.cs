@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.IO;
@@ -13,6 +14,7 @@ using HIC.Common.Validation.Constraints.Primary;
 using HIC.Common.Validation.Constraints.Secondary;
 using HIC.Common.Validation.Constraints.Secondary.Predictor;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 
 namespace HIC.Common.Validation
 {
@@ -204,18 +206,16 @@ namespace HIC.Common.Validation
         private static object oLockExtraTypes = new object();
         private static Type[] _extraTypes = null;
 
-
-
-        public static void RefreshExtraTypes()
+        public static void RefreshExtraTypes(ICheckNotifier mefCheckNotifier)
         {
             lock (oLockExtraTypes)
             {
                 _extraTypes = null;
-                GetExtraTypes();
+                GetExtraTypes(mefCheckNotifier);
             }
         }
 
-        public static Type[] GetExtraTypes()
+        public static Type[] GetExtraTypes(ICheckNotifier notifier = null)
         {
             if (_extraTypes != null)
                 return _extraTypes;
@@ -247,9 +247,12 @@ namespace HIC.Common.Validation
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("While looking for Constraints we were unable to resolve Types in Assembly " + assembly + " - Ignoring and continuing with the next assembly in the CurrentDomain");
+                        string msg = "Could not load '"+assembly+"' (while looking for IConstraints)";
 
-                        Console.WriteLine(ex);
+                        if (notifier != null)
+                            notifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Warning, ex));
+                        else
+                            Console.WriteLine(msg);
                     }
 
                 _extraTypes = extraTypes.ToArray();

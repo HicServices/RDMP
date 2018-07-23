@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using CatalogueLibrary.Data;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using Tests.Common;
@@ -628,6 +630,104 @@ namespace ReusableCodeTests
             {
                 database.ForceDrop();
             }
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void CreateTable_AutoIncrementColumnTest(DatabaseType type)
+        {
+            database = GetCleanedServer(type);
+
+            var tbl =  database.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("IdColumn", new DatabaseTypeRequest(typeof (int)))
+                {
+                    AllowNulls = false,
+                    IsAutoIncrement = true,
+                    IsPrimaryKey = true
+                },
+                new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),100))
+
+            });
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Name");
+            dt.Rows.Add("Frank");
+
+            using (var bulkInsert = tbl.BeginBulkInsert())
+                bulkInsert.Upload(dt);
+
+            Assert.AreEqual(1,tbl.GetRowCount());
+
+            var result = tbl.GetDataTable();
+            Assert.AreEqual(1,result.Rows.Count);
+            Assert.AreEqual(1,result.Rows[0]["IdColumn"]);
+
+            Assert.IsTrue(tbl.DiscoverColumn("IdColumn").IsAutoIncrement);
+
+            TableInfo ti;
+            ColumnInfo[] cis;
+            Import(tbl, out ti, out cis);
+
+            Assert.IsTrue(cis.Single(c => c.GetRuntimeName().Equals("IdColumn",StringComparison.InvariantCultureIgnoreCase)).IsAutoIncrement);
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void CreateTable_DefaultTest(DatabaseType type)
+        {
+            database = GetCleanedServer(type);
+
+            var tbl = database.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string),100)), 
+                new DatabaseColumnRequest("myDt", new DatabaseTypeRequest(typeof (DateTime)))
+                {
+                    AllowNulls = false,
+                    Default = MandatoryScalarFunctions.GetTodaysDate
+                }
+            });
+            DateTime currentValue;
+            
+            using (var insert = tbl.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("Name");
+                dt.Rows.Add("Hi");
+
+                currentValue = DateTime.Now;
+                insert.Upload(dt);
+            }
+
+            var dt2 = tbl.GetDataTable();
+
+            var databaseValue = (DateTime)dt2.Rows.Cast<DataRow>().Single()["myDt"];
+            
+            Assert.AreEqual(currentValue.Year,databaseValue.Year);
+            Assert.AreEqual(currentValue.Month, databaseValue.Month);
+            Assert.AreEqual(currentValue.Day, databaseValue.Day);
+            Assert.AreEqual(currentValue.Hour, databaseValue.Hour);
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer, "Latin1_General_CS_AS_KS_WS")]
+        [TestCase(DatabaseType.MYSQLServer, "latin1_german1_ci")]
+        //[TestCase(DatabaseType.Oracle, "BINARY_CI")] //Requires 12.2+ oracle https://www.experts-exchange.com/questions/29102764/SQL-Statement-to-create-case-insensitive-columns-and-or-tables-in-Oracle.html
+        public void CreateTable_CollationTest(DatabaseType type,string collation)
+        {
+            database = GetCleanedServer(type);
+
+            var tbl = database.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string),100))
+                {
+                    AllowNulls = false,
+                    Collation = collation
+                }
+            });
+
+            Assert.AreEqual(collation, tbl.DiscoverColumn("Name").Collation);
         }
 
         [TestFixtureTearDown]

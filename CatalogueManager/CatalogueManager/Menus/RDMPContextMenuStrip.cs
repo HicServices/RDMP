@@ -9,8 +9,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
+using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
+using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
@@ -55,7 +58,7 @@ namespace CatalogueManager.Menus
 
             _activator = _args.ItemActivator;
 
-            AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator.CoreIconProvider);
+            AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
             RepositoryLocator = _activator.RepositoryLocator;
         }
@@ -87,7 +90,36 @@ namespace CatalogueManager.Menus
             return mi;
         }
 
-        public void AddCommonMenuItems()
+        /// <summary>
+        /// Adds all commands (usually plugins) that are derrived from T e.g. PluginDatabaseAtomicCommand.  This will only add Types that are exposed
+        /// via MEF Export decorations so if you define a new base Type T make sure to inherit from PluginAtomicCommand to pick up the [InheritedExport].
+        /// 
+        /// <para>All derrived classes must have either a blank constructor or one taking either an <see cref="IActivateItems"/> or <see cref="IRDMPPlatformRepositoryServiceLocator"/></para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        protected void AddAll<T>()
+        {
+            var types = _activator.RepositoryLocator.CatalogueRepository.MEF
+                .GetTypes<IAtomicCommand>().Where(t =>
+                    typeof(T).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+
+            foreach (var type in types)
+            {
+                var constructor = new ObjectConstructor();
+
+                var instance =
+                    constructor.ConstructIfPossible(type, _activator)?? //what about one that takes an IActivateItems?
+                    constructor.ConstructIfPossible(type, _activator.RepositoryLocator)?? //maybe it takes a repo locator
+                    constructor.ConstructIfPossible(type);  //does it maybe have a blank constructor?
+
+                if(instance == null)
+                    throw new NotSupportedException("Type " + type + " did not have any valid constructors");
+
+                Add((IAtomicCommand)instance);
+            }
+        }
+
+        public void AddCommonMenuItems(RDMPCollectionCommonFunctionalitySettings settings)
         {
             var deletable = _o as IDeleteable;
             var nameable = _o as INamed;
@@ -110,6 +142,8 @@ namespace CatalogueManager.Menus
             if (nameable != null)
                 Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
 
+            Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
+
             if (databaseEntity != null)
             {
                 if (databaseEntity.Equals(_args.CurrentlyPinnedObject))
@@ -117,7 +151,6 @@ namespace CatalogueManager.Menus
                 else
                     Add(new ExecuteCommandPin(_activator, databaseEntity));
 
-                Add(new ExecuteCommandShowKeywordHelp(_activator, databaseEntity));
                 Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
             }
             
@@ -137,7 +170,7 @@ namespace CatalogueManager.Menus
                 }
             }
 
-            if (_args.Tree != null)
+            if (_args.Tree != null && !settings.SuppressChildrenAdder)
             {
                 Add(new ExecuteCommandExpandAllNodes(_activator, _args.Tree, _args.Model));
                 Add(new ExecuteCommandCollapseChildNodes(_activator, _args.Tree, _args.Model));

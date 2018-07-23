@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
@@ -13,9 +8,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -31,6 +24,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 SetImpossible("There are no Cohort Identification Configurations yet");
 
             _existingAssociations = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Specifies that the Cohort Identification Configuration (query) is only for use generating cohorts for extractions of the specified project";
         }
 
         public override void Execute()

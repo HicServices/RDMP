@@ -1,17 +1,11 @@
 using System.Drawing;
-using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -30,6 +24,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _catalogue = catalogue;
             if(!_catalogue.ContainsAtLeastOneExtractionIdentifier)
                 SetImpossible("Catalogue " + _catalogue.Catalogue + " does not contain any IsExtractionIdentifier columns");
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Creates a new patient index table query that fetches a subset of data from the chosen dataset.  This query will be used as part of a cohort identification configuration";
         }
 
         public override void Execute()

@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LoadModules.GenericUIs.DataFlowSources
@@ -46,7 +39,9 @@ namespace LoadModules.GenericUIs.DataFlowSources
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            DeletePressed(this, new EventArgs());
+            var h = DeletePressed;
+            if(h != null)
+                DeletePressed(this, new EventArgs());
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Text;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
@@ -48,6 +49,33 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
         }
         [Test]
+        public void LoadCSVWithCorrectDatatypes_ForceHeadersWhitespace()
+        {
+            FileInfo testFile = CreateTestFile();
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+            source.ForceHeaders = "chi  ,Study ID\t ,Date";
+            source.ForceHeadersReplacesFirstLineInFile = true;
+            source.StronglyTypeInput = true;//makes the source interpret the file types properly
+
+            var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+            Console.WriteLine("Resulting columns were:" + string.Join("," , chunk.Columns.Cast<DataColumn>().Select(c=>c.ColumnName)));
+
+            Assert.IsTrue(chunk.Columns.Contains("chi")); //notice the lack of whitespace!
+            Assert.IsTrue(chunk.Columns.Contains("study ID")); //whitespace is allowed in the middle though... because we like a challenge!
+
+            Assert.AreEqual(3,chunk.Columns.Count);
+            Assert.AreEqual(1, chunk.Rows.Count);
+            Assert.AreEqual("0101010101", chunk.Rows[0][0]);
+            Assert.AreEqual(5, chunk.Rows[0][1]);
+            Assert.AreEqual(new DateTime(2001 , 1 , 5), chunk.Rows[0][2]);//notice the strong typing (we are not looking for strings here)
+            
+            source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+        }
+
+        [Test]
         public void LoadCSVWithCorrectDatatypes_DatatypesAreCorrect()
         {
 
@@ -59,15 +87,14 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
             var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-            Assert.AreEqual(3,chunk.Columns.Count);
+            Assert.AreEqual(3, chunk.Columns.Count);
             Assert.AreEqual(1, chunk.Rows.Count);
             Assert.AreEqual("0101010101", chunk.Rows[0][0]);
             Assert.AreEqual(5, chunk.Rows[0][1]);
-            Assert.AreEqual(new DateTime(2001 , 1 , 5), chunk.Rows[0][2]);//notice the strong typing (we are not looking for strings here)
-            
+            Assert.AreEqual(new DateTime(2001, 1, 5), chunk.Rows[0][2]);//notice the strong typing (we are not looking for strings here)
+
             source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
         }
-
         [Test]
         public void OverrideDatatypes_ForcedFreakyTypesCorrect()
         {

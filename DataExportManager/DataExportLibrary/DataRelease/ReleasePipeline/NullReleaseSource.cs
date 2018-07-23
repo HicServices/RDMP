@@ -11,7 +11,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
     public class NullReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
     {
-        public override ReleaseAudit GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -28,7 +28,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         protected override void RunSpecificChecks(ICheckNotifier notifier)
         {
-            throw new NotImplementedException();
         }
 
         public override string ToString()

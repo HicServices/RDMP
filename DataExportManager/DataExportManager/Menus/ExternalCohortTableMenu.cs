@@ -18,6 +18,7 @@ using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.CohortUI.ImportCustomData;
 using DataExportManager.CommandExecution.AtomicCommands;
@@ -43,9 +44,19 @@ namespace DataExportManager.Menus
         public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable): base(args, externalCohortTable)
         {
             _externalCohortTable = externalCohortTable;
-            Add(new ExecuteCommandImportFileAsNewCohort(_activator));
 
-            Add(new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(_activator));
+            Items.Add(new ToolStripSeparator());
+            Add(new ExecuteCommandCreateNewCohortFromFile(_activator,_externalCohortTable));
+            Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,_externalCohortTable));
+            Add(new ExecuteCommandCreateNewCohortFromCatalogue(_activator,externalCohortTable));
+            Items.Add(new ToolStripSeparator());
+
+            var projectOnlyNode = args.Masquerader as CohortSourceUsedByProjectNode;
+
+            if (projectOnlyNode != null)
+                Add(new ExecuteCommandShowSummaryOfCohorts(_activator, projectOnlyNode));
+            else
+                Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable));
 
             _importExistingCohort = new ToolStripMenuItem("Import an Already Existing Cohort", _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import), (s, e) => ImportAlreadyExistingCohort());
             Items.Add(_importExistingCohort);

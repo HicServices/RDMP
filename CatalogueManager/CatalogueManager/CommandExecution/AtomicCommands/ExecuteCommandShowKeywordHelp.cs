@@ -1,30 +1,23 @@
+using System;
 using System.Drawing;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
+using System.Windows.Forms;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
+using CatalogueManager.Menus;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly DatabaseEntity _databaseEntity;
-        private string _className;
+        private RDMPContextMenuStripArgs _args;
 
-        public ExecuteCommandShowKeywordHelp(IActivateItems activator, DatabaseEntity databaseEntity) : base(activator)
+        public ExecuteCommandShowKeywordHelp(IActivateItems activator,  RDMPContextMenuStripArgs args) : base(activator)
         {
-            _databaseEntity = databaseEntity;
-            _className = databaseEntity.GetType().Name;
-
-            if(!KeywordHelpTextListbox.ContainsKey(_className))
-                SetImpossible("No keyword help exists for '" + _className+"'");
-
+            _args = args;
         }
 
         public override string GetCommandName()
@@ -37,11 +30,28 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return iconProvider.GetImage(RDMPConcept.Help);
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Displays the code documentation for the menu object or the Type name of the object if it has none";
+        }
+
         public override void Execute()
         {
             base.Execute();
-        
-            KeywordHelpTextListbox.ShowKeywordHelp(_className);
+
+            var modelType = _args.Model.GetType();
+                
+            if (_args.Masquerader != null)
+            {
+                if(MessageBox.Show("Node is '" + MEF.GetCSharpNameForType(_args.Masquerader.GetType()) + "'.  Show help for '" +
+                    MEF.GetCSharpNameForType(modelType) + "'?","Show Help", MessageBoxButtons.YesNo) == DialogResult.No)
+                    return;
+            }
+
+            if (KeywordHelpTextListbox.ContainsKey(modelType.Name))
+                KeywordHelpTextListbox.ShowKeywordHelp(modelType.Name);
+            else
+                MessageBox.Show(MEF.GetCSharpNameForType(modelType));
         }
     }
 }

@@ -46,6 +46,7 @@ namespace CatalogueManager.Validation
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnConfigureStandardRegex = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -58,7 +59,6 @@ namespace CatalogueManager.Validation
             this.lblPickPivotColumn = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumns)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -81,7 +81,7 @@ namespace CatalogueManager.Validation
             this.olvColumns.HideSelection = false;
             this.olvColumns.Location = new System.Drawing.Point(0, 0);
             this.olvColumns.Name = "olvColumns";
-            this.olvColumns.Size = new System.Drawing.Size(259, 475);
+            this.olvColumns.Size = new System.Drawing.Size(258, 475);
             this.olvColumns.TabIndex = 0;
             this.olvColumns.UseCompatibleStateImageBehavior = false;
             this.olvColumns.View = System.Windows.Forms.View.Details;
@@ -165,7 +165,7 @@ namespace CatalogueManager.Validation
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(959, 404);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(960, 404);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // btnAddSecondaryConstraint
@@ -217,7 +217,7 @@ namespace CatalogueManager.Validation
             this.splitContainer1.Panel2.Controls.Add(this.btnAddSecondaryConstraint);
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel1);
             this.splitContainer1.Size = new System.Drawing.Size(1177, 537);
-            this.splitContainer1.SplitterDistance = 251;
+            this.splitContainer1.SplitterDistance = 250;
             this.splitContainer1.TabIndex = 9;
             // 
             // tbFilter
@@ -226,7 +226,7 @@ namespace CatalogueManager.Validation
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFilter.Location = new System.Drawing.Point(41, 481);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(215, 20);
+            this.tbFilter.Size = new System.Drawing.Size(214, 20);
             this.tbFilter.TabIndex = 2;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
@@ -239,6 +239,14 @@ namespace CatalogueManager.Validation
             this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Filter:";
+            // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(265, 62);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(56, 28);
+            this.objectSaverButton1.TabIndex = 11;
             // 
             // toolStrip1
             // 
@@ -328,14 +336,6 @@ namespace CatalogueManager.Validation
             // 
             this.timer1.Enabled = true;
             this.timer1.Interval = 500;
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(4, 500);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(56, 28);
-            this.objectSaverButton1.TabIndex = 11;
             // 
             // ValidationSetupForm
             // 

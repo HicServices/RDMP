@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CatalogueLibrary.Ticketing;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
@@ -51,27 +52,29 @@ namespace DataExportLibrary.DataRelease
             ReleaseAudit = releaseAudit;
         }
 
-        public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, ReleaseEnvironmentPotential environment, bool isPatch)
+        public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
         {
             ConfigurationsToRelease = toRelease;
-            
-            StreamWriter sw = PrepareAuditFile();
 
-            ReleaseGlobalFolder();
-
-            // Audit Global Folder if there are any
-            if (ReleaseAudit.SourceGlobalFolder != null)
+            using (StreamWriter sw = PrepareAuditFile())
             {
-                AuditDirectoryCreation(ReleaseAudit.SourceGlobalFolder.FullName, sw, 0);
+                ReleaseGlobalFolder();
 
-                foreach (FileInfo fileInfo in ReleaseAudit.SourceGlobalFolder.GetFiles())
-                    AuditFileCreation(fileInfo.Name, sw, 1);
+                // Audit Global Folder if there are any
+                if (ReleaseAudit.SourceGlobalFolder != null)
+                {
+                    AuditDirectoryCreation(ReleaseAudit.SourceGlobalFolder.FullName, sw, 0);
+
+                    foreach (FileInfo fileInfo in ReleaseAudit.SourceGlobalFolder.GetFiles())
+                        AuditFileCreation(fileInfo.Name, sw, 1);
+                }
+
+                ReleaseAllExtractionConfigurations(toRelease, sw, environments, isPatch);
+
+                sw.Flush();
+                sw.Close();
             }
-
-            ReleaseAllExtractionConfigurations(toRelease, sw, environment, isPatch);
-
-            sw.Flush();
-            sw.Close();
+            
             ReleaseSuccessful = true;
         }
         
@@ -100,7 +103,7 @@ namespace DataExportLibrary.DataRelease
             }
         }
 
-        protected virtual void ReleaseAllExtractionConfigurations(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, StreamWriter sw, ReleaseEnvironmentPotential environment, bool isPatch)
+        protected virtual void ReleaseAllExtractionConfigurations(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, StreamWriter sw, Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
         {
             //for each configuration, all the release potentials can be released
             foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp in toRelease)
@@ -122,6 +125,10 @@ namespace DataExportLibrary.DataRelease
                 if (otherDataFolder != null)
                     AuditDirectoryCreation(otherDataFolder.FullName, sw, 1);
 
+                var metadataFolder = ReleaseMetadata(kvp, configurationSubDirectory);
+                if (metadataFolder != null)
+                    AuditDirectoryCreation(metadataFolder.FullName, sw, 1);
+
                 //generate release document
                 var generator = new WordDataReleaseFileGenerator(kvp.Key, _repository);
                 generator.GenerateWordFile(Path.Combine(configurationSubDirectory.FullName, "ReleaseDocument_" + extractionIdentifier + ".docx"));
@@ -137,7 +144,7 @@ namespace DataExportLibrary.DataRelease
                     AuditDirectoryCreation(rpDirectory.Name, sw, 1);
 
                     CutTreeRecursive(rp.ExtractDirectory, rpDirectory, sw, 2);
-                    AuditProperRelease(rp, environment, rpDirectory, isPatch);
+                    AuditProperRelease(rp, environments[kvp.Key], rpDirectory, isPatch);
                 }
 
                 ConfigurationsReleased.Add(kvp.Key);
@@ -168,6 +175,20 @@ namespace DataExportLibrary.DataRelease
             return fromMasterData;
         }
 
+        protected virtual DirectoryInfo ReleaseMetadata(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, DirectoryInfo configurationSubDirectory)
+        {
+            //if there is custom data copy that across for the specific cohort
+            var folderFound = GetAllFoldersCalled(ExtractionDirectory.METADATA_FOLDER_NAME, kvp);
+            DirectoryInfo source = GetUniqueDirectoryFrom(folderFound.Distinct(new DirectoryInfoComparer()).ToList());
+
+            if (source != null)
+            {
+                var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.Parent.FullName, source.Name));
+                source.CopyAll(destination);
+            }
+            return source;
+        }
+
         protected virtual void AuditExtractionConfigurationDetails(StreamWriter sw, DirectoryInfo configurationSubDirectory, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string extractionIdentifier)
         {
             //audit in contents.txt
@@ -177,7 +198,7 @@ namespace DataExportLibrary.DataRelease
             sw.WriteLine("ExtractionConfiguration.ID:" + kvp.Key.ID);
             sw.WriteLine("ExtractionConfiguration Identifier:" + extractionIdentifier);
             sw.WriteLine("CumulativeExtractionResult.ID(s):" +
-                         kvp.Value.Select(v => v.ExtractionResults.ID)
+                         kvp.Value.Select(v => v.DatasetExtractionResult.ID)
                              .Distinct()
                              .Aggregate("", (s, n) => s + n + ",")
                              .TrimEnd(','));
@@ -187,7 +208,7 @@ namespace DataExportLibrary.DataRelease
 
         protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
         {
-            ReleaseLogWriter logWriter = new ReleaseLogWriter(rp, environment, _repository);
+            var releaseLogWriter = new ReleaseLogWriter(rp, environment, _repository);
 
             FileInfo datasetFile = null;
             
@@ -201,18 +222,18 @@ namespace DataExportLibrary.DataRelease
                 }
             }
 
-            logWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
+            releaseLogWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
         }
 
         protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
-            var customDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.CustomCohortDataFolderName, toRelease);
+            var customDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.CUSTOM_COHORT_DATA_FOLDER_NAME, toRelease);
             return GetUniqueDirectoryFrom(customDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
         }
 
         protected DirectoryInfo ThrowIfMasterDataConflictElseReturnFirstOtherDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
-            var masterDataDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.MasterDataFolderName, toRelease);
+            var masterDataDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.MASTER_DATA_FOLDER_NAME, toRelease);
             return GetUniqueDirectoryFrom(masterDataDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
         }
 

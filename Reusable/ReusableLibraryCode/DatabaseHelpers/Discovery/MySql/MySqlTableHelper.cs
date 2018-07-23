@@ -11,11 +11,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
     public class MySqlTableHelper : DiscoveredTableHelper
     {
 
-        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName)
+        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database)
         {
             List<DiscoveredColumn> columns = new List<DiscoveredColumn>();
+            var tableName = discoveredTable.GetRuntimeName();
 
-            DbCommand cmd = DatabaseCommandHelper.GetCommand("DESCRIBE `" + database + "`.`" + tableName + "`", connection.Connection);
+            DbCommand cmd = DatabaseCommandHelper.GetCommand("SHOW FULL COLUMNS FROM `" + database + "`.`" + tableName + "`", connection.Connection);
             cmd.Transaction = connection.Transaction;
 
             using(DbDataReader r = cmd.ExecuteReader())
@@ -29,7 +30,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
                     if (r["Key"].Equals("PRI"))
                         toAdd.IsPrimaryKey = true;
-
+                    
+                    toAdd.IsAutoIncrement = r["Extra"] as string == "auto_increment";
+                    toAdd.Collation = r["Collation"] as string;
+                    
                     toAdd.DataType = new DiscoveredDataType(r,SensibleTypeFromMySqlType(r["Type"].ToString()),toAdd);
                     columns.Add(toAdd);
 
@@ -123,13 +127,5 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
             throw new NotImplementedException();
         }
-
-
-        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction,
-            IManagedConnection connection, string database, string tableName)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

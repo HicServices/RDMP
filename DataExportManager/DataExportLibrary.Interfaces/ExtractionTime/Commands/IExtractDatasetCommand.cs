@@ -10,7 +10,7 @@ namespace DataExportLibrary.Interfaces.ExtractionTime.Commands
     /// <summary>
     /// See ExtractDatasetCommand
     /// </summary>
-    public interface IExtractDatasetCommand:IExtractCommand
+    public interface IExtractDatasetCommand : IExtractCommand
     {
         ISelectedDataSets SelectedDataSets { get; }
 
@@ -20,7 +20,10 @@ namespace DataExportLibrary.Interfaces.ExtractionTime.Commands
         IExtractableDatasetBundle DatasetBundle { get; }
         List<IColumn> ColumnsToExtract { get; set; }
 
+        void GenerateQueryBuilder();
         ISqlQueryBuilder QueryBuilder { get; set; }
 
+        ICumulativeExtractionResults CumulativeExtractionResults { get; }
+        int TopX { get; set; }
     }
 }

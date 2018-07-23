@@ -84,7 +84,7 @@ namespace ReusableUIComponents
         public SuggestComboBox()
         {
             // set the standard rules:
-            _filterRuleCompiled = s => s.ToLower().Contains(Text.Trim().ToLower());
+            _filterRuleCompiled = DefaultFilterRule;
             _suggestListOrderRuleCompiled = s => s;
             _propertySelectorCompiled = collection => collection.Cast<string>();
 
@@ -94,6 +94,16 @@ namespace ReusableUIComponents
             ParentChanged += OnParentChanged;
 
             _suggLb.VisibleChanged += _suggLb_VisibleChanged;
+        }
+
+        private bool DefaultFilterRule(string arg)
+        {
+            if (string.IsNullOrWhiteSpace(Text))
+                return false;
+
+            var keywords = Text.Split(new []{" "}, StringSplitOptions.RemoveEmptyEntries);
+
+            return keywords.All(k => arg.ToLower().Contains(k.ToLower()));
         }
 
         private bool _changingVisibility = false;

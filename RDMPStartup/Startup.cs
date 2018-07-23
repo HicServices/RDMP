@@ -18,6 +18,8 @@ using MapsDirectlyToDatabaseTable.Versioning;
 using RDMPStartup.Events;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
 
 
 namespace RDMPStartup
@@ -93,6 +95,20 @@ namespace RDMPStartup
                 DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,null,null,1, RDMPPlatformDatabaseStatus.Broken, RDMPPlatformType.Catalogue,e));
             }
 
+            //setup connection string keywords
+            foreach (ConnectionStringKeyword keyword in RepositoryLocator.CatalogueRepository.GetAllObjects<ConnectionStringKeyword>())
+            {
+                var tomem = new ToMemoryCheckNotifier(mefCheckNotifier);
+                keyword.Check(tomem);
+
+                //don't add broken keywords!
+                if(tomem.GetWorst() >= CheckResult.Fail)
+                    continue;
+                
+                //pass it into the system wide static keyword collection for use with all databases of this type all the time (that includes Microsoft Sql Server btw which means those options will happen for DataExport too!)
+                DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType,keyword.Name, keyword.Value, ConnectionStringKeywordPriority.SystemDefaultMedium);
+            }
+
             //only load data export manager if catalogue worked
             if(foundCatalogue)
             {
@@ -121,7 +137,7 @@ namespace RDMPStartup
                 FindTier3Databases(RepositoryLocator.CatalogueRepository);
             }
 
-            Validator.RefreshExtraTypes();
+            Validator.RefreshExtraTypes(mefCheckNotifier);
         }
 
         private void FindTier3Databases(CatalogueRepository catalogueRepository)

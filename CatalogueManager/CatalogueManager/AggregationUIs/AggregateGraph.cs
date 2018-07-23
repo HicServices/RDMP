@@ -110,7 +110,7 @@ namespace CatalogueManager.AggregationUIs
                 return;
             }
 
-            if(_cmd != null)
+            if (_cmd != null && _cmd.Connection != null && _cmd.Connection.State != ConnectionState.Closed)
                 _cmd.Cancel();
 
             pbLoading.Visible = false;
@@ -210,7 +210,7 @@ namespace CatalogueManager.AggregationUIs
 
                 var server =
                     AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(
-                        DataAccessContext.InternalDataProcessing, false);
+                        DataAccessContext.InternalDataProcessing,true);
 
                 this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Connecting To Server..."; }));
 

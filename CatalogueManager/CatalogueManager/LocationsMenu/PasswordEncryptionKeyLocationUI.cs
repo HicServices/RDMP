@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.LocationsMenu
@@ -81,14 +82,12 @@ namespace CatalogueManager.LocationsMenu
         {
             try
             {
-                Process.Start(new FileInfo(tbCertificate.Text).Directory.FullName);
+                UsefulStuff.GetInstance().ShowFileInWindowsExplorer(new FileInfo(tbCertificate.Text));
             }
             catch (Exception exception)
             {
                 ExceptionViewer.Show(exception);
             }
-
-            
         }
 
         private void btnCreateKeyFile_Click(object sender, EventArgs e)

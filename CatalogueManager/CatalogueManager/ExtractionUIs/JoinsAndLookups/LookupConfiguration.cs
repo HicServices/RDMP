@@ -7,8 +7,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using CatalogueLibrary.CommandExecution;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -18,6 +18,7 @@ using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ScintillaNET;
@@ -327,7 +328,8 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 For example:
 if the Drug Code 'TIB' is reused in Tayside and Fife healthboard with different meanings then the primary key/foreign key would of the Lookup table would have to be both the 'Code' (TIB) and the 'Prescribing Healthboard' (T or F).
 
-Only define secondary columns if you really need them! if any of the key fields do not match between the Lookup table and the Dataset table then no lookup description will be recorded");
+Only define secondary columns if you really need them! if any of the key fields do not match between the Lookup table and the Dataset table then no lookup description will be recorded",
+                                                                                                                                                                                        null, true, null, null,CatalogueIcons.Help, WideMessageBoxTheme.Help);
         }
 
         private void olvLookupColumns_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
@@ -434,57 +436,40 @@ Only define secondary columns if you really need them! if any of the key fields 
 
                 if (actuallyDoIt)
                 {
-                    foreach (var descCol in descs)
-                    {
-                        var repo = (CatalogueRepository)_catalogue.Repository;
-                        Lookup lookup = new Lookup(repo, descCol, f1, p1, ExtractionJoinType.Left, tbCollation.Text);
+                    bool alsoCreateExtractionInformation =
+                        MessageBox.Show(
+                            "Also create a virtual extractable column(s) in '" + _catalogue + "' called '<Column>_Desc'",
+                            "Create Extractable Column?", MessageBoxButtons.YesNo) == DialogResult.Yes;
 
-                        if (p2 != null)
-                            new LookupCompositeJoinInfo(repo, lookup, f2, p2, tbCollation.Text);
+                    var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>>();
+                    keyPairs.Add(Tuple.Create(f1,p1));
 
-                        if (p3 != null)
-                            new LookupCompositeJoinInfo(repo, lookup, f3, p3, tbCollation.Text);
+                    if(p2 != null)
+                        keyPairs.Add(Tuple.Create(f2,p2));
+                    
+                    if(p3 != null)
+                        keyPairs.Add(Tuple.Create(f3,p3));
 
-                        var proposedName = foreignKeyExtractionInformation.GetRuntimeName() + "_Desc";
+                    var cmd = new ExecuteCommandCreateLookup(_activator.RepositoryLocator.CatalogueRepository,foreignKeyExtractionInformation, descs,
+                        keyPairs, tbCollation.Text, alsoCreateExtractionInformation);
 
-                        var newCatalogueItem = new CatalogueItem(repo, _catalogue, proposedName);
-                        newCatalogueItem.SetColumnInfo(descCol);
+                    cmd.Execute();
 
-                        if (
-                            MessageBox.Show(
-                                "Also create a virtual extractable column in Catalogue '" + _catalogue + "' called '" +
-                                proposedName + "'", "Create Extractable Column?", MessageBoxButtons.YesNo) ==
-                            DialogResult.Yes)
-                        {
-                            //bump everyone down 1
-                            foreach (var toBumpDown in allExtractionInformations.Where(e => e.Order > foreignKeyExtractionInformation.Order))
-                            {
-                                toBumpDown.Order++;
-                                toBumpDown.SaveToDatabase();
-                            }
+                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
+                    SetDatabaseObject(_activator,_catalogue);
 
-
-                            var newExtractionInformation = new ExtractionInformation(repo, newCatalogueItem, descCol, descCol.ToString());
-                            newExtractionInformation.ExtractionCategory = ExtractionCategory.Supplemental;
-                            newExtractionInformation.Alias = newCatalogueItem.Name;
-                            newExtractionInformation.Order = foreignKeyExtractionInformation.Order + 1;
-                            newExtractionInformation.SaveToDatabase();
-                        }
-
-                        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
-                        SetDatabaseObject(_activator,_catalogue);
-
-                        MessageBox.Show("Lookup created successfully, fields will now be cleared");
-                        pk2.Clear();
-                        pk3.Clear();
+                    MessageBox.Show("Lookup created successfully, fields will now be cleared");
+                    pk1.Clear();
+                    pk2.Clear();
+                    pk3.Clear();
                         
-                        fk1.Clear();
-                        fk2.Clear();
-                        fk3.Clear();
+                    fk1.Clear();
+                    fk2.Clear();
+                    fk3.Clear();
 
-                        olvSelectedDescriptionColumns.ClearObjects();
+                    olvSelectedDescriptionColumns.ClearObjects();
 
-                    }
+                    
                 }
                 btnCreateLookup.Enabled = true;
 

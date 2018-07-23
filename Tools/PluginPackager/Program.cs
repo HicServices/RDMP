@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using RDMPStartup;
+using CommandLine;
 using RDMPStartup.PluginManagement;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
 namespace PluginPackager
@@ -19,37 +13,30 @@ namespace PluginPackager
     {
         static int Main(string[] args)
         {
-            var options = new PluginPackagerProgramOptions();
-            
-            if (!CommandLine.Parser.Default.ParseArguments(args, options))
-                return -1;
+            return UsefulStuff.GetParser().ParseArguments<PluginPackagerProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
+        }
 
-            if (options.Items.Count != 2)
-            {
-                Console.WriteLine(options.GetUsage());
-                return -2;
-            }
-
-            FileInfo f = new FileInfo(options.Items[0]);
+        private static int RunOptionsAndReturnExitCode(PluginPackagerProgramOptions opts)
+        {
+            FileInfo f = new FileInfo(opts.SolutionFile);
             if (!f.Exists)
             {
-                Console.WriteLine("Could not find dll");
+                Console.WriteLine("Could not find Solution File");
                 return -58;
             }
 
-            Packager p = new Packager(f, options.Items[1],options.SkipSourceCodeCollection);
+            Packager p = new Packager(f, opts.ZipFileName, opts.SkipSourceCodeCollection);
             p.PackageUpFile(new ThrowImmediatelyCheckNotifier());
-           
-            if(!string.IsNullOrWhiteSpace(options.Server))
+
+            if (!string.IsNullOrWhiteSpace(opts.Server))
             {
-                var builder = new SqlConnectionStringBuilder() {DataSource = options.Server, InitialCatalog = options.Database,IntegratedSecurity = true};
+                var builder = new SqlConnectionStringBuilder() { DataSource = opts.Server, InitialCatalog = opts.Database, IntegratedSecurity = true };
 
                 CatalogueRepository.SuppressHelpLoading = true;
                 var processor = new PluginProcessor(new ThrowImmediatelyCheckNotifier(), new CatalogueRepository(builder));
-                processor.ProcessFileReturningTrueIfIsUpgrade(new FileInfo(options.Items[1]));
-                
+                processor.ProcessFileReturningTrueIfIsUpgrade(new FileInfo(opts.ZipFileName));
             }
-            
+
             return 0;
         }
     }

@@ -62,7 +62,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 
                 foreach (string dbname in databases)
-                    _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),_loadTables.Where(t => t.GetDatabaseRuntimeName().Equals(dbname)).ToArray());
+                    _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),_loadTables.Where(t => t.GetDatabaseRuntimeName().Equals(dbname,StringComparison.CurrentCultureIgnoreCase)).ToArray());
             }
 
                         //if it is live yield all the lookups
@@ -88,7 +88,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             foreach (LoadDiagramDatabaseNode db in Children)
                 db.DiscoverState();
         }
-
+        #region equality
         protected bool Equals(LoadDiagramServerNode other)
         {
             return base.Equals(other) && _bubble == other._bubble && Equals(_database, other._database);
@@ -112,5 +112,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 return hashCode;
             }
         }
+        #endregion
     }
 }

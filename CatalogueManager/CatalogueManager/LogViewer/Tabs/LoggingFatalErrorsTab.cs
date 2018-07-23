@@ -1,4 +1,5 @@
-﻿using HIC.Logging;
+﻿using System.Data;
+using HIC.Logging;
 
 namespace CatalogueManager.LogViewer.Tabs
 {
@@ -7,34 +8,17 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingFatalErrorsTab : LoggingTab
     {
-        public event NavigatePaneToEntityHandler NavigationPaneGoto;
-
-        public LoggingFatalErrorsTab()
+        protected override DataTable FetchDataTable(LogManager lm)
         {
-            base.InitializeComponent();
-            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
+            return lm.ListFatalErrorsAsDataTable(null);
         }
 
-        void dataGridView1_CellDoubleClick(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+        public override void SetFilter(LogViewerFilter filter)
         {
-            if (e.RowIndex == -1)
-                return;
-
-            NavigationPaneGoto(this, new NavigatePaneToEntityArgs(LogViewerNavigationTarget.FatalErrors, (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value));
-        }
-
-        public void SetStateTo(LogManager logManager, LogViewerFilterCollection filter)
-        {
-            _filters = filter;
-
-            if (!_bLoaded)
-            {
-                var dt = logManager.ListFatalErrorsAsDataTable(null);
-                base.LoadDataTable(dt);
-            }
+            base.SetFilter(filter);
 
             if (filter.Run == null)
-                SetFilter(null);
+                SetFilter("");
             else
                 SetFilter("dataLoadRunID=" + filter.Run);
         }

@@ -91,9 +91,10 @@ namespace CatalogueManager.SimpleDialogs.Governance
             
             checksUIIconOnly1.Check(GovernancePeriod);
             GovernancePeriod.SaveToDatabase();
-            
-            if (ChangesSaved != null)
-                ChangesSaved(this, null);
+
+            var h = ChangesSaved;
+            if (h != null)
+                h(this, null);
         }
 
         private void tbName_TextChanged(object sender, EventArgs e)

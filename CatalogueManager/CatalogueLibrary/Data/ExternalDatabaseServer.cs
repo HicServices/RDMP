@@ -108,6 +108,19 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        public DatabaseType DatabaseType
+        {
+            get { return _selfCertifyingDataAccessPoint.DatabaseType; }
+            set
+            {
+                if (Equals(_selfCertifyingDataAccessPoint.DatabaseType, value))
+                    return;
+
+                _selfCertifyingDataAccessPoint.DatabaseType = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
@@ -125,7 +138,8 @@ namespace CatalogueLibrary.Data
         {
             var parameters = new Dictionary<string, object>
             {
-                {"Name", name}
+                {"Name", name},
+                {"DatabaseType",DatabaseType.MicrosoftSQLServer}
             };
             
             if(databaseAssemblyIfCreatedByOne != null)
@@ -140,7 +154,7 @@ namespace CatalogueLibrary.Data
         {
             var repo = shareManager.RepositoryLocator.CatalogueRepository;
             Repository = repo;
-            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)Repository, DatabaseType.MicrosoftSQLServer);
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)Repository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/); 
 
             repo.UpsertAndHydrate(this,shareManager, shareDefinition);
         }
@@ -151,7 +165,9 @@ namespace CatalogueLibrary.Data
             CreatedByAssembly = r["CreatedByAssembly"] as string;
             MappedDataPath = r["MappedDataPath"] as string;
 
-            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)repository,DatabaseType.MicrosoftSQLServer)
+            var databaseType = (DatabaseType) Enum.Parse(typeof (DatabaseType), r["DatabaseType"].ToString());
+
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)repository, databaseType)
             {
                 Database = r["Database"] as string,
                 Password = r["Password"] as string,
@@ -190,10 +206,7 @@ namespace CatalogueLibrary.Data
         {
             return DataAccessPortal.GetInstance().ExpectServer(this, context).RespondsWithinTime(timeoutInSeconds, out exception);
         }
-
-        [NoMappingToDatabase]
-        public DatabaseType DatabaseType { get { return _selfCertifyingDataAccessPoint.DatabaseType; } }
-
+        
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
         {
             return _selfCertifyingDataAccessPoint.GetCredentialsIfExists(context);
@@ -226,6 +239,11 @@ namespace CatalogueLibrary.Data
                 return false;
 
             return databaseAssembly.GetName().Name == CreatedByAssembly;
+        }
+
+        public DiscoveredDatabase Discover(DataAccessContext context)
+        {
+            return DataAccessPortal.GetInstance().ExpectDatabase(this, context);
         }
     }
 }

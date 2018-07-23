@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.DataRelease.Potential;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
@@ -50,11 +53,11 @@ VALUES
            ,@IsPatch
            ,@ReleaseFolder)", new Dictionary<string, object>
                                {
-                                   {"CumulativeExtractionResults_ID", _dataset.ExtractionResults.ID},
+                                   {"CumulativeExtractionResults_ID", _dataset.DatasetExtractionResult.ID},
                                    {"Username", Environment.UserName},
                                    {"DateOfRelease", DateTime.Now},
                                    {"MD5OfDatasetFile", datasetFileBeingReleased == null ? "X" : UsefulStuff.MD5File(datasetFileBeingReleased.FullName)},
-                                   {"DatasetState", _dataset.Assesment.ToString()},
+                                   {"DatasetState", _dataset.DatasetExtractionResult.ToString()},
                                    {"EnvironmentState", _environment.Assesment.ToString()},
                                    {"IsPatch", isPatch},
                                    {"ReleaseFolder", releaseDirectory.FullName}

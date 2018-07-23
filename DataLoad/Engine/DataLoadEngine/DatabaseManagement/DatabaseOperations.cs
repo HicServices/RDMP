@@ -6,6 +6,7 @@ using System.Linq;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Triggers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace DataLoadEngine.DatabaseManagement
 {
@@ -24,15 +25,12 @@ namespace DataLoadEngine.DatabaseManagement
             if (!sourceTable.Exists())
                 throw new Exception("Table " + srcTableName + " does not exist on " + srcDatabaseInfo);
 
-            var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/); 
 
-            
             //new table will start with the same name as the as the old scripted one
             DiscoveredTable newTable = destDatabaseInfo.ExpectTable(destTableName);
-
-            //replace all references to the old table with the new table name
-            sql = sql.Replace(sourceTable.GetFullyQualifiedName(), newTable.GetFullyQualifiedName());
-
+            
+            var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/,newTable); 
+            
             using (var con = destDatabaseInfo.Server.GetConnection())
             {
                 con.Open();
@@ -48,7 +46,7 @@ namespace DataLoadEngine.DatabaseManagement
                 bool drop = false;
                 var colName = column.GetRuntimeName();
 
-                if (column.DataType.IsIdentity())
+                if (column.IsAutoIncrement)
                     drop = true;
 
                 if (colName.StartsWith("hic_") && dropHICColumns)
@@ -138,23 +136,6 @@ AND    object_id = object_id('" + table.GetRuntimeName()+ "');";
             return new SqlDataAdapter(command);
         }
 
-        public static void AddColumnToTable(DiscoveredDatabase discoveredDatabase, string tableName, string desiredColumnName, string desiredColumnType)
-        {
-            using (var conn = (SqlConnection)discoveredDatabase.Server.GetConnection())
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand("Alter table " + tableName + " ADD [" + desiredColumnName + "] " + desiredColumnType ,conn);
-                cmd.ExecuteNonQuery();
-                conn.Close();
-            }
-        }
-
-
-        public static void DropColumnFromTable(DiscoveredDatabase server, string tableName, string columnName)
-        {
-            var todrop = server.ExpectTable(tableName).DiscoverColumn(columnName);
-            server.ExpectTable(tableName).DropColumn(todrop);
-        }
 
 
         public static void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)

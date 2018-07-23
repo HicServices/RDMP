@@ -21,7 +21,11 @@ namespace CohortManager.CommandExecution.AtomicCommands
         public ExecuteCommandViewCohortAggregateGraph(IActivateItems activator, CohortSummaryAggregateGraphObjectCollection collection) : base(activator)
         {
             _collection = collection;
-            
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Shows a subset of the main graph as it applies to the people in your cohort";
         }
 
         public override string GetCommandName()

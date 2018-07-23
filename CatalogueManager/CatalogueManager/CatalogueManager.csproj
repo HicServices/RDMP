@@ -254,6 +254,10 @@
       <HintPath>..\..\packages\AutoCompleteMenu-ScintillaNET.1.5.0\lib\net40\AutocompleteMenu-ScintillaNET.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CommandLine, Version=2.2.1.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommandLineParser.2.2.1\lib\net45\CommandLine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
@@ -381,6 +385,7 @@
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="Collections\Providers\IDColumnProvider.cs" />
     <Compile Include="Collections\RDMPCollection.cs" />
+    <Compile Include="Collections\RDMPCollectionCommonFunctionalitySettings.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionalityTreeHijacker.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddJoinInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
@@ -389,11 +394,12 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewAutomationSlot.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
@@ -411,20 +417,23 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunChecksInPopupWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
+    <Compile Include="LogViewer\LogViewerNavigationTarget.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemIssue.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDataAccessCredentials.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadPeriodically.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadProgress.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindow.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPreLoadDiscardedColumn.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAutomationServiceSlot.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
@@ -434,6 +443,34 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingDocument.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingSQLTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsTableInfo.cs" />
+    <Compile Include="Icons\IconProvision\CatalogueIcons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CatalogueIcons.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureDefaultServers.cs" />
+    <Compile Include="MainFormUITabs\ConnectionStringKeywordUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainFormUITabs\ConnectionStringKeywordUI.Designer.cs">
+      <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menus\AllConnectionStringKeywordsNodeMenu.cs" />
+    <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
+    <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleControls\CheckAndExecuteUI.Designer.cs">
+      <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleControls\CommandGetterHandler.cs" />
+    <Compile Include="SimpleControls\ExecuteInAutomationServerUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleControls\ExecuteInAutomationServerUI.Designer.cs">
+      <DependentUpon>ExecuteInAutomationServerUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="FindAndReplace\FindAndReplaceNode.cs" />
     <Compile Include="FindAndReplace\FindAndReplaceUI.cs">
       <SubType>UserControl</SubType>
@@ -441,17 +478,9 @@
     <Compile Include="FindAndReplace\FindAndReplaceUI.Designer.cs">
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Icons\IconProvision\CatalogueIcons.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CatalogueIcons.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Menus\AllAutomationServerSlotsNodeMenu.cs" />
     <Compile Include="Menus\AllLoadMetadatasNodeMenu.cs" />
     <Compile Include="Menus\AllObjectImportsNodeMenu.cs" />
     <Compile Include="Menus\AllPermissionWindowsNodeMenu.cs" />
-    <Compile Include="Menus\AutomationServiceSlotMenu.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPushToRemotes.cs" />
     <Compile Include="Menus\AllANOTablesNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetDataAccessContextForCredentials.cs" />
     <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
@@ -461,7 +490,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadPeriodically.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPreLoadDiscardedColumn.cs" />
@@ -479,7 +507,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowKeywordHelp.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnlockLockable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -695,12 +722,6 @@
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramDatabaseNode.cs" />
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramServerNode.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadPeriodicallyUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadPeriodicallyUI.Designer.cs">
-      <DependentUpon>LoadPeriodicallyUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -817,7 +838,6 @@
     <Compile Include="Menus\FilterMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCollapseChildNodes.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExpandAllNodes.cs" />
-    <Compile Include="Menus\LoadPeriodicallyMenu.cs" />
     <Compile Include="Menus\ParametersNodeMenu.cs" />
     <Compile Include="Menus\ExtractionInformationMenu.cs" />
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
@@ -828,7 +848,6 @@
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs" />
     <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
     <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs" />
-    <Compile Include="Menus\PermissionWindowUsageMenu.cs" />
     <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
     <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
     <Compile Include="Menus\RDMPContextMenuStripArgs.cs" />
@@ -865,28 +884,7 @@
     <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.Designer.cs">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LogViewer\BreadcrumbNavigation.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LogViewer\BreadcrumbNavigation.Designer.cs">
-      <DependentUpon>BreadcrumbNavigation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerFilterCollection.cs" />
-    <Compile Include="LogViewer\LogViewerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerForm.Designer.cs">
-      <DependentUpon>LogViewerForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerNavigationPane.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerNavigationPane.Designer.cs">
-      <DependentUpon>LogViewerNavigationPane.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LogViewer\LogViewerNavigationRequestHandler.cs" />
-    <Compile Include="LogViewer\NavigatePaneToEntityArgs.cs" />
-    <Compile Include="LogViewer\LogViewerNavigateToCollection.cs" />
+    <Compile Include="LogViewer\LogViewerFilter.cs" />
     <Compile Include="LogViewer\Tabs\LoggingDataSourcesTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -989,18 +987,6 @@
     <Compile Include="SimpleControls\ObjectSaverButton.Designer.cs">
       <DependentUpon>ObjectSaverButton.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.Designer.cs">
-      <DependentUpon>AutomateablePipelineCollectionUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomationServiceSlotUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\Automation\AutomationServiceSlotUI.Designer.cs">
-      <DependentUpon>AutomationServiceSlotUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1018,6 +1004,12 @@
     </Compile>
     <Compile Include="SimpleDialogs\NavigateTo\NavigateToObjectUI.Designer.cs">
       <DependentUpon>NavigateToObjectUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleDialogs\NavigateTo\RunUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SimpleDialogs\NavigateTo\RunUI.Designer.cs">
+      <DependentUpon>RunUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\PerformanceCounterUI.cs">
       <SubType>Form</SubType>
@@ -1048,12 +1040,6 @@
     </Compile>
     <Compile Include="SimpleDialogs\Governance\GovernanceUI.Designer.cs">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.Designer.cs">
-      <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\Remoting\RemoteRDMPUI.cs">
       <SubType>UserControl</SubType>
@@ -1285,6 +1271,8 @@
     <Compile Include="Validation\ValidationSetupForm.Designer.cs">
       <DependentUpon>ValidationSetupForm.cs</DependentUpon>
     </Compile>
+    <None Include="LogViewer\LoggingUI.cd" />
+    <None Include="SimpleControls\CheckAndExecuteUI.cd" />
     <None Include="TestsAndSetup\StartupUI\YellowFace.png" />
     <None Include="TestsAndSetup\StartupUI\RedFace.png" />
     <None Include="TestsAndSetup\StartupUI\GreenFace.png" />
@@ -1444,11 +1432,16 @@
     <None Include="Icons\ExtractionInformation_ProjectSpecific.png" />
     <None Include="Icons\AllLoadMetadatasNode.png" />
     <None Include="Icons\AllPermissionWindowsNode.png" />
+    <None Include="Icons\Diff.png" />
+    <None Include="Icons\ConnectionStringKeyword.png" />
+    <None Include="Icons\AllConnectionStringKeywords.png" />
+    <None Include="Icons\AllConnectionStringKeywordsNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
     <None Include="Icons\GetFilesStage.png" />
     <None Include="Icons\FrozenExtractionConfigurationsNode.png" />
+    <None Include="Icons\FileMissing.png" />
     <Content Include="Icons\importFile.png" />
     <None Include="Icons\Parameter1.bmp" />
     <None Include="Icons\ParameterSet.png" />
@@ -1538,6 +1531,12 @@
     <None Include="Icons\ProjectCatalogue.png" />
     <None Include="Icons\ProjectCataloguesNode.png" />
     <None Include="Icons\MakeProjectSpecificCatalogueNormalAgain.png" />
+    <None Include="Icons\NotLaunched.png" />
+    <None Include="Icons\WaitingForSQLServer.png" />
+    <None Include="Icons\WritingToFile.png" />
+    <None Include="Icons\Waiting.png" />
+    <None Include="Icons\Writing.png" />
+    <None Include="Icons\WaitingForDatabase.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1598,6 +1597,15 @@
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainFormUITabs\ConnectionStringKeywordUI.resx">
+      <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleControls\CheckAndExecuteUI.resx">
+      <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleControls\ExecuteInAutomationServerUI.resx">
+      <DependentUpon>ExecuteInAutomationServerUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FindAndReplace\FindAndReplaceUI.resx">
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -1653,9 +1661,6 @@
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.resx">
       <DependentUpon>LoadMetadataUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadPeriodicallyUI.resx">
-      <DependentUpon>LoadPeriodicallyUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.resx">
       <DependentUpon>LoadProgressUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -1691,15 +1696,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LocationsMenu\PasswordEncryptionKeyLocationUI.resx">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LogViewer\BreadcrumbNavigation.resx">
-      <DependentUpon>BreadcrumbNavigation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LogViewer\LogViewerForm.resx">
-      <DependentUpon>LogViewerForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LogViewer\LogViewerNavigationPane.resx">
-      <DependentUpon>LogViewerNavigationPane.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LogViewer\Tabs\LoggingTab.resx">
       <DependentUpon>LoggingTab.cs</DependentUpon>
@@ -1755,12 +1751,6 @@
       <DependentUpon>ObjectSaverButton.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Automation\AutomateablePipelineCollectionUI.resx">
-      <DependentUpon>AutomateablePipelineCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Automation\AutomationServiceSlotUI.resx">
-      <DependentUpon>AutomationServiceSlotUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\BulkProcessCatalogueItems.resx">
       <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>
     </EmbeddedResource>
@@ -1769,6 +1759,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\NavigateTo\NavigateToObjectUI.resx">
       <DependentUpon>NavigateToObjectUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleDialogs\NavigateTo\RunUI.resx">
+      <DependentUpon>RunUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\PerformanceCounterUI.resx">
       <DependentUpon>PerformanceCounterUI.cs</DependentUpon>
@@ -1784,9 +1777,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Governance\GovernanceUI.resx">
       <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\NavigateTo\LaunchAnyDialogUI.resx">
-      <DependentUpon>LaunchAnyDialogUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Remoting\RemoteRDMPUI.resx">
       <DependentUpon>RemoteRDMPUI.cs</DependentUpon>
@@ -2370,6 +2360,7 @@
     </PublishFile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Service References\Icons\IconProvision\StateBasedIconProviders\" />
     <Folder Include="SimpleDialogs\LaunchAnyDialog\" />
   </ItemGroup>
   <ItemGroup>

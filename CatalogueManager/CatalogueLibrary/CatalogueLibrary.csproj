@@ -257,6 +257,7 @@
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />
     <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginDatabaseAtomicCommand.cs" />
+    <Compile Include="CommandExecution\ExecuteCommandCreateLookup.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\OverlappingImplementationsException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\MultipleMatchingImplmentationException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowPipelineContext.cs" />
@@ -266,6 +267,7 @@
     <Compile Include="Data\Cohort\SetOperation.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
     <Compile Include="Data\ContainerHelper.cs" />
+    <Compile Include="Data\ConnectionStringKeyword.cs" />
     <Compile Include="Data\Dashboarding\DashboardControl.cs" />
     <Compile Include="Data\Dashboarding\DashboardLayout.cs" />
     <Compile Include="Data\Dashboarding\DashboardObjectUse.cs" />
@@ -305,9 +307,6 @@
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
     <Compile Include="FilterImporting\FilterImporter.cs" />
     <Compile Include="FilterImporting\ParameterCreator.cs" />
-    <Compile Include="Data\Automation\AutomateablePipeline.cs" />
-    <Compile Include="Data\Automation\AutomationJob.cs" />
-    <Compile Include="Data\Automation\AutomationServiceSlot.cs" />
     <Compile Include="Data\Cache\CacheLagPeriod.cs" />
     <Compile Include="Data\Cohort\Joinables\JoinableCohortAggregateConfiguration.cs" />
     <Compile Include="Data\Cohort\Joinables\JoinableCohortAggregateConfigurationUse.cs" />
@@ -335,18 +334,20 @@
     <Compile Include="ExternalDatabaseServerPatching\IdentifierDumpDatabasePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
+    <Compile Include="Nodes\AllConnectionStringKeywordsNode.cs" />
     <Compile Include="Nodes\AllLoadMetadatasNode.cs" />
     <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
+    <Compile Include="Nodes\ArbitraryFolderNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
+    <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
     <Compile Include="IHICProjectDirectory.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\IDirectoryInfoNode.cs" />
     <Compile Include="Nodes\AggregatesNode.cs" />
-    <Compile Include="Nodes\AllAutomationServerSlotsNode.cs" />
     <Compile Include="Nodes\AllExternalServersNode.cs" />
     <Compile Include="Nodes\AllRDMPRemotesNode.cs" />
     <Compile Include="Nodes\AllANOTablesNode.cs" />
@@ -439,7 +440,6 @@
     <Compile Include="Data\DataLoad\ICustomUIDrivenClass.cs" />
     <Compile Include="Data\DataLoad\ILoadMetadata.cs" />
     <Compile Include="Data\DataLoad\IResolveDuplication.cs" />
-    <Compile Include="Data\AutomationServiceException.cs" />
     <Compile Include="DataHelper\RDMPQuerySyntaxHelper.cs" />
     <Compile Include="Data\DemandsInitializationAttribute.cs" />
     <Compile Include="Data\EncryptedPasswordHost.cs" />
@@ -454,7 +454,6 @@
     <Compile Include="Data\ICollectSqlParameters.cs" />
     <Compile Include="Data\ILoadProgress.cs" />
     <Compile Include="Data\PasswordEncryptionKeyLocation.cs" />
-    <Compile Include="Data\LoadPeriodically.cs" />
     <Compile Include="Data\PermissionWindow.cs" />
     <Compile Include="Data\PermissionWindowPeriod.cs" />
     <Compile Include="Data\Pipelines\IDataFlowPipelineEngine.cs" />

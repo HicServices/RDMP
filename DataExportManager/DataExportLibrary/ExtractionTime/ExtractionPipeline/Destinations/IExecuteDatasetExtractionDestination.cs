@@ -9,12 +9,14 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.DataRelease;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using HIC.Logging;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
@@ -33,9 +35,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         string DateFormat { get; }
         string GetFilename();
         string GetDestinationDescription();
-        DestinationType GetDestinationType();
 
-        ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, ExtractableDataSet dataSet);
+        ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
         FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository);
+        GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck);
     }
 }

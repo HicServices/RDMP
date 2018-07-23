@@ -37,12 +37,12 @@ namespace DataExportManager.CommandExecution.Proposals
             var cicCommand = cmd as CohortIdentificationConfigurationCommand;
             if (cicCommand != null)
                 return
-                    new ExecuteCommandExecuteCohortIdentificationConfigurationAndCommitResults(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
+                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
             
             //drop a file on the SavedCohorts node to commit it
             var fileCommand = cmd as FileCollectionCommand;
             if(fileCommand != null && fileCommand.Files.Length == 1)
-                return new ExecuteCommandImportFileAsNewCohort(ItemActivator,fileCommand.Files[0]).SetTarget(target.Project);
+                return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0]).SetTarget(target.Project);
 
             //drop a Project Specific Catalogue onto it
             var catalogueCommand = cmd as CatalogueCommand;

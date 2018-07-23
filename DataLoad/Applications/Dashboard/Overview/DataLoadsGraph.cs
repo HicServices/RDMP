@@ -25,8 +25,8 @@ using ReusableUIComponents;
 namespace Dashboard.Overview
 {
     /// <summary>
-    /// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  This includes a division between data loads
-    /// configured for automation (See LoadPeriodicallyUI) and those run manually.  If you have not configured any data loads yet then this control will be blank.
+    /// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  If you have not configured any data
+    /// loads yet then this control will be blank.
     /// </summary>
     public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
     {
@@ -108,8 +108,6 @@ namespace Dashboard.Overview
             {
                 try
                 {
-                    int countAutoLoadsuccessful = 0;
-                    int countAutoLoadFailure = 0;
                     int countManualLoadsuccessful = 0;
                     int countManualLoadFailure = 0;
                     
@@ -135,14 +133,12 @@ namespace Dashboard.Overview
 
                             ArchivalDataLoadInfo archivalDataLoadInfo = logManager.GetLoadStatusOf(PastEventType.MostRecent, metadata.GetDistinctLoggingTask());
 
-                            bool isAutomated = metadata.LoadPeriodically != null;
                             bool lastLoadWasError;
 
                             var loadSummary = new DataLoadsGraphResult
                             {
                                 ID = metadata.ID,
                                 Name = metadata.Name,
-                                Category = isAutomated ? "Auto" : "Manual"
                             };
 
                             if (archivalDataLoadInfo == null)
@@ -163,14 +159,10 @@ namespace Dashboard.Overview
                             //while we were fetching data from database the form was closed
                             if (IsDisposed || !IsHandleCreated)
                                 return;
-                            
-                            if (isAutomated && lastLoadWasError)
-                                countAutoLoadFailure++;
-                            if (isAutomated && !lastLoadWasError)
-                                countAutoLoadsuccessful++;
-                            if (!isAutomated && lastLoadWasError)
+
+                            if (lastLoadWasError)
                                 countManualLoadFailure++;
-                            if (!isAutomated && !lastLoadWasError)
+                            else
                                 countManualLoadsuccessful++;
 
                             this.Invoke(new MethodInvoker(() =>
@@ -195,7 +187,7 @@ namespace Dashboard.Overview
 
 
                     //if there have been no loads at all ever
-                    if (countAutoLoadFailure == 0 && countAutoLoadFailure == 0 && countManualLoadsuccessful == 0 && countManualLoadFailure == 0)
+                    if (countManualLoadsuccessful == 0 && countManualLoadFailure == 0)
                     {
                         this.Invoke(new MethodInvoker(() =>
                         {
@@ -211,8 +203,6 @@ namespace Dashboard.Overview
                     dt.Columns.Add("Category");
                     dt.Columns.Add("NumberOfDataLoadsAtStatus");
 
-                    dt.Rows.Add(new object[] { "Auto Successful", countAutoLoadsuccessful });
-                    dt.Rows.Add(new object[] { "Auto Fail", countAutoLoadFailure });
                     dt.Rows.Add(new object[] { "Manual Successful", countManualLoadsuccessful });
                     dt.Rows.Add(new object[] { "Manual Fail", countManualLoadFailure });
 
@@ -227,14 +217,10 @@ namespace Dashboard.Overview
 
                         chart1.Series[0].Points[0].Color = Color.Green;
                         chart1.Series[0].Points[1].Color = Color.Red;
-                        chart1.Series[0].Points[2].Color = Color.Green;
-                        chart1.Series[0].Points[3].Color = Color.Red;
-
-
 
                         var max = new int[]
                         {
-                            countAutoLoadFailure, countAutoLoadsuccessful, countManualLoadFailure,
+                            countManualLoadFailure,
                             countManualLoadsuccessful
                         }.Max();
 

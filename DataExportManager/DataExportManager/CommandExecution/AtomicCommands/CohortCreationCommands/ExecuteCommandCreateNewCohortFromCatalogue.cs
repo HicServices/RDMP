@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
@@ -6,7 +6,6 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
-using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
@@ -21,6 +20,12 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             SetExtractionIdentifierColumn(extractionInformation);
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Creates a cohort using ALL of the patient identifiers in the referenced dataset";
+        }
+
+        [ImportingConstructor]
         public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, Catalogue catalogue): base(activator)
         {
             SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(catalogue));
@@ -29,6 +34,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator): base(activator)
         {
             
+        }
+
+        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
+        {
+            ExternalCohortTable = externalCohortTable;
         }
 
         public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -70,6 +80,15 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
         public override void Execute()
         {
+            if (_extractionIdentifierColumn == null)
+            {
+                var cata = SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+
+                if(cata == null)
+                    return;
+                SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(cata));
+            }
+
             base.Execute();
 
             var request = GetCohortCreationRequest("All patient identifiers in ExtractionInformation '" + _extractionIdentifierColumn.CatalogueItem.Catalogue + "." + _extractionIdentifierColumn.GetRuntimeName() + "'  (ID=" + _extractionIdentifierColumn.ID +")");

@@ -18,7 +18,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             return iconProvider.GetImage(RDMPConcept.Plugin,OverlayKind.Edit);
         }
-        
+
+        public override string GetCommandHelp()
+        {
+            return "View, upload, delete and debug RDMP pluin dlls";
+        }
+
         public override void Execute()
         {
             base.Execute();

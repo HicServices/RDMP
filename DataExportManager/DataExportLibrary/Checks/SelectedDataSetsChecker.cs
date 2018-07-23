@@ -11,6 +11,7 @@ using DataExportLibrary.Data;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -24,18 +25,18 @@ namespace DataExportLibrary.Checks
     public class SelectedDataSetsChecker : ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        private SelectedDataSets _selectedDataSet;
+        public ISelectedDataSets SelectedDataSet { get; private set; }
 
-        public SelectedDataSetsChecker(SelectedDataSets selectedDataSet,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
-            _selectedDataSet = selectedDataSet;
+            SelectedDataSet = selectedDataSet;
         }
 
         public void Check(ICheckNotifier notifier)
         {
-            var ds = _selectedDataSet.ExtractableDataSet;
-            var config = _selectedDataSet.ExtractionConfiguration;
+            var ds = SelectedDataSet.ExtractableDataSet;
+            var config = SelectedDataSet.ExtractionConfiguration;
             var cohort = config.Cohort;
             var project = config.Project;
             const int timeout = 5;
@@ -55,7 +56,8 @@ namespace DataExportLibrary.Checks
             }
 
             var request = new ExtractDatasetCommand(_repositoryLocator, config, cohort, new ExtractableDatasetBundle(ds),
-                selectedcols, new HICProjectSalt(project), "TOP 1", null);
+                selectedcols, new HICProjectSalt(project), null) { TopX = 1 };
+
             try
             {
                 request.GenerateQueryBuilder();
@@ -109,16 +111,17 @@ namespace DataExportLibrary.Checks
                                 notifier.OnCheckPerformed(new CheckEventArgs("Read at least 1 row successfully from dataset " + ds,
                                     CheckResult.Success));
                             else
-                                notifier.OnCheckPerformed(new CheckEventArgs("Dataset " + ds + " is completely empty (when linked with the cohort)",
-                                    CheckResult.Fail));
+                                notifier.OnCheckPerformed(new CheckEventArgs("Dataset " + ds + " is completely empty (when linked with the cohort). " +
+                                                                             "Extraction may fail if the Source does not allow empty extractions",
+                                    CheckResult.Warning));
                         }
                     }
                     catch (SqlException e)
                     {
                         if (e.Message.Contains("Timeout"))
-                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s",CheckResult.Warning));
+                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s", CheckResult.Warning));
                         else
-                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail,e));
+                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));
                     }
                 }
             }

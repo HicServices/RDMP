@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using ReusableUIComponents;
 
 namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
@@ -36,6 +37,8 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
         public double Missing { get; set; }
         public double Wrong { get; set; }
         public double DBNull { get; set; }
+        
+        public string Label { get; set; }
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
@@ -91,6 +94,17 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
             e.Graphics.FillRectangle(bMissing, new Rectangle(correctRightPoint, 0, missingWidth, heightOfNullsBarStart));
             e.Graphics.FillRectangle(bWrong, new Rectangle(missingRightPoint, 0, wrongWidth, heightOfNullsBarStart));
             e.Graphics.FillRectangle(bInvalid, new Rectangle(wrongRightPoint, 0, invalidWidth, heightOfNullsBarStart));
+
+            if(!string.IsNullOrWhiteSpace(Label))
+            {
+                var rect = e.Graphics.MeasureString(Label, Font);
+
+                var textX = 0;
+                var textY = 2;
+
+                e.Graphics.FillRectangle(Brushes.LightGray,textX,textY,rect.Width,rect.Height);
+                e.Graphics.DrawString(Label,Font,Brushes.Black,textX,textY);
+            }
         }
 
         public void GenerateToolTip()
@@ -102,6 +116,8 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
                 return;
 
             toolTip.SetToolTip(this,
+
+                Label +Environment.NewLine +
                 "Null:" +
                 string.Format("{0:n0}", DBNull) + GetPercentageText(DBNull) +
                 "Correct:" +

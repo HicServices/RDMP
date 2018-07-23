@@ -273,13 +273,15 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
                 var a = new ANOTable(RepositoryLocator.CatalogueRepository, server, tbANOTableName.Text, tbSuffix.Text);
 
                 //if we know the type is e.g. varchar(5)
-                var length = ColumnInfo.GetColumnLengthIfAny();
-                if (length.HasValue)
+                var length = ColumnInfo.Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString();
+
+                if (length>0)
                 {
                     a.NumberOfIntegersToUseInAnonymousRepresentation = 0;
-                    a.NumberOfCharactersToUseInAnonymousRepresentation = length.Value;//give it a sensible maximal that will work
+                    a.NumberOfCharactersToUseInAnonymousRepresentation = length;//give it a sensible maximal that will work
                     a.SaveToDatabase();
                 }
+
                 ANOTable = a;//and set the property to it to populate the rest of the form
 
                 gbANOTable.Enabled = true;

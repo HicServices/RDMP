@@ -24,6 +24,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 SetImpossible("No datasets have been extracted");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Generate a document describing what has been extracted so far for each dataset in the extraction configuration including number of rows, distinct patient counts etc";
+        }
+
         public override void Execute()
         {
             base.Execute();

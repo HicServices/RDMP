@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
+using CommandLine;
 using MapsDirectlyToDatabaseTable.Versioning;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
@@ -26,26 +28,20 @@ namespace DatabaseCreation
 
         public static int Main(string[] args)
         {
-            var options = new DatabaseCreationProgramOptions();
-            if (CommandLine.Parser.Default.ParseArguments(args, options))
-            {
-                if (options.Items.Count != 2)
-                {
-                    Console.WriteLine(options.GetUsage());
-                    return -1;
-                }
-            }
-            else
-                return -1;
+            return UsefulStuff.GetParser().ParseArguments<DatabaseCreationProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
+        }
 
-            var serverName = options.Items[0];
-            var prefix = options.Items[1];
+        private static int RunOptionsAndReturnExitCode(DatabaseCreationProgramOptions options)
+        {
             
+            var serverName = options.ServerName;
+            var prefix = options.Prefix;
+
             Console.WriteLine("About to create on server '" + serverName + "' databases with prefix '" + prefix + "'");
-            
+
             try
             {
-                Create(serverName,prefix,DefaultCatalogueDatabaseName,typeof(Class1).Assembly,options.DropDatabases,options.BinaryCollation);
+                Create(serverName, prefix, DefaultCatalogueDatabaseName, typeof(Class1).Assembly, options.DropDatabases, options.BinaryCollation);
                 Create(serverName, prefix, DefaultDataExportDatabaseName, typeof(DataExportLibrary.Database.Class1).Assembly, options.DropDatabases, options.BinaryCollation);
 
                 var dqe = Create(serverName, prefix, DefaultDQEDatabaseName, typeof(DataQualityEngine.Database.Class1).Assembly, options.DropDatabases, options.BinaryCollation);
@@ -53,9 +49,9 @@ namespace DatabaseCreation
 
                 CatalogueRepository.SuppressHelpLoading = true;
 
-                if(!options.SkipPipelines)
+                if (!options.SkipPipelines)
                 {
-                    var creator = new CataloguePipelinesAndReferencesCreation(new DatabaseCreationRepositoryFinder(serverName, prefix),logging, dqe);
+                    var creator = new CataloguePipelinesAndReferencesCreation(new DatabaseCreationRepositoryFinder(serverName, prefix), logging, dqe);
                     creator.Create();
                 }
             }
@@ -65,7 +61,6 @@ namespace DatabaseCreation
                 return -1;
             }
             return 0;
-
         }
 
         private static SqlConnectionStringBuilder Create(string serverName, string prefix, string databaseName, Assembly assembly, bool dropFlag, bool binaryCollationFlag)

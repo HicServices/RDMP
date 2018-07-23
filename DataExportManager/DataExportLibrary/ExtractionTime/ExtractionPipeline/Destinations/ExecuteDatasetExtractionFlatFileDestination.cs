@@ -7,11 +7,13 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.DataRelease;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
@@ -22,6 +24,7 @@ using DataExportLibrary.ExtractionTime.FileOutputFormats;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataLoadEngine.DataFlowPipeline;
 using HIC.Logging;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
@@ -62,16 +65,19 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         [DemandsInitialization("Naming of flat files is usually based on Catalogue.Name, if this is true then the Catalogue.Acronym will be used instead",defaultValue:false)]
         public bool UseAcronymForFileNaming { get; set; }
 
-        public ExtractionTimeValidator ExtractionTimeValidator { get; set; }
+        [DemandsInitialization("If this is true, the dataset extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: true)]
+        public bool CleanExtractionFolderBeforeExtraction { get; set; }
         
         private bool haveOpened = false;
         private bool haveWrittenBundleContents = false;
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
+            _request.ElevateState(ExtractCommandState.WritingToFile);
+
             if (!haveWrittenBundleContents && _request is ExtractDatasetCommand)
                 WriteBundleContents(((ExtractDatasetCommand)_request).DatasetBundle, job, cancellationToken);
-
+            
             if (_request is ExtractGlobalsCommand)
             {
                 ExtractGlobals((ExtractGlobalsCommand)_request, job, _dataLoadInfo);
@@ -113,6 +119,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         private void WriteBundleContents(IExtractableDatasetBundle datasetBundle, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
             var rootDir = _request.GetExtractionDirectory();
+            if (CleanExtractionFolderBeforeExtraction)
+            {
+                rootDir.Delete(true);
+                rootDir.Create();
+            }
             var supportingSQLFolder = new DirectoryInfo(Path.Combine(rootDir.FullName, SupportingSQLTable.ExtractionFolderName));
             var lookupDir = rootDir.CreateSubdirectory("Lookups");
                     
@@ -141,10 +152,17 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     sw.Start();
 
                     //extracts all of them
-                    ExtractTableVerbatim extractTableVerbatim = new ExtractTableVerbatim(server, new []{lookup.TableInfo.Name}, lookupDir, _request.Configuration.Separator,DateFormat);
+                    var extractTableVerbatim = new ExtractTableVerbatim(server, new []{lookup.TableInfo.Name}, lookupDir, _request.Configuration.Separator,DateFormat);
                     int linesWritten = extractTableVerbatim.DoExtraction();
                     sw.Stop();
                     job.OnProgress(this,new ProgressEventArgs("Lookup "+ lookup,new ProgressMeasurement(linesWritten,ProgressType.Records),sw.Elapsed));
+
+                    if (_request is ExtractDatasetCommand)
+                    {
+                        var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                        var supplementalResult = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup.TableInfo.Name, lookup.TableInfo);
+                        supplementalResult.CompleteAudit(this.GetType(), extractTableVerbatim.OutputFilename, linesWritten);
+                    }
 
                     datasetBundle.States[lookup] = ExtractCommandState.Completed;
                 }
@@ -188,6 +206,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 //close audit object - unless it was prematurely closed e.g. by a failure somewhere
                 if (!TableLoadInfo.IsClosed)
                     TableLoadInfo.CloseAndArchive();
+
+                // also close off the cumulative extraction result
+                var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
+                if (result != null) 
+                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), LinesWritten);
             }
             catch (Exception e)
             {
@@ -241,7 +264,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public string GetFilename()
         {
-            string filename = _request.Name;
+            string filename = _request.ToString();
 
             var datasetCommand = _request as IExtractDatasetCommand;
             if (datasetCommand != null && UseAcronymForFileNaming)
@@ -263,15 +286,15 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         {
             return OutputFile;
         }
-
-        public DestinationType GetDestinationType()
-        {
-            return DestinationType.FileSystem;
-        }
         
         private void ExtractGlobals(ExtractGlobalsCommand request, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
             var globalsDirectory = request.GetExtractionDirectory();
+            if (CleanExtractionFolderBeforeExtraction)
+            {
+                globalsDirectory.Delete(true);
+                globalsDirectory.Create();
+            }
 
             foreach (var doc in request.Globals.Documents)
                 request.Globals.States[doc] = TryExtractSupportingDocument(globalsDirectory, doc, listener)
@@ -284,9 +307,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     : ExtractCommandState.Crashed;
         }
         
-        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, ExtractableDataSet dataSet)
+        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
         {
-            return new FlatFileReleasePotential(repositoryLocator, configuration, dataSet);
+            return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
         }
 
         public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)
@@ -294,14 +317,37 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return new FlatFileReleaseSource<ReleaseAudit>();
         }
 
+        public GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+        {
+            return new FlatFileGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+        }
+
         private bool TryExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
         {
-            SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(null);
+            SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(doc);
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to copy "+doc+" to directory " + directory.FullName));
             try
             {
-                fetcher.ExtractToDirectory(directory, doc);
+                var outputPath = fetcher.ExtractToDirectory(directory);
+                if (_request is ExtractDatasetCommand)
+                {
+                    var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                    var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
+                    supplementalResult.CompleteAudit(this.GetType(), outputPath, 0);
+                }
+                else
+                {
+                    var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                    Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
+                    var result = new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
+                                                                   extractGlobalsCommand.Configuration,
+                                                                   null,
+                                                                   doc);
+                    result.CompleteAudit(this.GetType(), outputPath, 0);
+                    extractGlobalsCommand.ExtractionResults.Add(result);
+                }
+
                 return true;
             }
             catch (Exception e)
@@ -311,7 +357,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             }
         }
 
-        private bool TryExtractSupportingSQLTable(DirectoryInfo directory, IExtractionConfiguration configuration, SupportingSQLTable sql, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
+        private bool TryExtractSupportingSQLTable(DirectoryInfo directory, IExtractionConfiguration configuration, 
+                                                  SupportingSQLTable sql, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
             try
             {
@@ -324,13 +371,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 string target = Path.Combine(directory.FullName, sql.Name + ".csv");
                 var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", target, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
 
-                int sqlLinesWritten = new ExtractTableVerbatim(sql.GetServer(),
-                    sql.SQL, sql.Name,
-                    directory,
-                    configuration
-                        .Separator,
-                    DateFormat)
-                    .DoExtraction();
+                var extractor = new ExtractTableVerbatim(sql.GetServer(), sql.SQL, sql.Name,
+                                                         directory, configuration.Separator, DateFormat);
+                int sqlLinesWritten = extractor.DoExtraction(); 
 
                 sw.Stop();
 
@@ -338,8 +381,28 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 tableLoadInfo.Inserts = sqlLinesWritten;
                 tableLoadInfo.CloseAndArchive();
 
+                if (_request is ExtractDatasetCommand)
+                {
+                    var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                    var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
+                    supplementalResult.CompleteAudit(this.GetType(), extractor.OutputFilename, sqlLinesWritten);
+                }
+                else
+                {
+                    var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                    Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
+                    var result =
+                        new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
+                                                          extractGlobalsCommand.Configuration,
+                                                          sql.SQL,
+                                                          sql);
+                    result.CompleteAudit(this.GetType(), extractor.OutputFilename, sqlLinesWritten);
+                    extractGlobalsCommand.ExtractionResults.Add(result);
+                }
+
                 listener.OnProgress(this, new ProgressEventArgs("Extract " + sql, new ProgressMeasurement(sqlLinesWritten, ProgressType.Records), sw.Elapsed));
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Extracted " + sqlLinesWritten + " records from SupportingSQL " + sql + " into directory " + directory.FullName));
+
                 return true;
             }
             catch (Exception e)
@@ -371,4 +434,5 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             }
         }
     }
+
 }

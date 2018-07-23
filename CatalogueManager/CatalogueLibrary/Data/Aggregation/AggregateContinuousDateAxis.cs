@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueLibrary.Data.Aggregation
@@ -77,10 +78,14 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="dimension"></param>
         public AggregateContinuousDateAxis(ICatalogueRepository repository,AggregateDimension dimension)
         {
+            var todaysDateFunction = dimension.AggregateConfiguration.GetQuerySyntaxHelper().GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
+
             repository.InsertAndHydrate(this, 
                 new Dictionary<string, object>()
                 {
-                    {"AggregateDimension_ID",dimension.ID}
+                    {"AggregateDimension_ID",dimension.ID},
+                    {"EndDate",todaysDateFunction}
+                    
                 });
         }
         

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using Sharing.CommandExecution;
@@ -13,7 +14,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandExportObjectsToFileUI : BasicUICommandExecution, IAtomicCommand
     {
-        private ExecuteCommandExportObjectsToFile _cmd;
+        private readonly ExecuteCommandExportObjectsToFile _cmd;
+        public bool ShowInExplorer { get; set; }
 
         public ExecuteCommandExportObjectsToFileUI(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport,DirectoryInfo targetDirectoryInfo = null) : base(activator)
         {
@@ -21,6 +23,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if(_cmd.IsImpossible)
                 SetImpossible(_cmd.ReasonCommandImpossible);
+
+            ShowInExplorer = true;
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Creates a share file with definitions for the supplied objects and all children";
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -37,11 +46,19 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 var fb = new FolderBrowserDialog();
                 if (fb.ShowDialog() == DialogResult.OK)
                     _cmd.TargetDirectoryInfo = new DirectoryInfo(fb.SelectedPath);
+                else
+                    return;
             }
             
             _cmd.Execute();
 
-            Process.Start("explorer.exe", _cmd.TargetDirectoryInfo.FullName);
+            if (ShowInExplorer)
+                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_cmd.TargetDirectoryInfo);
+        }
+
+        public override string GetCommandName()
+        {
+            return "Export Object(s) to File...";
         }
     }
 }

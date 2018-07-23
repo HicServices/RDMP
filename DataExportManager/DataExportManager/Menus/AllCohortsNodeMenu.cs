@@ -16,6 +16,7 @@ using DataExportManager.CohortUI;
 using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
@@ -26,9 +27,9 @@ namespace DataExportManager.Menus
     {
         [ImportingConstructor]
         public AllCohortsNodeMenu(RDMPContextMenuStripArgs args, AllCohortsNode node)
-            : base(args, null)
+            : base(args, node)
         {
-            Add(new ExecuteCommandShowDetailedSummaryOfAllCohorts(_activator));
+            Add(new ExecuteCommandShowSummaryOfCohorts(_activator));
 
             Add(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(_activator));
 
@@ -38,7 +39,7 @@ namespace DataExportManager.Menus
         
         private void AddBlankExternalCohortTable()
         {
-            var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"Blank Cohort Source " + Guid.NewGuid());
+            var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"Blank Cohort Source " + Guid.NewGuid(),DatabaseType.MicrosoftSQLServer);
             Publish(newExternalCohortTable);
             Activate(newExternalCohortTable);
         }

@@ -5,12 +5,18 @@ using System.Data.Common;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Oracle.ManagedDataAccess.Client;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 {
     internal class OracleServerHelper : DiscoveredServerHelper
     {
+        static OracleServerHelper()
+        {
+            //add any keywords that are required to make Oracle work properly here (at API level if it won't work period without it or SystemDefaultLow if it's just recommended)
+        }
+
         public OracleServerHelper() : base(DatabaseType.Oracle)
         {
         }
@@ -44,13 +50,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             return new OracleConnection(builder.ConnectionString);
         }
 
-        public override DbConnectionStringBuilder GetConnectionStringBuilder(string connectionString)
+        protected override DbConnectionStringBuilder GetConnectionStringBuilderImpl(string connectionString)
         {
             return new OracleConnectionStringBuilder(connectionString);
         }
         #endregion
 
-        public override DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database, string username, string password)
+        protected override DbConnectionStringBuilder GetConnectionStringBuilderImpl(string server, string database, string username, string password)
         {
             var toReturn = new OracleConnectionStringBuilder() {DataSource = server};
 
@@ -99,6 +105,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 
                 cmd = new OracleCommand("ALTER USER " + newDatabaseName.GetRuntimeName() + " quota unlimited on system", (OracleConnection)con);
                 cmd.ExecuteNonQuery();
+
+                cmd = new OracleCommand("ALTER USER " + newDatabaseName.GetRuntimeName() + " quota unlimited on users", (OracleConnection)con);
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -106,12 +115,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         {
             throw new NotImplementedException();
         }
-
-        public override bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds, out Exception exception)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)
         {
             return ((OracleConnectionStringBuilder) builder).UserID;

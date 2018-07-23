@@ -31,10 +31,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
         public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             var db = RuntimeArguments.StageSpecificArguments.DbInfo;
-
-            var newBuilder = new SqlConnectionStringBuilder(db.Server.Builder.ConnectionString);
-            newBuilder.ConnectTimeout = 600;
-
+            
             if (!Exists())
                 throw new Exception("The sql file " + Filepath + " does not exist");
 
@@ -67,8 +64,12 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             {
                 Dictionary<int,Stopwatch> performance = new Dictionary<int, Stopwatch>();
 
-                UsefulStuff.ExecuteBatchNonQuery(commandText,new SqlConnection(newBuilder.ConnectionString),null,out performance,600000);
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executing script " + Filepath + " (" + db.DescribeDatabase()+ ")"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executing script " + Filepath + " (" + db.DescribeDatabase() + ")"));
+                using (var con = db.Server.GetConnection())
+                {
+                    con.Open();
+                    UsefulStuff.ExecuteBatchNonQuery(commandText, con, null, out performance, 600000);
+                }
 
                 foreach (KeyValuePair<int, Stopwatch> section in performance)
                     job.OnNotify(this,

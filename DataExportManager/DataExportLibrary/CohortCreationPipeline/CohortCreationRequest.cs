@@ -13,6 +13,7 @@ using DataExportLibrary.Interfaces.Pipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.CohortCreationPipeline
 {
@@ -22,7 +23,7 @@ namespace DataExportLibrary.CohortCreationPipeline
     /// </summary>
     public class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest, ICheckable
     {
-        private readonly DataExportRepository _repository;
+        private readonly IDataExportRepository _repository;
         private DataFlowPipelineContext<DataTable> _context;
 
         //for pipeline editing initialization when no known cohort is available
@@ -35,7 +36,7 @@ namespace DataExportLibrary.CohortCreationPipeline
         public ICohortDefinition NewCohortDefinition { get; set; }
         public ExtractableCohort CohortCreatedIfAny { get; set; }
 
-        public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, DataExportRepository repository, string descriptionForAuditLog):this()
+        public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog):this()
         {
             _repository = repository;
             Project = project;
@@ -138,13 +139,13 @@ namespace DataExportLibrary.CohortCreationPipeline
                 notifier.OnCheckPerformed(new CheckEventArgs("User did not provide a description of the cohort for the AuditLog",CheckResult.Fail));
         }
 
-        public void PushToServer(SqlConnection con, SqlTransaction transaction)
+        public void PushToServer(IManagedConnection connection)
         {
             string reason;
             if(!NewCohortDefinition.IsAcceptableAsNewCohort(out reason))
                 throw new Exception(reason);
 
-            NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, con, transaction);
+            NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, connection);
         }
 
         public int ImportAsExtractableCohort()

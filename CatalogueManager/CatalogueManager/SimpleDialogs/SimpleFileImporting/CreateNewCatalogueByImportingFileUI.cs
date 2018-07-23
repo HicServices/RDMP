@@ -232,6 +232,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
         void serverDatabaseTableSelector1_SelectionChanged()
         {
             btnConfirmDatabase.Enabled = serverDatabaseTableSelector1.GetDiscoveredDatabase() != null;
+            btnAdvanced.Enabled = btnConfirmDatabase.Enabled;
         }
 
         private void IdentifyCompatiblePipelines()
@@ -302,17 +303,22 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void ToggleAdvanced()
         {
+            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+
+            if(db == null)
+                return;
+
             //flip it
             isAdvanced = !isAdvanced;
             btnAdvanced.Text = isAdvanced ? "Simple" : "Advanced";
-
+            
             if (isAdvanced)
             {
                 if (advanced == null)
                     advanced =
                         new CreateNewCatalogueByImportingFileUI_Advanced(
-                            _activator,
-                            serverDatabaseTableSelector1.GetDiscoveredDatabase(), _selectedFile, true,_projectSpecific);
+                            _activator,db
+                            , _selectedFile, true,_projectSpecific);
 
                 advanced.Bounds = pSimplePanel.Bounds;
                 advanced.Anchor = pSimplePanel.Anchor;

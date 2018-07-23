@@ -24,9 +24,7 @@ namespace CachingEngineTests.Unit
 
             // set up the engine map
             var loadProgress1 = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress1.LockedBecauseRunning = false;
             var loadProgress2 = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress2.LockedBecauseRunning = true;
             
             // set up the lock provider
             var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
@@ -49,8 +47,8 @@ namespace CachingEngineTests.Unit
             // engine1 should have been executed once
             engine1.AssertWasCalled(engine => engine.ExecutePipeline(Arg<GracefulCancellationToken>.Is.Anything));
             
-            // engine2 should not have been executed as it is locked
-            engine2.AssertWasNotCalled(engine => engine.ExecutePipeline(Arg<GracefulCancellationToken>.Is.Anything));
+            // engine2 should also have been run (locking isn't a thing anymore)
+            engine2.AssertWasCalled(engine => engine.ExecutePipeline(Arg<GracefulCancellationToken>.Is.Anything));
         }
 
         [Test]
@@ -72,10 +70,8 @@ namespace CachingEngineTests.Unit
 
             // set up the engine map
             var loadProgress1 = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress1.LockedBecauseRunning = false;
             var loadProgress2 = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress2.LockedBecauseRunning = false;
-
+            
             // set up the lock provider
             var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
             {

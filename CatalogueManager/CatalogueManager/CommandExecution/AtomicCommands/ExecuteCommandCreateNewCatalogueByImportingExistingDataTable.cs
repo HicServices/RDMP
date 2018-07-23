@@ -1,15 +1,9 @@
 using System.Drawing;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs.SubComponents;
-using CatalogueManager.Refreshing;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -22,7 +16,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="allowImportAsCatalogue">true to automatically create the catalogue without showing the UI</param>
-        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator,bool allowImportAsCatalogue) : base(activator)
+        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator,bool allowImportAsCatalogue=true) : base(activator)
         {
             this._allowImportAsCatalogue = allowImportAsCatalogue;
         }

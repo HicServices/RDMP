@@ -167,7 +167,16 @@ namespace DataExportLibrary.Data.DataTables
                 return Repository.GetAllObjectsWithParent<CumulativeExtractionResults>(this);
             }
         }
-        
+
+        [NoMappingToDatabase]
+        public IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults
+        {
+            get
+            {
+                return Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this);
+            }
+        }
+
         /// <inheritdoc cref="Cohort_ID"/>
         [NoMappingToDatabase]
         public IExtractableCohort Cohort
@@ -500,7 +509,6 @@ namespace DataExportLibrary.Data.DataTables
                 .ToArray();
         }
 
-
         public void AddDatasetToConfiguration(IExtractableDataSet extractableDataSet)
         {
             //it is already part of the configuration
@@ -568,13 +576,8 @@ namespace DataExportLibrary.Data.DataTables
             else
                 addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1, query); // its custom column of some kind, not tied to a catalogue entry
 
-            //Add new things you want to copy from the Catalogue here
-            addMe.HashOnDataRelease = item.HashOnDataRelease;
-            addMe.IsExtractionIdentifier = item.IsExtractionIdentifier;
-            addMe.IsPrimaryKey = item.IsPrimaryKey;
-            addMe.Order = item.Order;
-            addMe.Alias = item.Alias;
-            addMe.SaveToDatabase();
+            addMe.UpdateValuesToMatch(item);
+
             return addMe;
         }
 
@@ -640,6 +643,41 @@ namespace DataExportLibrary.Data.DataTables
 
             IsReleased = false;
             SaveToDatabase();
+        }
+
+        public IMapsDirectlyToDatabaseTable[] GetGlobals()
+        {
+            var sds = SelectedDataSets.FirstOrDefault(s=>s.ExtractableDataSet.Catalogue != null);
+
+            if(sds == null)
+                return new IMapsDirectlyToDatabaseTable[0];
+
+            var cata = sds.ExtractableDataSet.Catalogue;
+
+            return 
+                cata.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableGlobals)
+                .Cast<IMapsDirectlyToDatabaseTable>()
+                .Union(
+                cata.GetAllSupportingDocuments(FetchOptions.ExtractableGlobals))
+                .ToArray();
+        }
+
+        public override void DeleteInDatabase()
+        {
+            foreach (var result in Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this))
+                result.DeleteInDatabase();
+
+            base.DeleteInDatabase();
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new[] {Project};
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            return new IHasDependencies[0];
         }
     }
 }

@@ -22,7 +22,7 @@ namespace CachingEngine.Locking
         {
             CheckExists(engine);
             var loadProgress = _engineMap[engine];
-            return loadProgress.LockedBecauseRunning || loadProgress.IsDisabled;
+            return loadProgress.IsDisabled;
         }
 
         public string Details(IDataFlowPipelineEngine engine)
@@ -31,17 +31,6 @@ namespace CachingEngine.Locking
             return "Engine for Load Schedule '" + _engineMap[engine].Name + "'";
         }
 
-        public void Lock(IDataFlowPipelineEngine engine)
-        {
-            CheckExists(engine);
-            _engineMap[engine].Lock();
-        }
-
-        public void Unlock(IDataFlowPipelineEngine engine)
-        {
-            CheckExists(engine);
-            _engineMap[engine].Unlock();
-        }
 
         private void CheckExists(IDataFlowPipelineEngine engine)
         {

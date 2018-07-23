@@ -183,10 +183,11 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
             // 
             // pathLinkLabel1
             // 
-            this.pathLinkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pathLinkLabel1.Location = new System.Drawing.Point(26, 117);
+            this.pathLinkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pathLinkLabel1.Location = new System.Drawing.Point(26, 115);
             this.pathLinkLabel1.Name = "pathLinkLabel1";
-            this.pathLinkLabel1.Size = new System.Drawing.Size(605, 13);
+            this.pathLinkLabel1.Size = new System.Drawing.Size(893, 15);
             this.pathLinkLabel1.TabIndex = 5;
             this.pathLinkLabel1.Text = "Cache Path";
             // 

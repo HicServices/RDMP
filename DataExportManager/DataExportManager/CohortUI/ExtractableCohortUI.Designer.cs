@@ -32,12 +32,12 @@ namespace DataExportManager.CohortUI
         {
             this.tbID = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.lblSaved = new System.Windows.Forms.Label();
             this.lblDescription = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tbOverrideReleaseIdentifierSQL = new System.Windows.Forms.TextBox();
             this.pSqlPreview = new System.Windows.Forms.Panel();
             this.pDescription = new System.Windows.Forms.Panel();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
             // 
             // tbID
@@ -56,17 +56,6 @@ namespace DataExportManager.CohortUI
             this.label5.Size = new System.Drawing.Size(21, 13);
             this.label5.TabIndex = 11;
             this.label5.Text = "ID:";
-            // 
-            // lblSaved
-            // 
-            this.lblSaved.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblSaved.AutoSize = true;
-            this.lblSaved.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSaved.Location = new System.Drawing.Point(998, 830);
-            this.lblSaved.Name = "lblSaved";
-            this.lblSaved.Size = new System.Drawing.Size(47, 13);
-            this.lblSaved.TabIndex = 0;
-            this.lblSaved.Text = "Saved...";
             // 
             // lblDescription
             // 
@@ -101,7 +90,7 @@ namespace DataExportManager.CohortUI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pSqlPreview.Location = new System.Drawing.Point(8, 233);
             this.pSqlPreview.Name = "pSqlPreview";
-            this.pSqlPreview.Size = new System.Drawing.Size(1035, 565);
+            this.pSqlPreview.Size = new System.Drawing.Size(1035, 607);
             this.pSqlPreview.TabIndex = 14;
             // 
             // pDescription
@@ -113,10 +102,19 @@ namespace DataExportManager.CohortUI
             this.pDescription.Size = new System.Drawing.Size(969, 156);
             this.pDescription.TabIndex = 15;
             // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(8, 101);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
+            this.objectSaverButton1.TabIndex = 16;
+            // 
             // ExtractableCohortUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.pDescription);
             this.Controls.Add(this.pSqlPreview);
             this.Controls.Add(this.lblDescription);
@@ -124,7 +122,6 @@ namespace DataExportManager.CohortUI
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbID);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.lblSaved);
             this.Name = "ExtractableCohortUI";
             this.Size = new System.Drawing.Size(1046, 843);
             this.ResumeLayout(false);
@@ -136,11 +133,11 @@ namespace DataExportManager.CohortUI
 
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label lblSaved;
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbOverrideReleaseIdentifierSQL;
         private System.Windows.Forms.Panel pSqlPreview;
         private System.Windows.Forms.Panel pDescription;
+        private CatalogueManager.SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

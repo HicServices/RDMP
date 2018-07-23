@@ -416,6 +416,9 @@ namespace MapsDirectlyToDatabaseTable
 
         public IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
         {
+            if (id == 0)
+                return null;
+
             string typename = type.Name;
 
             #region Try Cache

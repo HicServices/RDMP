@@ -9,7 +9,7 @@ namespace CatalogueLibrary.Data
     /// <summary>
     /// See PermissionWindow
     /// </summary>
-    public interface IPermissionWindow : IMapsDirectlyToDatabaseTable, ISaveable, IDeleteable,ILockable
+    public interface IPermissionWindow : IMapsDirectlyToDatabaseTable, ISaveable, IDeleteable
     {
         string Name { get; set; }
         string Description { get; set; }

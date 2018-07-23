@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers;
@@ -165,9 +162,16 @@ namespace ReusableUIComponents
             {
                 _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token);
             }
-            catch (OperationCanceledException )//user cancels
+            catch (OperationCanceledException)
             {
                 _listDatabasesAsyncResult = new string[0];
+            }
+            catch (AggregateException ex )//user cancels
+            {
+                if (ex.GetExceptionIfExists<OperationCanceledException>() != null)
+                    _listDatabasesAsyncResult = new string[0];
+                else
+                    throw;
             }
         }
 

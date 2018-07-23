@@ -60,7 +60,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
             _engine = new ReleaseEngine(_project, ReleaseSettings, listener, releaseAudit);
 
-            _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotential, isPatch: _releaseData.ReleaseState == ReleaseState.DoingPatch);
+            _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotentials, isPatch: _releaseData.ReleaseState == ReleaseState.DoingPatch);
 
             _destinationFolder = _engine.ReleaseAudit.ReleaseFolder;
             _configurationReleased = _engine.ConfigurationsReleased;
@@ -92,7 +92,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 }
             }
 
-            if(pipelineFailureExceptionIfAny == null && _destinationFolder != null)
+            if (pipelineFailureExceptionIfAny == null && _destinationFolder != null)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
                 //mark configuration as released

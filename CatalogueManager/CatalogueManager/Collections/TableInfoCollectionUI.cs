@@ -114,13 +114,13 @@ namespace CatalogueManager.Collections
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
 
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllAutomationServerSlotsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllObjectSharingNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllConnectionStringKeywordsNode);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -135,7 +135,6 @@ namespace CatalogueManager.Collections
         public static bool IsRootObject(object root)
         {
             return
-                root is AllAutomationServerSlotsNode ||
                 root is AllRDMPRemotesNode ||
                 root is AllObjectSharingNode ||
                 root is AllExternalServersNode ||

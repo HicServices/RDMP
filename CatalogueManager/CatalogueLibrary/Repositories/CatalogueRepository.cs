@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.ImportExport;
@@ -51,7 +51,7 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         public static bool? SuppressHelpLoading;
 
-        public Dictionary<string,string> HelpText = new Dictionary<string, string>();
+        public readonly Dictionary<string,string> HelpText = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
         
         public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
         {
@@ -297,60 +297,7 @@ namespace CatalogueLibrary.Repositories
         {
             return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
         }
-
-        public void TickLifeline(IMapsDirectlyToDatabaseTable ticker)
-        {
-            if(!(ticker is ILifelineable))
-                throw new NotSupportedException(ticker + " did not implement ILifelineable");
-
-            Update("UPDATE "+ticker.GetType().Name+" SET Lifeline=@machineTime WHERE ID = " + ticker.ID , new Dictionary<string, object>()
-            {
-                {"@machineTime", DateTime.Now}
-            });
-        }
-
-
         
-        public DateTime? GetTickLifeline(IMapsDirectlyToDatabaseTable ticker)
-        {
-            if (!(ticker is ILifelineable))
-                throw new NotSupportedException(ticker + " did not implement ILifelineable");
-
-            using (var con = GetConnection())
-                return
-                    ObjectToNullableDateTime(
-                        DatabaseCommandHelper.GetCommand(
-                            "SELECT Lifeline from " + ticker.GetType().Name + " WHERE ID = " + ticker.ID, con.Connection)
-                            .ExecuteScalar());
-        }
-
-        public void RefreshLockPropertiesFromDatabase(IMapsDirectlyToDatabaseTable lockable)
-        {
-            var l = lockable as ILockable;
-
-            if (l == null)
-                throw new NotSupportedException(lockable + " did not implement ILockable");
-
-            using (var con = GetConnection())
-            {
-                DbDataReader r = DatabaseCommandHelper.GetCommand(
-                    "Select LockedBecauseRunning,LockHeldBy from " + lockable.GetType().Name + " WHERE ID = " +
-                    lockable.ID, con.Connection).ExecuteReader();
-
-                if (!r.Read())
-                    throw new ObjectDeletedException(lockable);
-
-                l.LockedBecauseRunning = Convert.ToBoolean(r["LockedBecauseRunning"]);
-                l.LockHeldBy = Convert.ToString(r["LockHeldBy"]);
-            }
-        }
-
-
-        public Catalogue[] GetAllAutomationLockedCatalogues()
-        {
-            return SelectAll<Catalogue>("SELECT * FROM AutomationLockedCatalogues", "Catalogue_ID").ToArray();
-        }
-
         public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
         {
             var servers = GetAllObjects<ExternalDatabaseServer>();

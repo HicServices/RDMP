@@ -10,6 +10,7 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 
@@ -27,7 +28,7 @@ namespace CatalogueLibrary.Data
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
     /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).</para>
     /// </summary>
-    public class ColumnInfo : VersionedDatabaseEntity, IDeleteable, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo
+    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation
     {
         public static int Name_MaxLength;
         public static int Data_type_MaxLength;
@@ -52,8 +53,11 @@ namespace CatalogueLibrary.Data
         private string _regexPattern;
         private string _validationRules;
         private bool _isPrimaryKey;
+        private bool _isAutoIncrement;
         private int? _duplicateRecordResolutionOrder;
         private bool _duplicateRecordResolutionIsAscending;
+        private string _collation;
+
         public int TableInfo_ID
         {
             get { return _tableInfoID; }
@@ -126,6 +130,18 @@ namespace CatalogueLibrary.Data
             get { return _isPrimaryKey; }
             set { SetField(ref  _isPrimaryKey, value); }
         }
+
+        public bool IsAutoIncrement
+        {
+            get { return _isAutoIncrement; }
+            set { SetField(ref  _isAutoIncrement, value); }
+        }
+        public string Collation
+        {
+            get { return _collation; }
+            set { SetField(ref  _collation, value); }
+        }
+        
 
         public int? DuplicateRecordResolutionOrder
         {
@@ -200,6 +216,7 @@ namespace CatalogueLibrary.Data
             Digitisation_specs = r["Digitisation_specs"].ToString();
             Source = r["Source"].ToString();
             Description = r["Description"].ToString();
+            Collation = r["Collation"] as string;
 
             //try to turn string value in database into enum value
             ColumnStatus dbStatus;
@@ -209,6 +226,7 @@ namespace CatalogueLibrary.Data
             RegexPattern = r["RegexPattern"].ToString();
             ValidationRules = r["ValidationRules"].ToString();
             IsPrimaryKey = Boolean.Parse(r["IsPrimaryKey"].ToString());
+            IsAutoIncrement = Boolean.Parse(r["IsAutoIncrement"].ToString());
 
             if (r["ANOTable_ID"] != DBNull.Value)
                 ANOTable_ID = int.Parse(r["ANOTable_ID"].ToString());
@@ -321,18 +339,12 @@ namespace CatalogueLibrary.Data
             //The user is asking about a stage other than RAW so tell them about the final column type state
             return Data_type;
         }
-
-        public int? GetColumnLengthIfAny()
+        
+        public DiscoveredColumn Discover(DataAccessContext context)
         {
-            Regex r = new Regex(@"\(\d+\)");
-
-            if (string.IsNullOrWhiteSpace(Data_type))
-                return null;
-            Match match = r.Match(Data_type);
-            if (match.Success)
-                return int.Parse(match.Value.TrimStart(new[] {'('}).TrimEnd(new[] {')'}));
-
-            return null;
+            var ti = TableInfo;
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, context);
+            return db.ExpectTable(ti.GetRuntimeName()).DiscoverColumn(GetRuntimeName());
         }
 
         public IHasDependencies[] GetObjectsThisDependsOn()
@@ -344,8 +356,7 @@ namespace CatalogueLibrary.Data
 
             if (ANOTable_ID != null)
               iDependOn.Add(ANOTable);
-
-
+            
             return iDependOn.ToArray();
         }
 

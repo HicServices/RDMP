@@ -17,6 +17,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using HIC.Logging;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -59,7 +60,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
 
             _request = new ExtractDatasetCommand(RepositoryLocator,_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
-                _extractableColumns, new HICProjectSalt(_project), "",
+                _extractableColumns, new HICProjectSalt(_project),
                 new ExtractionDirectory(@"C:\temp\", _configuration));
         }
 
@@ -136,7 +137,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
                 Assert.IsNotEmpty(pipelineUseCase.Source.Request.QueryBuilder.SQL);
 
-                Assert.IsFalse(pipelineUseCase.Crashed);
+                Assert.IsTrue(pipelineUseCase.ExtractCommand.State == ExtractCommandState.Completed);
             }
             finally
             {

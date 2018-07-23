@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data.Dashboarding;
+using CatalogueManager.AutoComplete;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ObjectVisualisation;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportManager.DataViewing.Collections
 {
@@ -36,12 +38,7 @@ namespace DataExportManager.DataViewing.Collections
         {
             
         }
-
-        public IHasDependencies GetAutocompleteObject()
-        {
-            return null;
-        }
-
+        
         public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
 
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
@@ -56,13 +53,45 @@ namespace DataExportManager.DataViewing.Collections
 
         public string GetSql()
         {
-            return "SELECT TOP 100 * FROM " + Cohort.ExternalCohortTable.TableName + Environment.NewLine + " WHERE " + Cohort.WhereSQL();
+            if (Cohort == null)
+                return "";
 
+            var tableName = Cohort.ExternalCohortTable.TableName;
+
+            var response = GetQuerySyntaxHelper().HowDoWeAchieveTopX(100);
+
+            switch (response.Location)
+            {
+                case QueryComponent.SELECT:
+                    return "Select " + response.SQL + " * from " + tableName + " WHERE " + Cohort.WhereSQL();
+                case QueryComponent.WHERE:
+                    return "Select * from " + tableName + " WHERE " + response.SQL + " AND " + Cohort.WhereSQL();
+                case QueryComponent.Postfix:
+                    return "Select * from " + tableName + " WHERE " + Cohort.WhereSQL() + " " + response.SQL;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public string GetTabName()
         {
             return "Top 100 " + Cohort;
+        }
+
+        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        {
+            if(Cohort == null)
+                return;
+
+            var ect = Cohort.ExternalCohortTable;
+            var table = ect.Discover().ExpectTable(ect.TableName);
+            autoComplete.Add(table);
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var c = Cohort;
+            return c != null ? c.GetQuerySyntaxHelper() : null;
         }
     }
 }

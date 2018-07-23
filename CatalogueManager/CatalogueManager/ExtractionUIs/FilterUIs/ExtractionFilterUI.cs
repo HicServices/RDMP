@@ -120,7 +120,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             var options = factory.Create(value);
             
             var autoCompleteFactory = new AutoCompleteProviderFactory(_activator);
-            _autoCompleteProvider = autoCompleteFactory.Create(value as IHasDependencies);
+            _autoCompleteProvider = autoCompleteFactory.Create(value.GetQuerySyntaxHelper());
             
             foreach (var t in options.GetTableInfos())
                 _autoCompleteProvider.Add(t);

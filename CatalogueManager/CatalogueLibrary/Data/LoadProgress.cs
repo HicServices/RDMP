@@ -22,10 +22,7 @@ namespace CatalogueLibrary.Data
         private DateTime? _originDate;
         private string _loadPeriodicity;
         private DateTime? _dataLoadProgress;
-        private bool _lockedBecauseRunning;
-        private string _lockHeldBy;
         private int _loadMetadata_ID;
-        private bool _allowAutomation;
         private int _defaultNumberOfDaysToLoadEachTime;
 
         public bool IsDisabled
@@ -53,25 +50,10 @@ namespace CatalogueLibrary.Data
             get { return _dataLoadProgress; }
             set { SetField(ref _dataLoadProgress, value); }
         }
-        public bool LockedBecauseRunning
-        {
-            get { return _lockedBecauseRunning; }
-            set { SetField(ref _lockedBecauseRunning, value); }
-        }
-        public string LockHeldBy
-        {
-            get { return _lockHeldBy; }
-            set { SetField(ref _lockHeldBy, value); }
-        }
         public int LoadMetadata_ID
         {
             get { return _loadMetadata_ID; }
             set { SetField(ref _loadMetadata_ID, value); }
-        }
-        public bool AllowAutomation
-        {
-            get { return _allowAutomation; }
-            set { SetField(ref _allowAutomation, value); }
         }
         public int DefaultNumberOfDaysToLoadEachTime
         {
@@ -111,12 +93,9 @@ namespace CatalogueLibrary.Data
             OriginDate = ObjectToNullableDateTime(r["OriginDate"]);
             DataLoadProgress = ObjectToNullableDateTime(r["DataLoadProgress"]);
             LoadMetadata_ID = int.Parse(r["LoadMetaData_ID"].ToString());
-            LockedBecauseRunning = (bool)r["LockedBecauseRunning"];
-            LockHeldBy = r["LockHeldBy"] as string;
             LoadPeriodicity = r["LoadPeriodicity"].ToString();
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
             DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(r["DefaultNumberOfDaysToLoadEachTime"]);
-            AllowAutomation = Convert.ToBoolean(r["AllowAutomation"]);
         }
         
         public TimeSpan GetLoadPeriodicity()
@@ -132,25 +111,6 @@ namespace CatalogueLibrary.Data
         public override string ToString()
         {
             return Name + " ID=" + ID;
-        }
-
-        public void Lock()
-        {
-            LockedBecauseRunning = true;
-            LockHeldBy = Environment.UserName + " (" + Environment.MachineName + ")";
-            SaveToDatabase();
-        }
-        
-        public void Unlock()
-        {
-            LockedBecauseRunning = false;
-            LockHeldBy = null;
-            SaveToDatabase();
-        }
-
-        public void RefreshLockPropertiesFromDatabase()
-        {
-            ((CatalogueRepository) Repository).RefreshLockPropertiesFromDatabase(this);
         }
     }
 }

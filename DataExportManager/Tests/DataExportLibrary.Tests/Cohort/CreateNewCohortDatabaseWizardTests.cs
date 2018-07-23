@@ -1,12 +1,21 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.DataFlowPipeline;
+using DataExportLibrary.CohortCreationPipeline;
+using DataExportLibrary.CohortCreationPipeline.Destinations;
+using DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation;
 using DataExportLibrary.CohortDatabaseWizard;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace DataExportLibrary.Tests.Cohort
@@ -69,7 +78,7 @@ namespace DataExportLibrary.Tests.Cohort
         {
             _extractionInfo1.IsExtractionIdentifier = true;
             _extractionInfo1.SaveToDatabase();
-            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(CatalogueRepository, DataExportRepository);
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository,false);
 
             //it finds it!
             Assert.IsTrue(wizard.GetPrivateIdentifierCandidates().Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));
@@ -85,7 +94,7 @@ namespace DataExportLibrary.Tests.Cohort
         [Test]
         public void ProposePrivateIdentifierDatatypes()
         {
-            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(CatalogueRepository, DataExportRepository);
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(null,CatalogueRepository, DataExportRepository,false);
 
             var candidates = wizard.GetPrivateIdentifierCandidates();
 
@@ -100,40 +109,106 @@ namespace DataExportLibrary.Tests.Cohort
             Assert.IsTrue(candidate.MatchingExtractionInformations.Single().ID== _extractionInfo1.ID);
         }
 
-        [Test]
-        [TestCase(ReleaseIdentifierAssignmentStrategy.Autonum)]
-        [TestCase(ReleaseIdentifierAssignmentStrategy.Guid)]
-        [TestCase(ReleaseIdentifierAssignmentStrategy.LeaveBlank)]
-        public void TheIronTest(ReleaseIdentifierAssignmentStrategy strategy)
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        public void TestActuallyCreatingIt(DatabaseType type)
         {
+            var db = GetCleanedServer(type);
 
-            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseName);
+            //drop it
+            db.ForceDrop();
 
-            if(db.Exists())
-                db.ForceDrop();
-
-            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(CatalogueRepository, DataExportRepository);
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
 
             _extractionInfo2.IsExtractionIdentifier = true;
             _extractionInfo2.SaveToDatabase();
 
             var candidate = wizard.GetPrivateIdentifierCandidates().Single(c => c.RuntimeName.Equals("PrivateIdentifierB"));
-            wizard.CreateDatabase(
+            var ect = wizard.CreateDatabase(
                 candidate,
-                strategy, 
-                (SqlConnectionStringBuilder)DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder,
-                cohortDatabaseName,
-                cohortDatabaseName,
                 new ThrowImmediatelyCheckNotifier());
 
             //database should exist
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseName);
             Assert.IsTrue(db.Exists());
+            
+            //did it create the correct type?
+            Assert.AreEqual(type,ect.DatabaseType);
 
-            foreach (DiscoveredTable table in db.DiscoverTables(false))
-                table.Drop();
+            //the ExternalCohortTable should pass tests
+            ect.Check(new ThrowImmediatelyCheckNotifier());
+            
+            //now try putting someone in it
+            //the project it will go under
+            var project = new Project(DataExportRepository, "MyProject");
+            project.ProjectNumber = 10;
+            project.SaveToDatabase();
 
-            db.Drop();
+            //the request to put it under there
+            var request = new CohortCreationRequest(project, new CohortDefinition(null, "My cohort", 1, 10, ect), DataExportRepository,"Blah");
+            
+            //the actual cohort data
+            DataTable dt = new DataTable();
+            dt.Columns.Add(_extractionInfo2.GetRuntimeName());
+            dt.Rows.Add(101243); //_extractionInfo2 is of type int
+
+            //the destination component that will put it there
+            var dest = new BasicCohortDestination();
+
+            dest.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
+            
+            //tell it to use the guid allocator
+            dest.ReleaseIdentifierAllocator = typeof (GuidReleaseIdentifierAllocator);
+            
+            dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+
+            var cohort = request.CohortCreatedIfAny;
+            Assert.IsNotNull(cohort);
+
+            var externalData = cohort.GetExternalData();
+            Assert.AreEqual(10,externalData.ExternalProjectNumber);
+            Assert.IsNotNullOrEmpty( externalData.ExternalDescription);
+
+
+            Assert.AreEqual(DateTime.Now.Year, externalData.ExternalCohortCreationDate.Value.Year);
+            Assert.AreEqual(DateTime.Now.Month, externalData.ExternalCohortCreationDate.Value.Month);
+            Assert.AreEqual(DateTime.Now.Day,  externalData.ExternalCohortCreationDate.Value.Day);
+            Assert.AreEqual(DateTime.Now.Hour, externalData.ExternalCohortCreationDate.Value.Hour);
+
+            cohort.AppendToAuditLog("Test");
+            
+            Assert.IsTrue(cohort.AuditLog.Contains("Test"));
+
+            Assert.AreEqual(1,cohort.Count); 
+            Assert.AreEqual(1,cohort.CountDistinct);
+
+            var cohortTable = cohort.FetchEntireCohort();
+
+            Assert.AreEqual(1,cohortTable.Rows.Count);
+
+            var helper = ect.GetQuerySyntaxHelper();
+
+            Assert.AreEqual(101243, cohortTable.Rows[0][helper.GetRuntimeName(ect.PrivateIdentifierField)]);
+            var aguid = cohortTable.Rows[0][helper.GetRuntimeName(ect.ReleaseIdentifierField)].ToString();
+            Assert.IsNotNullOrEmpty(aguid); //should be a guid
+
+            //test reversing the anonymisation of something
+            var dtAno = new DataTable();
+            dtAno.Columns.Add(cohort.GetReleaseIdentifier(true));
+            dtAno.Columns.Add("Age");
+            dtAno.Rows.Add(aguid, 23);
+            dtAno.Rows.Add(aguid, 99);
+
+            cohort.ReverseAnonymiseDataTable(dtAno, new ThrowImmediatelyDataLoadEventListener(), true);
+
+            Assert.AreEqual(2, dtAno.Columns.Count);
+            Assert.IsTrue(dtAno.Columns.Contains(cohort.GetPrivateIdentifier(true)));
+
+            Assert.AreEqual("101243", dtAno.Rows[0][cohort.GetPrivateIdentifier(true)]);
+            Assert.AreEqual("101243", dtAno.Rows[1][cohort.GetPrivateIdentifier(true)]);
+
 
         }
     }

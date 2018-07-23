@@ -24,6 +24,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("There are no PermissionWindows created yet");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Restrict caching execution to the given time period";
+        }
+
         public override void Execute()
         {
             base.Execute();

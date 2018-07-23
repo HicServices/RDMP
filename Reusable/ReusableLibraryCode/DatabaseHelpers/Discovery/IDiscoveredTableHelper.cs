@@ -15,8 +15,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     {
         string GetTopXSqlForTable(IHasFullyQualifiedNameToo table, int topX);
 
-        DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName);
-        DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction, IManagedConnection connection, string database, string tableName);
+        DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database);
 
         IDiscoveredColumnHelper GetColumnHelper();
         
@@ -34,9 +33,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         
         void TruncateTable(DiscoveredTable discoveredTable);
         void MakeDistinct(DiscoveredTable discoveredTable);
-        string ScriptTableCreation(DiscoveredTable constraints, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt);
+
+        /// <inheritdoc cref="DiscoveredTable.ScriptTableCreation"/>
+        string ScriptTableCreation(DiscoveredTable constraints, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt, DiscoveredTable toCreateTable = null);
         bool IsEmpty(DbConnection connection, DiscoveredTable discoveredTable, DbTransaction transaction);
         void RenameTable(DiscoveredTable discoveredTable, string newName, IManagedConnection connection);
         void CreatePrimaryKey(DiscoveredTable columns, DiscoveredColumn[] discoverColumns, IManagedConnection connection);
+        int ExecuteInsertReturningIdentity(DiscoveredTable discoveredTable, DbCommand cmd, IManagedTransaction transaction=null);
     }
 }

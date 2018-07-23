@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueLibrary.QueryBuilding;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using DataLoadEngine.DataFlowPipeline.Sources;
@@ -20,7 +21,9 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
@@ -29,7 +32,7 @@ namespace LoadModules.Generic.Attachers
     /// Data load component for loading RAW tables with records read from a remote database server.  Runs the specified query (which can include a date parameter)
     /// and inserts the results of the query into RAW. 
     /// </summary>
-    public abstract class RemoteTableAttacher: Attacher, IPluginAttacher
+    public class RemoteTableAttacher: Attacher, IPluginAttacher
     {
         private const string FutureLoadMessage = "Cannot load data from the future";
 
@@ -69,14 +72,15 @@ namespace LoadModules.Generic.Attachers
         [DemandsInitialization("Username and password to use when connecting to fetch data from the remote table (e.g. sql user account).  If not provided then 'Integrated Security' (Windows user account) will be used to authenticate")]
         public DataAccessCredentials RemoteTableAccessCredentials { get; set; }
 
-        protected const string StartDateParameter = "@startDate";
-        protected const string EndDateParameter = "@endDate";
+        [DemandsInitialization("The database type you are attempting to connect to",DefaultValue=DatabaseType.MicrosoftSQLServer)]
+        public DatabaseType DatabaseType { get; set; }
 
-        protected const string DeclareStartDateParameter = "declare @startDate datetime";
-        protected const string DeclareEndDateParameter = "declare @endDate datetime";
-
-        protected string _remoteUsername { get; set; }
-        protected string _remotePassword { get; set; }
+        const string StartDateParameter = "@startDate";
+        const string EndDateParameter = "@endDate";
+        
+        private DiscoveredDatabase _remoteDatabase;
+        private string _remoteUsername { get; set; }
+        private string _remotePassword { get; set; }
         protected bool _setupDone { get; set; }
 
         public enum PeriodToLoad
@@ -110,17 +114,14 @@ namespace LoadModules.Generic.Attachers
 
             try
             {
-                SetupUsernameAndPassword();
+                Setup();
             }
             catch (Exception)
             {
                 //use integrated security if this fails
             }
         }
-     
-
         
-
         public override void Check(ICheckNotifier notifier)
         {
             //if we have been initialized
@@ -141,7 +142,7 @@ namespace LoadModules.Generic.Attachers
                     
                     try
                     {
-                        SetupUsernameAndPassword();
+                        Setup();
 
                         //if there is a username and password
                         if(!string.IsNullOrWhiteSpace(_remoteUsername) && !string.IsNullOrWhiteSpace(_remotePassword))
@@ -152,7 +153,7 @@ namespace LoadModules.Generic.Attachers
                         notifier.OnCheckPerformed(new CheckEventArgs("Failed to setup username/password - proceeding with Integrated Security", CheckResult.Warning, e));
                     }
                     
-                    CheckTablesExist(GetConnectionString(), notifier);
+                    CheckTablesExist(notifier);
                 }
                 catch (Exception e)
                 {
@@ -202,10 +203,6 @@ namespace LoadModules.Generic.Attachers
                 if (!LoadNotRequiredIfNoRowsRead)
                     notifier.OnCheckPerformed(new CheckEventArgs("LoadNotRequiredIfNoRowsRead is false but you have a Progress '" + Progress +"', this means that when the data being loaded is fully exhausted for a given range of days you will probably get an error instead of a clean shutdown",CheckResult.Warning));
 
-                
-                if (Progress.LockedBecauseRunning)
-                    notifier.OnCheckPerformed(new CheckEventArgs("LoadProgress '" + Progress + "'  is currently locked, lock holder is listed as '" + (Progress.LockHeldBy ?? "unspecified") + "'", CheckResult.Fail, null));
-
                 if(string.IsNullOrWhiteSpace(RemoteSelectSQL))
                     notifier.OnCheckPerformed(new CheckEventArgs("A LoadProgress has been configured but the RemoteSelectSQL is empty, how are you respecting the schedule without tailoring your query?", CheckResult.Fail, null));
                 else
@@ -218,13 +215,6 @@ namespace LoadModules.Generic.Attachers
                             notifier.OnCheckPerformed(new CheckEventArgs(
                                 "Could not find any reference to parameter " + expectedParameter +
                                 " in the RemoteSelectSQL, how do you expect to respect the LoadProgress you have configured without a reference to this date?", CheckResult.Fail, null));
-
-                    foreach (string prohibitedSQL in new[]{DeclareEndDateParameter,DeclareStartDateParameter})
-                    {
-                        if (RemoteSelectSQL.Contains(prohibitedSQL))
-                            notifier.OnCheckPerformed(new CheckEventArgs("Do not include '" + prohibitedSQL + "' in the RemoteSelectSQL, this global parameter will automatically be added to your query and populated with the current LoadProgress",CheckResult.Fail, null));
-                 
-                    }
                 }
             }
 
@@ -232,19 +222,20 @@ namespace LoadModules.Generic.Attachers
                 notifier.OnCheckPerformed(new CheckEventArgs("RAWTableName has not been set for " + GetType().Name, CheckResult.Fail));
         }
 
-        protected abstract DbConnectionStringBuilder GetConnectionString();
-        protected abstract DbConnection GetConnection();
-        protected void CheckTablesExist(DbConnectionStringBuilder builder, ICheckNotifier notifier)
+        public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+        {
+            
+        }
+
+        protected void CheckTablesExist(ICheckNotifier notifier)
         {
             try
             {
-                var db = new DiscoveredServer(builder).ExpectDatabase(RemoteDatabaseName);
-
-                if (!db.Exists())
+                if (!_remoteDatabase.Exists())
                     throw new Exception("Database " + RemoteDatabaseName + " did not exist on the remote server");
 
                 //still worthwhile doing this incase we cannot connect to the server
-                var tables = db.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
+                var tables = _remoteDatabase.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
                 
                 //overrides table level checks
                 if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
@@ -269,29 +260,27 @@ namespace LoadModules.Generic.Attachers
         }
 
 
-        private void SetupUsernameAndPassword()
+        private void Setup()
         {
-
             if(RemoteTableAccessCredentials != null)
             {
                 _remoteUsername = RemoteTableAccessCredentials.Username;
                 _remotePassword = RemoteTableAccessCredentials.GetDecryptedPassword();
             }
-
+            
+            var helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
+            var builder = helper.GetConnectionStringBuilder(RemoteServer, RemoteDatabaseName, _remoteUsername, _remotePassword);
+            _remoteDatabase = new DiscoveredServer(builder).GetCurrentDatabase();
+            
             _setupDone = true;
         }
         public override ExitCodeType Attach(IDataLoadJob job)
         {
             base.Attach(job);
 
-
             if (job == null)
                 throw new Exception("Job is Null, we require to know the job to build a DataFlowPipeline");
-
-            
-            DbConnection con = GetConnection();
-            con.Open();
-
+      
             ThrowIfInvalidRemoteTableName();
             
             string sql;
@@ -326,7 +315,7 @@ namespace LoadModules.Generic.Attachers
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to execute SQL:" + Environment.NewLine + sql));
 
-            var source = new DbDataCommandDataFlowSource(sql, "Fetch data from " + RemoteServer + " to populate RAW table " + RemoteTableName, GetConnectionString(), Timeout ==0?50000:Timeout);
+            var source = new DbDataCommandDataFlowSource(sql, "Fetch data from " + RemoteServer + " to populate RAW table " + RemoteTableName, _remoteDatabase.Server.Builder, Timeout == 0 ? 50000 : Timeout);
 
             var destination = new SqlBulkInsertDestination(_dbInfo, RAWTableName, Enumerable.Empty<string>());
 
@@ -337,14 +326,14 @@ namespace LoadModules.Generic.Attachers
 
             ITableLoadInfo loadInfo = job.DataLoadInfo.CreateTableLoadInfo("Truncate RAW table " + RAWTableName,
                 _dbInfo.Server.Name + "." + _dbInfo.GetRuntimeName(),
-                new DataSource[]
+                new []
                 {
                     new DataSource(
                         "Remote SqlServer Servername=" + RemoteServer + "Database=" + _dbInfo.GetRuntimeName() +
                         
                         //Either list the table or the query depending on what is populated
                         (RemoteTableName != null?" Table=" + RemoteTableName
-                        :" Query = " + sql), DateTime.Now)
+                            :" Query = " + sql), DateTime.Now)
                 }, -1);
 
             engine.Initialize(loadInfo);
@@ -367,7 +356,8 @@ namespace LoadModules.Generic.Attachers
                 ProgressUpdateStrategy.AddAppropriateDisposeStep((ScheduledDataLoadJob) job,_dbInfo);
 
             }
-
+                
+            
             return ExitCodeType.Success;
         }
 
@@ -381,8 +371,7 @@ namespace LoadModules.Generic.Attachers
 
             //if the currently scheduled job is not our Schedule then it is a mismatch and we should skip it
             scheduleMismatch = !jobAsScheduledJob.LoadProgress.Equals(Progress);
-
-
+            
             DateTime min = jobAsScheduledJob.DatesToRetrieve.Min();
             DateTime max = jobAsScheduledJob.DatesToRetrieve.Max();
 
@@ -394,20 +383,23 @@ namespace LoadModules.Generic.Attachers
                 max = max.AddSeconds(59);
             }
 
-
             if(min >= max)
                 throw new Exception("Problematic max and min dates(" + max + " and " + min +" respectively)");
 
-            string startSql = DeclareStartDateParameter + " = '" + min.ToString("yyyy-MM-dd HH:mm:ss") + "'" + Environment.NewLine;
-            string endSQL = DeclareEndDateParameter + " = '" + max.ToString("yyyy-MM-dd HH:mm:ss") + "'" + Environment.NewLine;
+            var syntaxHelper = _remoteDatabase.Server.Helper.GetQuerySyntaxHelper();
+            var declareStartDateParameter = syntaxHelper.GetParameterDeclaration(StartDateParameter, new DatabaseTypeRequest(typeof (DateTime)));
+            var declareEndDateParameter = syntaxHelper.GetParameterDeclaration(EndDateParameter,new DatabaseTypeRequest(typeof (DateTime)));
             
+            string startSql = declareStartDateParameter + Environment.NewLine;
+            startSql += "SET "+StartDateParameter+" = '" + min.ToString("yyyy-MM-dd HH:mm:ss") + "';" + Environment.NewLine;
+
+            string endSQL = declareEndDateParameter + Environment.NewLine;
+            endSQL += "SET " + EndDateParameter + " = '" + max.ToString("yyyy-MM-dd HH:mm:ss") + "';" + Environment.NewLine;
+
             if(min > DateTime.Now)
                 throw new Exception(FutureLoadMessage + " (min is " + min +")");
             
             return startSql + endSQL + Environment.NewLine;
         }
-
-
     }
-
 }

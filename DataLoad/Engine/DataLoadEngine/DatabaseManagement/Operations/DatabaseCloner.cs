@@ -42,23 +42,7 @@ namespace DataLoadEngine.DatabaseManagement.Operations
             return dbInfo;
         }
         
-        /// <summary>
-        /// Do not use in the context of DLE (or any time where you have a cached list of TableInfos you could use instead as it will be faster to use the overload that takes TableInfo (if you use this method it has to go back to the Catalogue database to figure out what the TableInfos are)
-        /// </summary>
-        /// <param name="Catalogues"></param>
-        /// <param name="copyToStage"></param>
-        /// <param name="tableNamingScheme"></param>
-        /// <param name="includeLookupTables"></param>
-        public void CreateTablesInDatabaseFromCatalogueInfo(IEnumerable<ICatalogue> Catalogues, LoadBubble copyToStage, INameDatabasesAndTablesDuringLoads tableNamingScheme, bool includeLookupTables)
-        {
-            if (copyToStage == LoadBubble.Live)
-                throw new Exception("Please don't try to create tables in the live database");
-
-            foreach (var tableInfo in Catalogues.SelectMany(catalogue => catalogue.GetTableInfoList(includeLookupTables)).Distinct())
-                CreateTablesInDatabaseFromCatalogueInfo(tableInfo, copyToStage);
-        }
-
-        public void CreateTablesInDatabaseFromCatalogueInfo(TableInfo tableInfo, LoadBubble copyToStage)
+        public void CreateTablesInDatabaseFromCatalogueInfo(IDataLoadEventListener listener, TableInfo tableInfo, LoadBubble copyToStage)
         {
             if (copyToStage == LoadBubble.Live)
                 throw new Exception("Please don't try to create tables in the live database");
@@ -79,6 +63,8 @@ namespace DataLoadEngine.DatabaseManagement.Operations
             {
                 var tableName = tableInfo.GetRuntimeName(copyToStage, _hicDatabaseConfiguration.DatabaseNamer);
 
+                var table = destDbInfo.ExpectTable(tableName);
+
                 string[] existingColumns = tableInfo.ColumnInfos.Select(c => c.GetRuntimeName(LoadStage.AdjustRaw)).ToArray();
 
                 foreach (PreLoadDiscardedColumn preLoadDiscardedColumn in tableInfo.PreLoadDiscardedColumns)
@@ -90,9 +76,8 @@ namespace DataLoadEngine.DatabaseManagement.Operations
                     if (existingColumns.Any(e=>e.Equals(preLoadDiscardedColumn.GetRuntimeName(LoadStage.AdjustRaw))))
                         throw new Exception("There is a column called " + preLoadDiscardedColumn.GetRuntimeName(LoadStage.AdjustRaw) + " as both a PreLoadDiscardedColumn and in the TableInfo (live table), you should either drop the column from the live table or remove it as a PreLoadDiscarded column");
 
-
                     //add all the preload discarded columns because they could be routed to ANO store or sent to oblivion
-                    DatabaseOperations.AddColumnToTable(destDbInfo, tableName, preLoadDiscardedColumn.RuntimeColumnName, preLoadDiscardedColumn.SqlDataType);
+                    AddColumnToTable(table, preLoadDiscardedColumn.RuntimeColumnName, preLoadDiscardedColumn.SqlDataType, listener);
                 }
 
                 //deal with anonymisation transforms e.g. ANOCHI of datatype varchar(12) would have to become a column called CHI of datatype varchar(10) on creation in RAW
@@ -105,13 +90,25 @@ namespace DataLoadEngine.DatabaseManagement.Operations
 
                         var rawDataType = col.GetRuntimeDataType(LoadStage.AdjustRaw);
 
-                        DatabaseOperations.DropColumnFromTable(destDbInfo, tableName, liveName);
-                        DatabaseOperations.AddColumnToTable(destDbInfo,tableName,rawName,rawDataType);
+                        DropColumnFromTable(table, liveName,listener);
+                        AddColumnToTable(table, rawName, rawDataType, listener);
                     }
             }
         }
 
-        
+        private void AddColumnToTable(DiscoveredTable table, string desiredColumnName, string desiredColumnType, IDataLoadEventListener listener)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, string.Format("Adding column '{0}' with datatype '{1}' to table '{2}'", desiredColumnName, desiredColumnType, table.GetFullyQualifiedName())));
+            table.AddColumn(desiredColumnName, desiredColumnType, true, 500);
+        }
+
+        private void DropColumnFromTable(DiscoveredTable table, string columnName, IDataLoadEventListener listener)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, string.Format("Dropping column '{0}' from table '{1}'", columnName, table.GetFullyQualifiedName())));
+            var col = table.DiscoverColumn(columnName);
+            table.DropColumn(col);
+        }
+
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
         {

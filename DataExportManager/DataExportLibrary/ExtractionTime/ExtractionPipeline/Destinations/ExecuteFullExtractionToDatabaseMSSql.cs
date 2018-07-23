@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
@@ -12,6 +13,7 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
@@ -20,6 +22,7 @@ using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using HIC.Logging;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -224,7 +227,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
             if (_request is ExtractGlobalsCommand)
             {
-                tblName = tblName.Replace("$d", "Globals");
+                tblName = tblName.Replace("$d", ExtractionDirectory.GLOBALS_DATA_NAME);
                 tblName = tblName.Replace("$a", "G");
             }
 
@@ -268,6 +271,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             
             if (TableLoadInfo != null)
                 TableLoadInfo.CloseAndArchive();
+            // also close off the cumulative extraction result
+            if (_request is ExtractDatasetCommand)
+            {
+                var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
+                if (result != null)
+                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), TableLoadInfo.Inserts);
+            }
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -290,7 +300,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public string GetFilename()
         {
-            return _request.Name;
+            return _request.ToString();
         }
 
         public string GetDestinationDescription()
@@ -325,14 +335,19 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             }
         }
 
-        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, ExtractableDataSet dataSet)
+        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
         {
-            return new MsSqlExtractionReleasePotential(repositoryLocator, configuration, dataSet);
+            return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
         }
 
         public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)
         {
             return new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
+        }
+
+        public GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+        {
+            return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
         }
 
         private ExtractCommandState ExtractSupportingSql(SupportingSQLTable sql, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
@@ -370,6 +385,25 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                     //end auditing it
                     tableLoadInfo.CloseAndArchive();
+
+                    if (_request is ExtractDatasetCommand)
+                    {
+                        var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                        var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
+                        supplementalResult.CompleteAudit(this.GetType(), TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
+                    }
+                    else
+                    {
+                        var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                        Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
+                        var result =
+                            new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
+                                                              extractGlobalsCommand.Configuration,
+                                                              sql.SQL,
+                                                              sql);
+                        result.CompleteAudit(this.GetType(), TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
+                        extractGlobalsCommand.ExtractionResults.Add(result);
+                    }
                 }
             }
             catch (Exception e)
@@ -383,12 +417,29 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private ExtractCommandState ExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
         {
-            SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(null);
+            SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(doc);
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to copy " + doc + " to directory " + directory.FullName));
             try
             {
-                fetcher.ExtractToDirectory(directory, doc);
+                var outputPath = fetcher.ExtractToDirectory(directory);
+                if (_request is ExtractDatasetCommand)
+                {
+                    var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                    var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
+                    supplementalResult.CompleteAudit(this.GetType(), outputPath, 0);
+                }
+                else
+                {
+                    var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                    Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
+                    var result = new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
+                                                                   extractGlobalsCommand.Configuration,
+                                                                   null,
+                                                                   doc);
+                    result.CompleteAudit(this.GetType(), outputPath, 0);
+                    extractGlobalsCommand.ExtractionResults.Add(result);
+                }
                 return ExtractCommandState.Completed;
             }
             catch (Exception e)
@@ -436,6 +487,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                     //end auditing it
                     tableLoadInfo.CloseAndArchive();
+
+                    if (_request is ExtractDatasetCommand)
+                    {
+                        var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                        var supplementalResult = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup.TableInfo.Name, lookup.TableInfo);
+                        supplementalResult.CompleteAudit(this.GetType(), TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
+                    }
                 }
             }
             catch (Exception e)
@@ -519,13 +577,19 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 var database = server.ExpectDatabase(GetDatabaseName());
 
                 if (database.Exists())
-                    notifier.OnCheckPerformed(new CheckEventArgs("Confirmed database " + database + " exists", CheckResult.Success));
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Database " + database + " already exists! if an extraction has already been run " +
+                            "you may have errors if you are re-extracting the same tables", CheckResult.Warning));
                 else
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Database " + database + " does not exist on server... how were we even able to connect?!", CheckResult.Fail));
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Database " + database + " does not exist on server... it will be created at runtime",
+                            CheckResult.Success));
                     return;
                 }
-                
+
                 var tables = database.DiscoverTables(false);
 
                 if (tables.Any())

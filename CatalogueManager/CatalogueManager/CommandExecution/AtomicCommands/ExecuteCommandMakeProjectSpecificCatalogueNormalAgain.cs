@@ -40,7 +40,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             }
         }
 
-
+        public override string GetCommandHelp()
+        {
+            return "Take a dataset that was previously only usable with extractions of a specific project and make it free for use in any extraction project";
+        }
 
         public override void Execute()
         {

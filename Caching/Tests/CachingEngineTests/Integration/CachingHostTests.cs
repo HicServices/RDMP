@@ -29,7 +29,6 @@ namespace CachingEngineTests.Integration
             var cacheProgress = MockRepository.GenerateStub<ICacheProgress>();
 
             var loadProgress = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress.LockedBecauseRunning = false;
             loadProgress.IsDisabled = false;
 
             cacheProgress.Stub(progress => progress.LoadProgress).Return(loadProgress);
@@ -75,8 +74,7 @@ namespace CachingEngineTests.Integration
             // set up a factory stub to return our engine mock
             var cacheHost = new CachingHost(CatalogueRepository)
             {
-                CacheProgressList = new List<ICacheProgress> { cacheProgress },
-                PermissionWindows = new List<IPermissionWindow> { permissionWindow }
+                CacheProgressList = new List<ICacheProgress> { cacheProgress }
             };
 
             var stopTokenSource = new CancellationTokenSource();

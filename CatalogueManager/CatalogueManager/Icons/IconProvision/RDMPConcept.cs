@@ -132,6 +132,7 @@ namespace CatalogueManager.Icons.IconProvision
         AllObjectSharingNode,
         AllObjectImportsNode,
         AllObjectExportsNode,
+        AllConnectionStringKeywordsNode,
 
         ExtractableColumn,
         ProjectCohortsNode,
@@ -140,5 +141,15 @@ namespace CatalogueManager.Icons.IconProvision
 
         AllLoadMetadatasNode,
         AllPermissionWindowsNode,
+
+
+        Waiting,
+        WaitingForDatabase,
+        Writing,
+        Warning,
+        Diff,
+        FileMissing,
+
+        ConnectionStringKeyword,
     }
 }

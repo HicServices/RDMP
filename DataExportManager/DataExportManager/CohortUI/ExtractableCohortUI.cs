@@ -11,6 +11,7 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportManager.CohortUI.ImportCustomData;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -45,7 +46,7 @@ namespace DataExportManager.CohortUI
     /// additional release identifier columns into your cohort table and want to use that column instead of the listed release identifier column (again this is a really bad idea).</para>
     /// 
     /// </summary>
-    public partial class ExtractableCohortUI :ExtractableCohortUI_Design
+    public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableUI
     {
         internal event ChangesSavedHandler ChangesSaved;
 
@@ -118,7 +119,6 @@ namespace DataExportManager.CohortUI
         public ExtractableCohortUI()
         {
             InitializeComponent();
-            lblSaved.Text = "";
             
             if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
                 return;
@@ -159,32 +159,6 @@ namespace DataExportManager.CohortUI
             AssociatedCollection = RDMPCollection.SavedCohorts;
         }
 
-        protected override bool ProcessKeyPreview(ref Message m)
-        {
-            PreviewKey p = new PreviewKey(ref m, ModifierKeys);
-
-            if (p.IsKeyDownMessage && p.e.KeyCode == Keys.S && p.e.Control)
-            {
-                try
-                {
-                    ExtractableCohort.SaveToDatabase();
-                    this.lblSaved.Text = "Saved";
-
-                    if (ChangesSaved != null)
-                        ChangesSaved();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
-                p.Trap(this);
-
-            }
-
-            return base.ProcessKeyPreview(ref m);
-        }
-        
         private void tbOverrideReleaseIdentifierSQL_TextChanged(object sender, EventArgs e)
         {
             if (ExtractableCohort != null)
@@ -215,6 +189,11 @@ namespace DataExportManager.CohortUI
         
         private void btnImportPatientIndexTable_Click(object sender, EventArgs e)
         {
+        }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
         }
     }
 

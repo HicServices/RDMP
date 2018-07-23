@@ -16,15 +16,13 @@ namespace CatalogueLibrary.Data
     /// disrupt routine hospital use).  Also serves as a Locking point for job control.  Once an IPermissionWindow is in use by a process (e.g. Caching Pipeline) then it
     /// is not available to other processes (e.g. loading or other caching pipelines that share the same IPermissionWindow).
     /// </summary>
-    public class PermissionWindow : VersionedDatabaseEntity, IPermissionWindow, ILockable
+    public class PermissionWindow : VersionedDatabaseEntity, IPermissionWindow
     {
         #region Database Properties
 
         private string _name;
         private string _description;
         private bool _requiresSynchronousAccess;
-        private bool _lockedBecauseRunning;
-        private string _lockHeldBy;
         
         public string Name
         {
@@ -43,19 +41,7 @@ namespace CatalogueLibrary.Data
             get { return _requiresSynchronousAccess; }
             set { SetField(ref  _requiresSynchronousAccess, value); }
         }
-
-        public bool LockedBecauseRunning
-        {
-            get { return _lockedBecauseRunning; }
-            set { SetField(ref  _lockedBecauseRunning, value); }
-        }
-
-        public string LockHeldBy
-        {
-            get { return _lockHeldBy; }
-            set { SetField(ref  _lockHeldBy, value); }
-        }
-
+        
         public string PermissionPeriodConfig {
             get { return SerializePermissionWindowPeriods(); }
             set
@@ -131,9 +117,6 @@ namespace CatalogueLibrary.Data
             Description = r["Description"].ToString();
             RequiresSynchronousAccess = Convert.ToBoolean(r["RequiresSynchronousAccess"]);
             PermissionPeriodConfig = r["PermissionPeriodConfig"].ToString();
-
-            LockedBecauseRunning = Convert.ToBoolean(r["LockedBecauseRunning"]);
-            LockHeldBy = r["LockHeldBy"].ToString();
         }
 
         public PermissionWindow(List<PermissionWindowPeriod> permissionPeriods)
@@ -152,25 +135,6 @@ namespace CatalogueLibrary.Data
         {
             PermissionWindowPeriods = windowPeriods;
             PermissionPeriodConfig = SerializePermissionWindowPeriods();
-        }
-
-        public void Lock()
-        {
-            LockedBecauseRunning = true;
-            LockHeldBy = Environment.UserName + " (" + Environment.MachineName + ")";
-            SaveToDatabase();
-        }
-
-        public void Unlock()
-        {
-            LockedBecauseRunning = false;
-            LockHeldBy = null;
-            SaveToDatabase();
-        }
-
-        public void RefreshLockPropertiesFromDatabase()
-        {
-            ((CatalogueRepository)Repository).RefreshLockPropertiesFromDatabase(this);
         }
     }
 }
