@@ -59,6 +59,8 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void Test_CatalogueItems_NonExtractedPrimaryKey_AreRespected()
         {
+            new ConfigurationProperties(false, DataExportRepository).SetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern, "CONCAT('HASHED: ',{0})");
+            
             var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", new string[] { }, new [] { "DateOfBirth" });
 
             var source = new ExecutePkSynthesizerDatasetExtractionSource();
