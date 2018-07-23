@@ -12,6 +12,10 @@ using ReusableUIComponents;
 
 namespace CatalogueManager.MainFormUITabs
 {
+    /// <summary>
+    /// Allows you to set up a <see cref="ConnectionStringKeyword"/> which will be used with all connections made against databases of the given <see cref="DatabaseType"/>.
+    /// Take great care when doing this as you can easily render your datasources unreachable by all system users.
+    /// </summary>
     public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Design, ISaveableUI
     {
         private ConnectionStringKeyword _keyword;
