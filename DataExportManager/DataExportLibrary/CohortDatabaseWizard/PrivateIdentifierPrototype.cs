@@ -19,6 +19,13 @@ namespace DataExportLibrary.CohortDatabaseWizard
             MatchingExtractionInformations = new List<ExtractionInformation>(new []{extractionInformation});
         }
 
+        public PrivateIdentifierPrototype(string runtimeName,string datatype)
+        {
+            RuntimeName = runtimeName;
+            DataType = datatype;
+            MatchingExtractionInformations = new List<ExtractionInformation>();
+        }
+
         public string RuntimeName { get; internal set; }
         public string DataType { get; internal set; }
         public List<ExtractionInformation> MatchingExtractionInformations { get; internal set; }

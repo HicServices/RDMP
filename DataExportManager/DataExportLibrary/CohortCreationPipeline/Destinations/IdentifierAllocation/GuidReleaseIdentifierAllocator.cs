@@ -1,4 +1,5 @@
 ﻿using System;
+using DataExportLibrary.Interfaces.Pipeline;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation
 {
@@ -10,6 +11,11 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAlloca
         public object AllocateReleaseIdentifier(object privateIdentifier)
         {
             return Guid.NewGuid().ToString();
+        }
+
+        public void Initialize(ICohortCreationRequest request)
+        {
+            
         }
     }
 }

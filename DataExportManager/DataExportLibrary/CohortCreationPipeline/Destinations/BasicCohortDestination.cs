@@ -44,7 +44,11 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
         {
             //if user has picked an allocator get an instance
             if (ReleaseIdentifierAllocator != null && _allocator == null)
+            {
                 _allocator = (IAllocateReleaseIdentifiers) new ObjectConstructor().Construct(ReleaseIdentifierAllocator);
+                _allocator.Initialize(Request);
+
+            }
             
             if(!toProcess.Columns.Contains(_privateIdentifier))
                 throw new Exception("Could not find column called " + _privateIdentifier + " in chunk, columns were:" + string.Join(",", toProcess.Columns.OfType<DataColumn>().Select(c => c.ColumnName)));
