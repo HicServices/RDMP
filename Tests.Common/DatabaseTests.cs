@@ -81,11 +81,12 @@ namespace Tests.Common
             {
                 TestDatabaseSettings = ReadSettingsFileFromStream(f.OpenRead());
             }
-
-            //otherwise use the embedded resource file
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                TestDatabaseSettings = ReadSettingsFileFromStream(stream);
-            
+            else
+            {
+                //otherwise use the embedded resource file
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    TestDatabaseSettings = ReadSettingsFileFromStream(stream);
+            }
         }
 
         public DatabaseTests()
