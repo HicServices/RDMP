@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using ANOStore.ANOEngineering;
 using CatalogueLibrary;
@@ -25,6 +26,7 @@ using RDMPStartup;
 using RDMPStartup.Events;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Rhino.Mocks;
 
@@ -34,9 +36,7 @@ namespace Tests.Common
     public class DatabaseTests
     {
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
-        protected static string _serverName;
-        private static string _mySqlServer;
-        private static string _oracleServer;
+        private static TestDatabasesSettings TestDatabaseSettings;
 
         public CatalogueRepository CatalogueRepository
         {
@@ -64,10 +64,10 @@ namespace Tests.Common
             if (CatalogueRepository.SuppressHelpLoading == null)
                 CatalogueRepository.SuppressHelpLoading = true;
             
-            ReadSettingsFile(out _serverName, out TestDatabaseNames.Prefix,out _mySqlServer, out _oracleServer);
+            ReadSettingsFile();
         }
 
-        private static void ReadSettingsFile(out string serverName,out string prefix, out string mysql, out string oracle)
+        private static void ReadSettingsFile()
         {
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "Tests.Common.TestDatabases.txt";
@@ -79,19 +79,18 @@ namespace Tests.Common
             //there is a local text file so favour that one
             if (f != null)
             {
-                ReadSettingsFileFromStream(f.OpenRead(),out serverName,out prefix, out mysql, out oracle);
-                return;
+                TestDatabaseSettings = ReadSettingsFileFromStream(f.OpenRead());
             }
 
             //otherwise use the embedded resource file
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                ReadSettingsFileFromStream(stream,out serverName,out prefix, out mysql,out oracle);
+                TestDatabaseSettings = ReadSettingsFileFromStream(stream);
             
         }
 
         public DatabaseTests()
         {
-            RepositoryLocator = new DatabaseCreationRepositoryFinder(_serverName, TestDatabaseNames.Prefix);
+            RepositoryLocator = new DatabaseCreationRepositoryFinder(TestDatabaseSettings.ServerName, TestDatabaseNames.Prefix);
 
             Console.WriteLine("Expecting Unit Test Catalogue To Be At:"+((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.DescribeServer());
             Assert.IsTrue(((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
@@ -112,36 +111,39 @@ namespace Tests.Common
 
             CreateScratchArea();
 
-            if (_mySqlServer != null)
-                _discoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(_mySqlServer){SslMode = MySqlSslMode.None});
+            if (TestDatabaseSettings.MySql != null)
+                _discoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(TestDatabaseSettings.MySql) { SslMode = MySqlSslMode.None });
 
-            if(_oracleServer != null)
-                _discoveredOracleServer = new DiscoveredServer(_oracleServer,DatabaseType.Oracle);
+            if (TestDatabaseSettings.Oracle != null)
+                _discoveredOracleServer = new DiscoveredServer(TestDatabaseSettings.Oracle, DatabaseType.Oracle);
         }
 
         
 
-        private static void ReadSettingsFileFromStream(Stream stream, out string serverName, out string prefix, out string mySql, out string oracle)
+        private static TestDatabasesSettings ReadSettingsFileFromStream(Stream stream)
         {
+            var settings = new TestDatabasesSettings();
+
             using (StreamReader reader = new StreamReader(stream))
             {
                 string result = reader.ReadToEnd();
 
-                serverName = Regex.Match(result, "^ServerName:(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase).Groups[1].Value.Trim();
-                prefix = Regex.Match(result, "^Prefix:(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase).Groups[1].Value.Trim();
 
-                var mysqlMatch = Regex.Match(result, "^MySql:(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                mySql = mysqlMatch.Success? mysqlMatch.Groups[1].Value.Trim():null;
+                foreach (PropertyInfo p in typeof(TestDatabasesSettings).GetProperties())
+                {
+                    var match = Regex.Match(result, "^" + p.Name + ":(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+                    
+                    if(match.Success)
+                        p.SetValue(settings, match.Groups[1].Value.Trim());
 
-
-                var oracleMatch = Regex.Match(result, "^Oracle:(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                oracle = oracleMatch.Success ? oracleMatch.Groups[1].Value.Trim() : null;
+                }
             }
+            return settings;
         }
 
         private SqlConnectionStringBuilder CreateServerPointerInCatalogue(ServerDefaults defaults, string prefix, string databaseName, ServerDefaults.PermissableDefaults defaultToSet,Assembly creator)
         {
-            var builder = DatabaseCreationProgram.GetBuilder(_serverName, prefix, databaseName);
+            var builder = DatabaseCreationProgram.GetBuilder(TestDatabaseSettings.ServerName, prefix, databaseName);
 
             if (string.IsNullOrWhiteSpace(databaseName))
                 builder.InitialCatalog = "";
@@ -277,12 +279,6 @@ delete from {0}..ExtractionInformation
 
 delete from {0}..CatalogueItemIssue
 delete from {0}..IssueSystemUser
-
-delete from {0}..AutomationLockedCatalogues
-delete from {0}..AutomationJob
-delete from {0}..AutomateablePipeline
-delete from {0}..AutomationServiceSlot
-delete from {0}..AutomationServiceException
 
 delete from {0}..SupportingDocument
 delete from {0}..SupportingSQLTable
@@ -428,6 +424,88 @@ delete from {1}..Project
             ExtractionInformation[] extractionInformations;
 
             return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
+        }
+
+        [Flags]
+        public enum TestLowPrivilegePermissions 
+        {
+            Reader = 1,
+            Writer = 2,
+            CreateAndDropTables = 4,
+
+            All = Reader|Writer|CreateAndDropTables
+        }
+
+        protected void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db,TestLowPrivilegePermissions permissions)
+        {
+            SetupLowPrivilegeUserRightsFor(db, permissions, null);
+        }
+        protected void SetupLowPrivilegeUserRightsFor(TableInfo ti, TestLowPrivilegePermissions permissions)
+        {
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
+            SetupLowPrivilegeUserRightsFor(db, permissions, ti);
+        }
+
+        private void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db, TestLowPrivilegePermissions permissions, TableInfo ti)
+        {
+            var dbType = db.Server.DatabaseType;
+
+            //get access to the database using the current credentials
+            var username = TestDatabaseSettings.GetLowPrivilegeUsername(dbType);
+            var password = TestDatabaseSettings.GetLowPrivilegePassword(dbType);
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                Assert.Inconclusive();
+
+            //give the user access to the table
+            var sql = GrantAccessSql(username, dbType, permissions);
+
+            using (var con = db.Server.GetConnection())
+                UsefulStuff.ExecuteBatchNonQuery(sql, con);
+
+            if (ti != null)
+            {
+                //remove any existing credentials
+                foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
+                    CatalogueRepository.TableInfoToCredentialsLinker.BreakAllLinksBetween(cred, ti);
+
+                //set the new ones
+                DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
+                credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
+            }
+            
+        }
+
+
+        private string GrantAccessSql(string username, DatabaseType type, TestLowPrivilegePermissions permissions)
+        {
+            switch (type)
+            {
+                case DatabaseType.MicrosoftSQLServer:
+                    return string.Format(@"
+if exists (select * from sys.sysusers where name = '{0}')
+	drop user [{0}]
+GO
+
+CREATE USER [{0}] FOR LOGIN [{0}]
+GO
+{1} ALTER ROLE [db_datareader] ADD MEMBER [{0}]
+{2} ALTER ROLE [db_datawriter] ADD MEMBER [{0}]
+{3} ALTER ROLE [db_ddladmin] ADD MEMBER [{0}]
+GO
+", username,
+ permissions.HasFlag(TestLowPrivilegePermissions.Reader) ? "" : "--",
+ permissions.HasFlag(TestLowPrivilegePermissions.Reader) ? "" : "--",
+ permissions.HasFlag(TestLowPrivilegePermissions.CreateAndDropTables) ? "" : "--");
+                case DatabaseType.MYSQLServer:
+                    break;
+                case DatabaseType.Oracle:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            throw new NotImplementedException();
         }
     }
     

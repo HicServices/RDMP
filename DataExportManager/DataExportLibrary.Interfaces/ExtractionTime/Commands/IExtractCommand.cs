@@ -1,6 +1,4 @@
 ﻿using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 
 namespace DataExportLibrary.Interfaces.ExtractionTime.Commands
@@ -12,12 +10,10 @@ namespace DataExportLibrary.Interfaces.ExtractionTime.Commands
     public interface IExtractCommand
     {
         DirectoryInfo GetExtractionDirectory();
-        IExtractionConfiguration Configuration { get; set; }
+        IExtractionConfiguration Configuration { get; }
         string DescribeExtractionImplementation();
 
-        ExtractCommandState State { get; set; }
-        string Name { get; }
-
-        IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
+        ExtractCommandState State { get; }
+        void ElevateState(ExtractCommandState newState);
     }
 }

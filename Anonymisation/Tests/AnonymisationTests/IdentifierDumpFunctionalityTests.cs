@@ -266,7 +266,7 @@ namespace AnonymisationTests
                 dumper.Check(notifier);
 
                 Assert.IsTrue(notifier.Messages.Any(m=>
-                    m.Result == CheckResult.Fail 
+                    m.Result == CheckResult.Warning 
                     &&
                     m.Message.Contains("Table ID_BulkData was not found")));
             }

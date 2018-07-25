@@ -9,6 +9,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Tests.Common
 {
+    [Obsolete("Just use DiscoveredDatabase directly please")]
     /// <summary>
     /// Manages a test database, including creation and disposal. Intended for use at test fixture level, i.e. shared by multiple tests.
     /// </summary>

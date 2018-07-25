@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Governance;
 using CatalogueManager.SimpleDialogs.Revertable;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.SimpleDialogs.Governance
@@ -149,7 +150,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         {
             try
             {
-                Process.Start(new FileInfo(tbPath.Text).Directory.FullName);
+                UsefulStuff.GetInstance().ShowFileInWindowsExplorer(new FileInfo(tbPath.Text));
             }
             catch (Exception exception)
             {

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using ReusableLibraryCode;
 
 namespace RDMPObjectVisualisation.Menus.MenuItems
 {
@@ -19,9 +20,7 @@ namespace RDMPObjectVisualisation.Menus.MenuItems
         {
             base.OnClick(e);
 
-            string argument = "/select, \"" + _file.FullName + "\"";
-
-            Process.Start("explorer.exe", argument);
+            UsefulStuff.GetInstance().ShowFileInWindowsExplorer(_file);
         }
     }
 }

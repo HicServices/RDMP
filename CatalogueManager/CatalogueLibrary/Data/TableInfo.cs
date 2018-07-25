@@ -115,9 +115,7 @@ namespace CatalogueLibrary.Data
         }
 
         #endregion
-
         
-
         // Temporary fix to remove downcasts to CatalogueRepository when using CatalogueRepository specific classes etc.
         // Need to fix underlying design issue of having an IRepository in the base when this class requires an ICatalogueRepository
         private readonly ICatalogueRepository _catalogueRepository;
@@ -405,5 +403,12 @@ select 0", con.Connection, con.Transaction);
         {
             return Repository.GetAllObjectsWithParent<ColumnInfo>(this);
         }
+
+        public DiscoveredTable Discover(DataAccessContext context)
+        {
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+            return db.ExpectTable(GetRuntimeName());
+        }
+
     }
 }

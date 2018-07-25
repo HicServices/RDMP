@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
     /// <summary>
     /// See Project
     /// </summary>
-    public interface IProject:IMapsDirectlyToDatabaseTable
+    public interface IProject:IMapsDirectlyToDatabaseTable,IHasDependencies
     {
         string Name { get; set; }
         string MasterTicket { get; set; }

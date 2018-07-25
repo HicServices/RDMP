@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
+using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -46,12 +47,7 @@ namespace CatalogueManager.DataViewing.Collections
             string value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
             ViewType = (ViewType) Enum.Parse(typeof (ViewType), value);
         }
-
-        public IHasDependencies GetAutocompleteObject()
-        {
-            return ColumnInfo;
-        }
-
+        
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
         {
             ribbon.Add(ColumnInfo);
@@ -100,6 +96,11 @@ namespace CatalogueManager.DataViewing.Collections
             return ColumnInfo + "(" + ViewType + ")";
         }
 
+        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        {
+            autoComplete.Add(ColumnInfo);
+        }
+
         public ColumnInfo ColumnInfo
         {
             get { return DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault(); }
@@ -108,6 +109,12 @@ namespace CatalogueManager.DataViewing.Collections
         private IFilter GetFilterIfAny()
         {
             return (IFilter) DatabaseObjects.SingleOrDefault(o => o is IFilter);
+        }
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        {
+            var c = ColumnInfo;
+            return c != null ? c.GetQuerySyntaxHelper() : null;
         }
     }
 }

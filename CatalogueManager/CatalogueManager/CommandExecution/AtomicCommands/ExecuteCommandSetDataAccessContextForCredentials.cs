@@ -31,6 +31,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("DataAccessCredentials '" + existingCredentials[newContext] + "' are used for accessing table under context " + newContext);
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Changes which contexts the credentials can be used under e.g. DataLoad only";
+        }
+
         public override string GetCommandName()
         {
             return _newContext.ToString();

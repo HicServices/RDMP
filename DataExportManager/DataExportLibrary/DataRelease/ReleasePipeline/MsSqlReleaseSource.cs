@@ -7,6 +7,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
@@ -26,53 +27,42 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         private readonly CatalogueRepository _catalogueRepository;
         private DiscoveredDatabase _database;
         private DirectoryInfo _dataPathMap;
-        private bool firstTime = true;
 
-        public MsSqlReleaseSource(CatalogueRepository catalogueRepository) : base()
+        public MsSqlReleaseSource(CatalogueRepository catalogueRepository)
         {
             _catalogueRepository = catalogueRepository;
         }
 
-        public override ReleaseAudit GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (firstTime)
+            DirectoryInfo sourceFolder = GetSourceFolder();
+            Debug.Assert(sourceFolder != null, "sourceFolder != null");
+            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MASTER_DATA_FOLDER_NAME);
+
+            var releaseAudit = new ReleaseAudit()
             {
-                firstTime = false;
-                DirectoryInfo sourceFolder = GetSourceFolder();
-                Debug.Assert(sourceFolder != null, "sourceFolder != null");
-                var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MasterDataFolderName);
+                SourceGlobalFolder = PrepareSourceGlobalFolder()
+            };
 
-                var releaseAudit = new ReleaseAudit()
-                {
-                    SourceGlobalFolder = PrepareSourceGlobalFolder()
-                };
+            if (_database != null)
+            {
+                _database.Detach();
+                var databaseName = _database.GetRuntimeName();
 
-                if (_database != null)
-                {
-                    _database.Detach();
-                    var databaseName = _database.GetRuntimeName();
-
-                    File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"), Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
-                    File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"), Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
-                    File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"));
-                    File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"));
-                }
-
-                return releaseAudit;
+                File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"), Path.Combine(dbOutputFolder.FullName, databaseName + ".mdf"));
+                File.Copy(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"), Path.Combine(dbOutputFolder.FullName, databaseName + "_log.ldf"));
+                File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + ".mdf"));
+                File.Delete(Path.Combine(_dataPathMap.FullName, databaseName + "_log.ldf"));
             }
-            return null;
+
+            return releaseAudit;
         }
 
         private DirectoryInfo GetSourceFolder()
         {
-            foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> releasePotentials in _releaseData.ConfigurationsForRelease)
-            {
-                foreach (ReleasePotential releasePotential in releasePotentials.Value)
-                {
-                    return releasePotential.ExtractDirectory.Parent;
-                }
-            }
-            return null;
+            var extractDir = _releaseData.ConfigurationsForRelease.First().Key.GetProject().ExtractionDirectory;
+
+            return new ExtractionDirectory(extractDir, _releaseData.ConfigurationsForRelease.First().Key).ExtractionDirectoryInfo;
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -87,18 +77,53 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         protected override void RunSpecificChecks(ICheckNotifier notifier)
         {
+            if (!_releaseData.ReleaseGlobals || _releaseData.ReleaseState == ReleaseState.DoingPatch)
+                notifier.OnCheckPerformed(new CheckEventArgs("You cannot untick globals or release a subset of datasets when releasing from a DB", CheckResult.Fail));
+
             var foundConnection = String.Empty;
             var tables = new List<string>();
-            foreach (var configs in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.CumulativeExtractionResults))
+            foreach (var cumulativeResult in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.CumulativeExtractionResults))
             {
-                var candidate = configs.DestinationDescription.Split('|')[0] + "|" +
-                                configs.DestinationDescription.Split('|')[1];
+                string candidate = cumulativeResult.DestinationDescription.Split('|')[0] + "|" +
+                                   cumulativeResult.DestinationDescription.Split('|')[1];
 
-                tables.Add(configs.DestinationDescription.Split('|')[2]);
+                tables.Add(cumulativeResult.DestinationDescription.Split('|')[2]);
 
-                if (String.IsNullOrEmpty(foundConnection))
+                if (String.IsNullOrEmpty(foundConnection)) // the first time we use the candidate as our connection...
                     foundConnection = candidate;
-                if (foundConnection != candidate)
+
+                if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
+                    throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
+                                        "Please re-run the extracts against the same database.");
+
+                foreach (var supplementalResult in cumulativeResult.SupplementalExtractionResults
+                                                                   .Where(x => x.GetExtractedType() == typeof(SupportingSQLTable) || 
+                                                                               x.GetExtractedType() == typeof(TableInfo)))
+                {
+                    candidate = supplementalResult.DestinationDescription.Split('|')[0] + "|" +
+                                supplementalResult.DestinationDescription.Split('|')[1];
+
+                    tables.Add(supplementalResult.DestinationDescription.Split('|')[2]);
+
+                    if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
+                        throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
+                                            "Please re-run the extracts against the same database.");
+                }
+            }
+
+            foreach (var globalResult in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.SupplementalExtractionResults)
+                                                                              .Where(x => x.GetExtractedType() == typeof(SupportingSQLTable) ||
+                                                                                          x.GetExtractedType() == typeof(TableInfo)))
+            {
+                string candidate = globalResult.DestinationDescription.Split('|')[0] + "|" +
+                                   globalResult.DestinationDescription.Split('|')[1];
+
+                tables.Add(globalResult.DestinationDescription.Split('|')[2]);
+
+                if (String.IsNullOrEmpty(foundConnection)) // the first time we use the candidate as our connection...
+                    foundConnection = candidate;
+
+                if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
                     throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
                                         "Please re-run the extracts against the same database.");
             }
@@ -117,7 +142,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
             if (!_database.Exists())
             {
-                throw new Exception("Database does not exist!");
+                throw new Exception("Database " + _database + " does not exist!");
             }
 
             foreach (var table in tables)
@@ -125,12 +150,13 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 var foundTable = _database.ExpectTable(table);
                 if (!foundTable.Exists())
                 {
-                    throw new Exception("Table does not exist!");
+                    throw new Exception("Table " + table + " does not exist!");
                 }
             }
 
             var spuriousTables = _database.DiscoverTables(false).Where(t => !tables.Contains(t.GetRuntimeName())).ToList();
-            if (spuriousTables.Any() && !notifier.OnCheckPerformed(new CheckEventArgs("Spurious table(s): " + String.Join(",", spuriousTables) + " found in the DB.",
+            if (spuriousTables.Any() && !notifier.OnCheckPerformed(new CheckEventArgs("Spurious table(s): " + String.Join(",", spuriousTables) + " found in the DB." +
+                                                                                      "These WILL BE released, you may want to check them before proceeding.",
                                                                                       CheckResult.Warning,
                                                                                       null,
                                                                                       "Are you sure you want to continue the release process?")))
@@ -139,7 +165,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             DirectoryInfo sourceFolder = GetSourceFolder();
-            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MasterDataFolderName);
+            var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MASTER_DATA_FOLDER_NAME);
 
             var databaseName = _database.GetRuntimeName();
 
@@ -162,6 +188,14 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                     throw new Exception("Release aborted by user.");
                 }
             }
+        }
+
+        protected override DirectoryInfo PrepareSourceGlobalFolder()
+        {
+            if (_releaseData.ReleaseGlobals)
+                return base.PrepareSourceGlobalFolder();
+
+            return null;
         }
     }
 }

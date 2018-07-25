@@ -11,48 +11,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 {
     public class MicrosoftSQLTableHelper : DiscoveredTableHelper
     {
-        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database, string tableName)
+        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database)
         {
-            List<DiscoveredColumn> columns = new List<DiscoveredColumn>();
-
-            DbCommand cmd = DatabaseCommandHelper.GetCommand("use [" + database + @"];  exec sp_columns @table_name", connection.Connection);
-            cmd.Transaction = connection.Transaction;
-
-            DbParameter p = new SqlParameter("@table_name",SqlDbType.VarChar);
-            p.Value = tableName;
-            cmd.Parameters.Add(p);
-
-            using(var r = cmd.ExecuteReader())
-            {
-
-                if (!r.HasRows)
-                    throw new Exception("Could not find any columns using sp_columns for table " + tableName +
-                                        " in database " + database);
-
-                while (r.Read())
-                {
-                    DiscoveredColumn toAdd = new DiscoveredColumn(discoveredTable, (string)r["COLUMN_NAME"], Convert.ToBoolean(r["NULLABLE"]));
-                    toAdd.DataType = new DiscoveredDataType(r, GetSQLType_FromSpColumnsResult(r),toAdd);
-
-                    columns.Add(toAdd);
-                }
-                r.Close();
-            }
-            var pks = ListPrimaryKeys(connection, tableName);
-
-            foreach (DiscoveredColumn c in columns)
-                if (pks.Any(pk=>pk.Equals(c.GetRuntimeName())))
-                    c.IsPrimaryKey = true;
-
-
-            return columns.ToArray();
-            
-        }
-
-        public override DiscoveredColumn[] DiscoverColumns(DiscoveredTableValuedFunction discoveredTableValuedFunction, IManagedConnection connection, string database, string tableName)
-        {
-            string tableValuedFunctionName = discoveredTableValuedFunction.GetRuntimeName();
-
             DbCommand cmd = DatabaseCommandHelper.GetCommand("use [" + database + @"];
 SELECT  
 sys.columns.name AS COLUMN_NAME,
@@ -60,11 +20,14 @@ sys.columns.name AS COLUMN_NAME,
   sys.columns.collation_name AS COLLATION_NAME,
    sys.columns.max_length as LENGTH,
    sys.columns.scale as SCALE,
-   sys.columns.precision as PRECISION
+    sys.columns.is_identity,
+    sys.columns.is_nullable,
+   sys.columns.precision as PRECISION,
+sys.columns.collation_name
 from sys.columns 
 join 
 sys.types on sys.columns.user_type_id = sys.types.user_type_id
-where object_id =OBJECT_ID('" + tableValuedFunctionName+"')", connection.Connection,connection.Transaction);
+where object_id =OBJECT_ID('" + discoveredTable.GetRuntimeName() + "')", connection.Connection, connection.Transaction);
 
             List<DiscoveredColumn> toReturn = new List<DiscoveredColumn>();
 
@@ -72,11 +35,34 @@ where object_id =OBJECT_ID('" + tableValuedFunctionName+"')", connection.Connect
             using (var r = cmd.ExecuteReader())
                 while (r.Read())
                 {
-                    var toAdd = new DiscoveredColumn(discoveredTableValuedFunction,
-                        tableValuedFunctionName + "." + r["COLUMN_NAME"], false);
+                    bool isNullable = Convert.ToBoolean(r["is_nullable"]);
+
+                    //if it is a table valued function prefix the column name with the table valued function name
+                    string columnName = discoveredTable is DiscoveredTableValuedFunction
+                        ? discoveredTable.GetRuntimeName() + "." + r["COLUMN_NAME"]
+                        : r["COLUMN_NAME"].ToString();
+
+                    var toAdd = new DiscoveredColumn(discoveredTable, columnName, isNullable);
+                    toAdd.IsAutoIncrement = Convert.ToBoolean(r["is_identity"]);
                     toAdd.DataType = new DiscoveredDataType(r, GetSQLType_FromSpColumnsResult(r), toAdd);
+                    toAdd.Collation = r["collation_name"] as string;
                     toReturn.Add(toAdd);
                 }
+
+            if(!toReturn.Any())
+                throw new Exception("Could not find any columns in table " + discoveredTable);
+            
+            //don't bother looking for pks if it is a table valued function
+            if (discoveredTable is DiscoveredTableValuedFunction)
+                return toReturn.ToArray();
+            
+            var pks = ListPrimaryKeys(connection, discoveredTable);
+
+            foreach (DiscoveredColumn c in toReturn)
+                if (pks.Any(pk=>pk.Equals(c.GetRuntimeName())))
+                    c.IsPrimaryKey = true;
+
+
             return toReturn.ToArray();
         }
 
@@ -235,7 +221,9 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
                 lengthQualifier = "(" + r["PRECISION"] + "," + r["SCALE"] + ")";
             else
                 if (UsefulStuff.RequiresLength(columnType))
-                    lengthQualifier = "(" + AdjustForUnicode(columnType,Convert.ToInt32(r["LENGTH"])) + ")";
+                {
+                    lengthQualifier = "(" + AdjustForUnicodeAndNegativeOne(columnType,Convert.ToInt32(r["LENGTH"])) + ")";
+                }
 
             if (columnType == "text")
                 return "varchar(max)";
@@ -243,8 +231,11 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             return columnType + lengthQualifier;
         }
 
-        private int AdjustForUnicode(string columnType, int length)
+        private object AdjustForUnicodeAndNegativeOne(string columnType, int length)
         {
+            if (length == -1)
+                return "max";
+
             if (columnType.Contains("nvarchar") || columnType.Contains("nchar") || columnType.Contains("ntext"))
                 return length/2;
 
@@ -252,7 +243,7 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
         }
 
 
-        private string[] ListPrimaryKeys(IManagedConnection con, string tableName)
+        private string[] ListPrimaryKeys(IManagedConnection con, DiscoveredTable table)
         {
             List<string> toReturn = new List<string>();
 
@@ -266,7 +257,7 @@ INNER JOIN sys.columns AS c ON ic.object_id = c.object_id AND ic.column_id = c.c
 ON i.OBJECT_ID = ic.OBJECT_ID 
 AND i.index_id = ic.index_id 
 WHERE (i.is_primary_key = 1) AND ic.OBJECT_ID = OBJECT_ID('dbo.{0}')
-ORDER BY OBJECT_NAME(ic.OBJECT_ID), ic.key_ordinal", tableName);
+ORDER BY OBJECT_NAME(ic.OBJECT_ID), ic.key_ordinal", table.GetRuntimeName());
 
             DbCommand cmd = DatabaseCommandHelper.GetCommand(query, con.Connection);
             cmd.Transaction = con.Transaction;

@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
@@ -16,7 +15,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         public override string GetRuntimeName(string s)
         {
             var result =  base.GetRuntimeName(s);
-            
+
+            if (string.IsNullOrWhiteSpace(result))
+                return result;
+
             //nothing is in caps in mysql ever
             return result.ToLower();
         }
@@ -77,9 +79,34 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             {
                 case MandatoryScalarFunctions.GetTodaysDate:
                     return "now()";
+                case MandatoryScalarFunctions.GetGuid:
+                    return "uuid()";
                 default:
                     throw new ArgumentOutOfRangeException("function");
             }
+        }
+
+        public override string GetAutoIncrementKeywordIfAny()
+        {
+            return "AUTO_INCREMENT";
+        }
+
+        public override Dictionary<string, string> GetSQLFunctionsDictionary()
+        {
+            return new Dictionary<string, string>()
+            {
+                {"left", "LEFT ( string , length)"},
+                {"right", "RIGHT ( string , length )"},
+                {"upper", "UPPER ( string )"},
+                {"substring", "SUBSTR ( str ,start , length ) "},
+                {"dateadd", "DATE_ADD (date, INTERVAL value unit)"},
+                {"datediff", "DATEDIFF ( date1 , date2)  "},
+                {"getdate", "now()"},
+                {"now", "now()"},
+                {"cast", "CAST ( value AS type )"},
+                {"convert", "CONVERT ( value, type ) "},
+                {"case", "CASE WHEN x=y THEN 'something' WHEN x=z THEN 'something2' ELSE 'something3' END"}
+            };
         }
     }
 }

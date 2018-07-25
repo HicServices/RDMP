@@ -5,10 +5,15 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Triggers;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.Migration;
 using DataQualityEngine.Reports;
+using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
@@ -25,99 +30,36 @@ namespace CatalogueManager.DataQualityUIs
     public partial class DQEExecutionControl : DQEExecutionControl_Design
     {
         private Catalogue _catalogue;
-        public Catalogue Catalogue
-        {
-            get { return _catalogue; }
-            private set
-            {
-                _catalogue = value;
-                ReloadUIFromDatabase();
-            }
-        }
-        
+
         public DQEExecutionControl()
         {
             InitializeComponent();
-            dqePreRunCheckerUI1.AllChecksComplete += (s, e) =>
-            {
-                if (IsDisposed || !IsHandleCreated)
-                    return;
-
-                Invoke(new MethodInvoker(AllChecksComplete));
-            };
-
+            
             AssociatedCollection = RDMPCollection.Catalogue;
+            checkAndExecuteUI1.CommandGetter += CommandGetter;
         }
 
-        private void ReloadUIFromDatabase()
+        private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
         {
-            if (_catalogue == null || RepositoryLocator == null)
-                return;
-
-            dqePreRunCheckerUI1.Clear();
-
-            RunChecks();
-        }
-
-        private void AllChecksComplete()
-        {
-            EnableExecution();
-        }
-
-        private void EnableExecution()
-        {
-            if (InvokeRequired)
-                btnExecute.Invoke((MethodInvoker)(() => btnExecute.Enabled = true));
-            else
-                btnExecute.Enabled = true;
-        }
-
-        private void RunChecks()
-        {
-            btnExecute.Enabled = false;
-            CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
-            dqePreRunCheckerUI1.StartChecking(report);
-        }
-
-        private void ExecuteDQE()
-        {
-            Thread t = new Thread(() =>
-            {
-                executionProgressUI1.ShowRunning(true);
-
-                try
-                {
-                    CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue,
-                        SpecialFieldNames.DataLoadRunID);
-                    report.GenerateReport(_catalogue, executionProgressUI1, new CancellationTokenSource().Token);
-                }
-                catch (Exception exception)
-                {
-                    executionProgressUI1.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Error, exception.Message, exception));
-                }
-                finally
-                {
-                    executionProgressUI1.ShowRunning(false);
-                }
-            });
-
-            executionProgressUI1.Text = "DQE Evaluation of " + _catalogue;
-            t.Start();
-        }
-
-        private void btnExecute_Click(object sender, EventArgs e)
-        {
-            executionProgressUI1.Clear();
-            executionProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "DQE execution starting..."));
-
-            ExecuteDQE();
+            return new DqeOptions() { Catalogue = _catalogue.ID, Command = commandLineActivity };
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-            Catalogue = databaseObject;
+            _catalogue = databaseObject;
+            checkAndExecuteUI1.SetItemActivator(activator);
+
+            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
+            rdmpObjectsRibbonUI1.Clear();
+            rdmpObjectsRibbonUI1.Add(RDMPConcept.DQE,OverlayKind.Execute,"Run Data Quality Engine");
+            rdmpObjectsRibbonUI1.Add(_catalogue);
+        }
+
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        {
+            base.ConsultAboutClosing(sender,e);
+            checkAndExecuteUI1.ConsultAboutClosing(sender,e);
         }
 
         public override string GetTabName()
@@ -125,12 +67,15 @@ namespace CatalogueManager.DataQualityUIs
             return "DQE Execution:" + base.GetTabName();
         }
 
-        private void btnRerunChecks_Click(object sender, EventArgs e)
+        private void btnViewResults_Click(object sender, EventArgs e)
         {
-            if (_catalogue == null)
-                return;
+            _activator.ActivateViewDQEResultsForCatalogue(_catalogue);
+        }
 
-            ReloadUIFromDatabase();
+        private void btnConfigureValidation_Click(object sender, EventArgs e)
+        {
+            var cmd = new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue);
+            cmd.Execute();
         }
     }
 

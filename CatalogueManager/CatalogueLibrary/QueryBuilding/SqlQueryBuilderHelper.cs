@@ -541,7 +541,7 @@ namespace CatalogueLibrary.QueryBuilding
 
             //if we are expected to have a topx
             var response = syntaxHelper.HowDoWeAchieveTopX(topX);
-            queryBuilder.TopXCustomLine = AddCustomLine(queryBuilder,response.SQL, response.Location);
+            queryBuilder.TopXCustomLine = AddCustomLine(queryBuilder, response.SQL, response.Location);
             queryBuilder.TopXCustomLine.Role = CustomLineRole.TopX;
         }
 
@@ -554,7 +554,6 @@ namespace CatalogueLibrary.QueryBuilding
                 queryBuilder.SQLOutOfDate = true;
             }
         }
-
 
         public static IEnumerable<CustomLine> GetCustomLinesSQLForStage(ISqlQueryBuilder queryBuilder, QueryComponent stage)
         {

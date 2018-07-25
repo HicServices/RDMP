@@ -48,6 +48,9 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
 
         private void ddDestination_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_preLoadDiscardedColumn == null)
+                return;
+
            _preLoadDiscardedColumn.Destination = (DiscardedColumnDestination) ddDestination.SelectedItem;
         }
 

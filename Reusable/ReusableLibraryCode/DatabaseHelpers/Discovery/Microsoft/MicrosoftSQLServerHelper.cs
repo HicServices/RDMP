@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
@@ -13,6 +14,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 
     public class MicrosoftSQLServerHelper : DiscoveredServerHelper
     {
+        static MicrosoftSQLServerHelper()
+        {
+            //add any keywords that are required to make Oracle work properly here (at API level if it won't work period without it or SystemDefaultLow if it's just recommended)
+        }
 
         //the name of the properties on DbConnectionStringBuilder that correspond to server and database
         public MicrosoftSQLServerHelper() : base(DatabaseType.MicrosoftSQLServer)
@@ -21,6 +26,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 
         protected override string ServerKeyName { get { return "Data Source"; }}
         protected override string DatabaseKeyName { get { return "Initial Catalog"; }}
+
+        protected override string ConnectionTimeoutKeyName { get { return "Connect Timeout";} }
 
         #region Up Typing
         public override DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null)
@@ -48,11 +55,24 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             return new SqlConnection(builder.ConnectionString);
         }
 
-        public override DbConnectionStringBuilder GetConnectionStringBuilder(string connectionString)
+        protected override DbConnectionStringBuilder GetConnectionStringBuilderImpl(string connectionString)
         {
             return new SqlConnectionStringBuilder(connectionString);
         }
 
+        protected override DbConnectionStringBuilder GetConnectionStringBuilderImpl(string server, string database, string username, string password)
+        {
+            var toReturn = new SqlConnectionStringBuilder() { DataSource = server, InitialCatalog = database };
+            if (!string.IsNullOrWhiteSpace(username))
+            {
+                toReturn.UserID = username;
+                toReturn.Password = password;
+            }
+            else
+                toReturn.IntegratedSecurity = true;
+
+            return toReturn;
+        }
         public string GetDatabaseNameFrom(DbConnectionStringBuilder builder)
         {
             return ((SqlConnectionStringBuilder) builder).InitialCatalog;
@@ -149,30 +169,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             return toReturn;
         }
 
-        public override bool RespondsWithinTime(DbConnectionStringBuilder builder, int timeoutInSeconds, out Exception exception)
-        {
-            try
-            {
-                var copyBuilder = new SqlConnectionStringBuilder(builder.ConnectionString);
-                copyBuilder.ConnectTimeout = timeoutInSeconds;
-
-                using (var con = GetConnection(copyBuilder))
-                {
-                    con.Open();
-
-                    con.Close();
-
-                    exception = null;
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                exception = e;
-                return false;
-            }
-        }
-
         public override string GetExplicitUsernameIfAny(DbConnectionStringBuilder builder)
         {
             var u = ((SqlConnectionStringBuilder) builder).UserID;
@@ -185,18 +181,5 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             return string.IsNullOrWhiteSpace(pwd) ? null : pwd;
         }
 
-        public override DbConnectionStringBuilder GetConnectionStringBuilder(string server, string database, string username, string password)
-        {
-            var toReturn = new SqlConnectionStringBuilder() {DataSource = server, InitialCatalog = database};
-            if (!string.IsNullOrWhiteSpace(username))
-            {
-                toReturn.UserID = username;
-                toReturn.Password = password;
-            }
-            else
-                toReturn.IntegratedSecurity = true;
-
-            return toReturn;
-        }
     }
 }

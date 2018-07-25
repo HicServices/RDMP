@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Windows.Forms;
+using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using HIC.Logging;
 
 namespace CatalogueManager.LogViewer.Tabs
@@ -10,41 +14,34 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingRunsTab : LoggingTab
     {
-        public event NavigatePaneToEntityHandler NavigationPaneGoto;
-
-        public LoggingRunsTab()
+        protected override IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
         {
-            base.InitializeComponent();
-            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
+
+            var taskId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
+            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.ProgressMessages, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.FatalErrors, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.TableLoadRuns, new LogViewerFilter { Run = taskId });
         }
 
-        void dataGridView1_CellDoubleClick(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+        protected override DataTable FetchDataTable(LogManager lm)
         {
-            if (e.RowIndex == -1)
-                return;
-
-            NavigationPaneGoto(this, new NavigatePaneToEntityArgs(LogViewerNavigationTarget.DataLoadRuns, (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value));
+            return lm.ListDataLoadRunsAsTable(null);
         }
 
-        public void SetStateTo(LogManager lm, LogViewerFilterCollection filters)
+        public override void SetFilter(LogViewerFilter filter)
         {
-            _filters = filters;
-            if (!_bLoaded)
-            {
-                var dt = lm.ListDataLoadRunsAsTable(null);
-                LoadDataTable(dt);    
-            }
+            base.SetFilter(filter);
 
             string f = null;
-            
-            if (_filters.Task != null)
-                f = "dataLoadTaskID=" + filters.Task;
 
-            if(_filters.Run != null)
+            if (filter.Task != null)
+                f = "dataLoadTaskID=" + filter.Task;
+
+            if (filter.Run != null)
                 if(string.IsNullOrEmpty(f))
-                    f = " ID=" + _filters.Run;
+                    f = " ID=" + filter.Run;
                 else
-                    f += " AND ID="+_filters.Run;
+                    f += " AND ID=" + filter.Run;
 
             SetFilter(f);
         }

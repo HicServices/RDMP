@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
@@ -51,8 +52,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public ExtractionTimeTimeCoverageAggregator ExtractionTimeTimeCoverageAggregator { get; set; }
 
-        public ICumulativeExtractionResults CumulativeExtractionResults { get; protected set; }
-        
         [DemandsInitialization("Determines the systems behaviour when an extraction query returns 0 rows.  Default (false) is that an error is reported.  If set to true (ticked) then instead a DataTable with 0 rows but all the correct headers will be generated usually resulting in a headers only 0 line/empty extract file")]
         public bool AllowEmptyExtractions { get; set; }
 
@@ -68,7 +67,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         public Dictionary<ExtractableColumn, ExtractTimeTransformationObserved> ExtractTimeTransformationsObserved;
         private DbDataCommandDataFlowSource _hostedSource;
 
-        private void Initialize(ExtractDatasetCommand request)
+        protected virtual void Initialize(ExtractDatasetCommand request)
         {
             Request = request;
 
@@ -125,22 +124,30 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (Request == null && GlobalsRequest == null)
-                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Component has not been initialized before being asked to GetChunk(s)"));
-
             // we are in the Global Commands case, let's return an empty DataTable (not null) 
             // so we can trigger the destination to extract the globals docs and sql
             if (GlobalsRequest != null)
             {
+                GlobalsRequest.ElevateState(ExtractCommandState.WaitingForSQLServer);
                 if (firstGlobalChunk)
                 {
+                    //unless we are checking, start auditing
+                    if (!_testMode)
+                    {
+                        StartAuditGlobals();
+                    }
                     firstGlobalChunk = false;
-                    return new DataTable("Globals");
+                    return new DataTable(ExtractionDirectory.GLOBALS_DATA_NAME);
                 }
-                
+
                 return null;
             }
 
+            if (Request == null)
+                throw new Exception("Component has not been initialized before being asked to GetChunk(s)");
+
+            Request.ElevateState(ExtractCommandState.WaitingForSQLServer);
+            
             if(_cancel)
                 throw new Exception("User cancelled data extraction");
             
@@ -148,7 +155,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             {
                //unless we are checking, start auditing
                if(!_testMode)
-                    StartAudit(Request.QueryBuilder.SQL);
+               {
+                   StartAudit(Request.QueryBuilder.SQL);
+               }
 
                if(Request.DatasetBundle.DataSet.DisableExtraction)
                    throw new Exception("Cannot extract " + Request.DatasetBundle.DataSet + " because DisableExtraction is set to true");
@@ -163,28 +172,20 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
             DataTable chunk=null;
 
-            Thread t = new Thread(() =>
+            try
             {
-                try
-                {
-                    chunk = _hostedSource.GetChunk(listener, cancellationToken);
-                }
-                catch (Exception e)
-                {
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Read from source failed",e));
-                }
-            });
-            t.Start();
+                chunk = _hostedSource.GetChunk(listener, cancellationToken);
+            }
+            catch (AggregateException a)
+            {
+                if (a.GetExceptionIfExists<TaskCanceledException>() != null)
+                    _cancel = true;
 
-            bool haveAttemptedCancelling = false;
-            while (t.IsAlive)
+                throw;
+            }
+            catch (Exception e)
             {
-                if(cancellationToken.IsCancellationRequested && _hostedSource.cmd != null && !haveAttemptedCancelling)
-                {
-                    _hostedSource.cmd.Cancel();//cancel the database command
-                    haveAttemptedCancelling = true;
-                }
-                Thread.Sleep(100);
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Read from source failed",e));
             }
             
             if(cancellationToken.IsCancellationRequested)
@@ -201,6 +202,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             if (chunk == null)
             {
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Data exhausted after reading " + _rowsRead + " rows of data ("+UniqueReleaseIdentifiersEncountered.Count + " unique release identifiers seen)"));
+                if (Request != null)
+                    Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered = UniqueReleaseIdentifiersEncountered.Count;
                 return null;
             }
 
@@ -311,7 +314,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             }
         }
 
-        private string GetCommandSQL( IDataLoadEventListener listener)
+        private string GetCommandSQL(IDataLoadEventListener listener)
         {
             string sql = Request.QueryBuilder.SQL;
 
@@ -338,12 +341,25 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             foreach (var audit in previousAudit)
                 audit.DeleteInDatabase();
 
-            CumulativeExtractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
+            var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
 
             string filterDescriptions = RecursivelyListAllFilterNames(Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
 
-            CumulativeExtractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
-            CumulativeExtractionResults.SaveToDatabase();
+            extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
+            extractionResults.SaveToDatabase();
+
+            Request.CumulativeExtractionResults = extractionResults;
+        }
+
+        private void StartAuditGlobals()
+        {
+            var dataExportRepo = ((DataExportRepository)GlobalsRequest.RepositoryLocator.DataExportRepository);
+
+            var previousAudit = dataExportRepo.GetAllGlobalExtractionResultsFor(GlobalsRequest.Configuration);
+
+            //delete old audit records
+            foreach (var audit in previousAudit)
+                audit.DeleteInDatabase();
         }
 
         private string RecursivelyListAllFilterNames(IContainer filterContainer)
@@ -413,62 +429,17 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 return;
             }
 
+            if (GlobalsRequest != null)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Request is for Globals, checking will not be carried out at source", CheckResult.Success));
+                return;
+            }
+            
             if (Request == null)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("ExtractionRequest has not been set", CheckResult.Fail));
                 return;
             }
-
-            notifier.OnCheckPerformed(new CheckEventArgs("ExtractionRequest is set, about to generate test extraction SQL", CheckResult.Success));
-                
-            if(Request.LimitationSql == null || (!Request.LimitationSql.Trim().StartsWith("TOP ")))
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs("Request did not have any LimitationSql or it did not start with TOP",
-                        CheckResult.Warning));
-                
-            notifier.OnCheckPerformed(
-                new CheckEventArgs(
-                    "Extraction SQL for Checking (may differ from runtime extraction SQL e.g. have TOP 100 in it) is :" +
-                    Request.QueryBuilder.SQL, CheckResult.Success));
-
-
-            notifier.OnCheckPerformed(new CheckEventArgs("About to run GetChunk ",CheckResult.Success));
-            try
-            {
-                _testMode = true;
-                DataTable dt = GetChunk(new FromCheckNotifierToDataLoadEventListener(notifier), new GracefulCancellationToken());
-
-                if (dt == null)
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs("The above SQL returned no rows",
-                            CheckResult.Fail));
-                else
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs("successfully read " + dt.Rows.Count + " rows using the above SQL",
-                            CheckResult.Success));
-
-            }
-            catch (Exception e)
-            {
-                if (e.Message.Contains("Timeout"))
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Above SQL resulted in a timeout, it is likely that your pipeline is intact but targets a slow table that is not worth previewing",
-                            CheckResult.Warning, e));
-                else
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Could not read data from the source (above SQL failed)",
-                            CheckResult.Fail, e));
-                }
-            }
-            finally
-            {
-                _testMode = false;
-            }
-
-            
         }
 
         private bool _testMode;

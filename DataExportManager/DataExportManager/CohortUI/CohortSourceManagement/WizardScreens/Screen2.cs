@@ -10,45 +10,46 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortDatabaseWizard;
+using DataExportLibrary.Data.DataTables;
+using ReusableLibraryCode.Checks;
+using ReusableUIComponents.ChecksUI;
 
 namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
 {
     /// <summary>
-    /// Allows you to specify the private and release identifier column name/datatypes for the cohort database you are creating.  It is anticipated that you will have some datasets already
+    /// <para>Allows you to specify the private and release identifier column name/datatypes for the cohort database you are creating.  It is anticipated that you will have some datasets already
     /// configured in the Data Catalogue Database and have marked your patient identifier columns as IsExtractionIdentifier (See ExtractionInformationUI, ImportSQLTable and 
-    /// ForwardEngineerCatalogue).
+    /// ForwardEngineerCatalogue).</para>
     /// 
-    /// <para>All your private patient identifier fields should have the same name and datatype (e.g. 'NHSNumber' char(10)).  If you have a large legacy architecture and you cannot standardise
-    /// the names of your private identifier columns then you can just alias them '[MyTable].[MyCol] as MyColRenamed' in ExtractionInformationUI (but this is not recommended).  Press
-    /// the button at the top of the screen to list all the identifier columns in your datasets.  Select the correct name/datatype.</para>
-    /// 
+    /// <para>Once you have understood and configured your cohort database schema including private / release identifier datatypes you can now choose which database/server to 
+    /// create the database on (Sql Server).  Enter the server details.  If you omit username and password then Windows Authentication (Integrated Security) is used, if you enter a
+    /// username/password then these will be stored in the Data Export Manager database in encrypted form (See PasswordEncryptionKeyLocationUI) and used to do Sql Authentication when
+    /// doing data extractions.</para> 
+    ///  
     /// <para>After you have chosen the correct private identifier you should choose a strategy for allocating release identifiers.  Because each agency handles governance and identifier assignment
-    /// differently you can select 'Leave Blank' and provide your own implementation by editing the resulting cohort database manually (advanced topic).  Or you can select from one of the 
-    /// two 'out of the box' solutions:</para>
-    /// 
-    /// <para>1. Auto Incrementing Int - generates an autonum column for the release identifier (Also known as magic numbers).
-    /// 2. Guid - generates a new Globally Unique Identifier String for each release identifier (e.g. 29e4506c-c8ad-48e5-b8ad-4fa999dcd3d3)</para>
-    /// 
-    /// <para>Between the two, Guid is recommended since it prevents you making mistakes if you ever have to deanonymise data since you cannot cross map against the wrong cohort database (like you
-    /// could if you used autonums).</para>
+    /// differently you can select 'Allow Null Release Identifiers' and provide allocate them yourself manually (e.g. through a stored proceedure).</para>
     /// </summary>
     public partial class Screen2 : RDMPUserControl
     {
         public Screen2()
         {
             InitializeComponent();
+            helpIcon1.SetHelpText("Null Release Identifiers",
+                @"In RMDP a cohort is a list of private identifiers paired to release identifiers.  Normally these release identifiers are allocated as part of the committing pipeline (e.g. as a new GUID).  If you want to allocate these later yourself e.g. with a stored proceedure then you can tick 'AllowNullReleaseIdentifiers' to create a cohort schema where the release identifier can be null.");
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            Wizard = new CreateNewCohortDatabaseWizard(RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository);
+            serverDatabaseTableSelector1.HideTableComponents();
+            Wizard = new CreateNewCohortDatabaseWizard(null,RepositoryLocator.CatalogueRepository,RepositoryLocator.DataExportRepository,false);
         }
 
-        public ReleaseIdentifierAssignmentStrategy Strategy { get; private set; }
         public CreateNewCohortDatabaseWizard Wizard { get; private set; }
         public PrivateIdentifierPrototype PrivateIdentifierPrototype { get; private set; }
+
+        public ExternalCohortTable ExternalCohortTableCreatedIfAny { get; private set; }
 
         private void btnDiscoverExtractionIdentifiers_Click(object sender, EventArgs e)
         {
@@ -59,38 +60,37 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
                 MessageBox.Show("It looks like none of the ExtractionInformations in your Catalogue database are marked as IsExtractionIdentifier");
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnNext_Click(object sender, EventArgs e)
         {
-            var prototype = listView1.SelectedObject as PrivateIdentifierPrototype;
-            PrivateIdentifierPrototype = prototype;
+            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+            if (db == null)
+            {
+                MessageBox.Show("You must select a database");
+                return;
+            }
+            if (PrivateIdentifierPrototype == null)
+            {
+                MessageBox.Show("You must select a private identifier datatype");
+                return;
+            }
 
-            if (prototype == null)
-            {
-                cohortSourceDiagram1.SetPrivateIdentifierText("");
-                groupBox1.Enabled = false;
-            }
-            else
-            {
-                cohortSourceDiagram1.SetPrivateIdentifierText(prototype.RuntimeName + " " + prototype.DataType);
-                groupBox1.Enabled = true;
-            }
+            Wizard = new CreateNewCohortDatabaseWizard(db, RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository,cbAllowNullReleaseIdentifiers.Checked);
+
+            var popup = new PopupChecksUI("Creating Cohort Table", false);
+            ExternalCohortTableCreatedIfAny = Wizard.CreateDatabase(PrivateIdentifierPrototype, popup);
+
+            
+
+            if(popup.GetWorst() <= CheckResult.Warning)
+                if(MessageBox.Show("Close Form?","Close",MessageBoxButtons.YesNo ) == DialogResult.Yes)
+                    ParentForm.Close();
         }
 
-        private void rb_CheckedChanged(object sender, EventArgs e)
+        
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            btnNext.Enabled = true;
-
-            if(rbAutoIncrementing.Checked)
-                Strategy = ReleaseIdentifierAssignmentStrategy.Autonum;
-            else
-            if (rbGuid.Checked)
-                Strategy = ReleaseIdentifierAssignmentStrategy.Guid;
-            else if (rbIWantToHackTheReleaseIdentifierMyself.Checked)
-                Strategy = ReleaseIdentifierAssignmentStrategy.LeaveBlank;
-            else
-                btnNext.Enabled = false;
-
-            cohortSourceDiagram1.SetPublicIdentifierText(Wizard.GetReleaseIdentifierNameAndTypeAsSqlString(Strategy));
+            PrivateIdentifierPrototype = (PrivateIdentifierPrototype) listView1.SelectedObject;
         }
     }
 }

@@ -36,9 +36,8 @@ namespace DataLoadEngine.LoadProcess.Scheduling
 
             var loadProgress = loadProgresses.First();
 
-            // we don't need any other schedules the strategy may have given us, so unlock them
+            // we don't need any other schedules the strategy may have given us
             loadProgresses.Remove(loadProgress);
-            loadProgresses.ForEach(progress => progress.Unlock());
 
             // Create the job factory
             if (_scheduledJobFactory != null)
@@ -46,22 +45,14 @@ namespace DataLoadEngine.LoadProcess.Scheduling
 
             _scheduledJobFactory = new SingleScheduledJobFactory(loadProgress, JobDateGenerationStrategyFactory.Create(loadProgress,DataLoadEventListener), OverrideNumberOfDaysToLoad??loadProgress.DefaultNumberOfDaysToLoadEachTime, LoadMetadata, LogManager);
             
-            try
-            {
-                // If the job factory won't produce any jobs we can bail out here
-                if (!_scheduledJobFactory.HasJobs())
-                    return ExitCodeType.OperationNotRequired;
+            // If the job factory won't produce any jobs we can bail out here
+            if (!_scheduledJobFactory.HasJobs())
+                return ExitCodeType.OperationNotRequired;
 
-                // Run the data load
-                JobProvider = _scheduledJobFactory;
+            // Run the data load
+            JobProvider = _scheduledJobFactory;
 
-             return base.Run(loadCancellationToken,payload);
-            }
-            finally
-            {
-                // Remember to unlock load schedule after completion
-                loadProgress.Unlock();
-            }
+            return base.Run(loadCancellationToken,payload);
         }
     }
 }

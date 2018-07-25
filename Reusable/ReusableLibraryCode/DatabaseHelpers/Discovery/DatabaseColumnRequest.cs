@@ -1,3 +1,4 @@
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
@@ -8,13 +9,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     /// 
     /// <para>Type specification is defined in the DatabaseTypeRequest but can also be specified explicitly (e.g. 'varchar(10)').</para>
     /// </summary>
-    public class DatabaseColumnRequest
+    public class DatabaseColumnRequest:ISupplementalColumnInformation
     {
         private readonly string _explicitDbType;
         public string ColumnName { get; set; }
         private readonly DatabaseTypeRequest _typeRequested;
         public bool AllowNulls { get; set; }
         public bool IsPrimaryKey { get; set; }
+
+        public bool IsAutoIncrement { get; set; }
+        public MandatoryScalarFunctions Default { get; set; }
+        public string Collation { get; set; }
 
         public DatabaseColumnRequest(string columnName, DatabaseTypeRequest typeRequested, bool allowNulls = true)
         {

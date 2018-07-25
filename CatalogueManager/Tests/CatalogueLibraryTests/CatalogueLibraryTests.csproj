@@ -251,8 +251,6 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Automation\AutomationJobTests.cs" />
-    <Compile Include="Automation\AutomationServiceSlotTests.cs" />
     <Compile Include="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
     <Compile Include="ImportTests\GatherAndShareTests.cs" />
     <Compile Include="ImportTests\PluginClassTests.cs" />
@@ -266,6 +264,7 @@
     <Compile Include="Integration\ColumnInfoTests.cs" />
     <Compile Include="Integration\CredentialsTests.cs" />
     <Compile Include="Integration\CrossDatabaseTriggerTests.cs" />
+    <Compile Include="Integration\DataAccess\ConnectionStringKeywordAccumulatorTests.cs" />
     <Compile Include="Integration\DataAccess\SuperMultiThreadedVolumeAccess.cs" />
     <Compile Include="Integration\DataAccess\TestDataAccess.cs" />
     <Compile Include="Integration\Dependencies\DependencyTests.cs" />
@@ -316,6 +315,7 @@
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\RDMPFormInitializationTests.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousEmptyChecksMethodsOrNotICheckablePlugins.cs" />
     <Compile Include="SourceCodeEvaluation\InterfaceDeclarationsCorrect.cs" />
+    <Compile Include="SourceCodeEvaluation\RunUITests.cs" />
     <Compile Include="SourceCodeEvaluation\SinglePropertyUISourceCodeEvaluator.cs" />
     <Compile Include="TestResources.Designer.cs">
       <AutoGen>True</AutoGen>

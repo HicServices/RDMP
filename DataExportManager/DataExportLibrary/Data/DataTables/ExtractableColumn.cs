@@ -213,5 +213,37 @@ namespace DataExportLibrary.Data.DataTables
                 return null;
             }
         }
+
+        /// <summary>
+        /// Returns true if the current state of the ExtractableColumn is different from the current state of the original <see cref="ExtractionInformation"/> that 
+        /// it was cloned from.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsOutOfSync()
+        {
+            var ei = CatalogueExtractionInformation;
+
+            if (ei != null)
+                if (ei.IsExtractionIdentifier != IsExtractionIdentifier || ei.SelectSQL != SelectSQL)
+                    return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Copies all values (SelectSQL, Order, IsPrimaryKey etc from the specified <see cref="IColumn"/>) then saves to database.
+        /// </summary>
+        /// <param name="item"></param>
+        public void UpdateValuesToMatch(IColumn item)
+        {
+            //Add new things you want to copy from the Catalogue here
+            HashOnDataRelease = item.HashOnDataRelease;
+            IsExtractionIdentifier = item.IsExtractionIdentifier;
+            IsPrimaryKey = item.IsPrimaryKey;
+            Order = item.Order;
+            Alias = item.Alias;
+            SelectSQL = item.SelectSQL;
+            SaveToDatabase();
+        }
     }
 }

@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.Interfaces.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
@@ -111,13 +112,14 @@ namespace DataExportLibrary.Data.DataTables
             return Name;
         }
         
-        public ExternalCohortTable(IDataExportRepository repository, string name)
+        public ExternalCohortTable(IDataExportRepository repository, string name, DatabaseType databaseType)
         {
             Repository = repository;
-            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository,DatabaseType.MicrosoftSQLServer);
+            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
-                {"Name", name ?? "NewExternalSource" + Guid.NewGuid()}
+                {"Name", name ?? "NewExternalSource" + Guid.NewGuid()},
+                {"DatabaseType",databaseType}
             });
         }
 
@@ -126,12 +128,14 @@ namespace DataExportLibrary.Data.DataTables
         {
             SoftwareVersion = r["SoftwareVersion"].ToString();
             Name = r["Name"] as string;
+            var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 
-            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(((DataExportRepository)repository).CatalogueRepository,DatabaseType.MicrosoftSQLServer);
+            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(((DataExportRepository)repository).CatalogueRepository,databaseType);
 
             Server = r["Server"] as string;
             Username = r["Username"] as string;
             Password = r["Password"] as string;
+
 
             if(!string.IsNullOrWhiteSpace(Server))
                 Server = RDMPQuerySyntaxHelper.EnsureValueIsNotWrapped(Server);
@@ -177,6 +181,31 @@ namespace DataExportLibrary.Data.DataTables
                                     " is the same as the PrivateIdentifierSQL, this is forbidden");
 
             return toReturn;
+        }
+
+        public IExternalCohortDefinitionData GetExternalData(IExtractableCohort extractableCohort)
+        {
+            string sql = @"select projectNumber, description,version,dtCreated from " + DefinitionTableName + " where id = " + extractableCohort.OriginID;
+
+            var db = Discover();
+
+            using (var con = db.Server.GetConnection())
+            {
+                con.Open();
+                var getDescription =db.Server.GetCommand(sql, con);
+
+                var r = getDescription.ExecuteReader();
+
+                if (!r.Read())
+                    throw new Exception("No records returned for Cohort OriginID " + extractableCohort.OriginID);
+
+                return new ExternalCohortDefinitionData(r, Name);
+            }
+        }
+
+        public DiscoveredDatabase Discover()
+        {
+            return DataAccessPortal.GetInstance().ExpectDatabase(this, DataAccessContext.DataExport);
         }
 
         public void Check(ICheckNotifier notifier)
@@ -275,14 +304,14 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
         
-        public void PushToServer(ICohortDefinition newCohortDefinition, DbConnection con, DbTransaction transaction)
+        public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
         {
-            var cmdInsert = DatabaseCommandHelper.GetCommand("INSERT INTO " + DefinitionTableName + "(projectNumber,version,description) VALUES (@projectNumber,@version,@description); SELECT @@IDENTITY;", con, transaction);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@projectNumber",cmdInsert,newCohortDefinition.ProjectNumber);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@version",cmdInsert,newCohortDefinition.Version);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@description",cmdInsert,newCohortDefinition.Description);
-            
-            newCohortDefinition.ID = Convert.ToInt32(cmdInsert.ExecuteScalar());
+            newCohortDefinition.ID = Discover().ExpectTable(DefinitionTableName).Insert(new Dictionary<string, object>()
+            {
+                {"projectNumber",newCohortDefinition.ProjectNumber},
+                {"version",newCohortDefinition.Version},
+                {"description",newCohortDefinition.Description},
+            },connection.ManagedTransaction);
         }
         #endregion
 
@@ -300,10 +329,6 @@ namespace DataExportLibrary.Data.DataTables
                     CheckResult.Fail, null));
         }
         
-        public DiscoveredDatabase GetExpectDatabase()
-        {
-            return DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport).ExpectDatabase(Database);
-        }
 
         #region IDataAccessCredentials and IDataAccessPoint delegation
         public string Password
@@ -362,10 +387,18 @@ namespace DataExportLibrary.Data.DataTables
                 OnPropertyChanged(); 
             }
         }
-        [NoMappingToDatabase]
+
         public DatabaseType DatabaseType
         {
             get { return SelfCertifyingDataAccessPoint.DatabaseType; }
+            set
+            {
+                if (Equals(SelfCertifyingDataAccessPoint.DatabaseType, value))
+                    return;
+
+                SelfCertifyingDataAccessPoint.DatabaseType = value;
+                OnPropertyChanged();
+            }
         }
 
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
@@ -414,6 +447,22 @@ dtCreated as dtCreated
 
                 return string.Format(sql, DefinitionTableName);
 
+        }
+        
+        [Obsolete("Use Discover instead")]
+        public DiscoveredDatabase GetExpectDatabase()
+        {
+            return Discover();
+        }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new IHasDependencies[0];
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            return new IHasDependencies[0];
         }
     }
 }

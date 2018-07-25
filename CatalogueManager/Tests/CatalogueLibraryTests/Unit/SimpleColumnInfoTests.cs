@@ -1,5 +1,9 @@
-﻿using CatalogueLibrary.Data;
+﻿using System.Linq;
+using CatalogueLibrary.Data;
 using NUnit.Framework;
+using ReusableLibraryCode;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Unit
@@ -8,19 +12,26 @@ namespace CatalogueLibraryTests.Unit
     {
         [Test]
         [TestCase("varchar(5)",5)]
-        [TestCase("varchar()", null)]
-        [TestCase("int", null)]
-        [TestCase("datetime2", null)]
+        [TestCase("int", -1)]
+        [TestCase("datetime2", -1)]
         [TestCase("nchar(100)", 100)]
         [TestCase("char(11)", 11)]
+        [TestCase("text", int.MaxValue)]
+        [TestCase("varchar(max)", int.MaxValue)]
         public void GetColumnLength(string type, int? expectedLength)
         {
-            var ti = new TableInfo(CatalogueRepository, "Foo");
-            var c = new ColumnInfo(CatalogueRepository, "", type, ti);
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            var t = db.CreateTable("MyTable", new[]
+            {
+                new DatabaseColumnRequest("MyCol", type)
+            });
 
-            Assert.AreEqual(c.GetColumnLengthIfAny(),expectedLength);
+            ColumnInfo[] cis;
+            TableInfo ti;
+            Import(t, out ti, out cis);
+            
+            Assert.AreEqual(expectedLength,cis.Single().Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString());
 
-            c.DeleteInDatabase();
             ti.DeleteInDatabase();
         }
     }

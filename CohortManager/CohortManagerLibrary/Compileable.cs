@@ -39,9 +39,10 @@ namespace CohortManagerLibrary
         {
             set
             {
-                _state = value; 
-                if(StateChanged != null)
-                    StateChanged(this,new EventArgs());
+                _state = value;
+                var h = StateChanged;
+                if(h != null)
+                    h(this,new EventArgs());
             }
             get { return _state; }
         }

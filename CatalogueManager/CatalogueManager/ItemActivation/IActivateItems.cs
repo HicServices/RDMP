@@ -32,6 +32,7 @@ using CohortManagerLibrary;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using MapsDirectlyToDatabaseTable;
+using RDMPAutomationService.Runners;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.CommandExecution;
@@ -121,37 +122,38 @@ namespace CatalogueManager.ItemActivation
         T Activate<T>(IPersistableObjectCollection collection) where T : IObjectCollectionControl, new();
 
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
-        
+
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
-        
+
         void ActivateConvertColumnInfoIntoANOColumnInfo(ColumnInfo columnInfo);
-        
+
         void ViewDataSample(IViewSQLAndResultsCollection collection);
 
         DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard);
 
         event EmphasiseItemHandler Emphasise;
-        
+
         /// <summary>
         /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
         /// </summary>
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
-        
+
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
-        
+
         void ActivateReOrderCatalogueItems(Catalogue catalogue);
 
-        void ActivateConfigureValidation(object sender, Catalogue catalogue);
         void ViewFilterGraph(object sender,FilterGraphObjectCollection collection);
 
         void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic);
         void ActivateViewLog(ExternalDatabaseServer loggingServer, int dataLoadRunID);
+        void ActivateViewLog(LoadMetadata loadMetadata);
 
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
-        
+
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);
         object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
+        void ActivateViewDQEResultsForCatalogue(Catalogue catalogue);
     }
 }

@@ -18,14 +18,16 @@ namespace DataExportLibrary.ExtractionTime
     public class ExtractionDirectory : IExtractionDirectory
     {
         private readonly DirectoryInfo root;
-        private readonly DirectoryInfo extractionDirectory;
         
-        public const string ExtractionSubFolderName = "Extractions";
-        public const string StandardExtractionPrefix = "Extr_";
-        public const string GlobalsDataFolderName = "Globals";
-        public const string CustomCohortDataFolderName = "CohortCustomData";
-        public const string MasterDataFolderName = "MasterData";
+        public const string EXTRACTION_SUB_FOLDER_NAME = "Extractions";
+        public const string STANDARD_EXTRACTION_PREFIX = "Extr_";
+        public const string GLOBALS_DATA_NAME = "Globals";
+        public const string CUSTOM_COHORT_DATA_FOLDER_NAME = "CohortCustomData";
+        public const string MASTER_DATA_FOLDER_NAME = "MasterData";
+        public const string METADATA_FOLDER_NAME = "MetadataShareDefs";
 
+        public DirectoryInfo ExtractionDirectoryInfo { get; private set; }
+        
         public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
             : this(rootExtractionDirectory, configuration, DateTime.Now)
         {
@@ -40,27 +42,27 @@ namespace DataExportLibrary.ExtractionTime
                 if (!Directory.Exists(rootExtractionDirectory))
                     throw new DirectoryNotFoundException("Root directory \"" + rootExtractionDirectory + "\" does not exist");
 
-            root = new DirectoryInfo(Path.Combine(rootExtractionDirectory, ExtractionSubFolderName));
+            root = new DirectoryInfo(Path.Combine(rootExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME));
             if (!root.Exists)
                 root.Create();
 
             string subdirectoryName = GetExtractionDirectoryPrefix(configuration);
 
             if (!Directory.Exists(Path.Combine(root.FullName, subdirectoryName)))
-                extractionDirectory = root.CreateSubdirectory(subdirectoryName);
+                ExtractionDirectoryInfo = root.CreateSubdirectory(subdirectoryName);
             else
-                extractionDirectory = new DirectoryInfo(Path.Combine(root.FullName, subdirectoryName));
+                ExtractionDirectoryInfo = new DirectoryInfo(Path.Combine(root.FullName, subdirectoryName));
         }
 
         public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
         {
-            return StandardExtractionPrefix + configuration.ID;
+            return STANDARD_EXTRACTION_PREFIX + configuration.ID;
         }
 
         public DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset)
         {
-            if(dataset.ToString().Equals(CustomCohortDataFolderName))
-                throw new Exception("You cannot call a dataset '"+CustomCohortDataFolderName+"' because this string is reserved for cohort custom data the system spits out itself");
+            if(dataset.ToString().Equals(CUSTOM_COHORT_DATA_FOLDER_NAME))
+                throw new Exception("You cannot call a dataset '"+CUSTOM_COHORT_DATA_FOLDER_NAME+"' because this string is reserved for cohort custom data the system spits out itself");
 
             string reason;
             if(!Catalogue.IsAcceptableName(dataset.Catalogue.Name,out reason))
@@ -69,17 +71,17 @@ namespace DataExportLibrary.ExtractionTime
             var datasetDirectory = dataset.ToString();
             try
             {
-                return extractionDirectory.CreateSubdirectory(datasetDirectory);
+                return ExtractionDirectoryInfo.CreateSubdirectory(datasetDirectory);
             }
             catch (Exception e)
             {
-                throw new Exception("Could not create a directory called '" + datasetDirectory +"' as a subfolder of Project extraction directory " + extractionDirectory.Root ,e);
+                throw new Exception("Could not create a directory called '" + datasetDirectory +"' as a subfolder of Project extraction directory " + ExtractionDirectoryInfo.Root ,e);
             }
         }
 
         public DirectoryInfo GetGlobalsDirectory()
         {
-            return extractionDirectory.CreateSubdirectory(GlobalsDataFolderName);
+            return ExtractionDirectoryInfo.CreateSubdirectory(GLOBALS_DATA_NAME);
         }
 
         public static bool IsOwnerOf(IExtractionConfiguration configuration, DirectoryInfo directory)
@@ -91,25 +93,25 @@ namespace DataExportLibrary.ExtractionTime
             //The configuration number matches but directory isn't the currently configured Project extraction directory
             IProject p = configuration.Project;
 
-            if (directory.Parent.FullName != Path.Combine(p.ExtractionDirectory, ExtractionSubFolderName))
+            if (directory.Parent.FullName != Path.Combine(p.ExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME))
                 return false;
             
-            return directory.Name.StartsWith(StandardExtractionPrefix + configuration.ID);
+            return directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
         }
 
         public DirectoryInfo GetDirectoryForCohortCustomData()
         {
-            return extractionDirectory.CreateSubdirectory(CustomCohortDataFolderName);
+            return ExtractionDirectoryInfo.CreateSubdirectory(CUSTOM_COHORT_DATA_FOLDER_NAME);
         }
 
         public DirectoryInfo GetDirectoryForMasterData()
         {
-            return extractionDirectory.CreateSubdirectory(MasterDataFolderName);
+            return ExtractionDirectoryInfo.CreateSubdirectory(MASTER_DATA_FOLDER_NAME);
         }
 
         public static void CleanupExtractionDirectory(object sender, string extractionDirectory, IEnumerable<IExtractionConfiguration> configurations, IDataLoadEventListener listener)
         {
-            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, ExtractionSubFolderName));
+            DirectoryInfo projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, EXTRACTION_SUB_FOLDER_NAME));
             var directoriesToDelete = new List<DirectoryInfo>();
             var filesToDelete = new List<FileInfo>();
 

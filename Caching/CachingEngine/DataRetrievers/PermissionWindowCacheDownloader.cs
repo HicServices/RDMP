@@ -72,8 +72,7 @@ namespace CachingEngine.DataRetrievers
                 return true;
 
             //return true only if the permission window is not locked and the time is currently within the window
-            return
-                !_permissionWindow.LockedBecauseRunning && _permissionWindow.WithinPermissionWindow();
+            return  _permissionWindow.WithinPermissionWindow();
         }
 
         /// <summary>
@@ -145,92 +144,73 @@ namespace CachingEngine.DataRetrievers
         /// <returns></returns>
         private RetrievalResult RunOnce(GracefulCancellationToken cancellationToken, List<IDataFlowPipelineEngine> cachingEngines)
         {
-            Lock();
-            try
-            {
-                // We will be spawning our own task which we want separate control of (to kill if we pass outside the permission window), so need our own cancellation token
-                var executionCancellationTokenSource = new GracefulCancellationTokenSource();
 
-                // We want to be able to stop the engine if we pass outside the permission window, however the execution strategy objects should not know about PermissionWindows
-                var executionTask = new Task(() => _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token, _listener));
+            // We will be spawning our own task which we want separate control of (to kill if we pass outside the permission window), so need our own cancellation token
+            var executionCancellationTokenSource = new GracefulCancellationTokenSource();
 
-                // Block waiting on task completion or signalling of the cancellation token
-                while (!executionTask.IsCompleted)
-                {
-                    if (executionTask.Status == TaskStatus.Created)
-                        executionTask.Start();
-
-                    Task.Delay(1000).Wait();
-
-                    // We need to handle stop and abort as we have used our own cancellation token with the child task
-                    // If someone above us in the process chain has requested abort or cancel then use our own cancellation token to pass this info on to the child task
-                    if (cancellationToken.IsAbortRequested)
-                    {
-                        // Wait nicely until the child task signals its abort token (by throwing?)
-                        executionCancellationTokenSource.Abort();
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Have issued Abort request to the Pipeline Execution Task. Waiting for the task to exit..."));
-                        try
-                        {
-                            executionTask.Wait();
-                        }
-                        catch (AggregateException)
-                        {
-                        
-                        }
-                        Unlock();
-                        return RetrievalResult.Aborted;
-                    }
-
-                    if (cancellationToken.IsStopRequested)
-                    {
-                        // Wait nicely until the child task signals its stop token (by throwing?)
-                        executionCancellationTokenSource.Stop();
-                        _listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information,
-                                "Have issued Stop request to the Pipeline Execution Task, however this may take some to complete as it will attempt to complete the current run through the pipeline."));
-                        executionTask.Wait();
-                        Unlock();
-                        return RetrievalResult.Stopped;
-                    }
-
-                    // Now can check to see if we are finished (we have passed outside the permission window)
-                    if (_permissionWindow != null && !_permissionWindow.WithinPermissionWindow())
-                    {
-                        executionCancellationTokenSource.Abort();
-                        _listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information,
-                                "Now outside the PermissionWindow, have issued Abort request to the Pipeline Execution Task."));
-                        executionTask.Wait();
-                        Unlock();
-                        return RetrievalResult.NotPermitted;
-                    }
-                }
-
-                if (executionTask.IsFaulted)
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Task faulted, information is in the attached exception.", executionTask.Exception));
-                    throw new InvalidOperationException("Task faulted, see inner exception for details.", executionTask.Exception);
-                }
-            }
-            finally
-            {
-                Unlock();
-            }
+            // We want to be able to stop the engine if we pass outside the permission window, however the execution strategy objects should not know about PermissionWindows
+            var executionTask = new Task(() => 
+                _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token, _listener));
             
+            // Block waiting on task completion or signalling of the cancellation token
+            while (!executionTask.IsCompleted)
+            {
+                if (executionTask.Status == TaskStatus.Created)
+                    executionTask.Start();
+
+                Task.Delay(1000).Wait();
+
+                // We need to handle stop and abort as we have used our own cancellation token with the child task
+                // If someone above us in the process chain has requested abort or cancel then use our own cancellation token to pass this info on to the child task
+                if (cancellationToken.IsAbortRequested)
+                {
+                    // Wait nicely until the child task signals its abort token (by throwing?)
+                    executionCancellationTokenSource.Abort();
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Have issued Abort request to the Pipeline Execution Task. Waiting for the task to exit..."));
+                    try
+                    {
+                        executionTask.Wait();
+                    }
+                    catch (AggregateException)
+                    {
+                        
+                    }
+                    return RetrievalResult.Aborted;
+                }
+
+                if (cancellationToken.IsStopRequested)
+                {
+                    // Wait nicely until the child task signals its stop token (by throwing?)
+                    executionCancellationTokenSource.Stop();
+                    _listener.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Information,
+                            "Have issued Stop request to the Pipeline Execution Task, however this may take some to complete as it will attempt to complete the current run through the pipeline."));
+                    executionTask.Wait();
+                    return RetrievalResult.Stopped;
+                }
+
+                // Now can check to see if we are finished (we have passed outside the permission window)
+                if (_permissionWindow != null && !_permissionWindow.WithinPermissionWindow())
+                {
+                    executionCancellationTokenSource.Abort();
+                    _listener.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Information,
+                            "Now outside the PermissionWindow, have issued Abort request to the Pipeline Execution Task."));
+                    executionTask.Wait();
+
+                    return RetrievalResult.NotPermitted;
+                }
+            }
+
+            if (executionTask.IsFaulted)
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Task faulted, information is in the attached exception.", executionTask.Exception));
+                throw new InvalidOperationException("Task faulted, see inner exception for details.", executionTask.Exception);
+            }
+
             return RetrievalResult.Complete;
         }
 
-        public void Lock()
-        {
-            if (_permissionWindow != null)
-                _permissionWindow.Lock();
-        }
-
-        public void Unlock()
-        {
-            if (_permissionWindow != null)
-                _permissionWindow.Unlock();
-        }
 
         private IDataFlowPipelineEngine CreateCachingEngine(ICacheProgress cacheProgress)
         {
@@ -272,6 +252,10 @@ namespace CachingEngine.DataRetrievers
 
         public override string ToString()
         {
+            if(_permissionWindow == null)
+                return "Downloader (Any Time)";
+
+
             return "Downloader for " + _permissionWindow.Name;
         }
     }

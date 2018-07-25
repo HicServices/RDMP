@@ -17,19 +17,9 @@ namespace DataLoadEngine.LoadProcess.Scheduling.Strategy
             _loadMetadata = loadMetadata;
         }
 
-        public List<ILoadProgress> GetAllLoadProgresses(bool respectAndAcquire = true)
+        public List<ILoadProgress> GetAllLoadProgresses()
         {
-            var loadProgresses = _loadMetadata.LoadProgresses.Where(schedule => 
-                !schedule.LockedBecauseRunning  //it is available to run
-                || 
-                !respectAndAcquire//we don't care just give us it
-                ).ToList();
-
-            //if we want lock
-            if(respectAndAcquire)
-                loadProgresses.ForEach(schedule => schedule.Lock());//lock everything
-
-            return loadProgresses;
+            return _loadMetadata.LoadProgresses.ToList();
         }
     }
 }

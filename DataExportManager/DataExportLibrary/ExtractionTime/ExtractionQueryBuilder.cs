@@ -51,7 +51,7 @@ namespace DataExportLibrary.ExtractionTime
             switch (request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier))
             { 
                 //no extraction identifiers
-                case 0: throw new Exception("There are no Columns in this dataset marked as IsExtractionIdentifier"); 
+                case 0: throw new Exception("There are no Columns in this dataset ("+request+") marked as IsExtractionIdentifier"); 
                     
                 //a single extraction identifier e.g. CHI X died on date Y with conditions a,b and c
                 case 1: substitutions.Add(new ReleaseIdentifierSubstitution(request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false));
@@ -73,8 +73,8 @@ namespace DataExportLibrary.ExtractionTime
             //identify any tables we are supposed to force join to
             var forcedJoins = request.SelectedDataSets.SelectedDataSetsForcedJoins;
 
-            QueryBuilder queryBuilder = new QueryBuilder("DISTINCT " + request.LimitationSql, hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
-
+            QueryBuilder queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
+            queryBuilder.TopX = request.TopX;
             
             queryBuilder.SetSalt(request.Salt.GetSalt());
 

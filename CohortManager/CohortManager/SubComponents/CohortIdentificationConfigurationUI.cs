@@ -113,7 +113,13 @@ namespace CohortManager.SubComponents
             if (_commonFunctionality == null)
             {
                 _commonFunctionality = new RDMPCollectionCommonFunctionality();
-                _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic,activator,olvNameCol,olvNameCol,false,false);
+
+                _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol, new RDMPCollectionCommonFunctionalitySettings
+                {
+                    AddFavouriteColumn = false,
+                    AddIDColumn = false
+                });
+
                 tlvCic.AddObject(_configuration);
                 tlvCic.ExpandAll();
             }

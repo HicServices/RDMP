@@ -183,6 +183,10 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=2.2.1.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommandLineParser.2.2.1\lib\net45\CommandLine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Common.Logging, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Common.Logging.3.4.1\lib\net40\Common.Logging.dll</HintPath>
       <Private>True</Private>
@@ -253,6 +257,7 @@
     <Compile Include="DataAccess\IEncryptedPasswordHost.cs" />
     <Compile Include="DataAccess\IHasQuerySyntaxHelper.cs" />
     <Compile Include="DatabaseCommandHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\ConnectionStringDefaults\ConnectionStringKeywordAccumulator.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DatabaseColumnRequest.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DecimalSize.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DiscoveredDatabaseHelper.cs" />
@@ -271,7 +276,9 @@
     <Compile Include="DatabaseHelpers\Discovery\IManagedConnection.cs" />
     <Compile Include="DatabaseHelpers\Discovery\IMightNotExist.cs" />
     <Compile Include="DatabaseHelpers\Discovery\IDiscoveredColumnHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\ISupplementalColumnInformation.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Microsoft\Aggregation\MicrosoftSQLAggregateHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\BulkCopy.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Microsoft\Update\MicrosoftSQLUpdateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\MySql\Update\MySqlUpdateHelper.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Oracle\OracleBulkCopy.cs" />
@@ -336,8 +343,6 @@
     <Compile Include="Icons\IconProvision\OverlayKind.cs" />
     <Compile Include="ICustomSearchString.cs" />
     <Compile Include="IHasFullyQualifiedNameToo.cs" />
-    <Compile Include="ILifelineable.cs" />
-    <Compile Include="ILockable.cs" />
     <Compile Include="IManagedTransaction.cs" />
     <Compile Include="ManagedTransaction.cs" />
     <Compile Include="DatabaseType.cs" />

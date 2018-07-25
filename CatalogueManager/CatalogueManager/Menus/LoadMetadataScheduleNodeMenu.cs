@@ -12,7 +12,6 @@ namespace CatalogueManager.Menus
         public LoadMetadataScheduleNodeMenu(RDMPContextMenuStripArgs args, LoadMetadataScheduleNode schedulingNode) : base(args,null)
         {
             Add(new ExecuteCommandCreateNewLoadProgress(_activator, schedulingNode.LoadMetadata));
-            Add(new ExecuteCommandCreateNewLoadPeriodically(_activator, schedulingNode.LoadMetadata));
         }
 
     }

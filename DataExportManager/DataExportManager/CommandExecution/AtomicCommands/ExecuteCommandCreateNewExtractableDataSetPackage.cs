@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
@@ -12,7 +7,6 @@ using DataExportLibrary.Data.DataTables.DataSetPackages;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
@@ -22,6 +16,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         {
             if(Activator.RepositoryLocator.DataExportRepository == null)
                 SetImpossible("Data export database is not setup");
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Creates a new grouping of dataset which are commonly extracted together e.g. 'Core datasets on offer'";
         }
 
         public override void Execute()

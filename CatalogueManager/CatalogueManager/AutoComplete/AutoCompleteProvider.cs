@@ -1,25 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using AutocompleteMenuNS;
-using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Migration;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
-using ReusableUIComponents.ScintillaHelper;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ScintillaNET;
 
 namespace CatalogueManager.AutoComplete
@@ -51,7 +44,7 @@ namespace CatalogueManager.AutoComplete
         }
 
 
-        private void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName,LoadStage stage)
+        public void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName,LoadStage stage)
         {
             var runtimeName = columnInfo.GetRuntimeName(stage);
 
@@ -63,6 +56,18 @@ namespace CatalogueManager.AutoComplete
             
             AddUnlessDuplicate(snip);
         }
+
+        public void Add(ColumnInfo columnInfo)
+        {
+            var snip = new SubstringAutocompleteItem(columnInfo.GetRuntimeName());
+            snip.MenuText = columnInfo.GetRuntimeName();
+            snip.Text = columnInfo.GetFullyQualifiedName();
+            snip.Tag = columnInfo;
+            snip.ImageIndex = GetIndexFor(columnInfo, RDMPConcept.ColumnInfo.ToString());
+
+            AddUnlessDuplicate(snip);
+        }
+
         private void Add(PreLoadDiscardedColumn discardedColumn, TableInfo tableInfo, string rawDbName)
         {
             var snip = new SubstringAutocompleteItem(discardedColumn.GetRuntimeName());
@@ -135,10 +140,12 @@ namespace CatalogueManager.AutoComplete
             throw new ArgumentOutOfRangeException("Did not know what type of icon to use for IColumn Type:" + column.GetType());
         }
 
-        public void AddSQLKeywords()
+        public void AddSQLKeywords(IQuerySyntaxHelper syntaxHelper)
         {
+            if (syntaxHelper == null)
+                return;
 
-            foreach (KeyValuePair<string, string> kvp in ScintillaTextEditorFactory.SQLFunctionsDictionary)
+            foreach (KeyValuePair<string, string> kvp in syntaxHelper.GetSQLFunctionsDictionary())
             {
                 var snip = new SubstringAutocompleteItem(kvp.Key);
                 snip.MenuText = kvp.Key;
@@ -148,7 +155,6 @@ namespace CatalogueManager.AutoComplete
 
                 AddUnlessDuplicate(snip);
             }
-            
         }
 
         public void Add(ISqlParameter parameter)
@@ -199,6 +205,49 @@ namespace CatalogueManager.AutoComplete
             AddUnlessDuplicate(snip);
         }
 
+        public void Add(DiscoveredTable discoveredTable)
+        {
+            if (items.Any(i => i.Tag.Equals(discoveredTable)))
+                return;
+            
+            var snip = new SubstringAutocompleteItem(discoveredTable.GetRuntimeName());
+            snip.MenuText = discoveredTable.GetRuntimeName(); //name of table
+            snip.Text = discoveredTable.GetFullyQualifiedName();//full SQL
+            snip.Tag = discoveredTable; //record object for future reference
+            snip.ImageIndex = GetIndexFor(discoveredTable, RDMPConcept.TableInfo.ToString());
+
+
+            AddUnlessDuplicate(snip);
+
+            DiscoveredColumn[] columns = null;
+            try
+            {
+                columns = discoveredTable.DiscoverColumns();
+            }
+            catch (Exception)
+            {
+                //couldn't load nevermind
+            }
+
+            if(columns != null)
+                foreach (var col in columns)
+                    Add(col);
+        }
+
+        private void Add(DiscoveredColumn discoveredColumn)
+        {
+            if (items.Any(i => i.Tag.Equals(discoveredColumn)))
+                return;
+
+            var snip = new SubstringAutocompleteItem(discoveredColumn.GetRuntimeName());
+            snip.MenuText = discoveredColumn.GetRuntimeName(); //name of table
+            snip.Text = discoveredColumn.GetFullyQualifiedName();//full SQL
+            snip.Tag = discoveredColumn; //record object for future reference
+            snip.ImageIndex = GetIndexFor(discoveredColumn, RDMPConcept.ColumnInfo.ToString());
+
+            AddUnlessDuplicate(snip);
+        }
+
         public void Clear()
         {
             items.Clear();
@@ -240,6 +289,17 @@ namespace CatalogueManager.AutoComplete
         public void UnRegister()
         {
             _autocomplete.TargetControlWrapper = null;
+        }
+
+        public void Add(AggregateConfiguration aggregateConfiguration)
+        {
+            Add(aggregateConfiguration.Catalogue);
+        }
+
+        public void Add(ICatalogue catalogue)
+        {
+            foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+                Add(ei);
         }
     }
 }

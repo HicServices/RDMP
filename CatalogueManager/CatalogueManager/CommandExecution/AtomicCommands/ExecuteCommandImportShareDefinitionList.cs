@@ -51,6 +51,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             }
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Import serialized RDMP objects that have been shared with you in a share definition file.  If you already have the objects then they will be updated to match the file.";
+        }
+
         private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute,ShareDefinition shareDefinition)
         {
             MessageBox.Show("Choose a local object for '" + property + "' on " + Environment.NewLine
@@ -62,14 +67,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if (Activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(requiredType))
             {
-                var selected = SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>());
+                var selected = SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
                 if (selected != null)
                     return selected.ID;
             }
 
             if (Activator.RepositoryLocator.DataExportRepository.SupportsObjectType(requiredType))
             {
-                var selected = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>());
+                var selected = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
                 if (selected != null)
                     return selected.ID;
             }

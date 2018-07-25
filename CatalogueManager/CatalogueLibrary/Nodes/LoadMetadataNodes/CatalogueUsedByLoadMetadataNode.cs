@@ -4,7 +4,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class CatalogueUsedByLoadMetadataNode:IDeletableWithCustomMessage
+    public class CatalogueUsedByLoadMetadataNode:IMasqueradeAs,IDeletableWithCustomMessage
     {
         public LoadMetadata LoadMetadata { get; private set; }
         public Catalogue Catalogue { get; private set; }
@@ -41,6 +41,12 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
                 return ((LoadMetadata != null ? LoadMetadata.GetHashCode() : 0)*397) ^ (Catalogue != null ? Catalogue.GetHashCode() : 0);
             }
         }
+
+        public object MasqueradingAs()
+        {
+            return Catalogue;
+        }
+
         #endregion
 
         public void DeleteInDatabase()

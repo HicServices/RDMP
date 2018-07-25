@@ -26,6 +26,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("AggregateConfiguration is a Cohort aggregate");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Assembles and runs the graph query and renders the results as a graph";
+        }
 
         public override void Execute()
         {

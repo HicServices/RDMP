@@ -1,20 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
+﻿using CatalogueManager.Menus;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Providers.Nodes.UsedByProject;
-using DataExportManager.CohortUI;
-using DataExportManager.CohortUI.CohortSourceManagement;
-using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.DataViewing.Collections;
-using RDMPStartup;
-using ReusableUIComponents;
 
 namespace DataExportManager.Menus
 {
@@ -28,12 +14,6 @@ namespace DataExportManager.Menus
         {
             _cohort = cohort;
             Items.Add("View TOP 100 identifiers",null, (s, e) => ViewTop100());
-        }
-
-        public ExtractableCohortMenu(RDMPContextMenuStripArgs args, ExtractableCohortUsedByProjectNode cohortNode)
-            : this(args, cohortNode.Cohort)
-        {
-
         }
         
         private void ViewTop100()

@@ -22,19 +22,15 @@ namespace DataExportLibrary.ExtractionTime.Commands
     /// (Lookup tables, SupportingDocuments etc).  Also includes optional settings (e.g. IncludeValidation) etc.  You can realise the request by running the 
     /// QueryBuilder SQL. 
     /// </summary>
-    public class ExtractDatasetCommand : IExtractDatasetCommand
+    public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     {
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
         public ISelectedDataSets SelectedDataSets { get; set; }
 
         private IExtractableDatasetBundle _datasetBundle;
-        public IExtractionConfiguration Configuration{get;set;}
         
         public IExtractableCohort ExtractableCohort { get; set; }
-
-        public ExtractCommandState State { get; set; }
-        public string Name { get { return DatasetBundle.DataSet.ToString(); } }
 
         public IExtractableDatasetBundle DatasetBundle
         {
@@ -46,35 +42,33 @@ namespace DataExportLibrary.ExtractionTime.Commands
                 if(value == null)
                     Catalogue = null;
                 else
-                    if(value.DataSet.Catalogue_ID == null)
-                        throw new Exception("Cannot create a request for a dataset which does not have a Catalogue_ID set");
-                    else
-                        Catalogue = RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>((int)value.DataSet.Catalogue_ID);
+                    Catalogue = RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(value.DataSet.Catalogue_ID);
             }
         }
 
         public List<IColumn> ColumnsToExtract{get;set;} 
         public IHICProjectSalt Salt{get;set;}
-        public string LimitationSql{get;set;}
         public bool IncludeValidation {get;set;} 
         
         public IExtractionDirectory Directory { get; set; }
         public ICatalogue Catalogue { get; private set; }
 
         public ISqlQueryBuilder QueryBuilder { get; set; }
+        public ICumulativeExtractionResults CumulativeExtractionResults { get; set; }
         public List<ReleaseIdentifierSubstitution> ReleaseIdentifierSubstitutions { get; private set; }
+        public List<IExtractionResults> ExtractionResults { get; private set; }
+        public int TopX { get; set; }
 
-        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableCohort extractableCohort, IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt, string limitationSql, IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
+        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableCohort extractableCohort, IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt, IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
         {
             RepositoryLocator = repositoryLocator;
-            Configuration = configuration;
             ExtractableCohort = extractableCohort;
             DatasetBundle = datasetBundle;
             ColumnsToExtract = columnsToExtract;
             Salt = salt;
-            LimitationSql = limitationSql;
             Directory = directory;
             IncludeValidation = includeValidation;
+            TopX = -1;
         }
 
         /// <summary>
@@ -84,34 +78,27 @@ namespace DataExportLibrary.ExtractionTime.Commands
         /// <param name="repositoryLocator"></param>
         /// <param name="configuration"></param>
         /// <param name="datasetBundle"></param>
-        /// <param name="limitationSql"></param>
         /// <param name="includeValidation"></param>
         /// <param name="includeLookups"></param>
-        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDatasetBundle datasetBundle, string limitationSql = "", bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
+        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDatasetBundle datasetBundle, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
         {
             RepositoryLocator = repositoryLocator;
-            var project = configuration.Project;
-
+            
             RepositoryLocator = repositoryLocator;
-            Configuration = configuration;
             //ExtractableCohort = ExtractableCohort.GetExtractableCohortByID((int) configuration.Cohort_ID);
             ExtractableCohort = configuration.GetExtractableCohort();
             DatasetBundle = datasetBundle;
             ColumnsToExtract = new List<IColumn>(Configuration.GetAllExtractableColumnsFor(datasetBundle.DataSet));
-            Salt = new HICProjectSalt(project);
-            LimitationSql = limitationSql;
-            Directory = new ExtractionDirectory(project.ExtractionDirectory, configuration);
+            Salt = new HICProjectSalt(Project);
+            Directory = new ExtractionDirectory(Project.ExtractionDirectory, configuration);
             IncludeValidation = includeValidation;
+            TopX = -1;
         }
 
         public static readonly ExtractDatasetCommand EmptyCommand = new ExtractDatasetCommand();
 
-        private ExtractDatasetCommand()
-        {
-            
-        }
 
-        private ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableDataSet dataset)
+        private ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableDataSet dataset):base(configuration)
         {
             var selectedDataSets = configuration.SelectedDataSets.Where(ds => ds.ExtractableDataSet_ID == dataset.ID).ToArray();
 
@@ -119,6 +106,13 @@ namespace DataExportLibrary.ExtractionTime.Commands
                 throw new Exception("Could not find 1 ISelectedDataSets for ExtractionConfiguration '" + configuration + "' | Dataset '" + dataset +"'");
 
             SelectedDataSets = selectedDataSets[0];
+
+            ExtractionResults = new List<IExtractionResults>();
+        }
+
+        private ExtractDatasetCommand() : base(null)
+        {
+            
         }
 
         public void GenerateQueryBuilder()
@@ -138,14 +132,14 @@ namespace DataExportLibrary.ExtractionTime.Commands
             return DatasetBundle.DataSet.ToString();
         }
 
-        public DirectoryInfo GetExtractionDirectory()
+        public override DirectoryInfo GetExtractionDirectory()
         {
             if (this == EmptyCommand)
                 return new DirectoryInfo(Path.GetTempPath());
 
             return Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
         }
-        public string DescribeExtractionImplementation()
+        public override string DescribeExtractionImplementation()
         {
             return QueryBuilder.SQL;
         }

@@ -68,8 +68,6 @@ namespace CatalogueLibrary.Repositories
             where T : IMapsDirectlyToDatabaseTable;
         
         DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null);
-
-        Catalogue[] GetAllAutomationLockedCatalogues();
         
     }
 }

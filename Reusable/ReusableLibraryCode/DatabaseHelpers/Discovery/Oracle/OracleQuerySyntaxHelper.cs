@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
@@ -13,9 +14,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         {
         }
 
+        public override char ParameterSymbol
+        {
+            get { return ':'; }
+        }
+
         public override string GetRuntimeName(string s)
         {
-            //upper it because oracle is stupid
+            if (string.IsNullOrWhiteSpace(s))
+                return s;
+
+            //upper it because oracle loves uppercase stuff
             string toReturn =  s.Substring(s.LastIndexOf(".") + 1).Trim('"').ToUpper();
 
             //truncate it to 30 maximum because oracle cant count higher than 30
@@ -43,10 +52,27 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             switch (function)
             {
                 case MandatoryScalarFunctions.GetTodaysDate:
-                    return "SYSDATE";
+                    return "CURRENT_TIMESTAMP";
+                    case MandatoryScalarFunctions.GetGuid:
+                    return "SYS_GUID()";
                 default:
                     throw new ArgumentOutOfRangeException("function");
             }
+        }
+
+        /// <summary>
+        /// Always returns null for Oracle since this is handled by <see cref="OracleTableHelper.GetCreateTableSql"/>
+        /// </summary>
+        /// <returns></returns>
+        public override string GetAutoIncrementKeywordIfAny()
+        {
+            //this is handled in 
+            return null;
+        }
+
+        public override Dictionary<string, string> GetSQLFunctionsDictionary()
+        {
+            return new Dictionary<string, string>();
         }
 
         public override string DatabaseTableSeparator

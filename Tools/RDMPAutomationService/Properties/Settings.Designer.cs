@@ -25,7 +25,7 @@ namespace RDMPAutomationService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("CHILTERN8564")]
+        [global::System.Configuration.DefaultSettingValueAttribute("localhost\\sqlexpress")]
         public string ServerName {
             get {
                 return ((string)(this["ServerName"]));
@@ -34,7 +34,7 @@ namespace RDMPAutomationService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("NewLookupDataCatalogue")]
+        [global::System.Configuration.DefaultSettingValueAttribute("RDMP_Catalogue")]
         public string CatalogueDB {
             get {
                 return ((string)(this["CatalogueDB"]));
@@ -43,19 +43,10 @@ namespace RDMPAutomationService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("EMBARCDataExport")]
+        [global::System.Configuration.DefaultSettingValueAttribute("RDMP_DataExport")]
         public string DataExportDB {
             get {
                 return ((string)(this["DataExportDB"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int ForceSlot {
-            get {
-                return ((int)(this["ForceSlot"]));
             }
         }
     }

@@ -241,7 +241,7 @@ SET @columnsSelectCases = NULL;
 SELECT
   GROUP_CONCAT(
     CONCAT(
-      '{2}(case when {3} = ''', pivotValues.piv, ''' then {4} end) AS `', pivotValues.piv,'`'
+      '{2}(case when {3} = ''', REPLACE(pivotValues.piv,'\'','\\\''), ''' then {4} end) AS `', pivotValues.piv,'`'
     )
   ) INTO @columnsSelectCases
 FROM

@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
+﻿using System.Drawing;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LocationsMenu;
-using RDMPStartup;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -26,6 +17,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandChoosePlatformDatabase(IActivateItems activator)
         {
             _activator = activator;
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Change which RDMP platform metadata databases you are connected to";
         }
 
         public ExecuteCommandChoosePlatformDatabase(IRDMPPlatformRepositoryServiceLocator repositoryLocator)

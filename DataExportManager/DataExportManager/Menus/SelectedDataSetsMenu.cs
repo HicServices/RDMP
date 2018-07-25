@@ -2,20 +2,14 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Icons.IconOverlays;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.ProjectUI;
 using DataExportManager.ProjectUI.Graphs;
-using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
@@ -32,6 +26,10 @@ namespace DataExportManager.Menus
             _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;
 
             var root = selectedDataSet.RootFilterContainer;
+
+            Add(new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue, int.MaxValue) { OverrideCommandName = "Show Catalogue" });
+
+            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
 
             /////////////////// Extraction Graphs //////////////////////////////
             var graphs = new ToolStripMenuItem("View Extraction Graphs", CatalogueIcons.Graph);

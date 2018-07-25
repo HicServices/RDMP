@@ -9,6 +9,9 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.ReleasePipeline;
+using DataExportLibrary.ExtractionTime;
+using DataExportLibrary.Interfaces.Data.DataTables;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Sharing.CommandExecution;
@@ -30,10 +33,10 @@ namespace LoadModules.Generic.DataFlowOperations
         public ReleaseAudit ProcessPipelineData(ReleaseAudit toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             var allCatalogues = 
-                _releaseData.ConfigurationsForRelease.Keys
-                .SelectMany(ec => ec.SelectedDataSets)
+                _releaseData.SelectedDatasets.Values.SelectMany(sd => sd.ToList())
                 .Select(sds => sds.ExtractableDataSet.Catalogue)
                 .Distinct()
+                .Cast<IMapsDirectlyToDatabaseTable>()
                 .ToArray();
             
             if(!allCatalogues.Any())
@@ -42,11 +45,13 @@ namespace LoadModules.Generic.DataFlowOperations
                 return toProcess;
             }
 
-            if(toProcess.ReleaseFolder == null)
-                throw new Exception("No ReleaseFolder has been set yet, this component must come after the ReleaseFolderProvider component if any");
+            var sourceFolder = _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent;
+            if (sourceFolder == null)
+                throw new Exception("Could not find Source Folder. DOes the project have an Extraction Directory defined?");
 
-            //(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IMapsDirectlyToDatabaseTable[] toExport, DirectoryInfo targetDirectoryInfo = null)
-            var cmd = new ExecuteCommandExportObjectsToFile(_releaseData.RepositoryLocator, allCatalogues, toProcess.ReleaseFolder);
+            var outputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
+            
+            var cmd = new ExecuteCommandExportObjectsToFile(_releaseData.RepositoryLocator, allCatalogues, outputFolder);
             cmd.Execute();
             
             return toProcess;

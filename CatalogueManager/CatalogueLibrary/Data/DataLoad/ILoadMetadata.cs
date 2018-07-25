@@ -26,7 +26,6 @@ namespace CatalogueLibrary.Data.DataLoad
 
         ILoadProgress[] LoadProgresses { get; }
         IOrderedEnumerable<ProcessTask> ProcessTasks { get; }
-        LoadPeriodically LoadPeriodically { get; }
         IEnumerable<ProcessTask> GetAllProcessTasks(bool includeDisabled);
     }
 }

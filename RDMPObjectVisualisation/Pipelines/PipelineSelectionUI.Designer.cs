@@ -156,6 +156,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbPrompt);
+            this.MinimumSize = new System.Drawing.Size(250, 28);
             this.Name = "PipelineSelectionUI";
             this.Size = new System.Drawing.Size(625, 155);
             this.gbPrompt.ResumeLayout(false);

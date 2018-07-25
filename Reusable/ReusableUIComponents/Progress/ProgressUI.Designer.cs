@@ -32,12 +32,16 @@ namespace ReusableUIComponents.Progress
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.lblCrashed = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.tbTextFilter = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.tbTopX = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
+            this.ddGroupBy = new System.Windows.Forms.ToolStripComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.olvProgressEvents = new BrightIdeasSoftware.ObjectListView();
             this.olvSender = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -48,7 +52,6 @@ namespace ReusableUIComponents.Progress
             this.Sender = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Message = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ExceptionStack = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -82,6 +85,7 @@ namespace ReusableUIComponents.Progress
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.lblCrashed);
             this.splitContainer1.Panel1.Controls.Add(this.progressBar1);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
@@ -94,6 +98,30 @@ namespace ReusableUIComponents.Progress
             this.splitContainer1.Size = new System.Drawing.Size(880, 572);
             this.splitContainer1.SplitterDistance = 294;
             this.splitContainer1.TabIndex = 3;
+            // 
+            // lblCrashed
+            // 
+            this.lblCrashed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCrashed.BackColor = System.Drawing.Color.IndianRed;
+            this.lblCrashed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCrashed.ForeColor = System.Drawing.Color.Orange;
+            this.lblCrashed.Location = new System.Drawing.Point(3, 274);
+            this.lblCrashed.Name = "lblCrashed";
+            this.lblCrashed.Size = new System.Drawing.Size(874, 17);
+            this.lblCrashed.TabIndex = 7;
+            this.lblCrashed.Text = "Crashed";
+            this.lblCrashed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblCrashed.Visible = false;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(3, 276);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(874, 15);
+            this.progressBar1.TabIndex = 4;
             // 
             // label1
             // 
@@ -111,7 +139,9 @@ namespace ReusableUIComponents.Progress
             this.toolStripLabel1,
             this.tbTextFilter,
             this.toolStripLabel2,
-            this.tbTopX});
+            this.tbTopX,
+            this.toolStripLabel3,
+            this.ddGroupBy});
             this.toolStrip1.Location = new System.Drawing.Point(0, 249);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(880, 25);
@@ -143,6 +173,19 @@ namespace ReusableUIComponents.Progress
             this.tbTopX.Text = "1000";
             this.tbTopX.TextChanged += new System.EventHandler(this.tbTopX_TextChanged);
             // 
+            // toolStripLabel3
+            // 
+            this.toolStripLabel3.Name = "toolStripLabel3";
+            this.toolStripLabel3.Size = new System.Drawing.Size(56, 22);
+            this.toolStripLabel3.Text = "Group By";
+            // 
+            // ddGroupBy
+            // 
+            this.ddGroupBy.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddGroupBy.Name = "ddGroupBy";
+            this.ddGroupBy.Size = new System.Drawing.Size(151, 25);
+            this.ddGroupBy.SelectedIndexChanged += new System.EventHandler(this.ddGroupBy_SelectedIndexChanged);
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -170,6 +213,7 @@ namespace ReusableUIComponents.Progress
             this.olvProgressEvents.Location = new System.Drawing.Point(0, 20);
             this.olvProgressEvents.Name = "olvProgressEvents";
             this.olvProgressEvents.RowHeight = 19;
+            this.olvProgressEvents.ShowGroups = false;
             this.olvProgressEvents.Size = new System.Drawing.Size(883, 226);
             this.olvProgressEvents.TabIndex = 5;
             this.olvProgressEvents.UseCompatibleStateImageBehavior = false;
@@ -178,7 +222,6 @@ namespace ReusableUIComponents.Progress
             // olvSender
             // 
             this.olvSender.AspectName = "Sender";
-            this.olvSender.Groupable = false;
             this.olvSender.Text = "Sender";
             this.olvSender.Width = 177;
             // 
@@ -220,15 +263,6 @@ namespace ReusableUIComponents.Progress
             // 
             this.ExceptionStack.Text = "ExceptionStack";
             this.ExceptionStack.Width = 500;
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(3, 276);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(874, 15);
-            this.progressBar1.TabIndex = 4;
             // 
             // ProgressUI
             // 
@@ -272,5 +306,8 @@ namespace ReusableUIComponents.Progress
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripTextBox tbTopX;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel3;
+        private System.Windows.Forms.ToolStripComboBox ddGroupBy;
+        private System.Windows.Forms.Label lblCrashed;
     }
 }

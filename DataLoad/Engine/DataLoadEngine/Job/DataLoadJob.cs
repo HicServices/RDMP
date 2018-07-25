@@ -136,10 +136,10 @@ namespace DataLoadEngine.Job
         public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
         {
             foreach (TableInfo regularTableInfo in RegularTablesToLoad)
-                cloner.CreateTablesInDatabaseFromCatalogueInfo(regularTableInfo, stage);
+                cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener,regularTableInfo, stage);
 
             foreach (TableInfo lookupTableInfo in LookupTablesToLoad)
-                 cloner.CreateTablesInDatabaseFromCatalogueInfo(lookupTableInfo, stage);
+                 cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, lookupTableInfo, stage);
             
             PushForDisposal(cloner);
         }

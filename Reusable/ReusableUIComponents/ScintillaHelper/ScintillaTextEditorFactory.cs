@@ -5,6 +5,7 @@ using BrightIdeasSoftware;
 using EnvDTE;
 using MapsDirectlyToDatabaseTable;
 using QuickGraph;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents.CommandExecution;
 using ScintillaNET;
 
@@ -12,20 +13,6 @@ namespace ReusableUIComponents.ScintillaHelper
 {
     public class ScintillaTextEditorFactory
     {
-        public static Dictionary<string, string> SQLFunctionsDictionary = new Dictionary<string, string>()
-        {
-            { "left", "LEFT ( character_expression , integer_expression )" },
-            { "right", "RIGHT ( character_expression , integer_expression )" },
-            { "upper", "UPPER ( character_expression )" },
-            { "substring","SUBSTRING ( expression ,start , length ) "},
-            { "dateadd","DATEADD (datepart , number , date )"},
-            {"datediff", "DATEDIFF ( datepart , startdate , enddate )  "},
-            {"getdate", "GETDATE()"},
-            {"cast", "CAST ( expression AS data_type [ ( length ) ] )"},
-            {"convert","CONVERT ( data_type [ ( length ) ] , expression [ , style ] ) "},
-            {"case","CASE WHEN x=y THEN 'something' WHEN x=z THEN 'something2' ELSE 'something3' END"}
-        };
-
         /// <summary>
         /// Creates a new SQL (default) Scintilla editor with highlighting
         /// </summary>
@@ -34,7 +21,7 @@ namespace ReusableUIComponents.ScintillaHelper
         /// to add to the editor</param>
         /// <param name="language"></param>
         /// <returns></returns>
-        public Scintilla Create(ICommandFactory commandFactory=null,string language = "mssql")
+        public Scintilla Create(ICommandFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null)
         {
             var toReturn =  new Scintilla();
             toReturn.Dock = DockStyle.Fill;
@@ -47,7 +34,7 @@ namespace ReusableUIComponents.ScintillaHelper
             toReturn.ClearCmdKey(Keys.Control | Keys.W); //prevent Ctrl+W displaying ascii code
             
             if (language == "mssql")
-                SetSQLHighlighting(toReturn);
+                SetSQLHighlighting(toReturn,syntaxHelper);
 
             if (language == "csharp")
                 SetCSharpHighlighting(toReturn);
@@ -85,12 +72,21 @@ namespace ReusableUIComponents.ScintillaHelper
 
             if (command == null)
                 return;
-            
+
+            //if it has a Form give it focus
+            var form = editor.FindForm();
+
+            if(form != null)
+            {
+                form.Activate();
+                editor.Focus();
+            }
+
             editor.InsertText(pos,command.GetSqlString());
         }
 
 
-        private void SetSQLHighlighting(Scintilla scintilla)
+        private void SetSQLHighlighting(Scintilla scintilla, IQuerySyntaxHelper syntaxHelper)
         {
             // Reset the styles
             scintilla.StyleResetDefault();
@@ -127,7 +123,8 @@ namespace ReusableUIComponents.ScintillaHelper
             string word2 =
                 @"ascii cast char charindex ceiling coalesce collate contains convert current_date current_time current_timestamp current_user floor isnull max min nullif object_id session_user substring system_user tsequal";
 
-            foreach (var kvp in SQLFunctionsDictionary)
+            if (syntaxHelper != null)
+                foreach (var kvp in syntaxHelper.GetSQLFunctionsDictionary())
                 word2 += " " + kvp.Key;
             
             // Word2 = 1

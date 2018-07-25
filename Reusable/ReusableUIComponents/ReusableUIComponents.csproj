@@ -211,9 +211,6 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AbstractControlDescriptionProvider.cs" />
-    <Compile Include="BetterListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="BetterListBoxScrollArgs.cs" />
     <Compile Include="ChecksUI\AllChecksCompleteHandler.cs" />
     <Compile Include="ChecksUI\AllChecksCompleteHandlerArgs.cs" />
@@ -327,12 +324,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
-    </Compile>
-    <Compile Include="LockableUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LockableUI.Designer.cs">
-      <DependentUpon>LockableUI.cs</DependentUpon>
     </Compile>
     <Compile Include="NativeMethods.cs" />
     <Compile Include="LinkLabels\PathLinkLabel.cs">
@@ -499,9 +490,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KeywordHelpTextListbox.resx">
       <DependentUpon>KeywordHelpTextListbox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LockableUI.resx">
-      <DependentUpon>LockableUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Performance\PerformanceCounterResultsUI.resx">
       <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>

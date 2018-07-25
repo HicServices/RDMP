@@ -46,7 +46,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             
             //recreate the extraction command so it gets updated with the new column too.
             _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
-                _extractableColumns, new HICProjectSalt(_project), "",
+                _extractableColumns, new HICProjectSalt(_project), 
                 new ExtractionDirectory(@"C:\temp\", _configuration));
 
             try

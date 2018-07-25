@@ -174,7 +174,7 @@ CohortDatabaseName);
                 alreadyExisting.DeleteInDatabase();
             }
 
-            var newExternal = new ExternalCohortTable(DataExportRepository, "")
+            var newExternal = new ExternalCohortTable(DataExportRepository, "",DatabaseType.MicrosoftSQLServer)
             {
                 Database = CohortDatabaseName,
                 Server = _cohortDatabase.Server.Name,

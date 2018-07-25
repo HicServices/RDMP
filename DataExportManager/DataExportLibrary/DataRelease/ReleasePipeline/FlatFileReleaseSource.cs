@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -11,20 +12,12 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
     public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
     {
-        private bool firstTime = true;
-
-        public override ReleaseAudit GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (firstTime)
+            return flowData ?? new ReleaseAudit()
             {
-                firstTime = false;
-                return flowData ?? new ReleaseAudit()
-                {
-                    SourceGlobalFolder = PrepareSourceGlobalFolder()
-                };
-            }
-
-            return null;
+                SourceGlobalFolder = PrepareSourceGlobalFolder()
+            };
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -40,6 +33,14 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         protected override void RunSpecificChecks(ICheckNotifier notifier)
         {
             
+        }
+
+        protected override DirectoryInfo PrepareSourceGlobalFolder()
+        {
+            if (_releaseData.ReleaseGlobals)
+                return base.PrepareSourceGlobalFolder();
+
+            return null;
         }
     }
 }

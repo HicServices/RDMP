@@ -22,6 +22,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableUIComponents;
@@ -241,11 +242,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 {
                     var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCommandFactory());
 
-                    var hasDependencies = col as IHasDependencies ?? _aggregate; //if col isn't IHasDependencies then it's count col presumably? use the aggregate for autocomplete
+                    var querySyntaxSource = col as IHasQuerySyntaxHelper ?? _aggregate;
 
-                    var autoComplete = new AutoCompleteProviderFactory(_activator).Create(hasDependencies);
+                    var autoComplete = new AutoCompleteProviderFactory(_activator).Create(querySyntaxSource.GetQuerySyntaxHelper());
+                    autoComplete.Add(col);
+                    autoComplete.Add(_aggregate);
+
                     autoComplete.RegisterForEvents(dialog.QueryEditor);
-
+                    
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         col.SelectSQL = dialog.Result;

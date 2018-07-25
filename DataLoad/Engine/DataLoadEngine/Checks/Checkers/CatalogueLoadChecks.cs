@@ -184,7 +184,10 @@ namespace DataLoadEngine.Checks.Checkers
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "TableInfo " + tableInfo.Name + " has no IsPrimaryKey columns", CheckResult.Fail, null));
 
-            var primaryKeys = live.ExpectTable(tableInfo.GetRuntimeName()).DiscoverColumns().Where(c => c.IsPrimaryKey);
+            var primaryKeys = live.ExpectTable(tableInfo.GetRuntimeName()).DiscoverColumns().Where(c => c.IsPrimaryKey).ToArray();
+
+            if(primaryKeys.Any(k=>k.IsAutoIncrement))
+                notifier.OnCheckPerformed(new CheckEventArgs("AutoIncrement columns "+string.Join(",",primaryKeys.Where(k=>k.IsAutoIncrement))+" are not allowed as Primary Keys for your table because there is no way to differentiate new data being loaded from duplicate old data being loaded (the entire purpose of the RDMP DLE)",CheckResult.Fail));
 
             //confirm primary keys match underlying table
             //sort pks alphabetically and confirm they match the underlying live system table
@@ -279,12 +282,12 @@ namespace DataLoadEngine.Checks.Checkers
             
             //live columns 
             foreach (DiscoveredColumn col in liveCols)
-                if (!col.GetRuntimeName().StartsWith("hic_") && col.DataType.IsIdentity())    //must start hic_ if they are identities
+                if (!col.GetRuntimeName().StartsWith("hic_") && col.IsAutoIncrement)    //must start hic_ if they are identities
                     notifier.OnCheckPerformed(new CheckEventArgs("Column " + col + " is an identity column in the LIVE database but does not start with hic_", CheckResult.Fail, null));//this one does not
 
             //staging columns
             foreach (DiscoveredColumn col in stagingCols) //staging columns
-                if (col.DataType.IsIdentity()) //if there are any auto increments
+                if (col.IsAutoIncrement) //if there are any auto increments
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         "Column " + col + " is an identity column and is in STAGING, the identity flag must be removed from the STAGING table", CheckResult.Fail, null));//complain since don't want a mismatch between IDs in staging and live or complaints about identity insert from SQL server
 

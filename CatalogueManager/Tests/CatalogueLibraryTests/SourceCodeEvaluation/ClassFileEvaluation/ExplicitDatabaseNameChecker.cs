@@ -23,6 +23,16 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             whitelist.Add("PluginPackagerProgramOptions.cs"); //allwed because it's a suggestion to the user about command line arguments
             whitelist.Add("DocumentationCrossExaminationTest.cs"); //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
 
+
+            whitelist.AddRange(
+                new string[]
+                {
+                    "DleOptions.cs",
+                    "RDMPCommandLineOptions.cs",
+                    "Settings.Designer.cs",
+
+                }); //allowed because it's default arguments for CLI
+
             prohibitedStrings.Add("TEST_");
             prohibitedStrings.Add("RDMP_");
 

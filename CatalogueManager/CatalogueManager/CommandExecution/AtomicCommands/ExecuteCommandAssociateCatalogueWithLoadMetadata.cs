@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -34,6 +23,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
             if(!_availableCatalogues.Any())
                 SetImpossible("There are no Catalogues that are not associated with another Load already");
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Specifies that the table(s) underlying the dataset are loaded by the load configuration.  The union of all catalogue(s) table(s) will be used for RAW=>STAGING=>LIVE migration during DLE execution";
         }
 
         public override void Execute()

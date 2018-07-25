@@ -78,14 +78,15 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 foreach (DiscoveredTable discoveredTable in Database.DiscoverTables(true))
                 {
                     //it's an anticipated one
-                    if(_anticipatedChildren.Any(c=>c.TableName.Equals(discoveredTable.GetRuntimeName())))
+                    if(_anticipatedChildren.Any(c=>c.TableName.Equals(discoveredTable.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)))
                         continue;
 
                     //it's unplanned (maybe user created it as part of his load script or something)
                     _unplannedChildren.Add(new UnplannedTable(discoveredTable));
                 }
         }
-
+        
+        #region equality
         protected bool Equals(LoadDiagramDatabaseNode other)
         {
             return string.Equals(DatabaseName, other.DatabaseName) && _bubble == other._bubble;
@@ -106,5 +107,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 return ((DatabaseName != null ? DatabaseName.GetHashCode() : 0)*397) ^ (int) _bubble;
             }
         }
+        #endregion
     }
 }

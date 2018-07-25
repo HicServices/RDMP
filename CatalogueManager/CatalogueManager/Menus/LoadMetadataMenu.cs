@@ -21,6 +21,7 @@ using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
 namespace CatalogueManager.Menus
@@ -34,11 +35,16 @@ namespace CatalogueManager.Menus
             : base(args, loadMetadata)
         {
             _loadMetadata = loadMetadata;
-            Items.Add("Edit description", null,(s, e) => _activator.Activate<LoadMetadataUI, LoadMetadata>(loadMetadata));
-
-            Add(new ExecuteCommandCreateNewLoadMetadata(_activator));
+            
             Items.Add("View Load Diagram", CatalogueIcons.LoadBubble, (s, e) => _activator.ActivateViewLoadMetadataDiagram(this, loadMetadata));
 
+            Items.Add("Edit description", null,(s, e) => _activator.Activate<LoadMetadataUI, LoadMetadata>(loadMetadata));
+            
+            Items.Add(new ToolStripSeparator());
+
+            Add(new ExecuteCommandCreateNewLoadMetadata(_activator));
+            
+            ReBrandActivateAs("Check and Execute",RDMPConcept.LoadMetadata,OverlayKind.Execute);
         }
 
         public void Delete()

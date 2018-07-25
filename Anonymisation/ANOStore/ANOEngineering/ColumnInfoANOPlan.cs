@@ -248,7 +248,7 @@ namespace ANOStore.ANOEngineering
                 case Plan.PassThroughUnchanged:
 
                     //if they have an identity column then we substitute it for int in the destination
-                    if (sourceTypeTranslater.IsIdentity(ColumnInfo.Data_type))
+                    if (ColumnInfo.IsAutoIncrement)
                         return destinationTypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(int)));
 
                     return sourceTypeTranslater.TranslateSQLDBType(ColumnInfo.Data_type, destinationTypeTranslater);

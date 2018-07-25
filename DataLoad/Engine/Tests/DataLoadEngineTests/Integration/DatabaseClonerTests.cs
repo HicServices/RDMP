@@ -17,6 +17,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -83,7 +84,7 @@ namespace DataLoadEngineTests.Integration
             
             var cloner = new DatabaseCloner(hicDatabaseConfig);
             cloner.CreateDatabaseForStage(LoadBubble.Raw);
-            cloner.CreateTablesInDatabaseFromCatalogueInfo(testEnvironment.DemographyTableInfo, LoadBubble.Raw);
+            cloner.CreateTablesInDatabaseFromCatalogueInfo(new ThrowImmediatelyDataLoadEventListener(), testEnvironment.DemographyTableInfo, LoadBubble.Raw);
             
             var table = hicDatabaseConfig.DeployInfo.DatabaseInfoList[LoadBubble.Raw].ExpectTable(testEnvironment.DemographyTableInfo.GetRuntimeName());
             Assert.IsTrue(table.Exists());
@@ -113,7 +114,7 @@ namespace DataLoadEngineTests.Integration
 
             var cloner = new DatabaseCloner(hicDatabaseConfig);
             cloner.CreateDatabaseForStage(LoadBubble.Raw);
-            cloner.CreateTablesInDatabaseFromCatalogueInfo(testEnvironment.DemographyTableInfo, LoadBubble.Raw);
+            cloner.CreateTablesInDatabaseFromCatalogueInfo(new ThrowImmediatelyDataLoadEventListener(),testEnvironment.DemographyTableInfo, LoadBubble.Raw);
 
             // The data type of the ANOCHI column in the LIVE database should be varchar(12), but in the RAW database it should be non-ANO and varchar(10)
 

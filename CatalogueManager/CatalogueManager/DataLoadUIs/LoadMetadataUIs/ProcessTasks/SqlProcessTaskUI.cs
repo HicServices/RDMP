@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.Design.WebControls.WebParts;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.AutoComplete;
@@ -59,53 +60,58 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             loadStageIconUI1.Left = tbID.Right +2;
         }
 
+        private bool _bLoading = false;
+
         private void LoadFile()
         {
-            lblPath.Text = _processTask.Path;
-            ragSmiley1.Left = lblPath.Right;
-            btnBrowse.Left = ragSmiley1.Right;
-
-            lblID.Left = btnBrowse.Right;
-            tbID.Left = lblID.Right;
-
-            pbFile.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.File);
-            tbID.Text = _processTask.ID.ToString();
-            
-
-            if (_scintilla == null)
-            {
-                ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
-                _scintilla = factory.Create(new RDMPCommandFactory());
-                groupBox1.Controls.Add(_scintilla);
-                _scintilla.SavePointLeft += ScintillaOnSavePointLeft;
-                objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;    
-            }
-            
-            SetupAutocomplete();
-
+            _bLoading = true;
             try
             {
-                _scintilla.Text = File.ReadAllText(_processTask.Path);
-                _scintilla.SetSavePoint();
+                lblPath.Text = _processTask.Path;
+                ragSmiley1.Left = lblPath.Right;
+                btnBrowse.Left = ragSmiley1.Right;
+
+                lblID.Left = btnBrowse.Right;
+                tbID.Left = lblID.Right;
+
+                pbFile.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.File);
+                tbID.Text = _processTask.ID.ToString();
+            
+
+                if (_scintilla == null)
+                {
+                    ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
+                    _scintilla = factory.Create(new RDMPCommandFactory());
+                    groupBox1.Controls.Add(_scintilla);
+                    _scintilla.SavePointLeft += ScintillaOnSavePointLeft;
+                    objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;    
+                }
+            
+                SetupAutocomplete();
+
+                try
+                {
+                    _scintilla.Text = File.ReadAllText(_processTask.Path);
+                    _scintilla.SetSavePoint();
+                }
+                catch (Exception e)
+                {
+                    ExceptionViewer.Show(e);
+                }
+
+                ragSmiley1.StartChecking(_processTask);
             }
-            catch (Exception e)
+            finally
             {
-                ExceptionViewer.Show(e);
+                _bLoading = false;
             }
-
-            ragSmiley1.StartChecking(_processTask);
-
         }
 
         private void SetupAutocomplete()
         {
             //if theres an old one dispose it
             if (_autoComplete == null)
-                _autoComplete = new AutoCompleteProviderFactory(_activator).Create();
-
-            _autoComplete.Clear();
-
-            _autoComplete.AddSQLKeywords();
+                _autoComplete = new AutoCompleteProviderFactory(_activator).Create(_processTask.LoadMetadata.GetQuerySyntaxHelper());
             
             foreach (var table in _processTask.LoadMetadata.GetDistinctTableInfoList(false))
                 _autoComplete.Add(table, _processTask.LoadStage);
@@ -126,6 +132,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
         private void ScintillaOnSavePointLeft(object sender, EventArgs eventArgs)
         {
+            if (_bLoading)
+                return;
+
             objectSaverButton1.Enable(true);
         }
 

@@ -62,6 +62,7 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvSelectedColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedCatalogue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvIssues = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -394,6 +395,7 @@ namespace DataExportManager.ProjectUI.Datasets
             // olvSelected
             // 
             this.olvSelected.AllColumns.Add(this.olvSelectedColumnName);
+            this.olvSelected.AllColumns.Add(this.olvIssues);
             this.olvSelected.AllColumns.Add(this.olvSelectedColumnOrder);
             this.olvSelected.AllColumns.Add(this.olvSelectedCatalogue);
             this.olvSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -402,7 +404,7 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvSelected.CellEditUseWholeCell = false;
             this.olvSelected.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvSelectedColumnName,
-            this.olvSelectedColumnOrder,
+            this.olvIssues,
             this.olvSelectedCatalogue});
             this.olvSelected.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvSelected.FullRowSelect = true;
@@ -431,12 +433,19 @@ namespace DataExportManager.ProjectUI.Datasets
             // olvSelectedColumnOrder
             // 
             this.olvSelectedColumnOrder.AspectName = "Order";
+            this.olvSelectedColumnOrder.DisplayIndex = 1;
+            this.olvSelectedColumnOrder.IsVisible = false;
             this.olvSelectedColumnOrder.Text = "Order";
             // 
             // olvSelectedCatalogue
             // 
             this.olvSelectedCatalogue.Text = "Catalogue";
             this.olvSelectedCatalogue.Width = 100;
+            // 
+            // olvIssues
+            // 
+            this.olvIssues.Text = "Issues";
+            this.olvIssues.Width = 100;
             // 
             // ConfigureDatasetUI
             // 
@@ -493,5 +502,6 @@ namespace DataExportManager.ProjectUI.Datasets
         private System.Windows.Forms.FlowLayoutPanel flpCouldNotJoinTables;
         private System.Windows.Forms.Label label8;
         private ReusableUIComponents.HelpIcon helpIconJoin;
+        private OLVColumn olvIssues;
     }
 }

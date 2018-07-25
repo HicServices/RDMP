@@ -115,16 +115,17 @@ namespace CatalogueLibrary.Data.DataLoad
 
         #endregion
 
-
-
         public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage)
         {
+            var order = repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
+            
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"LoadMetadata_ID", parent.ID},
                 {"ProcessTaskType", ProcessTaskType.Executable.ToString()},
                 {"LoadStage", stage},
-                {"Name", "New Process" + Guid.NewGuid()}
+                {"Name", "New Process" + Guid.NewGuid()},
+                {"Order", order}
             });
         }
 

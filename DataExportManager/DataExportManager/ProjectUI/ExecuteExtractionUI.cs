@@ -1,43 +1,29 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
-using CatalogueLibrary;
+using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.Commands;
+using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.Repositories;
-using HIC.Logging;
-using MapsDirectlyToDatabaseTableUI;
+using DataExportLibrary.Providers.Nodes.UsedByNodes;
+using MapsDirectlyToDatabaseTable;
+using RDMPAutomationService.Options;
+using RDMPAutomationService.Options.Abstracts;
+using RDMPAutomationService.Runners;
 using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
-using ReusableUIComponents.Progress;
-
-using ReusableUIComponents.SingleControlForms;
 
 namespace DataExportManager.ProjectUI
 {
@@ -55,247 +41,195 @@ namespace DataExportManager.ProjectUI
     {
         private IPipelineSelectionUI _pipelineSelectionUI1;
             
-        public Project Project { get; set; }
         public int TopX { get; set; }
-        private ExtractionConfiguration _configurationToExecute;
-        private readonly IExtractableDataSet[] _toExtract;
+        private ExtractionConfiguration _extractionConfiguration;
         
-        private bool extractionInProgress;
-        DataLoadInfo _dataLoadInfo;
+        private IMapsDirectlyToDatabaseTable[] _globals;
+        private ISelectedDataSets[] _datasets;
+        private HashSet<ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>> _bundledStuff;
 
-        BiDictionary<TabPage, ExecuteDatasetExtractionHostUI> tabPagesDictionary = new BiDictionary<TabPage, ExecuteDatasetExtractionHostUI>();
+        private RDMPCollectionCommonFunctionality _commonFunctionality = new RDMPCollectionCommonFunctionality();
+
+        private const string CoreDatasets = "Core";
+        private const string ProjectSpecificDatasets = "Project Specific";
+
+        private ArbitraryFolderNode _coreDatasetsFolder = new ArbitraryFolderNode(CoreDatasets);
+        private ArbitraryFolderNode _projectSpecificDatasetsFolder = new ArbitraryFolderNode(ProjectSpecificDatasets);
+        private ArbitraryFolderNode _globalsFolder = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME);
 
         public ExecuteExtractionUI()
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.DataExport;
-        }
 
-
-        private bool HasConfigurationPreviouslyBeenReleased(ExtractionConfiguration configurationToExecute)
-        {
-            var previouslyReleasedStuff = configurationToExecute.ReleaseLogEntries;
-
-            if (previouslyReleasedStuff.Any())
-                return true;
-
-            return false;
-        }
-
-
-        private void btnCancelAll_Click(object sender, EventArgs e)
-        {
-            if (datasetsCurrentlyExecuting == 0)
-                return;
-
-            foreach (ExecuteDatasetExtractionHostUI host in tabPagesDictionary.Seconds)
-                host.Cancel();
-
-        }
-
-        private void btnStart_Click(object sender, EventArgs e)
-        {
-            if (extractionInProgress)
-            {
-                MessageBox.Show("Extraction already in process");
-                return;
-            }
-
-            if (_pipelineSelectionUI1.Pipeline == null)
-            {
-                MessageBox.Show("No pipeline selected");
-                return;
-            }
-
-            //get rid of all old tabs
-            tabControl1.TabPages.Clear();
-            tabPagesDictionary.Clear();
-
-            IExtractCommand[] commands= null;
-
-            try
-            {
-                //create an entry in the table for each extraction
-                commands = chooseExtractablesUI1.GetFinalExtractCommands();
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-                return;
-            }
-
-            DisableControls(true);
+            checkAndExecuteUI1.CommandGetter = CommandGetter;
+            checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
+            checkAndExecuteUI1.GroupBySender();
             
-            _dataLoadInfo = StartAudit();
+            olvState.ImageGetter = State_ImageGetter;
+            olvState.AspectGetter = State_AspectGetter;
 
-            //could not generate audit object so abandon extraction (and renenable the controls)
-            if (_dataLoadInfo == null)
-            {
-                DisableControls(false);
-                return;
-            }
+            tlvDatasets.ChildrenGetter = ChildrenGetter;
+            tlvDatasets.CanExpandGetter = CanExpandGetter;
+            tlvDatasets.HierarchicalCheckboxes = true;
             
-            try
-            {
-                //the globals we must extract
-                var globals = chooseExtractablesUI1.GetGlobalsBundle();
+            checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
+            pictureBox1.BackColor = Color.FromArgb(240, 240, 240);
+        }
 
-                //if there are globals selected for extraction
-                if (globals.Any())
-                {
+        private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
+        {
+            tlvDatasets.RefreshObjects(tlvDatasets.Objects.Cast<object>().ToArray());
+        }
 
-                    var host = new ExecuteDatasetExtractionHostUI(new ExtractGlobalsCommand(RepositoryLocator, Project, _configurationToExecute, globals), Project, _dataLoadInfo, _pipelineSelectionUI1.Pipeline);
-                    host.RepositoryLocator = RepositoryLocator;
-                    host.Dock = DockStyle.Fill;
+        private bool CanExpandGetter(object model)
+        {
+            var e = ChildrenGetter(model);
+            return  e != null && e.Cast<object>().Any();
+        }
 
-                    //add a new tab page for this bundle execution
-                    var tabPage = new TabPage("Globals");
-                    tabPage.Controls.Add(host);
+        private IEnumerable ChildrenGetter(object model)
+        {
+            if (model == _globalsFolder)
+                return _globals;
 
-                    tabControl1.TabPages.Add(tabPage);
-                    tabPagesDictionary.Add(tabPage, host);
+            if (model == _coreDatasetsFolder)
+                return _datasets.Where(sds => sds.ExtractableDataSet.Project_ID == null);
 
-                    datasetsCurrentlyExecuting++;
-                    host.DoExtraction();
-                    host.Finished += host_Finished;
-                    //////////////////////////////////
-                    //create UI tab for globals
-                    //var globalsTab = new TabPage("Globals");
-                    //tabControl1.TabPages.Add(globalsTab);
+            if (model == _projectSpecificDatasetsFolder)
+                return _datasets.Where(sds => sds.ExtractableDataSet.Project_ID != null);
 
-                    ////with a progressUI on it
-                    //var progressUI = new ProgressUI();
-                    //progressUI.Dock = DockStyle.Fill;
-                    //globalsTab.Controls.Add(progressUI);
+            var eds = model as IExtractableDataSet;
 
-                    //var globalExtractor = new ExtractionPipelineUseCase(Project, ExtractDatasetCommand.EmptyCommand, _pipelineSelectionUI1.Pipeline, _dataLoadInfo);
+            if (_bundledStuff != null && eds != null)
+                return _bundledStuff.Where(s => s.User.Equals(eds));
 
-                    //Thread t = new Thread(() =>
-                    //    {
-                    //        try
-                    //        {
-                    //            progressUI.ShowRunning(true);
+            return null;
+        }
 
-                    //            globalExtractor.ExtractGlobalsForDestination(Project,
-                    //                _configurationToExecute,
-                    //                globals,
-                    //                progressUI,
-                    //                _dataLoadInfo);
-                    //        }
-                    //        finally
-                    //        {
-                    //            progressUI.ShowRunning(false);
-                    //        }
-                    //    }   
-                    //);
+        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        {
+            base.ConsultAboutClosing(sender, e);
+            checkAndExecuteUI1.ConsultAboutClosing(sender, e);
+        }
 
-                    //t.Start();
-                }
-                
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show("A problem ocurred trying to create global extractions."+exception.Message,exception);
-                return;
-            }
+        private object State_ImageGetter(object rowObject)
+        {
+            var state = GetState(rowObject);
+            return state == null ? null : _activator.CoreIconProvider.GetImage(state);
+        }
 
-            foreach (IExtractCommand command in commands)
-            {
-                var datasetCommand = command as ExtractDatasetCommand;
-                if(datasetCommand != null)
-                {
-                    if (TopX != -1)
-                        ForceTopX(datasetCommand);
+        private object GetState(object rowObject)
+        {
+            var extractionRunner = checkAndExecuteUI1.CurrentRunner as ExtractionRunner;
 
-                    datasetCommand.IncludeValidation = !cbSkipValidation.Checked;
-                }
-                
-                var host = new ExecuteDatasetExtractionHostUI(command, Project, _dataLoadInfo, _pipelineSelectionUI1.Pipeline);
-                host.RepositoryLocator = RepositoryLocator;
-                host.Dock = DockStyle.Fill;
+            if (rowObject == _globalsFolder && extractionRunner != null)
+                return extractionRunner.GetGlobalsState();
 
-                //add a new tab page for this bundle execution
-                var tabPage = new TabPage(command.ToString());
-                tabPage.Controls.Add(host);
-                
-                tabControl1.TabPages.Add(tabPage);
-                tabPagesDictionary.Add(tabPage,host);
-                  
-                datasetsCurrentlyExecuting++;
-                host.DoExtraction();
-                host.Finished += host_Finished;
-            }
+            var sds = rowObject as SelectedDataSets;
 
-            if(!_dataLoadInfo.IsClosed)
-                _dataLoadInfo.CloseAndMarkComplete();
+            if (extractionRunner != null && sds != null) 
+                return extractionRunner.GetState(sds.ExtractableDataSet);
             
+            return null;
         }
 
-        private void ForceTopX(ExtractDatasetCommand command)
+        private object State_AspectGetter(object rowobject)
         {
-            ((QueryBuilder)command.QueryBuilder).SetLimitationSQL(" TOP " + TopX);
-        }
-
-        private void DisableControls(bool disable)
-        {
-            extractionInProgress = disable;
-            btnStart.Enabled = !disable;
-            cbIsTest.Enabled = !disable;
-            cbIsTest.Enabled = !disable;
-        }
-
-        private int datasetsCurrentlyExecuting = 0;
-        
-        void host_Finished()
-        {
-            if (this.InvokeRequired)
-            {
-                BeginInvoke(new Action(host_Finished));
-                return;
-            }
-
-            datasetsCurrentlyExecuting--;
-
-            if (datasetsCurrentlyExecuting == 0)
-            {
-                extractionInProgress = false;
-                btnStart.Enabled = true;
-                cbIsTest.Enabled = true;
-                cbIsTest.Enabled = true;
-                
-                if (_dataLoadInfo != null && !_dataLoadInfo.IsClosed)
-                    _dataLoadInfo.CloseAndMarkComplete();
-
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_configurationToExecute));
-            }
-        }
-
-        
-        
-        private DataLoadInfo StartAudit()
-        {
-            DataLoadInfo dataLoadInfo;
-
-            var logManager = _configurationToExecute.GetExplicitLoggingDatabaseServerOrDefault();
-            
-            try
-            {
-                //populate DataLoadInfo object (Audit)
-                dataLoadInfo = new DataLoadInfo(ExecuteDatasetExtractionSource.AuditTaskName,
-                                                     Process.GetCurrentProcess().ProcessName,
-                                                     Project.Name + "(ExtractionConfiguration ID=" +
-                                                     _configurationToExecute.ID + ")",
-                                                     "", cbIsTest.Checked,logManager.Server);
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show("Problem occurred trying to create Logging Component:" + e.Message + " (check user has access to " + logManager.Server+ " and that the DataLoadTask '"+ExecuteDatasetExtractionSource.AuditTaskName+"' exists)", e);
-                return null;
-            }
-
-            return dataLoadInfo;
+            var state = GetState(rowobject);
+            return state == null ? null : state.ToString();
         }
         
+        private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
+        {
+            return new ExtractionOptions() { 
+                Command = activityRequested,
+                ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
+                Datasets = _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray(),
+                ExtractionConfiguration = _extractionConfiguration.ID,
+                Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 :_pipelineSelectionUI1.Pipeline.ID
+            };
+        }
+
+        private bool _isFirstTime = true;
+        public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
+        {
+            base.SetDatabaseObject(activator, databaseObject);
+            
+            _extractionConfiguration = databaseObject;
+            
+            if(!_commonFunctionality.IsSetup)
+                _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings(){AddFavouriteColumn = false,AllowPinning=false,SuppressChildrenAdder=true});
+
+            checkAndExecuteUI1.SetItemActivator(activator);
+
+            var checkedBefore = tlvDatasets.CheckedObjects;
+
+            tlvDatasets.ClearObjects();
+
+            _globals = _extractionConfiguration.GetGlobals();
+            _datasets = databaseObject.SelectedDataSets.ToArray();
+
+            GetBundledStuff();
+
+            //add the folders
+            tlvDatasets.AddObjects(new object[] { _globalsFolder, _coreDatasetsFolder, _projectSpecificDatasetsFolder });
+            
+            //enable all to start with 
+            tlvDatasets.EnableObjects(tlvDatasets.Objects);
+
+            tlvDatasets.DisableObjects(_globals);
+            tlvDatasets.DisableObjects(_bundledStuff);
+
+            //if there are no globals disable this option
+            if(!_globals.Any())
+                tlvDatasets.DisableObject(_globalsFolder);
+
+            //if there are no project specific datasets
+            if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID == null))
+                tlvDatasets.DisableObject(_projectSpecificDatasetsFolder); //disable this option
+
+            //if all the datasets are project specific
+            if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID != null))
+                tlvDatasets.DisableObject(_coreDatasetsFolder);
+            
+            //don't accept refresh while executing
+            if (checkAndExecuteUI1.IsExecuting)
+                return;
+            
+            if (_pipelineSelectionUI1 == null)
+            {
+                //create a new selection UI (pick an extraction pipeliene UI)
+                var useCase = new ExtractionPipelineUseCase(_extractionConfiguration.Project);
+                var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
+
+                _pipelineSelectionUI1 = factory.Create("Extraction Pipeline", DockStyle.Fill, panel1);
+                _pipelineSelectionUI1.CollapseToSingleLineMode();
+
+                //if the configuration has a default then use that pipeline
+                if (_extractionConfiguration.DefaultPipeline_ID != null)
+                    _pipelineSelectionUI1.Pipeline = _extractionConfiguration.DefaultPipeline;
+
+                _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
+            }
+
+            TopX = -1;
+
+            tlvDatasets.ExpandAll();
+
+            if (_isFirstTime)
+                tlvDatasets.CheckAll();
+            else if (checkedBefore.Count > 0)
+                tlvDatasets.CheckObjects(checkedBefore);
+
+            _isFirstTime = false;
+        }
+
+        private void ResetChecksUI(object sender, EventArgs e)
+        {
+            if (!checkAndExecuteUI1.IsExecuting)
+                checkAndExecuteUI1.Reset();
+        }
 
         private void tbTopX_TextChanged(object sender, EventArgs e)
         {
@@ -322,100 +256,42 @@ namespace DataExportManager.ProjectUI
             }
         }
 
-
-        private void lbDatasets_ItemChecked(object sender, ItemCheckedEventArgs e)
+        private void tbFilter_TextChanged(object sender, EventArgs e)
         {
-            if (e.Item.Tag != null)
-            {
-                ExtractableDataSet ds = e.Item.Tag as ExtractableDataSet;
-
-                if (ds != null && ds.DisableExtraction && e.Item.Checked)
-                {
-                    MessageBox.Show(
-                        "Dataset is disabled for extraction (possibly it is a work in progress or in a state of flux)");
-                    e.Item.Checked = false;
-                    return;
-                }
-            }
-        }
-        
-        private void chooseExtractablesUI1_BundleSelected(object sender, IExtractCommand command)
-        {
-            var toSelect = tabPagesDictionary.Seconds.SingleOrDefault(ui => ui.ExtractCommand  == command);
-
-            if(toSelect != null)
-                tabControl1.SelectTab(tabPagesDictionary.GetBySecond(toSelect));
-        }
-        
-        public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
-        {
-            base.SetDatabaseObject(activator,databaseObject);
-            
-            //don't accept refresh while executing
-            if (extractionInProgress)
-                return;
-
-            SetupFor(databaseObject);
-            chooseExtractablesUI1.Setup(_configurationToExecute);
+            tlvDatasets.ModelFilter = new TextMatchFilter(tlvDatasets,tbFilter.Text);
+            tlvDatasets.UseFiltering = true;
         }
 
-        private void SetupFor(ExtractionConfiguration configuration)
+        private void GetBundledStuff()
         {
-           
-            Project = (Project) configuration.Project;
-            _configurationToExecute = configuration;
+            _bundledStuff = new HashSet<ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>>();
 
-            if (_pipelineSelectionUI1 == null)
+            foreach (ISelectedDataSets sds in _datasets)
             {
-                //create a new selection UI (pick an extraction pipeliene UI)
-                var useCase = new ExtractionPipelineUseCase(Project);
-                var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
+                var eds = sds.ExtractableDataSet;
 
-                _pipelineSelectionUI1 = factory.Create("Extraction Pipeline",DockStyle.Fill,panel1);
-                
-                //if the configuration has a default then use that pipeline
-                if (configuration.DefaultPipeline_ID != null)
-                    _pipelineSelectionUI1.Pipeline = configuration.DefaultPipeline;
-            }
+                foreach (var document in eds.Catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals))
+                    _bundledStuff.Add( new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds,document));
 
-            TopX = -1;
-            
-            if (_configurationToExecute.Cohort_ID == null)
-                throw new Exception("There is no cohort associated with this extraction!");
+                foreach (var supportingSQLTable in eds.Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals))
+                    _bundledStuff.Add(new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds, supportingSQLTable));
 
-            if (HasConfigurationPreviouslyBeenReleased(_configurationToExecute))
-            {
-                lblAlreadyReleased.Visible = true;
-                this.Enabled = false;//disable entire form
-            }
-            try
-            {
-                if (configuration.DefaultPipeline_ID != null)
-                    _pipelineSelectionUI1.Pipeline = configuration.DefaultPipeline;
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show(e);
+                foreach (var lookup in eds.Catalogue.GetLookupTableInfoList())
+                    _bundledStuff.Add(new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds, lookup));
             }
         }
 
-        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        private void olvDatasets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (datasetsCurrentlyExecuting > 0)
-            {
-                MessageBox.Show("There are currently " + datasetsCurrentlyExecuting + " datasets executing, please abort these before closing");
-                e.Cancel = true;
-            }
+            var sds =  tlvDatasets.SelectedObject as SelectedDataSets;
+            checkAndExecuteUI1.GroupBySender(sds != null ? sds.ToString() : null);
         }
 
-        public override string GetTabName()
+        public void TickAllFor(SelectedDataSets selectedDataSet)
         {
-            return "Execute:" + base.GetTabName();
-        }
-
-        public void Start()
-        {
-            btnStart_Click(null, null);
+            tlvDatasets.UncheckAll();
+            tlvDatasets.CheckObject(_globalsFolder);
+            tlvDatasets.CheckObject(selectedDataSet);
         }
     }
 

@@ -36,7 +36,6 @@ namespace CatalogueLibrary.Providers
         PermissionWindow[] AllPermissionWindows { get;}
         IEnumerable<CatalogueItem> AllCatalogueItems { get; }
         AggregateConfiguration[] AllAggregateConfigurations { get;}
-        AllAutomationServerSlotsNode AllAutomationServerSlotsNode { get; }
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
         AllObjectSharingNode AllObjectSharingNode { get; }
         ObjectImport[] AllImports { get; }
@@ -48,6 +47,7 @@ namespace CatalogueLibrary.Providers
         
         AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
         AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
+        AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
     }

@@ -76,12 +76,12 @@ namespace CatalogueManager.DataViewing
             var overlayer = new IconOverlayProvider();
             btnResetSql.Image = overlayer.GetOverlay(FamFamFamIcons.text_align_left, OverlayKind.Problem);
 
-            //the autocomplete supporting object
-            var autoCompleteObject = _collection.GetAutocompleteObject();
-
-            if(autoCompleteObject != null && _autoComplete == null)
+            if(_autoComplete == null)
             {
-                _autoComplete = new AutoCompleteProviderFactory(activator).Create();
+                _autoComplete = new AutoCompleteProviderFactory(activator).Create( _collection.GetQuerySyntaxHelper());
+
+                _collection.AdjustAutocomplete(_autoComplete);
+
                 _autoComplete.RegisterForEvents(_scintilla);
             }
             

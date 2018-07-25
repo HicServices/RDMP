@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Automation;
-using CatalogueLibrary.Data.Remoting;
-using CatalogueManager.AggregationUIs.Advanced;
+﻿using CatalogueLibrary.Data.Remoting;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.SimpleDialogs.Automation;
 using CatalogueManager.SimpleDialogs.Remoting;
-using RDMPObjectVisualisation.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

@@ -37,7 +37,7 @@ namespace CatalogueManager.PluginChildProvision
         protected ToolStripMenuItem GetMenuItem(IAtomicCommand cmd)
         {
             if(_atomicCommandUIFactory == null)
-                _atomicCommandUIFactory = new AtomicCommandUIFactory(ItemActivator.CoreIconProvider);
+                _atomicCommandUIFactory = new AtomicCommandUIFactory(ItemActivator);
 
             return _atomicCommandUIFactory.CreateMenuItem(cmd);
         }

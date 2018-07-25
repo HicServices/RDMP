@@ -27,10 +27,36 @@ namespace ReusableLibraryCode
             return message;
         }
 
+        /// <summary>
+        /// Returns the first base Exception in the AggregateException.InnerExceptions list which is of type T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="e"></param>
+        /// <returns></returns>
         [Pure]
         public static T GetExceptionIfExists<T>(this AggregateException e) where T:Exception
         {
             return e.Flatten().InnerExceptions.OfType<T>().FirstOrDefault();
+        }
+        
+        /// <summary>
+        /// Returns the first InnerException of type T in the Exception or null.
+        /// 
+        /// <para>If e is T then e is returned directly</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        [Pure]
+        public static T GetExceptionIfExists<T>(this Exception e) where T : Exception
+        {
+            if (e is T)
+                return (T)e;
+
+            if (e.InnerException != null)
+                return GetExceptionIfExists<T>(e.InnerException);
+
+            return null;
         }
     }
 }

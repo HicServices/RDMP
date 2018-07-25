@@ -7,6 +7,7 @@ using System.Text;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Ticketing;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable.Revertable;
@@ -21,19 +22,30 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// Extraction Destinations will return an implementation of this class based on the extraction method used.
     /// </summary>
     /// <typeparam name="T">The type which is passed around in the pipeline</typeparam>
-    public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<ReleaseData>, IDataFlowSource<T> where T : class, new()
+    public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<ReleaseData>, IDataFlowSource<T> where T : ReleaseAudit
     {
-        private readonly Action<ICheckNotifier> checkAction;
         protected readonly T flowData;
         protected ReleaseData _releaseData;
+        protected bool firstTime = true;
 
-        public FixedReleaseSource(Action<ICheckNotifier> checkAction = null, T flowData = null)
+        public FixedReleaseSource(T flowData = null)
         {
-            this.checkAction = checkAction ?? (cn => { });
             this.flowData = flowData;
         }
 
-        public abstract T GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
+        public T GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        {
+            if (firstTime)
+            {
+                firstTime = false;
+                Check(new FromDataLoadEventListenerToCheckNotifier(listener), true);
+                return GetChunkImpl(listener, cancellationToken);
+            }
+
+            return null;
+        }
+
+        protected abstract T GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
 
         public abstract void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny);
 
@@ -49,7 +61,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             _releaseData = value;
         }
 
-        public void Check(ICheckNotifier notifier)
+        private void Check(ICheckNotifier notifier, bool isRunTime)
         {
             if (_releaseData.IsDesignTime)
             {
@@ -57,49 +69,67 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 return;
             }
 
-            var staleDatasets = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).Where(
-                   p => p.ExtractionResults.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
-
-            if (staleDatasets.Any())
-                throw new Exception(
-                    "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
-                    string.Join(",", staleDatasets.Select(ds => ds.ToString())) + ").  You can probably fix this problem by reloading/refreshing the Releaseability window.  If you have already added them to a planned Release you will need to add the newly recalculated one instead.");
-
-            //make sure everything is releasable
-            var dodgyStates = _releaseData.ConfigurationsForRelease.Where(
-                kvp =>
-                    kvp.Value.Any(
-                        p =>
-                            //these are the only permissable release states
-                            p.Assesment != Releaseability.Releaseable &&
-                            p.Assesment != Releaseability.ColumnDifferencesVsCatalogue)).ToArray();
-
-            if (dodgyStates.Any())
+            if (isRunTime)
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp in dodgyStates)
-                {
-                    sb.AppendLine(kvp.Key + ":");
-                    foreach (var releasePotential in kvp.Value)
-                        sb.AppendLine("\t" + releasePotential.Configuration.Name + " : " + releasePotential.Assesment);
+                var allPotentials = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).ToList();
+                var staleDatasets = allPotentials.Where(
+                       p => p.DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
 
+                if (staleDatasets.Any())
+                    throw new Exception(
+                        "The following ReleasePotentials relate to expired (stale) extractions, you or someone else has executed another data extraction since you added this dataset to the release.  Offending datasets were (" +
+                        string.Join(",", staleDatasets.Select(ds => ds.ToString())) + ").  You can probably fix this problem by reloading/refreshing the Releaseability window.  If you have already added them to a planned Release you will need to add the newly recalculated one instead.");
+
+                if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Value.OfType<NoReleasePotential>().Any()))
+                    throw new Exception("There are DataSets with NoReleasePotential in the ReleaseData");
+
+                foreach (var releasePotentials in allPotentials)
+                    releasePotentials.Check(notifier);
+
+                //make sure everything is releasable
+                var dodgyStates = _releaseData.ConfigurationsForRelease.Where(
+                    kvp =>
+                        kvp.Value.Any(p =>
+                        {
+                            var dsReleasability = p.Assessments[p.DatasetExtractionResult];
+                            return dsReleasability != Releaseability.Releaseable &&
+                                   dsReleasability != Releaseability.ColumnDifferencesVsCatalogue;
+                        })).ToArray();
+
+                if (dodgyStates.Any())
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp in dodgyStates)
+                    {
+                        sb.AppendLine(kvp.Key + ":");
+                        foreach (var releasePotential in kvp.Value)
+                            sb.AppendLine("\t" + releasePotential.Configuration.Name + " : " + releasePotential.DatasetExtractionResult);
+                    }
+
+                    throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable. The following Release Potentials were at a dodgy state:" + sb);
                 }
 
-                throw new Exception("Attempted to release a dataset that was not evaluated as being releaseable.  The following Release Potentials were at a dodgy state:" + sb);
+                foreach (var environmentPotential in _releaseData.EnvironmentPotentials.Values)
+                {
+                    environmentPotential.Check(notifier);
+                    if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
+                        throw new Exception("Ticketing system decided that the Environment is not ready for release. Reason: " + environmentPotential.Reason);
+                }
             }
 
             var projects = _releaseData.ConfigurationsForRelease.Keys.Select(cfr => cfr.Project_ID).Distinct().ToList();
             if (projects.Count() != 1)
-                throw new Exception("How is it possible that you are doing a release for multiple different projects?");
+                notifier.OnCheckPerformed(new CheckEventArgs("How is it possible that you are doing a release for multiple different projects?", CheckResult.Fail));
 
             if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Key.Project_ID != projects.First()))
-                throw new Exception("Mismatch between project passed into constructor and DoRelease projects");
-
-            if (_releaseData.EnvironmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable &&
-                _releaseData.EnvironmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
-                throw new Exception("Ticketing system decided that the Environment is not ready for release. Reason: " + _releaseData.EnvironmentPotential.Reason);
+                notifier.OnCheckPerformed(new CheckEventArgs("Mismatch between project passed into constructor and DoRelease projects", CheckResult.Fail));
 
             RunSpecificChecks(notifier);
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            Check(notifier, false);
         }
 
         protected abstract void RunSpecificChecks(ICheckNotifier notifier);
@@ -128,7 +158,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         protected IEnumerable<DirectoryInfo> GetAllGlobalFolders(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
         {
-            const string folderName = ExtractionDirectory.GlobalsDataFolderName;
+            const string folderName = ExtractionDirectory.GLOBALS_DATA_NAME;
 
             foreach (ReleasePotential releasePotential in toRelease.Value)
             {

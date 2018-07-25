@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using HIC.Logging;
 
 namespace CatalogueManager.LogViewer.Tabs
@@ -16,52 +15,25 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingTasksTab : LoggingTab
     {
-        public event NavigatePaneToEntityHandler NavigationPaneGoto;
-
-        public LoggingTasksTab()
+        protected override IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIndex)
         {
-            base.InitializeComponent();
-            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
+            var taskId = (int)dataGridView1.Rows[rowIndex].Cells["ID"].Value;
+            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.DataLoadRuns, new LogViewerFilter { Task = taskId });
         }
 
-        void dataGridView1_CellDoubleClick(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+        protected override DataTable FetchDataTable(LogManager lm)
         {
-            if (e.RowIndex == -1)
-                return;
-
-            NavigationPaneGoto(this, new NavigatePaneToEntityArgs(LogViewerNavigationTarget.DataLoadTasks, (int)dataGridView1.Rows[e.RowIndex].Cells["ID"].Value));
+            return lm.ListDataTasksAsTable();
         }
 
-
-
-        /// <summary>
-        /// Should only ever be called once! sets the initial tasks that are known about
-        /// </summary>
-        /// <param name="lm"></param>
-        /// <param name="filters"></param>
-        /// <returns></returns>
-        public Dictionary<string, int> FetchDataTasks(LogManager lm, LogViewerFilterCollection filters)
+        public override void SetFilter(LogViewerFilter filter)
         {
-            _filters = filters;
-            var dt = lm.ListDataTasksAsTable();
-
-            Dictionary<string, int> toReturn = new Dictionary<string, int>();
-
-            foreach (DataRow row in dt.Rows)
-                toReturn.Add((string) row["name"], (int) row["ID"]);
-
-            base.LoadDataTable(dt);
-
-            return toReturn;
-        }
-
-
-        public void SetStateTo(LogManager lm, LogViewerFilterCollection filters)
-        {
-            if (filters.Task == null)
-                SetFilter(null);
+            base.SetFilter(filter);
+            
+            if (filter.Task == null)
+                SetFilter("");
             else
-                SetFilter("ID=" + filters.Task);
+                SetFilter("ID=" + filter.Task);
         }
 
     }

@@ -4,6 +4,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus.MenuItems;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.ObjectVisualisation
 {
@@ -48,6 +49,15 @@ namespace CatalogueManager.ObjectVisualisation
             Add(text, FamFamFamIcons.text_align_left);
         }
 
+        public void Add(RDMPConcept concept, string text)
+        {
+            Add(text, _coreIconProvider.GetImage(concept));
+        }
+
+        public void Add(RDMPConcept concept,OverlayKind overlay, string text)
+        {
+            Add(text,_coreIconProvider.GetImage(concept,overlay));
+        }
         private void Add(string text, Image image)
         {
             var p = new Panel();

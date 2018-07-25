@@ -64,6 +64,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.btnGraph = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             this.gbDescription.SuspendLayout();
             this.gbAxis.SuspendLayout();
             this.gbPivot.SuspendLayout();
@@ -431,10 +433,31 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.label6.TabIndex = 29;
             this.label6.Text = "Name";
             // 
+            // btnGraph
+            // 
+            this.btnGraph.Location = new System.Drawing.Point(246, 57);
+            this.btnGraph.Name = "btnGraph";
+            this.btnGraph.Size = new System.Drawing.Size(45, 45);
+            this.btnGraph.TabIndex = 30;
+            this.btnGraph.UseVisualStyleBackColor = true;
+            this.btnGraph.Click += new System.EventHandler(this.btnGraph_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
+            this.label7.Location = new System.Drawing.Point(251, 100);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(36, 13);
+            this.label7.TabIndex = 31;
+            this.label7.Text = "Graph";
+            // 
             // AggregateEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnGraph);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.tbName);
             this.Controls.Add(this.panel1);
@@ -496,5 +519,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnGraph;
+        private System.Windows.Forms.Label label7;
     }
 }

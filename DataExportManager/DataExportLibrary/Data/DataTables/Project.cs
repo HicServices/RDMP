@@ -178,5 +178,15 @@ namespace DataExportLibrary.Data.DataTables
         {
             return GetAllProjectCatalogues().SelectMany(pc => pc.GetAllExtractionInformation(c)).ToArray();
         }
+
+        public IHasDependencies[] GetObjectsThisDependsOn()
+        {
+            return new IHasDependencies[0];
+        }
+
+        public IHasDependencies[] GetObjectsDependingOnThis()
+        {
+            return ExtractionConfigurations;
+        }
     }
 }

@@ -264,6 +264,8 @@
     <Compile Include="Integration\CoalescerTests.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseDataLoadTests.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseMergeCommandTest.cs" />
+    <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseConstraintsTests.cs" />
+    <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseInsertTests.cs" />
     <Compile Include="Integration\DatabaseClonerTests.cs" />
     <Compile Include="Integration\DataLoadProgressUpdateInfoTests.cs" />
     <Compile Include="Integration\DataTableUploadDestinationTests.cs" />
@@ -409,6 +411,10 @@
     <ProjectReference Include="..\..\..\..\Tests.Common\Tests.Common.csproj">
       <Project>{ca13a431-7fb6-4bce-8521-42d130934311}</Project>
       <Name>Tests.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
+      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
+      <Name>RDMPAutomationService</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>

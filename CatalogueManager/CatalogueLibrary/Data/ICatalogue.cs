@@ -14,7 +14,7 @@ namespace CatalogueLibrary.Data
     /// <summary>
     /// See Catalogue
     /// </summary>
-    public interface ICatalogue : IMapsDirectlyToDatabaseTable, IHasDependencies
+    public interface ICatalogue : IMapsDirectlyToDatabaseTable, IHasDependencies, IHasQuerySyntaxHelper
     {
         int? LoadMetadata_ID { get; }
         string LoggingDataTask { get; }

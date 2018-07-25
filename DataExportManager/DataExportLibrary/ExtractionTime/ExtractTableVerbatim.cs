@@ -25,6 +25,8 @@ namespace DataExportLibrary.ExtractionTime
         private string _specificSQLTableName;
         private DiscoveredServer _server;
 
+        public string OutputFilename { get; private set; }
+
         public ExtractTableVerbatim(DiscoveredServer server, string[] tableNames, DirectoryInfo outputDirectory, string separator, string dateTimeFormat)
         {
             _tableNames = tableNames;
@@ -62,7 +64,7 @@ namespace DataExportLibrary.ExtractionTime
 
                 if (_specificSQL != null)
                 {
-                    linesWritten+= ExtractSQL(_specificSQL,_specificSQLTableName,con);
+                    linesWritten += ExtractSQL(_specificSQL,_specificSQLTableName,con);
                 }
             
                 if(_tableNames != null)
@@ -79,16 +81,15 @@ namespace DataExportLibrary.ExtractionTime
         {
             DbCommand cmdExtract = _server.GetCommand( sql, con);
 
-
             if (!Directory.Exists(_outputDirectory.FullName))
                 Directory.CreateDirectory(_outputDirectory.FullName);
 
 
-            string outputFilename = _outputDirectory.FullName + "\\" +
+            OutputFilename = _outputDirectory.FullName + "\\" +
                                     tableName.Replace("[", "").Replace("]", "").ToLower().Trim() +
                                     ".csv";
 
-            StreamWriter sw = new StreamWriter(outputFilename);
+            StreamWriter sw = new StreamWriter(OutputFilename);
 
             cmdExtract.CommandTimeout = 500000;
 

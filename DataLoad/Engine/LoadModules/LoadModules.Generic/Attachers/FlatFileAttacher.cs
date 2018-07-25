@@ -187,7 +187,7 @@ namespace LoadModules.Generic.Attachers
                     ") and the number of columns in the RAW database table (" + dt.Columns.Count + ")"));
             
             foreach (DataColumn column in dt.Columns)
-                if (!columnsAtDestination.Contains(column.ColumnName))
+                if (!columnsAtDestination.Contains(column.ColumnName,StringComparer.CurrentCultureIgnoreCase))
                     throw new FlatFileLoadException("Column in flat file called " + column.ColumnName +
                                                     " does not appear in the RAW database table (after fixing potentially silly names)");
 

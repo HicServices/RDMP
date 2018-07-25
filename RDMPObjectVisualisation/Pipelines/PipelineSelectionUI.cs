@@ -140,8 +140,9 @@ namespace RDMPObjectVisualisation.Pipelines
             btnDeletePipeline.Enabled = Pipeline != null;
             btnClonePipeline.Enabled = Pipeline != null;
 
-            if(PipelineChanged != null)
-                PipelineChanged(this,new EventArgs());
+            var h = PipelineChanged;
+            if(h != null)
+                h(this,new EventArgs());
         }
 
         private void btnEditPipeline_Click(object sender, EventArgs e)
@@ -160,8 +161,9 @@ namespace RDMPObjectVisualisation.Pipelines
 
         private void ShowEditPipelineDialog()
         {
-            if (OnBeforeLaunchEdit!= null)
-                OnBeforeLaunchEdit(this,new EventArgs());
+            var h = OnBeforeLaunchEdit;
+            if (h!= null)
+                h(this,new EventArgs());
 
             //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
             var dialog = new ConfigurePipelineUI<T>(Pipeline, _sourceIfExists, _destinationIfExists, Context, InitializationObjectsForPreviewPipeline, _repository);

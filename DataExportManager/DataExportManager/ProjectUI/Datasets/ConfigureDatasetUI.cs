@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -70,7 +71,45 @@ namespace DataExportManager.ProjectUI.Datasets
 
             olvJoinColumn.EnableButtonWhenItemIsDisabled = true;
 
+            olvIssues.AspectGetter += Issues_AspectGetter;
+            
+            olvSelected.UseCellFormatEvents = true;
+            olvSelected.FormatCell += olvSelected_FormatCell;
+            olvSelected.CellRightClick += olvSelected_CellRightClick;
+
             helpIconJoin.SetHelpText("Configure JoinInfos","Your query involves more than 1 table and RDMP does not yet know which columns to use to join the tables on.  Click the 'Configure' button below on any ticked tables for which no joins are shown");
+        }
+
+        void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
+        {
+            var ec = e.Model as ExtractableColumn;
+
+            if (ec != null && ec.IsOutOfSync())
+            {
+                var ms = new ContextMenuStrip();
+                ms.Items.Add(new ToolStripMenuItem("Update With Catalogue Settings", null,(s,x)=> ec.UpdateValuesToMatch(ec.CatalogueExtractionInformation)));
+
+                e.MenuStrip = ms;
+            }
+        }
+
+        void olvSelected_FormatCell(object sender, FormatCellEventArgs e)
+        {
+            if(e.Column == olvIssues)
+                if(e.CellValue == "None")
+                    e.SubItem.ForeColor = Color.Gray;
+                else if (e.CellValue == "Different")
+                    e.SubItem.ForeColor = Color.Red;
+        }
+
+        private object Issues_AspectGetter(object rowObject)
+        {
+            var ec = rowObject as ExtractableColumn;
+
+            if (ec != null && ec.IsOutOfSync())
+                return "Different";
+
+            return "None";
         }
 
         private object SelectedCatalogue_AspectGetter(object rowObject)
@@ -87,10 +126,8 @@ namespace DataExportManager.ProjectUI.Datasets
         private void SortSelectedByOrder()
         {
             //user cannot sort columns
-            olvSelectedColumnName.Sortable = false;
             olvSelectedColumnOrder.Sortable = true;
             olvSelected.Sort(olvSelectedColumnOrder, SortOrder.Ascending);
-            olvSelectedColumnOrder.Sortable = false;
         }
 
         private object ImageGetter(object rowObject)

@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
-using RDMPObjectVisualisation.Copying;
 using RDMPObjectVisualisation.Copying.Commands;
-using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
-    public class LoadDiagramTableNode:ICommandSource, IHasLoadDiagramState
+    public class LoadDiagramTableNode:ICommandSource, IHasLoadDiagramState, IMasqueradeAs
     {
         private readonly LoadDiagramDatabaseNode _databaseNode;
         public readonly TableInfo TableInfo;
@@ -94,7 +89,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             //discover children and marry them up to planned/ new unplanned ones
             foreach (var discoveredColumn in Table.DiscoverColumns())
             {
-                var match = _anticipatedChildren.SingleOrDefault(c => c.ColumnName.Equals(discoveredColumn.GetRuntimeName()));
+                var match = _anticipatedChildren.SingleOrDefault(c => c.ColumnName.Equals(discoveredColumn.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase));
                 if (match != null)
                     match.SetState(discoveredColumn);
                 else
@@ -110,9 +105,14 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         public void SetStateNotFound()
         {
             State = LoadDiagramState.NotFound;
+
+            foreach (var c in _anticipatedChildren)
+                c.State = LoadDiagramState.NotFound;
+
             _unplannedChildren.Clear();
         }
 
+        #region equality
         protected bool Equals(LoadDiagramTableNode other)
         {
             return Equals(_databaseNode, other._databaseNode) && Bubble == other.Bubble && string.Equals(TableName, other.TableName);
@@ -136,5 +136,12 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 return hashCode;
             }
         }
+
+        public object MasqueradingAs()
+        {
+            return Bubble == LoadBubble.Live ? TableInfo: null;
+        }
+
+        #endregion
     }
 }

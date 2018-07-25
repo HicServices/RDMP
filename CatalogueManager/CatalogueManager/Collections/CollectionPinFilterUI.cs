@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Automation;
+
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Remoting;
@@ -48,7 +48,6 @@ namespace CatalogueManager.Collections
             typeof(CohortIdentificationConfiguration),
             
             //TableInfoCollectionUI pinnables
-            typeof(AutomationServiceSlot),
             typeof(ExtractableDataSetPackage),
             typeof(RemoteRDMP),
             typeof(ExternalDatabaseServer),
@@ -155,8 +154,9 @@ namespace CatalogueManager.Collections
             _tree.ModelFilter = _beforeModelFilter;
             _tree = null;
 
-            if(UnApplied != null)
-                UnApplied(this,new EventArgs());
+            var h = UnApplied;
+            if(h != null)
+                h(this,new EventArgs());
         }
 
         private void pbRemoveFilter_Click(object sender, EventArgs e)

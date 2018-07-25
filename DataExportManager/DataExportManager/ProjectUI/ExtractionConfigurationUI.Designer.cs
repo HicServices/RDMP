@@ -34,7 +34,6 @@ namespace DataExportManager.ProjectUI
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.tbCreated = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.btnConfigureGlobalParameters = new System.Windows.Forms.Button();
             this.tcRelease = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.tcRequest = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.tbID = new System.Windows.Forms.TextBox();
@@ -88,15 +87,6 @@ namespace DataExportManager.ProjectUI
             this.label5.TabIndex = 8;
             this.label5.Text = "Created:";
             // 
-            // btnConfigureGlobalParameters
-            // 
-            this.btnConfigureGlobalParameters.Location = new System.Drawing.Point(578, 4);
-            this.btnConfigureGlobalParameters.Name = "btnConfigureGlobalParameters";
-            this.btnConfigureGlobalParameters.Size = new System.Drawing.Size(177, 23);
-            this.btnConfigureGlobalParameters.TabIndex = 45;
-            this.btnConfigureGlobalParameters.Text = "Configure Global Parameters";
-            this.btnConfigureGlobalParameters.UseVisualStyleBackColor = true;
-            // 
             // tcRelease
             // 
             this.tcRelease.AutoSize = true;
@@ -148,9 +138,9 @@ namespace DataExportManager.ProjectUI
             this.gbCohortRefreshing.Controls.Add(this.pbCic);
             this.gbCohortRefreshing.Controls.Add(this.cbxCohortIdentificationConfiguration);
             this.gbCohortRefreshing.Controls.Add(this.label1);
-            this.gbCohortRefreshing.Location = new System.Drawing.Point(11, 100);
+            this.gbCohortRefreshing.Location = new System.Drawing.Point(11, 250);
             this.gbCohortRefreshing.Name = "gbCohortRefreshing";
-            this.gbCohortRefreshing.Size = new System.Drawing.Size(714, 104);
+            this.gbCohortRefreshing.Size = new System.Drawing.Size(743, 104);
             this.gbCohortRefreshing.TabIndex = 50;
             this.gbCohortRefreshing.TabStop = false;
             this.gbCohortRefreshing.Text = "Cohort Refreshing";
@@ -161,7 +151,7 @@ namespace DataExportManager.ProjectUI
             this.ragSmiley1Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ragSmiley1Refresh.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1Refresh.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1Refresh.Location = new System.Drawing.Point(629, 44);
+            this.ragSmiley1Refresh.Location = new System.Drawing.Point(658, 44);
             this.ragSmiley1Refresh.Name = "ragSmiley1Refresh";
             this.ragSmiley1Refresh.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1Refresh.TabIndex = 52;
@@ -170,13 +160,13 @@ namespace DataExportManager.ProjectUI
             // 
             this.pChooseCohortRefreshPipeline.Location = new System.Drawing.Point(17, 55);
             this.pChooseCohortRefreshPipeline.Name = "pChooseCohortRefreshPipeline";
-            this.pChooseCohortRefreshPipeline.Size = new System.Drawing.Size(606, 38);
+            this.pChooseCohortRefreshPipeline.Size = new System.Drawing.Size(635, 38);
             this.pChooseCohortRefreshPipeline.TabIndex = 50;
             // 
             // btnClearCic
             // 
             this.btnClearCic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearCic.Location = new System.Drawing.Point(629, 15);
+            this.btnClearCic.Location = new System.Drawing.Point(658, 15);
             this.btnClearCic.Name = "btnClearCic";
             this.btnClearCic.Size = new System.Drawing.Size(41, 23);
             this.btnClearCic.TabIndex = 4;
@@ -187,7 +177,7 @@ namespace DataExportManager.ProjectUI
             // pbCic
             // 
             this.pbCic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbCic.Location = new System.Drawing.Point(676, 17);
+            this.pbCic.Location = new System.Drawing.Point(705, 17);
             this.pbCic.Name = "pbCic";
             this.pbCic.Size = new System.Drawing.Size(21, 21);
             this.pbCic.TabIndex = 3;
@@ -202,7 +192,7 @@ namespace DataExportManager.ProjectUI
             this.cbxCohortIdentificationConfiguration.Location = new System.Drawing.Point(227, 17);
             this.cbxCohortIdentificationConfiguration.Name = "cbxCohortIdentificationConfiguration";
             this.cbxCohortIdentificationConfiguration.PropertySelector = null;
-            this.cbxCohortIdentificationConfiguration.Size = new System.Drawing.Size(396, 21);
+            this.cbxCohortIdentificationConfiguration.Size = new System.Drawing.Size(425, 21);
             this.cbxCohortIdentificationConfiguration.SuggestBoxHeight = 96;
             this.cbxCohortIdentificationConfiguration.SuggestListOrderRule = null;
             this.cbxCohortIdentificationConfiguration.TabIndex = 1;
@@ -219,7 +209,7 @@ namespace DataExportManager.ProjectUI
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(10, 331);
+            this.objectSaverButton1.Location = new System.Drawing.Point(6, 221);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(75, 26);
@@ -228,7 +218,7 @@ namespace DataExportManager.ProjectUI
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 207);
+            this.label2.Location = new System.Drawing.Point(3, 97);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 13);
             this.label2.TabIndex = 52;
@@ -236,7 +226,7 @@ namespace DataExportManager.ProjectUI
             // 
             // tbDescription
             // 
-            this.tbDescription.Location = new System.Drawing.Point(10, 223);
+            this.tbDescription.Location = new System.Drawing.Point(10, 113);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
             this.tbDescription.Size = new System.Drawing.Size(744, 105);
@@ -257,7 +247,6 @@ namespace DataExportManager.ProjectUI
             this.Controls.Add(this.label6);
             this.Controls.Add(this.tcRelease);
             this.Controls.Add(this.tcRequest);
-            this.Controls.Add(this.btnConfigureGlobalParameters);
             this.Controls.Add(this.tbCreated);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.tbUsername);
@@ -279,7 +268,6 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.TextBox tbUsername;
         private System.Windows.Forms.TextBox tbCreated;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button btnConfigureGlobalParameters;
         private TicketingControl tcRequest;
         private TicketingControl tcRelease;
         private System.Windows.Forms.TextBox tbID;
