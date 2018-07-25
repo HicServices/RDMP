@@ -222,6 +222,7 @@
     <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\GuidReleaseIdentifierAllocator.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\IAllocateReleaseIdentifiers.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\NullAllocateReleaseIdentifiers.cs" />
+    <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\ProjectConsistentGuidReleaseIdentifierAllocator.cs" />
     <Compile Include="CohortCreationPipeline\Sources\AggregateConfigurationTableSource.cs" />
     <Compile Include="CohortCreationPipeline\Sources\PatientIdentifierColumnSource.cs" />
     <Compile Include="CohortCreationPipeline\Sources\PatientIndexTableSource.cs" />

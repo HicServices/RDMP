@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using DataExportLibrary.Interfaces.Pipeline;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation
 {
@@ -10,5 +11,6 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAlloca
     public interface IAllocateReleaseIdentifiers
     {
         object AllocateReleaseIdentifier(object privateIdentifier);
+        void Initialize(ICohortCreationRequest request);
     }
 }
