@@ -77,7 +77,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             }
         }
         */
-                public override int Upload(DataTable dt)
+        public override int Upload(DataTable dt)
         {
             var matchedColumns = GetMapping(dt.Columns.Cast<DataColumn>());
 
@@ -89,6 +89,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 
             int affected = 0;
             int row = 0;
+
+            var querySyntaxHelper = TargetTable.GetQuerySyntaxHelper();
 
             foreach(DataRow dr in dt.Rows)
             {
@@ -104,8 +106,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                     if(col + 1 < matchedColumns.Keys.Count)
                         sb.Append(",");
 
+                    var p = DatabaseCommandHelper.GetParameter(paramName,querySyntaxHelper, matchedColumns[keys[col]], dr[keys[col]]);
                     //add a corresponding parameter
-                    cmd.Parameters.Add(new MySqlParameter(paramName, dr[keys[col]]));
+                    cmd.Parameters.Add(p);
                 }
                 
                 sb.AppendLine("),");

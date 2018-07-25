@@ -93,8 +93,35 @@ namespace ReusableCodeTests
             Assert.IsFalse(tbl.Exists());
         }
 
-        
+        [TestCase(DatabaseType.MicrosoftSQLServer, "01/01/2007 00:00:00")]
+        [TestCase(DatabaseType.MYSQLServer, "1/1/2007 00:00:00")]
+        [TestCase(DatabaseType.MYSQLServer, "01/01/2007 00:00:00")]
+        [TestCase(DatabaseType.Oracle, "01/01/2007 00:00:00")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "2007-01-01 00:00:00")]
+        [TestCase(DatabaseType.MYSQLServer, "2007-01-01 00:00:00")]
+        [TestCase(DatabaseType.Oracle, "2007-01-01 00:00:00")]
+        public void DateColumnTests_NoTime(DatabaseType type, object input)
+        {
+            var db = GetCleanedServer(type);
+            var tbl = db.CreateTable("MyTable",new []{new DatabaseColumnRequest("MyDate",new DatabaseTypeRequest(typeof(DateTime)))});
 
+            tbl.Insert(new Dictionary<string, object>() { { "MyDate", input } });
+            
+            using (var blk = tbl.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("MyDate");
+                dt.Rows.Add(input);
+
+                blk.Upload(dt);
+            }
+
+            var result = tbl.GetDataTable();
+            var expectedDate = new DateTime(2007, 1, 1);
+            Assert.AreEqual(expectedDate, result.Rows[0][0]);
+            Assert.AreEqual(expectedDate, result.Rows[1][0]);
+        }
+        
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer, "decimal(4,2)", "-23.00")]
         [TestCase(DatabaseType.MicrosoftSQLServer, "decimal(3,1)", "23.0")]

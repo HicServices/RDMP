@@ -11,7 +11,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 {
     public class MicrosoftQuerySyntaxHelper : QuerySyntaxHelper
     {
-        public MicrosoftQuerySyntaxHelper() : base(new MicrosoftSQLTypeTranslater(),new MicrosoftSQLAggregateHelper(),new MicrosoftSQLUpdateHelper())
+        public MicrosoftQuerySyntaxHelper() : base(new MicrosoftSQLTypeTranslater(),new MicrosoftSQLAggregateHelper(),new MicrosoftSQLUpdateHelper(),DatabaseType.MicrosoftSQLServer)
         {
         }
 
@@ -64,7 +64,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
                 { "case","CASE WHEN x=y THEN 'something' WHEN x=z THEN 'something2' ELSE 'something3' END"}
             };
         }
-
+        
         public override string EnsureWrappedImpl(string databaseOrTableName)
         {
             return "[" + GetRuntimeName(databaseOrTableName) + "]";
