@@ -101,6 +101,53 @@ namespace DataExportLibrary.Tests.Cohort
             Assert.AreEqual(2, cohortTable.GetRowCount());
             Assert.IsNotNull(allocator.AllocateReleaseIdentifier("0202020202"));
             Assert.AreEqual("0x0127", allocator.AllocateReleaseIdentifier("0202020202"));
+
+
+            //finally lets break it by giving it conflicting historical records
+            //Lets pretend that previously we had already got 2 historical batches for the project, batch 1 released 0202020202 as 0x0127 (see above) and batch 2 released 0202020202 as 0x0128
+            defTable.Insert(new Dictionary<string, object>()
+            {
+                {"projectNumber", 10}, //this is our project number!
+                {"version", 2},
+                {"description","flibble"}
+            });
+
+            Assert.AreEqual(3, defTable.GetRowCount());
+
+            cohortTable.Insert(new Dictionary<string, object>()
+            {
+                {ect.DefinitionTableForeignKeyField, 3},
+                {"chi", "0202020202"},
+                {"ReleaseId", "0x0128"}
+            });
+
+            //recreate allocator to clear map
+            allocator = new ProjectConsistentGuidReleaseIdentifierAllocator();
+            allocator.Initialize(req);
+
+            //allocator is being asked to allocate when the person 0202020202 has previously appeared under our project (10) as release identifiers 0x0127 and 0x0128
+            Assert.AreEqual(3, defTable.GetRowCount());
+            Assert.AreEqual(3, cohortTable.GetRowCount());
+
+            var ex = Assert.Throws<Exception>(() => allocator.AllocateReleaseIdentifier("0202020202"));
+
+            //should be complaining about both of these conflicting release identifiers existing
+            StringAssert.Contains("0x0127",ex.Message);
+            StringAssert.Contains("0x0128", ex.Message);
+
+            //fix the problem
+            using (var con = db.Server.GetConnection())
+            {
+                con.Open();
+                db.Server.GetCommand("UPDATE " + cohortTable + " SET ReleaseId='0x0127' WHERE ReleaseId='0x0128'", con).ExecuteScalar();
+            }
+
+            //should be happy now again
+            Assert.AreEqual(3, defTable.GetRowCount());
+            Assert.AreEqual(3, cohortTable.GetRowCount());
+            Assert.IsNotNull(allocator.AllocateReleaseIdentifier("0202020202"));
+            Assert.AreEqual("0x0127", allocator.AllocateReleaseIdentifier("0202020202"));
+
         }
 
     }

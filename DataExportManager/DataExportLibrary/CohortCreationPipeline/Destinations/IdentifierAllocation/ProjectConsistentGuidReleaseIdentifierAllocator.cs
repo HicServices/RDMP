@@ -75,7 +75,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAlloca
                     while (r.Read())
                     {
                         if(toReturn.ContainsKey(r[priv]))
-                            throw new Exception("Private identifier '" + r[priv] + "' has more than 1 historical release identifier (" + string.Join(",",toReturn[priv],r[rel]));
+                            throw new Exception("Private identifier '" + r[priv] + "' has more than 1 historical release identifier (" + string.Join(",",toReturn[r[priv]],r[rel]));
 
                         toReturn.Add(r[priv],r[rel]);
                     }
