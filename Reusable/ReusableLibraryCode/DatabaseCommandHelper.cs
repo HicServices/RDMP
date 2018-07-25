@@ -122,7 +122,7 @@ namespace ReusableLibraryCode
                     if (value is string)
                         p.Value = DateTime.Parse(value.ToString());
                     else
-                        p.Value = value.ToString();
+                        p.Value = value;
                 }
                 else
                     p.Value = value;
