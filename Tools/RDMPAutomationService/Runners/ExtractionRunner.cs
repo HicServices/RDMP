@@ -131,7 +131,8 @@ namespace RDMPAutomationService.Runners
                 CheckGlobals = false
             });
             
-            checkables.Add(new GlobalExtractionChecker(_configuration));
+            if(_options.ExtractGlobals)
+                checkables.Add(new GlobalExtractionChecker(_configuration));
 
             foreach (var runnable in GetRunnables())
             {
