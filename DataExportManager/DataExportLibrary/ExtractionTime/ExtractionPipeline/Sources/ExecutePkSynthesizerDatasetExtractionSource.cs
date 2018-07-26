@@ -32,10 +32,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             
             // if there are some they will be marked in the "GetChunk".
             // If there are none, then we need to synth a new column here.
-            if (!allPrimaryKeys.Any() && request.QueryBuilder.TablesUsedInQuery.Count == 1) // EASY mode
+            var properTables = request.QueryBuilder.TablesUsedInQuery.Where(ti => !ti.IsLookupTable()).ToList(); 
+            if (!allPrimaryKeys.Any()) 
             {
-                var table = Request.QueryBuilder.TablesUsedInQuery.First();
-                var primaryKeys = table.ColumnInfos.Where(ci => ci.IsPrimaryKey).ToList();
+                var primaryKeys = properTables.SelectMany(t => t.ColumnInfos).Where(ci => ci.IsPrimaryKey).ToList();
                 if (primaryKeys.Any())
                 {
                     string newSql;

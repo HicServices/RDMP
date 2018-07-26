@@ -46,6 +46,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         public bool AllowLoadingPopulatedTables { get; set; }
 
         public string TargetTableName { get; private set; }
+        
         private IBulkCopy _bulkcopy;
         private int _affectedRows = 0;
         Stopwatch swTimeSpentWritting = new Stopwatch();
@@ -60,11 +61,16 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         private IManagedConnection _managedConnection;
         private ToLoggingDatabaseDataLoadEventListener _loggingDatabaseListener;
 
-        List<DatabaseColumnRequest> explicitTypes = new List<DatabaseColumnRequest>();
+        public List<DatabaseColumnRequest> ExplicitTypes { get; set; }
 
         private bool _firstTime = true;
 
         private const int AlterTimeout = 300;
+
+        public DataTableUploadDestination()
+        {
+            ExplicitTypes = new List<DatabaseColumnRequest>();
+        }
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -110,7 +116,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 //create connection to destination
                if (!tableAlreadyExistsButEmpty)
                {
-                   _database.CreateTable(TargetTableName, toProcess, explicitTypes.ToArray(), true);
+                   _database.CreateTable(TargetTableName, toProcess, ExplicitTypes.ToArray(), true);
                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Created table " + TargetTableName + " successfully."));
                 }
 
@@ -206,7 +212,6 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             }
         }
 
-
         public void Abort(IDataLoadEventListener listener)
         {
             _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
@@ -290,7 +295,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             _database = value;
             _server = value.Server;
         }
-
+        
         /// <summary>
         /// Declare that the column of name columnName (which might or might not appear in DataTables being uploaded) should always have the associated database type (e.g. varchar(59))
         /// The columnName is Case insensitive.  Note that if AllowResizingColumnsAtUploadTime is true then these datatypes are only the starting types and might get changed later to
@@ -298,9 +303,30 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         /// </summary>
         /// <param name="columnName"></param>
         /// <param name="explicitType"></param>
-        public void AddExplicitWriteType(string columnName, string explicitType)
+        /// <param name="columnFlags"></param>
+        /// <returns>The Column Request that has been added to the array</returns>
+        public DatabaseColumnRequest AddExplicitWriteType(string columnName, string explicitType, ISupplementalColumnInformation columnFlags = null)
         {
-            explicitTypes.Add(new DatabaseColumnRequest(columnName, explicitType, true));
+            DatabaseColumnRequest columnRequest;
+            
+            if (columnFlags == null)
+            {
+                columnRequest = new DatabaseColumnRequest(columnName, explicitType, true);
+                ExplicitTypes.Add(columnRequest);
+                return columnRequest;
+            }
+            else
+            {
+                columnRequest = new DatabaseColumnRequest(columnName, explicitType, !columnFlags.IsPrimaryKey && !columnFlags.IsAutoIncrement)
+                {
+                    IsPrimaryKey = columnFlags.IsPrimaryKey,
+                    IsAutoIncrement = columnFlags.IsAutoIncrement,
+                    Collation = columnFlags.Collation
+                };
+
+                ExplicitTypes.Add(columnRequest);
+                return columnRequest;
+            }
         }
     }
 }
