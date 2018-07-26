@@ -1,5 +1,6 @@
 ﻿using System;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.Settings;
 
 namespace CatalogueManager.Tutorials

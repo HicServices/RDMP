@@ -160,14 +160,6 @@
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Plugin.Settings, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Xam.Plugins.Settings.3.1.1\lib\net45\Plugin.Settings.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Plugin.Settings.Abstractions, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Xam.Plugins.Settings.3.1.1\lib\net45\Plugin.Settings.Abstractions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="QuickGraph">
@@ -202,9 +194,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
+    <Reference Include="System.Runtime"/>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -277,7 +267,6 @@
       <DependentUpon>HeatmapUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Heatmapping\RainbowColorPicker.cs" />
-    <Compile Include="Helpers\Settings.cs" />
     <Compile Include="HelpIcon.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -376,8 +365,6 @@
     <Compile Include="ServerDatabaseTableSelector.Designer.cs">
       <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="Settings\RDMPApplicationSettings.cs" />
-    <Compile Include="Settings\UserSettings.cs" />
     <Compile Include="Settings\UserSettingsUI.cs">
       <SubType>Form</SubType>
     </Compile>

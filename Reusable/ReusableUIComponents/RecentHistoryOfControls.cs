@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.Settings;
 
 namespace ReusableUIComponents
