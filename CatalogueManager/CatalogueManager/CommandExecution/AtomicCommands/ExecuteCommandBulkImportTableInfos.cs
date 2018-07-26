@@ -50,7 +50,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if (MessageBox.Show("Would you also like to import ShareDefinitions (metadata)?", "Import Metadata From File(s)", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                OpenFileDialog ofd = new OpenFileDialog();
+                OpenFileDialog ofd = new OpenFileDialog() { Multiselect = true };
                 ofd.Filter = "Share Definitions|*.sd";
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
