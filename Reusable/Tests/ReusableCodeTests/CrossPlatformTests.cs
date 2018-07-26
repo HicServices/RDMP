@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using CatalogueLibrary.Data;
@@ -121,7 +122,85 @@ namespace ReusableCodeTests
             Assert.AreEqual(expectedDate, result.Rows[0][0]);
             Assert.AreEqual(expectedDate, result.Rows[1][0]);
         }
-        
+
+        [TestCase(DatabaseType.MicrosoftSQLServer, "00:00:00")]
+        [TestCase(DatabaseType.MYSQLServer, "00:00:00")]
+        [TestCase(DatabaseType.Oracle, "00:00:00")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "00:00")]
+        [TestCase(DatabaseType.MYSQLServer, "00:00")]
+        [TestCase(DatabaseType.Oracle, "00:00")]
+        public void DateColumnTests_TimeOnly_Midnight(DatabaseType type, object input)
+        {
+            var db = GetCleanedServer(type);
+            var tbl = db.CreateTable("MyTable", new[] { new DatabaseColumnRequest("MyTime", new DatabaseTypeRequest(typeof(TimeSpan))) });
+
+            tbl.Insert(new Dictionary<string, object>() { { "MyTime", input } });
+
+            using (var blk = tbl.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("MyTime");
+                dt.Rows.Add(input);
+
+                blk.Upload(dt);
+            }
+
+            var result = tbl.GetDataTable();
+            var expectedTime = new TimeSpan(0,0,0,0);
+            Assert.AreEqual(expectedTime, result.Rows[0][0]);
+            Assert.AreEqual(expectedTime, result.Rows[1][0]);
+        }
+
+
+        [TestCase(DatabaseType.MicrosoftSQLServer, "1:11 PM")]
+        [TestCase(DatabaseType.MYSQLServer, "1:11 PM")]
+        [TestCase(DatabaseType.Oracle, "1:11 PM")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "13:11:10")]
+        [TestCase(DatabaseType.MYSQLServer, "13:11:10")]
+        [TestCase(DatabaseType.Oracle, "13:11:10")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "13:11")]
+        [TestCase(DatabaseType.MYSQLServer, "13:11")]
+        [TestCase(DatabaseType.Oracle, "13:11")]
+        public void DateColumnTests_TimeOnly_Afternoon(DatabaseType type, object input)
+        {
+            var db = GetCleanedServer(type);
+            var tbl = db.CreateTable("MyTable", new[] { new DatabaseColumnRequest("MyTime", new DatabaseTypeRequest(typeof(TimeSpan))) });
+
+            tbl.Insert(new Dictionary<string, object>() { { "MyTime", input } });
+
+            using (var blk = tbl.BeginBulkInsert())
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("MyTime");
+                dt.Rows.Add(input);
+
+                blk.Upload(dt);
+            }
+
+            var result = tbl.GetDataTable();
+            var expectedTime = new TimeSpan(13,11,00);
+
+            foreach (TimeSpan t in new[] {result.Rows[0][0], result.Rows[1][0]})
+            {
+                if(t.Seconds>0)
+                    Assert.AreEqual(10,t.Seconds);
+
+                var eval = t.Subtract(new TimeSpan(0, 0, 0, t.Seconds));
+                Assert.AreEqual(expectedTime,eval);
+            }
+        }
+
+
+        [Test]
+        public void MicrosoftHatesDbTypeTime()
+        {
+            var p = new SqlParameter("m",DBNull.Value);
+            p.DbType = DbType.Time;
+            
+            Assert.AreNotEqual(DbType.Time, p.DbType);
+            Assert.AreEqual(DbType.DateTime, p.DbType);
+        }
+
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer, "decimal(4,2)", "-23.00")]
         [TestCase(DatabaseType.MicrosoftSQLServer, "decimal(3,1)", "23.0")]

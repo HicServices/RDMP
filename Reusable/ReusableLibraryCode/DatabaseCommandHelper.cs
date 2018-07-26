@@ -11,6 +11,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using ReusableLibraryCode.Performance;
 
 namespace ReusableLibraryCode
@@ -97,6 +98,8 @@ namespace ReusableLibraryCode
             return helper.GetConnectionStringBuilder(targetCatalogueConnectionString);
         }
 
+        static TypeDeciderFactory typeDeciderFactory = new TypeDeciderFactory();
+
         /// <summary>
         /// Gets a DbParameter hard typed with the correct DbType for the discoveredColumn and the Value set to the correct Value representation (e.g. DBNull for nulls or whitespace).
         /// <para>Also handles converting DateTime representations since many DBMS are a bit rubbish at that</para> 
@@ -116,13 +119,17 @@ namespace ReusableLibraryCode
 
             if (syntaxHelper.IsBasicallyNull(value))
                 p.Value = DBNull.Value;
-            else
-                if (cSharpType == typeof(DateTime))
+            else  
+                if (value is string && typeDeciderFactory.IsSupported(cSharpType)) //if the input is a string and it's for a hard type e.g. TimeSpan 
                 {
-                    if (value is string)
-                        p.Value = DateTime.Parse(value.ToString());
-                    else
-                        p.Value = value;
+                    var o = typeDeciderFactory.Create(cSharpType).Parse((string)value);
+
+                    //Apparently everyone in Microsoft hates TimeSpans - see test MicrosoftHatesDbTypeTime
+                    if (o is TimeSpan && syntaxHelper.DatabaseType == DatabaseType.MicrosoftSQLServer)
+                        o = Convert.ToDateTime(o.ToString());
+
+                    p.Value = o;
+
                 }
                 else
                     p.Value = value;

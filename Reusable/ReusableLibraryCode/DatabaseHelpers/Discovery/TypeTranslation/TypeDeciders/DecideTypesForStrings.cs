@@ -41,6 +41,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
             return IsAcceptableAsTypeImpl(candidateString, sizeRecord);
         }
 
+        public object Parse(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+
+            return ParseImpl(value);
+        }
+
+        protected abstract object ParseImpl(string value);
+
         protected abstract bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord);
     }
 }

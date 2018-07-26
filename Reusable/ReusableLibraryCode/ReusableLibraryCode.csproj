@@ -329,6 +329,7 @@
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\IntTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TimeSpanTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeCompatibilityGroup.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeDeciderFactory.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeTranslater.cs" />
     <Compile Include="DirectoryInfoComparer.cs" />
     <Compile Include="DoNotExtractProperty.cs" />

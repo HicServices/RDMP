@@ -13,6 +13,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
         {
         }
 
+        protected override object ParseImpl(string value)
+        {
+            return DateTime.Parse(value);
+        }
+
         protected override bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord)
         {
             //if it's a float then it isn't a date is it! thanks C# for thinking 1.1 is the first of January
