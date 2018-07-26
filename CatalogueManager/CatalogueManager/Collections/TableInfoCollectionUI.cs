@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -18,7 +17,6 @@ using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LocationsMenu;
@@ -28,6 +26,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using RDMPObjectVisualisation.Copying;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
@@ -106,9 +105,10 @@ namespace CatalogueManager.Collections
                 olvColumn1
                 );
 
-            CommonFunctionality.WhitespaceRightClickMenuCommands = new[]
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false)
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false),
+                new ExecuteCommandBulkImportTableInfos(_activator)
             };
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
