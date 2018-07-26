@@ -71,6 +71,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             var married = new Dictionary<CatalogueItem, ColumnInfo>();
 
+            TableInfo anyNewTable = null;
+
             foreach (DiscoveredTable discoveredTable in db.DiscoverTables(includeViews: false))
             {
                 var collide = existing.FirstOrDefault(t => t.Is(discoveredTable));
@@ -87,6 +89,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 //import the table
                 importer.DoImport(out ti, out cis);
 
+                anyNewTable = anyNewTable ?? ti;
+                     
                 //find a Catalogue of the same name (possibly imported from Share Definition)
                 var matchingCatalogues = catalogues.Where(c => c.Name.Equals(ti.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
@@ -130,12 +134,18 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 }
 
             if(ignoredTables.Any())
-                WideMessageBox.Show("Ignored " + ignoredTables + " tables because they already existed as TableInfos:" + string.Join(Environment.NewLine,ignoredTables));
+                WideMessageBox.Show("Ignored " + ignoredTables.Count + " tables because they already existed as TableInfos:" + string.Join(Environment.NewLine,ignoredTables.Select(ti=>ti.GetRuntimeName())));
+
+            if (anyNewTable != null)
+            {
+                Publish(anyNewTable);
+                Emphasise(anyNewTable);
+            }
         }
 
         private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
         {
-            if (property.Name.EndsWith("LoggingServer"))
+            if (property.Name.EndsWith("LoggingServer_ID"))
                 return _loggingServer.ID;
 
 
