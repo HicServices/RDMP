@@ -410,5 +410,18 @@ select 0", con.Connection, con.Transaction);
             return db.ExpectTable(GetRuntimeName());
         }
 
+        /// <summary>
+        /// Returns true if the TableInfo is a reference to the discovered live table (same database, same table name, same server)
+        /// <para>By default servername is not checked since you can have server aliases e.g. localhost\sqlexpress could be the same as 127.0.0.1\sqlexpress</para>
+        /// </summary>
+        /// <param name="discoveredTable">Pass true to also check the servername is EXACTLY the same (dangerous due to the fact that servers can be accessed by hostname or IP etc)</param>
+        /// <returns></returns>
+        public bool Is(DiscoveredTable discoveredTable,bool alsoCheckServer = false)
+        {
+            return GetRuntimeName().Equals(discoveredTable.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase) &&
+                   GetDatabaseRuntimeName().Equals(discoveredTable.Database.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase) &&
+                   DatabaseType == discoveredTable.Database.Server.DatabaseType &&
+                   (!alsoCheckServer || discoveredTable.Database.Server.Name.Equals(Server,StringComparison.CurrentCultureIgnoreCase));
+        }
     }
 }
