@@ -158,12 +158,18 @@ namespace DataExportLibrary.Data.DataTables
 
         public override void DeleteInDatabase()
         {
+            var children = GetAllFiltersIncludingInSubContainersRecursively();
+
             //if deleting first set delete any relationships where this is a child
             Repository.Delete("DELETE FROM FilterContainerSubcontainers WHERE FilterContainerChildID=" + ID,null,false);
             
             //then delete any children it has itself
             foreach (FilterContainer subContainer in this.GetSubContainers())
                 subContainer.DeleteInDatabase();
+
+            //clean up the orphans that will be created by killing ourselves
+            foreach (var filter in children.Where(c => c.Exists()))
+                filter.DeleteInDatabase();
 
             // then delete the actual component
             base.DeleteInDatabase();
