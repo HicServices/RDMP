@@ -40,6 +40,7 @@ using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Settings;

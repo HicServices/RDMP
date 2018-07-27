@@ -13,6 +13,7 @@ using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPStartup;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.Settings;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;

@@ -4,7 +4,7 @@ using System.IO.IsolatedStorage;
 using System.Linq;
 using Plugin.Settings.Abstractions;
 
-namespace ReusableUIComponents.Settings
+namespace ReusableLibraryCode.Settings
 {
     internal class RDMPApplicationSettings : ISettings
     {

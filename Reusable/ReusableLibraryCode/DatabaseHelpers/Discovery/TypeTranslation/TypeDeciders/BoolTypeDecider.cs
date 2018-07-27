@@ -8,6 +8,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
         {
         }
 
+        protected override object ParseImpl(string value)
+        {
+            return bool.Parse(value);
+        }
+
         protected override bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord)
         {
             bool result;

@@ -25,6 +25,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public ITypeTranslater TypeTranslater { get; private set; }
         public IAggregateHelper AggregateHelper { get; private set; }
         public IUpdateHelper UpdateHelper { get; set; }
+        public DatabaseType DatabaseType { get; private set; }
 
         public virtual char ParameterSymbol { get { return '@'; }}
 
@@ -70,11 +71,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return _parameterNamesRegex.IsMatch(parameterSQL);
         }
 
-        protected QuerySyntaxHelper(ITypeTranslater translater, IAggregateHelper aggregateHelper,IUpdateHelper updateHelper)
+        protected QuerySyntaxHelper(ITypeTranslater translater, IAggregateHelper aggregateHelper,IUpdateHelper updateHelper, DatabaseType databaseType)
         {
             TypeTranslater = translater;
             AggregateHelper = aggregateHelper;
             UpdateHelper = updateHelper;
+            DatabaseType = databaseType;
         }
 
         public virtual string GetRuntimeName(string s)
@@ -89,6 +91,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return s.Substring(s.LastIndexOf(".") + 1).Trim('[', ']', '`');
         }
 
+        
         public string EnsureWrapped(string databaseOrTableName)
         {
             if(databaseOrTableName.Contains(DatabaseTableSeparator))
@@ -266,6 +269,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public abstract string GetAutoIncrementKeywordIfAny();
         public abstract Dictionary<string, string> GetSQLFunctionsDictionary();
+        
+        public bool IsBasicallyNull(object value)
+        {
+            if(value is string)
+                return string.IsNullOrWhiteSpace((string)value);
+
+            return value == null || value == DBNull.Value;
+        }
 
         #region Equality Members
         protected bool Equals(QuerySyntaxHelper other)

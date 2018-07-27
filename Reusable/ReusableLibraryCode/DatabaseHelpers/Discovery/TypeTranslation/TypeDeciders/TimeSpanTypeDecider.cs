@@ -9,6 +9,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
         {
         }
 
+        protected override object ParseImpl(string value)
+        {
+            var dt = DateTime.Parse(value);
+
+            return dt.TimeOfDay;
+        }
+
         protected override bool IsAcceptableAsTypeImpl(string candidateString,DecimalSize sizeRecord)
         {
             try
