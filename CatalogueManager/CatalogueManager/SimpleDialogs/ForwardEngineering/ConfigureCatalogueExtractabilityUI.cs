@@ -136,6 +136,9 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                 pbProject.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Project);
                 helpIconProjectSpecific.SetHelpText("Project Specific Catalogues", "A Catalogue can be isolated to a single extraction Project (for example if you are importing researchers questionnaire data etc).  This will mean the Catalogue only shows up under that Project and can only be extracted with that Project.");
             }
+
+            ddIsExtractionIdentifier.Items.Add("<<None>>");
+            ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
         }
 
 
@@ -415,7 +418,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         {
             _workflow = new HelpWorkflow(this, new Guid("74e6943e-1ed8-4c43-89c2-96158c1360fa"), new TutorialTracker(_activator));
             var stage1 = new HelpStage(olvColumnExtractability, "This is a collection of all the column definitions imported, change the Extractable status of one of the columns to make it extractable", () => GetExtractionInformations().Any());
-            var stage2 = new HelpStage(olvColumnExtractability, "One of your columns should contain a patient identifier, tick IsExtractionIdentifier on your patient identifier column", () => GetExtractionInformations().Any(ei=>ei.IsExtractionIdentifier));
+            var stage2 = new HelpStage(ddIsExtractionIdentifier, "One of your columns should contain a patient identifier, select it here", () => GetExtractionInformations().Any(ei=>ei.IsExtractionIdentifier));
             var stage3 = new HelpStage(pChangeAll, "Change this dropdown to change all at once", () =>  _ddChangeAllChanged);
             var stage4 = new HelpStage(pFilter, "Type in here if you are trying to find a specific column", () => !string.IsNullOrWhiteSpace(tbFilter.Text));
 
@@ -490,6 +493,34 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                     SelectProject((Project)dialog.Selected);
             }
             
+        }
+
+        private void ddIsExtractionIdentifier_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var n = ddIsExtractionIdentifier.SelectedItem as Node;
+
+            //turn off all IsExtractionIdentifierness
+            foreach (Node node in ddIsExtractionIdentifier.Items.OfType<Node>())
+            {
+                if (node.ExtractionInformation != null && node.ExtractionInformation.IsExtractionIdentifier)
+                {
+                    node.ExtractionInformation.IsExtractionIdentifier = false;
+                    node.ExtractionInformation.SaveToDatabase();
+                }
+            }
+
+            //we cleared them all, now did they want one selected (i.e. they selected anythign except <<None>>)
+            if (n != null)
+            {
+                if(n.ExtractionInformation == null)
+                    MakeExtractable(n, true, ExtractionCategory.Core);
+
+                Debug.Assert(n.ExtractionInformation != null, "n.ExtractionInformation != null");
+                n.ExtractionInformation.IsExtractionIdentifier = true;
+                n.ExtractionInformation.SaveToDatabase();
+            }
+
+            olvColumnExtractability.RebuildColumns();
         }
     }
 }
