@@ -283,6 +283,7 @@ namespace ResearchDataManagementPlatform.Menus
             AddToNew(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false));
             AddToNew(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
             AddToNew(new ExecuteCommandCreateNewLoadMetadata(_activator));
+            AddToNew(new ExecuteCommandCreateNewStandardRegex(_activator));
 
             //Saved cohorts database creation
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());

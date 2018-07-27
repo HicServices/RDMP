@@ -7,7 +7,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewStandardRegex : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewStandardRegex : BasicUICommandExecution,IAtomicCommand
     {
         public ExecuteCommandCreateNewStandardRegex(IActivateItems activator):base(activator)
         {
@@ -21,6 +21,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Publish(regex);
             Emphasise(regex);
             Activate(regex);
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Regular Expressions are patterns that match a given text input.  StandardRegex allow a central declaration of a given pattern rather than copying and pasting it everywhere";
         }
 
         public Image GetImage(IIconProvider iconProvider)
