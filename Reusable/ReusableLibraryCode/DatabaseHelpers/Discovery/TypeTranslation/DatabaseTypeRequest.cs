@@ -12,6 +12,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
     /// </summary>
     public class DatabaseTypeRequest
     {
+        /// <summary>
+        /// Any input string of unknown Type will be assignable to one of the following C# data types.  The order denotes system wide which data types to try 
+        /// converting the string into in order of preference.  For the implementation of this see <see cref="DataTypeComputer"/>.
+        /// </summary>
         public static readonly ReadOnlyCollection<Type> PreferenceOrder = new ReadOnlyCollection<Type>(new Type[]
         {
             typeof(bool),

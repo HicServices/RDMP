@@ -235,11 +235,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
                 foreach (KeyValuePair<DiscoveredColumn, object> kvp in toInsert)
                 {
-                    var p = DatabaseCommandHelper.GetParameter(kvp.Key.GetRuntimeName(),cmd);
-
-                    p.DbType = syntaxHelper.TypeTranslater.GetDbTypeForSQLDBType(kvp.Key.DataType.SQLType);
-                    p.Value = kvp.Value;
-
+                    var p = DatabaseCommandHelper.GetParameter(kvp.Key.GetRuntimeName(),syntaxHelper,kvp.Key,kvp.Value);
                     cmd.Parameters.Add(p);
                 }
 

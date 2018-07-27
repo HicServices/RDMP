@@ -23,6 +23,7 @@ using RDMPObjectVisualisation;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents.ChecksUI;

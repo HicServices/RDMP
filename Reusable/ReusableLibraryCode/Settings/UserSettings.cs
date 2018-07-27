@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Documents;
-using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
-namespace ReusableUIComponents.Settings
+namespace ReusableLibraryCode.Settings
 {
     /// <summary>
     /// This is the Settings static class that can be used in your Core solution or in any

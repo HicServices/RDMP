@@ -8,11 +8,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
         {
         }
 
+        protected override object ParseImpl(string value)
+        {
+            return System.Convert.ToInt32(value);
+        }
+
         protected override bool IsAcceptableAsTypeImpl(string candidateString, DecimalSize sizeRecord)
         {
             try
             {
-                var t = Convert.ToInt32(candidateString);
+                var t = System.Convert.ToInt32(candidateString);
                 
                 sizeRecord.IncreaseTo(t.ToString().Length);
 

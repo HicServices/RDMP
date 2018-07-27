@@ -8,6 +8,7 @@ using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using Microsoft.Win32;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.Settings;
 
 namespace RDMPStartup

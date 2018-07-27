@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.Update;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
 {
     public class OracleQuerySyntaxHelper : QuerySyntaxHelper
     {
-        public OracleQuerySyntaxHelper() : base(new OracleTypeTranslater(), new OracleAggregateHelper(),new OracleUpdateHelper())//no custom translater
+        public OracleQuerySyntaxHelper() : base(new OracleTypeTranslater(), new OracleAggregateHelper(),new OracleUpdateHelper(),DatabaseType.Oracle)//no custom translater
         {
         }
 

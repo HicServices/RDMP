@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using CatalogueManager.Tutorials;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.Settings;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems

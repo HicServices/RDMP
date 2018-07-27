@@ -25,6 +25,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         char ParameterSymbol { get; }
 
         string GetRuntimeName(string s);
+
+        DatabaseType DatabaseType {get;}
         
         /// <summary>
         /// Ensures that the supplied single entity object e.g. "mytable" , "mydatabase, "[mydatabase]", "`mydatabase` etc is returned wrapped in appropriate qualifiers for
@@ -62,6 +64,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         /// </summary>
         /// <returns></returns>
         Dictionary<string, string> GetSQLFunctionsDictionary();
+
+        bool IsBasicallyNull(object value);
     }
 
     public enum MandatoryScalarFunctions
