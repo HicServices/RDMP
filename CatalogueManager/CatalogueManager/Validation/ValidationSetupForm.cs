@@ -305,7 +305,6 @@ namespace CatalogueManager.Validation
         {
             StandardRegexUI dialog = new StandardRegexUI();
             dialog.RepositoryLocator = RepositoryLocator;
-            dialog.Closed += (s, v) => PopulateFormForSelectedColumn();
             dialog.Show();
         }
         

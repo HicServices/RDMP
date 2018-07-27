@@ -73,6 +73,9 @@ namespace CatalogueLibrary.Providers
         public ObjectImport[] AllImports { get; set; }
         public ObjectExport[] AllExports { get; set; }
 
+        public AllStandardRegexesNode AllStandardRegexesNode { get; private set; }
+        public StandardRegex[] AllStandardRegexes { get; set; }
+
         private CatalogueItemIssue[] _allCatalogueItemIssues;
 
         //TableInfo side of things
@@ -221,6 +224,10 @@ namespace CatalogueLibrary.Providers
             AllImports = repository.GetAllObjects<ObjectImport>();
 
             AddChildren(AllObjectSharingNode);
+
+            AllStandardRegexesNode = new AllStandardRegexesNode();
+            AllStandardRegexes = repository.GetAllObjects<StandardRegex>();
+            AddToDictionaries(new HashSet<object>(AllStandardRegexes),new DescendancyList(AllStandardRegexesNode));
             
             //All the things for TableInfoCollectionUI
             BuildServerNodes();

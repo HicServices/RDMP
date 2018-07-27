@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
+using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
@@ -24,7 +26,7 @@ namespace CatalogueManager.Validation
     /// test your implementation by typing values into the 'Testing Box' and clicking Test.  For example if you typed in 'Male' with the above pattern it would fail validation because it
     /// is not either an M or a F or a U.  If your pattern was [MFU] then it would pass because it contains an M! </para>
     /// </summary>
-    public partial class StandardRegexUI : RDMPForm
+    public partial class StandardRegexUI : StandardRegexUI_Design, ISaveableUI
     {
         private StandardRegex _standardRegex;
 
@@ -32,113 +34,37 @@ namespace CatalogueManager.Validation
         {
             InitializeComponent();
         }
-
-        protected override void OnLoad(EventArgs e)
+        public override void SetDatabaseObject(IActivateItems activator, StandardRegex databaseObject)
         {
-            base.OnLoad(e);
+            base.SetDatabaseObject(activator, databaseObject);
 
-            if(VisualStudioDesignMode)
-                return;
+            _standardRegex = databaseObject;
 
-            RefreshDropdown();
-        }
+            tbID.Text = databaseObject.ID.ToString();
+            tbConceptName.Text = databaseObject.ConceptName;
+            tbRegex.Text = databaseObject.Regex;
+            tbDescription.Text = databaseObject.Description;
 
-        private void btnAddNew_Click(object sender, EventArgs e)
-        {
-            var regex = new StandardRegex(RepositoryLocator.CatalogueRepository);
-            RefreshDropdown();
-            SelectID(regex.ID);
-        }
 
-        private void SelectID(int id)
-        {
-            ddConcepts.SelectedItem = ddConcepts.Items.Cast<StandardRegex>().Single(c => c.ID == id);
-        }
-
-        private void RefreshDropdown()
-        {
-            ddConcepts.Items.Clear();
-            ddConcepts.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<StandardRegex>().ToArray());
-        }
-
-        private void ddConcepts_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            StandardRegex = ddConcepts.SelectedItem as StandardRegex;
-            gbStandardRegex.Enabled = StandardRegex != null;
-        }
-
-        public StandardRegex StandardRegex
-        {
-            get { return _standardRegex; }
-            set
-            {
-                _standardRegex = value;
-
-                gbStandardRegex.Enabled = value != null;
-
-                if (value != null)
-                {
-                    tbID.Text = value.ID.ToString();
-                    tbConceptName.Text = value.ConceptName;
-                    tbRegex.Text = value.Regex;
-                    tbDescription.Text = value.Description;
-                }
-                else
-                {
-                    tbID.Text = "";
-                    tbConceptName.Text = "";
-                    tbRegex.Text = "";
-                    tbDescription.Text = "";
-                }
-            }
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                StandardRegex.SaveToDatabase();
-                
-                RefreshDropdown();
-                SelectID(StandardRegex.ID);
-
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                StandardRegex.DeleteInDatabase();
-                StandardRegex = null;
-                RefreshDropdown();
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
+            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
         }
 
         private void tbConceptName_TextChanged(object sender, EventArgs e)
         {
             tbConceptName.BackColor = Color.White;
 
-            if(StandardRegex != null)
+            if(_standardRegex != null)
                 if (string.IsNullOrWhiteSpace(tbConceptName.Text))
                     tbConceptName.BackColor = Color.Pink;
                 else
-                    StandardRegex.ConceptName = tbConceptName.Text;
+                    _standardRegex.ConceptName = tbConceptName.Text;
         }
 
         private void tbRegex_TextChanged(object sender, EventArgs e)
         {
             tbRegex.BackColor = Color.White;
 
-            if (StandardRegex != null)
+            if (_standardRegex != null)
                 if (string.IsNullOrWhiteSpace(tbRegex.Text))
                     tbRegex.BackColor = Color.Pink;
                 else
@@ -146,7 +72,7 @@ namespace CatalogueManager.Validation
                     try
                     {
                         Regex r = new Regex(tbRegex.Text);
-                        StandardRegex.Regex = tbRegex.Text;
+                        _standardRegex.Regex = tbRegex.Text;
                         tbRegex.ForeColor = Color.Black;
                     }
                     catch (Exception)
@@ -158,8 +84,8 @@ namespace CatalogueManager.Validation
 
         private void tbDescription_TextChanged(object sender, EventArgs e)
         {
-            if (StandardRegex != null)
-                StandardRegex.Description = tbDescription.Text;
+            if (_standardRegex != null)
+                _standardRegex.Description = tbDescription.Text;
         }
 
         private void btnTest_Click(object sender, EventArgs e)
@@ -170,16 +96,26 @@ namespace CatalogueManager.Validation
                 lblResultOfTest.ForeColor = Color.Green;
             }
             else
-            if (Regex.IsMatch(tbTesting.Text, StandardRegex.Regex))
+                if (Regex.IsMatch(tbTesting.Text, _standardRegex.Regex))
             {
-                lblResultOfTest.Text = "The text '" + tbTesting.Text + "' matches the Regex pattern '" + StandardRegex.Regex + "' meaning that the value will pass validation and not be flagged as a validation failure";
+                lblResultOfTest.Text = "The text '" + tbTesting.Text + "' matches the Regex pattern '" + _standardRegex.Regex + "' meaning that the value will pass validation and not be flagged as a validation failure";
                 lblResultOfTest.ForeColor = Color.Green;
             }
             else
             {
-                lblResultOfTest.Text = "The text '" + tbTesting.Text + "' failed to match Regex pattern '" + StandardRegex.Regex + "' meaning that the value will fail validation and will be flagged as a validation failure";
+                lblResultOfTest.Text = "The text '" + tbTesting.Text + "' failed to match Regex pattern '" + _standardRegex.Regex + "' meaning that the value will fail validation and will be flagged as a validation failure";
                 lblResultOfTest.ForeColor = Color.Red;
             }
         }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<StandardRegexUI_Design, UserControl>))]
+    public abstract class StandardRegexUI_Design : RDMPSingleDatabaseObjectControl<StandardRegex>
+    {
     }
 }

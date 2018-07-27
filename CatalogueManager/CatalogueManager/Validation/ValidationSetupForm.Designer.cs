@@ -48,8 +48,6 @@ namespace CatalogueManager.Validation
             this.label1 = new System.Windows.Forms.Label();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnConfigureStandardRegex = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.cbxTimePeriodColumn = new System.Windows.Forms.ToolStripComboBox();
             this.lblPickTimePeriodColumn = new System.Windows.Forms.ToolStripLabel();
@@ -251,8 +249,6 @@ namespace CatalogueManager.Validation
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnConfigureStandardRegex,
-            this.toolStripSeparator2,
             this.toolStripLabel1,
             this.cbxTimePeriodColumn,
             this.lblPickTimePeriodColumn,
@@ -266,21 +262,6 @@ namespace CatalogueManager.Validation
             this.toolStrip1.Size = new System.Drawing.Size(1183, 25);
             this.toolStrip1.TabIndex = 10;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btnConfigureStandardRegex
-            // 
-            this.btnConfigureStandardRegex.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnConfigureStandardRegex.Image = ((System.Drawing.Image)(resources.GetObject("btnConfigureStandardRegex.Image")));
-            this.btnConfigureStandardRegex.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnConfigureStandardRegex.Name = "btnConfigureStandardRegex";
-            this.btnConfigureStandardRegex.Size = new System.Drawing.Size(23, 22);
-            this.btnConfigureStandardRegex.Text = "Configure Standard Regexes";
-            this.btnConfigureStandardRegex.Click += new System.EventHandler(this.btnConfigureStandardRegex_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripLabel1
             // 
@@ -375,7 +356,6 @@ namespace CatalogueManager.Validation
         private System.Windows.Forms.SplitContainer splitContainer1;
         private OLVColumn olvName;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton btnConfigureStandardRegex;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
@@ -385,7 +365,6 @@ namespace CatalogueManager.Validation
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripComboBox cbxPivotColumn;
         private System.Windows.Forms.ToolStripLabel lblPickTimePeriodColumn;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripLabel lblPickPivotColumn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;

@@ -151,5 +151,6 @@ namespace CatalogueManager.Icons.IconProvision
         FileMissing,
 
         ConnectionStringKeyword,
+        AllStandardRegexesNode
     }
 }

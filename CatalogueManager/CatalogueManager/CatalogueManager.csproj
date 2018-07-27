@@ -262,6 +262,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
     </Reference>
+    <Reference Include="DataExportManager">
+      <HintPath>..\..\DataExportManager\DataExportManager\obj\Debug\DataExportManager.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
       <Private>True</Private>
@@ -405,6 +408,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewStandardRegex.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFileUI.cs" />
@@ -424,6 +428,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
     <Compile Include="LogViewer\LogViewerNavigationTarget.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
@@ -459,6 +464,7 @@
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Menus\AllConnectionStringKeywordsNodeMenu.cs" />
+    <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
@@ -1250,7 +1256,7 @@
     <Compile Include="Tutorials\Tutorial.cs" />
     <Compile Include="Tutorials\TutorialTracker.cs" />
     <Compile Include="Validation\StandardRegexUI.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Validation\StandardRegexUI.Designer.cs">
       <DependentUpon>StandardRegexUI.cs</DependentUpon>
@@ -1438,6 +1444,7 @@
     <None Include="Icons\ConnectionStringKeyword.png" />
     <None Include="Icons\AllConnectionStringKeywords.png" />
     <None Include="Icons\AllConnectionStringKeywordsNode.png" />
+    <None Include="Icons\AllStandardRegexesNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

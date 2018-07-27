@@ -337,6 +337,7 @@
     <Compile Include="Nodes\AllConnectionStringKeywordsNode.cs" />
     <Compile Include="Nodes\AllLoadMetadatasNode.cs" />
     <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
+    <Compile Include="Nodes\AllStandardRegexesNode.cs" />
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />

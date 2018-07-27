@@ -263,6 +263,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllStandardRegexesNode {
+            get {
+                object obj = ResourceManager.GetObject("AllStandardRegexesNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap ANOColumnInfo {
             get {
                 object obj = ResourceManager.GetObject("ANOColumnInfo", resourceCulture);
