@@ -63,6 +63,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
         public bool DropTableIfLoadFails { get; set; }
 
+        [DemandsInitialization("If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: true)]
+        public bool CleanExtractionFolderBeforeExtraction { get; set; }
+
         public TableLoadInfo TableLoadInfo { get; private set; }
         public DirectoryInfo DirectoryPopulated { get; private set; }
         public bool GeneratesFiles { get { return false; } }
@@ -109,6 +112,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private void WriteBundleContents(IExtractableDatasetBundle datasetBundle, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            var rootDir = _request.GetExtractionDirectory();
+            if (CleanExtractionFolderBeforeExtraction)
+            {
+                rootDir.Delete(true);
+                rootDir.Create();
+            }
+
             var bundle = ((ExtractDatasetCommand)_request).DatasetBundle;
             foreach (var sql in bundle.SupportingSQL)
                 bundle.States[sql] = ExtractSupportingSql(sql, listener, _dataLoadInfo);
@@ -331,7 +341,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             if (globalsToExtract.Any())
             {
                 var globalsDirectory = request.GetExtractionDirectory();
-                
+                if (CleanExtractionFolderBeforeExtraction)
+                {
+                    globalsDirectory.Delete(true);
+                    globalsDirectory.Create();
+                }
+
                 foreach (var sql in globalsToExtract.SupportingSQL)
                     ExtractSupportingSql(sql, listener, dataLoadInfo);
 
