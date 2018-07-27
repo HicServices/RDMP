@@ -104,11 +104,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                     foreach (var cataItem in matchingCatalogues[0].CatalogueItems)
                         if (cataItem.ColumnInfo_ID == null)
                         {
-                            var matches = cataItem.GuessAssociatedColumn(cis).ToArray();
+                            var matches = cataItem.GuessAssociatedColumn(cis, allowPartial: false).ToArray();
 
                             if (matches.Length == 1)
-                            {
-                                
+                            {   
                                 cataItem.SetColumnInfo(matches[0]);
                                 unmatched.Remove(matches[0]); //we married them together
                                 married.Add(cataItem,matches[0]);
