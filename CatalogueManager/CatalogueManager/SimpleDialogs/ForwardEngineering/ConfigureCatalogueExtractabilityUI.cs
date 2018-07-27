@@ -46,7 +46,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// </summary>
     public partial class ConfigureCatalogueExtractabilityUI : Form
     {
-        private readonly object[] _extractionCategories;
+        private object[] _extractionCategories;
         
         private IActivateItems _activator;
 
@@ -66,20 +66,34 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
 
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny)
+        {
+            _tableInfo = tableInfo;
+            Initialize(activator, initialDescription, projectSpecificIfAny);
+        }
+
         public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny)
+        {
+            ColumnInfo[] cols;
+            importer.DoImport(out _tableInfo, out cols);
+
+            Initialize(activator,initialDescription,projectSpecificIfAny);
+        }
+        
+        private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
         {
             InitializeComponent();
 
             _activator = activator;
-                    ColumnInfo[] cols;
-                    importer.DoImport(out _tableInfo, out cols);
-
+            
+            var cols = _tableInfo.ColumnInfos;
+            
             var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols, false);
             ExtractionInformation[] eis;
-            forwardEngineer.ExecuteForwardEngineering(out _catalogue,out _catalogueItems,out eis);
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _catalogueItems, out eis);
 
             tbCatalogueName.Text = _catalogue.Name;
-            tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now +")";
+            tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
             tbTableName.Text = _tableInfo.Name;
             _catalogue.SaveToDatabase();
 
@@ -108,11 +122,11 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             olvIsExtractionIdentifier.AspectPutter += IsExtractionIdentifier_AspectPutter;
             olvIsExtractionIdentifier.AspectGetter += IsExtractionIdentifier_AspectGetter;
-            
+
             olvColumnInfoName.ImageGetter = ImageGetter;
             olvColumnExtractability.RebuildColumns();
 
-            objectSaverButton1.SetupFor(_catalogue,activator.RefreshBus);
+            objectSaverButton1.SetupFor(_catalogue, activator.RefreshBus);
 
             if (_activator.RepositoryLocator.DataExportRepository == null)
                 gbProjectSpecific.Enabled = false;
@@ -123,6 +137,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                 helpIconProjectSpecific.SetHelpText("Project Specific Catalogues", "A Catalogue can be isolated to a single extraction Project (for example if you are importing researchers questionnaire data etc).  This will mean the Catalogue only shows up under that Project and can only be extracted with that Project.");
             }
         }
+
 
         private void IsExtractionIdentifier_AspectPutter(object rowobject, object newvalue)
         {
