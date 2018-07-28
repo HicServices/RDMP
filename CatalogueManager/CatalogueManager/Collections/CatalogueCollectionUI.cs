@@ -202,7 +202,8 @@ namespace CatalogueManager.Collections
         public void ApplyFilters()
         {
             tlvCatalogues.UseFiltering = true;
-            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider,cbShowInternal.Checked, cbShowDeprecated.Checked, cbShowColdStorage.Checked,cbProjectSpecific.Checked);
+            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider,
+                cbShowInternal.Checked, cbShowDeprecated.Checked, cbShowColdStorage.Checked, cbProjectSpecific.Checked, cbShowNonExtractable.Checked);
         }
 
         public enum HighlightCatalogueType
