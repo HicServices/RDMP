@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Tutorials;
+using DataExportManager.CommandExecution.AtomicCommands;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents.SingleControlForms;
+using ReusableUIComponents.TransparentHelpSystem;
 
 namespace CatalogueManager.SimpleControls
 {
@@ -51,12 +55,28 @@ namespace CatalogueManager.SimpleControls
             return CommandGetter(CommandLineActivity.run);
         }
 
+        public List<HelpStage> HelpStages { get; private set; }
+
         //constructor
         public CheckAndExecuteUI()
         {
             InitializeComponent();
             ChecksPassed = false;
             SetButtonStates();
+            HelpStages = BuildHelpStages();
+        }
+
+        private List<HelpStage> BuildHelpStages()
+        {
+            var stages = new List<HelpStage>()
+            {
+                new HelpStage(btnRunChecks,
+                    "Once you are happy with the selections, use this button to run the checks for the selected options."),
+                new HelpStage(btnExecute, "This button will execute the required operation in the RDMP UI.\r\n" +
+                                          "Results will be shown below."),
+            };
+            stages.AddRange(executeInAutomationServerUI1.HelpStages);
+            return stages;
         }
 
         private GracefulCancellationTokenSource _cancellationTokenSource;

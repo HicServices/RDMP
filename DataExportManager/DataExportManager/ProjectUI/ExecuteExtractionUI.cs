@@ -61,8 +61,6 @@ namespace DataExportManager.ProjectUI
         private ArbitraryFolderNode _projectSpecificDatasetsFolder = new ArbitraryFolderNode(ProjectSpecificDatasets);
         private ArbitraryFolderNode _globalsFolder = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME);
 
-        private HelpWorkflow helpWorkflow;
-
         public ExecuteExtractionUI()
         {
             InitializeComponent();
@@ -82,29 +80,32 @@ namespace DataExportManager.ProjectUI
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
             pictureBox1.BackColor = Color.FromArgb(240, 240, 240);
 
-            BuildHelpFlow();
+            helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
         }
 
-        private void BuildHelpFlow()
+        private HelpWorkflow BuildHelpFlow()
         {
             var tracker = new TutorialTracker(_activator);
 
-            helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(_activator), tracker);
+            var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(_activator), tracker);
 
             //////Normal work flow
             var root = new HelpStage(tlvDatasets, "Choose the datasets and Globals you want to extract here.\r\n" +
                                                  "\r\n" +
                                                  "Click on the red icon to disable this help.");
             var stage2 = new HelpStage(panel1, "Select the pipeline to run for extracting the data.\r\n");
-
-            var stage3 = new HelpStage(checkAndExecuteUI1, "Run the Checks against the selected items.\r\n" +
-                                                           "Once that's done, if everythig passes the green arrow 'Execute' button will become available");
-
+            
             root.SetOption(">>", stage2);
-            stage2.SetOption(">>", stage3);
-            stage3.SetOption("|<<", root);
+            stage2.SetOption(">>", checkAndExecuteUI1.HelpStages.First());
+            for (int i = 0; i < checkAndExecuteUI1.HelpStages.Count - 1; i++)
+            {
+                checkAndExecuteUI1.HelpStages[i].SetOption(">>", checkAndExecuteUI1.HelpStages[i+1]);
+            }
+
+            checkAndExecuteUI1.HelpStages.Last().SetOption("|<<", root);
 
             helpWorkflow.RootStage = root;
+            return helpWorkflow;
         }
 
         private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
@@ -322,11 +323,6 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.UncheckAll();
             tlvDatasets.CheckObject(_globalsFolder);
             tlvDatasets.CheckObject(selectedDataSet);
-        }
-
-        private void helpIcon1_Click(object sender, EventArgs e)
-        {
-            helpWorkflow.Start(force: true);
         }
     }
 

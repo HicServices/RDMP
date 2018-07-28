@@ -193,12 +193,12 @@ namespace DataExportManager.ProjectUI
             // 
             // helpIcon1
             // 
+            this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
             this.helpIcon1.Location = new System.Drawing.Point(675, 54);
             this.helpIcon1.Name = "helpIcon1";
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
             this.helpIcon1.TabIndex = 32;
-            this.helpIcon1.Click += new System.EventHandler(this.helpIcon1_Click);
             // 
             // label2
             // 

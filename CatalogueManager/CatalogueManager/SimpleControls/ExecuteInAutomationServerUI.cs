@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -7,6 +8,7 @@ using CatalogueManager.ItemActivation;
 using CommandLine;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
+using ReusableUIComponents.TransparentHelpSystem;
 
 namespace CatalogueManager.SimpleControls
 {
@@ -19,10 +21,27 @@ namespace CatalogueManager.SimpleControls
         public const string AutomationServiceExecutable = "RDMPAutomationService.exe";
 
         public Func<RDMPCommandLineOptions> CommandGetter { get; set; }
+        public List<HelpStage> HelpStages { get; set; }
 
         public ExecuteInAutomationServerUI()
         {
             InitializeComponent();
+            HelpStages = BuildHelpStages();
+        }
+
+        private List<HelpStage> BuildHelpStages()
+        {
+            return new List<HelpStage>
+            {
+                new HelpStage(btnExecuteDetatched, "This button will execute the required operation in a detached windows prompt.\r\n" +
+                                                   "Results will be shown in that window and will also be available from the LogViewer screen.\r\n" +
+                                                   "\r\n" +
+                                                   "You can keep using RDMP as normal."),
+                new HelpStage(btnCopyCommandToClipboard, "This button will copy the required command with the correct parameters to the clipboard.\r\n" +
+                                                         "This will NOT execute the command.\r\n" +
+                                                         "\r\n" +
+                                                         "You can use the copied command to schedule a run using your favourite tool.")
+            };
         }
 
         public void SetItemActivator(IActivateItems activator)
