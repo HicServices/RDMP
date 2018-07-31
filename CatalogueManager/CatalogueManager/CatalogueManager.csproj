@@ -424,6 +424,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunChecksInPopupWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowRelatedObject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
