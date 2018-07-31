@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
@@ -103,6 +104,7 @@ namespace DataExportLibrary.Checks
                             CheckResult.Fail, e));
                         return;
                     }
+                    
                     try
                     {
                         using (var r = cmd.ExecuteReader())
@@ -116,10 +118,10 @@ namespace DataExportLibrary.Checks
                                     CheckResult.Warning));
                         }
                     }
-                    catch (SqlException e)
+                    catch (Exception e)
                     {
-                        if (e.Message.Contains("Timeout"))
-                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s", CheckResult.Warning));
+                        if (server.GetQuerySyntaxHelper().IsTimeout(e))
+                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s", CheckResult.Warning,e));
                         else
                             notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));
                     }

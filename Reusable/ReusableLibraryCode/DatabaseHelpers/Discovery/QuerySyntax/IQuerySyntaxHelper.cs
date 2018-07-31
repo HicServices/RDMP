@@ -66,6 +66,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         Dictionary<string, string> GetSQLFunctionsDictionary();
 
         bool IsBasicallyNull(object value);
+        bool IsTimeout(Exception exception);
     }
 
     public enum MandatoryScalarFunctions

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -276,6 +277,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 return string.IsNullOrWhiteSpace((string)value);
 
             return value == null || value == DBNull.Value;
+        }
+
+        public virtual bool IsTimeout(Exception exception)
+        {
+
+            var oleE = exception as OleDbException;
+            
+            if (oleE != null && oleE.ErrorCode == -2147217871)
+                return true;
+            
+            return exception.Message.ToLower().Contains("timeout");
         }
 
         #region Equality Members

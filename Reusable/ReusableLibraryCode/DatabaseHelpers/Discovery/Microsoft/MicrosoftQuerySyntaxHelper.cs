@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Aggregation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.Update;
@@ -64,7 +65,24 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
                 { "case","CASE WHEN x=y THEN 'something' WHEN x=z THEN 'something2' ELSE 'something3' END"}
             };
         }
-        
+
+        public override bool IsTimeout(Exception exception)
+        {
+            var sqlE = exception as SqlException;
+
+            if (sqlE != null)
+            {
+                if (sqlE.Number == -2 || sqlE.Number == 11 || sqlE.Number == 1205)
+                    return true;
+
+                //yup, I've seen this behaviour from Sql Server.  ExceptionMessage of " " and .Number of 
+                if (string.IsNullOrWhiteSpace(sqlE.Message) && sqlE.Number == 3617)
+                    return true;
+            }
+
+            return base.IsTimeout(exception);
+        }
+
         public override string EnsureWrappedImpl(string databaseOrTableName)
         {
             return "[" + GetRuntimeName(databaseOrTableName) + "]";
