@@ -69,6 +69,7 @@ namespace RDMPAutomationService.Runners
                 case CommandLineActivity.check:
                     var checkable = new CachingPreExecutionChecker(cp);
                     checkable.Check(checkNotifier);
+                    return checkable.ChecksExitCode;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
