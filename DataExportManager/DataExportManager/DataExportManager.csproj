@@ -330,6 +330,7 @@
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortFromCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortFromFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseCohort.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneCohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractableDataSetPackage.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
