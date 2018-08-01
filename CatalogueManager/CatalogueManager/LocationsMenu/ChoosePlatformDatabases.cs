@@ -54,11 +54,6 @@ namespace CatalogueManager.LocationsMenu
         private readonly IActivateItems _activatorIfAny;
         public HelpWorkflow HelpWorkflow { get; private set; }
 
-        public ChoosePlatformDatabases(IActivateItems activator, ICommandExecution command): this(activator.RepositoryLocator, command)
-        {
-            _activatorIfAny = activator;
-        }
-
         private HelpStage _lookAtChecksToSeeWhyItAllFailed;
         private UserSettingsRepositoryFinder _repositoryLocator;
 
@@ -101,7 +96,6 @@ namespace CatalogueManager.LocationsMenu
 
             _lookAtChecksToSeeWhyItAllFailed = new HelpStage(checksUI1,
                 "Something went wrong with the operation, double click the red lines to see what went wrong.  Then close this help dialog.");
-
         }
 
         protected override void OnLoad(EventArgs e)

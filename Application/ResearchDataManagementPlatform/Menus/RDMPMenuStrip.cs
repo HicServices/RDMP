@@ -17,6 +17,7 @@ using CatalogueManager.LocationsMenu;
 using CatalogueManager.LocationsMenu.Ticketing;
 using CatalogueManager.LogViewer;
 using CatalogueManager.MainFormUITabs;
+using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.PluginManagement;
 using CatalogueManager.PluginManagement.CodeGeneration;
 using CatalogueManager.SimpleControls;
@@ -301,6 +302,8 @@ namespace ResearchDataManagementPlatform.Menus
             AddToNew(new ExecuteCommandCreateNewDataExtractionProject(_activator));
             AddToNew(new ExecuteCommandRelease(_activator));
 
+            // Location menu
+            LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(RepositoryLocator)));
         }
 
         private void AddToNew(IAtomicCommand cmd)

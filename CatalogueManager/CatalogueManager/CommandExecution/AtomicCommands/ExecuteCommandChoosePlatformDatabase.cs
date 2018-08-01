@@ -3,6 +3,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LocationsMenu;
+using RDMPStartup;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -11,29 +12,36 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomicCommand
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        private readonly IActivateItems _activator;
-
-        public ExecuteCommandChoosePlatformDatabase(IActivateItems activator)
+        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        
+        public ExecuteCommandChoosePlatformDatabase(IActivateItems activator) 
         {
-            _activator = activator;
+            if (activator != null)
+                Initialize(activator.RepositoryLocator);
+        }
+
+        public ExecuteCommandChoosePlatformDatabase(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            Initialize(repositoryLocator);
+        }
+
+        private void Initialize(IRDMPPlatformRepositoryServiceLocator locator)
+        {
+            _repositoryLocator = locator;
+            if (!(_repositoryLocator is UserSettingsRepositoryFinder))
+                SetImpossible("Platform databases location is read-only (probably passed as commandline parameter?).");
         }
 
         public override string GetCommandHelp()
         {
             return "Change which RDMP platform metadata databases you are connected to";
         }
-
-        public ExecuteCommandChoosePlatformDatabase(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            _repositoryLocator = repositoryLocator;
-        }
-
+        
         public override void Execute()
         {
             base.Execute();
             
-            ChoosePlatformDatabases dialog = _activator != null ? new ChoosePlatformDatabases(_activator, this) : new ChoosePlatformDatabases(_repositoryLocator, this);
+            var dialog = new ChoosePlatformDatabases(_repositoryLocator, this);
             dialog.ShowDialog();
         }
 
