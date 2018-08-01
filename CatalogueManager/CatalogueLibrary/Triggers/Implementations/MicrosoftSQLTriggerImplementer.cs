@@ -147,9 +147,16 @@ namespace CatalogueLibrary.Triggers.Implementations
             string equalsSqlTableToInserted = GetTableToTableEqualsSqlWithPrimaryKeys(_table.GetRuntimeName(),"inserted");
             string equalsSqlTableToDeleted = GetTableToTableEqualsSqlWithPrimaryKeys(_table.GetRuntimeName(), "deleted");
 
+            var columnNames = _columns.Select(c => c.GetRuntimeName()).ToList();
 
-            string colList = string.Join(",", _columns.Select(c => c.GetRuntimeName()).Union(new String[] { SpecialFieldNames.DataLoadRunID ,SpecialFieldNames.ValidFrom}));
-            string dDotColList = string.Join(",", _columns.Select(c => "d." + c.GetRuntimeName()).Union(new String[] { "d."+SpecialFieldNames.DataLoadRunID, "d."+SpecialFieldNames.ValidFrom }));
+            if(!columnNames.Contains(SpecialFieldNames.DataLoadRunID,StringComparer.CurrentCultureIgnoreCase))
+                columnNames.Add(SpecialFieldNames.DataLoadRunID);
+
+            if(!columnNames.Contains(SpecialFieldNames.ValidFrom,StringComparer.CurrentCultureIgnoreCase))
+                columnNames.Add(SpecialFieldNames.ValidFrom);
+            
+            string colList = string.Join(",",columnNames );
+            string dDotColList = string.Join(",", columnNames.Select(c => "d." + c));
 
             return
                 @"
