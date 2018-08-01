@@ -26,6 +26,9 @@ namespace RDMPAutomationService.Options.Abstracts
         [Value(0, HelpText = @"Command to run on the engine: 'run' or 'check' ", Required = true)]
         public CommandLineActivity Command { get; set; }
 
+        [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
+        public bool FailOnWarnings { get; set; }
+
         public void LoadFromAppConfig()
         {
             if (ServerName == null)

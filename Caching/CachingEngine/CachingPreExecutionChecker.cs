@@ -33,8 +33,6 @@ namespace CachingEngine
             _repository = (CatalogueRepository) _cacheProgress.Repository;
         }
 
-        public int ChecksExitCode { get; set; }
-
         public void Check(ICheckNotifier notifier)
         {
             try
@@ -74,7 +72,6 @@ namespace CachingEngine
                         " which is not a permitted time according to the configured PermissionWindow " + _cacheProgress.PermissionWindow.Description + 
                         " of the CacheProgress " + _cacheProgress,
                         CheckResult.Warning));
-                    ChecksExitCode = 1;
                 }
 
                 var shortfall = _cacheProgress.GetShortfall();
@@ -86,7 +83,6 @@ namespace CachingEngine
                             new CheckEventArgs(
                                 "CacheProgress reports that it has loaded up till " + _cacheProgress.CacheFillProgress +
                                 " which is in the future.  So we don't need to load this cache.", CheckResult.Warning));
-                        ChecksExitCode = 1;
                     }
                     else
                     {
@@ -95,7 +91,6 @@ namespace CachingEngine
                                 "CacheProgress reports that it has loaded up till " + _cacheProgress.CacheFillProgress +
                                 " but there is a lag period of " + _cacheProgress.CacheLagPeriod +
                                 " which means we are not due to load any cached data yet.", CheckResult.Warning));
-                        ChecksExitCode = 1;
                     }
 
                 var factory = new CachingPipelineUseCase(_cacheProgress);
