@@ -6,6 +6,8 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.DataRelease;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -15,6 +17,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
     {
         private Project _project;
         private ExtractionConfiguration _configuration;
+        private ISelectedDataSets _selectedDataSet;
 
         public ExecuteCommandRelease(IActivateItems activator) : base(activator)
         {
@@ -34,6 +37,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         {
             _project =  target as Project;
             _configuration = target as ExtractionConfiguration;
+            _selectedDataSet = target as ISelectedDataSets;
 
             if (_project != null && _project.ExtractionConfigurations.All(ec => ec.IsReleased))
                 SetImpossible("There are no unreleased ExtractionConfigurations in Project");
@@ -53,6 +57,17 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                     SetImpossible("No datasets configured");
 
             }
+            if (_selectedDataSet != null)
+            {
+                _configuration = (ExtractionConfiguration) _selectedDataSet.ExtractionConfiguration;
+                _project = (Project) _configuration.Project;
+
+                if(_selectedDataSet.ExtractionConfiguration.IsReleased)
+                    SetImpossible("This dataset is part of an ExtractionConfiguration that has already been Released");
+
+                if (_selectedDataSet.ExtractionConfiguration.Cohort_ID == null)
+                    SetImpossible("This dataset is part of an ExtractionConfiguration with no Cohort defined");
+            }
 
             return this;
         }
@@ -67,8 +82,12 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             var releaseUI = Activator.Activate<DataReleaseUI, Project>(_project);
             
             if(_configuration != null)
-                releaseUI.TickAllFor(_configuration);
-       
+                if (_selectedDataSet == null)
+                    releaseUI.TickAllFor(_configuration);
+                else
+                    releaseUI.Tick(_selectedDataSet);
+
+
             _project = null;
             
         }

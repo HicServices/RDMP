@@ -313,6 +313,13 @@ namespace DataExportManager.DataRelease
             tlvReleasePotentials.CheckObject(_globalsNode);
         }
 
+        public void Tick(ISelectedDataSets selectedDataSet)
+        {
+            tlvReleasePotentials.UncheckAll();
+            tlvReleasePotentials.CheckObject(selectedDataSet);
+            tlvReleasePotentials.CheckObject(_globalsNode);
+        }
+
         private void ResetChecksUI(object sender, EventArgs e)
         {
             if (!checkAndExecuteUI1.IsExecuting)
