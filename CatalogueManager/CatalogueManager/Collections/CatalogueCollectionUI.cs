@@ -277,13 +277,20 @@ namespace CatalogueManager.Collections
                     c = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
             }
             
-            if (c != null && (c.IsColdStorageDataset || c.IsDeprecated || c.IsInternalDataset))
+            if (c != null)
             {
-                //trouble is our flags might be hiding it so make sure it is visible
-                cbShowColdStorage.Checked = cbShowColdStorage.Checked || c.IsColdStorageDataset;
-                cbShowDeprecated.Checked = cbShowDeprecated.Checked || c.IsDeprecated;
-                cbShowInternal.Checked = cbShowInternal.Checked || c.IsInternalDataset;
+                if ((c.IsColdStorageDataset || c.IsDeprecated || c.IsInternalDataset))
+                {
+                    //trouble is our flags might be hiding it so make sure it is visible
+                    cbShowColdStorage.Checked = cbShowColdStorage.Checked || c.IsColdStorageDataset;
+                    cbShowDeprecated.Checked = cbShowDeprecated.Checked || c.IsDeprecated;
+                    cbShowInternal.Checked = cbShowInternal.Checked || c.IsInternalDataset;
+                }
 
+                var isExtractable = c.GetExtractabilityStatus(null);
+
+                cbShowNonExtractable.Checked = cbShowNonExtractable.Checked || isExtractable == null || isExtractable.IsExtractable == false;
+                
                 ApplyFilters();
             }
         }
