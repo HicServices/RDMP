@@ -35,6 +35,7 @@ namespace DataExportManager.Collections
             this.tlvDataExport = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvCohortSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).BeginInit();
             this.SuspendLayout();
             // 
@@ -42,6 +43,7 @@ namespace DataExportManager.Collections
             // 
             this.tlvDataExport.AllColumns.Add(this.olvName);
             this.tlvDataExport.AllColumns.Add(this.olvProjectNumber);
+            this.tlvDataExport.AllColumns.Add(this.olvCohortSource);
             this.tlvDataExport.CellEditUseWholeCell = false;
             this.tlvDataExport.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName,
@@ -58,7 +60,6 @@ namespace DataExportManager.Collections
             this.tlvDataExport.UseCompatibleStateImageBehavior = false;
             this.tlvDataExport.View = System.Windows.Forms.View.Details;
             this.tlvDataExport.VirtualMode = true;
-            
             // 
             // olvName
             // 
@@ -71,6 +72,10 @@ namespace DataExportManager.Collections
             // 
             this.olvProjectNumber.Text = "ProjectNumber";
             this.olvProjectNumber.Width = 89;
+            // 
+            // olvCohortSource
+            // 
+            this.olvCohortSource.IsVisible = false;
             // 
             // DataExportCollectionUI
             // 
@@ -89,5 +94,6 @@ namespace DataExportManager.Collections
         private TreeListView tlvDataExport;
         private OLVColumn olvName;
         private OLVColumn olvProjectNumber;
+        private OLVColumn olvCohortSource;
     }
 }

@@ -1,45 +1,18 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Providers;
 using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.NavigateTo;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
-using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Providers;
 using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
-using DataExportLibrary.Providers.Nodes.UsedByProject;
-using DataExportLibrary.Repositories;
 using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.Icons.IconProvision;
-using DataExportManager.Menus;
-using HIC.Common.Validation.Constraints.Primary;
-using MapsDirectlyToDatabaseTable;
-
-using RDMPObjectVisualisation.Copying;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.TreeHelper;
 
 namespace DataExportManager.Collections
 {
@@ -60,8 +33,26 @@ namespace DataExportManager.Collections
 
             olvProjectNumber.IsEditable = false;
             olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
+
+            olvCohortSource.IsEditable = false;
+            olvCohortSource.AspectGetter = CohortSourceAspectGetter;
         }
-        
+
+        private object CohortSourceAspectGetter(object rowObject)
+        {
+            //if it is a cohort or something masquerading as a cohort
+            var masquerader = rowObject as IMasqueradeAs;
+            var cohort = masquerader != null
+                ? masquerader.MasqueradingAs() as ExtractableCohort
+                : rowObject as ExtractableCohort;
+
+            //serve up the ExternalCohortTable name
+            if (cohort != null)
+                return cohort.ExternalCohortTable.Name;
+
+            return null;
+        }
+
         private object ProjectNumberAspectGetter(object rowObject)
         {
             var p = rowObject as Project;

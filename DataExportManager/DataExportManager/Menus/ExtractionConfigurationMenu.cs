@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows.Forms;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.Icons.IconProvision;
@@ -39,14 +38,11 @@ namespace DataExportManager.Menus
             _importableDataSets = _childProvider.ExtractableDataSets.Except(_datasets).Where(ds=>ds.Project_ID == null || ds.Project_ID == extractionConfiguration.Project_ID).ToArray();
             
             ///////////////////Change Cohorts//////////////
-            string message = extractionConfiguration.Cohort_ID == null ? "Choose Cohort" : "Change Cohort";
-
-            Add(new ExecuteCommandRelease(_activator).SetTarget(extractionConfiguration));
             
-            var cohortMenuItem = new ToolStripMenuItem(message, _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Link), (s, e) => LinkCohortToExtractionConfiguration());
-            cohortMenuItem.Enabled = !extractionConfiguration.IsReleased;
-            Items.Add(cohortMenuItem);
+            Add(new ExecuteCommandRelease(_activator).SetTarget(extractionConfiguration));
 
+            Add(new ExecuteCommandChooseCohort(_activator, extractionConfiguration));
+            
             /////////////////Add Datasets/////////////
             var addDataSets = new ToolStripMenuItem("Add DataSet(s)", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link), (s, e) => AddDatasetsToConfiguration());
             addDataSets.Enabled = !extractionConfiguration.IsReleased && _importableDataSets.Any();//not frozen and must be at least 1 dataset that is not in the configuration!
@@ -89,51 +85,6 @@ namespace DataExportManager.Menus
         }
 
       
-        private void LinkCohortToExtractionConfiguration()
-        {
-            List<ExtractableCohort> compatibleCohorts = new List<ExtractableCohort>();
-
-            var project = _extractionConfiguration.Project;
-            int? projectNumber = project.ProjectNumber;
-
-            if (!projectNumber.HasValue)
-            {
-
-                WideMessageBox.Show("Extraction Configuration '" + _extractionConfiguration + "' belongs to Project '" +
-                                    project +
-                                    "' which does not have a ProjectNumber, you must have a ProjectNumber to associate a cohort");
-                return;         
-            }
-
-            //find cohorts that match the project number
-            if(_childProvider.ProjectNumberToCohortsDictionary.ContainsKey(projectNumber.Value))
-                compatibleCohorts.AddRange(_childProvider.ProjectNumberToCohortsDictionary[projectNumber.Value]);
-            
-            //if theres only one compatible cohort and that one is already selected
-            if(compatibleCohorts.Count == 1 && compatibleCohorts.Single().ID == _extractionConfiguration.Cohort_ID)
-            {
-                WideMessageBox.Show("The only cohort available is the one that is already currently selected.  Cohorts must have ProjectNumber "+ projectNumber.Value + " to be elligible");
-                return;
-            }
-
-            //there weren't any
-            if (!compatibleCohorts.Any())
-            {
-                WideMessageBox.Show("There are no cohorts currently configured with ProjectNumber " + projectNumber.Value + " (Project '" + project + "')");
-                return;
-            }
-
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID), false, false);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                //clear current one
-                _extractionConfiguration.Cohort_ID = ((ExtractableCohort)dialog.Selected).ID;
-                _extractionConfiguration.SaveToDatabase();
-                Publish(_extractionConfiguration);
-            }
-        }
-
         private void AddDatasetsToConfiguration()
         {
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_importableDataSets, false, false);

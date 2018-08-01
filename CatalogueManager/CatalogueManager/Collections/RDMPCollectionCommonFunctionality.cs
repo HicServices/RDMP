@@ -427,13 +427,10 @@ namespace CatalogueManager.Collections
             OnRefreshChildProvider(_activator.CoreChildProvider);
             
             //now tell tree view to refresh the object
-            object parent = null;
-
+            
             //or from known descendancy
             var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
-            if (knownDescendancy != null)
-                parent = knownDescendancy.Last();
-
+            
             //if the descendancy is known 
             if (_pinFilter != null)
                 _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e);
@@ -447,44 +444,52 @@ namespace CatalogueManager.Collections
             //item deleted?
             if (!e.Object.Exists())
             {
-
-                //item was deleted so remove it
-                Tree.RemoveObject(e.Object);
-
-                //if we have a parent it might be a node category that should now disapear too
-                if (parent != null)
+                //if we have the object
+                if (Tree.IndexOf(e.Object) != -1)
                 {
-                    //it's a Node (e.g. SupportingDocumentsNode) but not a SingletonNode (e.g. ANOTablesNode)
-                    if (parent.GetType().Name.EndsWith("Node") && ! (parent is SingletonNode))
-                    {
-                        //if we are the only child
-                        if (Tree.GetChildren(parent).Cast<object>().Count() <= 1)
-                        {
-                            Tree.RemoveObject(parent);
-                            return;
-                        }
+                    var parent = Tree.GetParent(e.Object);
+                    //item was deleted so remove it
+                    Tree.RemoveObject(e.Object);
 
-                        //there are other siblings so removing e.Object will not result in the node disapearing
-                        Tree.RefreshObject(parent);
+                    //if we have a parent it might be a node category that should now disapear too
+                    if (parent != null)
+                    {
+                        //it's a Node (e.g. SupportingDocumentsNode) but not a SingletonNode (e.g. ANOTablesNode)
+                        if (parent.GetType().Name.EndsWith("Node") && !(parent is SingletonNode))
+                        {
+                            //if we are the only child
+                            if (Tree.GetChildren(parent).Cast<object>().Count() <= 1)
+                            {
+                                Tree.RemoveObject(parent);
+                                return;
+                            }
+
+                            //there are other siblings so removing e.Object will not result in the node disapearing
+                            Tree.RefreshObject(parent);
+                        }
                     }
+                    
                 }
+                
             }
             else
             {
                 try
                 {
                     //but the filter is currently hiding the object?
-                    if (IsHiddenByFilter(e.Object))
-                        return;
-
-                    //is parent in tree?
-                    if (parent != null && Tree.IndexOf(parent) != -1)
-                        Tree.RefreshObject(parent); //refresh parent
-                    else
+                    if (!IsHiddenByFilter(e.Object))
                     {
-                        //parent isn't in tree, could be a root object? try to refresh the object anyway
+                        //Do we have the object itself?
                         if (Tree.IndexOf(e.Object) != -1)
                             Tree.RefreshObject(e.Object);
+                        else
+                        if(knownDescendancy != null) //we don't have the object but do we have something in it's descendancy?
+                        {
+                            var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
+                            
+                            if (lastParent != null)
+                                Tree.RefreshObject(lastParent); //refresh parent
+                        }
                     }
                 }
                 catch (ArgumentException)

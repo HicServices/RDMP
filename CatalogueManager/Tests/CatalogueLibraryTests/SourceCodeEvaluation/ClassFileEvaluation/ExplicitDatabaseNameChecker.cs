@@ -28,6 +28,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                 new string[]
                 {
                     "DleOptions.cs",
+                    "CacheOptions.cs",
                     "RDMPCommandLineOptions.cs",
                     "Settings.Designer.cs",
 

@@ -10,6 +10,7 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -123,7 +124,9 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
-
+        [NoMappingToDatabase]
+        [UsefulProperty]
+        public string Source { get { return ExternalCohortTable.Name; } }
 
         internal ExtractableCohort(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
