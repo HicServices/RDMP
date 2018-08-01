@@ -44,7 +44,6 @@ namespace DataExportManager.ProjectUI
             this.tlvDatasets = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvState = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvID = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -149,7 +148,6 @@ namespace DataExportManager.ProjectUI
             // 
             this.tlvDatasets.AllColumns.Add(this.olvName);
             this.tlvDatasets.AllColumns.Add(this.olvState);
-            this.tlvDatasets.AllColumns.Add(this.olvID);
             this.tlvDatasets.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -184,12 +182,6 @@ namespace DataExportManager.ProjectUI
             this.olvState.Groupable = false;
             this.olvState.Text = "State";
             this.olvState.Width = 160;
-            // 
-            // olvID
-            // 
-            this.olvID.AspectName = "ID";
-            this.olvID.IsVisible = false;
-            this.olvID.Text = "ID";
             // 
             // helpIcon1
             // 
@@ -274,7 +266,6 @@ namespace DataExportManager.ProjectUI
         private CatalogueManager.SimpleControls.CheckAndExecuteUI checkAndExecuteUI1;
         private OLVColumn olvName;
         private OLVColumn olvState;
-        private OLVColumn olvID;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;

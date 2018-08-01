@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -57,11 +58,16 @@ namespace DataExportManager.DataRelease
         private bool _isFirstTime = true;
 
         private IPipelineSelectionUI _pipelineSelectionUI1;
-        private IExtractionConfiguration[] _unreleasedConfigurations;
         private IMapsDirectlyToDatabaseTable[] _globals;
         private DataExportChildProvider _childProvider;
         
         private ArbitraryFolderNode _globalsNode = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME);
+
+
+        private bool _isExecuting;
+        private RDMPCollectionCommonFunctionality _commonFunctionality;
+        private IEnumerable<ExtractionConfiguration> _configurations = new ExtractionConfiguration[0];
+        private IEnumerable<ISelectedDataSets> _selectedDataSets = new ISelectedDataSets[0];
 
         public DataReleaseUI()
         {
@@ -84,9 +90,6 @@ namespace DataExportManager.DataRelease
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
             pictureBox1.BackColor = Color.FromArgb(240,240,240);
         }
-        
-        private bool _isExecuting;
-        private RDMPCollectionCommonFunctionality _commonFunctionality;
 
         private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
         {
@@ -183,8 +186,8 @@ namespace DataExportManager.DataRelease
             return new ReleaseOptions()
             {
                 Pipeline = _pipelineSelectionUI1.Pipeline == null ? 0 : _pipelineSelectionUI1.Pipeline.ID,
-                Configurations = tlvReleasePotentials.CheckedObjects.OfType<ExtractionConfiguration>().Select(ec => ec.ID).ToArray(),
-                SelectedDataSets = tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
+                Configurations = _configurations.Where(c=>tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray(),
+                SelectedDataSets = _selectedDataSets.All(tlvReleasePotentials.IsChecked)?new int[0]: tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
                 Command = activityRequested,
                 ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
             };
@@ -196,10 +199,10 @@ namespace DataExportManager.DataRelease
             var ec = model as ExtractionConfiguration;
 
             if (p != null)
-                return _childProvider.GetActiveConfigurationsOnly(p);
+                return _configurations = _childProvider.GetActiveConfigurationsOnly(p);
 
             if (ec != null)
-                return _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
+                return _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
 
             if (Equals(model, _globalsNode))
                 return _globals;
