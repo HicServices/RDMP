@@ -445,7 +445,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                 if(engine.NewCatalogue != null && engine.LoadMetadata != null)
                 {
                     foreach (KeyValuePair<TableInfo, QueryBuilder> sqls in engine.SelectSQLForMigrations)
-                        CreateAttacher(sqls.Key, sqls.Value, engine.LoadMetadata, engine.LoadProgressIfAny);
+                        CreateAttacher(sqls.Key, sqls.Value, engine.LoadMetadata, sqls.Key.IsLookupTable()? null:engine.LoadProgressIfAny);
 
                     foreach (KeyValuePair<PreLoadDiscardedColumn, IDilutionOperation> dilutionOps in engine.DilutionOperationsForMigrations)
                         CreateDilutionMutilation(dilutionOps,engine.LoadMetadata);
