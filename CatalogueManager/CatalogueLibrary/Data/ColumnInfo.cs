@@ -241,11 +241,19 @@ namespace CatalogueLibrary.Data
             get { return ANOTable_ID == null ? null : Repository.GetObjectByID<ANOTable>((int) ANOTable_ID); }
         }
 
+        /// <summary>
+        /// Fetches all <see cref="ExtractionInformation"/> which draw on this <see cref="ColumnInfo"/>.  This could be none (if it is not extractable) or more than one
+        /// (if there are multiple extraction transforms available for the column or if the column/table is part of multiple <see cref="Catalogue"/>)
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<ExtractionInformation> ExtractionInformations {
             get { return CatalogueItems.Select(e=>e.ExtractionInformation).Where(o=>o != null); }
         }
 
+        /// <summary>
+        /// Fetches all <see cref="CatalogueItem"/> which describe the <see cref="ExtractionInformations"/> of this <see cref="ColumnInfo"/>.  This will also include any
+        /// non extractable <see cref="CatalogueItem"/> linked to this <see cref="ColumnInfo"/> in <see cref="Catalogue"/>s.
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<CatalogueItem> CatalogueItems
         {
