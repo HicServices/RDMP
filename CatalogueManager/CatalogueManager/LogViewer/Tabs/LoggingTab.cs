@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -36,7 +37,16 @@ namespace CatalogueManager.LogViewer.Tabs
         private Label label1;
         private PictureBox pbRemoveFilter;
         private Label lblFilter;
+        private Label label2;
+        private TextBox tbTop;
         protected DataGridView dataGridView1;
+
+        protected LogViewerFilter IDFilter = new LogViewerFilter();
+
+        protected int TopX;
+        private string _customFilter;
+        private string _freeTextFilter;
+        protected LogManager LogManager;
 
         public LoggingTab()
         {
@@ -44,6 +54,29 @@ namespace CatalogueManager.LogViewer.Tabs
 
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             dataGridView1.CellMouseClick += DataGridView1OnCellMouseClick;
+
+            TopX = UpdateTopX();
+        }
+
+        private int UpdateTopX()
+        {
+            try
+            {
+                var result = int.Parse(tbTop.Text);
+                if(result <=0)
+                {
+                    tbTop.ForeColor = Color.Red;
+                    return 1000;
+                }
+                
+                tbTop.ForeColor = Color.Black;
+                return result;
+            }
+            catch (Exception)
+            {
+                tbTop.ForeColor = Color.Red;
+                return 1000;
+            }
         }
 
         private void DataGridView1OnCellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -119,6 +152,8 @@ namespace CatalogueManager.LogViewer.Tabs
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.pbRemoveFilter = new System.Windows.Forms.PictureBox();
             this.lblFilter = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tbTop = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).BeginInit();
             this.SuspendLayout();
@@ -129,7 +164,7 @@ namespace CatalogueManager.LogViewer.Tabs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbContentFilter.Location = new System.Drawing.Point(35, 542);
             this.tbContentFilter.Name = "tbContentFilter";
-            this.tbContentFilter.Size = new System.Drawing.Size(804, 20);
+            this.tbContentFilter.Size = new System.Drawing.Size(628, 20);
             this.tbContentFilter.TabIndex = 8;
             this.tbContentFilter.TextChanged += new System.EventHandler(this.tbContentFilter_TextChanged);
             // 
@@ -187,8 +222,30 @@ namespace CatalogueManager.LogViewer.Tabs
             this.lblFilter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblFilter.Visible = false;
             // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(669, 545);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(29, 13);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Top:";
+            // 
+            // tbTop
+            // 
+            this.tbTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbTop.Location = new System.Drawing.Point(704, 542);
+            this.tbTop.Name = "tbTop";
+            this.tbTop.Size = new System.Drawing.Size(138, 20);
+            this.tbTop.TabIndex = 12;
+            this.tbTop.Text = "10000";
+            this.tbTop.TextChanged += new System.EventHandler(this.tbTop_TextChanged);
+            // 
             // LoggingTab
             // 
+            this.Controls.Add(this.tbTop);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.pbRemoveFilter);
             this.Controls.Add(this.lblFilter);
             this.Controls.Add(this.tbContentFilter);
@@ -203,11 +260,7 @@ namespace CatalogueManager.LogViewer.Tabs
 
         }
 
-        private string _customFilter;
-        private string _freeTextFilter;
-        private LogViewerFilter _filter;
-
-        private void LoadDataTable(DataTable dt)
+        protected void LoadDataTable(DataTable dt)
         {
             AddFreeTextSearchColumn(dt);
 
@@ -223,14 +276,10 @@ namespace CatalogueManager.LogViewer.Tabs
             RegenerateFilters();
         }
 
-        protected void SetFilter(string customFilter)
+        public void SetFilter(LogViewerFilter filter)
         {
-            _customFilter = customFilter;
-            RegenerateFilters();
-        }
+            IDFilter = filter;
 
-        public virtual void SetFilter(LogViewerFilter filter)
-        {
             if (filter.IsEmpty)
             {
                 lblFilter.Visible = false;
@@ -246,6 +295,8 @@ namespace CatalogueManager.LogViewer.Tabs
                 dataGridView1.Top = lblFilter.Bottom;
                 dataGridView1.Height = tbContentFilter.Top - dataGridView1.Top;
             }
+
+            FetchDataTable();
         }
 
         private void RegenerateFilters()
@@ -266,19 +317,22 @@ namespace CatalogueManager.LogViewer.Tabs
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            var lm = new LogManager(databaseObject);
-            var dt = FetchDataTable(lm);
-            LoadDataTable(dt);
+            LogManager = new LogManager(databaseObject);
+            FetchDataTable();
         }
 
         public override string GetTabName()
         {
-            return GetType().Name.Replace("Logging","").Replace("Tab","") + "(" +base.GetTabName() + ")";
+            return GetTableEnum() + "(" +base.GetTabName() + ")";
         }
 
-        protected virtual DataTable FetchDataTable(LogManager lm)
+        protected virtual LoggingTables GetTableEnum()
         {
-            return null;
+            return LoggingTables.None;
+        }
+
+        protected virtual void FetchDataTable()
+        {
         }
 
         public void SelectRowWithID(int rowIDToSelect)
@@ -304,6 +358,12 @@ namespace CatalogueManager.LogViewer.Tabs
         private void pbRemoveFilter_Click(object sender, EventArgs e)
         {
             SetFilter(new LogViewerFilter());
+        }
+
+        private void tbTop_TextChanged(object sender, EventArgs e)
+        {
+            TopX = UpdateTopX();
+            FetchDataTable();
         }
     }
 

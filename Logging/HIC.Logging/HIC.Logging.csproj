@@ -168,6 +168,7 @@
     <Compile Include="Listeners\ToLoggingDatabaseDataLoadEventListener.cs" />
     <Compile Include="Listeners\ToFileDataLoadEventListener.cs" />
     <Compile Include="LoggingDatabaseChecker.cs" />
+    <Compile Include="LoggingTables.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="PastEvents\ArchivalDataSource.cs" />
     <Compile Include="PastEvents\ArchivalFatalError.cs" />

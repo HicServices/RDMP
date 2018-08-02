@@ -7,6 +7,7 @@ using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections.Arbitrary;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.LogViewer;
+using HIC.Logging;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueManager.Menus
@@ -21,12 +22,12 @@ namespace CatalogueManager.Menus
             if (server.WasCreatedByDatabaseAssembly(typeof (HIC.Logging.Database.Class1).Assembly))
             {
                 var viewLogs = new ToolStripMenuItem("View Logs",CatalogueIcons.Logging);
-                Add(new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.DataLoadTasks), Keys.None,viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.DataLoadRuns), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.FatalErrors), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.TableLoadRuns), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.DataSources), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.ProgressMessages), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLoggedData(_activator, LoggingTables.DataLoadTask), Keys.None,viewLogs);
+                Add(new ExecuteCommandViewLoggedData(_activator, LoggingTables.DataLoadRun), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLoggedData(_activator, LoggingTables.FatalError), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLoggedData(_activator, LoggingTables.TableLoadRun), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLoggedData(_activator, LoggingTables.DataSource), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLoggedData(_activator, LoggingTables.ProgressLog), Keys.None, viewLogs);
 
                 viewLogs.DropDownItems.Add(new ToolStripSeparator());
 

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using HIC.Logging;
 
@@ -18,23 +13,17 @@ namespace CatalogueManager.LogViewer.Tabs
         protected override IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIndex)
         {
             var taskId = (int)dataGridView1.Rows[rowIndex].Cells["ID"].Value;
-            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.DataLoadRuns, new LogViewerFilter { Task = taskId });
+            yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.DataLoadRun, new LogViewerFilter { Task = taskId });
         }
 
-        protected override DataTable FetchDataTable(LogManager lm)
+        protected override LoggingTables GetTableEnum()
         {
-            return lm.ListDataTasksAsTable();
+            return LoggingTables.DataLoadTask;
         }
 
-        public override void SetFilter(LogViewerFilter filter)
+        protected override void FetchDataTable()
         {
-            base.SetFilter(filter);
-            
-            if (filter.Task == null)
-                SetFilter("");
-            else
-                SetFilter("ID=" + filter.Task);
+            LoadDataTable(LogManager.GetTable(LoggingTables.DataLoadTask,null,TopX));
         }
-
     }
 }

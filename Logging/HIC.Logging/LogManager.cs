@@ -76,55 +76,40 @@ namespace HIC.Logging
                 return tasks.ToArray();
             }
         }
-
-        public DataTable ListDataTasksAsTable()
+        
+        public DataTable GetTable(LoggingTables table, int? parentId, int? topX)
         {
-            return GetAsTable("SELECT * FROM DataLoadTask");
+            string prefix = "";
+            string where = "";
+
+            if (topX.HasValue)
+                prefix = "TOP " + topX.Value;
+
+            if(parentId.HasValue)
+                switch (table)
+                {
+                    case LoggingTables.DataLoadTask:
+                        break;
+                    case LoggingTables.DataLoadRun:
+                        where = "where dataLoadTaskID=" + parentId.Value;
+                        break;
+
+                     //all these have the parent of dataLoadRun
+                    case LoggingTables.ProgressLog:
+                    case LoggingTables.FatalError:
+                    case LoggingTables.TableLoadRun:
+                        where = "where dataLoadRunID=" + parentId.Value;
+                        break;
+                    case LoggingTables.DataSource:
+                        where = "where tableLoadRunID=" + parentId.Value;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("table");
+                }
+
+            return GetAsTable(string.Format("SELECT {0} * FROM " + table + " {1}", prefix, where));
         }
-
-        public DataTable ListDataSetsAsTable()
-        {
-            return GetAsTable("SELECT * FROM DataSet");
-        }
-
-        public DataTable ListDataLoadRunsAsTable(int? taskID)
-        {
-            if (taskID == null)
-                return GetAsTable("SELECT * FROM DataLoadRun");
-
-            return GetAsTable("SELECT * FROM DataLoadRun where dataLoadTaskID=" + taskID);
-        }
-
-        public DataTable ListTableLoadsAsTable(int? dataLoadRunID)
-        {
-            if (dataLoadRunID == null)
-                return GetAsTable("SELECT * FROM TableLoadRun");
-
-            return GetAsTable("SELECT * FROM TableLoadRun where dataLoadRunID=" + dataLoadRunID);
-        }
-
-        public DataTable ListDataSourcesAsTable(int? tableLoadRunID)
-        {
-            if (tableLoadRunID == null)
-                return GetAsTable("SELECT * FROM DataSource");
-
-            return GetAsTable("SELECT * FROM DataSource where tableLoadRunID=" + tableLoadRunID);
-        }
-
-        public DataTable ListFatalErrorsAsDataTable(int? dataLoadRunID)
-        {
-            if (dataLoadRunID == null)
-                return GetAsTable("SELECT * FROM FatalError");
-
-            return GetAsTable("SELECT * FROM FatalError where dataLoadRunID=" + dataLoadRunID);
-        }
-        public DataTable ListProgressMessagesAsTable(int? dataLoadRunID)
-        {
-            if (dataLoadRunID == null)
-                return GetAsTable("SELECT * FROM ProgressLog");
-
-            return GetAsTable("SELECT * FROM ProgressLog where dataLoadRunID=" + dataLoadRunID);
-        }
+        
         private DataTable GetAsTable(string sql)
         {
             

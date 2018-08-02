@@ -33,6 +33,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using DataQualityEngine;
+using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
 using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
@@ -124,7 +125,7 @@ namespace ResearchDataManagementPlatform.Menus
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandViewLoggedData(_activator,LogViewerNavigationTarget.DataLoadTasks);
+            var cmd = new ExecuteCommandViewLoggedData(_activator,LoggingTables.DataLoadTask);
             cmd.Execute();
         }
         

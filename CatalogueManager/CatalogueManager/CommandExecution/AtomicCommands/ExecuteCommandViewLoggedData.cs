@@ -6,6 +6,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LogViewer;
 using CatalogueManager.LogViewer.Tabs;
+using HIC.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -14,11 +15,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandViewLoggedData : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly LogViewerNavigationTarget _target;
+        private readonly LoggingTables _target;
         private readonly LogViewerFilter _filter;
         private ExternalDatabaseServer[] _loggingServers;
 
-        public ExecuteCommandViewLoggedData(IActivateItems activator,LogViewerNavigationTarget target = LogViewerNavigationTarget.DataLoadTasks, LogViewerFilter filter = null) : base(activator)
+        public ExecuteCommandViewLoggedData(IActivateItems activator,LoggingTables target = LoggingTables.DataLoadTask, LogViewerFilter filter = null) : base(activator)
         {
             _target = target;
             _filter = filter ?? new LogViewerFilter();
@@ -44,22 +45,22 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if(server != null)
                 switch (_target)
                 {
-                    case LogViewerNavigationTarget.DataLoadTasks:
+                    case LoggingTables.DataLoadTask:
                         loggingTab = Activator.Activate<LoggingTasksTab, ExternalDatabaseServer>(server);
                         break;
-                    case LogViewerNavigationTarget.DataLoadRuns:
+                    case LoggingTables.DataLoadRun:
                         loggingTab = Activator.Activate<LoggingRunsTab, ExternalDatabaseServer>(server);
                         break;
-                    case LogViewerNavigationTarget.ProgressMessages:
+                    case LoggingTables.ProgressLog:
                         loggingTab = Activator.Activate<LoggingProgressMessagesTab, ExternalDatabaseServer>(server);
                         break;
-                    case LogViewerNavigationTarget.FatalErrors:
+                    case LoggingTables.FatalError:
                         loggingTab = Activator.Activate<LoggingFatalErrorsTab, ExternalDatabaseServer>(server);
                         break;
-                    case LogViewerNavigationTarget.TableLoadRuns:
+                    case LoggingTables.TableLoadRun:
                         loggingTab = Activator.Activate<LoggingTableLoadsTab, ExternalDatabaseServer>(server);
                         break;
-                    case LogViewerNavigationTarget.DataSources:
+                    case LoggingTables.DataSource:
                         loggingTab = Activator.Activate<LoggingDataSourcesTab, ExternalDatabaseServer>(server);
                         break;
                     default:

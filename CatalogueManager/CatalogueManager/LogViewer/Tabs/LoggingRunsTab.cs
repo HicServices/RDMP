@@ -18,33 +18,19 @@ namespace CatalogueManager.LogViewer.Tabs
         {
 
             var taskId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
-            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.ProgressMessages, new LogViewerFilter { Run = taskId });
-            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.FatalErrors, new LogViewerFilter { Run = taskId });
-            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.TableLoadRuns, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.ProgressLog, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.FatalError, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.TableLoadRun, new LogViewerFilter { Run = taskId });
         }
 
-        protected override DataTable FetchDataTable(LogManager lm)
+        protected override LoggingTables GetTableEnum()
         {
-            return lm.ListDataLoadRunsAsTable(null);
+            return LoggingTables.DataLoadRun;
         }
 
-        public override void SetFilter(LogViewerFilter filter)
+        protected override void FetchDataTable()
         {
-            base.SetFilter(filter);
-
-            string f = null;
-
-            if (filter.Task != null)
-                f = "dataLoadTaskID=" + filter.Task;
-
-            if (filter.Run != null)
-                if(string.IsNullOrEmpty(f))
-                    f = " ID=" + filter.Run;
-                else
-                    f += " AND ID=" + filter.Run;
-
-            SetFilter(f);
+            LoadDataTable(LogManager.GetTable(LoggingTables.DataLoadRun,IDFilter.Task,TopX));
         }
-
     }
 }

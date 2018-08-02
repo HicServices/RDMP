@@ -1,4 +1,5 @@
 using System.Data;
+using System.Windows.Forms;
 using HIC.Logging;
 
 namespace CatalogueManager.LogViewer.Tabs
@@ -9,19 +10,14 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingDataSourcesTab : LoggingTab
     {
-        protected override DataTable FetchDataTable(LogManager lm)
+        protected override LoggingTables GetTableEnum()
         {
-            return lm.ListDataSourcesAsTable(null);
+            return LoggingTables.DataSource;
         }
 
-        public override void SetFilter(LogViewerFilter filter)
+        protected override void FetchDataTable()
         {
-            base.SetFilter(filter);
-
-            if (filter.Table == null)
-                SetFilter("");
-            else
-                SetFilter("tableLoadRunID=" + filter.Table);
+            LoadDataTable(LogManager.GetTable(LoggingTables.DataSource, IDFilter.Table, TopX));
         }
     }
 }

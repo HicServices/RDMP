@@ -8,19 +8,14 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingFatalErrorsTab : LoggingTab
     {
-        protected override DataTable FetchDataTable(LogManager lm)
+        protected override LoggingTables GetTableEnum()
         {
-            return lm.ListFatalErrorsAsDataTable(null);
+            return LoggingTables.FatalError;
         }
 
-        public override void SetFilter(LogViewerFilter filter)
+        protected override void FetchDataTable()
         {
-            base.SetFilter(filter);
-
-            if (filter.Run == null)
-                SetFilter("");
-            else
-                SetFilter("dataLoadRunID=" + filter.Run);
+            LoadDataTable(LogManager.GetTable(LoggingTables.FatalError, IDFilter.Run,TopX));
         }
     }
 }
