@@ -103,7 +103,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>F048E664FB6FC6DA51ABB0FAB72EA28DFCAA0309</ManifestCertificateThumbprint>
