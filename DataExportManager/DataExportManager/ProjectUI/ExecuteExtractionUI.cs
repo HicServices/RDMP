@@ -27,6 +27,7 @@ using RDMPObjectVisualisation.Pipelines;
 using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
 using ReusableUIComponents;
 using ReusableUIComponents.TransparentHelpSystem;
+using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
 namespace DataExportManager.ProjectUI
 {
@@ -85,9 +86,7 @@ namespace DataExportManager.ProjectUI
 
         private HelpWorkflow BuildHelpFlow()
         {
-            var tracker = new TutorialTracker(_activator);
-
-            var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(_activator), tracker);
+            var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(_activator), new NullHelpWorkflowProgressProvider());
 
             //////Normal work flow
             var root = new HelpStage(tlvDatasets, "Choose the datasets and Globals you want to extract here.\r\n" +

@@ -8,5 +8,4 @@ namespace ReusableUIComponents.TransparentHelpSystem.ProgressTracking
         bool ShouldShowUserWorkflow(HelpWorkflow workflow);
         void Completed(HelpWorkflow helpWorkflow);
     }
-
 }
