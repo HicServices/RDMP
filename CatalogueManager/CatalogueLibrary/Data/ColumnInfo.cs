@@ -254,14 +254,41 @@ namespace CatalogueLibrary.Data
 
         #endregion
         
+        /// <summary>
+        /// Notional usage status of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
+        /// </summary>
         public enum ColumnStatus
         {
+            /// <summary>
+            /// Should not be used anymore.  Not used for anything by RDMP.
+            /// </summary>
             Deprecated,
+
+            /// <summary>
+            /// Notional usage state of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
+            /// </summary>
             Inactive,
+
+            /// <summary>
+            /// Notional usage state of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
+            /// </summary>
             Archived,
+
+            /// <summary>
+            /// Normal state for columns.  Not used for anything by RDMP.
+            /// </summary>
             Active
         }
 
+        /// <summary>
+        /// Creates a new record of a column found on a database server in the table referenced by <see cref="TableInfo"/>.  This constructor will be used
+        /// when first importing a table reference (See <see cref="CatalogueLibrary.DataHelper.TableInfoImporter"/>)  and again whenever there are new columns
+        /// discovered during table sync (See <see cref="TableInfoSynchronizer"/>)
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <param name="parent"></param>
         public ColumnInfo(ICatalogueRepository repository, string name, string type, TableInfo parent)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -308,11 +335,20 @@ namespace CatalogueLibrary.Data
 
         }
 
+        /// <summary>
+        /// Returns the fully qualified <see cref="Name"/> of the <see cref="ColumnInfo"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Allows sorting by fully qualified <see cref="Name"/>.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public int CompareTo(object obj)
         {
             if (obj is ColumnInfo)
@@ -323,8 +359,8 @@ namespace CatalogueLibrary.Data
             throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
             
         }
-
-
+        
+        ///<inheritdoc/>
         public string GetRuntimeName()
         {
             if (Name == null)
@@ -333,17 +369,15 @@ namespace CatalogueLibrary.Data
             return GetQuerySyntaxHelper().GetRuntimeName(Name);
         }
 
+        ///<inheritdoc/>
         public string GetFullyQualifiedName()
         {
             return Name;
         }
 
-        public override int GetHashCode()
-        {
-            return Repository.GetHashCode(this);
-        }
-
         private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
+
+        ///<inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             if (_cachedQuerySyntaxHelper == null)
@@ -352,13 +386,7 @@ namespace CatalogueLibrary.Data
             return _cachedQuerySyntaxHelper;
         }
 
-
-        public override bool Equals(object obj)
-        {
-            return Repository.AreEqual(this, obj);
-        }
-
-        
+        ///<inheritdoc/>
         public string GetRuntimeName(LoadStage stage)
         {
             string finalName = this.GetRuntimeName();
@@ -406,6 +434,13 @@ namespace CatalogueLibrary.Data
             return Data_type;
         }
         
+        /// <summary>
+        /// Connects to the live database referenced by this <seealso cref="ColumnInfo"/> and discovers the column returning the
+        /// live state of the column.
+        /// <para>If the database/table/column doesn't exist or is inaccessible then this method will throw</para>
+        /// </summary>
+        /// <param name="context">Determines which credentials (if any) to use to perform the connection operation</param>
+        /// <returns>The live state of the column</returns>
         public DiscoveredColumn Discover(DataAccessContext context)
         {
             var ti = TableInfo;
@@ -413,6 +448,7 @@ namespace CatalogueLibrary.Data
             return db.ExpectTable(ti.GetRuntimeName()).DiscoverColumn(GetRuntimeName());
         }
 
+        ///<inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             List<IHasDependencies> iDependOn = new List<IHasDependencies>();
@@ -426,8 +462,8 @@ namespace CatalogueLibrary.Data
             return iDependOn.ToArray();
         }
 
-        
 
+        ///<inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             List<IHasDependencies> dependantObjects = new List<IHasDependencies>();
@@ -447,6 +483,11 @@ namespace CatalogueLibrary.Data
             return dependantObjects.ToArray(); //dependantObjects.ToArray();
         }
 
+        /// <summary>
+        /// Checks the ANO status of the column is valid (and matching on datatypes etc).  
+        /// <para>Does not check for synchronization against the underlying database.</para>
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             //if it does not have an ANO transform it should not start with ANO
@@ -462,6 +503,11 @@ namespace CatalogueLibrary.Data
                     notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo " + this + " (ID=" + ID + ") has an ANOTable configured but does not start with " + ANOTable.ANOPrefix + " (All anonymised columns must start with "+ANOTable.ANOPrefix+")", CheckResult.Fail, null));
         }
 
+        /// <summary>
+        /// Determines whether the <see cref="ColumnInfo"/> is involved in <see cref="Lookup"/> declarations (either as a foreign key, or as part of a lookup <see cref="TableInfo"/>).
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public Lookup[] GetAllLookupForColumnInfoWhereItIsA(LookupType type)
         {
             string sql;
