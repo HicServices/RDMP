@@ -54,8 +54,19 @@ namespace HIC.Logging.PastEvents
         }
 
     
+        /// <summary>
+        /// All tables loaded during the run (up to <see cref="MaxChildrenToFetch"/>)
+        /// </summary>
         public List<ArchivalTableLoadInfo>  TableLoadInfos = new List<ArchivalTableLoadInfo>();
+
+        /// <summary>
+        /// All errors that occured during the run  (up to <see cref="MaxChildrenToFetch"/>)
+        /// </summary>
         public List<ArchivalFatalError> Errors = new List<ArchivalFatalError>();
+
+        /// <summary>
+        /// All progress messages recorded during the run (up to <see cref="MaxChildrenToFetch"/>)
+        /// </summary>
         public List<ArchivalProgressLog> Progress = new List<ArchivalProgressLog>();
 
         public string Description { get; set; }
@@ -81,7 +92,15 @@ namespace HIC.Logging.PastEvents
             }
         }
 
-
+        /// <summary>
+        /// Returns up to <see cref="MaxChildrenToFetch"/> data load audit objects which describe runs of over arching task <see cref="dataTask"/>
+        /// </summary>
+        /// <param name="dataTask"></param>
+        /// <param name="lds"></param>
+        /// <param name="top1"></param>
+        /// <param name="token"></param>
+        /// <param name="specificDataLoadRunIDOnly"></param>
+        /// <returns></returns>
         public static IEnumerable<ArchivalDataLoadInfo> GetLoadHistoryForTask(string dataTask, DiscoveredServer lds, bool top1 = false, CancellationToken? token = null, int? specificDataLoadRunIDOnly = null)
         {
             DataTable runsIncludingErrorData;

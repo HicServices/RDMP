@@ -262,6 +262,9 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 {
                     _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabaseSettings());
                     results = _logManager.GetArchivalLoadInfoFor(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
+
+                    if(results.Length == ArchivalDataLoadInfo.MaxChildrenToFetch)
+                        ragSmiley1.Warning(new Exception("Only showing " + ArchivalDataLoadInfo.MaxChildrenToFetch + " most recent records"));
                 }
                 catch (OperationCanceledException)//user cancels
                 {
