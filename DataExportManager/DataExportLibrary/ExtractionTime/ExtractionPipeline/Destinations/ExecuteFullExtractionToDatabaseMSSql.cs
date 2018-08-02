@@ -46,7 +46,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
          $n - Project Number (e.g. 234)
          $t - Master Ticket (e.g. 'LINK-1234')
          $r - Request Ticket (e.g. 'LINK-1234')
-         ", Mandatory = true, DefaultValue = "Proj_$n_$t")]
+         $l - Release Ticket (e.g. 'LINK-1234')
+         ", Mandatory = true, DefaultValue = "Proj_$n_$l")]
         public string DatabaseNamingPattern { get; set; }
 
         [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
@@ -542,7 +543,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             dbName = dbName.Replace("$p", _project.Name)
                            .Replace("$n", _project.ProjectNumber.ToString())
                            .Replace("$t", _project.MasterTicket)
-                           .Replace("$r", _request.Configuration.RequestTicket);
+                           .Replace("$r", _request.Configuration.RequestTicket)
+                           .Replace("$l", _request.Configuration.ReleaseTicket);
 
             return dbName;
         }
@@ -580,7 +582,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             }
 
-            if (!DatabaseNamingPattern.Contains("$p") && !DatabaseNamingPattern.Contains("$n") && !DatabaseNamingPattern.Contains("$t") && !DatabaseNamingPattern.Contains("$r"))
+            if (!DatabaseNamingPattern.Contains("$p") && !DatabaseNamingPattern.Contains("$n") && !DatabaseNamingPattern.Contains("$t") && !DatabaseNamingPattern.Contains("$r") && !DatabaseNamingPattern.Contains("$l"))
                 notifier.OnCheckPerformed(new CheckEventArgs("DatabaseNamingPattern does not contain any token. The tables may be created alongside existing tables and Release would be impossible.", CheckResult.Warning));
 
             if (!TableNamingPattern.Contains("$d") && !TableNamingPattern.Contains("$a"))
