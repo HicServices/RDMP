@@ -32,6 +32,8 @@ namespace HIC.Logging.PastEvents
         public DateTime StartTime { get; private set; }
         public DateTime? EndTime { get; private set; }
 
+        public const int MaxChildrenToFetch = 1000;
+
         public bool HasUnresolvedErrors {
             get
             {
@@ -250,7 +252,7 @@ namespace HIC.Logging.PastEvents
                 #region get data about errors
                 SqlCommand cmdErrors = new SqlCommand(
                     string.Format(@"
-SELECT 
+SELECT  TOP {1}
 run.dataLoadTaskID dataLoadTaskID,
 run.description runDescription,
 	run.ID runID
@@ -272,7 +274,7 @@ run.description runDescription,
   where 
 {0}
   order by run.ID desc
-", whereText)
+", whereText, MaxChildrenToFetch)
                     , con);
                 
                 if (!string.IsNullOrWhiteSpace(dataTask))
@@ -285,7 +287,7 @@ run.description runDescription,
                 #region get data about progress
                 SqlCommand cmdProgress = new SqlCommand(
                    string.Format(@"
-SELECT 
+SELECT TOP {1}
 run.ID runID,
 progress.*
   FROM [" + databaseName + @"].[dbo].ProgressLog progress
@@ -299,7 +301,7 @@ left join
   run.dataLoadTaskID = task.ID
   where
 {0}
-  order by run.ID desc",whereText)
+  order by run.ID desc", whereText, MaxChildrenToFetch)
                     , con);
 
                 if (!string.IsNullOrWhiteSpace(dataTask))
@@ -313,7 +315,7 @@ left join
                 #region get data about table load infos including datasource
                 SqlCommand cmdTableLoadInfo = new SqlCommand(
  string.Format(@"
-SELECT 
+SELECT  TOP {1}
 run.ID runID,
 t.*,
 s.ID DataSourceID,
@@ -334,7 +336,7 @@ s.*
   where 
 {0}
   order by run.ID desc
-", whereText)
+", whereText, MaxChildrenToFetch)
                     , con);
                 
                 if(!string.IsNullOrWhiteSpace(dataTask))
