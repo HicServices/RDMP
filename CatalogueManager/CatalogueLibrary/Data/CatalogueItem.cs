@@ -277,6 +277,7 @@ namespace CatalogueLibrary.Data
             shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
         }
 
+        /// <inheritdoc/>
         public void InjectKnown(Catalogue instance)
         {
             _knownCatalogue = new Lazy<Catalogue>(()=>instance);

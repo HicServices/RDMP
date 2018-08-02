@@ -651,6 +651,7 @@ namespace CatalogueLibrary.Data.Cohort
             SaveToDatabase();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             List<IHasDependencies> dependencies = new List<IHasDependencies>();
@@ -663,6 +664,7 @@ namespace CatalogueLibrary.Data.Cohort
             return dependencies.ToArray();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];

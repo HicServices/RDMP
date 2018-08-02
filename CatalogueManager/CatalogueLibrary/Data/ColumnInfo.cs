@@ -30,13 +30,21 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class ColumnInfo : VersionedDatabaseEntity, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation
     {
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Data_type_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Format_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Digitisation_specs_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Source_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int RegexPattern_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int ValidationRules_MaxLength;
 
         #region Database Properties
@@ -58,18 +66,28 @@ namespace CatalogueLibrary.Data
         private bool _duplicateRecordResolutionIsAscending;
         private string _collation;
 
+        /// <summary>
+        /// ID of the <see cref="TableInfo"/> that this <see cref="ColumnInfo"/> belongs to.
+        /// </summary>
         public int TableInfo_ID
         {
             get { return _tableInfoID; }
             private set { SetField(ref  _tableInfoID, value); }
         }
 
+        /// <summary>
+        /// ID of the <see cref="ANOTable"/> transform that is applied to this <see cref="ColumnInfo"/> during
+        /// data loads e.g. swap chi for anochi.
+        /// </summary>
         public int? ANOTable_ID
         {
             get { return _anoTableID; }
             set { SetField(ref  _anoTableID, value); }
         }
 
+        /// <summary>
+        /// The fully specified name of the column in the underlying database table this record points at.
+        /// </summary>
         [Sql]
         public string Name
         {
@@ -77,78 +95,126 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// The proprietary SQL datatype of the column in the underlying database table this record points at.  
+        /// <para>E.g. datetime2 or varchar2 (Oracle) or int etc</para>
+        /// </summary>
         public string Data_type
         {
             get { return _dataType; }
             set { SetField(ref  _dataType, value); }
         }
 
+        /// <summary>
+        ///  User specified free text field.  Not used for anything by RDMP. 
+        /// <para> Use <see cref="Collation"/> instead</para>
+        /// </summary>
         public string Format
         {
             get { return _format; }
             set { SetField(ref  _format, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Digitisation_specs
         {
             get { return _digitisationSpecs; }
             set { SetField(ref  _digitisationSpecs, value); }
         }
 
+        /// <summary>
+        ///  User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Source
         {
             get { return _source; }
             set { SetField(ref  _source, value); }
         }
 
+        /// <summary>
+        ///  User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { SetField(ref  _description, value); }
         }
 
+        /// <summary>
+        ///  User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public ColumnStatus? Status
         {
             get { return _status; }
             set { SetField(ref  _status, value); }
         }
 
+        /// <summary>
+        /// Validation Regex that could be used to assess the cleanliness of data in the column.   Not used for anything by RDMP.
+        /// <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML"/>)</para>
+        /// </summary>
         public string RegexPattern
         {
             get { return _regexPattern; }
             set { SetField(ref  _regexPattern, value); }
         }
 
+        /// <summary>
+        /// Not used for anything by RDMP.
+        /// <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML"/>)</para>
+        /// </summary>
         public string ValidationRules
         {
             get { return _validationRules; }
             set { SetField(ref  _validationRules, value); }
         }
 
+        /// <summary>
+        /// Records whether the column in the underlying database table this record points at is part of the primary key or not.
+        /// </summary>
         public bool IsPrimaryKey
         {
             get { return _isPrimaryKey; }
             set { SetField(ref  _isPrimaryKey, value); }
         }
 
+        /// <summary>
+        /// Records whether the column in the underlying database table this record points at is an anto increment identity column
+        /// </summary>
         public bool IsAutoIncrement
         {
             get { return _isAutoIncrement; }
             set { SetField(ref  _isAutoIncrement, value); }
         }
+
+        /// <summary>
+        /// Records the collation of the column in the underlying database table this record points at if explicitly declared by dbms (only applicable for char datatypes)
+        /// </summary>
         public string Collation
         {
             get { return _collation; }
             set { SetField(ref  _collation, value); }
         }
         
-
+        /// <summary>
+        /// The importance of this column in resolving primary key collisions during data loads (in RAW).  Columns with a lower number are consulted first when resolving
+        /// collisions.  E.g. are the colliding records different on this column? if yes use <see cref="DuplicateRecordResolutionIsAscending"/> to pick which to delete
+        /// otherwise move onto the next (non primary key) column.
+        /// <para>Only applies if you have a PrimaryKeyCollisionResolverMutilation in the data load</para>
+        /// </summary>
         public int? DuplicateRecordResolutionOrder
         {
             get { return _duplicateRecordResolutionOrder; }
             set { SetField(ref  _duplicateRecordResolutionOrder, value); }
         }
 
+        /// <summary>
+        /// Used in primary key collision resolution during data loads (in RAW).  If two records differ on this field (and <see cref="IsPrimaryKey"/> is false) then the order
+        /// (<see cref="DuplicateRecordResolutionIsAscending"/>) will be used to decide which is deleted.
+        /// <para>Only applies if you have a PrimaryKeyCollisionResolverMutilation in the data load</para>
+        /// </summary>
         public bool DuplicateRecordResolutionIsAscending
         {
             get { return _duplicateRecordResolutionIsAscending; }
