@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Tutorials;
-using DataExportManager.CommandExecution.AtomicCommands;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
