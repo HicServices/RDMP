@@ -527,28 +527,5 @@ namespace CatalogueLibrary.Data
 
             return lookups.ToArray();
         }
-
-        public bool CouldSupportConvertingToANOColumnInfo(out string reason)
-        {
-            if (GetRuntimeName().StartsWith(ANOTable.ANOPrefix))
-            {
-                reason =
-                    "Column " + this + " begins with '" + ANOTable.ANOPrefix +
-                    "' it cannot be converted into an ANO version because it is assumed to already be in the anonymous structure, you should instead identify the relevant ANOTable and configure it in the main ConfigureANOForTableInfo dialog";
-                
-                return false;
-            }
-
-            if (ANOTable_ID != null)
-            {
-                reason =
-                    "Column " + this +
-                    " ALREADY HAS an ANOTable associated with it! the whole purpose of this UI is to convert a column to an ANO versions (and handle migrating of identifiable data if existing), if the column already has an ANOTable associated with it then this is impossible";
-                return false;
-            }
-
-            reason = null;
-            return true;
-        }
     }
 }

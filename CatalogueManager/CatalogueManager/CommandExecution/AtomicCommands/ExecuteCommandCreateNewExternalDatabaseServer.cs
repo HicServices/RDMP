@@ -31,8 +31,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _databaseIconProvider = new ExternalDatabaseServerStateBasedIconProvider(_overlayProvider);
 
             //do we already have a default server for this?
-            var defaults = new ServerDefaults(Activator.RepositoryLocator.CatalogueRepository);
-            var existingDefault = defaults.GetDefaultFor(_defaultToSet);
+            var existingDefault = Activator.ServerDefaults.GetDefaultFor(_defaultToSet);
             
             if(existingDefault != null)
                 SetImpossible("There is already an existing " + _defaultToSet + " database");

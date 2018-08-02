@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
@@ -127,10 +128,6 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
 
         public override void SetDatabaseObject(IActivateItems activator, ColumnInfo databaseObject)
         {
-            string problem;
-            if (!databaseObject.CouldSupportConvertingToANOColumnInfo(out problem))
-                throw new ArgumentException("Column " + databaseObject + " is not suitable for use with this form, because CouldSupportConvertingToANOColumnInfo returned false, reason was:" + problem, "databaseObject");
-
             base.SetDatabaseObject(activator,databaseObject);
             ColumnInfo = databaseObject;
 
@@ -153,11 +150,14 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
 
         private void RefreshServers()
         {
+            if (ColumnInfo == null)
+                return;
+            
             ddExternalDatabaseServer.Items.Clear();
             
             ddExternalDatabaseServer.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.ANOStore));
 
-            var defaultServer = new ServerDefaults(RepositoryLocator.CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.ANOStore);
+            var defaultServer = _activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.ANOStore);
 
             if (defaultServer != null)
                 ddExternalDatabaseServer.SelectedItem = defaultServer;
@@ -200,7 +200,12 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
                     con.Open();
 
                     lblPreviewDataIsFictional.Visible = false;
-                    DbCommand cmd = server.GetCommand("Select top 10 " + _columnInfo.GetRuntimeName(LoadStage.PostLoad) + " from " + _tableInfo.Name, con);
+
+                    var qb = new QueryBuilder(null, null, new[] {_tableInfo});
+                    qb.AddColumn(new ColumnInfoToIColumn(_columnInfo));
+                    qb.TopX = 10;
+
+                    DbCommand cmd = server.GetCommand(qb.SQL, con);
                     cmd.CommandTimeout = Convert.ToInt32(ntimeout.Value);
                     var r = cmd.ExecuteReader();
 
