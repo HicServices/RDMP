@@ -141,7 +141,7 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
             foreach (Control control in _valueUIs)
             {
                 control.Left = _maxValueUILeft;
-                control.Width = control.Parent.ClientRectangle.Width - (_maxValueUILeft);
+                control.Width = pArguments.Width - (_maxValueUILeft);
                 control.Parent.MinimumSize = new Size(_maxValueUILeft + control.MinimumSize.Width, control.Parent.Height);
             }
 
@@ -180,7 +180,6 @@ namespace RDMPObjectVisualisation.DemandsInitializationUIs
 
             var valueui = (Control)_valueUisFactory.Create(parent, argument, required, Preview);
             valueui.MinimumSize = new Size(valueui.Width/4, valueui.Height);
-            valueui.MaximumSize = new Size(valueui.Width, valueui.Height);
             valueui.Anchor = name.Anchor = AnchorStyles.Top |  AnchorStyles.Left | AnchorStyles.Right;
             _valueUIs.Add(valueui);
 
