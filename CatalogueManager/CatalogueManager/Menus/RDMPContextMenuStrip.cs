@@ -62,7 +62,8 @@ namespace CatalogueManager.Menus
             
             RepositoryLocator = _activator.RepositoryLocator;
 
-            ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o));
+            if(o != null)
+                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o));
         }
 
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
