@@ -89,6 +89,9 @@ namespace DataExportLibrary.Data.DataTables
             get { return (IDataExportRepository)Repository; }
         }
 
+
+        public static IProject Empty = new Project();
+
         /// <summary>
         /// Defines a new extraction project this is stored in the Data Export database
         /// </summary>
@@ -134,6 +137,11 @@ namespace DataExportLibrary.Data.DataTables
             ExtractionDirectory = r["ExtractionDirectory"] as string;
 
             ProjectNumber = ObjectToNullableInt(r["ProjectNumber"]);
+        }
+
+        private Project()
+        {
+            Name = "Empty Project";
         }
 
         public override string ToString()

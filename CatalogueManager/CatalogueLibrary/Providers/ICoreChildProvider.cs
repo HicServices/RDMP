@@ -6,7 +6,9 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
 using MapsDirectlyToDatabaseTable;
 
@@ -49,6 +51,7 @@ namespace CatalogueLibrary.Providers
         AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
         AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         AllStandardRegexesNode AllStandardRegexesNode { get;}
+        AllPipelinesNode AllPipelinesNode { get; }
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
     }

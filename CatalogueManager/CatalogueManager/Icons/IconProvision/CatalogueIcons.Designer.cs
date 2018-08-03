@@ -233,6 +233,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllPipelinesNode {
+            get {
+                object obj = ResourceManager.GetObject("AllPipelinesNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllProcessTasksUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllProcessTasksUsedByLoadMetadataNode", resourceCulture);
@@ -1486,6 +1496,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap SqlThenVSNow {
             get {
                 object obj = ResourceManager.GetObject("SqlThenVSNow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap StandardPipelineUseCaseNode {
+            get {
+                object obj = ResourceManager.GetObject("StandardPipelineUseCaseNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

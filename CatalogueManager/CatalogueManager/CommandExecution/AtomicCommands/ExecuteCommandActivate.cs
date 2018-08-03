@@ -20,7 +20,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             var masquerader = _o as IMasqueradeAs;
 
-            if (masquerader != null)
+            //if we have a masquerader and we cannot activate the masquerader, maybe we can activate what it is masquerading as?
+            if (masquerader != null && !Activator.CommandExecutionFactory.CanActivate(masquerader))
                 _o = masquerader.MasqueradingAs();
 
             if(!Activator.CommandExecutionFactory.CanActivate(_o))

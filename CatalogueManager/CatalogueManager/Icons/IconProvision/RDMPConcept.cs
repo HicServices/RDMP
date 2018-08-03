@@ -151,6 +151,9 @@ namespace CatalogueManager.Icons.IconProvision
         FileMissing,
 
         ConnectionStringKeyword,
-        AllStandardRegexesNode
+        AllStandardRegexesNode,
+
+        AllPipelinesNode,
+        StandardPipelineUseCaseNode
     }
 }
