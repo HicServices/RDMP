@@ -194,7 +194,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="System.Runtime"/>
+    <Reference Include="System.Runtime" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -406,6 +406,7 @@
     <Compile Include="TransparentHelpSystem\HelpWorkflow.cs" />
     <Compile Include="TransparentHelpSystem\ProgressTracking\IHelpWorkflowProgressProvider.cs" />
     <Compile Include="TransparentHelpSystem\ProgressTracking\IHelpWorkflowUser.cs" />
+    <Compile Include="TransparentHelpSystem\ProgressTracking\NullHelpWorkflowProgressProvider.cs" />
     <Compile Include="TransparentHelpSystem\TransparentHelpForm.cs" />
     <Compile Include="TreeHelper\TreeNodeParentFinder.cs" />
     <Compile Include="TypeTextOrCancelDialog.cs">
