@@ -159,7 +159,7 @@ namespace DataExportLibrary.Providers
             {
                 {"Extraction",new ExtractionPipelineUseCase(Project.Empty)},
                 {"Release",ReleaseUseCase.DesignTime(repositoryLocator)},
-                {"Cohort Creation",CohortCreationRequest.Empty}
+                {"Cohort Creation",CohortCreationRequest.DesignTime(repositoryLocator)}
             });
         }
 

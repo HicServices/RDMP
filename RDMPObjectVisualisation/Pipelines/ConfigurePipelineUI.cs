@@ -126,7 +126,7 @@ namespace RDMPObjectVisualisation.Pipelines
             }
             catch (Exception e)
             {
-                ExceptionViewer.Show("Could not generate preview for source " + s, e);
+                return;//could not generate preview
             }
         }
 

@@ -27,7 +27,6 @@ namespace DataExportLibrary.CohortCreationPipeline
         private DataFlowPipelineContext<DataTable> _context;
 
         //for pipeline editing initialization when no known cohort is available
-        public static readonly CohortCreationRequest Empty = new CohortCreationRequest();
 
         public FlatFileToLoad FileToLoad { get; set; }
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
@@ -81,7 +80,10 @@ namespace DataExportLibrary.CohortCreationPipeline
         public override object[] GetInitializationObjects()
         {
             if(FileToLoad != null && CohortIdentificationConfiguration != null)
-                throw new Exception("CohortCreationRequest should either have a FileToLoad or a CohortIdentificationConfiguration not both");
+                if (FileToLoad.IsDesignTime && CohortIdentificationConfiguration.IsDesignTime)
+                    return new object[] {FileToLoad, CohortIdentificationConfiguration,this};
+                else
+                    throw new Exception("CohortCreationRequest should either have a FileToLoad or a CohortIdentificationConfiguration not both");
             
             List<object> l = new List<object>();
             l.Add(this);
@@ -159,6 +161,16 @@ namespace DataExportLibrary.CohortCreationPipeline
             CohortCreatedIfAny = cohort;
 
             return cohort.ID;
+        }
+
+        public static PipelineUseCase DesignTime(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            return new CohortCreationRequest
+            {
+                IsDesignTime = true,
+                FileToLoad = FlatFileToLoad.DesignTime(),
+                CohortIdentificationConfiguration = CohortIdentificationConfiguration.Empty
+            };
         }
     }
 }

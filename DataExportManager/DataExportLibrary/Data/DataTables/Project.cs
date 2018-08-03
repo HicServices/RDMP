@@ -194,11 +194,12 @@ namespace DataExportLibrary.Data.DataTables
         [NoMappingToDatabase]
         public bool IsDesignTime { get; private set; }
 
-        public static readonly IProject Empty = new Project(){IsDesignTime = true};
+        public static readonly IProject Empty = new Project();
 
         private Project()
         {
             Name = "Empty Project";
+            IsDesignTime = true;
         }
         public override int GetHashCode()
         {

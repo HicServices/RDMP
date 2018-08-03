@@ -169,7 +169,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
         {
             Request = value;
 
-            if(value == CohortCreationRequest.Empty)
+            if(value.IsDesignTime)
                 return;
 
             var target = Request.NewCohortDefinition.LocationOfCohort;
@@ -187,7 +187,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
 
         public virtual void Check(ICheckNotifier notifier)
         {
-            if (Request == CohortCreationRequest.Empty)
+            if (Request.IsDesignTime)
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs("Cannot check because CohortCreationRequest is CohortCreationRequest.Empty",

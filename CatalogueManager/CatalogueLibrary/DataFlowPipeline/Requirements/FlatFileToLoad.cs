@@ -1,4 +1,5 @@
 using System.IO;
+using CatalogueLibrary.Data.Pipelines;
 
 namespace CatalogueLibrary.DataFlowPipeline.Requirements
 {
@@ -7,7 +8,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
     /// out of it.  Having an IPipelineRequirement for a FileInfo on a component could be confusing, we might also want to allow multiple different types of FileInfo.  Having
     /// this wrapper ensures that there is no confusion about what a FlatFileToLoad Initialization Object is for. 
     /// </summary>
-    public class FlatFileToLoad
+    public class FlatFileToLoad:IHasDesignTimeMode
     {
         public FlatFileToLoad(FileInfo file)
         {
@@ -15,5 +16,13 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         }
 
         public FileInfo File { get; set; }
+
+
+        public bool IsDesignTime { get; private set; }
+
+        public static FlatFileToLoad DesignTime()
+        {
+            return new FlatFileToLoad(null){IsDesignTime = true};
+        }
     }
 }
