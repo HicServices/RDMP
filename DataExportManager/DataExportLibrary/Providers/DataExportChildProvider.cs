@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.Hierarchy;
 using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.DataRelease.ReleasePipeline;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportLibrary.Providers.Nodes.UsedByNodes;
@@ -150,7 +154,15 @@ namespace DataExportLibrary.Providers
                 if (cataToEds.ContainsKey(catalogue.ID))
                     catalogue.InjectKnown(cataToEds[catalogue.ID].GetCatalogueExtractabilityStatus());
                 else
-                    catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));    
+                    catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));
+
+
+            AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
+            {
+                {"Extraction",new ExtractionPipelineUseCase(Project.Empty)},
+                {"Release",new ReleaseUseCase(Project.Empty,new ReleaseData(repositoryLocator){IsDesignTime = true})},
+                {"Cohort Creation",CohortCreationRequest.Empty}
+            });
         }
 
         private void AddChildren(ExtractableDataSetPackage package, DescendancyList descendancy)

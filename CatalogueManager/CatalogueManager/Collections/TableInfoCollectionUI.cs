@@ -116,12 +116,14 @@ namespace CatalogueManager.Collections
 
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllObjectSharingNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllPipelinesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllConnectionStringKeywordsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllStandardRegexesNode);
+
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

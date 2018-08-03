@@ -29,7 +29,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             _project = project;
             _releaseData = releaseData;
 
-            if(_project != null)
+            if(_project != null && _project != Project.Empty)
                 _catalogueRepository = ((IDataExportRepository)project.Repository).CatalogueRepository;
 
             if (releaseData.IsDesignTime)

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.ImportExport.Exceptions;
@@ -62,11 +63,15 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                         }
                 }
             }
-            
+
+            bool generateCatalogues = false;
+
             if(!catalogues.Any())
                 if(MessageBox.Show("You have not imported any Share Definitions for Catalogues, would you like to try to guess Catalogues by Name?","Guess by name",MessageBoxButtons.YesNo) == DialogResult.Yes)
                     catalogues.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues());
-
+                else if(MessageBox.Show("Would you like to generate new empty Catalogues instead?","Generate New Catalogues",MessageBoxButtons.YesNo)== DialogResult.Yes)
+                    generateCatalogues = true;
+            
             var married = new Dictionary<CatalogueItem, ColumnInfo>();
 
             TableInfo anyNewTable = null;
@@ -121,6 +126,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                         married.Add(cataItem,columnInfo);
                     }
                 }
+                else if (generateCatalogues)
+                    new ForwardEngineerCatalogue(ti, cis).ExecuteForwardEngineering();
             }
 
             if (married.Any() &&MessageBox.Show("Found " + married.Count + " columns, make them all extractable?", "Make Extractable", MessageBoxButtons.YesNo) == DialogResult.Yes)

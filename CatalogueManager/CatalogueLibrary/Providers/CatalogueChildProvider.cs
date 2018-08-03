@@ -12,9 +12,11 @@ using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
@@ -74,6 +76,8 @@ namespace CatalogueLibrary.Providers
         public ObjectExport[] AllExports { get; set; }
 
         public AllStandardRegexesNode AllStandardRegexesNode { get; private set; }
+        public AllPipelinesNode AllPipelinesNode { get; private set; }
+        public Pipeline[] AllPipelines { get; set; }
         public StandardRegex[] AllStandardRegexes { get; set; }
 
         private CatalogueItemIssue[] _allCatalogueItemIssues;
@@ -225,6 +229,9 @@ namespace CatalogueLibrary.Providers
 
             AddChildren(AllObjectSharingNode);
 
+            AllPipelinesNode = new AllPipelinesNode();
+            AllPipelines = repository.GetAllObjects<Pipeline>();
+            
             AllStandardRegexesNode = new AllStandardRegexesNode();
             AllStandardRegexes = repository.GetAllObjects<StandardRegex>();
             AddToDictionaries(new HashSet<object>(AllStandardRegexes),new DescendancyList(AllStandardRegexesNode));
@@ -255,6 +262,8 @@ namespace CatalogueLibrary.Providers
             }
                     
         }
+
+        
 
         private void AddChildren(AllLoadMetadatasNode allLoadMetadatasNode)
         {
@@ -301,8 +310,7 @@ namespace CatalogueLibrary.Providers
         {
             AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
         }
-
-
+        
         private void AddChildren(AllObjectSharingNode allObjectSharingNode)
         {
             var descendancy = new DescendancyList(allObjectSharingNode);
@@ -315,7 +323,46 @@ namespace CatalogueLibrary.Providers
 
             AddToDictionaries(new HashSet<object>(new object[] { allExportsNode, allImportsNode }), descendancy);
         }
-        
+
+
+        /// <summary>
+        /// Creates new <see cref="StandardPipelineUseCaseNode"/>s and fills it with all compatible Pipelines - do not call this method more than once
+        /// </summary>
+        /// <param name="useCase"></param>
+        protected void AddPipelineUseCases(Dictionary<string,PipelineUseCase> useCases)
+        {
+            var descendancy = new DescendancyList(AllPipelinesNode);
+            HashSet<object> children = new HashSet<object>();
+
+            foreach (var useCase in useCases)
+            {
+                var node = new StandardPipelineUseCaseNode(useCase.Key,useCase.Value);
+
+                AddChildren(node,descendancy.Add(node));
+                
+                children.Add(node);
+            }
+            
+            //it is the first standard use case
+            AddToDictionaries(children, descendancy);
+            
+        }
+
+        private void AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            //find compatible pipelines useCase.Value
+            foreach (Pipeline compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
+            {
+                children.Add(new PipelineCompatibleWithUseCaseNode(compatiblePipeline, node.UseCase));
+            }
+
+            //it is the first standard use case
+            AddToDictionaries(children, descendancy);
+        }
+
+
         private void BuildServerNodes()
         {
             Dictionary<TableInfoServerNode,List<TableInfo>> allServers = new Dictionary<TableInfoServerNode,List<TableInfo>>();

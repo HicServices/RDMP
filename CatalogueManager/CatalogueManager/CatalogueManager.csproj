@@ -426,6 +426,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenCommandIsPipelineCompatibleWithUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
@@ -464,6 +465,7 @@
     <Compile Include="Menus\AllConnectionStringKeywordsNodeMenu.cs" />
     <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
+    <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1443,6 +1445,7 @@
     <None Include="Icons\AllConnectionStringKeywords.png" />
     <None Include="Icons\AllConnectionStringKeywordsNode.png" />
     <None Include="Icons\AllStandardRegexesNode.png" />
+    <None Include="Icons\AllPipelinesNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1544,6 +1547,7 @@
     <None Include="Icons\Waiting.png" />
     <None Include="Icons\Writing.png" />
     <None Include="Icons\WaitingForDatabase.png" />
+    <None Include="Icons\StandardPipelineUseCaseNode.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

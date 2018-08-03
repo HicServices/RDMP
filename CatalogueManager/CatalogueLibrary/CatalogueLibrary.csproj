@@ -339,6 +339,9 @@
     <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
     <Compile Include="Nodes\AllStandardRegexesNode.cs" />
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\AllPipelinesNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\PipelineCompatibleWithUseCaseNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\StandardPipelineUseCaseNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />

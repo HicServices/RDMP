@@ -40,10 +40,10 @@ namespace DataExportManager.CohortUI
             this.olvReleaseIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvCustomTables = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvCreationDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.label2 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
+            this.olvViewLog = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.lbCohortDatabaseTable)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,8 +58,8 @@ namespace DataExportManager.CohortUI
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvReleaseIdentifier);
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvProjectNumber);
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvVersion);
-            this.lbCohortDatabaseTable.AllColumns.Add(this.olvCustomTables);
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvCreationDate);
+            this.lbCohortDatabaseTable.AllColumns.Add(this.olvViewLog);
             this.lbCohortDatabaseTable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -73,8 +73,8 @@ namespace DataExportManager.CohortUI
             this.olvReleaseIdentifier,
             this.olvProjectNumber,
             this.olvVersion,
-            this.olvCustomTables,
-            this.olvCreationDate});
+            this.olvCreationDate,
+            this.olvViewLog});
             this.lbCohortDatabaseTable.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbCohortDatabaseTable.FullRowSelect = true;
             this.lbCohortDatabaseTable.HideSelection = false;
@@ -140,12 +140,6 @@ namespace DataExportManager.CohortUI
             this.olvVersion.AspectName = "Version";
             this.olvVersion.Text = "Version";
             // 
-            // olvCustomTables
-            // 
-            this.olvCustomTables.AspectName = "CustomTables";
-            this.olvCustomTables.Text = "CustomTables";
-            this.olvCustomTables.Width = 100;
-            // 
             // olvCreationDate
             // 
             this.olvCreationDate.AspectName = "CreationDate";
@@ -171,6 +165,11 @@ namespace DataExportManager.CohortUI
             this.tbFilter.Size = new System.Drawing.Size(524, 20);
             this.tbFilter.TabIndex = 9;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            // 
+            // olvViewLog
+            // 
+            this.olvViewLog.ButtonSizing = BrightIdeasSoftware.OLVColumn.ButtonSizingMode.CellBounds;
+            this.olvViewLog.IsButton = true;
             // 
             // ExtractableCohortCollection
             // 
@@ -198,10 +197,10 @@ namespace DataExportManager.CohortUI
         private BrightIdeasSoftware.OLVColumn olvReleaseIdentifier;
         private BrightIdeasSoftware.OLVColumn olvProjectNumber;
         private BrightIdeasSoftware.OLVColumn olvVersion;
-        private BrightIdeasSoftware.OLVColumn olvCustomTables;
         private BrightIdeasSoftware.OLVColumn olvCreationDate;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbFilter;
         private BrightIdeasSoftware.OLVColumn olvSource;
+        private BrightIdeasSoftware.OLVColumn olvViewLog;
     }
 }
