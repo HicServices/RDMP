@@ -19,7 +19,9 @@ namespace CatalogueLibrary.Data.Pipelines
 
         public object ExplicitSource { get; protected set; }
         public object ExplicitDestination { get; protected set; }
-        
+
+        public bool IsDesignTime { get; protected set; }
+
         public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
         {
             var context = GetContext();

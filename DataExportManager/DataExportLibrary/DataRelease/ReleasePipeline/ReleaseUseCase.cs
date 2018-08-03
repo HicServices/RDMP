@@ -20,17 +20,15 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         private readonly ReleaseData _releaseData;
         private readonly DataFlowPipelineContext<ReleaseAudit> _context;
         private readonly object[] _initObjects;
-        private CatalogueRepository _catalogueRepository;
+        private ICatalogueRepository _catalogueRepository;
 
-        public ReleaseUseCase(IProject project, ReleaseData releaseData)
+        public ReleaseUseCase(IProject project, ReleaseData releaseData, ICatalogueRepository catalogueRepository)
         {
             ExplicitDestination = null;
 
             _project = project;
             _releaseData = releaseData;
-
-            if(_project != null && _project != Project.Empty)
-                _catalogueRepository = ((IDataExportRepository)project.Repository).CatalogueRepository;
+            _catalogueRepository = catalogueRepository;
 
             if (releaseData.IsDesignTime)
             {
@@ -82,6 +80,17 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public override IDataFlowPipelineContext GetContext()
         {
             return _context;
+        }
+
+        public static ReleaseUseCase DesignTime(IRDMPPlatformRepositoryServiceLocator repositoryServiceLocator, IProject project = null)
+        {
+            return new ReleaseUseCase(
+                project??Project.Empty,
+                ReleaseData.DesignTime(repositoryServiceLocator),
+                repositoryServiceLocator.CatalogueRepository)
+            {
+                IsDesignTime = true
+            };
         }
     }
 }

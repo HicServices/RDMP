@@ -37,7 +37,6 @@ namespace DataExportLibrary.Providers
         //root objects
         public AllCohortsNode RootCohortsNode { get; private set; }
         
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly ICheckNotifier _errorsCheckNotifier;
 
         public ExternalCohortTable[] CohortSources { get; private set; }
@@ -78,7 +77,6 @@ namespace DataExportLibrary.Providers
 
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
-            _repositoryLocator = repositoryLocator;
             _errorsCheckNotifier = errorsCheckNotifier;
             var dataExportRepository = repositoryLocator.DataExportRepository;
 
@@ -160,7 +158,7 @@ namespace DataExportLibrary.Providers
             AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
             {
                 {"Extraction",new ExtractionPipelineUseCase(Project.Empty)},
-                {"Release",new ReleaseUseCase(Project.Empty,new ReleaseData(repositoryLocator){IsDesignTime = true})},
+                {"Release",ReleaseUseCase.DesignTime(repositoryLocator)},
                 {"Cohort Creation",CohortCreationRequest.Empty}
             });
         }

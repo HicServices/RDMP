@@ -5,6 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
@@ -20,7 +21,7 @@ namespace DataExportLibrary.Data.DataTables
     /// 
     /// <para>The ProjectNumber must match the project number of the cohorts in your cohort database.  Therefore it is not possible to share a single cohort between multiple Projects. </para>
     /// </summary>
-    public class Project : VersionedDatabaseEntity, IProject,INamed, ICustomSearchString
+    public class Project : VersionedDatabaseEntity, IProject,INamed, ICustomSearchString, IHasDesignTimeMode
     {
         #region Database Properties
         private string _name;
@@ -89,9 +90,6 @@ namespace DataExportLibrary.Data.DataTables
             get { return (IDataExportRepository)Repository; }
         }
 
-
-        public static IProject Empty = new Project();
-
         /// <summary>
         /// Defines a new extraction project this is stored in the Data Export database
         /// </summary>
@@ -137,11 +135,6 @@ namespace DataExportLibrary.Data.DataTables
             ExtractionDirectory = r["ExtractionDirectory"] as string;
 
             ProjectNumber = ObjectToNullableInt(r["ProjectNumber"]);
-        }
-
-        private Project()
-        {
-            Name = "Empty Project";
         }
 
         public override string ToString()
@@ -196,5 +189,31 @@ namespace DataExportLibrary.Data.DataTables
         {
             return ExtractionConfigurations;
         }
+
+        #region Empty Support
+        [NoMappingToDatabase]
+        public bool IsDesignTime { get; private set; }
+
+        public static readonly IProject Empty = new Project(){IsDesignTime = true};
+
+        private Project()
+        {
+            Name = "Empty Project";
+        }
+        public override int GetHashCode()
+        {
+            if (this == Empty)
+                return 0;
+
+            return base.GetHashCode();
+        }
+        public override bool Equals(object obj)
+        {
+            if (this == Empty || obj == Empty)
+                return this == obj;
+
+            return base.Equals(obj);
+        }
+        #endregion
     }
 }

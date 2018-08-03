@@ -361,7 +361,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
         }
 
-        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)
+        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
         {
             return new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
         }
