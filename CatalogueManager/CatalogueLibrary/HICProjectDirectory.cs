@@ -3,13 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Xml;
+using CatalogueLibrary.Data.Pipelines;
 
 namespace CatalogueLibrary
 {
     /// <summary>
     /// Basic implementation of IHICProjectDirectory including support for creating new templates on the file system.
     /// </summary>
-    public class HICProjectDirectory : IHICProjectDirectory
+    public class HICProjectDirectory : IHICProjectDirectory,IHasDesignTimeMode
     {
         public const string ExampleFixedWidthFormatFileContents = @"From,To,Field,Size,DateFormat
 1,7,gmc,7,
@@ -71,7 +72,7 @@ namespace CatalogueLibrary
         public DirectoryInfo ExecutablesPath { get; private set; }
         public FileInfo FTPDetails { get; private set; }
         public bool Test { get; private set; }
-
+        
         object oLockConfigurationDataXML = new object();
         
         public static HICProjectDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)
@@ -141,5 +142,13 @@ namespace CatalogueLibrary
 
             return new HICProjectDirectory(projectDir.FullName, false);
         }
+        
+        public bool IsDesignTime { get; private set; }
+
+        private HICProjectDirectory()
+        {
+            IsDesignTime = true;
+        }
+        public readonly static HICProjectDirectory Empty = new HICProjectDirectory();
     }
 }

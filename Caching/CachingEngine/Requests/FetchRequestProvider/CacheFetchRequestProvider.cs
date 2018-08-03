@@ -1,9 +1,10 @@
 ﻿using CatalogueLibrary.Data.Cache;
+using CatalogueLibrary.Data.Pipelines;
 using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Requests.FetchRequestProvider
 {
-    public class CacheFetchRequestProvider : ICacheFetchRequestProvider
+    public class CacheFetchRequestProvider : ICacheFetchRequestProvider, IHasDesignTimeMode
     {
         private readonly ICacheFetchRequest _initialRequest;
         public ICacheFetchRequest Current { get; private set; }
@@ -29,6 +30,13 @@ namespace CachingEngine.Requests.FetchRequestProvider
                 PermissionWindow = Current.PermissionWindow,
                 ChunkPeriod = Current.ChunkPeriod
             };
+        }
+
+        public bool IsDesignTime { get; private set; }
+
+        public static ICacheFetchRequestProvider DesignTime()
+        {
+            return new CacheFetchRequestProvider(null) { IsDesignTime =true};
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
+using CachingEngine.Requests;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Nodes.PipelineNodes;
@@ -33,6 +34,8 @@ namespace CatalogueManager.CommandExecution.Proposals
                 Activate<DataTable>(target);
             else if (flowType == typeof (ReleaseAudit))
                 Activate<ReleaseAudit>(target);
+            else if (flowType == typeof(ICacheChunk))
+                Activate<ICacheChunk>(target);
             else
                 throw new Exception("Could not understand flow type:" + flowType.Name);
         }

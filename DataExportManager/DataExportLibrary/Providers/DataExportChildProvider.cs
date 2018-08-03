@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using CachingEngine.Factories;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Nodes;
@@ -154,13 +155,20 @@ namespace DataExportLibrary.Providers
                 else
                     catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));
 
-
-            AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
+            try
             {
-                {"Extraction",new ExtractionPipelineUseCase(Project.Empty)},
-                {"Release",ReleaseUseCase.DesignTime(repositoryLocator)},
-                {"Cohort Creation",CohortCreationRequest.DesignTime(repositoryLocator)}
-            });
+                AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
+                {
+                    {"Extraction",new ExtractionPipelineUseCase(Project.Empty)},
+                    {"Release",ReleaseUseCase.DesignTime(repositoryLocator)},
+                    {"Cohort Creation",CohortCreationRequest.DesignTime(repositoryLocator)},
+                    {"Caching",CachingPipelineUseCase.DesignTime(repositoryLocator.CatalogueRepository)}
+                });
+            }
+            catch (Exception ex)
+            {
+                _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",CheckResult.Fail,ex));
+            }
         }
 
         private void AddChildren(ExtractableDataSetPackage package, DescendancyList descendancy)

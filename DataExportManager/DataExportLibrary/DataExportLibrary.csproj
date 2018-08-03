@@ -341,6 +341,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Caching\CachingEngine\CachingEngine.csproj">
+      <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
+      <Name>CachingEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>

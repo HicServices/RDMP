@@ -40,6 +40,9 @@ namespace CachingEngine.PipelineExecution.Destinations
         
         public void PreInitialize(IHICProjectDirectory value, IDataLoadEventListener listener)
         {
+            if (value.IsDesignTime)
+                return;
+
             // CacheDirectory overrides HICProjectDirectory, so only set CacheDirectory if it is null (i.e. no alternative cache location has been configured in the destination component)
             if (CacheDirectory == null)
             {
