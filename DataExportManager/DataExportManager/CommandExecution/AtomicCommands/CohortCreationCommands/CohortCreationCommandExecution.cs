@@ -88,7 +88,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         {
             var catalogueRepository = Activator.RepositoryLocator.CatalogueRepository;
             
-            ConfigureAndExecutePipeline configureAndExecuteDialog = new ConfigureAndExecutePipeline(request,catalogueRepository);
+            ConfigureAndExecutePipeline configureAndExecuteDialog = new ConfigureAndExecutePipeline(request,Activator);
             configureAndExecuteDialog.Dock = DockStyle.Fill;
             
             configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(configureAndExecuteDialog, request);

@@ -47,7 +47,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
             InitializeComponent();
             
-            configureAndExecutePipeline1 = new ConfigureAndExecutePipeline(new UploadFileUseCase(file,database),activator.RepositoryLocator.CatalogueRepository);
+            configureAndExecutePipeline1 = new ConfigureAndExecutePipeline(new UploadFileUseCase(file,database),activator);
 
             // 
             // configureAndExecutePipeline1

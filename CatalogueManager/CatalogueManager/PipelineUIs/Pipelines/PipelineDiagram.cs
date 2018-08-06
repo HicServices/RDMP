@@ -90,8 +90,6 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         {
             _useCase = useCase;
 
-            _pipelineFactory = new DataFlowPipelineEngineFactory(_useCase,pipeline);
-            
             _pipeline = pipeline;
             
             //clear the diagram
@@ -99,16 +97,17 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             pipelineBroken.Visible = false;
             
             bool pipelineCheckingFailed = false;
-            IDataFlowPipelineEngine pipelineInstance = null;
             try
             {
                 //if there is a pipeline
-                if(pipeline != null)
+                if (_pipeline != null)
                 {
                     try
                     {
+                        _pipelineFactory = new DataFlowPipelineEngineFactory(_useCase, _pipeline);
+
                         //create it
-                        pipelineInstance = _pipelineFactory.Create(pipeline, new ThrowImmediatelyDataLoadEventListener());
+                        IDataFlowPipelineEngine pipelineInstance = _pipelineFactory.Create(pipeline, new ThrowImmediatelyDataLoadEventListener());
                     
                         try
                         {

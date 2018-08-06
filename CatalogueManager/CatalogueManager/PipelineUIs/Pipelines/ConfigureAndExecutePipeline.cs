@@ -15,6 +15,7 @@ using CatalogueLibrary.DataFlowPipeline.Events;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.ItemActivation;
 using HIC.Logging.Listeners;
 using CatalogueManager.PipelineUIs.DataObjects;
 using ReusableLibraryCode.Progress;
@@ -52,10 +53,13 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 
         readonly List<object> _initializationObjects = new List<object>();
 
-       public ConfigureAndExecutePipeline(PipelineUseCase useCase, CatalogueRepository repository)
+       public ConfigureAndExecutePipeline(PipelineUseCase useCase, IActivateItems activator)
         {
            _useCase = useCase;
+           
            InitializeComponent();
+
+            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
 
             pipelineDiagram1 = new PipelineDiagram();
 
@@ -72,7 +76,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             foreach (var o in useCase.GetInitializationObjects())
                 AddInitializationObject(o);
 
-            SetPipelineOptions((IDataFlowSource<DataTable>)useCase.ExplicitSource, (IDataFlowDestination<DataTable>)useCase.ExplicitDestination, (DataFlowPipelineContext<DataTable>)context, repository); 
+            SetPipelineOptions((IDataFlowSource<DataTable>)useCase.ExplicitSource, (IDataFlowDestination<DataTable>)useCase.ExplicitDestination, (DataFlowPipelineContext<DataTable>)context, activator.RepositoryLocator.CatalogueRepository);
+
         }
 
 
@@ -88,7 +93,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             if(o is DatabaseEntity)
                 rdmpObjectsRibbonUI1.Add((DatabaseEntity)o);
             else
-                rdmpObjectsRibbonUI1.Add(o.ToString());
+                rdmpObjectsRibbonUI1.Add(o);
 
             _initializationObjects.Add(o);
         }

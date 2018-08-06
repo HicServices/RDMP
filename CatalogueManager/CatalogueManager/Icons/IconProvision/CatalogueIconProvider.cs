@@ -154,6 +154,12 @@ namespace CatalogueManager.Icons.IconProvision
             
         }
 
+        /// <inheritdoc/>
+        public bool HasIcon(object o)
+        {
+            return GetImage(o) != ImagesCollection[RDMPConcept.NoIconAvailable];
+        }
+
         public RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)
         {
             switch (rdmpCollection)
