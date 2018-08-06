@@ -31,7 +31,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
         public Dictionary<IArgument, RequiredPropertyInfo> DemandDictionary;
         private Type _argumentsAreFor;
         private IArgumentHost _parent;
-        private CatalogueRepository _catalogueRepository;
         private ArgumentValueUIFactory _valueUisFactory;
         
         private int _currentY;
@@ -51,17 +50,15 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
         /// be AnySeparatorFileAttacher or MDFAttacher).  Note that while T is IArgumentHost, it also should be tied to one or more interfaces (e.g. IAttacher) and able to host
         /// any child of that interface of which argumentsAreForUnderlyingType is the currently configured concrete class (e.g. AnySeparatorFileAttacher).
         /// </summary>
-        /// <param name="catalogueRepository"></param>
         /// <param name="parent"></param>
         /// <param name="argumentsAreForUnderlyingType"></param>
-        public void Setup(CatalogueRepository catalogueRepository, IArgumentHost parent, Type argumentsAreForUnderlyingType)
+        public void Setup(IArgumentHost parent, Type argumentsAreForUnderlyingType)
         {
             _parent = parent;
             _argumentsAreFor = argumentsAreForUnderlyingType;
 
             lblTypeUnloadable.Visible = _argumentsAreFor == null;
 
-            _catalogueRepository = catalogueRepository;
             _valueUisFactory = new ArgumentValueUIFactory();
 
             if (_argumentsAreFor != null)
@@ -230,7 +227,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
         {
             Form f = new Form();
             var argCollection = new ArgumentCollection();
-            argCollection.Setup(catalogueRepository, newComp, argumentsAreForUnderlyingType);
+            argCollection.Setup(newComp, argumentsAreForUnderlyingType);
             argCollection.Dock = DockStyle.Fill;
             
             bool areAnyDemandsInitializations =
@@ -251,7 +248,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
             f.Controls.Add(ok);
             f.Text = "Set Arguments For Type:" + argumentsAreForUnderlyingType.Name + " (you can always change these later)";
 
-            argCollection.Setup(catalogueRepository, newComp, argumentsAreForUnderlyingType);
+            argCollection.Setup(newComp, argumentsAreForUnderlyingType);
             argCollection.Preview = previewIfAny;
             
             f.Width = 800;

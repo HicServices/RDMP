@@ -21,7 +21,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
         // mmmm, type-safety for the win
         public Form Create(string dataFlowType, object pipeline, object source, object destination, object context, List<object> initializationObjectsForPreviewPipelineSource)
         {
-            var fixedType = typeof(ConfigurePipelineUI<>);
+            var fixedType = typeof(ConfigurePipelineUI);
             var specificType = fixedType.MakeGenericType(_mef.GetTypeByNameFromAnyLoadedAssembly(dataFlowType));
             var form = Activator.CreateInstance(specificType, pipeline, source, destination, context, initializationObjectsForPreviewPipelineSource, _repository);
             var castForm = form as Form;

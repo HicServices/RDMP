@@ -107,6 +107,24 @@ namespace CatalogueLibrary.Repositories
                 throw new Exception("Failed to get ComposablePartExportType<T> where T was " + typeof(T).Name + " and part was " + part + " and we decided MEF would probably be calling T a " + whatIAmLookingFor, e);
             }
         }
+        private Type ComposablePartExportType(Type t, ComposablePartDefinition part)
+        {
+            string whatIAmLookingFor = GetMEFNameForType(t);
+            try
+            {
+                if (part.ExportDefinitions.Any(
+                    def => def.Metadata.ContainsKey("ExportTypeIdentity") &&
+                           def.Metadata["ExportTypeIdentity"].Equals(whatIAmLookingFor)))
+                {
+                    return ReflectionModelServices.GetPartType(part).Value;
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed to get ComposablePartExportType<T> where T was " + t.Name + " and part was " + part + " and we decided MEF would probably be calling T a " + whatIAmLookingFor, e);
+            }
+        }
 
         /// <summary>
         /// Turns the legit C# name:
@@ -203,6 +221,27 @@ namespace CatalogueLibrary.Repositories
                     .Select(part =>
                         ComposablePartExportType<T>(part))
                     .Where(t => t != null);
+        }
+
+        public IEnumerable<Type> GetTypes(Type type)
+        {
+            SetupMEFIfRequired();
+
+            return SafeDirectoryCatalog.Parts
+                    .Select(part =>
+                        ComposablePartExportType(type, part))
+                    .Where(t => t != null);
+        }
+
+        /// <summary>
+        /// Returns all MEF exported classes decorated with the specified generic export e.g. [Export(typeof(IDataFlowComponent&lt;DataTable&gt;))]
+        /// </summary>
+        /// <param name="genericType"></param>
+        /// <param name="typeOfT"></param>
+        /// <returns></returns>
+        public IEnumerable<Type> GetGenericTypes(Type genericType, Type typeOfT)
+        {
+            return GetTypes(genericType.MakeGenericType(typeOfT));
         }
 
         public IEnumerable<Type> GetAllTypes()
@@ -405,7 +444,5 @@ namespace CatalogueLibrary.Repositories
                         prev + "Dll:" + next.Key + separator + " Exception:" +
                         ExceptionHelper.ExceptionToListOfInnerMessages(next.Value) + separator);
         }
-
-        
     }
 }

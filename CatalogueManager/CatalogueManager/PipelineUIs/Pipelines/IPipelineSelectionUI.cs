@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 
 namespace CatalogueManager.PipelineUIs.Pipelines
 {
@@ -9,10 +7,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     {
         event EventHandler PipelineChanged;
         IPipeline Pipeline { get; set; }
-        void SetContext(IDataFlowPipelineContext context);
-
-        List<object> InitializationObjectsForPreviewPipeline { get; set; }
-
+        
         void CollapseToSingleLineMode();
     }
 }

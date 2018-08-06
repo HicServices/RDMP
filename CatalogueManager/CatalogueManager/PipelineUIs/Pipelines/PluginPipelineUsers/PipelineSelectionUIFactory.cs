@@ -34,18 +34,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
 
         public IPipelineSelectionUI Create(string text = null, DockStyle dock = DockStyle.None, Control containerControl = null)
         {
-            var context = _useCase.GetContext();
-
             //setup getter as an event handler for the selection ui
-            
-            var pipelineSelectionUIType = typeof(PipelineSelectionUI<>).MakeGenericType(context.GetFlowType());
-            var uiConstructor = pipelineSelectionUIType.GetConstructors().Single();
-
-            var initObjects = _useCase.GetInitializationObjects().ToList();
-
-            _pipelineSelectionUIInstance = (IPipelineSelectionUI) uiConstructor.Invoke(new object[] { _useCase.ExplicitSource, _useCase.ExplicitDestination, _repository });
-            _pipelineSelectionUIInstance.SetContext(context);
-            _pipelineSelectionUIInstance.InitializationObjectsForPreviewPipeline =  initObjects;
+            _pipelineSelectionUIInstance = new PipelineSelectionUI(_useCase,_repository);
 
             if (_user != null)
             {

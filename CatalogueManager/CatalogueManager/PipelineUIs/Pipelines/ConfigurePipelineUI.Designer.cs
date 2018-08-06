@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace CatalogueManager.PipelineUIs.Pipelines
 {
-    partial class ConfigurePipelineUI<T>
+    partial class ConfigurePipelineUI
     {
         /// <summary>
         /// Required designer variable.

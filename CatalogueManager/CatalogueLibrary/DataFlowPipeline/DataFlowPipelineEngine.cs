@@ -23,14 +23,13 @@ namespace CatalogueLibrary.DataFlowPipeline
         private bool initialized = false;
         private string _name;
 
-        public List<IDataFlowComponent<T>> Components { get; set; }
+        public List<IDataFlowComponent<T>> Components { get { return ComponentObjects.Cast<IDataFlowComponent<T>>().ToList(); } }
+
         public IDataFlowDestination<T> Destination { get; private set; }
         public IDataFlowSource<T> Source { get; private set; }
 
-        public List<object> ComponentObjects
-        {
-            get { return Components.Cast<object>().ToList(); }
-        }
+        public List<object> ComponentObjects { get; set; }
+
         public object DestinationObject { get { return Destination; } }
         public object SourceObject { get { return Source; } }
 
@@ -42,7 +41,7 @@ namespace CatalogueLibrary.DataFlowPipeline
             Destination = destination;
             _context = context;
             _listener = listener;
-            Components = new List<IDataFlowComponent<T>>();
+            ComponentObjects = new List<object>();
 
             if (pipelineSource != null)
                 _name = pipelineSource.Name;

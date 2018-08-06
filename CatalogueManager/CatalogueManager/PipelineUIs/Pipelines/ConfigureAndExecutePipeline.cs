@@ -41,8 +41,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     public partial class ConfigureAndExecutePipeline : UserControl
     {
         private readonly PipelineUseCase _useCase;
-        private PipelineSelectionUI<DataTable> _pipelineSelectionUI;
-        private PipelineDiagram<DataTable> pipelineDiagram1;
+        private PipelineSelectionUI _pipelineSelectionUI;
+        private PipelineDiagram pipelineDiagram1;
 
 
         public event PipelineEngineEventHandler PipelineExecutionStarted;
@@ -57,7 +57,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
            _useCase = useCase;
            InitializeComponent();
 
-            pipelineDiagram1 = new PipelineDiagram<DataTable>();
+            pipelineDiagram1 = new PipelineDiagram();
 
             pipelineDiagram1.Dock = DockStyle.Fill;
             panel_pipelineDiagram1.Controls.Add(pipelineDiagram1);
@@ -96,10 +96,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         private bool _pipelineOptionsSet = false;
 
         private DataFlowPipelineContext<DataTable> _context;
-        private IDataFlowDestination<DataTable> _destinationIfExists;
-        private IDataFlowSource<DataTable> _sourceIfExists;
         
-        public DataFlowPipelineEngineFactory<DataTable> PipelineFactory { get; private set; }
+        public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
         
         private void SetPipelineOptions(IDataFlowSource<DataTable> sourceIfExists, IDataFlowDestination<DataTable> destinationIfExists, DataFlowPipelineContext<DataTable> context, CatalogueRepository repository)
         {
@@ -107,13 +105,10 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                 throw new Exception("CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
 
             _context = context;
-            _sourceIfExists = sourceIfExists;
-            _destinationIfExists = destinationIfExists;
             _pipelineOptionsSet = true;
 
-            _pipelineSelectionUI = new PipelineSelectionUI<DataTable>(sourceIfExists, destinationIfExists, repository)
+            _pipelineSelectionUI = new PipelineSelectionUI(_useCase, repository)
             {
-                Context = context,
                 Dock = DockStyle.Fill
             };
             _pipelineSelectionUI.PipelineChanged += _pipelineSelectionUI_PipelineChanged;
@@ -122,11 +117,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             pPipelineSelection.Controls.Add(_pipelineSelectionUI);
             
             //setup factory
-            PipelineFactory = new DataFlowPipelineEngineFactory<DataTable>(repository.MEF, _context)
-            {
-                ExplicitSource = _sourceIfExists,
-                ExplicitDestination = _destinationIfExists
-            };
+            PipelineFactory = new DataFlowPipelineEngineFactory(_useCase, repository.MEF);
 
             _pipelineOptionsSet = true;
 
@@ -155,14 +146,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             //not ready to refresh diagram yet
             if (!_pipelineOptionsSet)
                 return;
-            
-            pipelineDiagram1.SetTo(
-                PipelineFactory, //the factory that knows about fixed sources/destinations and context
-                _pipelineSelectionUI.Pipeline, //the possibly invalid pipeline configuration the user has chosen
-                _initializationObjects.ToArray());//objects that will satisfy IPipelineRequirement e.g. cohort/file 
-            
-            _pipelineSelectionUI.InitializationObjectsForPreviewPipeline.Clear();
-            _pipelineSelectionUI.InitializationObjectsForPreviewPipeline.AddRange(_initializationObjects);
+
+            pipelineDiagram1.SetTo(_pipelineSelectionUI.Pipeline, _useCase);
         }
 
 

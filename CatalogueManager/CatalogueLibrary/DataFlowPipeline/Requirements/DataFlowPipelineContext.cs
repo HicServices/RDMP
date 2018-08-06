@@ -170,6 +170,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
             return IsAllowable(pipeline, out whocares);
         }
 
+
         //objects that we can initialize with IPipelineRequirement<>
         public void PreInitialize(IDataLoadEventListener listener, IDataFlowComponent<T> component, params object[] parameters)
         {
@@ -179,7 +180,8 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         {
             PreInitializeComponentWithAllObjects(listener, component, parameters);
         }
-        
+
+               
         protected void PreInitializeComponentWithAllObjects(IDataLoadEventListener listener, object component, params object[] parameters)
         {
             Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents = new Dictionary<object, Dictionary<MethodInfo, object>>();

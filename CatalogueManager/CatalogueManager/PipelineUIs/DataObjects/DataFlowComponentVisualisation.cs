@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.DataFlowPipeline;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
@@ -160,5 +162,23 @@ namespace CatalogueManager.PipelineUIs.DataObjects
                 ragSmiley1.SetVisible(false);//it isn't checkable
         }
 
+        public static Role GetRoleFor(Type componentType)
+        {
+            if (IsGenericType(componentType, typeof(IDataFlowSource<>)))
+                return  Role.Source;
+            
+            if (IsGenericType(componentType, typeof(IDataFlowDestination<>)))
+                return Role.Destination;
+
+            if (IsGenericType(componentType, typeof(IDataFlowComponent<>)))
+                return Role.Middle;
+            
+            throw new ArgumentException("Object must be an IDataFlowComponent<> but was " + componentType);
+        }
+
+        private static bool IsGenericType(Type toCheck, Type genericType)
+        {
+            return toCheck.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericType);
+        }
     }
 }

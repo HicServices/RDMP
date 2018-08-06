@@ -1,15 +1,7 @@
-﻿using System;
-using System.Data;
-using System.Linq;
-using CachingEngine.Requests;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Nodes.PipelineNodes;
+﻿using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.DataRelease.ReleasePipeline;
 using CatalogueManager.PipelineUIs.Pipelines;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
@@ -27,23 +19,8 @@ namespace CatalogueManager.CommandExecution.Proposals
 
         public override void Activate(PipelineCompatibleWithUseCaseNode target)
         {
-            var context = target.UseCase.GetContext();
-            var flowType = context.GetFlowType();
-
-            if(flowType == typeof(DataTable))
-                Activate<DataTable>(target);
-            else if (flowType == typeof (ReleaseAudit))
-                Activate<ReleaseAudit>(target);
-            else if (flowType == typeof(ICacheChunk))
-                Activate<ICacheChunk>(target);
-            else
-                throw new Exception("Could not understand flow type:" + flowType.Name);
-        }
-
-        private void Activate<T>(PipelineCompatibleWithUseCaseNode target)
-        {
             //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
-            var dialog = new ConfigurePipelineUI<T>(target.Pipeline, (IDataFlowSource<T>)target.UseCase.ExplicitSource, (IDataFlowDestination<T>)target.UseCase.ExplicitDestination, (DataFlowPipelineContext<T>)target.UseCase.GetContext(), target.UseCase.GetInitializationObjects().ToList(), ItemActivator.RepositoryLocator.CatalogueRepository);
+            var dialog = new ConfigurePipelineUI(target.Pipeline, target.UseCase, ItemActivator.RepositoryLocator.CatalogueRepository);
             dialog.ShowDialog();
         }
         public override ICommandExecution ProposeExecution(ICommand cmd, PipelineCompatibleWithUseCaseNode target,
