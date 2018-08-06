@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
@@ -28,12 +29,16 @@ namespace DataExportLibrary.CohortCreationPipeline
 
         //for pipeline editing initialization when no known cohort is available
 
+        //things that can be turned into cohorts
         public FlatFileToLoad FileToLoad { get; set; }
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+        public ExtractionInformation ExtractionIdentifierColumn { get; set; }
+
 
         public IProject Project { get; private set; }
         public ICohortDefinition NewCohortDefinition { get; set; }
         public ExtractableCohort CohortCreatedIfAny { get; set; }
+        
 
         public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog):this()
         {
@@ -79,12 +84,6 @@ namespace DataExportLibrary.CohortCreationPipeline
 
         public override object[] GetInitializationObjects()
         {
-            if(FileToLoad != null && CohortIdentificationConfiguration != null)
-                if (FileToLoad.IsDesignTime && CohortIdentificationConfiguration.IsDesignTime)
-                    return new object[] {FileToLoad, CohortIdentificationConfiguration,this};
-                else
-                    throw new Exception("CohortCreationRequest should either have a FileToLoad or a CohortIdentificationConfiguration not both");
-            
             List<object> l = new List<object>();
             l.Add(this);
 
@@ -93,6 +92,9 @@ namespace DataExportLibrary.CohortCreationPipeline
             
             if(FileToLoad != null)
                 l.Add(FileToLoad);
+
+            if (ExtractionIdentifierColumn != null)
+                l.Add(ExtractionIdentifierColumn);
             
             return l.ToArray();
         }
@@ -104,7 +106,6 @@ namespace DataExportLibrary.CohortCreationPipeline
 
         public string DescriptionForAuditLog { get; set; }
         
-
         public void Check(ICheckNotifier notifier)
         {
             NewCohortDefinition.LocationOfCohort.Check(notifier);

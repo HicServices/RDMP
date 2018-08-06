@@ -338,6 +338,7 @@
     <Compile Include="Migration\QueryBuilding\ReverseMigrationQueryHelper.cs" />
     <Compile Include="Mutilators\IMutilateDataTables.cs" />
     <Compile Include="Mutilators\IPluginMutilateDataTables.cs" />
+    <Compile Include="PipelineUseCases\UploadFileUseCase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

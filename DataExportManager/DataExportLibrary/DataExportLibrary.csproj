@@ -217,6 +217,7 @@
     <Compile Include="Checks\SupportingSQLTableChecker.cs" />
     <Compile Include="CohortCreationPipeline\CohortCreationRequest.cs" />
     <Compile Include="CohortCreationPipeline\CohortRefreshEngine.cs" />
+    <Compile Include="CohortCreationPipeline\UseCases\CreateTableFromAggregateUseCase.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\BasicCohortDestination.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\CustomCohortDataDestination.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\GuidReleaseIdentifierAllocator.cs" />

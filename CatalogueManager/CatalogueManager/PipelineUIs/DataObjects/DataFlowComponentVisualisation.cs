@@ -81,7 +81,6 @@ namespace CatalogueManager.PipelineUIs.DataObjects
 
             
             _checkable = value as ICheckable;
-            Check();
             this.Width = lblText.PreferredWidth + 80;
         }
 

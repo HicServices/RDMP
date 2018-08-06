@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.IO;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -8,9 +7,11 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.PipelineUIs.Pipelines;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using DataExportLibrary.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
+using DataLoadEngine.PipelineUseCases;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
 
@@ -31,7 +32,6 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
         private readonly DiscoveredDatabase _database;
         private readonly bool _alsoForwardEngineerCatalogue;
 
-        private DataFlowPipelineContext<DataTable> _context = new DataFlowPipelineContext<DataTable>();
         private FlatFileToLoad _fileToLoad;
         private Project _projectSpecific;
 
@@ -44,18 +44,23 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             _database = database;
             _alsoForwardEngineerCatalogue = alsoForwardEngineerCatalogue;
             _projectSpecific = projectSpecific;
-            _context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.LoadsSingleFlatFile);
-            _context.MustHaveDestination = typeof (DataTableUploadDestination);
 
             InitializeComponent();
             
-            _fileToLoad = new FlatFileToLoad(file);
+            configureAndExecutePipeline1 = new ConfigureAndExecutePipeline(new UploadFileUseCase(file,database),activator.RepositoryLocator.CatalogueRepository);
 
-            configureAndExecutePipeline1.AddInitializationObject(_fileToLoad);
-            configureAndExecutePipeline1.AddInitializationObject(database);
+            // 
+            // configureAndExecutePipeline1
+            // 
+           configureAndExecutePipeline1.Dock = System.Windows.Forms.DockStyle.Fill;
+           configureAndExecutePipeline1.Location = new System.Drawing.Point(0, 0);
+           configureAndExecutePipeline1.Name = "configureAndExecutePipeline1";
+           configureAndExecutePipeline1.Size = new System.Drawing.Size(979, 894);
+           configureAndExecutePipeline1.TabIndex = 14;
+           Controls.Add(this.configureAndExecutePipeline1);
+
             configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully += ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
 
-            configureAndExecutePipeline1.SetPipelineOptions(null, null, _context, _repositoryLocator.CatalogueRepository);
         }
 
         

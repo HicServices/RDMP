@@ -9,6 +9,7 @@ using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.CohortCreationPipeline;
+using DataExportLibrary.CohortCreationPipeline.UseCases;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
@@ -20,6 +21,7 @@ using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportLibrary.Providers.Nodes.UsedByNodes;
 using DataExportLibrary.Providers.Nodes.UsedByProject;
+using DataLoadEngine.PipelineUseCases;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
@@ -159,10 +161,12 @@ namespace DataExportLibrary.Providers
             {
                 AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
                 {
+                    {"File Import", UploadFileUseCase.DesignTime()},
                     {"Extraction",new ExtractionPipelineUseCase(Project.Empty)},
                     {"Release",ReleaseUseCase.DesignTime(repositoryLocator)},
                     {"Cohort Creation",CohortCreationRequest.DesignTime(repositoryLocator)},
-                    {"Caching",CachingPipelineUseCase.DesignTime(repositoryLocator.CatalogueRepository)}
+                    {"Caching",CachingPipelineUseCase.DesignTime(repositoryLocator.CatalogueRepository)},
+                    {"Aggregate Committing",CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueRepository)}
                 });
             }
             catch (Exception ex)

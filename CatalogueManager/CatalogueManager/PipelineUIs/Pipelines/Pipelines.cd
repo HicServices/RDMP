@@ -4,40 +4,77 @@
     <Position X="3.802" Y="1.677" Height="0.344" Width="7.429" />
   </Comment>
   <Comment CommentText="UI Layer (Design Time)">
-    <Position X="4.979" Y="3.344" Height="0.344" Width="5.783" />
+    <Position X="9.094" Y="3.354" Height="0.344" Width="5.783" />
   </Comment>
   <Comment CommentText="Pipeline use cases (Contexts)">
     <Position X="3.396" Y="6.896" Height="0.344" Width="4.627" />
   </Comment>
   <Comment CommentText="Execution Time">
-    <Position X="7" Y="5.104" Height="0.344" Width="5.773" />
+    <Position X="6.75" Y="6.354" Height="0.344" Width="5.773" />
   </Comment>
   <Class Name="CatalogueLibrary.Data.Pipelines.PipelineUser" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="0.5" Y="5.5" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers.PipelineSelectionUIFactory" Collapsed="true">
+  <Class Name="CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers.PipelineSelectionUIFactory">
     <Position X="5" Y="2.75" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAABAAAQAAAAABAAAAAAAAMAAAAAAAAAAAAA=</HashCode>
-      <FileName>Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs</FileName>
+      <FileName>PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="_useCase" />
       <Field Name="_user" />
+      <Field Name="_useCase" />
+      <Field Name="_pipelineSelectionUIInstance" />
     </ShowAsAssociation>
   </Class>
   <Class Name="CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers.PluginPipelineUser" Collapsed="true">
     <Position X="3.25" Y="6.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAEABBCAAAIAAAABAAACAAKAAACAACAABAAA=</HashCode>
-      <FileName>Pipelines\PluginPipelineUsers\PluginPipelineUser.cs</FileName>
+      <HashCode>AAAAAAAAAAAABAAAAIAAAABAAAAAACAAACAACAAAAAA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CatalogueLibrary.DataFlowPipeline.DataFlowPipelineEngine&lt;T&gt;" Collapsed="true">
-    <Position X="10.25" Y="4.5" Width="2.5" />
+    <Position X="10" Y="5.75" Width="2.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.PipelineUIs.Pipelines.PipelineWorkArea&lt;T&gt;">
+    <Position X="10.75" Y="8" Width="2" />
+    <TypeIdentifier>
+      <HashCode>QAAIAAICBAAABAAAAAAAAAAAAAIAAAgAAAAABAAACIA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\PipelineWorkArea.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.PipelineUIs.Pipelines.PipelineDiagram&lt;T&gt;" Collapsed="true">
+    <Position X="14.5" Y="8.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>FAAJCQgAAgAAAACgAAAQADABRAICAYAQABQAIADABAA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\PipelineDiagram.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueManager.PipelineUIs.Pipelines.ConfigureAndExecutePipeline">
+    <Position X="4" Y="8" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAKIAaBARBDAAgCgFABCIBAMcBmAAAACACoAkCQ=</HashCode>
+      <FileName>PipelineUIs\Pipelines\ConfigureAndExecutePipeline.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_useCase" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CatalogueManager.PipelineUIs.Pipelines.ConfigurePipelineUI&lt;T&gt;">
+    <Position X="8" Y="8" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAgAAIAAAEBABCAEAAAAAACAAEIQAIAIAAACAAQAAAA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\ConfigurePipelineUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Pipelines.PipelineUseCase" Collapsed="true">
+    <Position X="0.75" Y="8" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
@@ -62,14 +99,14 @@
     <TypeIdentifier />
   </Interface>
   <Interface Name="CatalogueLibrary.DataFlowPipeline.IDataFlowPipelineEngineFactory" Collapsed="true">
-    <Position X="7" Y="4.5" Width="3" />
+    <Position X="6.75" Y="5.75" Width="3" />
     <TypeIdentifier />
   </Interface>
   <Interface Name="CatalogueManager.PipelineUIs.Pipelines.IPipelineSelectionUI" Collapsed="true">
-    <Position X="8.25" Y="2.75" Width="2.5" />
+    <Position X="10.25" Y="2.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AIAAAAAGAAIAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
-      <FileName>Pipelines\IPipelineSelectionUI.cs</FileName>
+      <FileName>PipelineUIs\Pipelines\IPipelineSelectionUI.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Delegate Name="CatalogueLibrary.Data.Pipelines.PipelineSetter" Collapsed="true">
