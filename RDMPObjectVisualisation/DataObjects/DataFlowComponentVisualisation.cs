@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
 
 namespace RDMPObjectVisualisation.DataObjects
 {
@@ -32,13 +27,11 @@ namespace RDMPObjectVisualisation.DataObjects
         }
         private readonly Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> _shouldAllowDrop;
 
-        public DataFlowComponentVisualisation(Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
-            : this(Role.Middle, null,shouldAllowDrop)
+        public DataFlowComponentVisualisation()
+            : this(Role.Middle, null,null)
         {
-            if (LicenseManager.UsageMode != LicenseUsageMode.Designtime && shouldAllowDrop != null) //dont connect to database in design mode unless they passed in a fist full of nulls
+            if (LicenseManager.UsageMode != LicenseUsageMode.Designtime) //dont connect to database in design mode unless they passed in a fist full of nulls
                 throw new NotSupportedException("Do not use this constructor, it is for use by Visual Studio Designer");
-
-            _shouldAllowDrop = shouldAllowDrop;
         }
 
         public Role GetRole()
@@ -91,7 +84,7 @@ namespace RDMPObjectVisualisation.DataObjects
             Check();
             this.Width = lblText.PreferredWidth + 80;
         }
-        
+
         ToolTip _toolTip = new ToolTip();
 
         private void GenerateToolTipBasedOnProperties(object value)
@@ -124,7 +117,7 @@ namespace RDMPObjectVisualisation.DataObjects
         protected bool _isEmpty ;
         Pen _emptyPen = new Pen(new SolidBrush(Color.Black));
         protected Pen _fullPen = new Pen(new SolidBrush(Color.Black));
-        
+    
         public enum Role
         {
             Source,
@@ -163,10 +156,9 @@ namespace RDMPObjectVisualisation.DataObjects
         public void Check()
         {
             if (_checkable != null)
-                checksUIIconOnly1.Check(_checkable);
+                ragSmiley1.StartChecking(_checkable);
             else
-                label3.Visible = false;//it isn't checkable
-
+                ragSmiley1.SetVisible(false);//it isn't checkable
         }
 
     }

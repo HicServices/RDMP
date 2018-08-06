@@ -32,5 +32,7 @@ namespace Tests.Common
 
             return toReturn != null && toReturn.Count>0;
         }
+
+        public bool IsDesignTime { get; private set; }
     }
 }

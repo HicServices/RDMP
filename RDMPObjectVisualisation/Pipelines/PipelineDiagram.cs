@@ -36,8 +36,6 @@ namespace RDMPObjectVisualisation.Pipelines
     /// <typeparam name="T"></typeparam>
     public partial class PipelineDiagram<T> : UserControl
     {
-        DataObjectVisualisationFactory _visualisationFactory = new DataObjectVisualisationFactory();
-
         Label pipelineBroken = new Label();
 
         private DataFlowPipelineEngineFactory<T> _pipelineFactory;
@@ -265,7 +263,7 @@ namespace RDMPObjectVisualisation.Pipelines
                 try
                 {
                     _pipelineFactory.Context.PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), value, _initializationObjects);
-                    component.ExInitialization = null;//initialization worked, changes N/A to Successful
+                    component.Clear(); //initialization worked, changes N/A to Successful
                     component.Check();
                 }
                 catch (Exception exInit)
@@ -317,7 +315,22 @@ namespace RDMPObjectVisualisation.Pipelines
 
         private void AddExplicit(object value)
         {
-            var component = (DataFlowComponentVisualisation)_visualisationFactory.Create(value);
+
+            var role = DataFlowComponentVisualisation.Role.Middle;
+
+            var t = value.GetType();
+
+            if (IsGenericType(t, typeof(IDataFlowSource<>)))
+                role = DataFlowComponentVisualisation.Role.Source;
+            else
+                if (IsGenericType(t, typeof(IDataFlowDestination<>)))
+                    role = DataFlowComponentVisualisation.Role.Destination;
+                else if (IsGenericType(t, typeof(IDataFlowComponent<>)))
+                    role = DataFlowComponentVisualisation.Role.Middle;
+                else
+                    throw new ArgumentException("Object must be an IDataFlowComponent<> but was " + t);
+
+            var component = new DataFlowComponentVisualisation(role,value,null);
             flpPipelineDiagram.Controls.Add(component);//add the explicit component
             component.IsLocked = true;
             try
@@ -329,7 +342,10 @@ namespace RDMPObjectVisualisation.Pipelines
                 ExceptionViewer.Show("PreInitialize failed on Explicit (locked component) " + component.Value.GetType().Name ,e);
             }
         }
-
+        private bool IsGenericType(Type toCheck, Type genericType)
+        {
+            return toCheck.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericType);
+        }
         private void AddBlankComponent(DataFlowComponentVisualisation.Role role)
         {
             DataFlowComponentVisualisation toAdd = new DataFlowComponentVisualisation(role, null, component_shouldAllowDrop);
@@ -563,21 +579,6 @@ namespace RDMPObjectVisualisation.Pipelines
             }
 
             return base.ProcessKeyPreview(ref m);
-        }
-
-        private void flpPipelineDiagram_Paint(object sender, PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-
-            foreach (HashSet<Control> anchorPoints in _initializationObjectsConsumedAnchorPoints_ClientCoordinates.Values)
-            {
-                foreach (Point anchorPoint in anchorPoints.Select(ControlToClientPoint))
-                {
-                    g.FillEllipse(new SolidBrush(Color.Black), new Rectangle(anchorPoint,new Size(5,5)));        
-                }
-
-            }
-            
         }
 
         public Dictionary<object, HashSet<Point>> GetAnchorPointsInScreenSpace()

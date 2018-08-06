@@ -74,7 +74,6 @@ namespace RDMPObjectVisualisation.Pipelines
             }
 
             gbArguments.Enabled = false;
-            olvComponents.SetNativeBackgroundWatermark(Images.DragFrom);
         }
 
         void _pipelineDiagram_SelectedComponentChanged(object sender, IPipelineComponent selected)

@@ -40,7 +40,6 @@
             this.flpPipelineDiagram.Name = "flpPipelineDiagram";
             this.flpPipelineDiagram.Size = new System.Drawing.Size(1000, 110);
             this.flpPipelineDiagram.TabIndex = 5;
-            this.flpPipelineDiagram.Paint += new System.Windows.Forms.PaintEventHandler(this.flpPipelineDiagram_Paint);
             // 
             // PipelineDiagram
             // 

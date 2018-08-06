@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Events;
@@ -38,7 +39,6 @@ namespace RDMPObjectVisualisation.Pipelines
     /// </summary>
     public partial class ConfigureAndExecutePipeline : UserControl
     {
-        DataObjectVisualisationFactory visualisationFactory = new DataObjectVisualisationFactory();
         private PipelineSelectionUI<DataTable> _pipelineSelectionUI;
         private PipelineDiagram<DataTable> pipelineDiagram1;
 
@@ -48,10 +48,11 @@ namespace RDMPObjectVisualisation.Pipelines
 
         private ForkDataLoadEventListener fork = null;
 
+        readonly List<object> _initializationObjects = new List<object>();
+
         public ConfigureAndExecutePipeline()
         {
             InitializeComponent();
-            InitializationObjects = new Dictionary<object,Control>();
 
             pipelineDiagram1  = new PipelineDiagram<DataTable>();
             
@@ -67,16 +68,15 @@ namespace RDMPObjectVisualisation.Pipelines
             set { lblTask.Text = value; }
         }
 
-        private Dictionary<object, Control> InitializationObjects { get; set; }
         
-
-
         public void AddInitializationObject(object o)
         {
-            var visualization = visualisationFactory.Create(o);
-            InitializationObjects.Add(o,visualization);
-            flpInputObjects.Controls.Add(visualization);
-            
+            if(o is DatabaseEntity)
+                rdmpObjectsRibbonUI1.Add((DatabaseEntity)o);
+            else
+                rdmpObjectsRibbonUI1.Add(o.ToString());
+
+            _initializationObjects.Add(o);
         }
 
         private bool _pipelineOptionsSet = false;
@@ -141,14 +141,14 @@ namespace RDMPObjectVisualisation.Pipelines
             //not ready to refresh diagram yet
             if (!_pipelineOptionsSet)
                 return;
-
+            
             pipelineDiagram1.SetTo(
                 PipelineFactory, //the factory that knows about fixed sources/destinations and context
                 _pipelineSelectionUI.Pipeline, //the possibly invalid pipeline configuration the user has chosen
-                InitializationObjects.Keys.ToArray());//objects that will satisfy IPipelineRequirement e.g. cohort/file 
+                _initializationObjects.ToArray());//objects that will satisfy IPipelineRequirement e.g. cohort/file 
             
             _pipelineSelectionUI.InitializationObjectsForPreviewPipeline.Clear();
-            _pipelineSelectionUI.InitializationObjectsForPreviewPipeline.AddRange(InitializationObjects.Keys);
+            _pipelineSelectionUI.InitializationObjectsForPreviewPipeline.AddRange(_initializationObjects);
         }
 
 
@@ -253,7 +253,7 @@ namespace RDMPObjectVisualisation.Pipelines
 
             try
             {
-                pipeline.Initialize(InitializationObjects.Keys.ToArray());
+                pipeline.Initialize(_initializationObjects.ToArray());
             }
             catch (Exception exception)
             {
@@ -272,33 +272,6 @@ namespace RDMPObjectVisualisation.Pipelines
         private void tpConfigure_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void tpConfigure_Paint(object sender, PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-
-            foreach (var kvp in pipelineDiagram1.GetAnchorPointsInScreenSpace())
-            {
-                Control originVisualization = InitializationObjects[kvp.Key];
-                
-                Point screenPointForOrigin = flpInputObjects.PointToScreen(new Point(originVisualization.Location.X + (originVisualization.Width/2),originVisualization.Bottom));
-                Point localPointForOrigin = tpConfigure.PointToClient(screenPointForOrigin);
-                
-                foreach (Point screenPointDestination in kvp.Value)
-                {
-                    Point destination = tpConfigure.PointToClient(screenPointDestination);
-                    
-                    AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
-                    Pen pen = new Pen(Color.Black, 2);
-                    pen.CustomEndCap = bigArrow;
-
-                    g.DrawLine(pen, localPointForOrigin, destination);        
-                }
-            }
         }
 
         public void CancelIfRunning()

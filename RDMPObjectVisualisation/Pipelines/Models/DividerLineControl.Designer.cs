@@ -41,7 +41,7 @@
             this.pbDividerLine.InitialImage = null;
             this.pbDividerLine.Location = new System.Drawing.Point(4, 0);
             this.pbDividerLine.Name = "pbDividerLine";
-            this.pbDividerLine.Size = new System.Drawing.Size(10, 100);
+            this.pbDividerLine.Size = new System.Drawing.Size(10, 50);
             this.pbDividerLine.TabIndex = 0;
             this.pbDividerLine.TabStop = false;
             // 
@@ -51,7 +51,7 @@
             this.pbDropPrompt.InitialImage = null;
             this.pbDropPrompt.Location = new System.Drawing.Point(4, 0);
             this.pbDropPrompt.Name = "pbDropPrompt";
-            this.pbDropPrompt.Size = new System.Drawing.Size(10, 100);
+            this.pbDropPrompt.Size = new System.Drawing.Size(10, 50);
             this.pbDropPrompt.TabIndex = 1;
             this.pbDropPrompt.TabStop = false;
             // 
@@ -63,7 +63,7 @@
             this.Controls.Add(this.pbDropPrompt);
             this.Controls.Add(this.pbDividerLine);
             this.Name = "DividerLineControl";
-            this.Size = new System.Drawing.Size(19, 100);
+            this.Size = new System.Drawing.Size(19, 50);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.DividerLineControl_DragEnter);
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.DividerLineControl_DragOver);
             this.DragLeave += new System.EventHandler(this.DividerLineControl_DragLeave);
