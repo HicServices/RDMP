@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 using BrightIdeasSoftware;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 
 namespace CatalogueManager.Collections.Providers.Copying
 {

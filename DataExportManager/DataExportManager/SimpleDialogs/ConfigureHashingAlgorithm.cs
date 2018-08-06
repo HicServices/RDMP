@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data;
 using MapsDirectlyToDatabaseTable;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;

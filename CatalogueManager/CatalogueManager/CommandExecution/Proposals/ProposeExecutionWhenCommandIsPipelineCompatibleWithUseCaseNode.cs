@@ -7,7 +7,7 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.DataRelease.ReleasePipeline;
-using RDMPObjectVisualisation.Pipelines;
+using CatalogueManager.PipelineUIs.Pipelines;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;

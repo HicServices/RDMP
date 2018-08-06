@@ -15,7 +15,7 @@ using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.SimpleDialogs;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;

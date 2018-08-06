@@ -1,7 +1,7 @@
 ﻿using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

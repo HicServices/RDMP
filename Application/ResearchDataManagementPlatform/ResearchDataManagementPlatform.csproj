@@ -305,10 +305,6 @@
       <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
       <Name>HIC.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\RDMPObjectVisualisation\RDMPObjectVisualisation.csproj">
-      <Project>{b541f57b-631a-4639-8589-8cda0021ae2d}</Project>
-      <Name>RDMPObjectVisualisation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
       <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
       <Name>RDMPStartup</Name>

@@ -11,7 +11,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
 using HIC.Logging.PastEvents;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;

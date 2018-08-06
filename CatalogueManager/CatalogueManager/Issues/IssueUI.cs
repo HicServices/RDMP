@@ -13,7 +13,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 

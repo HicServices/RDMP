@@ -429,6 +429,25 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenCommandIsPipelineCompatibleWithUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
+    <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
+    <Compile Include="Copying\Commands\CacheProgressCommand.cs" />
+    <Compile Include="Copying\Commands\CatalogueCommand.cs" />
+    <Compile Include="Copying\Commands\CohortAggregateContainerCommand.cs" />
+    <Compile Include="Copying\Commands\CohortCommandHelper.cs" />
+    <Compile Include="Copying\Commands\CohortIdentificationConfigurationCommand.cs" />
+    <Compile Include="Copying\Commands\ColumnCommand.cs" />
+    <Compile Include="Copying\Commands\ColumnInfoCommand.cs" />
+    <Compile Include="Copying\Commands\ContainerCommand.cs" />
+    <Compile Include="Copying\Commands\DataAccessCredentialsCommand.cs" />
+    <Compile Include="Copying\Commands\ExtractableCohortCommand.cs" />
+    <Compile Include="Copying\Commands\ExtractableDataSetCommand.cs" />
+    <Compile Include="Copying\Commands\FileCollectionCommand.cs" />
+    <Compile Include="Copying\Commands\FilterCommand.cs" />
+    <Compile Include="Copying\Commands\ManyCataloguesCommand.cs" />
+    <Compile Include="Copying\Commands\ProcessTaskCommand.cs" />
+    <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
+    <Compile Include="Copying\Commands\TableInfoCommand.cs" />
+    <Compile Include="Copying\RDMPCommandFactory.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemIssue.cs" />
@@ -466,6 +485,105 @@
     <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
+    <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.Designer.cs">
+      <DependentUpon>DataFlowComponentVisualisation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DataObjects\PipelineComponentVisualisation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.Designer.cs">
+      <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.Designer.cs">
+      <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.Designer.cs">
+      <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.Designer.cs">
+      <DependentUpon>ArgumentValueCustomUIDrivenClassUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.Designer.cs">
+      <DependentUpon>ArgumentValueLabelUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.Designer.cs">
+      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.Designer.cs">
+      <DependentUpon>ArgumentValueSqlUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.Designer.cs">
+      <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIFactory.cs" />
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\IArgumentValueUI.cs" />
+    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.Designer.cs">
+      <DependentUpon>ConfigureAndExecutePipeline.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\ConfigurePipelineUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\ConfigurePipelineUI.Designer.cs">
+      <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\IPipelineSelectionUI.cs" />
+    <Compile Include="PipelineUIs\Pipelines\Models\AdvertisedPipelineComponentTypeUnderContext.cs" />
+    <Compile Include="PipelineUIs\Pipelines\Models\DividerLineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\Models\DividerLineControl.Designer.cs">
+      <DependentUpon>DividerLineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineDiagram.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineDiagram.Designer.cs">
+      <DependentUpon>PipelineDiagram.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineSelectionUI.Designer.cs">
+      <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineWorkArea.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineWorkArea.Designer.cs">
+      <DependentUpon>PipelineWorkArea.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
+    <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1280,6 +1398,7 @@
       <DependentUpon>ValidationSetupForm.cs</DependentUpon>
     </Compile>
     <None Include="LogViewer\LoggingUI.cd" />
+    <None Include="PipelineUIs\Pipelines\Pipelines.cd" />
     <None Include="SimpleControls\CheckAndExecuteUI.cd" />
     <None Include="TestsAndSetup\StartupUI\YellowFace.png" />
     <None Include="TestsAndSetup\StartupUI\RedFace.png" />
@@ -1610,6 +1729,54 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\ConnectionStringKeywordUI.resx">
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.resx">
+      <DependentUpon>DataFlowComponentVisualisation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DataObjects\PipelineComponentVisualisation.resx">
+      <DependentUpon>PipelineComponentVisualisation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.resx">
+      <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.resx">
+      <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.resx">
+      <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.resx">
+      <DependentUpon>ArgumentValueCustomUIDrivenClassUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.resx">
+      <DependentUpon>ArgumentValueLabelUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.resx">
+      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.resx">
+      <DependentUpon>ArgumentValueSqlUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.resx">
+      <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.resx">
+      <DependentUpon>ConfigureAndExecutePipeline.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\ConfigurePipelineUI.resx">
+      <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\Models\DividerLineControl.resx">
+      <DependentUpon>DividerLineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineDiagram.resx">
+      <DependentUpon>PipelineDiagram.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineSelectionUI.resx">
+      <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineWorkArea.resx">
+      <DependentUpon>PipelineWorkArea.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleControls\CheckAndExecuteUI.resx">
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
@@ -1990,10 +2157,6 @@
     <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj">
       <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>
       <Name>QueryCaching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RDMPObjectVisualisation\RDMPObjectVisualisation.csproj">
-      <Project>{B541F57B-631A-4639-8589-8CDA0021AE2D}</Project>
-      <Name>RDMPObjectVisualisation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
       <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>

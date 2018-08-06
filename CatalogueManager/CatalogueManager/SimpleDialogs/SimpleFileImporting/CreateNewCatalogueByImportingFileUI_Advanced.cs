@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline.Events;
@@ -11,14 +9,10 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
-using RDMPObjectVisualisation;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
-using Message = System.ServiceModel.Channels.Message;
 
 namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 {

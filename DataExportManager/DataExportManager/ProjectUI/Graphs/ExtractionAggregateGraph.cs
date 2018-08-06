@@ -23,7 +23,7 @@ using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportManager.ProjectUI.Graphs

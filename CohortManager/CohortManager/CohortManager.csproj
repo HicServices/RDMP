@@ -317,10 +317,6 @@
       <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>
       <Name>QueryCaching</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\RDMPObjectVisualisation\RDMPObjectVisualisation.csproj">
-      <Project>{B541F57B-631A-4639-8589-8CDA0021AE2D}</Project>
-      <Name>RDMPObjectVisualisation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
       <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
       <Name>RDMPStartup</Name>

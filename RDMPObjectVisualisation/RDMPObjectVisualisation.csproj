@@ -160,124 +160,6 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
-    <Compile Include="Copying\Commands\CacheProgressCommand.cs" />
-    <Compile Include="Copying\Commands\CatalogueCommand.cs" />
-    <Compile Include="Copying\Commands\CohortAggregateContainerCommand.cs" />
-    <Compile Include="Copying\Commands\CohortCommandHelper.cs" />
-    <Compile Include="Copying\Commands\CohortIdentificationConfigurationCommand.cs" />
-    <Compile Include="Copying\Commands\ColumnCommand.cs" />
-    <Compile Include="Copying\Commands\ColumnInfoCommand.cs" />
-    <Compile Include="Copying\Commands\ContainerCommand.cs" />
-    <Compile Include="Copying\Commands\DataAccessCredentialsCommand.cs" />
-    <Compile Include="Copying\Commands\ExtractableCohortCommand.cs" />
-    <Compile Include="Copying\Commands\ExtractableDataSetCommand.cs" />
-    <Compile Include="Copying\Commands\FileCollectionCommand.cs" />
-    <Compile Include="Copying\Commands\FilterCommand.cs" />
-    <Compile Include="Copying\Commands\ManyCataloguesCommand.cs" />
-    <Compile Include="Copying\Commands\ProcessTaskCommand.cs" />
-    <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
-    <Compile Include="Copying\Commands\TableInfoCommand.cs" />
-    <Compile Include="Copying\RDMPCommandFactory.cs" />
-    <Compile Include="DataObjects\DataFlowComponentVisualisation.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DataObjects\DataFlowComponentVisualisation.Designer.cs">
-      <DependentUpon>DataFlowComponentVisualisation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DataObjects\PipelineComponentVisualisation.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentCollection.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentCollection.Designer.cs">
-      <DependentUpon>ArgumentCollection.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.Designer.cs">
-      <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.Designer.cs">
-      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.Designer.cs">
-      <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.Designer.cs">
-      <DependentUpon>ArgumentValueCustomUIDrivenClassUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.Designer.cs">
-      <DependentUpon>ArgumentValueLabelUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.Designer.cs">
-      <DependentUpon>ArgumentValueSqlUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.Designer.cs">
-      <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIFactory.cs" />
-    <Compile Include="DemandsInitializationUIs\ArgumentValueControls\IArgumentValueUI.cs" />
-    <Compile Include="Pipelines\ConfigureAndExecutePipeline.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Pipelines\ConfigureAndExecutePipeline.Designer.cs">
-      <DependentUpon>ConfigureAndExecutePipeline.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Pipelines\ConfigurePipelineUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Pipelines\ConfigurePipelineUI.Designer.cs">
-      <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Pipelines\IPipelineSelectionUI.cs" />
-    <Compile Include="Pipelines\Models\AdvertisedPipelineComponentTypeUnderContext.cs" />
-    <Compile Include="Pipelines\Models\DividerLineControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Pipelines\Models\DividerLineControl.Designer.cs">
-      <DependentUpon>DividerLineControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Pipelines\PipelineDiagram.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Pipelines\PipelineDiagram.Designer.cs">
-      <DependentUpon>PipelineDiagram.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Pipelines\PipelineWorkArea.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Pipelines\PipelineWorkArea.Designer.cs">
-      <DependentUpon>PipelineWorkArea.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Pipelines\PipelineSelectionUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Pipelines\PipelineSelectionUI.Designer.cs">
-      <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
-    <Compile Include="Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -286,54 +168,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DataObjects\DataFlowComponentVisualisation.resx">
-      <DependentUpon>DataFlowComponentVisualisation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DataObjects\PipelineComponentVisualisation.resx">
-      <DependentUpon>PipelineComponentVisualisation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentCollection.resx">
-      <DependentUpon>ArgumentCollection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.resx">
-      <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.resx">
-      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.resx">
-      <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.resx">
-      <DependentUpon>ArgumentValueCustomUIDrivenClassUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.resx">
-      <DependentUpon>ArgumentValueLabelUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.resx">
-      <DependentUpon>ArgumentValueSqlUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.resx">
-      <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pipelines\ConfigureAndExecutePipeline.resx">
-      <DependentUpon>ConfigureAndExecutePipeline.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pipelines\ConfigurePipelineUI.resx">
-      <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pipelines\Models\DividerLineControl.resx">
-      <DependentUpon>DividerLineControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pipelines\PipelineDiagram.resx">
-      <DependentUpon>PipelineDiagram.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pipelines\PipelineWorkArea.resx">
-      <DependentUpon>PipelineWorkArea.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pipelines\PipelineSelectionUI.resx">
-      <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -382,13 +216,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\ExtractableCohort.png" />
     <None Include="packages.config" />
-    <None Include="Pipelines\Pipelines.cd" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

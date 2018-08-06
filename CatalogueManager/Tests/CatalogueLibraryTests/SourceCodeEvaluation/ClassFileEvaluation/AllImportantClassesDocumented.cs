@@ -114,9 +114,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                             if (nameSpace.Contains("MapsDirectlyToDatabaseTableUI"))
                                 continue;
-
-                            if (nameSpace.Contains("RDMPObjectVisualisation"))
-                                continue;
                             
                             //Provider specific implementations of stuff that is documented at interface level
                             if (nameSpace.Contains(".Discovery.Microsoft") ||nameSpace.Contains(".Discovery.Oracle") ||nameSpace.Contains(".Discovery.MySql"))

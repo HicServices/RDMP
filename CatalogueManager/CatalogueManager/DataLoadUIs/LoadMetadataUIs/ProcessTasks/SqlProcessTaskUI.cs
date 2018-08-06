@@ -19,7 +19,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.LoadExecution.Components;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;

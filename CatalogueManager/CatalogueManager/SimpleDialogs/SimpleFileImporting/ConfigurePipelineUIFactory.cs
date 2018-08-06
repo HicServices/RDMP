@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using RDMPObjectVisualisation.Pipelines;
+using CatalogueManager.PipelineUIs.Pipelines;
 
 namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 {

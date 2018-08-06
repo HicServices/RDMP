@@ -8,7 +8,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CohortManagerLibrary.QueryBuilding;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;

@@ -1,23 +1,14 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
-using CatalogueManager.AggregationUIs.Advanced.Options;
-using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable;
-using RDMPObjectVisualisation;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
 

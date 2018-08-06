@@ -25,7 +25,7 @@ using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
 

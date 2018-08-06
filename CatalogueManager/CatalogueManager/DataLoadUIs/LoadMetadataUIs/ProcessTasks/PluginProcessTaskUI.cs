@@ -17,7 +17,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
-using RDMPObjectVisualisation.DemandsInitializationUIs;
+using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 

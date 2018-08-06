@@ -52,7 +52,7 @@ namespace CatalogueLibrary.Data
             "Diagnostics.dll",
             "IdentifierDump.Database.dll",
             "IdentifierDump.dll",
-            "RDMPObjectVisualisation.dll",
+            "CatalogueManager.PipelineUIs.dll",
             "CachingEngine.dll",
             "HIC.RDMP.Plugin.dll",
 

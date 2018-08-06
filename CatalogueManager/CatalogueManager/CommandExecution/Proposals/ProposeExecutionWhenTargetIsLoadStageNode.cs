@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueManager.ItemActivation;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

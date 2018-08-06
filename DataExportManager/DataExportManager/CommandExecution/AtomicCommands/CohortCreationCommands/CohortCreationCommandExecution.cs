@@ -18,7 +18,7 @@ using DataExportManager.CohortUI.ImportCustomData;
 using HIC.Logging;
 using HIC.Logging.Listeners;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation.Pipelines;
+using CatalogueManager.PipelineUIs.Pipelines;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Icons.IconProvision;
 
