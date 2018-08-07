@@ -12,6 +12,7 @@ namespace CatalogueLibrary
     {
         private readonly SupportingDocument _document;
         private readonly Catalogue _catalogue;
+        private readonly bool _singleDocument;
 
         public SupportingDocumentsFetcher(Catalogue catalogue)
         {
@@ -22,6 +23,7 @@ namespace CatalogueLibrary
         {
             _document = document;
             _catalogue = document.Repository.GetObjectByID<Catalogue>(document.Catalogue_ID);
+            _singleDocument = true;
         }
 
         public string ExtractToDirectory(DirectoryInfo directory)
@@ -50,42 +52,36 @@ namespace CatalogueLibrary
 
         public void Check(ICheckNotifier notifier)
         {
-            foreach (SupportingDocument supportingDocument in _catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableGlobalsAndLocals))
+            if (_singleDocument)
+                CheckDocument(_document, notifier);
+            else
             {
-                try
-                {
-                    FileInfo toCopy = new FileInfo(supportingDocument.URL.LocalPath);
-                    if (toCopy.Exists)
-                        notifier.OnCheckPerformed(new CheckEventArgs("Found SupportingDocument " + toCopy.Name + " and it exists",CheckResult.Success));
-                    else
-                        notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument " + supportingDocument + "(ID=" + supportingDocument .ID+ ") does not map to an existing file despite being flagged as Extractable", CheckResult.Fail));
-                }
-                catch (Exception e)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not check supporting documents of " + _catalogue, CheckResult.Fail, e));
-                }
+                foreach (SupportingDocument supportingDocument in _catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableGlobalsAndLocals))
+                    CheckDocument(supportingDocument, notifier);
             }
         }
 
-        public void CheckSingle(ICheckNotifier notifier)
+        private void CheckDocument(SupportingDocument document, ICheckNotifier notifier)
         {
-            if (_document == null)
-                notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument " + _document + " has not been set", CheckResult.Fail));
-            else
+            if (document == null)
             {
-                try
-                {
-                    FileInfo toCopy = new FileInfo(_document.URL.LocalPath);
-                    if (toCopy.Exists)
-                        notifier.OnCheckPerformed(new CheckEventArgs("Found SupportingDocument " + toCopy.Name + " and it exists", CheckResult.Success));
-                    else
-                        notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument " + _document + "(ID=" + _document.ID + ") " +
-                                                                     "does not map to an existing file despite being flagged as Extractable", CheckResult.Fail));
-                }
-                catch (Exception e)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not check supporting document " + _document, CheckResult.Fail, e));
-                }   
+                notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument has not been set", CheckResult.Fail));
+                return;
+            }
+
+            try
+            {
+                FileInfo toCopy = new FileInfo(document.URL.LocalPath);
+                if (toCopy.Exists)
+                    notifier.OnCheckPerformed(new CheckEventArgs("Found SupportingDocument " + toCopy.Name + " and it exists",
+                        CheckResult.Success));
+                else
+                    notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument " + document + "(ID=" + document.ID +
+                                                                 ") does not map to an existing file despite being flagged as Extractable", CheckResult.Fail));
+            }
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not check supporting documents of " + _catalogue, CheckResult.Fail, e));
             }
         }
     }
