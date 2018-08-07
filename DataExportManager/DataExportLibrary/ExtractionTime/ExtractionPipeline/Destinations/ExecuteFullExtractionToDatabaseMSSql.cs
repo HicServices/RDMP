@@ -540,6 +540,15 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         {
             string dbName = DatabaseNamingPattern;
 
+            if(_project.ProjectNumber == null)
+                throw new Exception("Project '"+_project+"' must have a ProjectNumber");
+
+            if (_request == null)
+                throw new Exception("No IExtractCommand Request was passed to this component");
+
+            if (_request.Configuration == null)
+                throw new Exception("Request did not specify any Configuration for Project '" + _project + "'");
+
             dbName = dbName.Replace("$p", _project.Name)
                            .Replace("$n", _project.ProjectNumber.ToString())
                            .Replace("$t", _project.MasterTicket)
