@@ -66,9 +66,6 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
         public DataTable TryGetPreview()
         {
-            if (_cohortIdentificationConfiguration.IsDesignTime)
-                return null;
-
             return GetDataTable(new ThrowImmediatelyDataLoadEventListener());
         }
 
@@ -166,12 +163,6 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
         public void Check(ICheckNotifier notifier)
         {
-            if (_cohortIdentificationConfiguration.IsDesignTime)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Checks not run because no CohortIdentificationConfiguration has been selected (IsDesignTime = true)",CheckResult.Warning));
-                return;
-            }
-
             try
             {
                 if (_cohortIdentificationConfiguration.Frozen)

@@ -125,5 +125,10 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
             CohortIdentificationConfigurationIfAny = value.GetCohortIdentificationConfigurationIfAny();
         }
+
+        public override string ToString()
+        {
+            return GetType().Name;
+        }
     }
 }

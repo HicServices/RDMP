@@ -294,7 +294,7 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             match.SetValue(true);
             match.SaveToDatabase();
 
-            var useCase = ReleaseUseCase.DesignTime(RepositoryLocator);
+            var useCase = ReleaseUseCase.DesignTime();
 
             var factory = new DataFlowPipelineEngineFactory(useCase,RepositoryLocator.CatalogueRepository.MEF);
             var destInstance = factory.CreateDestinationIfExists(pipe);

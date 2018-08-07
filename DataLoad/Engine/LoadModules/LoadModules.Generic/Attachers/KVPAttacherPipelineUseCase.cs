@@ -12,24 +12,17 @@ namespace LoadModules.Generic.Attachers
     /// </summary>
     public class KVPAttacherPipelineUseCase : PipelineUseCase
     {
-        private readonly FlatFileToLoad _file;
-
         public KVPAttacherPipelineUseCase(KVPAttacher kvpAttacher,FlatFileToLoad file)
         {
-            _file = file;
             ExplicitDestination = kvpAttacher;
+            AddInitializationObject(file);
         }
 
-        public override object[] GetInitializationObjects()
-        {
-            return new Object[] {_file};
-        }
-
-        public override IDataFlowPipelineContext GetContext()
+        protected override IDataFlowPipelineContext GenerateContext()
         {
             var context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.FixedDestination);
             context.MustHaveSource = typeof(IDataFlowSource<DataTable>);
-            
+
             return context;
         }
     }

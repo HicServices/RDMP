@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.DataFlowPipeline;
@@ -20,9 +21,17 @@ namespace CatalogueLibrary.Data.Pipelines
         /// when performing the task described by the PipelineUseCase</para>
         /// </summary>
         /// <returns></returns>
-        public abstract object[] GetInitializationObjects();
+        public HashSet<object> GetInitializationObjects()
+        {
+            return InitializationObjects;
+        }
 
-        public abstract IDataFlowPipelineContext GetContext();
+        public IDataFlowPipelineContext GetContext()
+        {
+            return _context;
+        }
+
+        protected abstract IDataFlowPipelineContext GenerateContext();
 
         public object ExplicitSource { get; protected set; }
         public object ExplicitDestination { get; protected set; }
@@ -33,7 +42,33 @@ namespace CatalogueLibrary.Data.Pipelines
         /// 
         /// <para>If this is true then GetInitializationObjects should return Type[] instead of the actually selected objects for the task</para>
         /// </summary>
-        public bool IsDesignTime { get; protected set; }
+        public bool IsDesignTime { get; private set; }
+        
+        protected HashSet<object> InitializationObjects = new HashSet<object>();
+        private IDataFlowPipelineContext _context;
+
+        /// <summary>
+        /// The normal (non desing time) constructor.  Add your objects to <see cref="InitializationObjects"/>
+        /// </summary>
+        protected PipelineUseCase()
+        {
+            IsDesignTime = false;
+            _context = GenerateContext();
+        }
+
+        /// <summary>
+        /// Use this constructor if you are intending to use the <see cref="PipelineUseCase"/> for design time activities only (building pipelines
+        /// from compatible components).  Only use if you don't have all the normally required object instances to actually execute a pipeline.
+        /// </summary>
+        /// <param name="designTimeInitializationObjectTypes"></param>
+        protected PipelineUseCase(Type[] designTimeInitializationObjectTypes)
+        {
+            IsDesignTime = true;
+            foreach (Type t in designTimeInitializationObjectTypes)
+                InitializationObjects.Add(t);
+
+            _context = GenerateContext();
+        }
 
         public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
         {
@@ -47,6 +82,12 @@ namespace CatalogueLibrary.Data.Pipelines
             engine.Initialize(GetInitializationObjects().ToArray());
 
             return engine;
+        }
+
+        protected void AddInitializationObject(object o)
+        {
+            if (o != null)
+                InitializationObjects.Add(o);
         }
     }
 }

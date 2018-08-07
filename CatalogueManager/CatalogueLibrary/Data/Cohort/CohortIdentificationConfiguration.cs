@@ -666,34 +666,5 @@ namespace CatalogueLibrary.Data.Cohort
         {
             return new IHasDependencies[0];
         }
-
-
-        #region Empty Support
-        [NoMappingToDatabase]
-        public bool IsDesignTime { get; private set; }
-
-        public static readonly CohortIdentificationConfiguration Empty = new CohortIdentificationConfiguration();
-
-        private CohortIdentificationConfiguration()
-        {
-            Name = "Empty Cohort Identification Configuration";
-            IsDesignTime = true;
-
-        }
-        public override int GetHashCode()
-        {
-            if (this == Empty)
-                return 0;
-
-            return base.GetHashCode();
-        }
-        public override bool Equals(object obj)
-        {
-            if (this == Empty || obj == Empty)
-                return this == obj;
-
-            return base.Equals(obj);
-        }
-        #endregion
     }
 }

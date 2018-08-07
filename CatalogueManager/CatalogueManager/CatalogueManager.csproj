@@ -1227,7 +1227,6 @@
     <Compile Include="SimpleDialogs\Revertable\RevertablePropertyDifferenceUI.Designer.cs">
       <DependentUpon>RevertablePropertyDifferenceUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\SimpleFileImporting\ConfigurePipelineUIFactory.cs" />
     <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI.cs">
       <SubType>Form</SubType>
     </Compile>

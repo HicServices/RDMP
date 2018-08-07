@@ -9,50 +9,26 @@ namespace DataLoadEngine.PipelineUseCases
 {
     public class UploadFileUseCase:PipelineUseCase
     {
-        private object[] _initializationObjects;
-
-        private DataFlowPipelineContext<DataTable> _context = new DataFlowPipelineContext<DataTable>();
-
         public UploadFileUseCase(FileInfo file, DiscoveredDatabase targetDatabase)
         {
-            _initializationObjects = new object[]
-            {
-                new FlatFileToLoad(file),
-                targetDatabase
-            };
-            
-            GenerateContext();
-
-            _context.MustHaveDestination = typeof (DataTableUploadDestination);
+            AddInitializationObject(new FlatFileToLoad(file));
+            AddInitializationObject(targetDatabase);;
         }
 
-        private void GenerateContext()
+        protected override IDataFlowPipelineContext GenerateContext()
         {
-            _context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.LoadsSingleFlatFile);
+            var context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.LoadsSingleFlatFile);
+            context.MustHaveDestination = typeof(DataTableUploadDestination);
+            return context;
         }
-
-
-        public override object[] GetInitializationObjects()
+        
+        private UploadFileUseCase():base(new []
         {
-            return _initializationObjects;
-        }
-
-        public override IDataFlowPipelineContext GetContext()
-        {
-            return _context;
-        }
-
-        private UploadFileUseCase()
-        {
-            GenerateContext();
-
-            _initializationObjects = new[]
-            {
-                typeof (FlatFileToLoad),
+            typeof (FlatFileToLoad),
                 typeof (DiscoveredDatabase)
-            };
-
-            IsDesignTime = true;
+        })
+        {
+            
         }
 
         public static PipelineUseCase DesignTime()

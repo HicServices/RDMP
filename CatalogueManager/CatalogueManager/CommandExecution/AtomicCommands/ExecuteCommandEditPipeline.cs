@@ -13,6 +13,7 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.PipelineUIs.Pipelines;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -56,17 +57,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var cataRepo = Activator.RepositoryLocator.CatalogueRepository;
-            var mef = cataRepo.MEF;
-
-            var context = _useCase.GetContext();
-
-            var initObjects = _useCase.GetInitializationObjects();
-
-            
-            var uiFactory = new ConfigurePipelineUIFactory(mef, cataRepo);
-            var pipelineForm = uiFactory.Create(context.GetType().GenericTypeArguments[0].FullName,
-                _pipeline, null, null, context,initObjects.ToList());
+            var pipelineForm = new ConfigurePipelineUI(_pipeline, _useCase, Activator.RepositoryLocator.CatalogueRepository);
             
             pipelineForm.ShowDialog();
         }

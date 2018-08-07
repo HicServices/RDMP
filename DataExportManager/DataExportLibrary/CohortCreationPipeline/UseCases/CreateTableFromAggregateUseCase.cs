@@ -19,9 +19,6 @@ namespace DataExportLibrary.CohortCreationPipeline.UseCases
     /// </summary>
     public class CreateTableFromAggregateUseCase:PipelineUseCase
     {
-        private DataFlowPipelineContext<DataTable> _context;
-        private object[] _initializationObjects;
-
         /// <summary>
         /// Defines a new use case in which the given <see cref="AggregateConfiguration"/> will be turned into an SQL query and used to generate rows
         /// that will be released into the pipeline.  The source is fixed the destination and middle components are open.
@@ -33,11 +30,6 @@ namespace DataExportLibrary.CohortCreationPipeline.UseCases
         /// <para> (table does not have to exist yet, you can use <see cref="DiscoveredDatabase.ExpectTable"/> to obtain a reference to a non existant table)</para></param>
         public CreateTableFromAggregateUseCase(AggregateConfiguration aggregateConfiguration, ExtractableCohort constrainByCohort, DiscoveredTable table)
         {
-            var initializationObjects = new List<object>();
-            initializationObjects.Add(aggregateConfiguration);
-            
-            GenerateContext();
-
             if (constrainByCohort == null)
             {
                 var src = new AggregateConfigurationTableSource();
@@ -47,7 +39,7 @@ namespace DataExportLibrary.CohortCreationPipeline.UseCases
             }
             else
             {
-                initializationObjects.Add(constrainByCohort);
+                AddInitializationObject(constrainByCohort);
 
                 var src = new PatientIndexTableSource();
                 src.PreInitialize(aggregateConfiguration, new ThrowImmediatelyDataLoadEventListener());
@@ -55,46 +47,32 @@ namespace DataExportLibrary.CohortCreationPipeline.UseCases
                 src.TableName = table.GetRuntimeName();
                 ExplicitSource = src;
             }
+            
+            AddInitializationObject(aggregateConfiguration);
+            AddInitializationObject(aggregateConfiguration.Repository);
+            AddInitializationObject(table.Database);
 
-            initializationObjects.Add(aggregateConfiguration.Repository);
-            initializationObjects.Add(table.Database);
-
-            _initializationObjects = initializationObjects.ToArray();
         }
 
-        private void GenerateContext()
+        protected override IDataFlowPipelineContext GenerateContext()
         {
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
-            _context = contextFactory.Create(PipelineUsage.FixedSource);
-            _context.MustHaveDestination = typeof(DataTableUploadDestination);
-        }
-
-        public override object[] GetInitializationObjects()
-        {
-            return _initializationObjects;
-        }
-
-        public override IDataFlowPipelineContext GetContext()
-        {
-            return _context;
-        }
-
-        private CreateTableFromAggregateUseCase()
-        {
-            IsDesignTime = true;
+            var context = contextFactory.Create(PipelineUsage.FixedSource);
+            context.MustHaveDestination = typeof(DataTableUploadDestination);
             
-            GenerateContext();
+            return context;
+        }
 
-            ExplicitSource = new AggregateConfigurationTableSource();
-
-            _initializationObjects = new object[]
-            {
-                typeof(AggregateConfiguration),
+        /// <summary>
+        /// Design time types
+        /// </summary>
+        private CreateTableFromAggregateUseCase()
+            : base(new[]{typeof(AggregateConfiguration),
                 typeof(ExtractableCohort),
                 typeof(DiscoveredDatabase),
-                typeof(ICatalogueRepository)
-
-            };
+                typeof(ICatalogueRepository)})
+        {
+            ExplicitSource = new AggregateConfigurationTableSource();
         }
 
         public static PipelineUseCase DesignTime(CatalogueRepository catalogueRepository)

@@ -302,7 +302,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             try
             {
 
-                _pipelineFactory.Check(_pipeline, popupChecksUI, _useCase.GetInitializationObjects());
+                _pipelineFactory.Check(_pipeline, popupChecksUI, _useCase.GetInitializationObjects().ToArray());
             }
             catch (Exception exception)
             {

@@ -62,12 +62,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         private void PrepareAndCheckReleaseFolder(ICheckNotifier notifier)
         {
-            if (_releaseData.IsDesignTime)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Release folder will be checked at runtime...", CheckResult.Success));
-                return;
-            }
-
             if (FolderSettings.CustomReleaseFolder != null && !String.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
             {
                 _releaseFolder = FolderSettings.CustomReleaseFolder;

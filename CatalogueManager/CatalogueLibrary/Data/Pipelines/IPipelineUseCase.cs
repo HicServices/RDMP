@@ -14,7 +14,7 @@ namespace CatalogueLibrary.Data.Pipelines
     /// </summary>
     public interface IPipelineUseCase : IHasDesignTimeMode
     {
-        object[] GetInitializationObjects();
+        HashSet<object> GetInitializationObjects();
         IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines);
         IDataFlowPipelineContext GetContext();
         object ExplicitSource { get; }

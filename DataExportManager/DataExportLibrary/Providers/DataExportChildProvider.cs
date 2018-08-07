@@ -162,10 +162,10 @@ namespace DataExportLibrary.Providers
                 AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
                 {
                     {"File Import", UploadFileUseCase.DesignTime()},
-                    {"Extraction",new ExtractionPipelineUseCase(Project.Empty)},
-                    {"Release",ReleaseUseCase.DesignTime(repositoryLocator)},
-                    {"Cohort Creation",CohortCreationRequest.DesignTime(repositoryLocator)},
-                    {"Caching",CachingPipelineUseCase.DesignTime(repositoryLocator.CatalogueRepository)},
+                    {"Extraction",ExtractionPipelineUseCase.DesignTime()},
+                    {"Release",ReleaseUseCase.DesignTime()},
+                    {"Cohort Creation",CohortCreationRequest.DesignTime()},
+                    {"Caching",CachingPipelineUseCase.DesignTime()},
                     {"Aggregate Committing",CreateTableFromAggregateUseCase.DesignTime(repositoryLocator.CatalogueRepository)}
                 });
             }
