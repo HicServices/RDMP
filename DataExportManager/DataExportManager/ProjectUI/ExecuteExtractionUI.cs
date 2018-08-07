@@ -250,7 +250,13 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.ExpandAll();
 
             if (_isFirstTime)
+            {
                 tlvDatasets.CheckAll();
+                foreach (var disabledObject in tlvDatasets.DisabledObjects.OfType<ArbitraryFolderNode>())
+                {
+                    tlvDatasets.UncheckObject(disabledObject);
+                }
+            }
             else if (checkedBefore.Count > 0)
                 tlvDatasets.CheckObjects(checkedBefore);
 
