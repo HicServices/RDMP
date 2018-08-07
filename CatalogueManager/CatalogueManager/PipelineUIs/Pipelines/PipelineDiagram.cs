@@ -91,6 +91,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             _useCase = useCase;
 
             _pipeline = pipeline;
+            _pipeline.ClearAllInjections();
             
             //clear the diagram
             flpPipelineDiagram.Controls.Clear();

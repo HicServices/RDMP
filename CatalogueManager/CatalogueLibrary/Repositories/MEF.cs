@@ -341,9 +341,15 @@ namespace CatalogueLibrary.Repositories
             container.ComposeParts(importingFactory);
         }
 
+        readonly Dictionary<string,Type> _cachedTypes = new Dictionary<string, Type>();
 
         public Type GetTypeByNameFromAnyLoadedAssembly(string name, Type expectedBaseClassType = null, StringComparison comparisonType = StringComparison.CurrentCulture)
         {
+            if (_cachedTypes.ContainsKey(name))
+                return _cachedTypes[name];
+
+            Type toReturn = null;
+
             SetupMEFIfRequired();
 
             if (string.IsNullOrWhiteSpace(name))
@@ -356,47 +362,53 @@ namespace CatalogueLibrary.Repositories
                     throw new InvalidOperationException("The type array produced by GetAllTypes should not contain any nulls");
 
                 if (type.FullName.Equals(name,comparisonType))
-                    return type;
+                    toReturn =  type;
             }
 
-            List<Type> matches = new List<Type>();
-            List<Type> fullMatches = new List<Type>();
-
-            //could be basic type
-            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            if(toReturn == null)
             {
-                try
-                {
-                    foreach (Type type in asm.GetTypes())
-                    {
-                        //type doesn't match base type
-                        if (expectedBaseClassType != null)
-                            if (!expectedBaseClassType.IsAssignableFrom(type))
-                                continue;
+                List<Type> matches = new List<Type>();
+                List<Type> fullMatches = new List<Type>();
 
-                        if (type.FullName.Equals(name, comparisonType))
-                            fullMatches.Add(type);
-                        else
-                            if (type.Name.Equals(name, comparisonType))
-                                matches.Add(type);
+                //could be basic type
+                foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    try
+                    {
+                        foreach (Type type in asm.GetTypes())
+                        {
+                            //type doesn't match base type
+                            if (expectedBaseClassType != null)
+                                if (!expectedBaseClassType.IsAssignableFrom(type))
+                                    continue;
+
+                            if (type.FullName.Equals(name, comparisonType))
+                                fullMatches.Add(type);
+                            else
+                                if (type.Name.Equals(name, comparisonType))
+                                    matches.Add(type);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        continue;
                     }
                 }
-                catch (Exception)
-                {
-                    continue;
-                }
+
+                if (fullMatches.Any())
+                    toReturn = fullMatches.Single();
+
+                if (matches.Any())
+                    if (matches.Count > 1)
+                        throw new Exception("Found " + matches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, matches.Select(m => m.FullName)));
+                    else
+                        toReturn = matches.Single();
             }
 
-            if (fullMatches.Any())
-                return fullMatches.Single();
+            if (toReturn != null)
+                _cachedTypes.Add(name,toReturn);
 
-            if (matches.Any())
-                if(matches.Count > 1)
-                    throw new Exception("Found " + matches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine,matches.Select(m=>m.FullName)));
-                else
-                    return matches.Single();
-
-            return null;
+            return toReturn;
         }
 
 

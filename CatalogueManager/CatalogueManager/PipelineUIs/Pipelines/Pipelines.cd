@@ -32,7 +32,7 @@
   <Class Name="CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers.PluginPipelineUser" Collapsed="true">
     <Position X="3.25" Y="6.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAABAAAAIAAAABAAAAAACAAACAACAAAAAA=</HashCode>
+      <HashCode>AAAAAAQAAAAAAAAAAIAABAAAAAAAAAAAAAAACAAAAAA=</HashCode>
       <FileName>PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -45,11 +45,12 @@
   <Class Name="CatalogueManager.PipelineUIs.Pipelines.PipelineWorkArea">
     <Position X="10.75" Y="8" Width="2" />
     <TypeIdentifier>
-      <HashCode>QAAIAAICBAAAAAAAAAAABAAAAAIAAAgAAAAABAAACIA=</HashCode>
+      <HashCode>QACMCAICBCAAAhCAAACABAACAAIAAQgBEAAABAAADIA=</HashCode>
       <FileName>PipelineUIs\Pipelines\PipelineWorkArea.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="_useCase" />
+      <Field Name="_pipelineDiagram" />
     </ShowAsAssociation>
   </Class>
   <Class Name="CatalogueManager.PipelineUIs.Pipelines.ConfigureAndExecutePipeline">
@@ -63,7 +64,7 @@
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACAAKIAaBARBDAAgCgFABCIBAMcBmAAAACACoAkCQ=</HashCode>
+      <HashCode>AAACAAKIAaBABBDAAgCgFABCIBAMcBmAAAACACgAkCQ=</HashCode>
       <FileName>PipelineUIs\Pipelines\ConfigureAndExecutePipeline.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -72,16 +73,8 @@
   </Class>
   <Class Name="CatalogueManager.PipelineUIs.Pipelines.ConfigurePipelineUI">
     <Position X="7.5" Y="8.25" Width="2.25" />
-    <AssociationLine Name="_useCase" Type="CatalogueLibrary.Data.Pipelines.PipelineUseCase" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="7.5" Y="8.75" />
-        <Point X="7.125" Y="8.75" />
-        <Point X="7.125" Y="8.188" />
-        <Point X="2" Y="8.188" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAgAAIAAAABAAAAEAAAABACAAEIQAIAIAAACAAAAAAA=</HashCode>
+      <HashCode>AQgAAIAAACBEBBAEAACABACCAEIYBIAIAIACAQAAAAA=</HashCode>
       <FileName>PipelineUIs\Pipelines\ConfigurePipelineUI.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -92,6 +85,16 @@
     <Position X="0.5" Y="7.75" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.PipelineUIs.Pipelines.PipelineDiagram">
+    <Position X="14.75" Y="8" Width="3" />
+    <TypeIdentifier>
+      <HashCode>FAAJCQgAACAAAAAgAACQBDADQAICAYAAABQAIABABAA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\PipelineDiagram.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_useCase" />
+    </ShowAsAssociation>
   </Class>
   <Interface Name="CatalogueLibrary.Data.Pipelines.IPipeline" Collapsed="true">
     <Position X="3.75" Y="0.75" Width="2.5" />
@@ -120,7 +123,7 @@
   <Interface Name="CatalogueManager.PipelineUIs.Pipelines.IPipelineSelectionUI" Collapsed="true">
     <Position X="10.25" Y="2.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAGAAIAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <HashCode>AIAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>PipelineUIs\Pipelines\IPipelineSelectionUI.cs</FileName>
     </TypeIdentifier>
   </Interface>

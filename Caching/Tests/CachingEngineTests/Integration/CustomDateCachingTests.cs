@@ -52,7 +52,7 @@ namespace CachingEngineTests.Integration
             pipeline.Repository = CatalogueRepository;
             pipeline.Stub(p => p.Source).Return(sourceComponent);
             pipeline.Stub(p => p.Destination).Return(destinationComponent);
-            pipeline.Stub(p => p.PipelineComponents).Return(Enumerable.Empty<IPipelineComponent>().OrderBy(p => p));
+            pipeline.Stub(p => p.PipelineComponents).Return(Enumerable.Empty<IPipelineComponent>().OrderBy(p => p).ToList());
 
             var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo("delme"),true);
 

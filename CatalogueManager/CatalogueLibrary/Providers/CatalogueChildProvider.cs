@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
@@ -78,6 +77,8 @@ namespace CatalogueLibrary.Providers
         public AllStandardRegexesNode AllStandardRegexesNode { get; private set; }
         public AllPipelinesNode AllPipelinesNode { get; private set; }
         public Pipeline[] AllPipelines { get; set; }
+        public PipelineComponent[] AllPipelineComponents { get; set; }
+
         public StandardRegex[] AllStandardRegexes { get; set; }
 
         private CatalogueItemIssue[] _allCatalogueItemIssues;
@@ -231,7 +232,11 @@ namespace CatalogueLibrary.Providers
 
             AllPipelinesNode = new AllPipelinesNode();
             AllPipelines = repository.GetAllObjects<Pipeline>();
-            
+            AllPipelineComponents = repository.GetAllObjects<PipelineComponent>();
+
+            foreach (Pipeline p in AllPipelines)
+                p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
+
             AllStandardRegexesNode = new AllStandardRegexesNode();
             AllStandardRegexes = repository.GetAllObjects<StandardRegex>();
             AddToDictionaries(new HashSet<object>(AllStandardRegexes),new DescendancyList(AllStandardRegexesNode));
@@ -264,6 +269,7 @@ namespace CatalogueLibrary.Providers
         }
 
         
+
 
         private void AddChildren(AllLoadMetadatasNode allLoadMetadatasNode)
         {
