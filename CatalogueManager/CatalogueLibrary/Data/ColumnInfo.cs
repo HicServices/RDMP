@@ -30,13 +30,21 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class ColumnInfo : VersionedDatabaseEntity, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation
     {
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Data_type_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Format_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Digitisation_specs_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Source_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int RegexPattern_MaxLength;
+        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int ValidationRules_MaxLength;
 
         #region Database Properties
@@ -58,18 +66,28 @@ namespace CatalogueLibrary.Data
         private bool _duplicateRecordResolutionIsAscending;
         private string _collation;
 
+        /// <summary>
+        /// ID of the <see cref="TableInfo"/> that this <see cref="ColumnInfo"/> belongs to.
+        /// </summary>
         public int TableInfo_ID
         {
             get { return _tableInfoID; }
             private set { SetField(ref  _tableInfoID, value); }
         }
 
+        /// <summary>
+        /// ID of the <see cref="ANOTable"/> transform that is applied to this <see cref="ColumnInfo"/> during
+        /// data loads e.g. swap chi for anochi.
+        /// </summary>
         public int? ANOTable_ID
         {
             get { return _anoTableID; }
             set { SetField(ref  _anoTableID, value); }
         }
 
+        /// <summary>
+        /// The fully specified name of the column in the underlying database table this record points at.
+        /// </summary>
         [Sql]
         public string Name
         {
@@ -77,78 +95,126 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// The proprietary SQL datatype of the column in the underlying database table this record points at.  
+        /// <para>E.g. datetime2 or varchar2 (Oracle) or int etc</para>
+        /// </summary>
         public string Data_type
         {
             get { return _dataType; }
             set { SetField(ref  _dataType, value); }
         }
 
+        /// <summary>
+        ///  User specified free text field.  Not used for anything by RDMP. 
+        /// <para> Use <see cref="Collation"/> instead</para>
+        /// </summary>
         public string Format
         {
             get { return _format; }
             set { SetField(ref  _format, value); }
         }
 
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Digitisation_specs
         {
             get { return _digitisationSpecs; }
             set { SetField(ref  _digitisationSpecs, value); }
         }
 
+        /// <summary>
+        ///  User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Source
         {
             get { return _source; }
             set { SetField(ref  _source, value); }
         }
 
+        /// <summary>
+        ///  User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { SetField(ref  _description, value); }
         }
 
+        /// <summary>
+        ///  User specified free text field.  Not used for anything by RDMP.
+        /// </summary>
         public ColumnStatus? Status
         {
             get { return _status; }
             set { SetField(ref  _status, value); }
         }
 
+        /// <summary>
+        /// Validation Regex that could be used to assess the cleanliness of data in the column.   Not used for anything by RDMP.
+        /// <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML"/>)</para>
+        /// </summary>
         public string RegexPattern
         {
             get { return _regexPattern; }
             set { SetField(ref  _regexPattern, value); }
         }
 
+        /// <summary>
+        /// Not used for anything by RDMP.
+        /// <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML"/>)</para>
+        /// </summary>
         public string ValidationRules
         {
             get { return _validationRules; }
             set { SetField(ref  _validationRules, value); }
         }
 
+        /// <summary>
+        /// Records whether the column in the underlying database table this record points at is part of the primary key or not.
+        /// </summary>
         public bool IsPrimaryKey
         {
             get { return _isPrimaryKey; }
             set { SetField(ref  _isPrimaryKey, value); }
         }
 
+        /// <summary>
+        /// Records whether the column in the underlying database table this record points at is an anto increment identity column
+        /// </summary>
         public bool IsAutoIncrement
         {
             get { return _isAutoIncrement; }
             set { SetField(ref  _isAutoIncrement, value); }
         }
+
+        /// <summary>
+        /// Records the collation of the column in the underlying database table this record points at if explicitly declared by dbms (only applicable for char datatypes)
+        /// </summary>
         public string Collation
         {
             get { return _collation; }
             set { SetField(ref  _collation, value); }
         }
         
-
+        /// <summary>
+        /// The importance of this column in resolving primary key collisions during data loads (in RAW).  Columns with a lower number are consulted first when resolving
+        /// collisions.  E.g. are the colliding records different on this column? if yes use <see cref="DuplicateRecordResolutionIsAscending"/> to pick which to delete
+        /// otherwise move onto the next (non primary key) column.
+        /// <para>Only applies if you have a PrimaryKeyCollisionResolverMutilation in the data load</para>
+        /// </summary>
         public int? DuplicateRecordResolutionOrder
         {
             get { return _duplicateRecordResolutionOrder; }
             set { SetField(ref  _duplicateRecordResolutionOrder, value); }
         }
 
+        /// <summary>
+        /// Used in primary key collision resolution during data loads (in RAW).  If two records differ on this field (and <see cref="IsPrimaryKey"/> is false) then the order
+        /// (<see cref="DuplicateRecordResolutionIsAscending"/>) will be used to decide which is deleted.
+        /// <para>Only applies if you have a PrimaryKeyCollisionResolverMutilation in the data load</para>
+        /// </summary>
         public bool DuplicateRecordResolutionIsAscending
         {
             get { return _duplicateRecordResolutionIsAscending; }
@@ -175,11 +241,19 @@ namespace CatalogueLibrary.Data
             get { return ANOTable_ID == null ? null : Repository.GetObjectByID<ANOTable>((int) ANOTable_ID); }
         }
 
+        /// <summary>
+        /// Fetches all <see cref="ExtractionInformation"/> which draw on this <see cref="ColumnInfo"/>.  This could be none (if it is not extractable) or more than one
+        /// (if there are multiple extraction transforms available for the column or if the column/table is part of multiple <see cref="Catalogue"/>)
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<ExtractionInformation> ExtractionInformations {
             get { return CatalogueItems.Select(e=>e.ExtractionInformation).Where(o=>o != null); }
         }
 
+        /// <summary>
+        /// Fetches all <see cref="CatalogueItem"/> which describe the <see cref="ExtractionInformations"/> of this <see cref="ColumnInfo"/>.  This will also include any
+        /// non extractable <see cref="CatalogueItem"/> linked to this <see cref="ColumnInfo"/> in <see cref="Catalogue"/>s.
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<CatalogueItem> CatalogueItems
         {
@@ -188,14 +262,41 @@ namespace CatalogueLibrary.Data
 
         #endregion
         
+        /// <summary>
+        /// Notional usage status of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
+        /// </summary>
         public enum ColumnStatus
         {
+            /// <summary>
+            /// Should not be used anymore.  Not used for anything by RDMP.
+            /// </summary>
             Deprecated,
+
+            /// <summary>
+            /// Notional usage state of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
+            /// </summary>
             Inactive,
+
+            /// <summary>
+            /// Notional usage state of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
+            /// </summary>
             Archived,
+
+            /// <summary>
+            /// Normal state for columns.  Not used for anything by RDMP.
+            /// </summary>
             Active
         }
 
+        /// <summary>
+        /// Creates a new record of a column found on a database server in the table referenced by <see cref="TableInfo"/>.  This constructor will be used
+        /// when first importing a table reference (See <see cref="CatalogueLibrary.DataHelper.TableInfoImporter"/>)  and again whenever there are new columns
+        /// discovered during table sync (See <see cref="TableInfoSynchronizer"/>)
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <param name="parent"></param>
         public ColumnInfo(ICatalogueRepository repository, string name, string type, TableInfo parent)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -242,11 +343,20 @@ namespace CatalogueLibrary.Data
 
         }
 
+        /// <summary>
+        /// Returns the fully qualified <see cref="Name"/> of the <see cref="ColumnInfo"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Allows sorting by fully qualified <see cref="Name"/>.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public int CompareTo(object obj)
         {
             if (obj is ColumnInfo)
@@ -257,8 +367,8 @@ namespace CatalogueLibrary.Data
             throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
             
         }
-
-
+        
+        ///<inheritdoc/>
         public string GetRuntimeName()
         {
             if (Name == null)
@@ -267,17 +377,15 @@ namespace CatalogueLibrary.Data
             return GetQuerySyntaxHelper().GetRuntimeName(Name);
         }
 
+        ///<inheritdoc/>
         public string GetFullyQualifiedName()
         {
             return Name;
         }
 
-        public override int GetHashCode()
-        {
-            return Repository.GetHashCode(this);
-        }
-
         private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
+
+        ///<inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             if (_cachedQuerySyntaxHelper == null)
@@ -286,13 +394,7 @@ namespace CatalogueLibrary.Data
             return _cachedQuerySyntaxHelper;
         }
 
-
-        public override bool Equals(object obj)
-        {
-            return Repository.AreEqual(this, obj);
-        }
-
-        
+        ///<inheritdoc/>
         public string GetRuntimeName(LoadStage stage)
         {
             string finalName = this.GetRuntimeName();
@@ -340,6 +442,13 @@ namespace CatalogueLibrary.Data
             return Data_type;
         }
         
+        /// <summary>
+        /// Connects to the live database referenced by this <seealso cref="ColumnInfo"/> and discovers the column returning the
+        /// live state of the column.
+        /// <para>If the database/table/column doesn't exist or is inaccessible then this method will throw</para>
+        /// </summary>
+        /// <param name="context">Determines which credentials (if any) to use to perform the connection operation</param>
+        /// <returns>The live state of the column</returns>
         public DiscoveredColumn Discover(DataAccessContext context)
         {
             var ti = TableInfo;
@@ -347,6 +456,7 @@ namespace CatalogueLibrary.Data
             return db.ExpectTable(ti.GetRuntimeName()).DiscoverColumn(GetRuntimeName());
         }
 
+        ///<inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             List<IHasDependencies> iDependOn = new List<IHasDependencies>();
@@ -360,8 +470,8 @@ namespace CatalogueLibrary.Data
             return iDependOn.ToArray();
         }
 
-        
 
+        ///<inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             List<IHasDependencies> dependantObjects = new List<IHasDependencies>();
@@ -381,6 +491,11 @@ namespace CatalogueLibrary.Data
             return dependantObjects.ToArray(); //dependantObjects.ToArray();
         }
 
+        /// <summary>
+        /// Checks the ANO status of the column is valid (and matching on datatypes etc).  
+        /// <para>Does not check for synchronization against the underlying database.</para>
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             //if it does not have an ANO transform it should not start with ANO
@@ -396,6 +511,11 @@ namespace CatalogueLibrary.Data
                     notifier.OnCheckPerformed(new CheckEventArgs("ColumnInfo " + this + " (ID=" + ID + ") has an ANOTable configured but does not start with " + ANOTable.ANOPrefix + " (All anonymised columns must start with "+ANOTable.ANOPrefix+")", CheckResult.Fail, null));
         }
 
+        /// <summary>
+        /// Determines whether the <see cref="ColumnInfo"/> is involved in <see cref="Lookup"/> declarations (either as a foreign key, or as part of a lookup <see cref="TableInfo"/>).
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public Lookup[] GetAllLookupForColumnInfoWhereItIsA(LookupType type)
         {
             string sql;
@@ -414,29 +534,6 @@ namespace CatalogueLibrary.Data
                 throw new Exception("Column " + this + " is configured as a foreign key to more than 1 primary key (only 1 is allowed), the Lookups are:" + string.Join(",", lookups.Select(l => l.PrimaryKey)));
 
             return lookups.ToArray();
-        }
-
-        public bool CouldSupportConvertingToANOColumnInfo(out string reason)
-        {
-            if (GetRuntimeName().StartsWith(ANOTable.ANOPrefix))
-            {
-                reason =
-                    "Column " + this + " begins with '" + ANOTable.ANOPrefix +
-                    "' it cannot be converted into an ANO version because it is assumed to already be in the anonymous structure, you should instead identify the relevant ANOTable and configure it in the main ConfigureANOForTableInfo dialog";
-                
-                return false;
-            }
-
-            if (ANOTable_ID != null)
-            {
-                reason =
-                    "Column " + this +
-                    " ALREADY HAS an ANOTable associated with it! the whole purpose of this UI is to convert a column to an ANO versions (and handle migrating of identifiable data if existing), if the column already has an ANOTable associated with it then this is impossible";
-                return false;
-            }
-
-            reason = null;
-            return true;
         }
     }
 }

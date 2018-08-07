@@ -12,7 +12,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueManager.ItemActivation;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;

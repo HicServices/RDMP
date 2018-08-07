@@ -1,8 +1,8 @@
 ﻿using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using RDMPObjectVisualisation.Copying;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution

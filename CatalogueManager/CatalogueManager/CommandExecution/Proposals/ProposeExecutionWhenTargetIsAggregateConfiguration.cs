@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.ItemActivation;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

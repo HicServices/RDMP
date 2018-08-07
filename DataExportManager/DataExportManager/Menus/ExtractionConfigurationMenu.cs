@@ -10,7 +10,7 @@ using DataExportLibrary.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 

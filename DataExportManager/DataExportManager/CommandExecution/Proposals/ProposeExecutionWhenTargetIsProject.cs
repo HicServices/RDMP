@@ -8,7 +8,7 @@ using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;

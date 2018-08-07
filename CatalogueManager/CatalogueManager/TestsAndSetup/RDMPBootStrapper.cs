@@ -1,25 +1,10 @@
 ﻿using System;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.ExternalDatabaseServerPatching;
-using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.LocationsMenu;
-using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
-using DatabaseCreation;
-using DataExportLibrary.Data.DataTables;
-using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation;
 using RDMPStartup;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
-using ScintillaNET;
 
 
 namespace CatalogueManager.TestsAndSetup

@@ -5,7 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 

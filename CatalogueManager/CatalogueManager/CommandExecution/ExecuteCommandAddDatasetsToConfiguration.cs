@@ -4,7 +4,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 

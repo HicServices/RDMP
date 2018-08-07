@@ -9,6 +9,12 @@ namespace CatalogueLibrary.Data.DataLoad
     /// </summary>
     public interface IHasStageSpecificRuntimeName
     {
+        /// <summary>
+        /// Returns the runtime name (unqualified name e.g. "MyColumn" ) for the column/table at the given stage of a data load (RAW=>STAGING=>LIVE)
+        /// <seealso cref="ReusableLibraryCode.IHasRuntimeName.GetRuntimeName"/>
+        /// </summary>
+        /// <param name="stage"></param>
+        /// <returns></returns>
         string GetRuntimeName(LoadStage stage);
     }
 }

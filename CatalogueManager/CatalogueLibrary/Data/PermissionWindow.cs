@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using CatalogueLibrary.Data.Cache;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -60,7 +61,7 @@ namespace CatalogueLibrary.Data
             get { return Repository.GetAllObjectsWithParent<CacheProgress>(this); }
         }
         #endregion
-
+        
         [NoMappingToDatabase]
         public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
 
@@ -136,5 +137,35 @@ namespace CatalogueLibrary.Data
             PermissionWindowPeriods = windowPeriods;
             PermissionPeriodConfig = SerializePermissionWindowPeriods();
         }
+
+        
+
+        #region Empty Support
+        [NoMappingToDatabase]
+        public bool IsDesignTime { get; private set; }
+
+        public static readonly PermissionWindow Empty = new PermissionWindow();
+
+        private PermissionWindow()
+        {
+            Name = "Design Time Permission Window";
+            IsDesignTime = true;
+        }
+
+        public override int GetHashCode()
+        {
+            if (this == Empty)
+                return 0;
+
+            return base.GetHashCode();
+        }
+        public override bool Equals(object obj)
+        {
+            if (this == Empty || obj == Empty)
+                return this == obj;
+
+            return base.Equals(obj);
+        }
+        #endregion
     }
 }

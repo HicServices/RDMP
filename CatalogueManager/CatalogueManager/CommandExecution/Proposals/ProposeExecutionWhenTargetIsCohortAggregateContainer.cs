@@ -1,6 +1,6 @@
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.ItemActivation;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

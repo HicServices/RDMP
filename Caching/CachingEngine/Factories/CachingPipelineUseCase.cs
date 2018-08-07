@@ -52,13 +52,7 @@ namespace CachingEngine.Factories
             else
                 _permissionWindow = cacheProgress.PermissionWindow;
 
-            //create the context using the standard context factory
-            var contextFactory = new DataFlowPipelineContextFactory<ICacheChunk>();
-            _context = contextFactory.Create(PipelineUsage.None);
-
-            //adjust context: we want a destination requirement of ICacheFileSystemDestination so that we can load from the cache using the pipeline endpoint as the source of the data load
-            _context.MustHaveDestination = typeof(ICacheFileSystemDestination);//we want this freaky destination type
-            _context.MustHaveSource = typeof(ICacheSource);
+            CreateContext();
 
             if(_providerIfAny == null)
             {
@@ -86,6 +80,18 @@ namespace CachingEngine.Factories
                 _hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
             
         }
+
+        private void CreateContext()
+        {
+            //create the context using the standard context factory
+            var contextFactory = new DataFlowPipelineContextFactory<ICacheChunk>();
+            _context = contextFactory.Create(PipelineUsage.None);
+
+            //adjust context: we want a destination requirement of ICacheFileSystemDestination so that we can load from the cache using the pipeline endpoint as the source of the data load
+            _context.MustHaveDestination = typeof(ICacheFileSystemDestination);//we want this freaky destination type
+            _context.MustHaveSource = typeof(ICacheSource);
+        }
+
 
         public ICacheFileSystemDestination CreateDestinationOnly( IDataLoadEventListener listener)
         {
@@ -120,6 +126,23 @@ namespace CachingEngine.Factories
         public override IDataFlowPipelineContext GetContext()
         {
             return _context;
+        }
+
+        private CachingPipelineUseCase(ICatalogueRepository repository)
+        {
+            IsDesignTime = true;
+
+            _providerIfAny = CacheFetchRequestProvider.DesignTime();
+            _permissionWindow = PermissionWindow.Empty;
+            _hicProjectDirectory = HICProjectDirectory.Empty;
+            _catalogueRepository = repository;
+
+            CreateContext();
+        }
+
+        public static CachingPipelineUseCase DesignTime(ICatalogueRepository repository)
+        {
+            return new CachingPipelineUseCase(repository);
         }
     }
 

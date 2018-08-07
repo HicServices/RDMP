@@ -16,7 +16,7 @@ using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;

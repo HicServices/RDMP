@@ -9,6 +9,10 @@ namespace ReusableLibraryCode
     /// </summary>
     public interface IHasRuntimeName
     {
+        /// <summary>
+        /// Returns the name of a table/column without qualifiers e.g. returns "Name" for the column "[MyDatabase]..[MyTable].[Name]"
+        /// </summary>
+        /// <returns></returns>
         string GetRuntimeName();
     }
 }

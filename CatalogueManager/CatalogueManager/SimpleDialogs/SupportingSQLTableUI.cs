@@ -12,7 +12,7 @@ using CatalogueManager.LocationsMenu;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;

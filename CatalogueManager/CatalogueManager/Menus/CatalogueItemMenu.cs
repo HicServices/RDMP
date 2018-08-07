@@ -15,7 +15,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using RDMPStartup;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;

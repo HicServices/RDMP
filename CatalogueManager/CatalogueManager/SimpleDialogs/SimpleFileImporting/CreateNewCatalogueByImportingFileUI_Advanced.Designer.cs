@@ -1,4 +1,4 @@
-﻿using RDMPObjectVisualisation.Pipelines;
+﻿using CatalogueManager.PipelineUIs.Pipelines;
 
 namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 {
@@ -33,7 +33,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CreateNewCatalogueByImportingFileUI_Advanced));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.configureAndExecutePipeline1 = new RDMPObjectVisualisation.Pipelines.ConfigureAndExecutePipeline();
+            this.configureAndExecutePipeline1 = new CatalogueManager.PipelineUIs.Pipelines.ConfigureAndExecutePipeline();
             this.SuspendLayout();
             // 
             // imageList1

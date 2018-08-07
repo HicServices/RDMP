@@ -15,7 +15,7 @@ using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using DataExportLibrary.CohortCreationPipeline.Sources;
 using DataExportLibrary.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
-using RDMPObjectVisualisation.Pipelines;
+using CatalogueManager.PipelineUIs.Pipelines;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;

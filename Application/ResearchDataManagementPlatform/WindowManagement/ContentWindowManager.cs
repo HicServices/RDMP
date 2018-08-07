@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -14,29 +13,20 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
-using CatalogueManager.CommandExecution.Proposals;
-using CatalogueManager.CredentialsUIs;
 using CatalogueManager.DashboardTabs;
-using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
-using CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ExtractionUIs.JoinsAndLookups;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Issues;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Validation;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
@@ -47,12 +37,10 @@ using DataExportLibrary.Providers;
 using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPAutomationService.Runners;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using WeifenLuo.WinFormsUI.Docking;
@@ -75,6 +63,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
+        public ServerDefaults ServerDefaults { get; private set; }
         public RefreshBus RefreshBus { get; private set; }
         public FavouritesProvider FavouritesProvider { get; private set; }
 
@@ -100,7 +89,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _toolboxWindowManager = toolboxWindowManager;
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
             RepositoryLocator = repositoryLocator;
-            
+
+            ServerDefaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
 
@@ -261,13 +252,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var wizard = new FilterImportWizard();
             return wizard.ImportOneFromSelection(containerToImportOneInto, filtersThatCouldBeImported);
         }
-
-        public void ActivateConvertColumnInfoIntoANOColumnInfo(ColumnInfo columnInfo)
-        {
-            Activate<ColumnInfoToANOTableConverterUI, ColumnInfo>(columnInfo);
-        }
-
-
+        
         public void ViewDataSample(IViewSQLAndResultsCollection collection)
         {
             Activate<ViewSQLAndResultsWithDataGridUI>(collection);

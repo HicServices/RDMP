@@ -181,11 +181,13 @@ namespace CatalogueLibrary.Data.Cohort
             return ((CatalogueRepository)Repository).GetObjectByID(type,Parent_ID);
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[0];
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             var parent = GetOwnerIfAny() as IHasDependencies;

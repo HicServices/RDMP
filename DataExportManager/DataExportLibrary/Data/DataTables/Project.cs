@@ -5,6 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
@@ -20,7 +21,7 @@ namespace DataExportLibrary.Data.DataTables
     /// 
     /// <para>The ProjectNumber must match the project number of the cohorts in your cohort database.  Therefore it is not possible to share a single cohort between multiple Projects. </para>
     /// </summary>
-    public class Project : VersionedDatabaseEntity, IProject,INamed, ICustomSearchString
+    public class Project : VersionedDatabaseEntity, IProject,INamed, ICustomSearchString, IHasDesignTimeMode
     {
         #region Database Properties
         private string _name;
@@ -188,5 +189,32 @@ namespace DataExportLibrary.Data.DataTables
         {
             return ExtractionConfigurations;
         }
+
+        #region Empty Support
+        [NoMappingToDatabase]
+        public bool IsDesignTime { get; private set; }
+
+        public static readonly IProject Empty = new Project();
+
+        private Project()
+        {
+            Name = "Empty Project";
+            IsDesignTime = true;
+        }
+        public override int GetHashCode()
+        {
+            if (this == Empty)
+                return 0;
+
+            return base.GetHashCode();
+        }
+        public override bool Equals(object obj)
+        {
+            if (this == Empty || obj == Empty)
+                return this == obj;
+
+            return base.Equals(obj);
+        }
+        #endregion
     }
 }

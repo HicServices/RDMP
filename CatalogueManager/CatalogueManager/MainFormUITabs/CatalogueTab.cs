@@ -22,7 +22,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableUIComponents;
 
 

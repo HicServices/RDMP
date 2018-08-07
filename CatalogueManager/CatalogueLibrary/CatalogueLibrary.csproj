@@ -291,6 +291,7 @@
     <Compile Include="Data\ImportExport\ObjectImport.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
+    <Compile Include="Data\Pipelines\IHasDesignTimeMode.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\IPipelineUser.cs" />
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
@@ -339,6 +340,9 @@
     <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
     <Compile Include="Nodes\AllStandardRegexesNode.cs" />
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\AllPipelinesNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\PipelineCompatibleWithUseCaseNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\StandardPipelineUseCaseNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />

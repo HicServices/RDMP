@@ -170,9 +170,9 @@
               <File Id="RDMPAUTOMATIONSERVICE.EXE.CONFIG" Name="RDMPAutomationService.exe.config" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPAutomationService.exe.config" />
               <File Id="RDMPAUTOMATIONSERVICE.PDB" Name="RDMPAutomationService.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPAutomationService.pdb" />
               <File Id="RDMPAUTOMATIONSERVICE.XML" Name="RDMPAutomationService.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPAutomationService.xml" />
-              <File Id="RDMPOBJECTVISUALISATION.DLL" Name="RDMPObjectVisualisation.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPObjectVisualisation.dll" />
-              <File Id="RDMPOBJECTVISUALISATION.PDB" Name="RDMPObjectVisualisation.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPObjectVisualisation.pdb" />
-              <File Id="RDMPOBJECTVISUALISATION.XML" Name="RDMPObjectVisualisation.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPObjectVisualisation.xml" />
+              <File Id="CatalogueManager.PipelineUIs.DLL" Name="CatalogueManager.PipelineUIs.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.PipelineUIs.dll" />
+              <File Id="CatalogueManager.PipelineUIs.PDB" Name="CatalogueManager.PipelineUIs.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.PipelineUIs.pdb" />
+              <File Id="CatalogueManager.PipelineUIs.XML" Name="CatalogueManager.PipelineUIs.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.PipelineUIs.xml" />
               <File Id="RDMPSTARTUP.DLL" Name="RDMPStartup.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPStartup.dll" />
               <File Id="RDMPSTARTUP.PDB" Name="RDMPStartup.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPStartup.pdb" />
               <File Id="RDMPSTARTUP.XML" Name="RDMPStartup.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPStartup.xml" />

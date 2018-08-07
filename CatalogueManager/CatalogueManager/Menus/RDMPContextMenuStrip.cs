@@ -46,7 +46,7 @@ namespace CatalogueManager.Menus
         
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
 
-        private AtomicCommandUIFactory AtomicCommandUIFactory;
+        private readonly AtomicCommandUIFactory AtomicCommandUIFactory;
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
         private RDMPContextMenuStripArgs _args;
@@ -61,12 +61,9 @@ namespace CatalogueManager.Menus
             AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
             RepositoryLocator = _activator.RepositoryLocator;
-        }
 
-        public RDMPContextMenuStrip(RDMPContextMenuStripArgs args, DatabaseEntity databaseEntity): this(args, (object)databaseEntity)
-        {
-            if (databaseEntity != null)
-                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator, databaseEntity));
+            if(o != null)
+                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o));
         }
 
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)

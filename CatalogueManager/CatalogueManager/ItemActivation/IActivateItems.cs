@@ -1,39 +1,23 @@
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.MainFormUITabs.SubComponents;
-using CatalogueManager.Menus;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CohortManagerLibrary;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
 using MapsDirectlyToDatabaseTable;
-using RDMPAutomationService.Runners;
-using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.CommandExecution;
 
@@ -47,6 +31,8 @@ namespace CatalogueManager.ItemActivation
     /// </summary>
     public interface IActivateItems
     {
+        ServerDefaults ServerDefaults { get; }
+
         /// <summary>
         /// Component for publishing the fact that an object has recently been put out of date by you.
         /// </summary>
@@ -124,8 +110,6 @@ namespace CatalogueManager.ItemActivation
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
 
         IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
-
-        void ActivateConvertColumnInfoIntoANOColumnInfo(ColumnInfo columnInfo);
 
         void ViewDataSample(IViewSQLAndResultsCollection collection);
 

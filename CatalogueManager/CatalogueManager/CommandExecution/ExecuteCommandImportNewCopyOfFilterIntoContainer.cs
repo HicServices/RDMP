@@ -5,7 +5,7 @@ using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.CommandExecution

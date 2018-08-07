@@ -28,12 +28,20 @@ namespace CatalogueLibrary.Data
         private bool _isPrimaryKey;
         private int _order;
 
+        /// <summary>
+        /// The order the column should be in when part of a SELECT statement built by an <see cref="CatalogueLibrary.QueryBuilding.ISqlQueryBuilder"/>
+        /// </summary>
         public int Order
         {
             get { return _order; }
             set { SetField(ref _order, value); }
         }
 
+        /// <summary>
+        /// The single line of SQL that should be executed in a SELECT statement built by an <see cref="CatalogueLibrary.QueryBuilding.ISqlQueryBuilder"/>
+        /// <para>This may just be the fully qualified column name verbatim or it could be a transform</para>
+        /// <para>This does not include the <see cref="Alias"/> section of the SELECT line e.g. " AS MyTransform"</para>
+        /// </summary>
         [Sql]
         public string SelectSQL
         {
@@ -48,18 +56,30 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// The alias (if any) for the column when it is included in a SELECT statement.  This should not include the " AS " bit only the text that would come after.
+        /// <para>Only use if the <see cref="SelectSQL"/> is a transform e.g. "UPPER([mydb]..[mytbl].[mycol])" </para>
+        /// </summary>
         public string Alias
         {
             get { return _alias; }
             set { SetField(ref _alias , value);}
         }
 
+        /// <summary>
+        /// True if the <see cref="ColumnInfo"/> should be wrapped with a standard hashing algorithmn (e.g. MD5) when extracted to researchers in a data extract.
+        /// <para>Hashing algorithmn must be defined in data export database</para>
+        /// </summary>
         public bool HashOnDataRelease
         {
             get { return _hashOnDataRelease; }
             set { SetField(ref _hashOnDataRelease , value);}
         }
 
+        /// <summary>
+        /// Indicates whether this column holds patient identifiers which can be used for cohort creation and which must be substituted for anonymous release
+        /// identifiers on data extraction (to a researcher).
+        /// </summary>
         public bool IsExtractionIdentifier
         {
             get { return _isExtractionIdentifier; }
@@ -81,6 +101,9 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
 
+        /// <summary>
+        /// Gets the underlying <see cref="ColumnInfo"/> behind this line of SELECT SQL.
+        /// </summary>
         [NoMappingToDatabase]
         public abstract ColumnInfo ColumnInfo { get; }
 
@@ -96,12 +119,14 @@ namespace CatalogueLibrary.Data
             
         }
 
+        /// <inheritdoc/>
         public string GetRuntimeName()
         {
             return RDMPQuerySyntaxHelper.GetRuntimeName(this);
         }
 
 
+        /// <inheritdoc cref="ColumnSyntaxChecker"/>
         public void Check(ICheckNotifier notifier)
         {
             new ColumnSyntaxChecker(this).Check(notifier);

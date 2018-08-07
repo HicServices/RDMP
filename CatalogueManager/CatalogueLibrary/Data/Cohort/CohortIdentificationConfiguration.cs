@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
@@ -10,11 +8,8 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
-
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data.Cohort
 {
@@ -153,6 +148,8 @@ namespace CatalogueLibrary.Data.Cohort
 
         [NoMappingToDatabase]
         CatalogueRepository CatalogueRepository { get { return (CatalogueRepository) Repository; } }
+
+        
 
         /// <summary>
         /// Declares a new configuration for identifying patient lists matching a study requirements based on the results of cohort sets / patient index tables and set operations
@@ -651,6 +648,7 @@ namespace CatalogueLibrary.Data.Cohort
             SaveToDatabase();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             List<IHasDependencies> dependencies = new List<IHasDependencies>();
@@ -663,9 +661,39 @@ namespace CatalogueLibrary.Data.Cohort
             return dependencies.ToArray();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];
         }
+
+
+        #region Empty Support
+        [NoMappingToDatabase]
+        public bool IsDesignTime { get; private set; }
+
+        public static readonly CohortIdentificationConfiguration Empty = new CohortIdentificationConfiguration();
+
+        private CohortIdentificationConfiguration()
+        {
+            Name = "Empty Cohort Identification Configuration";
+            IsDesignTime = true;
+
+        }
+        public override int GetHashCode()
+        {
+            if (this == Empty)
+                return 0;
+
+            return base.GetHashCode();
+        }
+        public override bool Equals(object obj)
+        {
+            if (this == Empty || obj == Empty)
+                return this == obj;
+
+            return base.Equals(obj);
+        }
+        #endregion
     }
 }

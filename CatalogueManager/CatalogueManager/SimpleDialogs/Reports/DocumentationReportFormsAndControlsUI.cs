@@ -53,7 +53,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
             namespaceToApplication.Add("Diagnostics", "Dataset Management");
             namespaceToApplication.Add("LoadModules", "Dataset Management");
             namespaceToApplication.Add("MapsDirectlyToDatabaseTableUI", "Dataset Management");
-            namespaceToApplication.Add("RDMPObjectVisualisation", "Dataset Management");
 
             namespaceToApplication.Add("DataExportManager", "Data Export Management");
             

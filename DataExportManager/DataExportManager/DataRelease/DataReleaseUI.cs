@@ -24,8 +24,8 @@ using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
-using RDMPObjectVisualisation.Pipelines;
-using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
+using CatalogueManager.PipelineUIs.Pipelines;
+using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
@@ -239,7 +239,7 @@ namespace DataExportManager.DataRelease
 
             if (_pipelineSelectionUI1 == null)
             {
-                var context = new ReleaseUseCase(_project, new ReleaseData(RepositoryLocator) { IsDesignTime = true });
+                var context = ReleaseUseCase.DesignTime(RepositoryLocator,_project);
                 _pipelineSelectionUI1 = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
                 _pipelineSelectionUI1.Pipeline = null;

@@ -21,7 +21,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;

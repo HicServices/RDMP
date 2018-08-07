@@ -16,7 +16,7 @@ using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;

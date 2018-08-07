@@ -38,7 +38,7 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(622, 22);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(622, 24);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // RDMPObjectsRibbonUI
@@ -48,7 +48,7 @@
             this.Controls.Add(this.flowLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "RDMPObjectsRibbonUI";
-            this.Size = new System.Drawing.Size(622, 22);
+            this.Size = new System.Drawing.Size(622, 24);
             this.ResumeLayout(false);
 
         }

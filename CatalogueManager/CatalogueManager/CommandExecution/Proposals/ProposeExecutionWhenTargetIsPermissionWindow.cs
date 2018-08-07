@@ -2,7 +2,7 @@
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using CatalogueManager.ItemActivation;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

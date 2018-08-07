@@ -205,7 +205,7 @@ namespace RDMPAutomationService.Runners
 
             try
             {
-                return new ReleaseUseCase(_project, data);
+                return new ReleaseUseCase(_project, data,RepositoryLocator.CatalogueRepository);
             }
             catch (Exception ex)
             {

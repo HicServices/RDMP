@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using CachingEngine.Factories;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.Hierarchy;
 using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.DataRelease.ReleasePipeline;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportLibrary.Providers.Nodes.UsedByNodes;
@@ -33,7 +38,6 @@ namespace DataExportLibrary.Providers
         //root objects
         public AllCohortsNode RootCohortsNode { get; private set; }
         
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly ICheckNotifier _errorsCheckNotifier;
 
         public ExternalCohortTable[] CohortSources { get; private set; }
@@ -74,7 +78,6 @@ namespace DataExportLibrary.Providers
 
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
-            _repositoryLocator = repositoryLocator;
             _errorsCheckNotifier = errorsCheckNotifier;
             var dataExportRepository = repositoryLocator.DataExportRepository;
 
@@ -150,7 +153,22 @@ namespace DataExportLibrary.Providers
                 if (cataToEds.ContainsKey(catalogue.ID))
                     catalogue.InjectKnown(cataToEds[catalogue.ID].GetCatalogueExtractabilityStatus());
                 else
-                    catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));    
+                    catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));
+
+            try
+            {
+                AddPipelineUseCases(new Dictionary<string, PipelineUseCase>
+                {
+                    {"Extraction",new ExtractionPipelineUseCase(Project.Empty)},
+                    {"Release",ReleaseUseCase.DesignTime(repositoryLocator)},
+                    {"Cohort Creation",CohortCreationRequest.DesignTime(repositoryLocator)},
+                    {"Caching",CachingPipelineUseCase.DesignTime(repositoryLocator.CatalogueRepository)}
+                });
+            }
+            catch (Exception ex)
+            {
+                _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",CheckResult.Fail,ex));
+            }
         }
 
         private void AddChildren(ExtractableDataSetPackage package, DescendancyList descendancy)

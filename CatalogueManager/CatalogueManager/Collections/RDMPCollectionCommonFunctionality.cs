@@ -417,6 +417,9 @@ namespace CatalogueManager.Collections
         {
             var o = Tree.SelectedObject;
             
+            if(o == null)
+                return;
+
             var cmd = new ExecuteCommandActivate(_activator, o);
             if(!cmd.IsImpossible)
                 cmd.Execute();

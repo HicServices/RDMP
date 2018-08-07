@@ -12,7 +12,7 @@ namespace CatalogueLibrary.Data.Pipelines
     /// <para>An instance of IPipelineUseCase is not just the general case (which is defined by IDataFlowPipelineContext) but the specific hydrated use case 
     /// e.g. 'I want to Release Project 205'.</para>
     /// </summary>
-    public interface IPipelineUseCase
+    public interface IPipelineUseCase : IHasDesignTimeMode
     {
         object[] GetInitializationObjects();
         IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines);
