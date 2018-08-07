@@ -33,8 +33,11 @@ namespace CatalogueManager.PipelineUIs.Pipelines.Models
 
             Type[] initializationTypes;
 
-            if (useCase.IsDesignTime)
-                initializationTypes = useCase.GetInitializationObjects().Cast<Type>().ToArray();
+            var initializationObjects = useCase.GetInitializationObjects();
+
+            //it is permitted to specify only Types as initialization objects if it is design time and the user hasn't picked any objects to execute the use case under
+            if (useCase.IsDesignTime && initializationObjects.All(t=>t is Type))
+                initializationTypes = initializationObjects.Cast<Type>().ToArray();
             else
                 initializationTypes = useCase.GetInitializationObjects().Select(o => o.GetType()).ToArray();
 

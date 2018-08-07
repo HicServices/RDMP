@@ -62,8 +62,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
                 else if (typeof (Enum).IsAssignableFrom(argument.GetSystemType()))
                 {
                     toReturn =
-                        new ArgumentValueComboBoxUI(Enum.GetValues(argument.GetSystemType()).Cast<object>().ToArray(),
-                            true);
+                        new ArgumentValueComboBoxUI(Enum.GetValues(argument.GetSystemType()).Cast<object>().ToArray());
                 }
                 else if (typeof (CatalogueRepository).IsAssignableFrom(argumentType))
                 {

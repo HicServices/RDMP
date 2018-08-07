@@ -24,5 +24,13 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         {
             return new FlatFileToLoad(null){IsDesignTime = true};
         }
+
+        public override string ToString()
+        {
+            if (File == null)
+                return base.ToString();
+
+            return File.Name;
+        }
     }
 }

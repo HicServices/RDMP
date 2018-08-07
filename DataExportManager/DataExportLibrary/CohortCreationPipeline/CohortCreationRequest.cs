@@ -173,5 +173,13 @@ namespace DataExportLibrary.CohortCreationPipeline
                 CohortIdentificationConfiguration = CohortIdentificationConfiguration.Empty
             };
         }
+
+        public override string ToString()
+        {
+            if (NewCohortDefinition == null)
+                return base.ToString();
+
+            return NewCohortDefinition.Description;
+        }
     }
 }
