@@ -325,6 +325,11 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.CheckObject(_globalsFolder);
             tlvDatasets.CheckObject(selectedDataSet);
         }
+
+        private void tlvDatasets_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            checkAndExecuteUI1.Enabled = tlvDatasets.CheckedObjects.Cast<object>().Any();
+        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExecuteExtractionUI_Design, UserControl>))]

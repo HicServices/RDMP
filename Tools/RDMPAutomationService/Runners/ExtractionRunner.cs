@@ -119,6 +119,12 @@ namespace RDMPAutomationService.Runners
             ChecksDictionary.Clear();
             var checkables = new List<ICheckable>();
 
+            if (_pipeline == null)
+            {
+                checkNotifier.OnCheckPerformed(new CheckEventArgs("No Pipeline has been picked", CheckResult.Fail));
+                return new ICheckable[0];
+            }
+
             checkables.Add(new ProjectChecker(RepositoryLocator, _configuration.Project)
             {
                 CheckDatasets = false,

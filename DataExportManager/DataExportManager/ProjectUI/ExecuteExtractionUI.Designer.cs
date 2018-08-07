@@ -167,6 +167,7 @@ namespace DataExportManager.ProjectUI
             this.tlvDatasets.UseCompatibleStateImageBehavior = false;
             this.tlvDatasets.View = System.Windows.Forms.View.Details;
             this.tlvDatasets.VirtualMode = true;
+            this.tlvDatasets.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.tlvDatasets_ItemChecked);
             this.tlvDatasets.SelectedIndexChanged += new System.EventHandler(this.olvDatasets_SelectedIndexChanged);
             // 
             // olvName
