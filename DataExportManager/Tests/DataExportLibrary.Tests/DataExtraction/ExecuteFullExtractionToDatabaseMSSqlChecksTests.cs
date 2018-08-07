@@ -3,6 +3,7 @@ using CatalogueLibrary.Data;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -13,9 +14,20 @@ namespace DataExportLibrary.Tests.DataExtraction
 {
     public class ExecuteFullExtractionToDatabaseMSSqlChecksTests:DatabaseTests
     {
+        private IProject _projectStub;
+        private IExtractCommand _commandStub;
+
         [SetUp]
         public void CleanupOnStart()
         {
+            _projectStub = MockRepository.GenerateStub<IProject>();
+            _projectStub.ProjectNumber = -123;
+
+            var cfg = MockRepository.GenerateStub<IExtractionConfiguration>();
+            
+            _commandStub = MockRepository.GenerateStub<IExtractCommand>();
+            _commandStub.Stub(cmd => cmd.Configuration).Return(cfg);
+
             var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase");
 
             if(db.Exists())
@@ -63,8 +75,9 @@ namespace DataExportLibrary.Tests.DataExtraction
             }
         }
 
-        [Test]
-        public void ServerDatabaseIsPresentAndCorrect()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ServerDatabaseIsPresentAndCorrect(bool alreadyExists)
         {
             var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction");
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
@@ -75,16 +88,23 @@ namespace DataExportLibrary.Tests.DataExtraction
 
             try
             {
+
                 var destination = new ExecuteFullExtractionToDatabaseMSSql();
-                destination.PreInitialize(MockRepository.GenerateStub<IProject>(), new ThrowImmediatelyDataLoadEventListener());
+                destination.PreInitialize(_projectStub, new ThrowImmediatelyDataLoadEventListener());
+                destination.PreInitialize(_commandStub, new ThrowImmediatelyDataLoadEventListener());
+
                 destination.TargetDatabaseServer = server;
                 destination.TableNamingPattern = "$d";
-                destination.DatabaseNamingPattern = "Fictional$nDatabase";
+
+                if (alreadyExists)
+                    destination.DatabaseNamingPattern = "FictionalDatabase"; //database that exists
+                else
+                    destination.DatabaseNamingPattern = "Fictional$nDatabase";  //database does not exist (but server does)
 
                 var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
                 destination.Check(tomemory);
 
-                Assert.AreEqual(CheckResult.Warning,tomemory.GetWorst());
+                Assert.AreEqual(alreadyExists? CheckResult.Warning: CheckResult.Success, tomemory.GetWorst());
 
             }
             finally
@@ -114,10 +134,11 @@ namespace DataExportLibrary.Tests.DataExtraction
             try
             {
                 var destination = new ExecuteFullExtractionToDatabaseMSSql();
-                destination.PreInitialize(MockRepository.GenerateStub<IProject>(), new ThrowImmediatelyDataLoadEventListener());
+                destination.PreInitialize(_projectStub, new ThrowImmediatelyDataLoadEventListener());
+                destination.PreInitialize(_commandStub, new ThrowImmediatelyDataLoadEventListener());
                 destination.TargetDatabaseServer = server;
                 destination.TableNamingPattern = "$d";
-                destination.DatabaseNamingPattern = "Fictional$nDatabase";
+                destination.DatabaseNamingPattern = "FictionalDatabase";
 
                 var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
                 destination.Check(tomemory);
