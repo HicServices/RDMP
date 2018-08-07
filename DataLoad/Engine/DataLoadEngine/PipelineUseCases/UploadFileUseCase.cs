@@ -7,6 +7,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.PipelineUseCases
 {
+    /// <summary>
+    /// Describes the use case of uploading a <see cref="FileInfo"/> to a target database server.  Compatible pipelines for achieving this must have a destination
+    /// of (or inheriting from) <see cref="DataTableUploadDestination"/> and a source that implements IPipelineRequirement&lt;FlatFileToLoad&gt;.
+    /// </summary>
     public class UploadFileUseCase:PipelineUseCase
     {
         public UploadFileUseCase(FileInfo file, DiscoveredDatabase targetDatabase)

@@ -54,9 +54,9 @@ namespace DataExportLibrary.CohortCreationPipeline
             get { return _cohortIdentificationConfiguration; }
             set
             {
-                Push(_cohortIdentificationConfiguration);
+                Pop(_cohortIdentificationConfiguration);
                 _cohortIdentificationConfiguration = value; 
-                Pop(value);
+                Push(value);
             }
         }
 
