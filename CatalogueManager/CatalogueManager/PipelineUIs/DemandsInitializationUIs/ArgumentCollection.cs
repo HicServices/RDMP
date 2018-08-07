@@ -215,47 +215,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
             return type.Name;
         }
 
-        /// <summary>
-        /// T must be an IArgumentHost e.g.  ProcessTask or PipelineComponent, these two classes act as persistence wrappers for their host type (which can be any type of anything - any plugin)
-        /// then you must also pass the underlying type that is being wrapped e.g. basically the constructor arguments to this class :)
-        /// </summary>
-        /// <param name="catalogueRepository"></param>
-        /// <param name="newComp"></param>
-        /// <param name="argumentsAreForUnderlyingType"></param>
-        /// <param name="previewIfAny">If you have a data table that approximates what the pipeline will look like at the time the component T is reached then pass it in here otherwise pass null</param>
-        public static void ShowDialogIfAnyArgs(CatalogueRepository catalogueRepository, IArgumentHost newComp, Type argumentsAreForUnderlyingType,DataTable previewIfAny)
-        {
-            Form f = new Form();
-            var argCollection = new ArgumentCollection();
-            argCollection.Setup(newComp, argumentsAreForUnderlyingType);
-            argCollection.Dock = DockStyle.Fill;
-            
-            bool areAnyDemandsInitializations =
-                //get all properties
-                argumentsAreForUnderlyingType.GetProperties()
-                //any of them have custom attribute collections which contain a [DemandsInitialization]?
-                .Any(p => p.GetCustomAttributes(typeof (CatalogueLibrary.Data.DemandsInitializationAttribute)).Any());
-
-            if (!areAnyDemandsInitializations)
-                return;
-
-            f.Controls.Add(argCollection);
-
-            Button ok = new Button();
-            ok.Text = "Ok";
-            ok.Dock = DockStyle.Bottom;
-            ok.Click += (s, e) => f.Close();
-            f.Controls.Add(ok);
-            f.Text = "Set Arguments For Type:" + argumentsAreForUnderlyingType.Name + " (you can always change these later)";
-
-            argCollection.Setup(newComp, argumentsAreForUnderlyingType);
-            argCollection.Preview = previewIfAny;
-            
-            f.Width = 800;
-            f.Height = 700;
-            f.ShowDialog();
-        }
-
         private void btnViewSourceCode_Click(object sender, EventArgs e)
         {
             new ViewSourceCodeDialog(_argumentsAreFor.Name + ".cs").Show();

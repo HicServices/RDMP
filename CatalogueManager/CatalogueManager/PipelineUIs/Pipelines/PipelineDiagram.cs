@@ -28,7 +28,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 {
 
     public delegate void PipelineComponentSelectedHandler(object sender, IPipelineComponent selected);
-
+    
     /// <summary>
     /// Used to visualise an IPipeline (See ConfigurePipelineUI and ConfigureAndExecutePipeline for what these are).  This control has a readonly/editable setting on it.  In dialogs where
     /// you are selecting an IPipeline you will see the diagram rendered readonly.  If you are editting  (See PipelineWorkArea and ConfigurePipelineUI) then you will be able to select
@@ -36,12 +36,12 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     /// </summary>
     public partial class PipelineDiagram : UserControl
     {
-        Label pipelineBroken = new Label();
-
         private IPipeline _pipeline;
         
         public bool AllowSelection { get; set; }
         public bool AllowReOrdering { get; set; }
+
+        RAGSmiley pipelineSmiley = new RAGSmiley();
 
         /// <summary>
         /// Used only when dropping in new components, can be left as null if you are unsure how to generate an appropriate preview for components in your pipeline
@@ -60,15 +60,11 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             AllowSelection = false;
 
 
-            this.Controls.Add(pipelineBroken);
-            pipelineBroken.AutoSize = true;
-            pipelineBroken.Anchor  = AnchorStyles.None;
-            pipelineBroken.Left = this.Width/2;
-            pipelineBroken.Top = this.Height/2;
-            pipelineBroken.ForeColor = Color.Red;
-            pipelineBroken.Visible = false;
-            pipelineBroken.Text = "Pipeline Broken";
-            pipelineBroken.Click += pipelineBroken_Click;
+            this.Controls.Add(pipelineSmiley);
+            pipelineSmiley.Anchor = AnchorStyles.Top|AnchorStyles.Right;
+            pipelineSmiley.Left = this.Width - pipelineSmiley.Width;
+            pipelineSmiley.Top = 0;
+            pipelineSmiley.BringToFront();
         }
 
 
@@ -95,9 +91,9 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             
             //clear the diagram
             flpPipelineDiagram.Controls.Clear();
-            pipelineBroken.Visible = false;
             
-            bool pipelineCheckingFailed = false;
+            pipelineSmiley.Reset();
+
             try
             {
                 //if there is a pipeline
@@ -110,30 +106,16 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                         //create it
                         IDataFlowPipelineEngine pipelineInstance = _pipelineFactory.Create(pipeline, new ThrowImmediatelyDataLoadEventListener());
                     
-                        try
-                        {
-                            //initialize it (unless it is design time)
-                            if(!_useCase.IsDesignTime)
-                                pipelineInstance.Initialize(_useCase.GetInitializationObjects());
-                        }
-                        catch (Exception )
-                        {
-                            pipelineCheckingFailed = true;
-                        }
+                        //initialize it (unless it is design time)
+                        if(!_useCase.IsDesignTime)
+                            pipelineInstance.Initialize(_useCase.GetInitializationObjects());
+                        
                     }
-                    catch (Exception )
+                    catch (Exception ex)
                     {
-                        pipelineCheckingFailed = true;
+                        pipelineSmiley.Fatal(ex);
                     }
                 
-
-                    //if it failed to passed checks
-                    if (pipelineCheckingFailed)
-                    {
-                        pipelineBroken.BringToFront();
-                        pipelineBroken.Visible = true;
-                    }
-
                     //There is a pipeline set but we might have been unable to fully realize it so setup stuff based on PipelineComponents
                 
                     //was there an explicit instance?
@@ -220,9 +202,10 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                     if (!_useCase.IsDesignTime)
                     {
                         _useCase.GetContext().PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), value, _useCase.GetInitializationObjects());
-                        component.Clear(); //initialization worked, changes N/A to Successful
                         component.Check();
                     }
+
+                    component.CheckMandatoryProperties();
                 }
                 catch (Exception exInit)
                 {
@@ -297,30 +280,6 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             flpPipelineDiagram.Controls.Add(toAdd);
         }
 
-        void pipelineBroken_Click(object sender, EventArgs e)
-        {
-            PopupChecksUI popupChecksUI = new PopupChecksUI("Why is pipeline broken?",false);
-            try
-            {
-
-                _pipelineFactory.Check(_pipeline, popupChecksUI, _useCase.GetInitializationObjects().ToArray());
-            }
-            catch (Exception exception)
-            {
-                popupChecksUI.OnCheckPerformed(new CheckEventArgs("Checking crashed", CheckResult.Fail, exception));
-            }
-
-            try
-            {
-                _pipelineFactory.Create(_pipeline, new FromCheckNotifierToDataLoadEventListener(popupChecksUI));
-            }
-            catch (Exception exception)
-            {
-                popupChecksUI.OnCheckPerformed(new CheckEventArgs("Instance instantiation crashed", CheckResult.Fail, exception));
-            }
-
-        }
-        
         private DragDropEffects component_shouldAllowDrop(DragEventArgs arg,DataFlowComponentVisualisation sender)
         {
             var obj = GetAdvertisedObjectFromDragOperation(arg);
@@ -422,8 +381,6 @@ namespace CatalogueManager.PipelineUIs.Pipelines
           
             newcomp.SaveToDatabase();
             
-            ArgumentCollection.ShowDialogIfAnyArgs((CatalogueRepository)repository, newcomp, underlyingComponentType, Preview);
-            
             if (advert.GetRole() == DataFlowComponentVisualisation.Role.Source)
             {
                 _pipeline.SourcePipelineComponent_ID = newcomp.ID;
@@ -437,7 +394,13 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             } 
 
             RefreshUIFromDatabase();
+
+
+            var viz = flpPipelineDiagram.Controls.OfType<PipelineComponentVisualisation>().Single(v => Equals(v.PipelineComponent, newcomp));
+
+            component_Selected(viz, newcomp);
         }
+
 
         private int GetOrderMakingSpaceIfNessesary(PipelineComponentVisualisation beingReorderedIfAny, DividerLineControl divider)
         {
