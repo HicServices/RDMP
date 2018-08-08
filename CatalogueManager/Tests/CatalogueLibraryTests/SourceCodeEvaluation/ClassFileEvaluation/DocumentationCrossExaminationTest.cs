@@ -183,7 +183,14 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "PatientSexCode",
             "SexDescription",
             "SexDescriptionLong",
-
+            "MyTransform",
+            
+            "MyObject",
+            "MyObjectMenu",
+            "AllServersNodeMenu",
+            "SomeClass",
+            "ProposeExecutionWhenCommandIs",
+            "Log4Net"
 
         };
 

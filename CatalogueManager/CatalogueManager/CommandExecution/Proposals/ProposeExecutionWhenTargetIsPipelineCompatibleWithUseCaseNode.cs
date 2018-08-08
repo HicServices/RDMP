@@ -7,9 +7,9 @@ using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    class ProposeExecutionWhenCommandIsPipelineCompatibleWithUseCaseNode : RDMPCommandExecutionProposal<PipelineCompatibleWithUseCaseNode>
+    class ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode : RDMPCommandExecutionProposal<PipelineCompatibleWithUseCaseNode>
     {
-        public ProposeExecutionWhenCommandIsPipelineCompatibleWithUseCaseNode(IActivateItems itemActivator) : base(itemActivator)
+        public ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode(IActivateItems itemActivator): base(itemActivator)
         {
         }
 

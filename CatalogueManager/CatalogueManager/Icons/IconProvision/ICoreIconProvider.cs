@@ -8,7 +8,7 @@ namespace CatalogueManager.Icons.IconProvision
         ImageList GetImageList(bool addFavouritesOverlayKeysToo);
 
         /// <summary>
-        /// Returns true if there is a valid icon associated with the object (i.e. not an UnknownObject icon).
+        /// Returns true if there is a valid icon associated with the object (i.e. not a NoIconAvailable icon).
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>

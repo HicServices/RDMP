@@ -427,8 +427,8 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenCommandIsPipelineCompatibleWithUseCaseNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenCommandIsStandardPipelineUseCaseNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
     <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />

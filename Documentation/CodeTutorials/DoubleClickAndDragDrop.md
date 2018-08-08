@@ -24,14 +24,14 @@ To add support for activating (double clicking) an object we must first know it'
 
 ![ExampleMenu](Images/DoubleClickAndDragDrop/WhatIsThis.png)
 
-Create a new class called `ProposeExecutionWhenCommandIs<TypeName>` in namespace `CatalogueManager.CommandExecution.Proposals` and inherit from `RDMPCommandExecutionProposal<T>`.  Return true for `CanActivate` and put a test message in `Activate`.
+Create a new class called `ProposeExecutionWhenTargetIs<TypeName>` in namespace `CatalogueManager.CommandExecution.Proposals` and inherit from `RDMPCommandExecutionProposal<T>`.  Return true for `CanActivate` and put a test message in `Activate`.
 
 ```csharp
 namespace CatalogueManager.CommandExecution.Proposals
 {
-    class ProposeExecutionWhenCommandIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+    class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
     {
-        public ProposeExecutionWhenCommandIsPipeline(IActivateItems itemActivator) : base(itemActivator)
+        public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
         {
         }
 
