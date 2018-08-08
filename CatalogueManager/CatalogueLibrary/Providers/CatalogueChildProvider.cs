@@ -76,6 +76,7 @@ namespace CatalogueLibrary.Providers
 
         public AllStandardRegexesNode AllStandardRegexesNode { get; private set; }
         public AllPipelinesNode AllPipelinesNode { get; private set; }
+        public OtherPipelinesNode OtherPipelinesNode { get; private set; }
         public Pipeline[] AllPipelines { get; set; }
         public PipelineComponent[] AllPipelineComponents { get; set; }
 
@@ -230,7 +231,12 @@ namespace CatalogueLibrary.Providers
 
             AddChildren(AllObjectSharingNode);
 
+            //Pipelines setup (see also DataExportChildProvider for calls to AddPipelineUseCases)
+            //Root node for all pipelines
             AllPipelinesNode = new AllPipelinesNode();
+
+            //Pipelines not found to be part of any use case after AddPipelineUseCases
+            OtherPipelinesNode = new OtherPipelinesNode();
             AllPipelines = repository.GetAllObjects<Pipeline>();
             AllPipelineComponents = repository.GetAllObjects<PipelineComponent>();
 
@@ -267,10 +273,7 @@ namespace CatalogueLibrary.Providers
             }
                     
         }
-
         
-
-
         private void AddChildren(AllLoadMetadatasNode allLoadMetadatasNode)
         {
             HashSet<object> children = new HashSet<object>();
@@ -340,21 +343,29 @@ namespace CatalogueLibrary.Providers
             var descendancy = new DescendancyList(AllPipelinesNode);
             HashSet<object> children = new HashSet<object>();
 
+            //pipelines not found to be part of any StandardPipelineUseCase
+            HashSet<object> unknownPipelines = new HashSet<object>(AllPipelines);
+
             foreach (var useCase in useCases)
             {
                 var node = new StandardPipelineUseCaseNode(useCase.Key,useCase.Value);
 
-                AddChildren(node,descendancy.Add(node));
-                
+                foreach (Pipeline pipeline in AddChildren(node, descendancy.Add(node)))
+                    unknownPipelines.Remove(pipeline);
+
                 children.Add(node);
             }
+
+            children.Add(OtherPipelinesNode);
+
+            AddToDictionaries(unknownPipelines,descendancy.Add(OtherPipelinesNode));
             
             //it is the first standard use case
             AddToDictionaries(children, descendancy);
             
         }
 
-        private void AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
+        private IEnumerable<Pipeline> AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
         {
             HashSet<object> children = new HashSet<object>();
 
@@ -366,6 +377,8 @@ namespace CatalogueLibrary.Providers
 
             //it is the first standard use case
             AddToDictionaries(children, descendancy);
+
+            return children.Cast<PipelineCompatibleWithUseCaseNode>().Select(u => u.Pipeline);
         }
 
 

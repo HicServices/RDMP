@@ -154,6 +154,7 @@ namespace CatalogueManager.Icons.IconProvision
         AllStandardRegexesNode,
 
         AllPipelinesNode,
+        OtherPipelinesNode,
         StandardPipelineUseCaseNode
     }
 }
