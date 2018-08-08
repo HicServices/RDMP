@@ -50,7 +50,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.governanceDocumentUI1 = new CatalogueManager.SimpleDialogs.Governance.GovernanceDocumentUI();
             this.lbDocuments = new System.Windows.Forms.ListBox();
             this.gbAttachments = new System.Windows.Forms.GroupBox();
-            this.checksUIIconOnly1 = new ReusableUIComponents.ChecksUI.ChecksUIIconOnly();
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.gbAttachments.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -260,19 +260,20 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.gbAttachments.TabStop = false;
             this.gbAttachments.Text = "Attachments";
             // 
-            // checksUIIconOnly1
+            // ragSmiley1
             // 
-            this.checksUIIconOnly1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checksUIIconOnly1.Location = new System.Drawing.Point(89, 855);
-            this.checksUIIconOnly1.Name = "checksUIIconOnly1";
-            this.checksUIIconOnly1.Size = new System.Drawing.Size(20, 20);
-            this.checksUIIconOnly1.TabIndex = 18;
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Location = new System.Drawing.Point(321, 375);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 18;
             // 
             // GovernancePeriodUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.checksUIIconOnly1);
+            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.gbAttachments);
             this.Controls.Add(this.btnImportCatalogues);
             this.Controls.Add(this.btnSave);
@@ -320,6 +321,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DateTimePicker dtpStartDate;
         private System.Windows.Forms.Label label3;
-        private ReusableUIComponents.ChecksUI.ChecksUIIconOnly checksUIIconOnly1;
+        private ReusableUIComponents.RAGSmiley ragSmiley1;
     }
 }

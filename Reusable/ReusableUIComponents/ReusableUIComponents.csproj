@@ -210,12 +210,6 @@
     <Compile Include="ChecksUI\ChecksUI.Designer.cs">
       <DependentUpon>ChecksUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ChecksUI\ChecksUIIconOnly.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ChecksUI\ChecksUIIconOnly.Designer.cs">
-      <DependentUpon>ChecksUIIconOnly.cs</DependentUpon>
-    </Compile>
     <Compile Include="ChecksUI\MakeChangePopup.cs" />
     <Compile Include="ChecksUI\PopupChecksUI.cs">
       <SubType>Form</SubType>
@@ -439,9 +433,6 @@
   <ItemGroup>
     <EmbeddedResource Include="ChecksUI\ChecksUI.resx">
       <DependentUpon>ChecksUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ChecksUI\ChecksUIIconOnly.resx">
-      <DependentUpon>ChecksUIIconOnly.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ChecksUI\PopupChecksUI.resx">
       <DependentUpon>PopupChecksUI.cs</DependentUpon>

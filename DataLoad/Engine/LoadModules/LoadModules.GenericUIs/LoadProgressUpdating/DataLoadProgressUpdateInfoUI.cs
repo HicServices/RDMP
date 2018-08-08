@@ -159,7 +159,7 @@ namespace LoadModules.GenericUIs.LoadProgressUpdating
         private void CheckObject()
         {
             var obj = GetFinalStateOfUnderlyingObject();
-            checksUIIconOnly1.Check(obj);
+            ragSmiley1.StartChecking(obj);
         }
 
         private int _timeout;
