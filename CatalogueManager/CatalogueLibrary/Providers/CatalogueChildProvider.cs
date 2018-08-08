@@ -129,6 +129,8 @@ namespace CatalogueLibrary.Providers
         
         public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
 
+        public Dictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
+
         public readonly IChildProvider[] PluginChildProviders;
         private readonly ICheckNotifier _errorsCheckNotifier;
         private readonly List<IChildProvider> _blacklistedPlugins = new List<IChildProvider>();
@@ -137,6 +139,8 @@ namespace CatalogueLibrary.Providers
         {
             PluginChildProviders = pluginChildProviders;
             _errorsCheckNotifier = errorsCheckNotifier;
+            
+            AllMasqueraders = new Dictionary<object, HashSet<IMasqueradeAs>>();
 
             AllAnyTableParameters = repository.GetAllObjects<AnyTableSqlParameter>();
 
@@ -921,7 +925,6 @@ namespace CatalogueLibrary.Providers
                 AddToDictionaries(children,descendancy);
         }
 
-        
         protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
         {
             if(list.IsEmpty)
@@ -966,6 +969,16 @@ namespace CatalogueLibrary.Providers
                 }
 
                 _descendancyDictionary.Add(o, list);
+            }
+
+            foreach (IMasqueradeAs masquerader in children.OfType<IMasqueradeAs>())
+            {
+                var key = masquerader.MasqueradingAs();
+
+                if(!AllMasqueraders.ContainsKey(key))
+                    AllMasqueraders.Add(key,new HashSet<IMasqueradeAs>());
+
+                AllMasqueraders[key].Add(masquerader);
             }
         }
 
@@ -1074,6 +1087,14 @@ namespace CatalogueLibrary.Providers
 
             if(newObjectsFound.Any())
                 GetPluginChildren(newObjectsFound);
+        }
+
+        public IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o)
+        {
+            if (AllMasqueraders.ContainsKey(o))
+                return AllMasqueraders[o];
+
+            return new IMasqueradeAs[0];
         }
 
         private HashSet<object> GetAllObjects()

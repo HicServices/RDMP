@@ -26,7 +26,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
             var dialog = new ConfigurePipelineUI(_pipeline, _useCase, Activator.RepositoryLocator.CatalogueRepository);
             dialog.ShowDialog();
-
+            
+            Publish(_pipeline);
         }
 
         public Image GetImage(IIconProvider iconProvider)

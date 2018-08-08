@@ -433,31 +433,45 @@ namespace CatalogueManager.Collections
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             OnRefreshChildProvider(_activator.CoreChildProvider);
-            
+
+            RefreshObject(e.Object,e.Exists);
+
             //now tell tree view to refresh the object
-            
-            //or from known descendancy
-            var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
             
             //if the descendancy is known 
             if (_pinFilter != null)
                 _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e);
 
+
+            RefreshContextMenuStrip();
+
+            //also refresh anyone who is masquerading as e.Object
+            foreach (IMasqueradeAs masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
+                RefreshObject(masquerader, e.Exists);
+            
+        }
+
+        private void RefreshObject(object o, bool exists)
+        {
+
+            //or from known descendancy
+            var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(o);
+
             //if it is a root object maintained by this tree and it exists
-            if (MaintainRootObjects != null && MaintainRootObjects.Contains(e.Object.GetType()) && e.Object.Exists())
-                    //if tree doesn't yet contain the object
-                    if (!Tree.Objects.Cast<object>().Contains(e.Object))
-                        Tree.AddObject(e.Object); //add it
+            if (MaintainRootObjects != null && MaintainRootObjects.Contains(o.GetType()) && exists)
+                //if tree doesn't yet contain the object
+                if (!Tree.Objects.Cast<object>().Contains(o))
+                    Tree.AddObject(o); //add it
 
             //item deleted?
-            if (!e.Object.Exists())
+            if (!exists)
             {
                 //if we have the object
-                if (Tree.IndexOf(e.Object) != -1)
+                if (Tree.IndexOf(o) != -1)
                 {
-                    var parent = Tree.GetParent(e.Object);
+                    var parent = Tree.GetParent(o);
                     //item was deleted so remove it
-                    Tree.RemoveObject(e.Object);
+                    Tree.RemoveObject(o);
 
                     //if we have a parent it might be a node category that should now disapear too
                     if (parent != null)
@@ -476,41 +490,39 @@ namespace CatalogueManager.Collections
                             Tree.RefreshObject(parent);
                         }
                     }
-                    
+
                 }
-                
+
             }
             else
             {
                 try
                 {
                     //but the filter is currently hiding the object?
-                    if (!IsHiddenByFilter(e.Object))
+                    if (!IsHiddenByFilter(o))
                     {
                         //Do we have the object itself?
-                        if (Tree.IndexOf(e.Object) != -1)
-                            Tree.RefreshObject(e.Object);
+                        if (Tree.IndexOf(o) != -1)
+                            Tree.RefreshObject(o);
                         else
-                        if(knownDescendancy != null) //we don't have the object but do we have something in it's descendancy?
-                        {
-                            var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
-                            
-                            if (lastParent != null)
-                                Tree.RefreshObject(lastParent); //refresh parent
-                        }
+                            if (knownDescendancy != null) //we don't have the object but do we have something in it's descendancy?
+                            {
+                                var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
+
+                                if (lastParent != null)
+                                    Tree.RefreshObject(lastParent); //refresh parent
+                            }
                     }
                 }
                 catch (ArgumentException)
                 {
-                    
+
                 }
                 catch (IndexOutOfRangeException)
                 {
-                        
+
                 }
             }
-
-            RefreshContextMenuStrip();
         }
 
         private bool IsHiddenByFilter(object o)
