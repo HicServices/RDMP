@@ -1,10 +1,10 @@
 # Table of contents
 1. [Background](#background)
-2. [Masquerading](#Masquerading)
-3. [Menu Constructor Overloading](#Menu-Constructor-Overloading)
-4. [Reasoning](#Reasoning)
-5. [Example](#Example)
-6. [Commands](#Commands)
+2. [Masquerading](#masquerading)
+3. [Menu Constructor Overloading](#menu-constructor-overloading)
+4. [Reasoning](#reasoning)
+5. [Example](#example)
+6. [Commands](#commands)
 7. [Creating a new Command](#creating-a-new-command)
 <a name="background"></a>
 # Background
