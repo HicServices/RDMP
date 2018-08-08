@@ -335,15 +335,20 @@ namespace CatalogueManager.Collections
                 //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
                 Tree.SelectedObject = o;
 
+                //is o masquerading as someone else?
+                IMasqueradeAs masquerader = o as IMasqueradeAs;
+
+                //if so this is who he is pretending to be
                 object masqueradingAs = null;
-                if (o is IMasqueradeAs)
-                    masqueradingAs = ((IMasqueradeAs)o).MasqueradingAs();
+
+                if (masquerader != null)
+                    masqueradingAs = masquerader.MasqueradingAs(); //yes he is masquerading!
 
                 var menu = GetMenuWithCompatibleConstructorIfExists(o);
 
                 //If no menu takes the object o try checking the object it is masquerading as as a secondary preference
                 if (menu == null && masqueradingAs != null)
-                    menu = GetMenuWithCompatibleConstructorIfExists(masqueradingAs, o);
+                    menu = GetMenuWithCompatibleConstructorIfExists(masqueradingAs, masquerader);
 
                 //found a menu with compatible constructor arguments
                 if (menu != null)
@@ -380,7 +385,7 @@ namespace CatalogueManager.Collections
             return null;
         }
 
-        private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, object oMasquerader = null)
+        private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
         {
             RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
             args.CurrentlyPinnedObject = _currentlyPinned;
