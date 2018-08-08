@@ -114,4 +114,49 @@ You can create your own `ICommandExecution` implementations by [following this t
 
 # Drag
 
-TODO
+`RDMPCommandFactory` is responsible for creating `ICommand` objects at the start of a drag operation (including files etc from the OS).  Most objects will have a 1 to 1 mapping with an `ICommand` e.g `CatalogueCommand` is a wrapper for a `Catalogue`.  The `ICommand` is responsible for doing expensive fact gathering at the start of a drag operation.
+
+If you need to provide drag support for a new object `Type` (e.g. `Pipeline`) first create an appropriate `ICommand` e.g. `PipelineCommand` and then in `RDMPCommandFactory` modify the method `ICommand Create(object modelObject)` to return it given the appropriate modelObject:
+
+```csharp
+public ICommand Create(object modelObject)
+{
+	//Other stuff
+	
+	var pipeline = modelObject as Pipeline;
+	if (pipeline != null)
+		return new PipelineCommand(pipeline);
+	
+	//Other stuff
+}
+```
+
+The `ICommand` could look like this.
+
+```csharp
+namespace CatalogueManager.Copying.Commands
+{
+    public class PipelineCommand : ICommand
+    {
+        public Pipeline Pipeline { get; private set; }
+        public bool IsEmpty { get; private set; }
+
+        public PipelineCommand(Pipeline pipeline)
+        {
+            Pipeline = pipeline;
+            IsEmpty = Pipeline.PipelineComponents.Count == 0;
+        }
+
+        public string GetSqlString()
+        {
+            return "";
+        }
+    }
+}
+```
+
+Doing this will allow you to drag the object (when previously you couldn't).  This helps avoid the user dragging something he will never be able to drop on anything.
+
+![CannotDrop](Images/DoubleClickAndDragDrop/CannotDrop.png)
+
+To provide drop targets for the new `ICommand` go to the `RDMPCommandExecutionProposal<T>` of the object `Type` you want to be able to drop on and [provide an implementation of ProposeExecution](#drop)

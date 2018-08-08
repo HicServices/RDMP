@@ -407,6 +407,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewStandardRegex.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipelineWithUseCase.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFileUI.cs" />
@@ -427,6 +428,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenCommandIsPipelineCompatibleWithUseCaseNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenCommandIsStandardPipelineUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
     <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
@@ -444,6 +446,7 @@
     <Compile Include="Copying\Commands\FileCollectionCommand.cs" />
     <Compile Include="Copying\Commands\FilterCommand.cs" />
     <Compile Include="Copying\Commands\ManyCataloguesCommand.cs" />
+    <Compile Include="Copying\Commands\PipelineCommand.cs" />
     <Compile Include="Copying\Commands\ProcessTaskCommand.cs" />
     <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
     <Compile Include="Copying\Commands\TableInfoCommand.cs" />

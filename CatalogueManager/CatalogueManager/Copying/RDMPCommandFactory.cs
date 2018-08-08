@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Nodes;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
@@ -72,6 +73,10 @@ namespace CatalogueManager.Copying
             var icolumn = modelObject as IColumn;
             if (icolumn != null)
                 return new ColumnCommand(icolumn);
+
+            var pipeline = modelObject as Pipeline;
+            if (pipeline != null)
+                return new PipelineCommand(pipeline);
 
             //table column pointers (not extractable)
             var columnInfo = modelObject as ColumnInfo; //ColumnInfo is not an IColumn btw because it does not have column order or other extraction rule stuff (alias, hash etc)
@@ -180,4 +185,5 @@ namespace CatalogueManager.Copying
             return toReturn.ToArray();
         }
     }
+
 }
