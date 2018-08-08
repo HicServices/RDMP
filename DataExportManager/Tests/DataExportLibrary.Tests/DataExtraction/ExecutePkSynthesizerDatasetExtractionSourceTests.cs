@@ -92,6 +92,9 @@ namespace DataExportLibrary.Tests.DataExtraction
 
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
             Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000_Dave"));
+
+            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleLookup").Drop();
+            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleJoin").Drop();
         }
 
         [Test]
@@ -110,8 +113,10 @@ namespace DataExportLibrary.Tests.DataExtraction
 
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
             Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
-        }
 
+            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleLookup").Drop();
+        }
+        
         private void SetupJoin()
         {
             DataTable dt = new DataTable();
