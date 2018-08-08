@@ -405,8 +405,8 @@ namespace CatalogueLibrary.Repositories
                         toReturn = matches.Single();
             }
 
-            if (toReturn != null)
-                _cachedTypes.Add(name,toReturn);
+            //cache the answer even if it is null (could not resolve Type name)
+            _cachedTypes.Add(name,toReturn);
 
             return toReturn;
         }

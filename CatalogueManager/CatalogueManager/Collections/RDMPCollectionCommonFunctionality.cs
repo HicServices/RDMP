@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -385,6 +386,9 @@ namespace CatalogueManager.Collections
             return null;
         }
 
+        //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
+        Dictionary<Type,Type> _cachedMenuCompatibility = new Dictionary<Type, Type>();
+
         private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
         {
             RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
@@ -393,6 +397,21 @@ namespace CatalogueManager.Collections
 
             var objectConstructor = new ObjectConstructor();
 
+            Type oType = o.GetType();
+
+            //if we have encountered this object type before
+            if (_cachedMenuCompatibility.ContainsKey(oType))
+            {
+                Type compatibleMenu = _cachedMenuCompatibility[oType];
+                
+                //we know there are no menus compatible with o
+                if (compatibleMenu == null)
+                    return null;
+
+                return ConstructMenu(objectConstructor, _cachedMenuCompatibility[oType], args, o);
+            }
+                
+
             //now find the first RDMPContextMenuStrip with a compatible constructor
             foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
             {
@@ -400,21 +419,39 @@ namespace CatalogueManager.Collections
                     continue;
 
                 //try constructing menu with:
-                var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(menuType,
-                    args,//parameter 1 must be args
-                    o //parameter 2 must be object compatible Type
-                    );
+                var menu = ConstructMenu(objectConstructor,menuType,args,o);
 
                 //find first menu that's compatible
                 if (menu != null)
                 {
-                    menu.AddCommonMenuItems(Settings);
+                    if (!_cachedMenuCompatibility.ContainsKey(oType))
+                        _cachedMenuCompatibility.Add(oType, menu.GetType());
+
                     return menu;
                 }
             }
-            
+
+            //we know there are no menus compatible with this type
+            if (!_cachedMenuCompatibility.ContainsKey(oType))
+                _cachedMenuCompatibility.Add(oType, null);
+
             //there are no derrived classes with compatible constructors
             return null;
+        }
+
+        private RDMPContextMenuStrip ConstructMenu(ObjectConstructor objectConstructor, Type type, RDMPContextMenuStripArgs args, object o)
+        {
+            //there is a compatible menu Type known
+            
+            //parameter 1 must be args
+            //parameter 2 must be object compatible Type
+
+            var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(type, args, o);
+            
+            if(menu != null)
+                menu.AddCommonMenuItems(Settings);
+
+            return menu;
         }
 
 
