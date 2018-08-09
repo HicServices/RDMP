@@ -80,7 +80,6 @@
               <File Id="HIC.LOGGING.PDB" Name="HIC.Logging.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Logging.pdb" />
               <File Id="HIC.LOGGING.XML" Name="HIC.Logging.xml" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Logging.xml" />
               <File Id="ICSHARPCODE.SHARPZIPLIB.DLL" Name="ICSharpCode.SharpZipLib.dll" Source="..\Anonymisation\ANOStore\bin\Debug\ICSharpCode.SharpZipLib.dll" />
-              <File Id="LOG4NET.CONFIG" Name="log4net.config" Source="..\Anonymisation\ANOStore\bin\Debug\log4net.config" />
               <File Id="MAPSDIRECTLYTODATABASETABLE.DLL" Name="MapsDirectlyToDatabaseTable.dll" Source="..\Anonymisation\ANOStore\bin\Debug\MapsDirectlyToDatabaseTable.dll" />
               <File Id="MAPSDIRECTLYTODATABASETABLE.PDB" Name="MapsDirectlyToDatabaseTable.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\MapsDirectlyToDatabaseTable.pdb" />
               <File Id="MAPSDIRECTLYTODATABASETABLE.XML" Name="MapsDirectlyToDatabaseTable.xml" Source="..\Anonymisation\ANOStore\bin\Debug\MapsDirectlyToDatabaseTable.xml" />

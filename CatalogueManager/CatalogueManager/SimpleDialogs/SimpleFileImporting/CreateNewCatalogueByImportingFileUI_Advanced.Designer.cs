@@ -33,7 +33,6 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CreateNewCatalogueByImportingFileUI_Advanced));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.configureAndExecutePipeline1 = new CatalogueManager.PipelineUIs.Pipelines.ConfigureAndExecutePipeline();
             this.SuspendLayout();
             // 
             // imageList1
@@ -42,21 +41,12 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "Database");
             this.imageList1.Images.SetKeyName(1, "Table");
-            // 
-            // configureAndExecutePipeline1
-            // 
-            this.configureAndExecutePipeline1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.configureAndExecutePipeline1.Location = new System.Drawing.Point(0, 0);
-            this.configureAndExecutePipeline1.Name = "configureAndExecutePipeline1";
-            this.configureAndExecutePipeline1.Size = new System.Drawing.Size(979, 894);
-            this.configureAndExecutePipeline1.TabIndex = 14;
-            this.configureAndExecutePipeline1.TaskDescription = resources.GetString("configureAndExecutePipeline1.TaskDescription");
+          
             // 
             // CreateNewCatalogueByImportingFileUI_Advanced
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.configureAndExecutePipeline1);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;  
             this.Name = "CreateNewCatalogueByImportingFileUI_Advanced";
             this.Size = new System.Drawing.Size(979, 894);
             this.ResumeLayout(false);

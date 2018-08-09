@@ -38,14 +38,18 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-
+            
             var modelType = _args.Model.GetType();
-                
+
             if (_args.Masquerader != null)
             {
+                var masqueradingAs = _args.Masquerader.MasqueradingAs();
+
                 if(MessageBox.Show("Node is '" + MEF.GetCSharpNameForType(_args.Masquerader.GetType()) + "'.  Show help for '" +
-                    MEF.GetCSharpNameForType(modelType) + "'?","Show Help", MessageBoxButtons.YesNo) == DialogResult.No)
+                    MEF.GetCSharpNameForType(masqueradingAs.GetType()) + "'?", "Show Help", MessageBoxButtons.YesNo) == DialogResult.No)
                     return;
+
+                modelType = masqueradingAs.GetType();
             }
 
             if (KeywordHelpTextListbox.ContainsKey(modelType.Name))

@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
-using CatalogueLibrary.Repositories;
 
 namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
 {
@@ -14,9 +10,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
     /// </summary>
     public class PluginPipelineUser : PipelineUseCase,IPipelineUser
     {
-        private object _context;
-        private object[] _inputObjects;
-
+        private IPipelineUseCase _useCase;
         public PipelineGetter Getter { get; private set; }
         public PipelineSetter Setter { get; private set; }
 
@@ -40,22 +34,18 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
             if (pipeDemander == null)
                 throw new NotSupportedException("Class " + pipeDemander.GetType().Name + " does not implement interface IDemandToUseAPipeline despite having a property which is a Pipeline");
 
-            var useCase = pipeDemander.GetDesignTimePipelineUseCase(demand);
+            _useCase = pipeDemander.GetDesignTimePipelineUseCase(demand);
             
-            _context = useCase.GetContext();
-            ExplicitSource = useCase.ExplicitSource;
-            ExplicitDestination = useCase.ExplicitDestination;
-            _inputObjects = useCase.GetInitializationObjects();
-        }
+            ExplicitSource = _useCase.ExplicitSource;
+            ExplicitDestination = _useCase.ExplicitDestination;
 
-        public override object[] GetInitializationObjects()
-        {
-            return _inputObjects ??new Object[0];
+            foreach (var o in GetInitializationObjects())
+                AddInitializationObject(o);
         }
         
-        public override IDataFlowPipelineContext GetContext()
+        protected override IDataFlowPipelineContext GenerateContext()
         {
-            return (IDataFlowPipelineContext) _context;
+            return _useCase.GetContext();
         }
         
     }

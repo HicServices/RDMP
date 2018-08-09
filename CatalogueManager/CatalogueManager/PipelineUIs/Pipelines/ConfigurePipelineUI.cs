@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
@@ -19,54 +18,43 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     /// are trying to build a pipeline to import a FlatFileToLoad into your database then you might use a DelimitedFlatFileDataFlowSource component to read the file (assuming it wasn't fixed 
     /// width or a database file or anything wierd) and a DataTableUploadDestination to put it into the endpoint.  
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public partial class ConfigurePipelineUI<T> : Form 
+    public partial class ConfigurePipelineUI : Form 
     {
         private readonly IPipeline _pipeline;
-        private readonly IDataFlowSource<T> _source;
-        private readonly IDataFlowDestination<T> _destination;
-        private readonly DataFlowPipelineContext<T> _context;
+        private readonly IPipelineUseCase _useCase;
+        private IDataFlowPipelineContext _context;
+        private readonly DataFlowPipelineEngineFactory _factory;
 
-        private readonly DataFlowPipelineEngineFactory<T> _factory;
-        private readonly List<object> _initializationObjectsForPreviewPipelineSource;
         private readonly CatalogueRepository _repository;
 
         private const string NO_COMPONENT = "Unknown";
         
-        private PipelineWorkArea<T> _workArea;
+        private PipelineWorkArea _workArea;
+        
 
-        public ConfigurePipelineUI(IPipeline pipeline, IDataFlowSource<T> source, IDataFlowDestination<T> destination, DataFlowPipelineContext<T> context, List<object> initializationObjectsForPreviewPipelineSource, CatalogueRepository repository)
+        public ConfigurePipelineUI(IPipeline pipeline, IPipelineUseCase useCase, CatalogueRepository repository)
         {
-            if (initializationObjectsForPreviewPipelineSource.Any(o => o == null))
-                throw new ArgumentException("initializationObjectsForPreviewPipelineSource array cannot contain null elements", "initializationObjectsForPreviewPipelineSource");
-
             _pipeline = pipeline;
-            _source = source;
-            _destination = destination;
-            _context = context;
-            _initializationObjectsForPreviewPipelineSource = initializationObjectsForPreviewPipelineSource;
+            _useCase = useCase;
             _repository = repository;
             InitializeComponent();
 
-            _factory = new DataFlowPipelineEngineFactory<T>(repository.MEF, context)
-            {
-                ExplicitSource = source,
-                ExplicitDestination = destination
-            };
+            _factory = new DataFlowPipelineEngineFactory(_useCase,repository.MEF);
 
-            _workArea = new PipelineWorkArea<T>(pipeline, context, repository,initializationObjectsForPreviewPipelineSource.ToArray()) {Dock = DockStyle.Fill};
+            _workArea = new PipelineWorkArea(pipeline, useCase,repository) {Dock = DockStyle.Fill};
             panel1.Controls.Add(_workArea);
 
             tbName.Text = pipeline.Name;
             tbDescription.Text = pipeline.Description;
 
             RefreshUIFromDatabase();
+            _context = _useCase.GetContext();
         }
 
   
         private void RefreshUIFromDatabase()
         {
-            _workArea.SetTo(_factory,_pipeline,_initializationObjectsForPreviewPipelineSource.ToArray());
+            _workArea.SetTo(_pipeline, _useCase);
             try
             {
                 lblPreviewStatus.Text = "No Preview Availble";
@@ -86,40 +74,48 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 
         private void InitializeSourceWithPreviewObjects()
         {
+            //don't bother with previews in design time
+            if(_useCase.IsDesignTime)
+                return;
+
+            var src = _useCase.ExplicitSource as IDataFlowSource<DataTable>;
+
             //fixed source
-            if (_source != null)
+            if (src != null)
             {
-                _workArea.SetPreview(_source.TryGetPreview());
+                _workArea.SetPreview(src.TryGetPreview());
                 lblPreviewStatus.Text = "Preview Generated successfully";
                 lblPreviewStatus.ForeColor = Color.Green;
             }
             else
             {
                 //custom source
-                if (_initializationObjectsForPreviewPipelineSource == null)
+
+                //don't bother trying if it's super design time
+                if (_useCase.IsDesignTime)
                     return;
 
-                if (!_initializationObjectsForPreviewPipelineSource.Any())
-                    return;
+                src = _factory.CreateSourceIfExists(_pipeline) as IDataFlowSource<DataTable>;
 
+                if(src == null)
+                    return;
+                
                 //destination is a pipeline component, factory stamp me out an instance
-                var factory = new DataFlowPipelineEngineFactory<T>(_repository.MEF, _context);
-                var s = factory.CreateSourceIfExists(_pipeline);
-
+                
                 //now use the stamped out instance for preview generation
-                InitializeSourceWithPreviewObjects(s);
+                InitializeSourceWithPreviewObjects(src);
             }
 
         }
 
-        private void InitializeSourceWithPreviewObjects(IDataFlowSource<T> s)
+        private void InitializeSourceWithPreviewObjects(IDataFlowSource<DataTable> s)
         {
             try
             {
                 if (s == null)
                     return;
 
-                _context.PreInitialize(new PopupErrorMessagesEventListener(), s, _initializationObjectsForPreviewPipelineSource.ToArray());
+                _context.PreInitializeGeneric(new PopupErrorMessagesEventListener(), s, _useCase.GetInitializationObjects());
                 _workArea.SetPreview(s.TryGetPreview());
                 lblPreviewStatus.Text = "Preview Generated successfully";
                 lblPreviewStatus.ForeColor = Color.Green;

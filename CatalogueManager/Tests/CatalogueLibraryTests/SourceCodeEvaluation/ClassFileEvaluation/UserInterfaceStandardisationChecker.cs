@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
@@ -25,7 +26,11 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         {
             //it's a singleton because you can only have one decryption certificate for an RDMP as opposed to other SingletonNode classses that represent collections e.g. AllTableInfos is the only collection of TableInfos but it's a collection
             typeof(DecryptionPrivateKeyNode),
-            typeof(ArbitraryFolderNode)
+            typeof(ArbitraryFolderNode),
+            
+            //excused because although singletons they have dynamic names / they are basically a collection
+            typeof(OtherPipelinesNode),
+            typeof(StandardPipelineUseCaseNode)
         };
 
         public void FindProblems(List<string> csFilesList,MEF mef)

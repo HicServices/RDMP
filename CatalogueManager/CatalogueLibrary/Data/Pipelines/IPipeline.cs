@@ -1,12 +1,14 @@
+using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
     /// <summary>
     /// See Pipeline
     /// </summary>
-    public interface IPipeline : IMapsDirectlyToDatabaseTable, ISaveable, IDeleteable
+    public interface IPipeline : IMapsDirectlyToDatabaseTable, ISaveable, IDeleteable, IInjectKnown<IPipelineComponent[]>
     {
         string Name { get; set; }
         string Description { get; set; }
@@ -14,7 +16,7 @@ namespace CatalogueLibrary.Data.Pipelines
         int? DestinationPipelineComponent_ID { get; set; }
         int? SourcePipelineComponent_ID { get; set; }
 
-        IOrderedEnumerable<IPipelineComponent> PipelineComponents { get; }
+        IList<IPipelineComponent> PipelineComponents { get; }
         IPipelineComponent Destination { get; }
         IPipelineComponent Source { get; }
     }

@@ -14,6 +14,8 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Events;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.ItemActivation;
 using HIC.Logging.Listeners;
 using CatalogueManager.PipelineUIs.DataObjects;
 using ReusableLibraryCode.Progress;
@@ -39,8 +41,9 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     /// </summary>
     public partial class ConfigureAndExecutePipeline : UserControl
     {
-        private PipelineSelectionUI<DataTable> _pipelineSelectionUI;
-        private PipelineDiagram<DataTable> pipelineDiagram1;
+        private readonly PipelineUseCase _useCase;
+        private PipelineSelectionUI _pipelineSelectionUI;
+        private PipelineDiagram pipelineDiagram1;
 
 
         public event PipelineEngineEventHandler PipelineExecutionStarted;
@@ -50,17 +53,33 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 
         readonly List<object> _initializationObjects = new List<object>();
 
-        public ConfigureAndExecutePipeline()
+       public ConfigureAndExecutePipeline(PipelineUseCase useCase, IActivateItems activator)
         {
-            InitializeComponent();
+           _useCase = useCase;
+           
+           InitializeComponent();
 
-            pipelineDiagram1  = new PipelineDiagram<DataTable>();
-            
+            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
+
+            pipelineDiagram1 = new PipelineDiagram();
+
             pipelineDiagram1.Dock = DockStyle.Fill;
             panel_pipelineDiagram1.Controls.Add(pipelineDiagram1);
 
             fork = new ForkDataLoadEventListener(progressUI1);
+
+            var context = useCase.GetContext();
+
+            if(context.GetFlowType() != typeof(DataTable))
+                throw new NotSupportedException("Only DataTable flow contexts can be used with this class");
+
+            foreach (var o in useCase.GetInitializationObjects())
+                AddInitializationObject(o);
+
+            SetPipelineOptions((IDataFlowSource<DataTable>)useCase.ExplicitSource, (IDataFlowDestination<DataTable>)useCase.ExplicitDestination, (DataFlowPipelineContext<DataTable>)context, activator.RepositoryLocator.CatalogueRepository);
+
         }
+
 
         [Description("The task you are trying to achieve with this pipeline execution (should tell the user about the context and allowable components etc)")]
         public string TaskDescription {
@@ -69,12 +88,12 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         }
 
         
-        public void AddInitializationObject(object o)
+        private void AddInitializationObject(object o)
         {
             if(o is DatabaseEntity)
                 rdmpObjectsRibbonUI1.Add((DatabaseEntity)o);
             else
-                rdmpObjectsRibbonUI1.Add(o.ToString());
+                rdmpObjectsRibbonUI1.Add(o);
 
             _initializationObjects.Add(o);
         }
@@ -82,24 +101,19 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         private bool _pipelineOptionsSet = false;
 
         private DataFlowPipelineContext<DataTable> _context;
-        private IDataFlowDestination<DataTable> _destinationIfExists;
-        private IDataFlowSource<DataTable> _sourceIfExists;
         
-        public DataFlowPipelineEngineFactory<DataTable> PipelineFactory { get; private set; }
+        public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
         
-        public void SetPipelineOptions(IDataFlowSource<DataTable> sourceIfExists, IDataFlowDestination<DataTable> destinationIfExists, DataFlowPipelineContext<DataTable> context, CatalogueRepository repository)
+        private void SetPipelineOptions(IDataFlowSource<DataTable> sourceIfExists, IDataFlowDestination<DataTable> destinationIfExists, DataFlowPipelineContext<DataTable> context, CatalogueRepository repository)
         {
             if (_pipelineOptionsSet)
                 throw new Exception("CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
 
             _context = context;
-            _sourceIfExists = sourceIfExists;
-            _destinationIfExists = destinationIfExists;
             _pipelineOptionsSet = true;
 
-            _pipelineSelectionUI = new PipelineSelectionUI<DataTable>(sourceIfExists, destinationIfExists, repository)
+            _pipelineSelectionUI = new PipelineSelectionUI(_useCase, repository)
             {
-                Context = context,
                 Dock = DockStyle.Fill
             };
             _pipelineSelectionUI.PipelineChanged += _pipelineSelectionUI_PipelineChanged;
@@ -108,11 +122,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             pPipelineSelection.Controls.Add(_pipelineSelectionUI);
             
             //setup factory
-            PipelineFactory = new DataFlowPipelineEngineFactory<DataTable>(repository.MEF, _context)
-            {
-                ExplicitSource = _sourceIfExists,
-                ExplicitDestination = _destinationIfExists
-            };
+            PipelineFactory = new DataFlowPipelineEngineFactory(_useCase, repository.MEF);
 
             _pipelineOptionsSet = true;
 
@@ -141,14 +151,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             //not ready to refresh diagram yet
             if (!_pipelineOptionsSet)
                 return;
-            
-            pipelineDiagram1.SetTo(
-                PipelineFactory, //the factory that knows about fixed sources/destinations and context
-                _pipelineSelectionUI.Pipeline, //the possibly invalid pipeline configuration the user has chosen
-                _initializationObjects.ToArray());//objects that will satisfy IPipelineRequirement e.g. cohort/file 
-            
-            _pipelineSelectionUI.InitializationObjectsForPreviewPipeline.Clear();
-            _pipelineSelectionUI.InitializationObjectsForPreviewPipeline.AddRange(_initializationObjects);
+
+            pipelineDiagram1.SetTo(_pipelineSelectionUI.Pipeline, _useCase);
         }
 
 

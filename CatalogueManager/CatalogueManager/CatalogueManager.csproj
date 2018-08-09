@@ -405,8 +405,10 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewStandardRegex.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipelineWithUseCase.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFileUI.cs" />
@@ -426,7 +428,8 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenCommandIsPipelineCompatibleWithUseCaseNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
     <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
@@ -444,6 +447,7 @@
     <Compile Include="Copying\Commands\FileCollectionCommand.cs" />
     <Compile Include="Copying\Commands\FilterCommand.cs" />
     <Compile Include="Copying\Commands\ManyCataloguesCommand.cs" />
+    <Compile Include="Copying\Commands\PipelineCommand.cs" />
     <Compile Include="Copying\Commands\ProcessTaskCommand.cs" />
     <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
     <Compile Include="Copying\Commands\TableInfoCommand.cs" />
@@ -617,7 +621,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPreLoadDiscardedColumn.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewProcessTask.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCatalogueWithLoadMetadata.cs" />
@@ -626,7 +629,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadMetadata.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDelete.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRename.cs" />
@@ -969,7 +971,6 @@
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
     <Compile Include="Menus\LoadStageNodeMenu.cs" />
-    <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs" />
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs" />
     <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
@@ -1227,7 +1228,6 @@
     <Compile Include="SimpleDialogs\Revertable\RevertablePropertyDifferenceUI.Designer.cs">
       <DependentUpon>RevertablePropertyDifferenceUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\SimpleFileImporting\ConfigurePipelineUIFactory.cs" />
     <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1667,6 +1667,7 @@
     <None Include="Icons\Writing.png" />
     <None Include="Icons\WaitingForDatabase.png" />
     <None Include="Icons\StandardPipelineUseCaseNode.png" />
+    <None Include="Icons\OtherPipelinesNode.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

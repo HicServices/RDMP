@@ -76,7 +76,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                     return;
                 }
 
-                _argumentCollection.Setup(repo, databaseObject, _underlyingType);
+                _argumentCollection.Setup(databaseObject, _underlyingType);
 
                 _argumentCollection.Dock = DockStyle.Fill;
                 pArguments.Controls.Add(_argumentCollection);

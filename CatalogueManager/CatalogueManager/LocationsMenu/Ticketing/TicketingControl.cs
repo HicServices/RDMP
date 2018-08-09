@@ -1,8 +1,4 @@
 using System;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Windows.Media;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Ticketing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
@@ -55,6 +51,8 @@ namespace CatalogueManager.LocationsMenu.Ticketing
 
         public void ReCheckTicketingSystemInCatalogue()
         {
+            ragSmiley1.SetVisible(false);
+            
             try
             {
                 if (VisualStudioDesignMode)
@@ -70,10 +68,8 @@ namespace CatalogueManager.LocationsMenu.Ticketing
             }
             catch (Exception exception)
             {
-                var toMemory = new ToMemoryCheckNotifier();
-                toMemory.OnCheckPerformed(new CheckEventArgs("Failed to check Ticketing system", CheckResult.Fail, exception));
-
-                checksUIIconOnly1.Check(new ReplayCheckable(toMemory));
+                ragSmiley1.SetVisible(true);
+                ragSmiley1.Fatal(exception);
             }
         }
 

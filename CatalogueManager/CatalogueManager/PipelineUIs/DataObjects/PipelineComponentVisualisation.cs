@@ -107,10 +107,6 @@ namespace CatalogueManager.PipelineUIs.DataObjects
                 DoDragDrop(this, DragDropEffects.Move);
             }
         }
-        
-        public void Clear()
-        {
-            ragSmiley1.Reset();
-        }
+
     }
 }

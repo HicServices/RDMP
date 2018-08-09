@@ -3,7 +3,7 @@ using BrightIdeasSoftware;
 
 namespace CatalogueManager.PipelineUIs.Pipelines
 {
-    partial class PipelineWorkArea<T>
+    partial class PipelineWorkArea
     {
         /// <summary> 
         /// Required designer variable.

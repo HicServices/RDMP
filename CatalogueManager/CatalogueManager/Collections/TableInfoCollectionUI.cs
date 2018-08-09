@@ -10,6 +10,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
@@ -133,6 +134,8 @@ namespace CatalogueManager.Collections
             
             if(e.Object is Catalogue || e.Object is TableInfo) 
                 tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
+
+            tlvTableInfos.RefreshObject(_activator.CoreChildProvider.AllPipelinesNode);
         }
         
         public static bool IsRootObject(object root)
@@ -143,7 +146,9 @@ namespace CatalogueManager.Collections
                 root is AllExternalServersNode ||
                 root is AllDataAccessCredentialsNode ||
                 root is AllANOTablesNode ||
-                root is AllServersNode;
+                root is AllServersNode || 
+                root is AllPipelinesNode;
+
         }
     }
 }

@@ -13,7 +13,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// that the extracted files match the current system configuration and that all expected files are there (See ReleasePotential).  In addition the ticketing
     /// system (if any) is consulted to confirm that it is happy for the collection to be released (See EnvironmentPotential)
     /// </summary>
-    public class ReleaseData : IHasDesignTimeMode
+    public class ReleaseData
     {
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsForRelease { get; set; }
@@ -22,7 +22,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
         public bool ReleaseGlobals { get; set; }
         
         public ReleaseState ReleaseState { get; set; }
-        public bool IsDesignTime { get; private set; }
         
         public ReleaseData(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
@@ -30,11 +29,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             ConfigurationsForRelease = new Dictionary<IExtractionConfiguration, List<ReleasePotential>>();
             EnvironmentPotentials = new Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential>();
             SelectedDatasets = new Dictionary<IExtractionConfiguration, IEnumerable<ISelectedDataSets>>();
-        }
-
-        public static ReleaseData DesignTime(IRDMPPlatformRepositoryServiceLocator repositoryServiceLocator)
-        {
-            return new ReleaseData(repositoryServiceLocator) {IsDesignTime = true};
-        }
+        } 
     }
 }

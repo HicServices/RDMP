@@ -107,6 +107,24 @@ namespace CatalogueLibrary.Repositories
                 throw new Exception("Failed to get ComposablePartExportType<T> where T was " + typeof(T).Name + " and part was " + part + " and we decided MEF would probably be calling T a " + whatIAmLookingFor, e);
             }
         }
+        private Type ComposablePartExportType(Type t, ComposablePartDefinition part)
+        {
+            string whatIAmLookingFor = GetMEFNameForType(t);
+            try
+            {
+                if (part.ExportDefinitions.Any(
+                    def => def.Metadata.ContainsKey("ExportTypeIdentity") &&
+                           def.Metadata["ExportTypeIdentity"].Equals(whatIAmLookingFor)))
+                {
+                    return ReflectionModelServices.GetPartType(part).Value;
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed to get ComposablePartExportType<T> where T was " + t.Name + " and part was " + part + " and we decided MEF would probably be calling T a " + whatIAmLookingFor, e);
+            }
+        }
 
         /// <summary>
         /// Turns the legit C# name:
@@ -203,6 +221,27 @@ namespace CatalogueLibrary.Repositories
                     .Select(part =>
                         ComposablePartExportType<T>(part))
                     .Where(t => t != null);
+        }
+
+        public IEnumerable<Type> GetTypes(Type type)
+        {
+            SetupMEFIfRequired();
+
+            return SafeDirectoryCatalog.Parts
+                    .Select(part =>
+                        ComposablePartExportType(type, part))
+                    .Where(t => t != null);
+        }
+
+        /// <summary>
+        /// Returns all MEF exported classes decorated with the specified generic export e.g. [Export(typeof(IDataFlowComponent&lt;DataTable&gt;))]
+        /// </summary>
+        /// <param name="genericType"></param>
+        /// <param name="typeOfT"></param>
+        /// <returns></returns>
+        public IEnumerable<Type> GetGenericTypes(Type genericType, Type typeOfT)
+        {
+            return GetTypes(genericType.MakeGenericType(typeOfT));
         }
 
         public IEnumerable<Type> GetAllTypes()
@@ -302,9 +341,15 @@ namespace CatalogueLibrary.Repositories
             container.ComposeParts(importingFactory);
         }
 
+        readonly Dictionary<string,Type> _cachedTypes = new Dictionary<string, Type>();
 
         public Type GetTypeByNameFromAnyLoadedAssembly(string name, Type expectedBaseClassType = null, StringComparison comparisonType = StringComparison.CurrentCulture)
         {
+            if (_cachedTypes.ContainsKey(name))
+                return _cachedTypes[name];
+
+            Type toReturn = null;
+
             SetupMEFIfRequired();
 
             if (string.IsNullOrWhiteSpace(name))
@@ -317,47 +362,53 @@ namespace CatalogueLibrary.Repositories
                     throw new InvalidOperationException("The type array produced by GetAllTypes should not contain any nulls");
 
                 if (type.FullName.Equals(name,comparisonType))
-                    return type;
+                    toReturn =  type;
             }
 
-            List<Type> matches = new List<Type>();
-            List<Type> fullMatches = new List<Type>();
-
-            //could be basic type
-            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            if(toReturn == null)
             {
-                try
-                {
-                    foreach (Type type in asm.GetTypes())
-                    {
-                        //type doesn't match base type
-                        if (expectedBaseClassType != null)
-                            if (!expectedBaseClassType.IsAssignableFrom(type))
-                                continue;
+                List<Type> matches = new List<Type>();
+                List<Type> fullMatches = new List<Type>();
 
-                        if (type.FullName.Equals(name, comparisonType))
-                            fullMatches.Add(type);
-                        else
-                            if (type.Name.Equals(name, comparisonType))
-                                matches.Add(type);
+                //could be basic type
+                foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    try
+                    {
+                        foreach (Type type in asm.GetTypes())
+                        {
+                            //type doesn't match base type
+                            if (expectedBaseClassType != null)
+                                if (!expectedBaseClassType.IsAssignableFrom(type))
+                                    continue;
+
+                            if (type.FullName.Equals(name, comparisonType))
+                                fullMatches.Add(type);
+                            else
+                                if (type.Name.Equals(name, comparisonType))
+                                    matches.Add(type);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        continue;
                     }
                 }
-                catch (Exception)
-                {
-                    continue;
-                }
+
+                if (fullMatches.Any())
+                    toReturn = fullMatches.Single();
+
+                if (matches.Any())
+                    if (matches.Count > 1)
+                        throw new Exception("Found " + matches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, matches.Select(m => m.FullName)));
+                    else
+                        toReturn = matches.Single();
             }
 
-            if (fullMatches.Any())
-                return fullMatches.Single();
+            //cache the answer even if it is null (could not resolve Type name)
+            _cachedTypes.Add(name,toReturn);
 
-            if (matches.Any())
-                if(matches.Count > 1)
-                    throw new Exception("Found " + matches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine,matches.Select(m=>m.FullName)));
-                else
-                    return matches.Single();
-
-            return null;
+            return toReturn;
         }
 
 
@@ -405,7 +456,5 @@ namespace CatalogueLibrary.Repositories
                         prev + "Dll:" + next.Key + separator + " Exception:" +
                         ExceptionHelper.ExceptionToListOfInnerMessages(next.Value) + separator);
         }
-
-        
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition.Primitives;
 using System.Drawing;
 using System.Data;
 using System.Linq;
@@ -21,22 +22,19 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     /// not available.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public partial class PipelineWorkArea<T> : UserControl
+    public partial class PipelineWorkArea : UserControl
     {
-        private PipelineDiagram<T> _pipelineDiagram;
+        private PipelineDiagram _pipelineDiagram;
         private ArgumentCollection _arumentsCollection1;
         private IPipeline _pipeline;
-        private readonly DataFlowPipelineContext<T> _context;
-        private readonly CatalogueRepository _catalogueRepository;
+        private readonly IPipelineUseCase _useCase;
+        private readonly ICatalogueRepository _catalogueRepository;
 
 
-        public PipelineWorkArea(IPipeline pipeline, DataFlowPipelineContext<T> context, CatalogueRepository catalogueRepository, object[] initializationObjects)
+        public PipelineWorkArea(IPipeline pipeline, IPipelineUseCase useCase, ICatalogueRepository catalogueRepository)
         {
-            if (initializationObjects.Any(o=>o == null))
-                throw new ArgumentException("initializationObjects array cannot contain null elements", "initializationObjects");
-
             _pipeline = pipeline;
-            _context = context;
+            _useCase = useCase;
             _catalogueRepository = catalogueRepository;
 
             InitializeComponent();
@@ -44,7 +42,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             olvComponents.BuildGroups(olvRole, SortOrder.Ascending);
             olvComponents.AlwaysGroupByColumn = olvRole;
 
-            _pipelineDiagram = new PipelineDiagram<T>();
+            _pipelineDiagram = new PipelineDiagram();
             _pipelineDiagram.AllowSelection = true;
             _pipelineDiagram.AllowReOrdering = true;
             _pipelineDiagram.SelectedComponentChanged += _pipelineDiagram_SelectedComponentChanged;
@@ -56,17 +54,18 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             gbArguments.Controls.Add(_arumentsCollection1);
 
             olvComponents.RowFormatter+= RowFormatter;
-            
+            var context = _useCase.GetContext();
+
             try
             {
-                var allTypes = _catalogueRepository.MEF.GetTypes<IDataFlowComponent<T>>();
+                //middle and destination components
+                var allComponentTypes = _catalogueRepository.MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
+                
+                //source components (list of all types with MEF exports of [Export(typeof(IDataFlowSource<DataTable>))])
+                var allSourceTypes = _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
-                //destinations are not allowed under this context (i.e. NONE of them will be compatible) so don't even bother showing them
-                if (context.CannotHave.Contains(typeof (IDataFlowDestination<T>)))
-                    allTypes = allTypes.Where(t => !typeof (IDataFlowDestination<T>).IsAssignableFrom(t));//change allTypes to those that are not destinations
-
-                olvComponents.AddObjects(allTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext<T>(t, context, initializationObjects)).ToArray());
-                olvComponents.AddObjects(_catalogueRepository.MEF.GetTypes<IDataFlowSource<T>>().Select(t => new AdvertisedPipelineComponentTypeUnderContext<T>(t, context, initializationObjects)).ToArray());
+                olvComponents.AddObjects(allComponentTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, _useCase)).ToArray());
+                olvComponents.AddObjects(allSourceTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, useCase)).ToArray());
             }
             catch (Exception exception)
             {
@@ -81,28 +80,28 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             gbArguments.Enabled = true;
 
             if (selected == null)
-                _arumentsCollection1.Setup(_catalogueRepository, null, null);
+                _arumentsCollection1.Setup(null, null);
             else
-                _arumentsCollection1.Setup(_catalogueRepository, selected, selected.GetClassAsSystemType());
+                _arumentsCollection1.Setup(selected, selected.GetClassAsSystemType());
         }
 
         private void RowFormatter(OLVListItem olvItem)
         {
-            var advertised = (AdvertisedPipelineComponentTypeUnderContext<T>)olvItem.RowObject;
+            var advertised = (AdvertisedPipelineComponentTypeUnderContext)olvItem.RowObject;
 
             if (!advertised.IsCompatible())
                 olvItem.ForeColor = Color.Red;
         }
 
-        public void SetTo(DataFlowPipelineEngineFactory<T> pipelineFactory, IPipeline pipeline, object[] initializationObjects)
+        public void SetTo(IPipeline pipeline,IPipelineUseCase useCase)
         {
-            _pipelineDiagram.SetTo(pipelineFactory,pipeline,initializationObjects);
+            _pipelineDiagram.SetTo(pipeline,useCase);
         }
 
         
         private void olvComponents_CellRightClick(object sender, CellRightClickEventArgs e)
         {
-            var model = (AdvertisedPipelineComponentTypeUnderContext<T>)e.Model;
+            var model = (AdvertisedPipelineComponentTypeUnderContext)e.Model;
             
             ContextMenuStrip RightClickMenu = new ContextMenuStrip();
             
@@ -118,7 +117,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 
         }
 
-        public void SetPreview(T preview)
+        public void SetPreview(object preview)
         {
             var dt = preview as DataTable;
 

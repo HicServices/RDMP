@@ -10,7 +10,7 @@ namespace CatalogueLibrary
     /// <summary>
     /// Basic implementation of IHICProjectDirectory including support for creating new templates on the file system.
     /// </summary>
-    public class HICProjectDirectory : IHICProjectDirectory,IHasDesignTimeMode
+    public class HICProjectDirectory : IHICProjectDirectory
     {
         public const string ExampleFixedWidthFormatFileContents = @"From,To,Field,Size,DateFormat
 1,7,gmc,7,
@@ -142,13 +142,5 @@ namespace CatalogueLibrary
 
             return new HICProjectDirectory(projectDir.FullName, false);
         }
-        
-        public bool IsDesignTime { get; private set; }
-
-        private HICProjectDirectory()
-        {
-            IsDesignTime = true;
-        }
-        public readonly static HICProjectDirectory Empty = new HICProjectDirectory();
     }
 }

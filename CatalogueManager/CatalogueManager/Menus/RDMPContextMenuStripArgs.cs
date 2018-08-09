@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 
 namespace CatalogueManager.Menus
@@ -7,7 +8,7 @@ namespace CatalogueManager.Menus
     {
         public IActivateItems ItemActivator { get; set; }
         public object CurrentlyPinnedObject { get; set; }
-        public object Masquerader { get; set; }
+        public IMasqueradeAs Masquerader { get; set; }
         
         public TreeListView Tree { get; set; }
         public object Model { get; set; }

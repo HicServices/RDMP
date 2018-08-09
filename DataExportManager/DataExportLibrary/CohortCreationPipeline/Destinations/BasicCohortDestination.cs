@@ -168,10 +168,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
         public virtual void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
         {
             Request = value;
-
-            if(value.IsDesignTime)
-                return;
-
+            
             var target = Request.NewCohortDefinition.LocationOfCohort;
 
             var syntax = target.GetQuerySyntaxHelper();

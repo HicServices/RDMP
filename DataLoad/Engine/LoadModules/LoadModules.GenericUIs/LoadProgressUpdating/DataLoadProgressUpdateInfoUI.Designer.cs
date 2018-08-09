@@ -37,7 +37,7 @@
             this.lblWarning = new System.Windows.Forms.Label();
             this.tbTimeout = new System.Windows.Forms.TextBox();
             this.lblTimeout = new System.Windows.Forms.Label();
-            this.checksUIIconOnly1 = new ReusableUIComponents.ChecksUI.ChecksUIIconOnly();
+            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.SuspendLayout();
             // 
             // ddStrategy
@@ -131,19 +131,21 @@
             this.lblTimeout.TabIndex = 8;
             this.lblTimeout.Text = "Timeout (in seconds):";
             // 
-            // checksUIIconOnly1
+            // ragSmiley1
             // 
-            this.checksUIIconOnly1.Location = new System.Drawing.Point(5, 68);
-            this.checksUIIconOnly1.Name = "checksUIIconOnly1";
-            this.checksUIIconOnly1.Size = new System.Drawing.Size(20, 20);
-            this.checksUIIconOnly1.TabIndex = 9;
+            this.ragSmiley1.AlwaysShowHandCursor = false;
+            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Location = new System.Drawing.Point(3, 91);
+            this.ragSmiley1.Name = "ragSmiley1";
+            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
+            this.ragSmiley1.TabIndex = 9;
             // 
             // DataLoadProgressUpdateInfoUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1017, 553);
-            this.Controls.Add(this.checksUIIconOnly1);
+            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.lblTimeout);
             this.Controls.Add(this.tbTimeout);
             this.Controls.Add(this.lblWarning);
@@ -172,6 +174,6 @@
         private System.Windows.Forms.Label lblWarning;
         private System.Windows.Forms.TextBox tbTimeout;
         private System.Windows.Forms.Label lblTimeout;
-        private ReusableUIComponents.ChecksUI.ChecksUIIconOnly checksUIIconOnly1;
+        private ReusableUIComponents.RAGSmiley ragSmiley1;
     }
 }

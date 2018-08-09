@@ -28,9 +28,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandSetDataAccessContextForCredentials),
                 typeof(ExecuteCommandActivate),
                 typeof(ExecuteCommandCreateNewExternalDatabaseServer),
-                typeof(ExecuteCommandCreateNewPipeline),
                 typeof(ExecuteCommandDelete),
-                typeof(ExecuteCommandEditPipeline),
                 typeof(ExecuteCommandRename),
                 typeof(ExecuteCommandSetPipeline),
                 typeof(ExecuteCommandShowKeywordHelp),
@@ -38,7 +36,12 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandExpandAllNodes),
                 typeof(ExecuteCommandViewDependencies),
                 typeof(ExecuteCommandViewCohortAggregateGraph),
-                typeof(ExecuteCommandExecuteExtractionAggregateGraph)
+                typeof(ExecuteCommandExecuteExtractionAggregateGraph),
+                
+                //requires a use case
+                typeof(ExecuteCommandCreateNewPipeline),
+                typeof(ExecuteCommandEditPipelineWithUseCase)
+
             });
 
         [Test]

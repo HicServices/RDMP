@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Pipelines
@@ -29,7 +30,7 @@ namespace CatalogueLibrary.Data.Pipelines
     /// <para>Remember that Pipeline is the serialization, pipelines are used all over the place in RDMP software under different contexts (caching, data extraction etc)
     /// and sometimes we even create DataFlowPipelineEngine on the fly without even having a Pipeline serialization to create it from.</para>
     /// </summary>
-    public class Pipeline : VersionedDatabaseEntity, IPipeline,IHasDependencies
+    public class Pipeline : VersionedDatabaseEntity, IPipeline,IHasDependencies, IInjectKnown<IPipelineComponent[]>
     {
         #region Database Properties
 
@@ -66,11 +67,9 @@ namespace CatalogueLibrary.Data.Pipelines
 
         #region Relationships
         [NoMappingToDatabase]
-        public IOrderedEnumerable<IPipelineComponent> PipelineComponents { get
+        public IList<IPipelineComponent> PipelineComponents { get
         {
-            return Repository.GetAllObjectsWithParent<PipelineComponent>(this)
-                .Cast<IPipelineComponent>()
-                .OrderBy(p => p.Order);
+            return _knownPipelineComponents.Value;
         }}
 
         [NoMappingToDatabase]
@@ -79,7 +78,7 @@ namespace CatalogueLibrary.Data.Pipelines
             {
                 return DestinationPipelineComponent_ID == null
                     ? null
-                    : Repository.GetObjectByID<PipelineComponent>((int) DestinationPipelineComponent_ID);
+                    :_knownPipelineComponents.Value.Single(c=>c.ID == DestinationPipelineComponent_ID.Value);
             }
         }
 
@@ -90,7 +89,7 @@ namespace CatalogueLibrary.Data.Pipelines
             {
                 return SourcePipelineComponent_ID == null
                     ? null
-                    : Repository.GetObjectByID<PipelineComponent>((int)SourcePipelineComponent_ID);
+                    :_knownPipelineComponents.Value.Single(c=>c.ID == SourcePipelineComponent_ID.Value);
             }
         }
 
@@ -102,6 +101,8 @@ namespace CatalogueLibrary.Data.Pipelines
             {
                 {"Name", name ?? "NewPipeline " + Guid.NewGuid()}
             });
+            
+            ClearAllInjections();
         }
 
         internal Pipeline(ICatalogueRepository repository, DbDataReader r)
@@ -122,6 +123,8 @@ namespace CatalogueLibrary.Data.Pipelines
                 SourcePipelineComponent_ID = Convert.ToInt32(o);
 
             Description = r["Description"] as string;
+
+            ClearAllInjections();
         }
         
         public override string ToString()
@@ -170,6 +173,26 @@ namespace CatalogueLibrary.Data.Pipelines
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return PipelineComponents.Cast<IHasDependencies>().ToArray();
+        }
+
+        private Lazy<IList<IPipelineComponent>> _knownPipelineComponents;
+
+        public void InjectKnown(IPipelineComponent[] instance)
+        {
+            _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(()=>instance.OrderBy(p=>p.Order).ToList());
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(FetchPipelineComponents);
+        }
+
+        private IList<IPipelineComponent> FetchPipelineComponents()
+        {
+            return Repository.GetAllObjectsWithParent<PipelineComponent>(this)
+                .Cast<IPipelineComponent>()
+                .OrderBy(p => p.Order)
+                .ToList();
         }
     }
 }
