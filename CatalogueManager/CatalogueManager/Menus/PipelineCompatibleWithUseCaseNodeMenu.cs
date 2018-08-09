@@ -1,21 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Nodes.PipelineNodes;
+using CatalogueManager.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Menus
 {
     class PipelineMenu : RDMPContextMenuStrip
     {
+        public PipelineMenu(RDMPContextMenuStripArgs args, PipelineCompatibleWithUseCaseNode node): base(args,node)
+        {
+            Add(new ExecuteCommandCreateNewPipeline(_activator, node.UseCase));
+        }
+        public PipelineMenu(RDMPContextMenuStripArgs args, StandardPipelineUseCaseNode node): base(args, node)
+        {
+            Add(new ExecuteCommandCreateNewPipeline(_activator, node.UseCase));
+        }
         public PipelineMenu(RDMPContextMenuStripArgs args, Pipeline pipeline): base(args, pipeline)
         {
-        }
-
-        public PipelineMenu(RDMPContextMenuStripArgs args, PipelineCompatibleWithUseCaseNode node): this(args, node.Pipeline)
-        {
+            Add(new ExecuteCommandCreateNewPipeline(_activator, null));
         }
     }
 }

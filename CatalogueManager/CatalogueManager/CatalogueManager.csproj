@@ -405,6 +405,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewStandardRegex.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipelineWithUseCase.cs" />
