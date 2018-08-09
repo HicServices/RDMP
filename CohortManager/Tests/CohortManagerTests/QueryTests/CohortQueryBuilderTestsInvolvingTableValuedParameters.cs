@@ -1,6 +1,5 @@
 ﻿using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueLibraryTests.Integration.TableValuedFunctionTests;
 using CohortManagerLibrary.QueryBuilding;
 using NUnit.Framework;
 using Tests.Common;

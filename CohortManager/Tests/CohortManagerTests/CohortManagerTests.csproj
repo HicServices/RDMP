@@ -81,9 +81,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -114,14 +112,6 @@
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\CatalogueManager\Tests\CatalogueLibraryTests\CatalogueLibraryTests.csproj">
-      <Project>{E733ACCF-3610-4F90-A240-8B9A757270C4}</Project>
-      <Name>CatalogueLibraryTests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
-      <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
-      <Name>DataExportLibrary.Database</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
       <Name>Diagnostics</Name>
@@ -133,10 +123,6 @@
     <ProjectReference Include="..\..\..\QueryCaching\QueryCaching\QueryCaching.csproj">
       <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>
       <Name>QueryCaching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\QueryCaching\Tests\QueryCachingTests\QueryCachingTests.csproj">
-      <Project>{5EC77801-AC9C-4DA1-8597-9A66D058112F}</Project>
-      <Name>QueryCachingTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>

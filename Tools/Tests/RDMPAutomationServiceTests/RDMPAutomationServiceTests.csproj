@@ -37,14 +37,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
@@ -69,14 +63,6 @@
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
-      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
-      <Name>DataExportLibrary.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
-      <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
-      <Name>DataQualityEngine</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
       <Name>Diagnostics</Name>
@@ -84,10 +70,6 @@
     <ProjectReference Include="..\..\..\Logging\HIC.Logging\HIC.Logging.csproj">
       <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
       <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\RDMPStartup\RDMPStartup.csproj">
-      <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
-      <Name>RDMPStartup</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
@@ -100,10 +82,6 @@
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj">
       <Project>{CA13A431-7FB6-4BCE-8521-42D130934311}</Project>
       <Name>Tests.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
-      <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>
-      <Name>HIC.Common.Validation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>

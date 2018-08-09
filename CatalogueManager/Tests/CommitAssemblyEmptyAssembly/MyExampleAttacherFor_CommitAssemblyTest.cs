@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
 using System.Text;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;

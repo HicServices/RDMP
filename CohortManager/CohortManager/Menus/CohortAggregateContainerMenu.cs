@@ -18,7 +18,6 @@ using CohortManager.Collections.Providers;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
 using CatalogueManager.Copying.Commands;
-using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;

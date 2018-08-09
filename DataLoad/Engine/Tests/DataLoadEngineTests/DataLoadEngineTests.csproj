@@ -219,14 +219,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\MySql.Data.8.0.11\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -236,19 +228,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -376,18 +359,6 @@
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\CatalogueManager\Tests\CatalogueLibraryTests\CatalogueLibraryTests.csproj">
-      <Project>{E733ACCF-3610-4F90-A240-8B9A757270C4}</Project>
-      <Name>CatalogueLibraryTests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
-      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
-      <Name>DataExportLibrary.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
-      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
-      <Name>DataExportLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
       <Name>Diagnostics</Name>
@@ -395,10 +366,6 @@
     <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj">
       <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
       <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\RDMPStartup\RDMPStartup.csproj">
-      <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
-      <Name>RDMPStartup</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>

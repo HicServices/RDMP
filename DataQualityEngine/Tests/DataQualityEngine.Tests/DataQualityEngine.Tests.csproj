@@ -78,13 +78,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
@@ -106,10 +101,6 @@
       <Project>{C37254B9-2224-4DDC-B2B2-4E3E8CB963B7}</Project>
       <Name>DataExportLibrary.Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
-      <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
-      <Name>DataLoadEngine</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
       <Name>Diagnostics</Name>
@@ -129,10 +120,6 @@
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj">
       <Project>{CA13A431-7FB6-4BCE-8521-42D130934311}</Project>
       <Name>Tests.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
-      <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>
-      <Name>HIC.Common.Validation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>

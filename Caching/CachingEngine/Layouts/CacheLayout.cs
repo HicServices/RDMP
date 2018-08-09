@@ -6,7 +6,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
-using System.ServiceModel.PeerResolvers;
 using CachingEngine.PipelineExecution.Destinations;
 using CachingEngine.Requests;
 using CatalogueLibrary.Data.Cache;

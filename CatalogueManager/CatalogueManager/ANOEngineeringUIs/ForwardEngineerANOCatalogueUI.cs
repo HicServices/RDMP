@@ -24,7 +24,6 @@ using LoadModules.Generic.Attachers;
 using LoadModules.Generic.LoadProgressUpdating;
 using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
-using Newtonsoft.Json;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 

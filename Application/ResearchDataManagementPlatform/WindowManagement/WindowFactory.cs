@@ -12,7 +12,6 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus;

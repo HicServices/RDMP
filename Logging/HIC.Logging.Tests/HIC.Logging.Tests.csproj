@@ -53,11 +53,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -85,14 +81,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
-      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
-      <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7f56d629-dc24-43a5-a338-073687433e55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>

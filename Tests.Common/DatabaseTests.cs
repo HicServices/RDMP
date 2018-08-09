@@ -8,16 +8,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using ANOStore.ANOEngineering;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.ExternalDatabaseServerPatching;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
-using DataQualityEngine.Data;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MySql.Data.MySqlClient;
@@ -28,7 +24,6 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using Rhino.Mocks;
 
 namespace Tests.Common
 {
