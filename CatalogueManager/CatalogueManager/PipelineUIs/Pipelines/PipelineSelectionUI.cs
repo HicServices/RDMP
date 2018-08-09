@@ -22,13 +22,12 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     /// then you can untick 'Only Show Compatible Pipelines' which will show all Pipelines of the type T (usually DataTable).  You should only use this feature to edit Pipelines as there is zero
     /// chance they will execute Successfully if they are not compatible with the DataFlowPipelineContext.</para>
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public partial class PipelineSelectionUI<T> : UserControl, IPipelineSelectionUI
+    public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     {
-        private readonly IDataFlowSource<T> _sourceIfExists;
-        private readonly IDataFlowDestination<T> _destinationIfExists;
+
+        private IPipelineUseCase _useCase;
         private readonly CatalogueRepository _repository;
-        private DataFlowPipelineContext<T> _context;
+        
         private IPipeline _pipeline;
         public event Action PipelineDeleted = delegate { };
         
@@ -46,21 +45,6 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                     ddPipelines.SelectedItem = value;
             }
         }
-        
-        public DataFlowPipelineContext<T> Context
-        {
-            get { return _context; }
-            set
-            {
-                _context = value;
-                RefreshPipelineList();
-            }
-        }
-
-        public void SetContext(IDataFlowPipelineContext context)
-        {
-            Context = (DataFlowPipelineContext<T>)context;
-        }
 
         public override string Text
         {
@@ -74,12 +58,14 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             var before = ddPipelines.SelectedItem as Pipeline;
 
             ddPipelines.Items.Clear();
+
+            var context = _useCase.GetContext();
             
             //add pipelines
             var allPipelines = _repository.GetAllObjects<Pipeline>();
-            ddPipelines.Items.AddRange(_context == null || cbOnlyShowCompatiblePipelines.Checked == false 
+            ddPipelines.Items.AddRange(context == null || cbOnlyShowCompatiblePipelines.Checked == false 
                 ? allPipelines.ToArray() //no context/show incompatible enabled so add all pipelines
-                : allPipelines.Where(_context.IsAllowable).ToArray()); //only compatible components
+                : allPipelines.Where(context.IsAllowable).ToArray()); //only compatible components
 
             ddPipelines.Items.Add("<<None>>");
 
@@ -101,21 +87,14 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                 ? (object) ddPipelines.Items.OfType<Pipeline>().Single()
                 : "<<None>>";
         }
-
-        public List<object> InitializationObjectsForPreviewPipeline { get; set; }
-
         
-        //IMPORTANT:Do not change this method signature, it is used in reflection (See ArgumentUI.cs for one)
-        public PipelineSelectionUI(IDataFlowSource<T> sourceIfExists, IDataFlowDestination<T> destinationIfExists, CatalogueRepository repository)
+        //IMPORTANT:Do not change this method signature, it is used in reflection (See ArgumentValuePipelineUI.cs for one)
+        public PipelineSelectionUI(IPipelineUseCase useCase, CatalogueRepository repository)
         {
-            _sourceIfExists = sourceIfExists;
-            _destinationIfExists = destinationIfExists;
+            _useCase = useCase;
             _repository = repository;
             InitializeComponent();
-
-            //objects that will satisfy (some but not necessarily all) of the IPipelineRequirements of the pipeline source such that it can generate previews of the data for use in configuring the load pipeline (e.g. to figure out dynamic column names)
-            InitializationObjectsForPreviewPipeline = new List<object>();
-
+            
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) //dont connect to database in design mode
                 return;
 
@@ -166,7 +145,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                 h(this,new EventArgs());
 
             //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
-            var dialog = new ConfigurePipelineUI<T>(Pipeline, _sourceIfExists, _destinationIfExists, Context, InitializationObjectsForPreviewPipeline, _repository);
+            var dialog = new ConfigurePipelineUI(Pipeline,_useCase, _repository);
             dialog.ShowDialog();
 
             ddPipelines.Items.Remove(Pipeline);

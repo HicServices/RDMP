@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
@@ -25,24 +26,38 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 
         private const string ClearSelection = "<<Clear Selection>>";
 
-        public ArgumentValueComboBoxUI(object[] objectsForComboBox, bool useDropdownDataSourceAndOmmitClear = false)
+        private HashSet<Type> types;
+
+        public ArgumentValueComboBoxUI(object[] objectsForComboBox)
         {
             _objectsForComboBox = objectsForComboBox;
             InitializeComponent();
 
             btnPick.Enabled = objectsForComboBox.All(o => o is IMapsDirectlyToDatabaseTable);
 
-            if(!useDropdownDataSourceAndOmmitClear)
+            //If it is a dropdown of Types
+            if (objectsForComboBox.All(o=>o is Type))
+            {
+                //add only the names (not the full namespace)
+                types = new HashSet<Type>(objectsForComboBox.Cast<Type>());
+
+                cbxValue.DropDownStyle = ComboBoxStyle.DropDownList;
+                cbxValue.Items.AddRange(types.Select(t=>t.Name).ToArray());
+                cbxValue.Items.Add(ClearSelection);
+            }
+            else
+            if (objectsForComboBox.All(t=>t is Enum)) //don't offer "ClearSelection" if it is an Enum list
+            {
+                cbxValue.DataSource = objectsForComboBox;
+                cbxValue.DropDownStyle = ComboBoxStyle.DropDownList;
+            }
+            else
             {
                 cbxValue.DropDownStyle = ComboBoxStyle.DropDownList;
                 cbxValue.Items.AddRange(objectsForComboBox);
                 cbxValue.Items.Add(ClearSelection);
             }
-            else
-            {
-                cbxValue.DataSource = objectsForComboBox;
-                cbxValue.DropDownStyle = ComboBoxStyle.DropDownList;
-            }
+            
         }
 
         public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
@@ -61,8 +76,12 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             {
                 ragSmiley1.Fatal(e);
             }
+
             if (currentValue != null)
-                cbxValue.Text = currentValue.ToString();
+                if (types != null)
+                    cbxValue.Text = ((Type) currentValue).Name;
+                else
+                    cbxValue.Text = currentValue.ToString();
 
             BombIfMandatoryAndEmpty();
             _bLoading = false;
@@ -84,8 +103,12 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             //user chose to clear selection from a combo box
             if (cbxValue.Text == ClearSelection)
                 _argument.Value = null;
-            else if (cbxValue.SelectedItem != null)
-                _argument.SetValue(cbxValue.SelectedItem);
+            else 
+                if (cbxValue.SelectedItem != null)
+                    if (types != null)
+                        _argument.SetValue(types.Single(t=>t.Name.Equals(cbxValue.SelectedItem)));
+                    else
+                        _argument.SetValue(cbxValue.SelectedItem);
 
             _argument.SaveToDatabase();
 

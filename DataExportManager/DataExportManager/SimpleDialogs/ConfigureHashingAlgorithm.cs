@@ -27,7 +27,7 @@ namespace DataExportManager.SimpleDialogs
     /// salt if you don't want to either, if you don't add a {1} then you won't get a salt argument into your scalar function.</para>
     /// 
     /// <para>This is quite technical if you don't know what a Scalar Function is in SQL then you probably don't want to do hashing and instead you might want to just not extract these columns
-    /// or configure them with the RDMP ANO system (See ConfigureANOForTableInfo).</para>
+    /// or configure them with the RDMP ANO system (See ANOTable).</para>
     /// </summary>
     public partial class ConfigureHashingAlgorithm : RDMPForm
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
@@ -24,31 +25,84 @@ namespace DataExportLibrary.CohortCreationPipeline
     public class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest, ICheckable
     {
         private readonly IDataExportRepository _repository;
-        private DataFlowPipelineContext<DataTable> _context;
 
         //for pipeline editing initialization when no known cohort is available
 
-        public FlatFileToLoad FileToLoad { get; set; }
-        public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+        #region Things that can be turned into cohorts
+        
+        private FlatFileToLoad _fileToLoad;
+        private ExtractionInformation _extractionIdentifierColumn;
+        private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+
+        public FlatFileToLoad FileToLoad
+        {
+            get { return _fileToLoad; }
+            set
+            {
+                //remove old value if it had one
+                Pop(_fileToLoad);
+
+                _fileToLoad = value;
+                
+                //add the new one
+                Push(value);
+            }
+        }
+        
+        public CohortIdentificationConfiguration CohortIdentificationConfiguration
+        {
+            get { return _cohortIdentificationConfiguration; }
+            set
+            {
+                Pop(_cohortIdentificationConfiguration);
+                _cohortIdentificationConfiguration = value; 
+                Push(value);
+            }
+        }
+
+        public ExtractionInformation ExtractionIdentifierColumn
+        {
+            get { return _extractionIdentifierColumn; }
+            set
+            {
+                Pop(_extractionIdentifierColumn);
+                _extractionIdentifierColumn = value; 
+                Push(_extractionIdentifierColumn);
+            }
+        }
+        
+        private void Pop(object oldValue)
+        {
+            if (oldValue != null && InitializationObjects.Contains(oldValue))
+                InitializationObjects.Remove(oldValue);
+        }
+
+        private void Push(object newValue)
+        {
+            AddInitializationObject(newValue);
+        }
+        #endregion
 
         public IProject Project { get; private set; }
         public ICohortDefinition NewCohortDefinition { get; set; }
         public ExtractableCohort CohortCreatedIfAny { get; set; }
-
-        public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog):this()
+        
+        public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog)
         {
             _repository = repository;
             Project = project;
             NewCohortDefinition = newCohortDefinition;
 
             DescriptionForAuditLog = descriptionForAuditLog;
+            
+            AddInitializationObject(Project);
         }
 
         /// <summary>
         /// For refreshing the current extraction configuration CohortIdentificationConfiguration ONLY.  The ExtractionConfiguration must have a cic and a refresh pipeline configured on it.
         /// </summary>
         /// <param name="configuration"></param>
-        public CohortCreationRequest(ExtractionConfiguration configuration):this()
+        public CohortCreationRequest(ExtractionConfiguration configuration)
         {
             _repository = (DataExportRepository) configuration.Repository;
 
@@ -66,45 +120,26 @@ namespace DataExportLibrary.CohortCreationPipeline
             var definition = new CohortDefinition(null, origCohortData.ExternalDescription, origCohortData.ExternalVersion + 1,(int) Project.ProjectNumber, origCohort.ExternalCohortTable);
             NewCohortDefinition = definition;
             DescriptionForAuditLog = "Cohort Refresh";
+
+            AddInitializationObject(Project);
+            AddInitializationObject(CohortIdentificationConfiguration);
+            AddInitializationObject(FileToLoad);
+            AddInitializationObject(ExtractionIdentifierColumn);
+            AddInitializationObject(this);
         }
 
-        private CohortCreationRequest()
+        protected override IDataFlowPipelineContext GenerateContext()
         {
-            _context = new DataFlowPipelineContext<DataTable>
+            return new DataFlowPipelineContext<DataTable>
             {
                 MustHaveDestination = typeof(ICohortPipelineDestination),
                 MustHaveSource = typeof(IDataFlowSource<DataTable>)
             };
         }
 
-        public override object[] GetInitializationObjects()
-        {
-            if(FileToLoad != null && CohortIdentificationConfiguration != null)
-                if (FileToLoad.IsDesignTime && CohortIdentificationConfiguration.IsDesignTime)
-                    return new object[] {FileToLoad, CohortIdentificationConfiguration,this};
-                else
-                    throw new Exception("CohortCreationRequest should either have a FileToLoad or a CohortIdentificationConfiguration not both");
-            
-            List<object> l = new List<object>();
-            l.Add(this);
-
-            if(CohortIdentificationConfiguration != null)
-                l.Add(CohortIdentificationConfiguration);
-            
-            if(FileToLoad != null)
-                l.Add(FileToLoad);
-            
-            return l.ToArray();
-        }
-
-        public override IDataFlowPipelineContext GetContext()
-        {
-            return _context;
-        }
 
         public string DescriptionForAuditLog { get; set; }
         
-
         public void Check(ICheckNotifier notifier)
         {
             NewCohortDefinition.LocationOfCohort.Check(notifier);
@@ -163,14 +198,33 @@ namespace DataExportLibrary.CohortCreationPipeline
             return cohort.ID;
         }
 
-        public static PipelineUseCase DesignTime(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+
+        /// <summary>
+        /// Design time types
+        /// </summary>
+        private CohortCreationRequest():base(new Type[]
         {
-            return new CohortCreationRequest
-            {
-                IsDesignTime = true,
-                FileToLoad = FlatFileToLoad.DesignTime(),
-                CohortIdentificationConfiguration = CohortIdentificationConfiguration.Empty
-            };
+            typeof(FlatFileToLoad),
+            typeof(CohortIdentificationConfiguration),
+            typeof(Project),
+            typeof(ExtractionInformation),
+            typeof(ICohortCreationRequest)
+        })
+        {
+            
+        }
+
+        public static PipelineUseCase DesignTime()
+        {
+            return new CohortCreationRequest();
+        }
+
+        public override string ToString()
+        {
+            if (NewCohortDefinition == null)
+                return base.ToString();
+
+            return NewCohortDefinition.Description;
         }
     }
 }

@@ -1,29 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Net.Mime;
 using System.Windows.Forms;
-using CachingEngine;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision.Exceptions;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
-using CatalogueManager.PluginChildProvision;
-using MapsDirectlyToDatabaseTable;
+using DataExportLibrary.CohortCreationPipeline;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
-using ScintillaNET;
 
 namespace CatalogueManager.Icons.IconProvision
 {
@@ -127,6 +118,21 @@ namespace CatalogueManager.Icons.IconProvision
             if (concept is ArbitraryFolderNode)
                 return GetImage(RDMPConcept.CatalogueFolder, kind);
 
+            if (concept is DiscoveredDatabase)
+                return GetImage(RDMPConcept.Database);
+            
+            if (concept is DiscoveredTable)
+                return GetImage(RDMPConcept.TableInfo);
+            
+            if (concept is DiscoveredColumn)
+                return GetImage(RDMPConcept.ColumnInfo);
+
+            if (concept is FlatFileToLoad)
+                return GetImage(RDMPConcept.File);
+
+            if (concept is CohortCreationRequest)
+                return GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add);
+
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {
                 var bmp = stateBasedIconProvider.GetImageIfSupportedObject(concept);
@@ -152,6 +158,12 @@ namespace CatalogueManager.Icons.IconProvision
 
             return ImagesCollection[RDMPConcept.NoIconAvailable];
             
+        }
+
+        /// <inheritdoc/>
+        public bool HasIcon(object o)
+        {
+            return GetImage(o) != ImagesCollection[RDMPConcept.NoIconAvailable];
         }
 
         public RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)

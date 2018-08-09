@@ -31,7 +31,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
         public Dictionary<IArgument, RequiredPropertyInfo> DemandDictionary;
         private Type _argumentsAreFor;
         private IArgumentHost _parent;
-        private CatalogueRepository _catalogueRepository;
         private ArgumentValueUIFactory _valueUisFactory;
         
         private int _currentY;
@@ -51,17 +50,15 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
         /// be AnySeparatorFileAttacher or MDFAttacher).  Note that while T is IArgumentHost, it also should be tied to one or more interfaces (e.g. IAttacher) and able to host
         /// any child of that interface of which argumentsAreForUnderlyingType is the currently configured concrete class (e.g. AnySeparatorFileAttacher).
         /// </summary>
-        /// <param name="catalogueRepository"></param>
         /// <param name="parent"></param>
         /// <param name="argumentsAreForUnderlyingType"></param>
-        public void Setup(CatalogueRepository catalogueRepository, IArgumentHost parent, Type argumentsAreForUnderlyingType)
+        public void Setup(IArgumentHost parent, Type argumentsAreForUnderlyingType)
         {
             _parent = parent;
             _argumentsAreFor = argumentsAreForUnderlyingType;
 
             lblTypeUnloadable.Visible = _argumentsAreFor == null;
 
-            _catalogueRepository = catalogueRepository;
             _valueUisFactory = new ArgumentValueUIFactory();
 
             if (_argumentsAreFor != null)
@@ -216,47 +213,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
                 return null;
 
             return type.Name;
-        }
-
-        /// <summary>
-        /// T must be an IArgumentHost e.g.  ProcessTask or PipelineComponent, these two classes act as persistence wrappers for their host type (which can be any type of anything - any plugin)
-        /// then you must also pass the underlying type that is being wrapped e.g. basically the constructor arguments to this class :)
-        /// </summary>
-        /// <param name="catalogueRepository"></param>
-        /// <param name="newComp"></param>
-        /// <param name="argumentsAreForUnderlyingType"></param>
-        /// <param name="previewIfAny">If you have a data table that approximates what the pipeline will look like at the time the component T is reached then pass it in here otherwise pass null</param>
-        public static void ShowDialogIfAnyArgs(CatalogueRepository catalogueRepository, IArgumentHost newComp, Type argumentsAreForUnderlyingType,DataTable previewIfAny)
-        {
-            Form f = new Form();
-            var argCollection = new ArgumentCollection();
-            argCollection.Setup(catalogueRepository, newComp, argumentsAreForUnderlyingType);
-            argCollection.Dock = DockStyle.Fill;
-            
-            bool areAnyDemandsInitializations =
-                //get all properties
-                argumentsAreForUnderlyingType.GetProperties()
-                //any of them have custom attribute collections which contain a [DemandsInitialization]?
-                .Any(p => p.GetCustomAttributes(typeof (CatalogueLibrary.Data.DemandsInitializationAttribute)).Any());
-
-            if (!areAnyDemandsInitializations)
-                return;
-
-            f.Controls.Add(argCollection);
-
-            Button ok = new Button();
-            ok.Text = "Ok";
-            ok.Dock = DockStyle.Bottom;
-            ok.Click += (s, e) => f.Close();
-            f.Controls.Add(ok);
-            f.Text = "Set Arguments For Type:" + argumentsAreForUnderlyingType.Name + " (you can always change these later)";
-
-            argCollection.Setup(catalogueRepository, newComp, argumentsAreForUnderlyingType);
-            argCollection.Preview = previewIfAny;
-            
-            f.Width = 800;
-            f.Height = 700;
-            f.ShowDialog();
         }
 
         private void btnViewSourceCode_Click(object sender, EventArgs e)

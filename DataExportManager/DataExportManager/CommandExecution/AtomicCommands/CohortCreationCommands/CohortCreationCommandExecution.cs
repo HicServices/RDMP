@@ -87,14 +87,10 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         protected ConfigureAndExecutePipeline GetConfigureAndExecuteControl(CohortCreationRequest request, string description)
         {
             var catalogueRepository = Activator.RepositoryLocator.CatalogueRepository;
-
-            ConfigureAndExecutePipeline configureAndExecuteDialog = new ConfigureAndExecutePipeline();
+            
+            ConfigureAndExecutePipeline configureAndExecuteDialog = new ConfigureAndExecutePipeline(request,Activator);
             configureAndExecuteDialog.Dock = DockStyle.Fill;
-            configureAndExecuteDialog.SetPipelineOptions(null, null, (DataFlowPipelineContext<DataTable>)request.GetContext(), catalogueRepository);
-
-            foreach (object o in request.GetInitializationObjects())
-                configureAndExecuteDialog.AddInitializationObject(o);
-
+            
             configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(configureAndExecuteDialog, request);
 
             //add in the logging server

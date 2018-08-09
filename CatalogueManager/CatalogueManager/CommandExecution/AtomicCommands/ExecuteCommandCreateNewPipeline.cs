@@ -1,51 +1,37 @@
-using System;
-using System.Drawing;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
+﻿using System.Drawing;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewPipeline :BasicUICommandExecution, IAtomicCommand
+    internal class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly PipelineUser _user;
-        private readonly IPipelineUseCase _useCase;
+        private readonly PipelineUseCase _useCase;
 
-        public ExecuteCommandCreateNewPipeline(IActivateItems activator, PipelineUser user, IPipelineUseCase useCase) : base(activator)
+        public ExecuteCommandCreateNewPipeline(IActivateItems activator, PipelineUseCase useCase) : base(activator)
         {
-            _user = user;
             _useCase = useCase;
 
-            if (_user.Getter() != null)
-                SetImpossible(_user.User + " already has a Pipeline configured");
+            if(_useCase == null)
+                SetImpossible("Pipelines can only be created under an established use case");
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            _user.Setter(new Pipeline(Activator.RepositoryLocator.CatalogueRepository, "CachingPipeline_" + Guid.NewGuid()));
-            Publish(_user.User);
+            var newPipe = new Pipeline(Activator.RepositoryLocator.CatalogueRepository);
+            var edit = new ExecuteCommandEditPipelineWithUseCase(Activator, newPipe, _useCase);
+            edit.Execute();
 
-            //now activate it so the user can edit it
-            var cmd = new ExecuteCommandEditPipeline(Activator, _user, _useCase);
-
-            if(!cmd.IsImpossible)
-                cmd.Execute();
         }
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Add); 
+            return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Add);
         }
     }
 }

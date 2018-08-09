@@ -6,6 +6,9 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.DataFlowPipeline;
+using DataLoadEngine.LoadExecution.Components.Runtime;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
@@ -19,7 +22,10 @@ namespace CatalogueManager.PipelineUIs.DataObjects
     {
         public object Value { get; set; }
         private readonly Role _role;
+        
         private ICheckable _checkable;
+        private MandatoryPropertyChecker _mandatoryChecker;
+
         public bool IsLocked
         {
             get { return pbPadlock.Visible; }
@@ -59,6 +65,8 @@ namespace CatalogueManager.PipelineUIs.DataObjects
             }
             else
             {
+                _checkable = value as ICheckable;
+                _mandatoryChecker = new MandatoryPropertyChecker(value);
                 lblText.Text = value.ToString();//.GetType().Name;
                 GenerateToolTipBasedOnProperties(value);
             }
@@ -80,8 +88,6 @@ namespace CatalogueManager.PipelineUIs.DataObjects
             }
 
             
-            _checkable = value as ICheckable;
-            Check();
             this.Width = lblText.PreferredWidth + 80;
         }
 
@@ -117,7 +123,8 @@ namespace CatalogueManager.PipelineUIs.DataObjects
         protected bool _isEmpty ;
         Pen _emptyPen = new Pen(new SolidBrush(Color.Black));
         protected Pen _fullPen = new Pen(new SolidBrush(Color.Black));
-    
+        
+
         public enum Role
         {
             Source,
@@ -153,13 +160,49 @@ namespace CatalogueManager.PipelineUIs.DataObjects
             pbInsertHere.Visible = false;
         }
 
-        public void Check()
+        public virtual void Check()
         {
-            if (_checkable != null)
-                ragSmiley1.StartChecking(_checkable);
-            else
-                ragSmiley1.SetVisible(false);//it isn't checkable
+            try
+            {
+                if (_checkable != null)
+                    _checkable.Check(ragSmiley1);
+            }
+            catch (Exception e)
+            {
+                ragSmiley1.Fatal(e);
+            }
         }
 
+        public void CheckMandatoryProperties()
+        {
+            try
+            {
+                if (_mandatoryChecker != null)
+                    _mandatoryChecker.Check(ragSmiley1);
+            }
+            catch (Exception e)
+            {
+                ragSmiley1.Fatal(e);
+            }
+        }
+
+        public static Role GetRoleFor(Type componentType)
+        {
+            if (IsGenericType(componentType, typeof(IDataFlowSource<>)))
+                return  Role.Source;
+            
+            if (IsGenericType(componentType, typeof(IDataFlowDestination<>)))
+                return Role.Destination;
+
+            if (IsGenericType(componentType, typeof(IDataFlowComponent<>)))
+                return Role.Middle;
+            
+            throw new ArgumentException("Object must be an IDataFlowComponent<> but was " + componentType);
+        }
+
+        private static bool IsGenericType(Type toCheck, Type genericType)
+        {
+            return toCheck.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericType);
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace CatalogueManager.PipelineUIs.Pipelines
 {
-    partial class PipelineDiagram<T>
+    partial class PipelineDiagram
     {
         /// <summary> 
         /// Required designer variable.

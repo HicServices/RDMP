@@ -239,7 +239,7 @@ namespace DataExportManager.DataRelease
 
             if (_pipelineSelectionUI1 == null)
             {
-                var context = ReleaseUseCase.DesignTime(RepositoryLocator,_project);
+                var context = ReleaseUseCase.DesignTime();
                 _pipelineSelectionUI1 = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
                 _pipelineSelectionUI1.Pipeline = null;

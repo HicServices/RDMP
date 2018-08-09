@@ -54,6 +54,20 @@ namespace CatalogueManager.ObjectVisualisation
             Add(text, _coreIconProvider.GetImage(concept));
         }
 
+
+        /// <summary>
+        /// Adds the icon to the ribbon with the associated RDMP icon (or the text icon if none is available)
+        /// with the text of the objects ToString method.
+        /// </summary>
+        /// <param name="o"></param>
+        public void Add(object o)
+        {
+            if (_coreIconProvider.HasIcon(o))
+                Add(o.ToString(), _coreIconProvider.GetImage(o));
+            else
+                Add(o.ToString());
+        }
+
         public void Add(RDMPConcept concept,OverlayKind overlay, string text)
         {
             Add(text,_coreIconProvider.GetImage(concept,overlay));
@@ -86,7 +100,6 @@ namespace CatalogueManager.ObjectVisualisation
         public void Clear()
         {
             flowLayoutPanel1.Controls.Clear();
-
         }
     }
 }

@@ -338,6 +338,7 @@
     <Compile Include="Migration\QueryBuilding\ReverseMigrationQueryHelper.cs" />
     <Compile Include="Mutilators\IMutilateDataTables.cs" />
     <Compile Include="Mutilators\IPluginMutilateDataTables.cs" />
+    <Compile Include="PipelineUseCases\UploadFileUseCase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -370,9 +371,6 @@
     <None Include="DataFlowPipeline\Components\Anonymisation.cd" />
     <None Include="DataProvider\ReadingFromCacheInDataLoad.cd" />
     <None Include="LoadExecution\DataLoadEngine.cd" />
-    <None Include="log4net.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Migration\StagingToLiveMigration.cd" />
     <None Include="packages.config" />
     <None Include="Job\SchedulesAndJobCreation.cd" />

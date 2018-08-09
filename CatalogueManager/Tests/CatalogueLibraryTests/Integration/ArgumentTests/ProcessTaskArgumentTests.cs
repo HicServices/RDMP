@@ -294,9 +294,9 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
             match.SetValue(true);
             match.SaveToDatabase();
 
-            var context = ReleaseUseCase.DesignTime(RepositoryLocator).GetContext();
+            var useCase = ReleaseUseCase.DesignTime();
 
-            var factory = new DataFlowPipelineEngineFactory<ReleaseAudit>(RepositoryLocator.CatalogueRepository.MEF, (DataFlowPipelineContext<ReleaseAudit>) context);
+            var factory = new DataFlowPipelineEngineFactory(useCase,RepositoryLocator.CatalogueRepository.MEF);
             var destInstance = factory.CreateDestinationIfExists(pipe);
 
             Assert.AreEqual(true, ((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess);

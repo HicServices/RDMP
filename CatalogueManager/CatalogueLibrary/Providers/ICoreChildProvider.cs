@@ -54,5 +54,12 @@ namespace CatalogueLibrary.Providers
         AllPipelinesNode AllPipelinesNode { get; }
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
+
+        /// <summary>
+        /// Returns all known objects who are masquerading as o
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
     }
 }

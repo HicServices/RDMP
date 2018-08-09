@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using CachingEngine.PipelineExecution.Destinations;
 using CachingEngine.PipelineExecution.Sources;
 using CachingEngine.Requests;
@@ -9,11 +7,9 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Factories
@@ -29,11 +25,8 @@ namespace CachingEngine.Factories
     {
         private readonly ICacheProgress _cacheProgress;
         private readonly ICacheFetchRequestProvider _providerIfAny;
-        private DataFlowPipelineContext<ICacheChunk> _context;
         private IPipeline _pipeline;
-        private ICatalogueRepository _catalogueRepository;
         private IPermissionWindow _permissionWindow;
-        private HICProjectDirectory _hicProjectDirectory;
 
         /// <summary>
         /// Class for helping you to construct a caching pipeline engine instance with the correct context and initialization objects
@@ -51,9 +44,7 @@ namespace CachingEngine.Factories
                 _permissionWindow = new SpontaneouslyInventedPermissionWindow(_cacheProgress);
             else
                 _permissionWindow = cacheProgress.PermissionWindow;
-
-            CreateContext();
-
+            
             if(_providerIfAny == null)
             {
                 var cacheFetchRequestFactory = new CacheFetchRequestFactory();
@@ -66,30 +57,34 @@ namespace CachingEngine.Factories
             if (_pipeline == null && throwIfNoPipeline)
                 throw new Exception("CacheProgress " + _cacheProgress + " does not have a Pipeline configured on it");
 
-            _catalogueRepository = (ICatalogueRepository)_cacheProgress.Repository;
+            AddInitializationObject(_cacheProgress.Repository);
 
             // Get the HICProjectDirectory for the engine initialization
             var lmd = _cacheProgress.LoadProgress.LoadMetadata;
 
             if (string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles))
+            {
                 if (throwIfNoPipeline)
                     throw new Exception("LoadMetadata '" + lmd + "' does not have a Load Directory specified, cannot create ProcessingPipelineUseCase without one");
-                else
-                    _hicProjectDirectory = null;
+            }
             else
-                _hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
-            
+                AddInitializationObject(new HICProjectDirectory(lmd.LocationOfFlatFiles, false));
+
+            AddInitializationObject(_providerIfAny);
+            AddInitializationObject(_permissionWindow);
         }
 
-        private void CreateContext()
+        protected override IDataFlowPipelineContext GenerateContext()
         {
             //create the context using the standard context factory
             var contextFactory = new DataFlowPipelineContextFactory<ICacheChunk>();
-            _context = contextFactory.Create(PipelineUsage.None);
+            var context = contextFactory.Create(PipelineUsage.None);
 
             //adjust context: we want a destination requirement of ICacheFileSystemDestination so that we can load from the cache using the pipeline endpoint as the source of the data load
-            _context.MustHaveDestination = typeof(ICacheFileSystemDestination);//we want this freaky destination type
-            _context.MustHaveSource = typeof(ICacheSource);
+            context.MustHaveDestination = typeof(ICacheFileSystemDestination);//we want this freaky destination type
+            context.MustHaveSource = typeof(ICacheSource);
+
+            return context;
         }
 
 
@@ -112,37 +107,24 @@ namespace CachingEngine.Factories
             return GetEngine(_pipeline, listener);
         }
         
-        public override object[] GetInitializationObjects()
+
+        /// <summary>
+        /// Design time types
+        /// </summary>
+        private CachingPipelineUseCase():base(new Type[]
         {
-            return new object[]
-            {
-                _providerIfAny,
-                _permissionWindow,
-                _hicProjectDirectory,
-                _catalogueRepository
-            }.Where(o=>o != null).ToArray();
+            typeof(ICacheFetchRequestProvider),
+            typeof(IPermissionWindow),
+            typeof(HICProjectDirectory),
+            typeof(ICatalogueRepository)
+        })
+        {
+            
         }
 
-        public override IDataFlowPipelineContext GetContext()
+        public static CachingPipelineUseCase DesignTime()
         {
-            return _context;
-        }
-
-        private CachingPipelineUseCase(ICatalogueRepository repository)
-        {
-            IsDesignTime = true;
-
-            _providerIfAny = CacheFetchRequestProvider.DesignTime();
-            _permissionWindow = PermissionWindow.Empty;
-            _hicProjectDirectory = HICProjectDirectory.Empty;
-            _catalogueRepository = repository;
-
-            CreateContext();
-        }
-
-        public static CachingPipelineUseCase DesignTime(ICatalogueRepository repository)
-        {
-            return new CachingPipelineUseCase(repository);
+            return new CachingPipelineUseCase();
         }
     }
 
