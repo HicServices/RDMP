@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.ExternalDatabaseServerPatching;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
@@ -107,7 +102,7 @@ namespace Tests.Common
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, ServerDefaults.PermissableDefaults.RAWDataLoadServer, null));
 
             CreateScratchArea();
-
+            
             if (TestDatabaseSettings.MySql != null)
                 _discoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(TestDatabaseSettings.MySql) { SslMode = MySqlSslMode.None });
 
