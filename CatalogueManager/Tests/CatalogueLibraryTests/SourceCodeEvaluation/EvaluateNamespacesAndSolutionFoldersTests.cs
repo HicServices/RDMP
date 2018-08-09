@@ -4,17 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
 using CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation;
-using CatalogueManager.SimpleDialogs.Reports;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using RDMPStartup;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 using Tests.Common;
-
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
 {
