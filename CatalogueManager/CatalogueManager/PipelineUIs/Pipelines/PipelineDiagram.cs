@@ -87,7 +87,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             _useCase = useCase;
 
             _pipeline = pipeline;
-            _pipeline.ClearAllInjections();
+            if (_pipeline != null)
+                _pipeline.ClearAllInjections();
             
             //clear the diagram
             flpPipelineDiagram.Controls.Clear();
@@ -108,7 +109,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                     
                         //initialize it (unless it is design time)
                         if(!_useCase.IsDesignTime)
-                            pipelineInstance.Initialize(_useCase.GetInitializationObjects());
+                            pipelineInstance.Initialize(_useCase.GetInitializationObjects().ToArray());
                         
                     }
                     catch (Exception ex)
@@ -201,7 +202,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                 {
                     if (!_useCase.IsDesignTime)
                     {
-                        _useCase.GetContext().PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), value, _useCase.GetInitializationObjects());
+                        _useCase.GetContext().PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), value, _useCase.GetInitializationObjects().ToArray());
                         component.Check();
                     }
 
@@ -265,7 +266,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             try
             {
                 if (!_useCase.IsDesignTime)
-                    _useCase.GetContext().PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), component.Value, _useCase.GetInitializationObjects());
+                    _useCase.GetContext().PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), component.Value, _useCase.GetInitializationObjects().ToArray());
             }
             catch (Exception e)
             {

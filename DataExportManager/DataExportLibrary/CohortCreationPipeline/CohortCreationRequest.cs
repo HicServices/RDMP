@@ -96,6 +96,7 @@ namespace DataExportLibrary.CohortCreationPipeline
             DescriptionForAuditLog = descriptionForAuditLog;
             
             AddInitializationObject(Project);
+            AddInitializationObject(this);
         }
 
         /// <summary>
