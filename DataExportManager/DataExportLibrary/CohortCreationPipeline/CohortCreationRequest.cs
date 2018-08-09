@@ -87,7 +87,7 @@ namespace DataExportLibrary.CohortCreationPipeline
         public ICohortDefinition NewCohortDefinition { get; set; }
         public ExtractableCohort CohortCreatedIfAny { get; set; }
         
-        public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog):this()
+        public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog)
         {
             _repository = repository;
             Project = project;

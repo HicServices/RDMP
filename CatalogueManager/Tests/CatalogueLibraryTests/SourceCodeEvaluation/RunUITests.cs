@@ -36,7 +36,12 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandExpandAllNodes),
                 typeof(ExecuteCommandViewDependencies),
                 typeof(ExecuteCommandViewCohortAggregateGraph),
-                typeof(ExecuteCommandExecuteExtractionAggregateGraph)
+                typeof(ExecuteCommandExecuteExtractionAggregateGraph),
+                
+                //requires a use case
+                typeof(ExecuteCommandCreateNewPipeline),
+                typeof(ExecuteCommandEditPipelineWithUseCase)
+
             });
 
         [Test]
