@@ -228,10 +228,6 @@
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
-      <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
-      <Name>ReusableUIComponents</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sharing\Sharing\Sharing.csproj">
       <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
       <Name>Sharing</Name>
