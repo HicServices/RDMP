@@ -106,20 +106,9 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void btnClearFile_Click(object sender, EventArgs e)
         {
-            //if advanced is instantiated it will have a pre-clear file state
-            if (advanced != null)
-            {
-                //toggle off advanced
-                if (isAdvanced)
-                    ToggleAdvanced();
-
-                advanced = null;
-            }
-
             SetupState(State.SelectFile);
 
             btnConfirmDatabase.Enabled = serverDatabaseTableSelector1.GetDiscoveredDatabase() != null;
-
         }
 
         private void SetupState(State state)
@@ -287,43 +276,19 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             ToggleAdvanced();
         }
 
-        private bool isAdvanced = false;
         private Project _projectSpecific;
 
         private void ToggleAdvanced()
         {
             var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
 
-            if(db == null)
+            if (db == null)
                 return;
 
             //flip it
-            isAdvanced = !isAdvanced;
-            btnAdvanced.Text = isAdvanced ? "Simple" : "Advanced";
-            
-            if (isAdvanced)
-            {
-                if (advanced == null)
-                    advanced =
-                        new CreateNewCatalogueByImportingFileUI_Advanced(
-                            _activator,db
-                            , _selectedFile, true,_projectSpecific);
-
-                advanced.Bounds = pSimplePanel.Bounds;
-                advanced.Anchor = pSimplePanel.Anchor;
-
-                Controls.Remove(pSimplePanel);
-                Controls.Add(advanced);
-            }
-            else
-            {
-
-                pSimplePanel.Bounds = advanced.Bounds;
-                pSimplePanel.Anchor = advanced.Anchor;
-
-                Controls.Remove(advanced);
-                Controls.Add(pSimplePanel);
-            }
+            var advanced = new CreateNewCatalogueByImportingFileUI_Advanced(_activator, db, _selectedFile, true, _projectSpecific);
+            var form = new SingleControlForm(advanced);
+            form.Show();
         }
 
         private void btnConfirmDatabase_Click(object sender, EventArgs e)

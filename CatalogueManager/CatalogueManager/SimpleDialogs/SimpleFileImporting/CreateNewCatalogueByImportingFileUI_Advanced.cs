@@ -32,7 +32,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
         private readonly DiscoveredDatabase _database;
         private readonly bool _alsoForwardEngineerCatalogue;
 
-        private FlatFileToLoad _fileToLoad;
+        private FileInfo _file;
         private Project _projectSpecific;
 
         public Catalogue CatalogueCreatedIfAny { get; private set; }
@@ -48,7 +48,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             InitializeComponent();
             
             configureAndExecutePipeline1 = new ConfigureAndExecutePipeline(new UploadFileUseCase(file,database),activator);
-
+            _file = file;
             // 
             // configureAndExecutePipeline1
             // 
@@ -77,7 +77,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                     targetTable = dest.TargetTableName;
                     var table = _database.ExpectTable(targetTable);
 
-                    var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table), "File '" + _fileToLoad.File.FullName + "'",_projectSpecific);
+                    var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table), "File '" + _file.FullName + "'", _projectSpecific);
                     ui.ShowDialog();
                     
                     var cata = CatalogueCreatedIfAny = ui.CatalogueCreatedIfAny;
