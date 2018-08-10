@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
 using DataExportLibrary.ExtractionTime.Commands;
 using ReusableLibraryCode.Checks;
@@ -21,34 +22,26 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
     {
         private const string SYNTH_PK_COLUMN = "SynthesizedPk";
         private bool _synthesizePkCol = false;
-        private List<ColumnInfo> _primaryKeys;
-
-        protected override void Initialize(ExtractDatasetCommand request)
+        public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
         {
-            base.Initialize(request);
-            if (request == ExtractDatasetCommand.EmptyCommand)
-                return;
-
-            request.QueryBuilder.RegenerateSQL();
-
             // let's look for primary keys in the Extraction Information
-            var allPrimaryKeys = request.ColumnsToExtract.Union(request.ReleaseIdentifierSubstitutions).Where(col => col.IsPrimaryKey).ToList();
-            
+            var allPrimaryKeys = Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions).Where(col => col.IsPrimaryKey).ToList();
+
             // if there are some they will be marked in the "GetChunk".
             // If there are none, then we need to synth a new column here.
-            var properTables = request.QueryBuilder.TablesUsedInQuery.Where(ti => !ti.IsLookupTable()).ToList(); 
-            if (!allPrimaryKeys.Any()) 
+            if (!allPrimaryKeys.Any())
             {
-                _primaryKeys = properTables.SelectMany(t => t.ColumnInfos).Where(ci => ci.IsPrimaryKey).ToList();
-                if (_primaryKeys.Any())
+                var primaryKeys = GetProperTables().SelectMany(GetPrimaryKeys).ToList();
+
+                if (primaryKeys.Any())
                 {
                     string newSql;
-                    if (_primaryKeys.Count > 1) // no need to do anything if there is only one.
-                        newSql = "CONCAT(" + String.Join(",'_',", _primaryKeys.Select(apk => apk.ToString())) + ")";
+                    if (primaryKeys.Count > 1) // no need to do anything if there is only one.
+                        newSql = "CONCAT(" + String.Join(",'_',", primaryKeys.Select(apk => apk.ToString())) + ")";
                     else
-                        newSql = _primaryKeys.First().ToString();
+                        newSql = primaryKeys.First().ToString();
 
-                    request.QueryBuilder.AddColumn(new SpontaneouslyInventedColumn(SYNTH_PK_COLUMN, newSql)
+                    Request.QueryBuilder.AddColumn(new SpontaneouslyInventedColumn(SYNTH_PK_COLUMN, newSql)
                     {
                         HashOnDataRelease = true,
                         IsPrimaryKey = true,
@@ -57,6 +50,21 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                     _synthesizePkCol = true;
                 }
             }
+
+            return Request.QueryBuilder.SQL;
+        }
+
+        private IEnumerable<ColumnInfo> GetPrimaryKeys(TableInfo t)
+        {
+            return t.ColumnInfos.Where(ci => ci.IsPrimaryKey);
+        }
+
+        private IEnumerable<TableInfo> GetProperTables()
+        {
+            if(Request.QueryBuilder.SQLOutOfDate)
+                Request.QueryBuilder.RegenerateSQL();
+
+            return Request.QueryBuilder.TablesUsedInQuery.Where(ti => !ti.IsLookupTable());
         }
 
         public override DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -91,10 +99,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             {
                 message = Request.SelectedDataSets +
                           ": No catalogue item is flagged as primary key";
-                if (_primaryKeys.Any())
+
+                var primaryKeys = GetProperTables().SelectMany(GetPrimaryKeys).ToList();
+
+                if (primaryKeys.Any())
                 {
                     message += ", but I found these underlying columns: " +
-                               String.Join(",", _primaryKeys.Select(apk => apk.ToString())) +
+                               String.Join(",", primaryKeys.Select(apk => apk.ToString())) +
                                ". Will concatenate and hash values into new PK column: " + SYNTH_PK_COLUMN;
                     check = CheckResult.Success;
                 }
