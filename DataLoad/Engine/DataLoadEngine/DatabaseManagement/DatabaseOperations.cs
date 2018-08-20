@@ -65,25 +65,7 @@ namespace DataLoadEngine.DatabaseManagement
                     newTable.DropColumn(column);
             }
         }
-
-        public static DataTable CreateDataTableFromDbOnServer(DiscoveredDatabase dbInfo, string tableName)
-        {
-            var dt = new DataTable();
-            var table = dbInfo.ExpectTable(tableName);
-
-            if(!table.Exists())
-                throw new Exception("Could not find table " + tableName + " on database " + dbInfo);
-
-            using (var conn = (SqlConnection)dbInfo.Server.GetConnection())
-            {
-                conn.Open();
-                var cmd = new SqlCommand("SELECT TOP 0 * FROM "+ table.GetFullyQualifiedName(), conn);
-                dt.Load(cmd.ExecuteReader());
-            }
-            return dt;
-        }
         
-
 
         public static bool DoesColumnHaveDefault(DiscoveredTable table, string columnName)
         {
@@ -112,32 +94,8 @@ AND    object_id = object_id('" + table.GetRuntimeName()+ "');";
             }
         }
 
-        public static SqlDataReader GetReaderForTableInDatabase(DiscoveredDatabase dbInfo, string tableName)
-        {
-            var conn = (SqlConnection)dbInfo.Server.GetConnection();
-            
-            conn.Open();
-            var command = new SqlCommand("SELECT distinct * FROM " + tableName, conn);
-            command.CommandTimeout = 50000;//distinct can take a long time for some big tables
-                
-            return  command.ExecuteReader();
 
-        }
-
-
-        public static SqlDataAdapter GetAdapterForTableInDatabase(DiscoveredDatabase dbInfo, string tableName)
-        {
-            var conn = (SqlConnection)dbInfo.Server.GetConnection();
-
-            conn.Open();
-            var command = new SqlCommand("SELECT distinct * FROM " + tableName, conn);
-            command.CommandTimeout = 50000;//distinct can take a long time for some big tables
-
-            return new SqlDataAdapter(command);
-        }
-
-
-
+        
         public static void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
         {
             if (!IsNukable(dbInfo))
