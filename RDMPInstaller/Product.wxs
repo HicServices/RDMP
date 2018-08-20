@@ -53,12 +53,6 @@
               <File Id="COHORTMANAGERLIBRARY.XML" Name="CohortManagerLibrary.xml" Source="..\Anonymisation\ANOStore\bin\Debug\CohortManagerLibrary.xml" />
               <File Id="COMMANDLINE.DLL" Name="CommandLine.dll" Source="..\Anonymisation\ANOStore\bin\Debug\CommandLine.dll" />
               <File Id="COMMANDLINE.XML" Name="CommandLine.xml" Source="..\Anonymisation\ANOStore\bin\Debug\CommandLine.xml" />
-              <File Id="COMMON.LOGGING.CORE.DLL" Name="Common.Logging.Core.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Common.Logging.Core.dll" />
-              <File Id="COMMON.LOGGING.CORE.PDB" Name="Common.Logging.Core.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\Common.Logging.Core.pdb" />
-              <File Id="COMMON.LOGGING.CORE.XML" Name="Common.Logging.Core.xml" Source="..\Anonymisation\ANOStore\bin\Debug\Common.Logging.Core.xml" />
-              <File Id="COMMON.LOGGING.DLL" Name="Common.Logging.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Common.Logging.dll" />
-              <File Id="COMMON.LOGGING.PDB" Name="Common.Logging.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\Common.Logging.pdb" />
-              <File Id="COMMON.LOGGING.XML" Name="Common.Logging.xml" Source="..\Anonymisation\ANOStore\bin\Debug\Common.Logging.xml" />
               <File Id="DATAEXPORTLIBRARY.DLL" Name="DataExportLibrary.dll" Source="..\Anonymisation\ANOStore\bin\Debug\DataExportLibrary.dll" />
               <File Id="DATAEXPORTLIBRARY.INTERFACES.DLL" Name="DataExportLibrary.Interfaces.dll" Source="..\Anonymisation\ANOStore\bin\Debug\DataExportLibrary.Interfaces.dll" />
               <File Id="DATAEXPORTLIBRARY.INTERFACES.PDB" Name="DataExportLibrary.Interfaces.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\DataExportLibrary.Interfaces.pdb" />

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
-using Common.Logging;
 using HIC.Logging.Listeners;
 using MyExamplePlugin.PipelineComponents;
 using NUnit.Framework;
