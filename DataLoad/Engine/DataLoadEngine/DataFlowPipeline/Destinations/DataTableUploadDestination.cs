@@ -209,6 +209,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     cmd.CommandTimeout = AlterTimeout;
                     cmd.ExecuteNonQuery();
                 }
+
+                _bulkcopy.InvalidateTableSchema();
             }
         }
 

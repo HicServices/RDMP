@@ -9,7 +9,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     {
         protected readonly IManagedConnection Connection;
         protected readonly DiscoveredTable TargetTable;
-        protected readonly DiscoveredColumn[] TargetTableColumns;
+        protected DiscoveredColumn[] TargetTableColumns;
 
 
         /// <summary>
@@ -25,13 +25,18 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             TargetTable = targetTable;
             Connection = connection;
-            TargetTableColumns = TargetTable.DiscoverColumns(connection.ManagedTransaction);
+            InvalidateTableSchema();
             AllowUnmatchedInputColumns = false;
         }
 
 
         public virtual int Timeout { get; set; }
-        
+
+        public void InvalidateTableSchema()
+        {
+            TargetTableColumns = TargetTable.DiscoverColumns(Connection.ManagedTransaction);
+        }
+
         public virtual void Dispose()
         {
             Connection.Dispose();
