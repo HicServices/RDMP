@@ -8,7 +8,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines.Models
 {
     /// <summary>
     /// Describes an IDataFlowComponent which may or may not be compatible with a specific DataFlowPipelineContext.  It describes how/if it's requirements conflict with the context
-    /// e.g. a DelimitedDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is not available.
+    /// e.g. a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is not available.
     /// </summary>
     internal class AdvertisedPipelineComponentTypeUnderContext
     {
