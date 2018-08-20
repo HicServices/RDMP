@@ -18,7 +18,7 @@
             <dependency id="JetBrains.Annotations" version="10.4.0" />
             <dependency id="CsvHelper" version="2.11.0" />
             <dependency id="MySql.Data" version="8.0.12" />
-            <dependency id="Newtonsoft.Json" version="9.0.1" />
+            <dependency id="Newtonsoft.Json" version="11.0.2"/>
             <dependency id="Oracle.ManagedDataAccess" version="12.2.1100" />
             <dependency id="AutoCompleteMenu-ScintillaNET" version="1.5.0" />
             <dependency id="jacobslusser.ScintillaNET" version="3.6.3" />

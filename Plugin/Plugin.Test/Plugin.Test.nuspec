@@ -14,8 +14,8 @@
         <copyright>Copyright 2018</copyright>
         <dependencies>
             <dependency id="CsvHelper" version="2.11.0" />
-            <dependency id="MySql.Data" version="8.0.12" /> 
-            <dependency id="Newtonsoft.Json" version="9.0.1" />
+            <dependency id="MySql.Data" version="8.0.12" />
+            <dependency id="Newtonsoft.Json" version="11.0.2"/>
             <dependency id="Oracle.ManagedDataAccess" version="12.2.1100" />
             <dependency id="DocX" version="1.1.0" />
             <dependency id="JetBrains.Annotations" version="10.4.0" />
