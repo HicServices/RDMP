@@ -53,11 +53,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             foreach (var project in sln.Projects)
             { 
                 FileInfo csproj = new FileInfo(Path.Combine(sln.SolutionDirectory.FullName,project.Path));
+                
+                FileInfo fappConfig = new FileInfo(Path.Combine(csproj.Directory.FullName, "app.config"));
 
-
-                FileInfo f = new FileInfo(Path.Combine(csproj.Directory.FullName, "app.config"));
-
-                if (f.Exists)
+                if (fappConfig.Exists)
                 {
                     //look for dodgy binding redirects
 
@@ -65,7 +64,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 <bindingRedirect oldVersion="0.0.0.0-11.0.0.0" newVersion="11.0.2.0" />*
                      */
                     XmlDocument dc = new XmlDocument();
-                    dc.Load(f.FullName);
+                    dc.Load(fappConfig.FullName);
 
                     foreach (XmlElement dependency in dc.GetElementsByTagName("dependentAssembly"))
                     {
@@ -80,15 +79,47 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                             if(Dependencies.ContainsKey(assembly))
                             {
                                 if (!AreProbablyCompatibleVersions(Dependencies[assembly], version))
-                                    problems.Add("You have a binding redirect in " + f.FullName  + " for assembly " + assembly + " to version " + version + " but your nuspec has version " + Dependencies[assembly]);
+                                    problems.Add("You have a binding redirect in " + fappConfig.FullName  + " for assembly " + assembly + " to version " + version + " but your nuspec has version " + Dependencies[assembly]);
                             }
                             else
                             {
-                                problems.Add("You have a binding redirect in "+f.FullName+" for assembly " + assembly + " but no corresponding dependency listed in any of your nuspec files.  Why do you have binding redirects for assemblies that are not redistributed with RDMP?");
+                                problems.Add("You have a binding redirect in "+fappConfig.FullName+" for assembly " + assembly + " but no corresponding dependency listed in any of your nuspec files.  Why do you have binding redirects for assemblies that are not redistributed with RDMP?");
                             }
                         }
                     }
                 }
+
+                FileInfo fappPackages = new FileInfo(Path.Combine(csproj.Directory.FullName, "packages.config"));
+                if (fappPackages.Exists)
+                {
+                    //look for dodgy packages
+                    //<package id="NUnit" version="2.6.4" />
+
+                    XmlDocument dc = new XmlDocument();
+                    dc.Load(fappPackages.FullName);
+
+                    foreach (XmlElement dependency in dc.GetElementsByTagName("package"))
+                    {
+                        var assembly = '"' + dependency.Attributes["id"].Value + '"';
+                        var version = '"' + dependency.Attributes["version"].Value + '"';
+                            
+                        if (Dependencies.ContainsKey(assembly))
+                        {
+                            if (!Equals(Dependencies[assembly], version))
+                                problems.Add("In package " + fappPackages.FullName + " you reference " + assembly + " with version " + version + " but your nuspec has version " + Dependencies[assembly]);
+                        }
+                        else
+                        {
+                            problems.Add("In package " + fappPackages.FullName + " you reference "  + assembly + "  (version "+version+") but no corresponding dependency listed in any of your nuspec files.");
+                        }
+                        
+                    }
+
+                }
+
+                
+
+
 
                 var csprojFileContexnts = File.ReadAllText(csproj.FullName);
                 

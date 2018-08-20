@@ -28,7 +28,7 @@
             <dependency id="QuickGraphPCL" version="3.6.61114.2" />
             <dependency id="CommandLineParser" version="2.2.1" />
             <dependency id="SSH.NET" version="2013.4.7" />
-            <dependency id="Mono.Reflection" version="1.1.0" />
+            <dependency id="Mono.Reflection" version="1.1.0.0" />
         </dependencies>
     </metadata>
 </package>
