@@ -94,6 +94,9 @@ namespace DataExportManager.ProjectUI
             {
                 var notifier = GetCheckNotifier(e.Model);
 
+                if(notifier == null)
+                    return;
+
                 var popup = new PopupChecksUI(e.Model.ToString(), false);
                 popup.Check(new ReplayCheckable(notifier));
             }
@@ -220,7 +223,13 @@ namespace DataExportManager.ProjectUI
             _extractionConfiguration = databaseObject;
             
             if(!_commonFunctionality.IsSetup)
-                _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings(){AddFavouriteColumn = false,AllowPinning=false,SuppressChildrenAdder=true});
+                _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings()
+                {
+                    AddFavouriteColumn = false,
+                    AllowPinning=false,
+                    SuppressChildrenAdder=true,
+                    SuppressActivate = true
+                });
 
             checkAndExecuteUI1.SetItemActivator(activator);
 

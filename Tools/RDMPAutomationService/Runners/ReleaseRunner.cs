@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Checks;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.Checks;
@@ -13,6 +14,7 @@ using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using HIC.Logging.Listeners;
+using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -232,6 +234,73 @@ namespace RDMPAutomationService.Runners
 
             //no, we are releasing all of them
             return configuration.SelectedDataSets;
+        }
+
+        public object GetState(IExtractionConfiguration configuration)
+        {
+            var matches = GetCheckerResults<ReleaseEnvironmentPotential>((rp) => rp.Configuration.Equals(configuration));
+
+            if (matches.Length == 0)
+                return null;
+
+            return ((ReleaseEnvironmentPotential) matches.Single().Key).Assesment;
+        }
+
+        public object GetState(ISelectedDataSets selectedDataSets)
+        {
+            var matches = GetCheckerResults<ReleasePotential>(rp => rp.SelectedDataSet.ID == selectedDataSets.ID);
+            
+            if (matches.Length == 0)
+                return null;
+
+            var releasePotential = (ReleasePotential) matches.Single().Key;
+            var results = matches.Single().Value;
+
+            //not been released ever
+            if (releasePotential is NoReleasePotential)
+                return Releaseability.NeverBeenSuccessfullyExecuted;
+
+            //do we know the release state of the assesments
+            if (releasePotential.Assessments != null && releasePotential.Assessments.Any())
+            {
+                var releasability = releasePotential.Assessments.Values.Min();
+
+                if (releasability != Releaseability.Undefined)
+                    return releasability;
+            }
+
+            //otherwise use the checks of it
+            return results.GetWorst();
+        }
+
+        public object GetState(SupportingSQLTable global)
+        {
+            return GetState((IMapsDirectlyToDatabaseTable)global);
+        }
+
+        public object GetState(SupportingDocument global)
+        {
+            return GetState((IMapsDirectlyToDatabaseTable)global);
+        }
+
+        private object GetState(IMapsDirectlyToDatabaseTable global)
+        {
+            var matches = GetCheckerResults<GlobalReleasePotential>(rp => rp.RelatedGlobal.Equals(global));
+
+            if (matches.Length == 0)
+                return null;
+
+            return ((GlobalReleasePotential) matches.Single().Key).Releasability;
+        }
+
+        public CheckResult? GetGlobalReleaseState()
+        {
+            var result = GetSingleCheckerResults<GlobalsReleaseChecker>();
+
+            if (result == null)
+                return null;
+
+            return result.GetWorst();
         }
     }
 }
