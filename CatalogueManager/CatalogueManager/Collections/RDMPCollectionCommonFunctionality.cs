@@ -292,7 +292,12 @@ namespace CatalogueManager.Collections
             };
         }
 
-        private void ExpandToDepth(int expansionDepth, object currentObject)
+        /// <summary>
+        /// Expands the current object (which must exist/be visible in the UI) to the given depth
+        /// </summary>
+        /// <param name="expansionDepth"></param>
+        /// <param name="currentObject"></param>
+        public void ExpandToDepth(int expansionDepth, object currentObject)
         {
             if(expansionDepth == 0)
                 return;
@@ -370,7 +375,7 @@ namespace CatalogueManager.Collections
 
                 //no compatible menus so just return default menu
                 var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
-                defaultMenu.AddCommonMenuItems(Settings);
+                defaultMenu.AddCommonMenuItems(this);
                 return defaultMenu;
             }
             else
@@ -449,7 +454,7 @@ namespace CatalogueManager.Collections
             var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(type, args, o);
             
             if(menu != null)
-                menu.AddCommonMenuItems(Settings);
+                menu.AddCommonMenuItems(this);
 
             return menu;
         }
@@ -541,42 +546,6 @@ namespace CatalogueManager.Collections
                 _activator.RefreshBus.Unsubscribe(this);
                 _activator.Emphasise -= _activator_Emphasise;
             }
-        }
-
-        private bool expand = true;
-        
-
-
-        /// <summary>
-        /// Expands or collapses the tree view.  Returns true if the tree is now expanded, returns false if the tree is now collapsed
-        /// </summary>
-        /// <param name="btnExpandOrCollapse"></param>
-        /// <returns></returns>
-        public bool ExpandOrCollapse(Button btnExpandOrCollapse)
-        {
-            Tree.UseFiltering = false;
-
-            if (expand)
-            {
-                Tree.ExpandAll();
-                expand = false;
-
-                if(btnExpandOrCollapse != null)
-                    btnExpandOrCollapse.Text = "Collapse";
-                
-            }
-            else
-            {
-                Tree.CollapseAll();
-                expand = true;
-                if(btnExpandOrCollapse != null)
-                    btnExpandOrCollapse.Text = "Expand";
-            }
-
-            Tree.UseFiltering = true;
-            Tree.EnsureVisible(0);
-            
-            return !expand;
         }
     }
 }

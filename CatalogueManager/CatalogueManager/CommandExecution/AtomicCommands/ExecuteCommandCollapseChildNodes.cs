@@ -2,53 +2,42 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using BrightIdeasSoftware;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly TreeListView _tree;
+        private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
         private readonly object _rootToCollapseTo;
 
-        public ExecuteCommandCollapseChildNodes(IActivateItems activator,TreeListView tree, object rootToCollapseTo) : base(activator)
+        public ExecuteCommandCollapseChildNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object rootToCollapseTo) : base(activator)
         {
-            _tree = tree;
+            _commonFunctionality = commonFunctionality;
             _rootToCollapseTo = rootToCollapseTo;
 
-            if(!tree.IsExpanded(rootToCollapseTo))
+            if (!_commonFunctionality.Tree.IsExpanded(rootToCollapseTo))
                 SetImpossible("Node is not expanded");
         }
 
         public override void Execute()
         {
             base.Execute();
+            
+            //collapse all children
+            foreach (object o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo))
+                if (_commonFunctionality.Tree.IsExpanded(o))
+                    _commonFunctionality.Tree.Collapse(o);
 
-            HashSet<object> expanded = new HashSet<object> (_tree.ExpandedObjects.OfType<object>());
+            //and collapse the root
+            _commonFunctionality.Tree.Collapse(_rootToCollapseTo);
 
-            try
-            {
-                foreach (var o in _tree.GetChildren(_rootToCollapseTo))
-                    CollapseRecursively(o,expanded);
-            }
-            finally
-            {
-                _tree.ExpandedObjects = expanded;
-                _tree.RebuildAll(true);
-            }
-        }
-
-        private void CollapseRecursively(object o, HashSet<object> expanded)
-        {
-            foreach (var child in _tree.GetChildren(o))
-                CollapseRecursively(child,expanded);
-
-            if(expanded.Contains(o))
-                expanded.Remove(o);
+            //then expand it to depth 1
+            _commonFunctionality.ExpandToDepth(1,_rootToCollapseTo);
         }
 
         public Image GetImage(IIconProvider iconProvider)

@@ -2,25 +2,25 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using BrightIdeasSoftware;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandExpandAllNodes : BasicUICommandExecution,IAtomicCommand
     {
-        private TreeListView _tree;
+        private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
         private object _rootToExpandFrom;
 
-        public ExecuteCommandExpandAllNodes(IActivateItems activator,TreeListView tree, object rootToCollapseTo) : base(activator)
+        public ExecuteCommandExpandAllNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object rootToCollapseTo) : base(activator)
         {
-            _tree = tree;
+            _commonFunctionality = commonFunctionality;
             _rootToExpandFrom = rootToCollapseTo;
             
-            if(!tree.CanExpand(rootToCollapseTo))
+            if(!commonFunctionality.Tree.CanExpand(rootToCollapseTo))
                 SetImpossible("Node cannot be expanded");
         }
 
@@ -28,28 +28,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            HashSet<object> expanded = new HashSet<object>(_tree.ExpandedObjects.OfType<object>());
-            try
-            {
-                expanded.Add(_rootToExpandFrom);
-
-                foreach (var o in _tree.GetChildren(_rootToExpandFrom))
-                    ExpandRecursively(o,expanded);
-
-                _tree.ExpandedObjects = expanded;
-            }
-            finally
-            {
-                _tree.RebuildAll(true);
-            }
-        }
-
-        private void ExpandRecursively(object o, HashSet<object> expanded)
-        {
-            expanded.Add(o);
-
-            foreach (var child in Activator.CoreChildProvider.GetChildren(o))
-                ExpandRecursively(child,expanded);
+            _commonFunctionality.ExpandToDepth(int.MaxValue,_rootToExpandFrom);
         }
 
         public Image GetImage(IIconProvider iconProvider)
