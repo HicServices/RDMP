@@ -122,7 +122,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 check = CheckResult.Success;
             }
 
-            notifier.OnCheckPerformed(new CheckEventArgs(message, check));
+            notifier.OnCheckPerformed(new CheckEventArgs("PkSynthesizer:" + message, check));
         }
     }
 } 

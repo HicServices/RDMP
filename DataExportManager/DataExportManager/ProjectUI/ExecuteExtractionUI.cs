@@ -25,7 +25,9 @@ using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
 using CatalogueManager.PipelineUIs.Pipelines;
 using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
@@ -81,7 +83,20 @@ namespace DataExportManager.ProjectUI
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
             pictureBox1.BackColor = Color.FromArgb(240, 240, 240);
 
+            tlvDatasets.CellClick += tlvDatasets_CellClick;
+            
             helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
+        }
+
+        void tlvDatasets_CellClick(object sender, CellClickEventArgs e)
+        {
+            if (e.Column == olvState)
+            {
+                var notifier = GetCheckNotifier(e.Model);
+
+                var popup = new PopupChecksUI(e.Model.ToString(), false);
+                popup.Check(new ReplayCheckable(notifier));
+            }
         }
 
         private HelpWorkflow BuildHelpFlow()
@@ -164,6 +179,20 @@ namespace DataExportManager.ProjectUI
             return null;
         }
 
+        private ToMemoryCheckNotifier GetCheckNotifier(object rowObject)
+        {
+            var extractionRunner = checkAndExecuteUI1.CurrentRunner as ExtractionRunner;
+
+            if (rowObject == _globalsFolder && extractionRunner != null)
+                return extractionRunner.GetGlobalCheckNotifier();
+
+            var sds = rowObject as SelectedDataSets;
+
+            if (extractionRunner != null && sds != null) 
+                return extractionRunner.GetCheckNotifier(sds.ExtractableDataSet);
+            
+            return null;
+        }
         private object State_AspectGetter(object rowobject)
         {
             var state = GetState(rowobject);

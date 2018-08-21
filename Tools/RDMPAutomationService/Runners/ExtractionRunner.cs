@@ -163,6 +163,29 @@ namespace RDMPAutomationService.Runners
             return _configuration.SelectedDataSets.Where(ds => _options.Datasets.Contains(ds.ExtractableDataSet_ID)).ToArray();
         }
 
+        public ToMemoryCheckNotifier GetGlobalCheckNotifier()
+        {
+            if (!ChecksDictionary.Any(kvp => kvp.Key is GlobalExtractionChecker))
+                return null;
+
+            return ChecksDictionary.Single(kvp=>kvp.Key is GlobalExtractionChecker).Value;
+        }
+
+        public ToMemoryCheckNotifier GetCheckNotifier(IExtractableDataSet extractableData)
+        {
+            if (_options.Command == CommandLineActivity.check)
+            {
+                var sds = ChecksDictionary.Keys.OfType<SelectedDataSetsChecker>().SingleOrDefault(k => k.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
+
+                if (sds == null)
+                    return null;
+
+                return ChecksDictionary[sds];
+            }
+            
+            return null;
+        }
+
         public object GetState(IExtractableDataSet extractableData)
         {
             if(_options.Command == CommandLineActivity.check)
