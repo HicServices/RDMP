@@ -40,8 +40,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                     var assembly = match.Groups[1].Value;
                     var version = match.Groups[2].Value;
 
-                    if(!Dependencies.ContainsKey(assembly))
-                        Dependencies.Add(assembly,version);
+                    if (!Dependencies.ContainsKey(assembly))
+                        Dependencies.Add(assembly, version);
                     else
                     {
                         if (!Equals(Dependencies[assembly], version))
@@ -51,43 +51,18 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             }
 
             foreach (var project in sln.Projects)
-            { 
-                FileInfo csproj = new FileInfo(Path.Combine(sln.SolutionDirectory.FullName,project.Path));
-                
+            {
+                FileInfo csproj = new FileInfo(Path.Combine(sln.SolutionDirectory.FullName, project.Path));
+
                 FileInfo fappConfig = new FileInfo(Path.Combine(csproj.Directory.FullName, "app.config"));
 
                 if (fappConfig.Exists)
-                {
-                    //look for dodgy binding redirects
+                    ProcessAppConfig(fappConfig, problems);
 
-                    /*<assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral" />
-                <bindingRedirect oldVersion="0.0.0.0-11.0.0.0" newVersion="11.0.2.0" />*
-                     */
-                    XmlDocument dc = new XmlDocument();
-                    dc.Load(fappConfig.FullName);
+                FileInfo fExeConfig = new FileInfo(Path.Combine(csproj.Directory.FullName,"RDMPAutomationService.exe.config"));
 
-                    foreach (XmlElement dependency in dc.GetElementsByTagName("dependentAssembly"))
-                    {
-                        var assemblyIdentity = dependency.GetElementsByTagName("assemblyIdentity").OfType<XmlElement>().SingleOrDefault();
-                        var bindingRedirect = dependency.GetElementsByTagName("bindingRedirect").OfType<XmlElement>().SingleOrDefault();
-
-                        if (assemblyIdentity != null && bindingRedirect != null)
-                        {
-                            var version ='"' + bindingRedirect.Attributes["newVersion"].Value + '"';
-                            var assembly = '"' + assemblyIdentity.Attributes["name"].Value + '"';
-
-                            if(Dependencies.ContainsKey(assembly))
-                            {
-                                if (!AreProbablyCompatibleVersions(Dependencies[assembly], version))
-                                    problems.Add("You have a binding redirect in " + fappConfig.FullName  + " for assembly " + assembly + " to version " + version + " but your nuspec has version " + Dependencies[assembly]);
-                            }
-                            else
-                            {
-                                problems.Add("You have a binding redirect in "+fappConfig.FullName+" for assembly " + assembly + " but no corresponding dependency listed in any of your nuspec files.  Why do you have binding redirects for assemblies that are not redistributed with RDMP?");
-                            }
-                        }
-                    }
-                }
+                if (fExeConfig.Exists)
+                    ProcessAppConfig(fExeConfig,problems);
 
                 FileInfo fappPackages = new FileInfo(Path.Combine(csproj.Directory.FullName, "packages.config"));
                 if (fappPackages.Exists)
@@ -102,40 +77,42 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                     {
                         var assembly = '"' + dependency.Attributes["id"].Value + '"';
                         var version = '"' + dependency.Attributes["version"].Value + '"';
-                            
+
                         if (Dependencies.ContainsKey(assembly))
                         {
                             if (!Equals(Dependencies[assembly], version))
-                                problems.Add("In package " + fappPackages.FullName + " you reference " + assembly + " with version " + version + " but your nuspec has version " + Dependencies[assembly]);
+                                problems.Add("In package " + fappPackages.FullName + " you reference " + assembly +
+                                             " with version " + version + " but your nuspec has version " +
+                                             Dependencies[assembly]);
                         }
                         else
                         {
-                            problems.Add("In package " + fappPackages.FullName + " you reference "  + assembly + "  (version "+version+") but no corresponding dependency listed in any of your nuspec files.");
+                            problems.Add("In package " + fappPackages.FullName + " you reference " + assembly +
+                                         "  (version " + version +
+                                         ") but no corresponding dependency listed in any of your nuspec files.");
                         }
-                        
+
                     }
 
                 }
 
-                
-
-
-
                 var csprojFileContexnts = File.ReadAllText(csproj.FullName);
-                
+
                 //look for dodgy reference includes
                 foreach (KeyValuePair<string, string> dependency in Dependencies)
                 {
                     //Reference Include="MySql.Data, Version=8.0.12.0
                     Regex r = new Regex(dependency.Key.Trim('"') + @", Version=([0-9.""]*)");
-                    
+
                     foreach (Match match in r.Matches(csprojFileContexnts))
                     {
                         var versionInCsproj = match.Groups[1].Value;
                         var versionInNuspec = dependency.Value;
 
                         if (!AreProbablyCompatibleVersions(versionInNuspec, versionInCsproj))
-                            problems.Add("csproj file " + project.Name + " lists dependency of " + dependency.Key + " with version " + versionInCsproj + " while in the nuspec it is " + versionInNuspec);
+                            problems.Add("csproj file " + project.Name + " lists dependency of " + dependency.Key +
+                                         " with version " + versionInCsproj + " while in the nuspec it is " +
+                                         versionInNuspec);
                     }
                 }
             }
@@ -143,8 +120,47 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             foreach (var problem in problems)
                 Console.WriteLine(problem);
 
-            Assert.AreEqual(0,problems.Count);
+            Assert.AreEqual(0, problems.Count);
 
+        }
+
+        private void ProcessAppConfig(FileInfo fappConfig, List<string> problems)
+        {
+            //look for dodgy binding redirects
+
+            /*<assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-11.0.0.0" newVersion="11.0.2.0" />*
+                 */
+            XmlDocument dc = new XmlDocument();
+            dc.Load(fappConfig.FullName);
+
+            foreach (XmlElement dependency in dc.GetElementsByTagName("dependentAssembly"))
+            {
+                var assemblyIdentity =
+                    dependency.GetElementsByTagName("assemblyIdentity").OfType<XmlElement>().SingleOrDefault();
+                var bindingRedirect =
+                    dependency.GetElementsByTagName("bindingRedirect").OfType<XmlElement>().SingleOrDefault();
+
+                if (assemblyIdentity != null && bindingRedirect != null)
+                {
+                    var version = '"' + bindingRedirect.Attributes["newVersion"].Value + '"';
+                    var assembly = '"' + assemblyIdentity.Attributes["name"].Value + '"';
+
+                    if (Dependencies.ContainsKey(assembly))
+                    {
+                        if (!AreProbablyCompatibleVersions(Dependencies[assembly], version))
+                            problems.Add("You have a binding redirect in " + fappConfig.FullName + " for assembly " +
+                                         assembly + " to version " + version + " but your nuspec has version " +
+                                         Dependencies[assembly]);
+                    }
+                    else
+                    {
+                        problems.Add("You have a binding redirect in " + fappConfig.FullName + " for assembly " +
+                                     assembly +
+                                     " but no corresponding dependency listed in any of your nuspec files.  Why do you have binding redirects for assemblies that are not redistributed with RDMP?");
+                    }
+                }
+            }
         }
 
         /// <summary>
