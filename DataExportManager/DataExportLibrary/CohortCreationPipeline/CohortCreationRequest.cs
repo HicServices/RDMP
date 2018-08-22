@@ -129,6 +129,8 @@ namespace DataExportLibrary.CohortCreationPipeline
             AddInitializationObject(FileToLoad);
             AddInitializationObject(ExtractionIdentifierColumn);
             AddInitializationObject(this);
+            
+            GenerateContext();
         }
 
         protected override IDataFlowPipelineContext GenerateContextImpl()
