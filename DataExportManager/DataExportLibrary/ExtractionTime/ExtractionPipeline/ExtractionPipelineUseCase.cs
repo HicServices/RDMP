@@ -20,7 +20,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
     /// <summary>
     /// Use case for linking and extracting Project Extraction Configuration datasets and custom data (See IExtractCommand).
     /// </summary>
-    public class ExtractionPipelineUseCase : PipelineUseCase
+    public sealed class ExtractionPipelineUseCase : PipelineUseCase
     {
         private readonly IPipeline _pipeline;
         readonly DataLoadInfo _dataLoadInfo;
@@ -48,12 +48,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             AddInitializationObject(project);
             AddInitializationObject(_dataLoadInfo);
             AddInitializationObject(project.DataExportRepository.CatalogueRepository);
-            
+
+            GenerateContext();
         }
 
         
 
-        protected override IDataFlowPipelineContext GenerateContext()
+        protected override IDataFlowPipelineContext GenerateContextImpl()
         {
             //create the context using the standard context factory
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
@@ -205,7 +206,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                 typeof(ICatalogueRepository)
             })
         {
-            
+            GenerateContext();
         }
 
         public static ExtractionPipelineUseCase DesignTime()

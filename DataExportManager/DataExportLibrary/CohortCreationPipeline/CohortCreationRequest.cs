@@ -22,7 +22,7 @@ namespace DataExportLibrary.CohortCreationPipeline
     /// All metadata details nessesary to create a cohort including which project it goes into, it's name, version etc.  There are no identifiers for the cohort.
     /// Also functions as the use case for cohort creation (to which it passes itself as an input object).
     /// </summary>
-    public class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest, ICheckable
+    public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest
     {
         private readonly IDataExportRepository _repository;
 
@@ -97,6 +97,8 @@ namespace DataExportLibrary.CohortCreationPipeline
             
             AddInitializationObject(Project);
             AddInitializationObject(this);
+
+            GenerateContext();
         }
 
         /// <summary>
@@ -129,7 +131,7 @@ namespace DataExportLibrary.CohortCreationPipeline
             AddInitializationObject(this);
         }
 
-        protected override IDataFlowPipelineContext GenerateContext()
+        protected override IDataFlowPipelineContext GenerateContextImpl()
         {
             return new DataFlowPipelineContext<DataTable>
             {
@@ -212,7 +214,7 @@ namespace DataExportLibrary.CohortCreationPipeline
             typeof(ICohortCreationRequest)
         })
         {
-            
+            GenerateContext();
         }
 
         public static PipelineUseCase DesignTime()
