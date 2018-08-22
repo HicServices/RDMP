@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Checks;
-using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
@@ -32,6 +28,7 @@ namespace CatalogueLibrary.QueryBuilding
         private readonly TableInfo[] _forceJoinsToTheseTables;
         object oSQLLock = new object();
 
+        /// <inheritdoc/>
         public string SQL
         {
             get {
@@ -48,14 +45,10 @@ namespace CatalogueLibrary.QueryBuilding
         public string LimitationSQL { get; private set; }
         
         public List<QueryTimeColumn> SelectColumns { get; private set; }
-        private int[] UserSelectColumns_LineNumbers;
-        
-        public List<JoinInfo> JoinsUsedInQuery { get; private set; }
-        private int[] JoinsUsedInQuery_LineNumbers;
-
         public List<TableInfo> TablesUsedInQuery { get; private set; }
-        
+        public List<JoinInfo> JoinsUsedInQuery { get; private set; }
         public List<CustomLine> CustomLines { get; private set; }
+
         public CustomLine TopXCustomLine { get; set; }
 
         public ParameterManager ParameterManager { get; private set; }
@@ -70,18 +63,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// Determines whether the QueryBuilder will sort the input columns according to their .Order paramter, the default value is true
         /// </summary>
         public bool Sort { get; set; }
-
-        public int CurrentLine
-        {
-            get { return currentLine;}
-        }
-
-
-        /// <summary>
-        /// The number of lines in the SQL parameter
-        /// </summary>
-        public int LineCount { get; private set; }
-
+        
         /// <summary>
         /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your 
         /// own container tree at runtime rather than referencing a database entity)
@@ -138,13 +120,11 @@ namespace CatalogueLibrary.QueryBuilding
             }
         }
 
-        private int[] Filters_LineNumbers;
-        private int Select_LineNumber;
-        private int FROM_LineNumber;
-
-        private int currentLine = 0;
         private string _sql;
+
+        /// <inheritdoc/>
         public bool SQLOutOfDate { get; set; }
+
         private IContainer _rootFilterContainer;
         private string _hashingAlgorithm;
         private int _topX;
@@ -194,119 +174,11 @@ namespace CatalogueLibrary.QueryBuilding
             }   
         }
         
-
-        /// <summary>
-        /// Pass in a column and it will tell you which line of .SQL it wrote it out to.  Returns -1 if it is not found
-        /// </summary>
-        /// <param name="column"></param>
-        /// <returns></returns>
-        [Pure]
-        public int GetLineNumberForColumn(IColumn column)
-        {
-            if (SQLOutOfDate)
-                RegenerateSQL();
-
-            for (int i = 0; i < UserSelectColumns_LineNumbers.Length; i++)
-                if (SelectColumns[i].IColumn.ID == column.ID)
-                    return UserSelectColumns_LineNumbers[i];
-
-            return -1;
-        }
-
-        [Pure]
-        public QueryComponent WhatIsOnLine(int iLineNumber)
-        {
-            if (SQLOutOfDate)
-                RegenerateSQL();
-
-            if (iLineNumber < Select_LineNumber)
-                return QueryComponent.VariableDeclaration;
-
-            if(iLineNumber == Select_LineNumber)
-                return QueryComponent.SELECT;
-            
-            if (UserSelectColumns_LineNumbers.Any())
-                if (UserSelectColumns_LineNumbers.Contains(iLineNumber))
-                    return QueryComponent.QueryTimeColumn;
-
-            if (JoinsUsedInQuery_LineNumbers.Any())
-                if (JoinsUsedInQuery_LineNumbers.Contains(iLineNumber))
-                    return QueryComponent.JoinInfoJoin;
-            
-            if (Filters_LineNumbers.Any())
-                if (Filters_LineNumbers.Contains(iLineNumber))
-                    return QueryComponent.WHERE;
-            
-            if (iLineNumber == FROM_LineNumber)
-                return QueryComponent.FROM;
-
-            return QueryComponent.None;
-        }
-
         public CustomLine AddCustomLine(string text, QueryComponent positionToInsert)
         {
             SQLOutOfDate = true;
             return SqlQueryBuilderHelper.AddCustomLine(this, text, positionToInsert);
         }
-
-        [Pure]
-        public object GetComponentOnLine(int iLineNumber)
-        {
-
-            if (SQLOutOfDate)
-                RegenerateSQL();
-
-            QueryComponent component = WhatIsOnLine(iLineNumber);
-
-            switch (component)
-            {
-                case QueryComponent.QueryTimeColumn:
-                    return SelectColumns[Array.IndexOf(UserSelectColumns_LineNumbers, iLineNumber)].IColumn;
-                case QueryComponent.WHERE:
-                    return Filters[Array.IndexOf(Filters_LineNumbers, iLineNumber)];
-                case QueryComponent.JoinInfoJoin:
-                    return JoinsUsedInQuery[Array.IndexOf(JoinsUsedInQuery_LineNumbers, iLineNumber)];
-                case QueryComponent.None:
-                    return null;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        [Pure]
-        public int GetLineNumberOfFirst(QueryComponent component)
-        {
-            if (SQLOutOfDate)
-                RegenerateSQL();
-
-            if (component == QueryComponent.FROM)
-                return FROM_LineNumber;
-
-            if (component == QueryComponent.SELECT)
-                return Select_LineNumber;
-
-            throw new NotImplementedException();
-
-        }
-        [Pure]
-        public string GetSQLSubstringStartingAtLineNumber(int line)
-        {
-            if (SQLOutOfDate)
-                RegenerateSQL();
-
-            if(line > LineCount)
-                throw new IndexOutOfRangeException("line must be less than the number of lines in the query");
-
-            string toReturn = "";
-            string[] queryLines = SQL.Split(new []{Environment.NewLine},StringSplitOptions.None);
-
-
-            for (int i = line; i < queryLines.Length; i++)
-                toReturn += queryLines[i];
-
-            return toReturn;
-        }
-
        
         [Pure]
         public JoinInfo[] GetRequiredJoins()
@@ -343,16 +215,13 @@ namespace CatalogueLibrary.QueryBuilding
             var checkNotifier = new ThrowImmediatelyCheckNotifier();
 
             _sql = "";
-            currentLine = 0;
-
+            
             //reset the Parameter knowledge
             ParameterManager.ClearNonGlobals();
 
             #region Setup to output the query, where we figure out all the joins etc
             //reset everything
-            //maintain a list of the line numbers that relevant things are on so that we can tell users
-            UserSelectColumns_LineNumbers = new int[SelectColumns.Count];
-
+            
             if (Sort)
                 SelectColumns.Sort();
             
@@ -407,10 +276,7 @@ namespace CatalogueLibrary.QueryBuilding
                 if(CheckSyntax)
                     parameter.Check(checkNotifier);
 
-                int newlinesTaken;
-                toReturn += GetParameterDeclarationSQL(parameter, out newlinesTaken);
-
-                currentLine += newlinesTaken;
+                toReturn += GetParameterDeclarationSQL(parameter);
             }
 
             //add user custom Parameter lines
@@ -419,58 +285,45 @@ namespace CatalogueLibrary.QueryBuilding
             #endregion
 
             #region Select (including all IColumns)
-            toReturn += TakeNewLine();
-            Select_LineNumber = currentLine;
-            toReturn += "SELECT " + LimitationSQL + TakeNewLine();
+            toReturn += Environment.NewLine;
+            toReturn += "SELECT " + LimitationSQL + Environment.NewLine;
 
             toReturn = AppendCustomLines(toReturn, QueryComponent.SELECT);
-            toReturn += TakeNewLine();
+            toReturn += Environment.NewLine;
 
             toReturn = AppendCustomLines(toReturn, QueryComponent.QueryTimeColumn);
             
             for (int i = 0; i < SelectColumns.Count;i++ )
             {
                 //output each of the ExtractionInformations that the user requested and record the line number for posterity
-                UserSelectColumns_LineNumbers[i] = currentLine;
-
                 string columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, _syntaxHelper);
 
                  //there is another one coming
                  if (i + 1 < SelectColumns.Count)
                      columnAsSql += ",";
-                
-                toReturn += columnAsSql + TakeNewLine();
+
+                 toReturn += columnAsSql + Environment.NewLine;
             }
 
             #endregion
 
-            FROM_LineNumber = currentLine;
-
-
             //work out basic JOINS Sql
-            int[] joinLineNumbers;
-            toReturn += SqlQueryBuilderHelper.GetFROMSQL(this,out joinLineNumbers);
-            JoinsUsedInQuery_LineNumbers = joinLineNumbers;
+            toReturn += SqlQueryBuilderHelper.GetFROMSQL(this);
 
             //add user custom JOIN lines
             toReturn = AppendCustomLines(toReturn, QueryComponent.JoinInfoJoin);
             
             #region Filters (WHERE)
 
-            int[] filterLineNumbers;
-            toReturn += SqlQueryBuilderHelper.GetWHERESQL(this, out filterLineNumbers);
-            Filters_LineNumbers = filterLineNumbers;
-
+            toReturn += SqlQueryBuilderHelper.GetWHERESQL(this);
+            
             toReturn = AppendCustomLines(toReturn, QueryComponent.WHERE);
             toReturn = AppendCustomLines(toReturn, QueryComponent.Postfix);
             
             _sql = toReturn;
             SQLOutOfDate = false;
 
-            LineCount = currentLine;
             #endregion
-            
-            
         }
 
         private string AppendCustomLines(string toReturn, QueryComponent stage)
@@ -478,31 +331,19 @@ namespace CatalogueLibrary.QueryBuilding
             var lines = SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, stage).ToArray();
             if (lines.Any())
             {
-                toReturn += TakeNewLine();
-                toReturn += string.Join(TakeNewLine(), lines.Select(l=>l.Text));
+                toReturn += Environment.NewLine;
+                toReturn += string.Join(Environment.NewLine, lines.Select(l => l.Text));
             }
 
             return toReturn;
         }
-
-        public string TakeNewLine()
-        {
-            currentLine++;
-            return Environment.NewLine;
-        }
-
+        
 
         public IEnumerable<Lookup> GetDistinctRequiredLookups()
         {
             return SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
         }
-
-        public static string GetParameterDeclarationSQL(ISqlParameter constantParameter)
-        {
-            int whoCares;
-            return GetParameterDeclarationSQL(constantParameter, out whoCares);
-        }
-
+        
         public static ConstantParameter DeconstructStringIntoParameter(string sql, IQuerySyntaxHelper syntaxHelper)
         {
             string[] lines = sql.Split(new[] {'\n'},StringSplitOptions.RemoveEmptyEntries);
@@ -529,18 +370,13 @@ namespace CatalogueLibrary.QueryBuilding
             return new ConstantParameter(declaration.Trim(), value.Trim(), comment, syntaxHelper);
         }
 
-        public static string GetParameterDeclarationSQL(ISqlParameter sqlParameter, out int newlinesTaken)
+        public static string GetParameterDeclarationSQL(ISqlParameter sqlParameter)
         {
             string toReturn = "";
 
             if (!string.IsNullOrWhiteSpace(sqlParameter.Comment))
-            {
                 toReturn += "/*" + sqlParameter.Comment + "*/" + Environment.NewLine;
-                newlinesTaken = 3;
-            }
-            else
-                newlinesTaken = 2;//IMPORTANT, if you edit this to have more newlines, correct this value
-
+            
             toReturn += sqlParameter.ParameterSQL + Environment.NewLine;
 
             //it's a table valued parameter! advanced
@@ -549,9 +385,6 @@ namespace CatalogueLibrary.QueryBuilding
             else
                 toReturn += "SET " + sqlParameter.ParameterName + "=" + sqlParameter.Value + ";" + Environment.NewLine;//its a regular value
             
-            
-            
-
             return toReturn;
         }
 

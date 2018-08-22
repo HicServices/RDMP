@@ -288,12 +288,10 @@ namespace CatalogueLibrary.QueryBuilding
             return toReturn;
         }
 
-        public static string GetFROMSQL(ISqlQueryBuilder qb,out int[] JoinsUsedInQuery_LineNumbers)
+        public static string GetFROMSQL(ISqlQueryBuilder qb)
         {
             //add the from bit
-            JoinsUsedInQuery_LineNumbers = new int[qb.JoinsUsedInQuery.Count];
-            
-            string toReturn = "FROM " + qb.TakeNewLine();
+            string toReturn = "FROM " + Environment.NewLine;
 
             if(qb.TablesUsedInQuery.Count == 0)
                 throw new QueryBuildingException("There are no tables involved in the query: We were asked to compute the FROM SQL but qb.TablesUsedInQuery was of length 0");
@@ -346,16 +344,14 @@ namespace CatalogueLibrary.QueryBuilding
                         if (qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
                         {
                             //we are joining to a table where the PrimaryExtractionTable is the PK in the relationship so join into the foreign key side
-                            JoinsUsedInQuery_LineNumbers[i] = qb.CurrentLine;
-                            toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + qb.TakeNewLine();
+                            toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;
                             tablesAddedSoFar.Add(qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID);
                         }
                         else
                             if (qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
                             {
                                 //we are joining to a table where the PrimaryExtractionTable is the FK in the relationship so join into the primary key side
-                                JoinsUsedInQuery_LineNumbers[i] = qb.CurrentLine;
-                                toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) + qb.TakeNewLine();
+                                toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;
                                 tablesAddedSoFar.Add(qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID);
                             }
 
@@ -367,11 +363,11 @@ namespace CatalogueLibrary.QueryBuilding
 
                             //if we have already seen foreign key table before 
                             if (tablesAddedSoFar.Contains(qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID))
-                                toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) + qb.TakeNewLine();  //add primary
+                                toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;  //add primary
                             else
                                 //else if we have already seen primary key table before
                                 if (tablesAddedSoFar.Contains(qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID))
-                                    toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + qb.TakeNewLine();  //add foreign instead
+                                    toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;  //add foreign instead
                                 else
                                     throw new NotImplementedException("We are having to add a Join for a table that is not 1 level down from the PrimaryExtractionTable");
                         }
@@ -380,14 +376,12 @@ namespace CatalogueLibrary.QueryBuilding
                 else
                 {
                     //user has not specified which table to start from so just output them all in a random order (hopefully FindRequiredJoins bombed out if they tried to do anything too mental)
-                    JoinsUsedInQuery_LineNumbers[0] = qb.CurrentLine;
-                    toReturn += JoinHelper.GetJoinSQL(qb.JoinsUsedInQuery[0]) + qb.TakeNewLine(); //"FROM ForeignKeyTable JOIN PrimaryKeyTable ON ..."
+                    toReturn += JoinHelper.GetJoinSQL(qb.JoinsUsedInQuery[0]) + Environment.NewLine; //"FROM ForeignKeyTable JOIN PrimaryKeyTable ON ..."
 
                     //any subsequent joins
                     for (int i = 1; i < qb.JoinsUsedInQuery.Count; i++)
                     {
-                        JoinsUsedInQuery_LineNumbers[i] = qb.CurrentLine;
-                        toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + qb.TakeNewLine(); //right side only (ForeignKeyTable)
+                        toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine; //right side only (ForeignKeyTable)
                     }
                 }
 
@@ -398,7 +392,7 @@ namespace CatalogueLibrary.QueryBuilding
                     (column.IsLookupForeignKey && column.IsLookupForeignKeyActuallyUsed(qb.SelectColumns))
                     ||
                     column.IsIsolatedLookupDescription)
-                    toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(column.LookupTable, column.LookupTableAlias) + qb.TakeNewLine();
+                    toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(column.LookupTable, column.LookupTableAlias) + Environment.NewLine;
             }
 
 
@@ -437,9 +431,8 @@ namespace CatalogueLibrary.QueryBuilding
             return toAdd;
         }
 
-        public static string GetWHERESQL(ISqlQueryBuilder qb, out int[] Filters_LineNumbers)
+        public static string GetWHERESQL(ISqlQueryBuilder qb)
         {
-            Filters_LineNumbers = new int[qb.Filters.Count];
             string toReturn = "";
             
             var emptyFilters = qb.Filters.Where(f => string.IsNullOrWhiteSpace(f.WhereSQL)).ToArray();
@@ -450,16 +443,16 @@ namespace CatalogueLibrary.QueryBuilding
             //recursively iterate the filter containers joining them up with their operation (AND or OR) and doing tab indentation etc
             if (qb.Filters.Count > 0)
             {
-                toReturn += qb.TakeNewLine();
-                toReturn += "WHERE" + qb.TakeNewLine();
+                toReturn += Environment.NewLine;
+                toReturn += "WHERE" + Environment.NewLine;
 
-                toReturn = WriteContainerTreeRecursively(toReturn, 0, qb.RootFilterContainer, qb, ref Filters_LineNumbers);
+                toReturn = WriteContainerTreeRecursively(toReturn, 0, qb.RootFilterContainer, qb);
             }
 
             return toReturn;
         }
 
-        private static string WriteContainerTreeRecursively(string toReturn, int tabDepth, IContainer currentContainer, ISqlQueryBuilder qb, ref int[] Filters_LineNumbers)
+        private static string WriteContainerTreeRecursively(string toReturn, int tabDepth, IContainer currentContainer, ISqlQueryBuilder qb)
         {
             string tabs = "";
             //see how far we have to tab in
@@ -467,7 +460,7 @@ namespace CatalogueLibrary.QueryBuilding
                 tabs += "\t";
 
             //output starting bracket
-            toReturn += tabs + "(" + qb.TakeNewLine();
+            toReturn += tabs + "(" + Environment.NewLine;
 
             //see if we have subcontainers
             IContainer[] subcontainers = currentContainer.GetSubContainers();
@@ -475,11 +468,11 @@ namespace CatalogueLibrary.QueryBuilding
             if (subcontainers != null)
                 for (int i = 0; i < subcontainers.Length; i++)
                 {
-                    toReturn = WriteContainerTreeRecursively(toReturn, tabDepth + 1, subcontainers[i], qb, ref Filters_LineNumbers);
+                    toReturn = WriteContainerTreeRecursively(toReturn, tabDepth + 1, subcontainers[i], qb);
 
                     //there are more subcontainers to come
                     if (i + 1 < subcontainers.Length)
-                        toReturn += tabs + currentContainer.Operation + qb.TakeNewLine();
+                        toReturn += tabs + currentContainer.Operation + Environment.NewLine;
                 }
 
             //get all the filters in the current container
@@ -488,7 +481,7 @@ namespace CatalogueLibrary.QueryBuilding
 
             //if there are both filters and containers we need to join the trees with the operator (e.g. AND)
             if (subcontainers != null && subcontainers.Length >= 1 && filtersInContainer != null && filtersInContainer.Length >= 1)
-                toReturn += currentContainer.Operation + qb.TakeNewLine();
+                toReturn += currentContainer.Operation + Environment.NewLine;
 
             //output each filter (and record the line number of it) also make sure it is tabbed in correctly
             for (int i = 0; i < filtersInContainer.Count(); i++)
@@ -496,25 +489,22 @@ namespace CatalogueLibrary.QueryBuilding
                 if (qb.CheckSyntax)
                     filtersInContainer[i].Check(new ThrowImmediatelyCheckNotifier());
 
-                toReturn += tabs + @"/*" + filtersInContainer[i].Name + @"*/" + qb.TakeNewLine();
-
-                //record the line number that we wrote this out on
-                Filters_LineNumbers[qb.Filters.FindIndex(f => f.ID == filtersInContainer[i].ID)] = qb.CurrentLine;
+                toReturn += tabs + @"/*" + filtersInContainer[i].Name + @"*/" + Environment.NewLine;
 
                 // the filter may span multiple lines, so collapse it to a single line cleaning up any whitespace issues, e.g. to avoid double spaces in the collapsed version
                 var trimmedFilters = (filtersInContainer[i].WhereSQL??"")
                     .Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
                     .Select(s => s.Trim());
                 var singleLineWhereSQL = string.Join(" ", trimmedFilters);
-                toReturn += tabs + singleLineWhereSQL + qb.TakeNewLine();
+                toReturn += tabs + singleLineWhereSQL + Environment.NewLine;
 
                 //if there are more filters to come
                 if (i + 1 < filtersInContainer.Count())
-                    toReturn += tabs + currentContainer.Operation + qb.TakeNewLine();
+                    toReturn += tabs + currentContainer.Operation + Environment.NewLine;
 
             }
 
-            toReturn += tabs + ")" + qb.TakeNewLine();
+            toReturn += tabs + ")" + Environment.NewLine;
 
             return toReturn;
         }
