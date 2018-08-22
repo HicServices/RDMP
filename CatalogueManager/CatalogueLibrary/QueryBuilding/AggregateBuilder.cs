@@ -85,8 +85,6 @@ namespace CatalogueLibrary.QueryBuilding
         public IContainer RootFilterContainer { get; set; }
         public bool CheckSyntax { get; set; }
         public TableInfo PrimaryExtractionTable { get; private set; }
-        public bool Sort { get { return true; } set {throw new NotSupportedException();} }
-
         public ParameterManager ParameterManager { get; private set; }
 
         string _sql;
@@ -218,8 +216,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// </summary>
         public void RegenerateSQL()
         {
-            if (Sort)
-                SelectColumns.Sort();
+            SelectColumns.Sort();
 
             //things we discover below, set them all to default values again
             _pivotDimension = null;

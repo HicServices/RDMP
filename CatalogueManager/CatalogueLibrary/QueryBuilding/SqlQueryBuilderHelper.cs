@@ -57,9 +57,6 @@ namespace CatalogueLibrary.QueryBuilding
             if (qb.TablesUsedInQuery.Count == 1)
                 return;
 
-            if (!qb.Sort)
-                throw new QueryBuildingException("Query Builder was told not to sort, but there are multiple tables (some of which may be lookups) which will likely break if the columns are not in the correct order");
-
             QueryTimeColumn.SetLookupStatus(qb.SelectColumns.ToArray(), qb.TablesUsedInQuery);
         }
 
@@ -478,12 +475,11 @@ namespace CatalogueLibrary.QueryBuilding
             //get all the filters in the current container
             IFilter[] filtersInContainer = currentContainer.GetFilters();
             
-
             //if there are both filters and containers we need to join the trees with the operator (e.g. AND)
             if (subcontainers != null && subcontainers.Length >= 1 && filtersInContainer != null && filtersInContainer.Length >= 1)
                 toReturn += currentContainer.Operation + Environment.NewLine;
 
-            //output each filter (and record the line number of it) also make sure it is tabbed in correctly
+            //output each filter also make sure it is tabbed in correctly
             for (int i = 0; i < filtersInContainer.Count(); i++)
             {
                 if (qb.CheckSyntax)

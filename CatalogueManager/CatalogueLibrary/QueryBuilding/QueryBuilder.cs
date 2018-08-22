@@ -60,11 +60,6 @@ namespace CatalogueLibrary.QueryBuilding
         public TableInfo PrimaryExtractionTable { get; set; }
 
         /// <summary>
-        /// Determines whether the QueryBuilder will sort the input columns according to their .Order paramter, the default value is true
-        /// </summary>
-        public bool Sort { get; set; }
-        
-        /// <summary>
         /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your 
         /// own container tree at runtime rather than referencing a database entity)
         /// </summary>
@@ -140,7 +135,6 @@ namespace CatalogueLibrary.QueryBuilding
         {
             _forceJoinsToTheseTables = forceJoinsToTheseTables;
             SetLimitationSQL(limitationSQL);
-            Sort = true;
             ParameterManager = new ParameterManager();
             CustomLines = new List<CustomLine>();
 
@@ -222,8 +216,7 @@ namespace CatalogueLibrary.QueryBuilding
             #region Setup to output the query, where we figure out all the joins etc
             //reset everything
             
-            if (Sort)
-                SelectColumns.Sort();
+            SelectColumns.Sort();
             
             //work out all the filters 
             Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
