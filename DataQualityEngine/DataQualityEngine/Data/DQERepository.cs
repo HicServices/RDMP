@@ -54,6 +54,16 @@ namespace DataQualityEngine.Data
             return GetEvaluationsWhere("where CatalogueID = " + catalogue.ID + " order by DateOfEvaluation asc");
         }
 
+        public bool HasEvaluations(Catalogue catalogue)
+        {
+            using (var con = GetConnection())
+            {
+                //get all the row level data 1 to 1 join with evaluation
+                var cmdGetEvaluations = DatabaseCommandHelper.GetCommand("select count(*) from Evaluation where CatalogueID = " + catalogue.ID ,con.Connection, con.Transaction);
+                return Convert.ToInt32(cmdGetEvaluations.ExecuteScalar()) > 0;
+            }
+        }
+
         public IEnumerable<Evaluation> GetEvaluationsWhere(string whereSQL)
         {
             
