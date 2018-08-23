@@ -7,6 +7,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -22,26 +23,31 @@ namespace CatalogueLibrary.DataFlowPipeline
     /// <para>In general rather than trying to use this class directly you should package up your requirements/initialization objects into a PipelineUseCase and call GetEngine. </para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class DataFlowPipelineEngineFactory<T> : IDataFlowPipelineEngineFactory
+    public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     {
         private readonly MEF _mefPlugins;
-        private readonly DataFlowPipelineContext<T> _context;
+        private readonly IDataFlowPipelineContext _context;
+        private IPipelineUseCase _useCase;
+        private Type _flowType;
+        private ObjectConstructor _constructor;
+        
+        private Type _engineType;
 
-        public IDataFlowSource<T> ExplicitSource { get; set; }
-        public IDataFlowDestination<T> ExplicitDestination { get; set; } 
-
-        public DataFlowPipelineContext<T> Context
-        {
-            get { return _context; }
-        }
-
-        public DataFlowPipelineEngineFactory(MEF mefPlugins, DataFlowPipelineContext<T> context,IDataFlowSource<T> explicitSource = null, IDataFlowDestination<T> explicitDestination = null)
+        public DataFlowPipelineEngineFactory(IPipelineUseCase useCase,MEF mefPlugins)
         {
             _mefPlugins = mefPlugins;
-            _context = context;
+            _context = useCase.GetContext();
+            _useCase = useCase;
+            _flowType = _context.GetFlowType();
 
-            ExplicitSource = explicitSource;
-            ExplicitDestination = explicitDestination;
+            _constructor = new ObjectConstructor();
+
+            _engineType = typeof (DataFlowPipelineEngine<>).MakeGenericType(_flowType);
+        }
+
+        public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline): this(useCase,((ICatalogueRepository)pipeline.Repository).MEF)
+        {
+            
         }
 
         public IDataFlowPipelineEngine Create(IPipeline pipeline, IDataLoadEventListener listener)
@@ -51,11 +57,14 @@ namespace CatalogueLibrary.DataFlowPipeline
             if (!_context.IsAllowable(pipeline, out reason))
                 throw new Exception("Cannot create pipeline because: " + reason);
 
-            var destination = GetBest(ExplicitDestination, CreateDestinationIfExists(pipeline),"destination");
-            var source = GetBest(ExplicitSource, CreateSourceIfExists(pipeline),"source");
-            
+            var destination = GetBest(_useCase.ExplicitDestination, CreateDestinationIfExists(pipeline),"destination");
+            var source = GetBest(_useCase.ExplicitSource, CreateSourceIfExists(pipeline), "source");
+
+
+            //new DataFlowPipelineEngine<T>(_context, source, destination, listener, pipeline);
+
             //engine (this is the source, target is the destination)
-            DataFlowPipelineEngine<T> dataFlowEngine = new DataFlowPipelineEngine<T>(_context, source, destination, listener, pipeline);
+            var dataFlowEngine = (IDataFlowPipelineEngine)_constructor.ConstructIfPossible(_engineType, _context, source, destination, listener, pipeline); 
 
             //now go fetch everything that the user has configured for this particular pipeline
             foreach (PipelineComponent toBuild in pipeline.PipelineComponents)
@@ -69,10 +78,10 @@ namespace CatalogueLibrary.DataFlowPipeline
                     continue;
                 
                 //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
-                IDataFlowComponent<T> component = CreateComponent(toBuild);
+                object component = CreateComponent(toBuild);
                 
                 //Add the components to the pipeline
-                dataFlowEngine.Components.Add(component);
+                dataFlowEngine.ComponentObjects.Add(component);
             }
 
             return dataFlowEngine;
@@ -108,7 +117,7 @@ namespace CatalogueLibrary.DataFlowPipeline
             try
             {
                 if (component.ID == pipeline.SourcePipelineComponent_ID)
-                    return CreateSourceComponent(component);
+                    return CreateComponent(component);
 
                 return CreateComponent(component);
             }
@@ -119,18 +128,9 @@ namespace CatalogueLibrary.DataFlowPipeline
             }
         }
 
-
-        private IDataFlowSource<T> CreateSourceComponent(IPipelineComponent toBuild)
+        private object CreateComponent(IPipelineComponent toBuild)
         {
-            return CreateComponent<IDataFlowSource<T>>(toBuild);
-        }
-        private IDataFlowComponent<T> CreateComponent(IPipelineComponent toBuild)
-        {
-            return CreateComponent<IDataFlowComponent<T>>(toBuild);
-        }
-        private T2 CreateComponent<T2>(IPipelineComponent toBuild)
-        {
-            T2 toReturn = _mefPlugins.FactoryCreateA<T2>(toBuild.Class);
+            object toReturn = _constructor.Construct(toBuild.GetClassAsSystemType());
 
             //all the IArguments we need to initialize the class
             var allArguments = toBuild.GetAllArguments().ToArray();
@@ -219,7 +219,7 @@ namespace CatalogueLibrary.DataFlowPipeline
         }
 
 
-        public IDataFlowSource<T> CreateSourceIfExists(IPipeline pipeline)
+        public object CreateSourceIfExists(IPipeline pipeline)
         {
             var source = pipeline.Source;
 
@@ -227,10 +227,10 @@ namespace CatalogueLibrary.DataFlowPipeline
             if (source == null)
                 return null;
 
-            return CreateSourceComponent(source);
+            return CreateComponent(source);
         }
 
-        public IDataFlowDestination<T> CreateDestinationIfExists(IPipeline pipeline)
+        public object CreateDestinationIfExists(IPipeline pipeline)
         {
             var destination = pipeline.Destination;
 
@@ -238,12 +238,9 @@ namespace CatalogueLibrary.DataFlowPipeline
             if (destination == null)
                 return null;
 
-            IDataFlowComponent<T> toReturn = CreateComponent(destination);
+            //throw new NotSupportedException("The IsDestination PipelineComponent of pipeline '" + pipeline.Name + "' is an IDataFlowComponent but it is not an IDataFlowDestination which is a requirement of all destinations");
 
-            if (toReturn is IDataFlowDestination<T>)
-                return (IDataFlowDestination<T>) toReturn;
-            else
-                throw new NotSupportedException("The IsDestination PipelineComponent of pipeline '" + pipeline.Name + "' is an IDataFlowComponent but it is not an IDataFlowDestination which is a requirement of all destinations");
+            return CreateComponent(destination);
         }
 
         public void Check(IPipeline pipeline, ICheckNotifier checkNotifier, object[] initizationObjects)
@@ -295,36 +292,6 @@ namespace CatalogueLibrary.DataFlowPipeline
                 checkNotifier.OnCheckPerformed(new CheckEventArgs("About to check engine/components", CheckResult.Success));
                 dataFlowPipelineEngine.Check(checkNotifier);
             }
-        }
-    }
-
-    /// <summary>
-    /// Non generic version of DataFlowPipelineEngineFactory T which relies on having an IPipelineUseCase which handles the context / initialization objects etc.
-    /// See the generic version for the full description of a the purpose of a DataFlowPipelineEngineFactory
-    /// </summary>
-    public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
-    {
-        private readonly IPipelineUseCase _useCase;
-
-        public DataFlowPipelineEngineFactory(IPipelineUseCase useCase)
-        {
-            _useCase = useCase;
-        }
-
-        public IDataFlowPipelineEngine Create(IPipeline pipeline, IDataLoadEventListener listener)
-        {
-            var repo = ((CatalogueRepository) pipeline.Repository);
-            var context = _useCase.GetContext();
-
-            //create an DataFlowPipelineContext<T> of the appropriate type T
-            var genericFactoryType = typeof( DataFlowPipelineEngineFactory<>).MakeGenericType(context.GetFlowType());
-
-            var constructor = genericFactoryType.GetConstructors().Single();
-            
-            //MEF mefPlugins, DataFlowPipelineContext<T> context
-            var genericFactoryInstance = (IDataFlowPipelineEngineFactory)constructor.Invoke(new object[] { repo.MEF, context,_useCase.ExplicitSource,_useCase.ExplicitDestination});
-            
-            return genericFactoryInstance.Create(pipeline, listener);
         }
     }
 }

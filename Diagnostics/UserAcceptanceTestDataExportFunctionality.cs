@@ -15,7 +15,6 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataLoadEngine.DatabaseManagement.Operations;
 using Diagnostics.TestData;
-using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;

@@ -88,8 +88,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            
-            checksUIIconOnly1.Check(GovernancePeriod);
+            ragSmiley1.StartChecking(GovernancePeriod);
             GovernancePeriod.SaveToDatabase();
 
             var h = ChangesSaved;

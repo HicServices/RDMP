@@ -8,19 +8,14 @@ namespace CatalogueManager.LogViewer.Tabs
     /// </summary>
     public class LoggingProgressMessagesTab : LoggingTab
     {
-        protected override DataTable FetchDataTable(LogManager lm)
+        protected override LoggingTables GetTableEnum()
         {
-            return lm.ListProgressMessagesAsTable(null);
+            return LoggingTables.ProgressLog;
         }
 
-        public override void SetFilter(LogViewerFilter filter)
+        protected override void FetchDataTable()
         {
-            base.SetFilter(filter);
-
-            if (filter.Run == null)
-                SetFilter("");
-            else
-                SetFilter("dataLoadRunID=" + filter.Run);
+            LoadDataTable(LogManager.GetTable(LoggingTables.ProgressLog,IDFilter.Run,TopX));
         }
     }
 }

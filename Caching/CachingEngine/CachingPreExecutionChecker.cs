@@ -26,8 +26,7 @@ namespace CachingEngine
     {
         private readonly ICacheProgress _cacheProgress;
         private CatalogueRepository _repository;
-
-
+        
         public CachingPreExecutionChecker(ICacheProgress cacheProgress)
         {
             _cacheProgress = cacheProgress;
@@ -66,30 +65,33 @@ namespace CachingEngine
                             "Both the CacheFillProgress and the LoadProgress.OriginDate are null, this means we don't know where the cache has filled up to and we don't know when the dataset is supposed to start.  This means it is impossible to know what dates to fetch",
                             CheckResult.Fail));
 
-                if (_cacheProgress.PermissionWindow_ID != null &&
-                    !_cacheProgress.PermissionWindow.WithinPermissionWindow(DateTime.UtcNow))
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Current time is " + DateTime.UtcNow +
-                            " which is not a permitted time according to the configured PermissionWindow " + _cacheProgress.PermissionWindow.Description + 
-                            " of the CacheProgress " + _cacheProgress,
-                            CheckResult.Fail));
+                if (_cacheProgress.PermissionWindow_ID != null && !_cacheProgress.PermissionWindow.WithinPermissionWindow(DateTime.UtcNow))
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        "Current time is " + DateTime.UtcNow +
+                        " which is not a permitted time according to the configured PermissionWindow " + _cacheProgress.PermissionWindow.Description + 
+                        " of the CacheProgress " + _cacheProgress,
+                        CheckResult.Warning));
+                }
 
                 var shortfall = _cacheProgress.GetShortfall();
                 
                 if (shortfall <= TimeSpan.Zero)
                     if (_cacheProgress.CacheLagPeriod == null)
+                    {
                         notifier.OnCheckPerformed(
                             new CheckEventArgs(
                                 "CacheProgress reports that it has loaded up till " + _cacheProgress.CacheFillProgress +
-                                " which is in the future.  So we don't need to load this cache.", CheckResult.Fail));
+                                " which is in the future.  So we don't need to load this cache.", CheckResult.Warning));
+                    }
                     else
+                    {
                         notifier.OnCheckPerformed(
                             new CheckEventArgs(
                                 "CacheProgress reports that it has loaded up till " + _cacheProgress.CacheFillProgress +
                                 " but there is a lag period of " + _cacheProgress.CacheLagPeriod +
-                                " which means we are not due to load any cached data yet.", CheckResult.Fail));
-
+                                " which means we are not due to load any cached data yet.", CheckResult.Warning));
+                    }
 
                 var factory = new CachingPipelineUseCase(_cacheProgress);
                 IDataFlowPipelineEngine engine = null;

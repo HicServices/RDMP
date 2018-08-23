@@ -1,38 +1,25 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.Refreshing;
-using DataLoadEngine.DataProvider.FromCache;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Dependencies;
 
 namespace CatalogueManager.Menus
 {
@@ -46,7 +33,7 @@ namespace CatalogueManager.Menus
         
         protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
 
-        private AtomicCommandUIFactory AtomicCommandUIFactory;
+        private readonly AtomicCommandUIFactory AtomicCommandUIFactory;
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
         private RDMPContextMenuStripArgs _args;
@@ -61,12 +48,9 @@ namespace CatalogueManager.Menus
             AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
             RepositoryLocator = _activator.RepositoryLocator;
-        }
 
-        public RDMPContextMenuStrip(RDMPContextMenuStripArgs args, DatabaseEntity databaseEntity): this(args, (object)databaseEntity)
-        {
-            if (databaseEntity != null)
-                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator, databaseEntity));
+            if(o != null)
+                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o));
         }
 
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
@@ -119,7 +103,7 @@ namespace CatalogueManager.Menus
             }
         }
 
-        public void AddCommonMenuItems(RDMPCollectionCommonFunctionalitySettings settings)
+        public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)
         {
             var deletable = _o as IDeleteable;
             var nameable = _o as INamed;
@@ -151,7 +135,7 @@ namespace CatalogueManager.Menus
                 else
                     Add(new ExecuteCommandPin(_activator, databaseEntity));
 
-                Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
+                Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, _activator.GetLazyCatalogueObjectVisualisation()));
             }
             
             foreach (var plugin in _activator.PluginUserInterfaces)
@@ -170,10 +154,10 @@ namespace CatalogueManager.Menus
                 }
             }
 
-            if (_args.Tree != null && !settings.SuppressChildrenAdder)
+            if (_args.Tree != null && !commonFunctionality.Settings.SuppressChildrenAdder)
             {
-                Add(new ExecuteCommandExpandAllNodes(_activator, _args.Tree, _args.Model));
-                Add(new ExecuteCommandCollapseChildNodes(_activator, _args.Tree, _args.Model));
+                Add(new ExecuteCommandExpandAllNodes(_activator, commonFunctionality, _args.Model));
+                Add(new ExecuteCommandCollapseChildNodes(_activator, commonFunctionality, _args.Model));
             }
         }
 

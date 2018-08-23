@@ -120,11 +120,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -163,10 +159,6 @@
     <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
       <Project>{8e14721e-2e82-4ec5-87f0-0b32f54911b5}</Project>
       <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
-      <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
-      <Name>HIC.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>

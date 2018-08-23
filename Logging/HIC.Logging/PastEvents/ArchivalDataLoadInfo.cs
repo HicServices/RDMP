@@ -32,6 +32,8 @@ namespace HIC.Logging.PastEvents
         public DateTime StartTime { get; private set; }
         public DateTime? EndTime { get; private set; }
 
+        public const int MaxChildrenToFetch = 1000;
+
         public bool HasUnresolvedErrors {
             get
             {
@@ -52,8 +54,19 @@ namespace HIC.Logging.PastEvents
         }
 
     
+        /// <summary>
+        /// All tables loaded during the run (up to <see cref="MaxChildrenToFetch"/>)
+        /// </summary>
         public List<ArchivalTableLoadInfo>  TableLoadInfos = new List<ArchivalTableLoadInfo>();
+
+        /// <summary>
+        /// All errors that occured during the run  (up to <see cref="MaxChildrenToFetch"/>)
+        /// </summary>
         public List<ArchivalFatalError> Errors = new List<ArchivalFatalError>();
+
+        /// <summary>
+        /// All progress messages recorded during the run (up to <see cref="MaxChildrenToFetch"/>)
+        /// </summary>
         public List<ArchivalProgressLog> Progress = new List<ArchivalProgressLog>();
 
         public string Description { get; set; }
@@ -79,7 +92,15 @@ namespace HIC.Logging.PastEvents
             }
         }
 
-
+        /// <summary>
+        /// Returns up to <see cref="MaxChildrenToFetch"/> data load audit objects which describe runs of over arching task <see cref="dataTask"/>
+        /// </summary>
+        /// <param name="dataTask"></param>
+        /// <param name="lds"></param>
+        /// <param name="top1"></param>
+        /// <param name="token"></param>
+        /// <param name="specificDataLoadRunIDOnly"></param>
+        /// <returns></returns>
         public static IEnumerable<ArchivalDataLoadInfo> GetLoadHistoryForTask(string dataTask, DiscoveredServer lds, bool top1 = false, CancellationToken? token = null, int? specificDataLoadRunIDOnly = null)
         {
             DataTable runsIncludingErrorData;
@@ -250,7 +271,7 @@ namespace HIC.Logging.PastEvents
                 #region get data about errors
                 SqlCommand cmdErrors = new SqlCommand(
                     string.Format(@"
-SELECT 
+SELECT  TOP {1}
 run.dataLoadTaskID dataLoadTaskID,
 run.description runDescription,
 	run.ID runID
@@ -272,7 +293,7 @@ run.description runDescription,
   where 
 {0}
   order by run.ID desc
-", whereText)
+", whereText, MaxChildrenToFetch)
                     , con);
                 
                 if (!string.IsNullOrWhiteSpace(dataTask))
@@ -285,7 +306,7 @@ run.description runDescription,
                 #region get data about progress
                 SqlCommand cmdProgress = new SqlCommand(
                    string.Format(@"
-SELECT 
+SELECT TOP {1}
 run.ID runID,
 progress.*
   FROM [" + databaseName + @"].[dbo].ProgressLog progress
@@ -299,7 +320,7 @@ left join
   run.dataLoadTaskID = task.ID
   where
 {0}
-  order by run.ID desc",whereText)
+  order by run.ID desc", whereText, MaxChildrenToFetch)
                     , con);
 
                 if (!string.IsNullOrWhiteSpace(dataTask))
@@ -313,7 +334,7 @@ left join
                 #region get data about table load infos including datasource
                 SqlCommand cmdTableLoadInfo = new SqlCommand(
  string.Format(@"
-SELECT 
+SELECT  TOP {1}
 run.ID runID,
 t.*,
 s.ID DataSourceID,
@@ -334,7 +355,7 @@ s.*
   where 
 {0}
   order by run.ID desc
-", whereText)
+", whereText, MaxChildrenToFetch)
                     , con);
                 
                 if(!string.IsNullOrWhiteSpace(dataTask))

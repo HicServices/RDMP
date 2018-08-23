@@ -63,12 +63,6 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
 
         private void Check(ICheckNotifier notifier, bool isRunTime)
         {
-            if (_releaseData.IsDesignTime)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Stale datasets will be checked at runtime...", CheckResult.Success));
-                return;
-            }
-
             if (isRunTime)
             {
                 var allPotentials = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).ToList();

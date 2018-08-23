@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.LocationsMenu;
 using DataExportLibrary.Repositories;
@@ -28,6 +29,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
     public partial class RepositoryFinderUI : UserControl
     {
         private UserSettingsRepositoryFinder _finder;
+        private IRDMPPlatformRepositoryServiceLocator _locator;
         
         public RepositoryFinderUI()
         {
@@ -37,6 +39,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
         public void SetRepositoryFinder(UserSettingsRepositoryFinder finder)
         {
             _finder = finder;
+            _locator = finder;
 
             //set these because calls to .CatalogueRepository property on finder can fail because of late load/dodgy connection string formats etc
             lblCatalogue.ForeColor = Color.Red;
@@ -68,7 +71,25 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
 
         private void btnChange_Click(object sender, EventArgs e)
         {
-            new ExecuteCommandChoosePlatformDatabase(_finder).Execute();
+            new ExecuteCommandChoosePlatformDatabase(_locator).Execute();
+        }
+
+        public void SetRepositoryFinder(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            _locator = repositoryLocator;
+
+            //set these because calls to .CatalogueRepository property on finder can fail because of late load/dodgy connection string formats etc
+            lblCatalogue.ForeColor = Color.Red;
+            lblCatalogue.Text = "Catalogue:Broken";
+            lblExport.ForeColor = Color.Red;
+            lblExport.Text = "Export:Broken";
+
+
+            lblCatalogue.Text = "Catalogue:" + Describe(repositoryLocator.CatalogueRepository, lblCatalogue);
+            lblCatalogue.ForeColor = Color.Black;
+
+            lblExport.Text = "Export:" + Describe((DataExportRepository)repositoryLocator.DataExportRepository, lblExport);
+            lblExport.ForeColor = Color.Black;
         }
     }
 }

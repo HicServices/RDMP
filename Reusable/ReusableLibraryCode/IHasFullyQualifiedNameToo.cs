@@ -7,6 +7,11 @@ namespace ReusableLibraryCode
     /// </summary>
     public interface IHasFullyQualifiedNameToo:IHasRuntimeName
     {
+        /// <summary>
+        /// Returns the fully qualified name of the object including both the database, table and (if applicable) column name e.g. "[MyDatabase]..[MyTable].[MyColumn]".
+        /// <para>The returned value should be wraped with the appropriate qualifier characters such that it will be valid in SQL queries even if it has spaces, starts with numbers etc</para>
+        /// </summary>
+        /// <returns></returns>
         string GetFullyQualifiedName();
     }
 }

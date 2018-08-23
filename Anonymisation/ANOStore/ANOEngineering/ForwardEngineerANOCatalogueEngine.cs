@@ -288,7 +288,7 @@ namespace ANOStore.ANOEngineering
                         LoadProgressIfAny.SaveToDatabase();
 
                         //date column based migration only works for single TableInfo migrations (see Plan Manager checks)
-                        var qb = SelectSQLForMigrations.Single().Value;
+                        var qb = SelectSQLForMigrations.Single(kvp=>!kvp.Key.IsLookupTable()).Value;
                         qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null,
                             new[]
                             {

@@ -57,6 +57,8 @@
             this.gbProjectSpecific = new System.Windows.Forms.GroupBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.label7 = new System.Windows.Forms.Label();
+            this.ddIsExtractionIdentifier = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
             this.pChangeAll.SuspendLayout();
             this.pFilter.SuspendLayout();
@@ -76,15 +78,14 @@
             this.olvColumnExtractability.CellEditUseWholeCell = false;
             this.olvColumnExtractability.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumnInfoName,
-            this.olvExtractionCategory,
-            this.olvIsExtractionIdentifier});
+            this.olvExtractionCategory});
             this.olvColumnExtractability.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvColumnExtractability.FullRowSelect = true;
             this.olvColumnExtractability.Location = new System.Drawing.Point(6, 138);
             this.olvColumnExtractability.Name = "olvColumnExtractability";
             this.olvColumnExtractability.RowHeight = 19;
             this.olvColumnExtractability.ShowGroups = false;
-            this.olvColumnExtractability.Size = new System.Drawing.Size(758, 409);
+            this.olvColumnExtractability.Size = new System.Drawing.Size(758, 382);
             this.olvColumnExtractability.TabIndex = 7;
             this.olvColumnExtractability.UseCompatibleStateImageBehavior = false;
             this.olvColumnExtractability.UseFiltering = true;
@@ -105,6 +106,8 @@
             // olvIsExtractionIdentifier
             // 
             this.olvIsExtractionIdentifier.CheckBoxes = true;
+            this.olvIsExtractionIdentifier.DisplayIndex = 2;
+            this.olvIsExtractionIdentifier.IsVisible = false;
             this.olvIsExtractionIdentifier.Text = "IsExtractionIdentifier";
             this.olvIsExtractionIdentifier.Width = 106;
             // 
@@ -344,11 +347,34 @@
             this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
             this.objectSaverButton1.TabIndex = 13;
             // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(3, 523);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(124, 26);
+            this.label7.TabIndex = 23;
+            this.label7.Text = "Patient Identifier Column:\r\n(IsExtractionIdentifier)";
+            // 
+            // ddIsExtractionIdentifier
+            // 
+            this.ddIsExtractionIdentifier.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ddIsExtractionIdentifier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddIsExtractionIdentifier.FormattingEnabled = true;
+            this.ddIsExtractionIdentifier.Location = new System.Drawing.Point(133, 526);
+            this.ddIsExtractionIdentifier.Name = "ddIsExtractionIdentifier";
+            this.ddIsExtractionIdentifier.Size = new System.Drawing.Size(362, 21);
+            this.ddIsExtractionIdentifier.TabIndex = 24;
+            this.ddIsExtractionIdentifier.SelectedIndexChanged += new System.EventHandler(this.ddIsExtractionIdentifier_SelectedIndexChanged);
+            // 
             // ConfigureCatalogueExtractabilityUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(774, 611);
+            this.Controls.Add(this.ddIsExtractionIdentifier);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.gbProjectSpecific);
             this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.tbDescription);
@@ -413,5 +439,7 @@
         private System.Windows.Forms.Button btnPickProject;
         private System.Windows.Forms.GroupBox gbProjectSpecific;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox ddIsExtractionIdentifier;
     }
 }

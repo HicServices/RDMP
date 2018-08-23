@@ -39,7 +39,6 @@
             this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
             this.gbPickPipeline = new System.Windows.Forms.GroupBox();
             this.ddPipeline = new System.Windows.Forms.ComboBox();
-            this.pSimplePanel = new System.Windows.Forms.Panel();
             this.gbExecute = new System.Windows.Forms.GroupBox();
             this.ragSmileyExecute = new ReusableUIComponents.RAGSmiley();
             this.btnExecute = new System.Windows.Forms.Button();
@@ -51,7 +50,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbFile)).BeginInit();
             this.gbPickDatabase.SuspendLayout();
             this.gbPickPipeline.SuspendLayout();
-            this.pSimplePanel.SuspendLayout();
             this.gbExecute.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbHelp)).BeginInit();
             this.SuspendLayout();
@@ -67,7 +65,7 @@
             this.gbPickFile.Controls.Add(this.btnBrowse);
             this.gbPickFile.Location = new System.Drawing.Point(12, 12);
             this.gbPickFile.Name = "gbPickFile";
-            this.gbPickFile.Size = new System.Drawing.Size(945, 54);
+            this.gbPickFile.Size = new System.Drawing.Size(632, 54);
             this.gbPickFile.TabIndex = 0;
             this.gbPickFile.TabStop = false;
             this.gbPickFile.Text = "1. Pick File";
@@ -127,7 +125,7 @@
             this.gbPickDatabase.Controls.Add(this.serverDatabaseTableSelector1);
             this.gbPickDatabase.Location = new System.Drawing.Point(12, 72);
             this.gbPickDatabase.Name = "gbPickDatabase";
-            this.gbPickDatabase.Size = new System.Drawing.Size(945, 169);
+            this.gbPickDatabase.Size = new System.Drawing.Size(632, 168);
             this.gbPickDatabase.TabIndex = 1;
             this.gbPickDatabase.TabStop = false;
             this.gbPickDatabase.Text = "2. Pick Destination Database for the Imported Data";
@@ -151,7 +149,7 @@
             this.serverDatabaseTableSelector1.Name = "serverDatabaseTableSelector1";
             this.serverDatabaseTableSelector1.Password = "";
             this.serverDatabaseTableSelector1.Server = "";
-            this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(581, 181);
+            this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(581, 146);
             this.serverDatabaseTableSelector1.TabIndex = 0;
             this.serverDatabaseTableSelector1.Table = "";
             this.serverDatabaseTableSelector1.Username = "";
@@ -161,9 +159,9 @@
             this.gbPickPipeline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbPickPipeline.Controls.Add(this.ddPipeline);
-            this.gbPickPipeline.Location = new System.Drawing.Point(6, 6);
+            this.gbPickPipeline.Location = new System.Drawing.Point(12, 246);
             this.gbPickPipeline.Name = "gbPickPipeline";
-            this.gbPickPipeline.Size = new System.Drawing.Size(939, 52);
+            this.gbPickPipeline.Size = new System.Drawing.Size(604, 52);
             this.gbPickPipeline.TabIndex = 2;
             this.gbPickPipeline.TabStop = false;
             this.gbPickPipeline.Text = "3. Pick Pipeline";
@@ -178,26 +176,14 @@
             this.ddPipeline.TabIndex = 0;
             this.ddPipeline.SelectedIndexChanged += new System.EventHandler(this.ddPipeline_SelectedIndexChanged);
             // 
-            // pSimplePanel
-            // 
-            this.pSimplePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pSimplePanel.Controls.Add(this.gbExecute);
-            this.pSimplePanel.Controls.Add(this.gbPickPipeline);
-            this.pSimplePanel.Location = new System.Drawing.Point(12, 244);
-            this.pSimplePanel.Name = "pSimplePanel";
-            this.pSimplePanel.Size = new System.Drawing.Size(951, 419);
-            this.pSimplePanel.TabIndex = 3;
-            // 
             // gbExecute
             // 
             this.gbExecute.Controls.Add(this.ragSmileyExecute);
             this.gbExecute.Controls.Add(this.btnExecute);
             this.gbExecute.Controls.Add(this.btnPreview);
-            this.gbExecute.Location = new System.Drawing.Point(6, 64);
+            this.gbExecute.Location = new System.Drawing.Point(12, 304);
             this.gbExecute.Name = "gbExecute";
-            this.gbExecute.Size = new System.Drawing.Size(939, 51);
+            this.gbExecute.Size = new System.Drawing.Size(604, 51);
             this.gbExecute.TabIndex = 4;
             this.gbExecute.TabStop = false;
             this.gbExecute.Text = "4. Import Data";
@@ -235,7 +221,7 @@
             // btnAdvanced
             // 
             this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAdvanced.Location = new System.Drawing.Point(963, 267);
+            this.btnAdvanced.Location = new System.Drawing.Point(622, 253);
             this.btnAdvanced.Name = "btnAdvanced";
             this.btnAdvanced.Size = new System.Drawing.Size(75, 23);
             this.btnAdvanced.TabIndex = 4;
@@ -245,7 +231,8 @@
             // 
             // pbHelp
             // 
-            this.pbHelp.Location = new System.Drawing.Point(1003, 12);
+            this.pbHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbHelp.Location = new System.Drawing.Point(680, 12);
             this.pbHelp.Name = "pbHelp";
             this.pbHelp.Size = new System.Drawing.Size(25, 25);
             this.pbHelp.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -259,7 +246,7 @@
             this.cbAutoClose.AutoSize = true;
             this.cbAutoClose.Checked = true;
             this.cbAutoClose.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbAutoClose.Location = new System.Drawing.Point(12, 669);
+            this.cbAutoClose.Location = new System.Drawing.Point(12, 363);
             this.cbAutoClose.Name = "cbAutoClose";
             this.cbAutoClose.Size = new System.Drawing.Size(131, 17);
             this.cbAutoClose.TabIndex = 7;
@@ -270,12 +257,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1040, 689);
+            this.ClientSize = new System.Drawing.Size(727, 383);
+            this.Controls.Add(this.gbPickPipeline);
+            this.Controls.Add(this.gbExecute);
             this.Controls.Add(this.cbAutoClose);
             this.Controls.Add(this.pbHelp);
             this.Controls.Add(this.btnAdvanced);
             this.Controls.Add(this.gbPickFile);
-            this.Controls.Add(this.pSimplePanel);
             this.Controls.Add(this.gbPickDatabase);
             this.Name = "CreateNewCatalogueByImportingFileUI";
             this.Text = "CreateNewCatalogueByImportingFile";
@@ -285,7 +273,6 @@
             this.gbPickDatabase.ResumeLayout(false);
             this.gbPickDatabase.PerformLayout();
             this.gbPickPipeline.ResumeLayout(false);
-            this.pSimplePanel.ResumeLayout(false);
             this.gbExecute.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbHelp)).EndInit();
             this.ResumeLayout(false);
@@ -306,7 +293,6 @@
         private System.Windows.Forms.GroupBox gbPickPipeline;
         private System.Windows.Forms.ComboBox ddPipeline;
         private ReusableUIComponents.RAGSmiley ragSmileyFile;
-        private System.Windows.Forms.Panel pSimplePanel;
         private System.Windows.Forms.Button btnAdvanced;
         private System.Windows.Forms.GroupBox gbExecute;
         private System.Windows.Forms.Button btnPreview;

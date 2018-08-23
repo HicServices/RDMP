@@ -9,7 +9,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibraryTests;
 using DataLoadEngine.Checks;
 using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.DatabaseManagement;

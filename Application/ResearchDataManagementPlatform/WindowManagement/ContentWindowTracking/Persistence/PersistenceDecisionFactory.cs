@@ -9,7 +9,6 @@ using CatalogueManager.LoadExecutionUIs;
 using Dashboard.Raceway;
 using DataExportManager.ProjectUI;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
 {

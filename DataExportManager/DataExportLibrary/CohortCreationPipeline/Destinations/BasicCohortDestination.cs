@@ -168,10 +168,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
         public virtual void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
         {
             Request = value;
-
-            if(value == CohortCreationRequest.Empty)
-                return;
-
+            
             var target = Request.NewCohortDefinition.LocationOfCohort;
 
             var syntax = target.GetQuerySyntaxHelper();
@@ -187,7 +184,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
 
         public virtual void Check(ICheckNotifier notifier)
         {
-            if (Request == CohortCreationRequest.Empty)
+            if (Request.IsDesignTime)
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs("Cannot check because CohortCreationRequest is CohortCreationRequest.Empty",

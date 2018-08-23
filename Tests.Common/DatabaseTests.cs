@@ -1,24 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using ANOStore.ANOEngineering;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.ExternalDatabaseServerPatching;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
-using DataQualityEngine.Data;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
@@ -28,7 +19,6 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using Rhino.Mocks;
 
 namespace Tests.Common
 {
@@ -93,14 +83,15 @@ namespace Tests.Common
         {
             RepositoryLocator = new DatabaseCreationRepositoryFinder(TestDatabaseSettings.ServerName, TestDatabaseNames.Prefix);
 
-            Console.WriteLine("Expecting Unit Test Catalogue To Be At:"+((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.DescribeServer());
-            Assert.IsTrue(((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
-            Console.WriteLine("Found Catalogue!");
+            Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + RepositoryLocator.CatalogueRepository.DiscoveredServer.Name + " Database=" + RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
+            Assert.IsTrue(RepositoryLocator.CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
+            Console.WriteLine("Found Catalogue");
 
-            Console.WriteLine("Expecting Unit Test Data Export database To Be At:" + ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.DescribeServer());
+            Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + RepositoryLocator.DataExportRepository.DiscoveredServer.Name + " Database= " + RepositoryLocator.DataExportRepository.DiscoveredServer.GetCurrentDatabase());
+            Assert.IsTrue(DataExportRepository.DiscoveredServer.Exists(), "Data Export database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
+            Console.WriteLine("Found DataExport");
+            
             Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
-            Assert.IsTrue(((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.Exists(), "Data Export database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
-            Console.WriteLine("Found DataExport!");
 
             RunBlitzDatabases(RepositoryLocator);
 
@@ -111,7 +102,7 @@ namespace Tests.Common
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, ServerDefaults.PermissableDefaults.RAWDataLoadServer, null));
 
             CreateScratchArea();
-
+            
             if (TestDatabaseSettings.MySql != null)
                 _discoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(TestDatabaseSettings.MySql) { SslMode = MySqlSslMode.None });
 

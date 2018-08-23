@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -11,6 +10,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
@@ -18,7 +18,6 @@ using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LocationsMenu;
@@ -27,7 +26,8 @@ using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
@@ -106,9 +106,10 @@ namespace CatalogueManager.Collections
                 olvColumn1
                 );
 
-            CommonFunctionality.WhitespaceRightClickMenuCommands = new[]
+            CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false)
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false),
+                new ExecuteCommandBulkImportTableInfos(_activator)
             };
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
@@ -116,11 +117,14 @@ namespace CatalogueManager.Collections
 
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllObjectSharingNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllPipelinesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllConnectionStringKeywordsNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllStandardRegexesNode);
+
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -130,6 +134,8 @@ namespace CatalogueManager.Collections
             
             if(e.Object is Catalogue || e.Object is TableInfo) 
                 tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
+
+            tlvTableInfos.RefreshObject(_activator.CoreChildProvider.AllPipelinesNode);
         }
         
         public static bool IsRootObject(object root)
@@ -140,7 +146,9 @@ namespace CatalogueManager.Collections
                 root is AllExternalServersNode ||
                 root is AllDataAccessCredentialsNode ||
                 root is AllANOTablesNode ||
-                root is AllServersNode;
+                root is AllServersNode || 
+                root is AllPipelinesNode;
+
         }
     }
 }

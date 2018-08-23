@@ -9,9 +9,14 @@ namespace ResearchDataManagementPlatform
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>();
+            RDMPBootStrapper<RDMPMainForm> bootStrapper;
+            if (args.Length == 2)
+                bootStrapper = new RDMPBootStrapper<RDMPMainForm>(args[0], args[1]);
+            else
+                bootStrapper = new RDMPBootStrapper<RDMPMainForm>(null, null);
+
             bootStrapper.Show(false);
         }
     }

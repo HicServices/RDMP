@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using DataLoadEngine.DatabaseManagement.Operations;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;

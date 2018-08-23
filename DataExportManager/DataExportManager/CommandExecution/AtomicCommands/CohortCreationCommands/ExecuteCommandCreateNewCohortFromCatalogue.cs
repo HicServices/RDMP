@@ -97,11 +97,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             if (request == null)
                 return;
 
+            request.ExtractionIdentifierColumn = _extractionIdentifierColumn;
             var configureAndExecute = GetConfigureAndExecuteControl(request, "Import column " + _extractionIdentifierColumn + " as cohort and commmit results");
-
-            configureAndExecute.AddInitializationObject(_extractionIdentifierColumn);
-            configureAndExecute.TaskDescription = "You have selected a patient identifier column in a dataset, the unique identifier list in this column will be commmented to the named project/cohort ready for data export.  This dialog requires you to select/create an appropriate pipeline. " + TaskDescriptionGenerallyHelpfulText;
-
+            
             Activator.ShowWindow(configureAndExecute);
         }
 

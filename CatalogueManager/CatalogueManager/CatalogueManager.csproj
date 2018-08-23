@@ -262,19 +262,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MySql.Data.8.0.11\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
       <Private>True</Private>
@@ -293,14 +281,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -393,16 +377,22 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingDocument.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAnonymiseColumnInfo.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkImportTableInfos.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueFromTableInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewStandardRegex.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipelineWithUseCase.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFileUI.cs" />
@@ -418,12 +408,35 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunChecksInPopupWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowRelatedObject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
+    <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
+    <Compile Include="Copying\Commands\CacheProgressCommand.cs" />
+    <Compile Include="Copying\Commands\CatalogueCommand.cs" />
+    <Compile Include="Copying\Commands\CohortAggregateContainerCommand.cs" />
+    <Compile Include="Copying\Commands\CohortCommandHelper.cs" />
+    <Compile Include="Copying\Commands\CohortIdentificationConfigurationCommand.cs" />
+    <Compile Include="Copying\Commands\ColumnCommand.cs" />
+    <Compile Include="Copying\Commands\ColumnInfoCommand.cs" />
+    <Compile Include="Copying\Commands\ContainerCommand.cs" />
+    <Compile Include="Copying\Commands\DataAccessCredentialsCommand.cs" />
+    <Compile Include="Copying\Commands\ExtractableCohortCommand.cs" />
+    <Compile Include="Copying\Commands\ExtractableDataSetCommand.cs" />
+    <Compile Include="Copying\Commands\FileCollectionCommand.cs" />
+    <Compile Include="Copying\Commands\FilterCommand.cs" />
+    <Compile Include="Copying\Commands\ManyCataloguesCommand.cs" />
+    <Compile Include="Copying\Commands\PipelineCommand.cs" />
+    <Compile Include="Copying\Commands\ProcessTaskCommand.cs" />
+    <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
+    <Compile Include="Copying\Commands\TableInfoCommand.cs" />
+    <Compile Include="Copying\RDMPCommandFactory.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
-    <Compile Include="LogViewer\LogViewerNavigationTarget.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemIssue.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDataAccessCredentials.cs" />
@@ -457,7 +470,108 @@
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Menus\AllConnectionStringKeywordsNodeMenu.cs" />
+    <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
+    <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
+    <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.Designer.cs">
+      <DependentUpon>DataFlowComponentVisualisation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DataObjects\PipelineComponentVisualisation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.Designer.cs">
+      <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.Designer.cs">
+      <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.Designer.cs">
+      <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.Designer.cs">
+      <DependentUpon>ArgumentValueCustomUIDrivenClassUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.Designer.cs">
+      <DependentUpon>ArgumentValueLabelUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.Designer.cs">
+      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.Designer.cs">
+      <DependentUpon>ArgumentValueSqlUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.Designer.cs">
+      <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIFactory.cs" />
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\IArgumentValueUI.cs" />
+    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.Designer.cs">
+      <DependentUpon>ConfigureAndExecutePipeline.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\ConfigurePipelineUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\ConfigurePipelineUI.Designer.cs">
+      <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\IPipelineSelectionUI.cs" />
+    <Compile Include="PipelineUIs\Pipelines\Models\AdvertisedPipelineComponentTypeUnderContext.cs" />
+    <Compile Include="PipelineUIs\Pipelines\Models\DividerLineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\Models\DividerLineControl.Designer.cs">
+      <DependentUpon>DividerLineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineDiagram.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineDiagram.Designer.cs">
+      <DependentUpon>PipelineDiagram.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineSelectionUI.Designer.cs">
+      <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineWorkArea.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PipelineWorkArea.Designer.cs">
+      <DependentUpon>PipelineWorkArea.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
+    <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -491,7 +605,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPreLoadDiscardedColumn.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewProcessTask.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCatalogueWithLoadMetadata.cs" />
@@ -500,7 +613,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingFile.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadMetadata.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDelete.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRename.cs" />
@@ -843,7 +955,6 @@
     <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
     <Compile Include="Menus\LoadProgressMenu.cs" />
     <Compile Include="Menus\LoadStageNodeMenu.cs" />
-    <Compile Include="Menus\MenuItems\ChoosePipelineMenuItem.cs" />
     <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs" />
     <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs" />
     <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
@@ -1101,7 +1212,6 @@
     <Compile Include="SimpleDialogs\Revertable\RevertablePropertyDifferenceUI.Designer.cs">
       <DependentUpon>RevertablePropertyDifferenceUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\SimpleFileImporting\ConfigurePipelineUIFactory.cs" />
     <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1248,7 +1358,7 @@
     <Compile Include="Tutorials\Tutorial.cs" />
     <Compile Include="Tutorials\TutorialTracker.cs" />
     <Compile Include="Validation\StandardRegexUI.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Validation\StandardRegexUI.Designer.cs">
       <DependentUpon>StandardRegexUI.cs</DependentUpon>
@@ -1272,6 +1382,7 @@
       <DependentUpon>ValidationSetupForm.cs</DependentUpon>
     </Compile>
     <None Include="LogViewer\LoggingUI.cd" />
+    <None Include="PipelineUIs\Pipelines\Pipelines.cd" />
     <None Include="SimpleControls\CheckAndExecuteUI.cd" />
     <None Include="TestsAndSetup\StartupUI\YellowFace.png" />
     <None Include="TestsAndSetup\StartupUI\RedFace.png" />
@@ -1436,6 +1547,8 @@
     <None Include="Icons\ConnectionStringKeyword.png" />
     <None Include="Icons\AllConnectionStringKeywords.png" />
     <None Include="Icons\AllConnectionStringKeywordsNode.png" />
+    <None Include="Icons\AllStandardRegexesNode.png" />
+    <None Include="Icons\AllPipelinesNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1537,6 +1650,8 @@
     <None Include="Icons\Waiting.png" />
     <None Include="Icons\Writing.png" />
     <None Include="Icons\WaitingForDatabase.png" />
+    <None Include="Icons\StandardPipelineUseCaseNode.png" />
+    <None Include="Icons\OtherPipelinesNode.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1599,6 +1714,54 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\ConnectionStringKeywordUI.resx">
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.resx">
+      <DependentUpon>DataFlowComponentVisualisation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DataObjects\PipelineComponentVisualisation.resx">
+      <DependentUpon>PipelineComponentVisualisation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.resx">
+      <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.resx">
+      <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.resx">
+      <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.resx">
+      <DependentUpon>ArgumentValueCustomUIDrivenClassUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.resx">
+      <DependentUpon>ArgumentValueLabelUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.resx">
+      <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.resx">
+      <DependentUpon>ArgumentValueSqlUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.resx">
+      <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.resx">
+      <DependentUpon>ConfigureAndExecutePipeline.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\ConfigurePipelineUI.resx">
+      <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\Models\DividerLineControl.resx">
+      <DependentUpon>DividerLineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineDiagram.resx">
+      <DependentUpon>PipelineDiagram.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineSelectionUI.resx">
+      <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineWorkArea.resx">
+      <DependentUpon>PipelineWorkArea.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleControls\CheckAndExecuteUI.resx">
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
@@ -1916,10 +2079,6 @@
       <Project>{93be8c03-da4a-4299-8add-7d6893df4860}</Project>
       <Name>IdentifierDump.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Anonymisation\IdentifierDump\IdentifierDump.csproj">
-      <Project>{01028615-752e-470a-90a7-d809af2ee09f}</Project>
-      <Name>IdentifierDump</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Caching\CachingEngine\CachingEngine.csproj">
       <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
       <Name>CachingEngine</Name>
@@ -1943,10 +2102,6 @@
     <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
       <Name>DataLoadEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
-      <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>
-      <Name>LoadModules.GenericUIs</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
       <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
@@ -1979,10 +2134,6 @@
     <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj">
       <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>
       <Name>QueryCaching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RDMPObjectVisualisation\RDMPObjectVisualisation.csproj">
-      <Project>{B541F57B-631A-4639-8589-8CDA0021AE2D}</Project>
-      <Name>RDMPObjectVisualisation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
       <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>

@@ -970,6 +970,7 @@ namespace CatalogueLibrary.Data
         internal Catalogue(ShareManager shareManager, ShareDefinition shareDefinition)
         {
             shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
+            ClearAllInjections();
         }
 
         /// <inheritdoc/>

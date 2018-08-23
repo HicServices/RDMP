@@ -50,6 +50,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "DataAge",
             "PatientCareNumber",
             "MyDb",
+            "MyTransform",
             "PatCHI",
             "PatientCHI",
             "MotherCHI",
@@ -183,7 +184,14 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "PatientSexCode",
             "SexDescription",
             "SexDescriptionLong",
-
+            "MyTransform",
+            
+            "MyObject",
+            "MyObjectMenu",
+            "AllServersNodeMenu",
+            "SomeClass",
+            "ProposeExecutionWhenCommandIs",
+            "Log4Net"
 
         };
 

@@ -1,46 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Implementations;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.DataLoadUIs.ANOUIs;
-using CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.ExtractionUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.Menus.MenuItems;
-using CatalogueManager.ObjectVisualisation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation.Copying.Commands;
-using RDMPStartup;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Dependencies;
 
 namespace CatalogueManager.Menus
 {
@@ -53,6 +33,7 @@ namespace CatalogueManager.Menus
             : base(args, tableInfo)
         {
             Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false));
+            Add(new ExecuteCommandCreateNewCatalogueFromTableInfo(_activator, tableInfo));
 
             Items.Add(new ToolStripSeparator());
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo));

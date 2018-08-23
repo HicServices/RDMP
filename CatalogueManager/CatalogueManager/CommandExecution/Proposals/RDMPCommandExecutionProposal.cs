@@ -23,6 +23,13 @@ namespace CatalogueManager.CommandExecution.Proposals
         public abstract bool CanActivate(T target);
         public abstract void Activate(T target);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmd">Self contained class describing both the object(s) being dragged and salient facts about it e.g. if  it is a <see cref="CatalogueManager.Copying.Commands.CatalogueCommand"/> then it will know whether the dragged <see cref="Catalogue"/> has at least one patient identifier column.</param>
+        /// <param name="target"> The object the cursor is currently hovering over </param>
+        /// <param name="insertOption">Whether the cursor is above or below or ontop of your object (if the collection the object is in supports it)</param>
+        /// <returns></returns>
         public abstract ICommandExecution ProposeExecution(ICommand cmd, T target, InsertOption insertOption = InsertOption.Default);
 
         public bool IsCompatibleTarget(object target)

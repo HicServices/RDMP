@@ -37,7 +37,6 @@
             this.findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LocationsMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.changeCatalogueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configureExternalServersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setTicketingSystemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -151,19 +150,11 @@
             // LocationsMenu
             // 
             this.LocationsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.changeCatalogueToolStripMenuItem,
             this.configureExternalServersToolStripMenuItem,
             this.setTicketingSystemToolStripMenuItem});
             this.LocationsMenu.Name = "LocationsMenu";
             this.LocationsMenu.Size = new System.Drawing.Size(70, 20);
             this.LocationsMenu.Text = "Locations";
-            // 
-            // changeCatalogueToolStripMenuItem
-            // 
-            this.changeCatalogueToolStripMenuItem.Name = "changeCatalogueToolStripMenuItem";
-            this.changeCatalogueToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
-            this.changeCatalogueToolStripMenuItem.Text = "Change Catalogue Connection String...";
-            this.changeCatalogueToolStripMenuItem.Click += new System.EventHandler(this.changeCatalogueToolStripMenuItem_Click);
             // 
             // configureExternalServersToolStripMenuItem
             // 
@@ -421,7 +412,6 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         public System.Windows.Forms.ToolStripMenuItem LocationsMenu;
-        private System.Windows.Forms.ToolStripMenuItem changeCatalogueToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem configureExternalServersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setTicketingSystemToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;

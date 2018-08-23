@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using CatalogueLibrary.Data.Cache;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -60,7 +61,7 @@ namespace CatalogueLibrary.Data
             get { return Repository.GetAllObjectsWithParent<CacheProgress>(this); }
         }
         #endregion
-
+        
         [NoMappingToDatabase]
         public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
 

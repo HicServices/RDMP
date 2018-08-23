@@ -4,17 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
 using CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation;
-using CatalogueManager.SimpleDialogs.Reports;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using RDMPStartup;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 using Tests.Common;
-
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
 {
@@ -53,7 +47,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             Console.WriteLine("Found solution folder in directory:" + slndir.FullName);
 
-            var sln = new VisualStudioSolutionFile(slndir.GetFiles().Single(f => f.Name.Equals(SolutionName)));
+            var sln = new VisualStudioSolutionFile(slndir,slndir.GetFiles().Single(f => f.Name.Equals(SolutionName)));
 
             ProcessFolderRecursive(sln.RootFolders, slndir);
 
@@ -77,6 +71,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             }
 
             Assert.AreEqual(0, errors.Count);
+
+            DependenciesEvaluation dependencies = new DependenciesEvaluation();
+            dependencies.FindProblems(sln);
 
             InterfaceDeclarationsCorrect interfaces = new InterfaceDeclarationsCorrect();
             interfaces.FindProblems(CatalogueRepository.MEF);

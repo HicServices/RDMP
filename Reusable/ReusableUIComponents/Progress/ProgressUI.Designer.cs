@@ -73,7 +73,7 @@ namespace ReusableUIComponents.Progress
             this.dataGridView1.Location = new System.Drawing.Point(0, 20);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(883, 250);
+            this.dataGridView1.Size = new System.Drawing.Size(883, 142);
             this.dataGridView1.TabIndex = 2;
             // 
             // splitContainer1
@@ -96,7 +96,7 @@ namespace ReusableUIComponents.Progress
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2.Controls.Add(this.olvProgressEvents);
             this.splitContainer1.Size = new System.Drawing.Size(880, 572);
-            this.splitContainer1.SplitterDistance = 294;
+            this.splitContainer1.SplitterDistance = 186;
             this.splitContainer1.TabIndex = 3;
             // 
             // lblCrashed
@@ -106,7 +106,7 @@ namespace ReusableUIComponents.Progress
             this.lblCrashed.BackColor = System.Drawing.Color.IndianRed;
             this.lblCrashed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCrashed.ForeColor = System.Drawing.Color.Orange;
-            this.lblCrashed.Location = new System.Drawing.Point(3, 274);
+            this.lblCrashed.Location = new System.Drawing.Point(3, 166);
             this.lblCrashed.Name = "lblCrashed";
             this.lblCrashed.Size = new System.Drawing.Size(874, 17);
             this.lblCrashed.TabIndex = 7;
@@ -118,7 +118,7 @@ namespace ReusableUIComponents.Progress
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(3, 276);
+            this.progressBar1.Location = new System.Drawing.Point(3, 168);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(874, 15);
             this.progressBar1.TabIndex = 4;
@@ -142,7 +142,7 @@ namespace ReusableUIComponents.Progress
             this.tbTopX,
             this.toolStripLabel3,
             this.ddGroupBy});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 249);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 357);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(880, 25);
             this.toolStrip1.TabIndex = 6;
@@ -214,7 +214,7 @@ namespace ReusableUIComponents.Progress
             this.olvProgressEvents.Name = "olvProgressEvents";
             this.olvProgressEvents.RowHeight = 19;
             this.olvProgressEvents.ShowGroups = false;
-            this.olvProgressEvents.Size = new System.Drawing.Size(883, 226);
+            this.olvProgressEvents.Size = new System.Drawing.Size(883, 334);
             this.olvProgressEvents.TabIndex = 5;
             this.olvProgressEvents.UseCompatibleStateImageBehavior = false;
             this.olvProgressEvents.View = System.Windows.Forms.View.Details;

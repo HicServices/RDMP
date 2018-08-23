@@ -51,8 +51,14 @@ namespace CatalogueManager.DataViewing
             _scintilla = factory.Create();
             splitContainer1.Panel1.Controls.Add(_scintilla);
             _scintilla.TextChanged += _scintilla_TextChanged;
-
+            _scintilla.KeyUp += ScintillaOnKeyUp;
             DoTransparencyProperly.ThisHoversOver(ragSmiley1,dataGridView1);
+        }
+
+        private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
+        {
+            if (keyEventArgs.KeyCode == Keys.F5)
+                RunQuery();
         }
 
 
@@ -210,7 +216,15 @@ namespace CatalogueManager.DataViewing
 
         private void btnExecuteSql_Click(object sender, EventArgs e)
         {
-            LoadDataTableAsync(_server,_scintilla.Text);
+            RunQuery();
+        }
+
+        private void RunQuery()
+        {
+            var selected = _scintilla.SelectedText;
+
+            //Run the full query or only the selected portion
+            LoadDataTableAsync(_server, string.IsNullOrWhiteSpace(selected)?_scintilla.Text:selected);
         }
 
         private void btnResetSql_Click(object sender, EventArgs e)

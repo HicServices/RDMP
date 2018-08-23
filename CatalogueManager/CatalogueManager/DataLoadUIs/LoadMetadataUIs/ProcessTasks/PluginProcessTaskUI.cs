@@ -17,7 +17,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
-using RDMPObjectVisualisation.DemandsInitializationUIs;
+using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
@@ -76,7 +76,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                     return;
                 }
 
-                _argumentCollection.Setup(repo, databaseObject, _underlyingType);
+                _argumentCollection.Setup(databaseObject, _underlyingType);
 
                 _argumentCollection.Dock = DockStyle.Fill;
                 pArguments.Controls.Add(_argumentCollection);

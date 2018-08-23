@@ -134,12 +134,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -203,10 +199,6 @@
     <ProjectReference Include="..\Logging\HIC.Logging\HIC.Logging.csproj">
       <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
       <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RDMPStartup\RDMPStartup.csproj">
-      <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
-      <Name>RDMPStartup</Name>
     </ProjectReference>
     <ProjectReference Include="..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
       <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>

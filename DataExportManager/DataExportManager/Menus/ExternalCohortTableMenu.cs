@@ -27,8 +27,7 @@ using DataExportManager.SimpleDialogs;
 using HIC.Logging;
 using HIC.Logging.Listeners;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation.Pipelines;
-using RDMPStartup;
+using CatalogueManager.PipelineUIs.Pipelines;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 

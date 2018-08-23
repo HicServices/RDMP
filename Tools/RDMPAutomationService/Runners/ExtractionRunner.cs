@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,8 +6,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
@@ -38,6 +35,7 @@ namespace RDMPAutomationService.Runners
         private DataLoadInfo _dataLoadInfo;
         private LogManager _logManager;
 
+        object _oLock = new object();
         public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
 
         public ExtractionRunner(ExtractionOptions extractionOpts):base(extractionOpts)
@@ -64,7 +62,8 @@ namespace RDMPAutomationService.Runners
 
         protected override object[] GetRunnables()
         {
-            ExtractCommands.Clear();
+            lock(_oLock)
+                ExtractCommands.Clear();
 
             var commands = new List<IExtractCommand>();
 
@@ -85,7 +84,9 @@ namespace RDMPAutomationService.Runners
             {
                 var extractDatasetCommand = factory.Create(RepositoryLocator, sds);
                 commands.Add(extractDatasetCommand);
-                ExtractCommands.Add(sds,extractDatasetCommand);
+                
+                lock(_oLock)
+                    ExtractCommands.Add(sds,extractDatasetCommand);
             }
 
             return commands.ToArray();
@@ -116,8 +117,13 @@ namespace RDMPAutomationService.Runners
 
         protected override ICheckable[] GetCheckables(ICheckNotifier checkNotifier)
         {
-            ChecksDictionary.Clear();
             var checkables = new List<ICheckable>();
+
+            if (_pipeline == null)
+            {
+                checkNotifier.OnCheckPerformed(new CheckEventArgs("No Pipeline has been picked", CheckResult.Fail));
+                return new ICheckable[0];
+            }
 
             checkables.Add(new ProjectChecker(RepositoryLocator, _configuration.Project)
             {
@@ -131,7 +137,8 @@ namespace RDMPAutomationService.Runners
                 CheckGlobals = false
             });
             
-            checkables.Add(new GlobalExtractionChecker(_configuration));
+            if(_options.ExtractGlobals)
+                checkables.Add(new GlobalExtractionChecker(_configuration));
 
             foreach (var runnable in GetRunnables())
             {
@@ -156,28 +163,42 @@ namespace RDMPAutomationService.Runners
             return _configuration.SelectedDataSets.Where(ds => _options.Datasets.Contains(ds.ExtractableDataSet_ID)).ToArray();
         }
 
+        public ToMemoryCheckNotifier GetGlobalCheckNotifier()
+        {
+            return GetSingleCheckerResults<GlobalExtractionChecker>();
+        }
+
+        public ToMemoryCheckNotifier GetCheckNotifier(IExtractableDataSet extractableData)
+        {
+            return GetSingleCheckerResults<SelectedDataSetsChecker>((sds) => sds.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
+        }
+
         public object GetState(IExtractableDataSet extractableData)
         {
             if(_options.Command == CommandLineActivity.check)
             {
-                var sds = ChecksDictionary.Keys.OfType<SelectedDataSetsChecker>().SingleOrDefault(k => k.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
+                var sds = GetCheckNotifier(extractableData);
 
                 if (sds == null)
                     return null;
 
-                return ChecksDictionary[sds].GetWorst();
+                return sds.GetWorst();
             }
 
             if(_options.Command == CommandLineActivity.run)
             {
-                var sds = ExtractCommands.Keys.FirstOrDefault(k => k.ExtractableDataSet_ID == extractableData.ID);
+                lock (_oLock)
+                {
+                    var sds = ExtractCommands.Keys.FirstOrDefault(k => k.ExtractableDataSet_ID == extractableData.ID);
 
-                if (sds == null)
-                    return null;
+                    if (sds == null)
+                        return null;
 
-                return ExtractCommands[sds].State;
+                    return ExtractCommands[sds].State;
+                }
             }
-
+                
+            
             return null;
         }
 
@@ -185,18 +206,19 @@ namespace RDMPAutomationService.Runners
         {
             if (_options.Command == CommandLineActivity.check)
             {
-                var sds = ChecksDictionary.Keys.OfType<GlobalExtractionChecker>().SingleOrDefault();
+                var g = GetSingleCheckerResults<GlobalExtractionChecker>();
 
-                if (sds == null)
+                if (g == null)
                     return null;
 
-                return ChecksDictionary[sds].GetWorst();
+                return g.GetWorst();
             }
 
             if (_options.Command == CommandLineActivity.run && _globalsCommand != null)
                 return _globalsCommand.State;
 
             return null;
+            
         }
 
         private DataLoadInfo StartAudit()

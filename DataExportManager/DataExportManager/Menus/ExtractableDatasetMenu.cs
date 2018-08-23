@@ -14,7 +14,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPStartup;
 using ReusableUIComponents;
 
 namespace DataExportManager.Menus

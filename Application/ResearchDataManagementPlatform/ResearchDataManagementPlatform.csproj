@@ -117,11 +117,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -289,25 +286,13 @@
       <Project>{66DCB9F0-41A3-4B14-ACC8-2036383A79C2}</Project>
       <Name>Dashboard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
-      <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>
-      <Name>LoadModules.GenericUIs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
-      <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
-      <Name>LoadModules.Generic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
       <Name>DataQualityEngine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\RDMPObjectVisualisation\RDMPObjectVisualisation.csproj">
-      <Project>{b541f57b-631a-4639-8589-8cda0021ae2d}</Project>
-      <Name>RDMPObjectVisualisation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
-      <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
-      <Name>RDMPStartup</Name>
+    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
+      <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
+      <Name>HIC.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj">
       <Project>{94797307-05F3-4E72-B60B-DCB51B41CF9C}</Project>
@@ -324,10 +309,6 @@
     <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
       <Project>{B3351D78-ABB9-4FED-88BF-C688D5F267B6}</Project>
       <Name>ReusableUIComponents</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
-      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
-      <Name>RDMPAutomationService</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

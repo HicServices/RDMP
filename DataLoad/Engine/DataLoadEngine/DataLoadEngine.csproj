@@ -212,16 +212,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -338,6 +332,7 @@
     <Compile Include="Migration\QueryBuilding\ReverseMigrationQueryHelper.cs" />
     <Compile Include="Mutilators\IMutilateDataTables.cs" />
     <Compile Include="Mutilators\IPluginMutilateDataTables.cs" />
+    <Compile Include="PipelineUseCases\UploadFileUseCase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -370,9 +365,6 @@
     <None Include="DataFlowPipeline\Components\Anonymisation.cd" />
     <None Include="DataProvider\ReadingFromCacheInDataLoad.cd" />
     <None Include="LoadExecution\DataLoadEngine.cd" />
-    <None Include="log4net.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Migration\StagingToLiveMigration.cd" />
     <None Include="packages.config" />
     <None Include="Job\SchedulesAndJobCreation.cd" />

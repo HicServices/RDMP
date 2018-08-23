@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -259,8 +260,16 @@ namespace CatalogueManager.Collections
                 return;
 
             if (args.Request.ExpansionDepth > 0)
-                ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
-
+                try
+                {
+                    Tree.BeginUpdate();
+                    ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
+                }
+                finally
+                {
+                    Tree.EndUpdate();
+                }
+                
             if (args.Request.Pin && Settings.AllowPinning)
                 Pin(args.Request.ObjectToEmphasise, decendancyList);
 
@@ -291,7 +300,12 @@ namespace CatalogueManager.Collections
             };
         }
 
-        private void ExpandToDepth(int expansionDepth, object currentObject)
+        /// <summary>
+        /// Expands the current object (which must exist/be visible in the UI) to the given depth
+        /// </summary>
+        /// <param name="expansionDepth"></param>
+        /// <param name="currentObject"></param>
+        public void ExpandToDepth(int expansionDepth, object currentObject)
         {
             if(expansionDepth == 0)
                 return;
@@ -335,15 +349,20 @@ namespace CatalogueManager.Collections
                 //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
                 Tree.SelectedObject = o;
 
+                //is o masquerading as someone else?
+                IMasqueradeAs masquerader = o as IMasqueradeAs;
+
+                //if so this is who he is pretending to be
                 object masqueradingAs = null;
-                if (o is IMasqueradeAs)
-                    masqueradingAs = ((IMasqueradeAs)o).MasqueradingAs();
+
+                if (masquerader != null)
+                    masqueradingAs = masquerader.MasqueradingAs(); //yes he is masquerading!
 
                 var menu = GetMenuWithCompatibleConstructorIfExists(o);
 
                 //If no menu takes the object o try checking the object it is masquerading as as a secondary preference
                 if (menu == null && masqueradingAs != null)
-                    menu = GetMenuWithCompatibleConstructorIfExists(masqueradingAs, o);
+                    menu = GetMenuWithCompatibleConstructorIfExists(masqueradingAs, masquerader);
 
                 //found a menu with compatible constructor arguments
                 if (menu != null)
@@ -364,7 +383,7 @@ namespace CatalogueManager.Collections
 
                 //no compatible menus so just return default menu
                 var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
-                defaultMenu.AddCommonMenuItems(Settings);
+                defaultMenu.AddCommonMenuItems(this);
                 return defaultMenu;
             }
             else
@@ -380,13 +399,31 @@ namespace CatalogueManager.Collections
             return null;
         }
 
-        private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, object oMasquerader = null)
+        //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
+        Dictionary<Type,Type> _cachedMenuCompatibility = new Dictionary<Type, Type>();
+
+        private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
         {
             RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
             args.CurrentlyPinnedObject = _currentlyPinned;
             args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
 
             var objectConstructor = new ObjectConstructor();
+
+            Type oType = o.GetType();
+
+            //if we have encountered this object type before
+            if (_cachedMenuCompatibility.ContainsKey(oType))
+            {
+                Type compatibleMenu = _cachedMenuCompatibility[oType];
+                
+                //we know there are no menus compatible with o
+                if (compatibleMenu == null)
+                    return null;
+
+                return ConstructMenu(objectConstructor, _cachedMenuCompatibility[oType], args, o);
+            }
+                
 
             //now find the first RDMPContextMenuStrip with a compatible constructor
             foreach (Type menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
@@ -395,21 +432,39 @@ namespace CatalogueManager.Collections
                     continue;
 
                 //try constructing menu with:
-                var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(menuType,
-                    args,//parameter 1 must be args
-                    o //parameter 2 must be object compatible Type
-                    );
+                var menu = ConstructMenu(objectConstructor,menuType,args,o);
 
                 //find first menu that's compatible
                 if (menu != null)
                 {
-                    menu.AddCommonMenuItems(Settings);
+                    if (!_cachedMenuCompatibility.ContainsKey(oType))
+                        _cachedMenuCompatibility.Add(oType, menu.GetType());
+
                     return menu;
                 }
             }
-            
+
+            //we know there are no menus compatible with this type
+            if (!_cachedMenuCompatibility.ContainsKey(oType))
+                _cachedMenuCompatibility.Add(oType, null);
+
             //there are no derrived classes with compatible constructors
             return null;
+        }
+
+        private RDMPContextMenuStrip ConstructMenu(ObjectConstructor objectConstructor, Type type, RDMPContextMenuStripArgs args, object o)
+        {
+            //there is a compatible menu Type known
+            
+            //parameter 1 must be args
+            //parameter 2 must be object compatible Type
+
+            var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(type, args, o);
+            
+            if(menu != null)
+                menu.AddCommonMenuItems(this);
+
+            return menu;
         }
 
 
@@ -417,6 +472,9 @@ namespace CatalogueManager.Collections
         {
             var o = Tree.SelectedObject;
             
+            if(o == null)
+                return;
+
             var cmd = new ExecuteCommandActivate(_activator, o);
             if(!cmd.IsImpossible)
                 cmd.Execute();
@@ -425,75 +483,58 @@ namespace CatalogueManager.Collections
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             OnRefreshChildProvider(_activator.CoreChildProvider);
-            
+
+            RefreshObject(e.Object,e.Exists);
+
             //now tell tree view to refresh the object
-            object parent = null;
-
-            //or from known descendancy
-            var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
-            if (knownDescendancy != null)
-                parent = knownDescendancy.Last();
-
+            
             //if the descendancy is known 
             if (_pinFilter != null)
                 _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e);
 
-            //if it is a root object maintained by this tree and it exists
-            if (MaintainRootObjects != null && MaintainRootObjects.Contains(e.Object.GetType()) && e.Object.Exists())
-                    //if tree doesn't yet contain the object
-                    if (!Tree.Objects.Cast<object>().Contains(e.Object))
-                        Tree.AddObject(e.Object); //add it
-
-            //item deleted?
-            if (!e.Object.Exists())
-            {
-
-                //item was deleted so remove it
-                Tree.RemoveObject(e.Object);
-
-                //if we have a parent it might be a node category that should now disapear too
-                if (parent != null)
-                {
-                    //it's a Node (e.g. SupportingDocumentsNode) but not a SingletonNode (e.g. ANOTablesNode)
-                    if (parent.GetType().Name.EndsWith("Node") && ! (parent is SingletonNode))
-                    {
-                        //if we are the only child
-                        if (Tree.GetChildren(parent).Cast<object>().Count() <= 1)
-                        {
-                            Tree.RemoveObject(parent);
-                            return;
-                        }
-
-                        //there are other siblings so removing e.Object will not result in the node disapearing
-                        Tree.RefreshObject(parent);
-                    }
-                }
-            }
-            else
-            {
-                try
-                {
-                    //but the filter is currently hiding the object?
-                    if (IsHiddenByFilter(e.Object))
-                        return;
-                
-                    //is parent in tree?
-                    if(parent != null && Tree.IndexOf(parent) != -1)
-                        Tree.RefreshObject(parent);//refresh parent
-                    else
-                    {
-                        //parent isn't in tree, could be a root object? try to refresh the object anyway
-                        if (Tree.IndexOf(e.Object) != -1)
-                            Tree.RefreshObject(e.Object);
-                    }
-                }
-                catch (IndexOutOfRangeException)
-                {
-                        
-                }
-            }
 
             RefreshContextMenuStrip();
+
+            //also refresh anyone who is masquerading as e.Object
+            foreach (IMasqueradeAs masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
+                RefreshObject(masquerader, e.Exists);
+            
+        }
+
+        private void RefreshObject(object o, bool exists)
+        {
+
+            //or from known descendancy
+            var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(o);
+
+            //if it is a root object maintained by this tree and it exists
+            if (MaintainRootObjects != null && MaintainRootObjects.Contains(o.GetType()) && exists)
+                //if tree doesn't yet contain the object
+                if (!Tree.Objects.Cast<object>().Contains(o))
+                {
+                    Tree.AddObject(o); //add it
+                    return;
+                }
+            
+            if(!IsHiddenByFilter(o))
+                //if we have the object
+                if (Tree.IndexOf(o) != -1)
+                {
+                    //remove it
+                    Tree.RemoveObject(o);
+
+                    //we don't have the object but do we have something in it's descendancy?
+                    if (knownDescendancy != null)
+                    {
+                        var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
+
+                        if (lastParent != null)
+                            Tree.RefreshObject(lastParent); //refresh parent
+                    }
+                    else 
+                        if(exists)
+                            Tree.AddObject(o);
+                }
         }
 
         private bool IsHiddenByFilter(object o)
@@ -513,42 +554,6 @@ namespace CatalogueManager.Collections
                 _activator.RefreshBus.Unsubscribe(this);
                 _activator.Emphasise -= _activator_Emphasise;
             }
-        }
-
-        private bool expand = true;
-        
-
-
-        /// <summary>
-        /// Expands or collapses the tree view.  Returns true if the tree is now expanded, returns false if the tree is now collapsed
-        /// </summary>
-        /// <param name="btnExpandOrCollapse"></param>
-        /// <returns></returns>
-        public bool ExpandOrCollapse(Button btnExpandOrCollapse)
-        {
-            Tree.UseFiltering = false;
-
-            if (expand)
-            {
-                Tree.ExpandAll();
-                expand = false;
-
-                if(btnExpandOrCollapse != null)
-                    btnExpandOrCollapse.Text = "Collapse";
-                
-            }
-            else
-            {
-                Tree.CollapseAll();
-                expand = true;
-                if(btnExpandOrCollapse != null)
-                    btnExpandOrCollapse.Text = "Expand";
-            }
-
-            Tree.UseFiltering = true;
-            Tree.EnsureVisible(0);
-            
-            return !expand;
         }
     }
 }

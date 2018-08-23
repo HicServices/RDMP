@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ServiceModel.Description;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting;

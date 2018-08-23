@@ -145,7 +145,8 @@ namespace ANOStore.ANOEngineering
                     if(notifier.OnCheckPerformed(new CheckEventArgs("Plan for " + DateColumn + " must be PassThroughUnchanged",CheckResult.Fail,null,"Set plan to PassThroughUnchanged")))
                         dateColumnPlan.Plan = Plan.PassThroughUnchanged;
 
-                var usedTables = TableInfos.Except(SkippedTables).Count();
+                //get a count of the number of non lookup used tables
+                var usedTables = TableInfos.Except(SkippedTables).Count(t => !t.IsLookupTable());
                 
                 if (usedTables > 1)
                     notifier.OnCheckPerformed(

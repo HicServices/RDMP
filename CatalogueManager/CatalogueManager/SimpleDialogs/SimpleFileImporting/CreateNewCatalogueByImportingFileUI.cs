@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.DataHelper;
-using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ExtractionUIs.JoinsAndLookups;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -24,6 +15,7 @@ using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using CatalogueManager.Tutorials;
 using DataExportLibrary.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
+using DataLoadEngine.PipelineUseCases;
 using LoadModules.Generic.DataFlowSources;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -114,20 +106,9 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void btnClearFile_Click(object sender, EventArgs e)
         {
-            //if advanced is instantiated it will have a pre-clear file state
-            if (advanced != null)
-            {
-                //toggle off advanced
-                if (isAdvanced)
-                    ToggleAdvanced();
-
-                advanced = null;
-            }
-
             SetupState(State.SelectFile);
 
             btnConfirmDatabase.Enabled = serverDatabaseTableSelector1.GetDiscoveredDatabase() != null;
-
         }
 
         private void SetupState(State state)
@@ -270,7 +251,8 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void ddPipeline_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataFlowPipelineEngineFactory<DataTable> factory = GetFactory();
+
+            DataFlowPipelineEngineFactory factory = GetFactory();
 
             var p = ddPipeline.SelectedItem as Pipeline;
 
@@ -288,53 +270,25 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             }
         }
 
-        private DataFlowPipelineEngineFactory<DataTable> GetFactory()
-        {
-            return new DataFlowPipelineEngineFactory<DataTable>(_activator.RepositoryLocator.CatalogueRepository.MEF, _context);
-        }
 
         private void btnAdvanced_Click(object sender, EventArgs e)
         {
             ToggleAdvanced();
         }
 
-        private bool isAdvanced = false;
         private Project _projectSpecific;
 
         private void ToggleAdvanced()
         {
             var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
 
-            if(db == null)
+            if (db == null)
                 return;
 
             //flip it
-            isAdvanced = !isAdvanced;
-            btnAdvanced.Text = isAdvanced ? "Simple" : "Advanced";
-            
-            if (isAdvanced)
-            {
-                if (advanced == null)
-                    advanced =
-                        new CreateNewCatalogueByImportingFileUI_Advanced(
-                            _activator,db
-                            , _selectedFile, true,_projectSpecific);
-
-                advanced.Bounds = pSimplePanel.Bounds;
-                advanced.Anchor = pSimplePanel.Anchor;
-
-                Controls.Remove(pSimplePanel);
-                Controls.Add(advanced);
-            }
-            else
-            {
-
-                pSimplePanel.Bounds = advanced.Bounds;
-                pSimplePanel.Anchor = advanced.Anchor;
-
-                Controls.Remove(advanced);
-                Controls.Add(pSimplePanel);
-            }
+            var advanced = new CreateNewCatalogueByImportingFileUI_Advanced(_activator, db, _selectedFile, true, _projectSpecific);
+            var form = new SingleControlForm(advanced);
+            form.Show();
         }
 
         private void btnConfirmDatabase_Click(object sender, EventArgs e)
@@ -366,7 +320,8 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                 return;
             }
 
-            var source = GetFactory().CreateSourceIfExists(p);
+            var source = (IDataFlowSource<DataTable>)GetFactory().CreateSourceIfExists(p);
+
             ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile), new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
             
             Cursor.Current = Cursors.WaitCursor;
@@ -378,6 +333,16 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                 DataTableViewer dtv = new DataTableViewer(preview,"Preview");
                 SingleControlForm.ShowDialog(dtv);
             }
+        }
+
+        private UploadFileUseCase GetUseCase()
+        {
+            return new UploadFileUseCase(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase());
+        }
+
+        private DataFlowPipelineEngineFactory GetFactory()
+        {
+            return new DataFlowPipelineEngineFactory(GetUseCase(),_activator.RepositoryLocator.CatalogueRepository.MEF);
         }
 
 

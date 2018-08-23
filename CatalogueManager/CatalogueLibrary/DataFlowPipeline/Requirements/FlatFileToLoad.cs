@@ -15,5 +15,13 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         }
 
         public FileInfo File { get; set; }
+        
+        public override string ToString()
+        {
+            if (File == null)
+                return base.ToString();
+
+            return File.Name;
+        }
     }
 }

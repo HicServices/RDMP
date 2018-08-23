@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -23,8 +24,8 @@ using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
-using RDMPObjectVisualisation.Pipelines;
-using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
+using CatalogueManager.PipelineUIs.Pipelines;
+using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
@@ -57,11 +58,16 @@ namespace DataExportManager.DataRelease
         private bool _isFirstTime = true;
 
         private IPipelineSelectionUI _pipelineSelectionUI1;
-        private IExtractionConfiguration[] _unreleasedConfigurations;
         private IMapsDirectlyToDatabaseTable[] _globals;
         private DataExportChildProvider _childProvider;
         
         private ArbitraryFolderNode _globalsNode = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME);
+
+
+        private bool _isExecuting;
+        private RDMPCollectionCommonFunctionality _commonFunctionality;
+        private IEnumerable<ExtractionConfiguration> _configurations = new ExtractionConfiguration[0];
+        private IEnumerable<ISelectedDataSets> _selectedDataSets = new ISelectedDataSets[0];
 
         public DataReleaseUI()
         {
@@ -84,9 +90,6 @@ namespace DataExportManager.DataRelease
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
             pictureBox1.BackColor = Color.FromArgb(240,240,240);
         }
-        
-        private bool _isExecuting;
-        private RDMPCollectionCommonFunctionality _commonFunctionality;
 
         private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
         {
@@ -118,62 +121,26 @@ namespace DataExportManager.DataRelease
             var releaseRunner = checkAndExecuteUI1.CurrentRunner as ReleaseRunner;
             var sds = rowObject as ISelectedDataSets;
             var configuration = rowObject as IExtractionConfiguration;
-            var global = rowObject as IMapsDirectlyToDatabaseTable;
+            var supportingDocument = rowObject as SupportingDocument;
+            var supportingSqlTable = rowObject as SupportingSQLTable;
 
             if (releaseRunner == null)
                 return null;
 
-            ICheckable key = null;
-
             if (configuration != null)
-            {
-                var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<ReleaseEnvironmentPotential>().ToArray().SingleOrDefault(rp => rp.Configuration.Equals(configuration));
-                if (releasePotential != null)
-                    return releasePotential.Assesment;
-                
-                return null;
-            }
+                return releaseRunner.GetState(configuration);
 
             if (sds != null)
-            {
-                var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<ReleasePotential>().ToArray().SingleOrDefault(rp => rp.SelectedDataSet.ID == sds.ID);
+                return releaseRunner.GetState(sds);
 
-                //not been released ever
-                if (releasePotential is NoReleasePotential)
-                    return Releaseability.NeverBeenSuccessfullyExecuted;
+            if (supportingDocument != null)
+                return releaseRunner.GetState(supportingDocument);
 
-                //do we know the release state of the assesments
-                if (releasePotential != null && releasePotential.Assessments != null && releasePotential.Assessments.Any())
-                {
-                    var releasability = releasePotential.Assessments.Values.Min();
-
-                    if (releasability != Releaseability.Undefined)
-                        return releasability;
-                }
-
-                //otherwise use the checks of it
-                key = releasePotential;
-                if (key != null)
-                    return releaseRunner.ChecksDictionary[key].GetWorst();
-
-                return null;
-            }
-
-            if (global != null && (global is SupportingDocument || global is SupportingSQLTable))
-            {
-                var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<GlobalReleasePotential>().ToList().SingleOrDefault(rp => rp.RelatedGlobal.Equals(global));
-                if (releasePotential != null)
-                    return releasePotential.Releasability;
-
-                return null;
-            }
+            if (supportingSqlTable != null)
+                return releaseRunner.GetState(supportingSqlTable);
 
             if (rowObject.Equals(_globalsNode))
-            {
-                var globalChecker = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().ToList().SingleOrDefault();
-                if (globalChecker != null)
-                    return releaseRunner.ChecksDictionary[globalChecker].GetWorst();
-            }
+                return releaseRunner.GetGlobalReleaseState();
 
             return null;
         }
@@ -183,8 +150,8 @@ namespace DataExportManager.DataRelease
             return new ReleaseOptions()
             {
                 Pipeline = _pipelineSelectionUI1.Pipeline == null ? 0 : _pipelineSelectionUI1.Pipeline.ID,
-                Configurations = tlvReleasePotentials.CheckedObjects.OfType<ExtractionConfiguration>().Select(ec => ec.ID).ToArray(),
-                SelectedDataSets = tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
+                Configurations = _configurations.Where(c=>tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray(),
+                SelectedDataSets = _selectedDataSets.All(tlvReleasePotentials.IsChecked)?new int[0]: tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
                 Command = activityRequested,
                 ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
             };
@@ -196,10 +163,10 @@ namespace DataExportManager.DataRelease
             var ec = model as ExtractionConfiguration;
 
             if (p != null)
-                return _childProvider.GetActiveConfigurationsOnly(p);
+                return _configurations = _childProvider.GetActiveConfigurationsOnly(p);
 
             if (ec != null)
-                return _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
+                return _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
 
             if (Equals(model, _globalsNode))
                 return _globals;
@@ -236,7 +203,7 @@ namespace DataExportManager.DataRelease
 
             if (_pipelineSelectionUI1 == null)
             {
-                var context = new ReleaseUseCase(_project, new ReleaseData(RepositoryLocator) { IsDesignTime = true });
+                var context = ReleaseUseCase.DesignTime();
                 _pipelineSelectionUI1 = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
                 _pipelineSelectionUI1.Pipeline = null;
@@ -307,6 +274,13 @@ namespace DataExportManager.DataRelease
         {
             tlvReleasePotentials.UncheckAll();
             tlvReleasePotentials.CheckObject(configuration);
+            tlvReleasePotentials.CheckObject(_globalsNode);
+        }
+
+        public void Tick(ISelectedDataSets selectedDataSet)
+        {
+            tlvReleasePotentials.UncheckAll();
+            tlvReleasePotentials.CheckObject(selectedDataSet);
             tlvReleasePotentials.CheckObject(_globalsNode);
         }
 

@@ -54,8 +54,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
                 return this;
             }
 
-            var defaults = new ServerDefaults(Activator.RepositoryLocator.CatalogueRepository);
-            var dqeServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
+            var dqeServer = Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
 
             if (dqeServer == null)
             {

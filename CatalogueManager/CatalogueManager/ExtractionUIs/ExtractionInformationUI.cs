@@ -26,7 +26,7 @@ using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
@@ -61,7 +61,7 @@ namespace CatalogueManager.ExtractionUIs
     /// For more information on configuring Filters see ExtractionFilterUI.</para>
     /// 
     /// <para>If you tick the HashOnDataRelease column then the transform/column will be wrapped by the Hashing Algorithm (if any - See ConfigureHashingAlgorithm) when it comes to data extraction.
-    /// Use this only if you have a hashing system implemented.  Hashing is separate from identifier allocation such as ANO (See ConfigureANOForTableInfo) in that its done at extraction
+    /// Use this only if you have a hashing system implemented.  Hashing is separate from identifier allocation such as ANO (See ANOTable) in that its done at extraction
     /// time in SQL only and the exact implementation is up to you.</para>
     ///
     /// <para></para>

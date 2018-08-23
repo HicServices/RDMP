@@ -65,7 +65,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         [DemandsInitialization("Naming of flat files is usually based on Catalogue.Name, if this is true then the Catalogue.Acronym will be used instead",defaultValue:false)]
         public bool UseAcronymForFileNaming { get; set; }
 
-        [DemandsInitialization("If this is true, the dataset extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: true)]
+        [DemandsInitialization("If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: true)]
         public bool CleanExtractionFolderBeforeExtraction { get; set; }
         
         private bool haveOpened = false;
@@ -312,7 +312,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
         }
 
-        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)
+        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
         {
             return new FlatFileReleaseSource<ReleaseAudit>();
         }

@@ -5,6 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;

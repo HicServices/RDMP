@@ -5,6 +5,7 @@ using System.Threading;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueLibrary.Repositories;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
@@ -19,12 +20,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
     /// <summary>
     /// Use case for linking and extracting Project Extraction Configuration datasets and custom data (See IExtractCommand).
     /// </summary>
-    public class ExtractionPipelineUseCase : PipelineUseCase
+    public sealed class ExtractionPipelineUseCase : PipelineUseCase
     {
-        private readonly IProject _project;
         private readonly IPipeline _pipeline;
-        DataLoadInfo _dataLoadInfo;
-        private DataFlowPipelineContext<DataTable> _context;
+        readonly DataLoadInfo _dataLoadInfo;
         
         public IExtractCommand ExtractCommand { get; set; }
         public ExecuteDatasetExtractionSource Source { get; private set; }
@@ -37,27 +36,37 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
         /// </summary>
         public IExecuteDatasetExtractionDestination Destination { get; private set; }
       
-        public ExtractionPipelineUseCase(IProject project) : this(project, ExtractDatasetCommand.EmptyCommand, null, DataLoadInfo.Empty)
-        { }
-
         public ExtractionPipelineUseCase(IProject project, IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
         {
-            _project = project;
             _dataLoadInfo = dataLoadInfo;
             ExtractCommand = extractCommand;
             _pipeline = pipeline;
 
+            extractCommand.ElevateState(ExtractCommandState.NotLaunched);
+
+            AddInitializationObject(ExtractCommand);
+            AddInitializationObject(project);
+            AddInitializationObject(_dataLoadInfo);
+            AddInitializationObject(project.DataExportRepository.CatalogueRepository);
+
+            GenerateContext();
+        }
+
+        
+
+        protected override IDataFlowPipelineContext GenerateContextImpl()
+        {
             //create the context using the standard context factory
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
-            _context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo);
+            var context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo);
 
             //adjust context: we want a destination requirement of IExecuteDatasetExtractionDestination
-            _context.MustHaveDestination = typeof(IExecuteDatasetExtractionDestination);//we want this freaky destination type
-            _context.MustHaveSource = typeof(ExecuteDatasetExtractionSource);
+            context.MustHaveDestination = typeof(IExecuteDatasetExtractionDestination);//we want this freaky destination type
+            context.MustHaveSource = typeof(ExecuteDatasetExtractionSource);
 
-            extractCommand.ElevateState(ExtractCommandState.NotLaunched);
+            return context;
         }
-        
+
         public void Execute(IDataLoadEventListener listener)
         {
             try
@@ -153,45 +162,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             return engine;
         }
         
-        public override object[] GetInitializationObjects()
-        {
-            //initialize it with the extraction configuration request object and the audit object (this will initialize all objects in pipeline which implement IPipelineRequirement<ExtractionRequest> and IPipelineRequirement<TableLoadInfo>
-            if (_pipeline != null)
-                return new object[] { ExtractCommand, _dataLoadInfo, _project, _pipeline.Repository };
-
-            return new object[] { ExtractCommand, _dataLoadInfo, _project };
-        }
-
-        public override IDataFlowPipelineContext GetContext()
-        {
-            return _context;
-        }
-
-        /*private void DoExtractionAsync(IExtractCommand request)
-        {
-            request.State = ExtractCommandState.WaitingForSQLServer;
-                
-            _pipelineUseCase = new ExtractionPipelineUseCase(Project, request, _pipeline, _dataLoadInfo);
-            _pipelineUseCase.Execute(progressUI1);
-
-            if (_pipelineUseCase.Crashed)
-            {
-                request.State = ExtractCommandState.Crashed;
-            }
-            else
-                if (_pipelineUseCase.Source != null)
-                    if (_pipelineUseCase.Source.WasCancelled)
-                        request.State = ExtractCommandState.UserAborted;
-                    else if (_pipelineUseCase.Source.ValidationFailureException != null)
-                        request.State = ExtractCommandState.Warning;
-                    else
-                    {
-                        request.State = ExtractCommandState.Completed;
-                            
-
-                    }
-        }
-        */
         private void WriteMetadata(IDataLoadEventListener listener)
         {
             ExtractCommand.ElevateState(ExtractCommandState.WritingMetadata);
@@ -225,6 +195,23 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
             {
                 ExtractCommand.ElevateState(ExtractCommandState.Completed);
             }
+        }
+
+        private ExtractionPipelineUseCase()
+            : base(new Type[]
+            {
+                typeof(IExtractCommand),
+                typeof(IProject),
+                typeof(DataLoadInfo),
+                typeof(ICatalogueRepository)
+            })
+        {
+            GenerateContext();
+        }
+
+        public static ExtractionPipelineUseCase DesignTime()
+        {
+            return new ExtractionPipelineUseCase();
         }
     }
 }

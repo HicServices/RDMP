@@ -31,6 +31,8 @@ namespace DataExportManager.Menus
 
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
 
+            Add(new ExecuteCommandRelease(_activator).SetTarget(selectedDataSet));
+
             /////////////////// Extraction Graphs //////////////////////////////
             var graphs = new ToolStripMenuItem("View Extraction Graphs", CatalogueIcons.Graph);
             

@@ -622,4 +622,16 @@
   <data name="ConnectionStringKeyword" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ConnectionStringKeyword.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AllStandardRegexesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllStandardRegexesNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AllPipelinesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllPipelinesNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StandardPipelineUseCaseNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\StandardPipelineUseCaseNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OtherPipelinesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\OtherPipelinesNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

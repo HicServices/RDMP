@@ -13,7 +13,10 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.LogViewer;
+using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
 using HIC.Logging.PastEvents;
@@ -161,13 +164,13 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             {
 
                 if(dli.Errors.Any())
-                    children.Add(new LoadEventsTreeView_Category("Errors",dli.Errors.ToArray()));
+                    children.Add(new LoadEventsTreeView_Category("Errors", dli.Errors.ToArray(), LoggingTables.FatalError, dli.ID));
 
                 if(dli.Progress.Any())
-                    children.Add(new LoadEventsTreeView_Category("Progress Messages", dli.Progress.ToArray()));
+                    children.Add(new LoadEventsTreeView_Category("Progress Messages", dli.Progress.ToArray(),LoggingTables.ProgressLog, dli.ID));
 
                 if(dli.TableLoadInfos.Any())
-                    children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.ToArray()));
+                    children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.ToArray(),LoggingTables.TableLoadRun, dli.ID));
             }
 
             var category = model as LoadEventsTreeView_Category;
@@ -180,16 +183,29 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         private class LoadEventsTreeView_Category
         {
             public object[] Children { get; set; }
+            
             private readonly string _name;
+            
+            public readonly LoggingTables AssociatedTable;
+            public readonly int RunId;
 
-            public LoadEventsTreeView_Category(string name, object[] children)
+            public LoadEventsTreeView_Category(string name, object[] children,LoggingTables associatedTable,int runId)
             {
                 Children = children;
+                RunId = runId;
                 _name = name;
+                AssociatedTable = associatedTable;
             }
 
+            public bool IsTopXSampleOnly()
+            {
+                return Children.Length == ArchivalDataLoadInfo.MaxChildrenToFetch;
+            }
             public override string ToString()
             {
+                if(IsTopXSampleOnly())
+                    return string.Format(_name + " (Top " + ArchivalDataLoadInfo.MaxChildrenToFetch +")", Children.Length);
+
                 return string.Format(_name + " ({0})",Children.Length);
             }
         }
@@ -246,6 +262,9 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 {
                     _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabaseSettings());
                     results = _logManager.GetArchivalLoadInfoFor(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
+
+                    if(results.Length == ArchivalDataLoadInfo.MaxChildrenToFetch)
+                        ragSmiley1.Warning(new Exception("Only showing " + ArchivalDataLoadInfo.MaxChildrenToFetch + " most recent records"));
                 }
                 catch (OperationCanceledException)//user cancels
                 {
@@ -314,6 +333,13 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             var RightClickMenu = new ContextMenuStrip();
 
             var tli = e.Model as ArchivalTableLoadInfo;
+            var category = e.Model as LoadEventsTreeView_Category;
+
+            if (category != null)
+            {
+                var cmd = new ExecuteCommandViewLoggedData(_activator,category.AssociatedTable,new LogViewerFilter(){Run = category.RunId});
+                RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, _activator));
+            }
 
             if (tli != null && _loadMetadata != null)
             {

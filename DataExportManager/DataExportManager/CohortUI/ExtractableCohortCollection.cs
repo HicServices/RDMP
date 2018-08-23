@@ -32,7 +32,6 @@ namespace DataExportManager.CohortUI
 
             lbCohortDatabaseTable.FormatRow += lbCohortDatabaseTable_FormatRow;
             lbCohortDatabaseTable.AlwaysGroupByColumn = olvSource;
-            lbCohortDatabaseTable.CellToolTipShowing += LbCohortDatabaseTableOnCellToolTipShowing;
 
             //always show selection in the same highlight colour
             lbCohortDatabaseTable.SelectedForeColor = Color.White;
@@ -40,6 +39,28 @@ namespace DataExportManager.CohortUI
             lbCohortDatabaseTable.UnfocusedSelectedForeColor = Color.White;
             lbCohortDatabaseTable.UnfocusedSelectedBackColor = Color.FromArgb(55, 153, 255);
 
+            olvViewLog.AspectGetter = ViewLogAspectGetter;
+            lbCohortDatabaseTable.ButtonClick += lbCohortDatabaseTable_ButtonClick;
+            lbCohortDatabaseTable.RowHeight = 19;
+
+        }
+
+        void lbCohortDatabaseTable_ButtonClick(object sender, CellClickEventArgs e)
+        {
+            var ecd = e.Model as ExtractableCohortDescription;
+
+            if (e.Column == olvViewLog && ecd != null)
+                WideMessageBox.Show(ecd.Cohort.AuditLog);
+        }
+
+        private object ViewLogAspectGetter(object rowObject)
+        {
+            var ecd = rowObject as ExtractableCohortDescription;
+            
+            if (ecd != null && !string.IsNullOrWhiteSpace(ecd.Cohort.AuditLog))
+                return "View Log";
+
+            return null;
         }
 
 
@@ -194,19 +215,6 @@ namespace DataExportManager.CohortUI
 
             if (SelectedCohortChanged != null)
                 SelectedCohortChanged(this, selected);
-        }
-        private void LbCohortDatabaseTableOnCellToolTipShowing(object sender, ToolTipShowingEventArgs e)
-        {
-
-            ExtractableCohortDescription node = (ExtractableCohortDescription)e.Model;
-
-            e.IsBalloon = true;
-            e.AutoPopDelay = 32767;
-            e.StandardIcon = ToolTipControl.StandardIcons.Info;
-
-            e.Text = string.IsNullOrWhiteSpace(node.Cohort.AuditLog) ? "No Audit Log" : node.Cohort.AuditLog;
-
-
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

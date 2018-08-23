@@ -1,33 +1,27 @@
 ﻿using System;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.ExternalDatabaseServerPatching;
-using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.LocationsMenu;
-using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
-using DataExportLibrary.Data.DataTables;
-using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation;
 using RDMPStartup;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
-using ScintillaNET;
 
 
 namespace CatalogueManager.TestsAndSetup
 {
     public class RDMPBootStrapper<T> where T : RDMPForm, new()
     {
+        private readonly string catalogueConnection;
+        private readonly string dataExportConnection;
         private T _mainForm;
 
         private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+
+        public RDMPBootStrapper(string catalogueConnection, string dataExportConnection)
+        {
+            this.catalogueConnection = catalogueConnection;
+            this.dataExportConnection = dataExportConnection;
+        }
 
         public void Show(bool requiresDataExportDatabaseToo)
         {
@@ -43,6 +37,12 @@ namespace CatalogueManager.TestsAndSetup
             {
                 //show the startup dialog
                 Startup startup = new Startup();
+                if (!String.IsNullOrWhiteSpace(catalogueConnection) && !String.IsNullOrWhiteSpace(dataExportConnection))
+                {
+                    startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnection, dataExportConnection);
+                    startup.RepositoryLocator.CatalogueRepository.TestConnection();
+                    startup.RepositoryLocator.DataExportRepository.TestConnection();
+                }
                 var startupUI = new StartupUIMainForm(startup);
                 startupUI.ShowDialog();
 

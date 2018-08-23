@@ -24,11 +24,11 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
     /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
     public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
     {
-        private readonly CatalogueRepository _catalogueRepository;
+        private readonly ICatalogueRepository _catalogueRepository;
         private DiscoveredDatabase _database;
         private DirectoryInfo _dataPathMap;
 
-        public MsSqlReleaseSource(CatalogueRepository catalogueRepository)
+        public MsSqlReleaseSource(ICatalogueRepository catalogueRepository)
         {
             _catalogueRepository = catalogueRepository;
         }

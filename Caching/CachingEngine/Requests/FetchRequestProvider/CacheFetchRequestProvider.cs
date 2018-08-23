@@ -1,5 +1,4 @@
-﻿using CatalogueLibrary.Data.Cache;
-using ReusableLibraryCode.Progress;
+﻿using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Requests.FetchRequestProvider
 {

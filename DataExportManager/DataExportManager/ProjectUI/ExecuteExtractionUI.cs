@@ -11,19 +11,25 @@ using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CatalogueManager.Tutorials;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.Providers.Nodes.UsedByNodes;
+using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
-using RDMPObjectVisualisation.Pipelines;
-using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
+using CatalogueManager.PipelineUIs.Pipelines;
+using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.TransparentHelpSystem;
+using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
 namespace DataExportManager.ProjectUI
 {
@@ -42,6 +48,7 @@ namespace DataExportManager.ProjectUI
         private IPipelineSelectionUI _pipelineSelectionUI1;
             
         public int TopX { get; set; }
+
         private ExtractionConfiguration _extractionConfiguration;
         
         private IMapsDirectlyToDatabaseTable[] _globals;
@@ -75,6 +82,47 @@ namespace DataExportManager.ProjectUI
             
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
             pictureBox1.BackColor = Color.FromArgb(240, 240, 240);
+
+            tlvDatasets.CellClick += tlvDatasets_CellClick;
+            
+            helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
+        }
+
+        void tlvDatasets_CellClick(object sender, CellClickEventArgs e)
+        {
+            if (e.Column == olvState)
+            {
+                var notifier = GetCheckNotifier(e.Model);
+
+                if(notifier == null)
+                    return;
+
+                var popup = new PopupChecksUI(e.Model.ToString(), false);
+                popup.Check(new ReplayCheckable(notifier));
+            }
+        }
+
+        private HelpWorkflow BuildHelpFlow()
+        {
+            var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(_activator), new NullHelpWorkflowProgressProvider());
+
+            //////Normal work flow
+            var root = new HelpStage(tlvDatasets, "Choose the datasets and Globals you want to extract here.\r\n" +
+                                                 "\r\n" +
+                                                 "Click on the red icon to disable this help.");
+            var stage2 = new HelpStage(panel1, "Select the pipeline to run for extracting the data.\r\n");
+            
+            root.SetOption(">>", stage2);
+            stage2.SetOption(">>", checkAndExecuteUI1.HelpStages.First());
+            for (int i = 0; i < checkAndExecuteUI1.HelpStages.Count - 1; i++)
+            {
+                checkAndExecuteUI1.HelpStages[i].SetOption(">>", checkAndExecuteUI1.HelpStages[i+1]);
+            }
+
+            checkAndExecuteUI1.HelpStages.Last().SetOption("|<<", root);
+
+            helpWorkflow.RootStage = root;
+            return helpWorkflow;
         }
 
         private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
@@ -134,6 +182,20 @@ namespace DataExportManager.ProjectUI
             return null;
         }
 
+        private ToMemoryCheckNotifier GetCheckNotifier(object rowObject)
+        {
+            var extractionRunner = checkAndExecuteUI1.CurrentRunner as ExtractionRunner;
+
+            if (rowObject == _globalsFolder && extractionRunner != null)
+                return extractionRunner.GetGlobalCheckNotifier();
+
+            var sds = rowObject as SelectedDataSets;
+
+            if (extractionRunner != null && sds != null) 
+                return extractionRunner.GetCheckNotifier(sds.ExtractableDataSet);
+            
+            return null;
+        }
         private object State_AspectGetter(object rowobject)
         {
             var state = GetState(rowobject);
@@ -145,7 +207,9 @@ namespace DataExportManager.ProjectUI
             return new ExtractionOptions() { 
                 Command = activityRequested,
                 ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
-                Datasets = _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray(),
+                
+
+                Datasets = _datasets.All(tlvDatasets.IsChecked)?new int[0]:_datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray(),
                 ExtractionConfiguration = _extractionConfiguration.ID,
                 Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 :_pipelineSelectionUI1.Pipeline.ID
             };
@@ -159,7 +223,13 @@ namespace DataExportManager.ProjectUI
             _extractionConfiguration = databaseObject;
             
             if(!_commonFunctionality.IsSetup)
-                _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings(){AddFavouriteColumn = false,AllowPinning=false,SuppressChildrenAdder=true});
+                _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings()
+                {
+                    AddFavouriteColumn = false,
+                    AllowPinning=false,
+                    SuppressChildrenAdder=true,
+                    SuppressActivate = true
+                });
 
             checkAndExecuteUI1.SetItemActivator(activator);
 
@@ -200,7 +270,7 @@ namespace DataExportManager.ProjectUI
             if (_pipelineSelectionUI1 == null)
             {
                 //create a new selection UI (pick an extraction pipeliene UI)
-                var useCase = new ExtractionPipelineUseCase(_extractionConfiguration.Project);
+                var useCase = ExtractionPipelineUseCase.DesignTime();
                 var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
                 _pipelineSelectionUI1 = factory.Create("Extraction Pipeline", DockStyle.Fill, panel1);
@@ -218,7 +288,13 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.ExpandAll();
 
             if (_isFirstTime)
+            {
                 tlvDatasets.CheckAll();
+                foreach (var disabledObject in tlvDatasets.DisabledObjects.OfType<ArbitraryFolderNode>())
+                {
+                    tlvDatasets.UncheckObject(disabledObject);
+                }
+            }
             else if (checkedBefore.Count > 0)
                 tlvDatasets.CheckObjects(checkedBefore);
 
@@ -292,6 +368,11 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.UncheckAll();
             tlvDatasets.CheckObject(_globalsFolder);
             tlvDatasets.CheckObject(selectedDataSet);
+        }
+
+        private void tlvDatasets_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            checkAndExecuteUI1.Enabled = tlvDatasets.CheckedObjects.Cast<object>().Any();
         }
     }
 

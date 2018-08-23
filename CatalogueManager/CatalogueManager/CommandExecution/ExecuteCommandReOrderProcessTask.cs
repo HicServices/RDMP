@@ -4,7 +4,7 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

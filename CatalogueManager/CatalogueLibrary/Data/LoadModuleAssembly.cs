@@ -52,7 +52,7 @@ namespace CatalogueLibrary.Data
             "Diagnostics.dll",
             "IdentifierDump.Database.dll",
             "IdentifierDump.dll",
-            "RDMPObjectVisualisation.dll",
+            "CatalogueManager.PipelineUIs.dll",
             "CachingEngine.dll",
             "HIC.RDMP.Plugin.dll",
 
@@ -111,7 +111,6 @@ namespace CatalogueLibrary.Data
             "TicketingTests.dll",
 
             //other random stuff already included as part of the runtime distributable that shouldn't also exist in the server
-            "log4net.dll",
             "Microsoft.SqlServer.DTSRuntimeWrap.dll",
             "MySql.Data.dll",
             "Org.Mentalis.Security.dll",

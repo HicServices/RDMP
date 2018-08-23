@@ -134,19 +134,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutocompleteMenu-ScintillaNET, Version=1.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoCompleteMenu-ScintillaNET.1.5.0\lib\net40\AutocompleteMenu-ScintillaNET.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CsvHelper">
-      <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="envdte80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="GraphX.Controls">
       <HintPath>..\..\packages\GraphX.2.2.0.2\lib\net40-client\GraphX.Controls.dll</HintPath>
     </Reference>
@@ -165,15 +152,6 @@
     <Reference Include="QuickGraph">
       <HintPath>..\..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph.Data">
-      <HintPath>..\..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="QuickGraph.Graphviz">
-      <HintPath>..\..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.Graphviz.dll</HintPath>
-    </Reference>
-    <Reference Include="QuickGraph.Serialization">
-      <HintPath>..\..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.Serialization.dll</HintPath>
-    </Reference>
     <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
       <Private>True</Private>
@@ -185,16 +163,13 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="System.Runtime"/>
+    <Reference Include="System.Runtime" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -209,12 +184,6 @@
     </Compile>
     <Compile Include="ChecksUI\ChecksUI.Designer.cs">
       <DependentUpon>ChecksUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ChecksUI\ChecksUIIconOnly.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ChecksUI\ChecksUIIconOnly.Designer.cs">
-      <DependentUpon>ChecksUIIconOnly.cs</DependentUpon>
     </Compile>
     <Compile Include="ChecksUI\MakeChangePopup.cs" />
     <Compile Include="ChecksUI\PopupChecksUI.cs">
@@ -406,6 +375,7 @@
     <Compile Include="TransparentHelpSystem\HelpWorkflow.cs" />
     <Compile Include="TransparentHelpSystem\ProgressTracking\IHelpWorkflowProgressProvider.cs" />
     <Compile Include="TransparentHelpSystem\ProgressTracking\IHelpWorkflowUser.cs" />
+    <Compile Include="TransparentHelpSystem\ProgressTracking\NullHelpWorkflowProgressProvider.cs" />
     <Compile Include="TransparentHelpSystem\TransparentHelpForm.cs" />
     <Compile Include="TreeHelper\TreeNodeParentFinder.cs" />
     <Compile Include="TypeTextOrCancelDialog.cs">
@@ -438,9 +408,6 @@
   <ItemGroup>
     <EmbeddedResource Include="ChecksUI\ChecksUI.resx">
       <DependentUpon>ChecksUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ChecksUI\ChecksUIIconOnly.resx">
-      <DependentUpon>ChecksUIIconOnly.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ChecksUI\PopupChecksUI.resx">
       <DependentUpon>PopupChecksUI.cs</DependentUpon>
@@ -528,10 +495,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
       <Name>ReusableLibraryCode</Name>

@@ -10,26 +10,21 @@ namespace LoadModules.Generic.Attachers
     /// Use case for the user configured pipeline for reading from a flat file.  Used by KVPAttacher (See KVPAttacher) to allow the user control over how the 
     /// source file format is read (e.g. csv, fixed width, excel etc).
     /// </summary>
-    public class KVPAttacherPipelineUseCase : PipelineUseCase
+    public sealed class KVPAttacherPipelineUseCase : PipelineUseCase
     {
-        private readonly FlatFileToLoad _file;
-
         public KVPAttacherPipelineUseCase(KVPAttacher kvpAttacher,FlatFileToLoad file)
         {
-            _file = file;
             ExplicitDestination = kvpAttacher;
+            AddInitializationObject(file);
+            
+            GenerateContext();
         }
 
-        public override object[] GetInitializationObjects()
-        {
-            return new Object[] {_file};
-        }
-
-        public override IDataFlowPipelineContext GetContext()
+        protected override IDataFlowPipelineContext GenerateContextImpl()
         {
             var context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.FixedDestination);
             context.MustHaveSource = typeof(IDataFlowSource<DataTable>);
-            
+
             return context;
         }
     }

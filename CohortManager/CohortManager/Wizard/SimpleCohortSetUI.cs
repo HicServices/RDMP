@@ -16,7 +16,7 @@ using CatalogueManager.CommandExecution;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
-using RDMPObjectVisualisation.Copying.Commands;
+using CatalogueManager.Copying.Commands;
 
 namespace CohortManager.Wizard
 {

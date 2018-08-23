@@ -19,7 +19,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPObjectVisualisation.Copying;
+using CatalogueManager.Copying;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;

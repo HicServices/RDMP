@@ -5,16 +5,17 @@ using System.Linq;
 using System.Security.Cryptography;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
@@ -73,6 +74,14 @@ namespace CatalogueLibrary.Providers
         public ObjectImport[] AllImports { get; set; }
         public ObjectExport[] AllExports { get; set; }
 
+        public AllStandardRegexesNode AllStandardRegexesNode { get; private set; }
+        public AllPipelinesNode AllPipelinesNode { get; private set; }
+        public OtherPipelinesNode OtherPipelinesNode { get; private set; }
+        public Pipeline[] AllPipelines { get; set; }
+        public PipelineComponent[] AllPipelineComponents { get; set; }
+
+        public StandardRegex[] AllStandardRegexes { get; set; }
+
         private CatalogueItemIssue[] _allCatalogueItemIssues;
 
         //TableInfo side of things
@@ -120,6 +129,8 @@ namespace CatalogueLibrary.Providers
         
         public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
 
+        public Dictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
+
         public readonly IChildProvider[] PluginChildProviders;
         private readonly ICheckNotifier _errorsCheckNotifier;
         private readonly List<IChildProvider> _blacklistedPlugins = new List<IChildProvider>();
@@ -128,6 +139,8 @@ namespace CatalogueLibrary.Providers
         {
             PluginChildProviders = pluginChildProviders;
             _errorsCheckNotifier = errorsCheckNotifier;
+            
+            AllMasqueraders = new Dictionary<object, HashSet<IMasqueradeAs>>();
 
             AllAnyTableParameters = repository.GetAllObjects<AnyTableSqlParameter>();
 
@@ -221,6 +234,22 @@ namespace CatalogueLibrary.Providers
             AllImports = repository.GetAllObjects<ObjectImport>();
 
             AddChildren(AllObjectSharingNode);
+
+            //Pipelines setup (see also DataExportChildProvider for calls to AddPipelineUseCases)
+            //Root node for all pipelines
+            AllPipelinesNode = new AllPipelinesNode();
+
+            //Pipelines not found to be part of any use case after AddPipelineUseCases
+            OtherPipelinesNode = new OtherPipelinesNode();
+            AllPipelines = repository.GetAllObjects<Pipeline>();
+            AllPipelineComponents = repository.GetAllObjects<PipelineComponent>();
+
+            foreach (Pipeline p in AllPipelines)
+                p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
+
+            AllStandardRegexesNode = new AllStandardRegexesNode();
+            AllStandardRegexes = repository.GetAllObjects<StandardRegex>();
+            AddToDictionaries(new HashSet<object>(AllStandardRegexes),new DescendancyList(AllStandardRegexesNode));
             
             //All the things for TableInfoCollectionUI
             BuildServerNodes();
@@ -248,7 +277,7 @@ namespace CatalogueLibrary.Providers
             }
                     
         }
-
+        
         private void AddChildren(AllLoadMetadatasNode allLoadMetadatasNode)
         {
             HashSet<object> children = new HashSet<object>();
@@ -294,8 +323,7 @@ namespace CatalogueLibrary.Providers
         {
             AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
         }
-
-
+        
         private void AddChildren(AllObjectSharingNode allObjectSharingNode)
         {
             var descendancy = new DescendancyList(allObjectSharingNode);
@@ -308,7 +336,56 @@ namespace CatalogueLibrary.Providers
 
             AddToDictionaries(new HashSet<object>(new object[] { allExportsNode, allImportsNode }), descendancy);
         }
-        
+
+
+        /// <summary>
+        /// Creates new <see cref="StandardPipelineUseCaseNode"/>s and fills it with all compatible Pipelines - do not call this method more than once
+        /// </summary>
+        /// <param name="useCase"></param>
+        protected void AddPipelineUseCases(Dictionary<string,PipelineUseCase> useCases)
+        {
+            var descendancy = new DescendancyList(AllPipelinesNode);
+            HashSet<object> children = new HashSet<object>();
+
+            //pipelines not found to be part of any StandardPipelineUseCase
+            HashSet<object> unknownPipelines = new HashSet<object>(AllPipelines);
+
+            foreach (var useCase in useCases)
+            {
+                var node = new StandardPipelineUseCaseNode(useCase.Key,useCase.Value);
+
+                foreach (Pipeline pipeline in AddChildren(node, descendancy.Add(node)))
+                    unknownPipelines.Remove(pipeline);
+
+                children.Add(node);
+            }
+
+            children.Add(OtherPipelinesNode);
+
+            AddToDictionaries(unknownPipelines,descendancy.Add(OtherPipelinesNode));
+            
+            //it is the first standard use case
+            AddToDictionaries(children, descendancy);
+            
+        }
+
+        private IEnumerable<Pipeline> AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            //find compatible pipelines useCase.Value
+            foreach (Pipeline compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
+            {
+                children.Add(new PipelineCompatibleWithUseCaseNode(compatiblePipeline, node.UseCase));
+            }
+
+            //it is the first standard use case
+            AddToDictionaries(children, descendancy);
+
+            return children.Cast<PipelineCompatibleWithUseCaseNode>().Select(u => u.Pipeline);
+        }
+
+
         private void BuildServerNodes()
         {
             Dictionary<TableInfoServerNode,List<TableInfo>> allServers = new Dictionary<TableInfoServerNode,List<TableInfo>>();
@@ -848,7 +925,6 @@ namespace CatalogueLibrary.Providers
                 AddToDictionaries(children,descendancy);
         }
 
-        
         protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
         {
             if(list.IsEmpty)
@@ -893,6 +969,16 @@ namespace CatalogueLibrary.Providers
                 }
 
                 _descendancyDictionary.Add(o, list);
+            }
+
+            foreach (IMasqueradeAs masquerader in children.OfType<IMasqueradeAs>())
+            {
+                var key = masquerader.MasqueradingAs();
+
+                if(!AllMasqueraders.ContainsKey(key))
+                    AllMasqueraders.Add(key,new HashSet<IMasqueradeAs>());
+
+                AllMasqueraders[key].Add(masquerader);
             }
         }
 
@@ -1001,6 +1087,14 @@ namespace CatalogueLibrary.Providers
 
             if(newObjectsFound.Any())
                 GetPluginChildren(newObjectsFound);
+        }
+
+        public IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o)
+        {
+            if (AllMasqueraders.ContainsKey(o))
+                return AllMasqueraders[o];
+
+            return new IMasqueradeAs[0];
         }
 
         private HashSet<object> GetAllObjects()

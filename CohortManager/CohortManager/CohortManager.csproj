@@ -136,7 +136,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
       <Private>True</Private>
@@ -144,17 +143,12 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
-    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -305,25 +299,9 @@
       <Project>{7665AFDE-002D-4A53-B3B8-AE17BC8F2BBA}</Project>
       <Name>DataExportManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
-      <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>
-      <Name>LoadModules.GenericUIs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
-      <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
-      <Name>HIC.Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj">
       <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>
       <Name>QueryCaching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RDMPObjectVisualisation\RDMPObjectVisualisation.csproj">
-      <Project>{B541F57B-631A-4639-8589-8CDA0021AE2D}</Project>
-      <Name>RDMPObjectVisualisation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
-      <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
-      <Name>RDMPStartup</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj">
       <Project>{94797307-05F3-4E72-B60B-DCB51B41CF9C}</Project>

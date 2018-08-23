@@ -16,10 +16,10 @@ namespace ReusableUIComponents.CommandExecution.AtomicCommands
     {
         private readonly IHasDependencies _root;
         private readonly Type[] _allowFilterOnTypes;
-        private readonly IObjectVisualisation _visualiser;
+        private readonly Lazy<IObjectVisualisation> _visualiser;
         private readonly List<Type> _initialGraphTypes;
 
-        public ExecuteCommandViewDependencies(IHasDependencies hasDependenciesOrNull, IObjectVisualisation visualiser, List<Type> initialGraphTypes = null)
+        public ExecuteCommandViewDependencies(IHasDependencies hasDependenciesOrNull, Lazy<IObjectVisualisation> visualiser, List<Type> initialGraphTypes = null)
         {
             if (hasDependenciesOrNull == null)
             {
@@ -42,7 +42,7 @@ namespace ReusableUIComponents.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            DependencyGraph g = new DependencyGraph(_allowFilterOnTypes, _visualiser);
+            DependencyGraph g = new DependencyGraph(_allowFilterOnTypes, _visualiser.Value);
             if (_initialGraphTypes != null)
                 g.ShowTypeList(_initialGraphTypes);
             else

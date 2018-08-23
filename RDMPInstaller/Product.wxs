@@ -38,204 +38,175 @@
                 <RegistryValue Root="HKCU" Key="Software\HIC\RDMP" Type="string" Value="" KeyPath="yes" />
               <File Id="ANOSTORE.DATABASE.DLL" Name="ANOStore.Database.dll" Source="..\Anonymisation\ANOStore\bin\Debug\ANOStore.Database.dll" />
               <File Id="ANOSTORE.DATABASE.PDB" Name="ANOStore.Database.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\ANOStore.Database.pdb" />
+              <File Id="ANOSTORE.DATABASE.XML" Name="ANOStore.Database.xml" Source="..\Anonymisation\ANOStore\bin\Debug\ANOStore.Database.xml" />
               <File Id="ANOSTORE.DLL" Name="ANOStore.dll" Source="..\Anonymisation\ANOStore\bin\Debug\ANOStore.dll" />
               <File Id="ANOSTORE.PDB" Name="ANOStore.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\ANOStore.pdb" />
-              <File Id="FLUENTNHIBERNATE.DLL" Name="FluentNHibernate.dll" Source="..\Anonymisation\ANOStore\bin\Debug\FluentNHibernate.dll" />
-              <File Id="IESI.COLLECTIONS.DLL" Name="Iesi.Collections.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Iesi.Collections.dll" />
-              <File Id="LOG4NET.DLL" Name="log4net.dll" Source="..\Anonymisation\ANOStore\bin\Debug\log4net.dll" />
-              <File Id="LOG4NET.XML" Name="log4net.xml" Source="..\Anonymisation\ANOStore\bin\Debug\log4net.xml" />
+              <File Id="ANOSTORE.XML" Name="ANOStore.xml" Source="..\Anonymisation\ANOStore\bin\Debug\ANOStore.xml" />
+              <File Id="CACHINGENGINE.DLL" Name="CachingEngine.dll" Source="..\Anonymisation\ANOStore\bin\Debug\CachingEngine.dll" />
+              <File Id="CACHINGENGINE.PDB" Name="CachingEngine.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\CachingEngine.pdb" />
+              <File Id="CACHINGENGINE.XML" Name="CachingEngine.xml" Source="..\Anonymisation\ANOStore\bin\Debug\CachingEngine.xml" />
+              <File Id="CATALOGUELIBRARY.DLL" Name="CatalogueLibrary.dll" Source="..\Anonymisation\ANOStore\bin\Debug\CatalogueLibrary.dll" />
+              <File Id="CATALOGUELIBRARY.PDB" Name="CatalogueLibrary.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\CatalogueLibrary.pdb" />
+              <File Id="CATALOGUELIBRARY.XML" Name="CatalogueLibrary.xml" Source="..\Anonymisation\ANOStore\bin\Debug\CatalogueLibrary.xml" />
+              <File Id="COHORTMANAGERLIBRARY.DLL" Name="CohortManagerLibrary.dll" Source="..\Anonymisation\ANOStore\bin\Debug\CohortManagerLibrary.dll" />
+              <File Id="COHORTMANAGERLIBRARY.PDB" Name="CohortManagerLibrary.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\CohortManagerLibrary.pdb" />
+              <File Id="COHORTMANAGERLIBRARY.XML" Name="CohortManagerLibrary.xml" Source="..\Anonymisation\ANOStore\bin\Debug\CohortManagerLibrary.xml" />
+              <File Id="COMMANDLINE.DLL" Name="CommandLine.dll" Source="..\Anonymisation\ANOStore\bin\Debug\CommandLine.dll" />
+              <File Id="COMMANDLINE.XML" Name="CommandLine.xml" Source="..\Anonymisation\ANOStore\bin\Debug\CommandLine.xml" />
+              <File Id="DATAEXPORTLIBRARY.DLL" Name="DataExportLibrary.dll" Source="..\Anonymisation\ANOStore\bin\Debug\DataExportLibrary.dll" />
+              <File Id="DATAEXPORTLIBRARY.INTERFACES.DLL" Name="DataExportLibrary.Interfaces.dll" Source="..\Anonymisation\ANOStore\bin\Debug\DataExportLibrary.Interfaces.dll" />
+              <File Id="DATAEXPORTLIBRARY.INTERFACES.PDB" Name="DataExportLibrary.Interfaces.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\DataExportLibrary.Interfaces.pdb" />
+              <File Id="DATAEXPORTLIBRARY.INTERFACES.XML" Name="DataExportLibrary.Interfaces.xml" Source="..\Anonymisation\ANOStore\bin\Debug\DataExportLibrary.Interfaces.xml" />
+              <File Id="DATAEXPORTLIBRARY.PDB" Name="DataExportLibrary.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\DataExportLibrary.pdb" />
+              <File Id="DATAEXPORTLIBRARY.XML" Name="DataExportLibrary.xml" Source="..\Anonymisation\ANOStore\bin\Debug\DataExportLibrary.xml" />
+              <File Id="DATALOADENGINE.DLL" Name="DataLoadEngine.dll" Source="..\Anonymisation\ANOStore\bin\Debug\DataLoadEngine.dll" />
+              <File Id="DATALOADENGINE.PDB" Name="DataLoadEngine.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\DataLoadEngine.pdb" />
+              <File Id="DATALOADENGINE.XML" Name="DataLoadEngine.xml" Source="..\Anonymisation\ANOStore\bin\Debug\DataLoadEngine.xml" />
+              <File Id="GOOGLE.PROTOBUF.DLL" Name="Google.Protobuf.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Google.Protobuf.dll" />
+              <File Id="GOOGLE.PROTOBUF.XML" Name="Google.Protobuf.xml" Source="..\Anonymisation\ANOStore\bin\Debug\Google.Protobuf.xml" />
+              <File Id="HIC.COMMON.VALIDATION.DLL" Name="HIC.Common.Validation.dll" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Common.Validation.dll" />
+              <File Id="HIC.COMMON.VALIDATION.PDB" Name="HIC.Common.Validation.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Common.Validation.pdb" />
+              <File Id="HIC.COMMON.VALIDATION.XML" Name="HIC.Common.Validation.xml" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Common.Validation.xml" />
+              <File Id="HIC.LOGGING.DATABASE.DLL" Name="HIC.Logging.Database.dll" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Logging.Database.dll" />
+              <File Id="HIC.LOGGING.DATABASE.PDB" Name="HIC.Logging.Database.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Logging.Database.pdb" />
+              <File Id="HIC.LOGGING.DATABASE.XML" Name="HIC.Logging.Database.xml" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Logging.Database.xml" />
+              <File Id="HIC.LOGGING.DLL" Name="HIC.Logging.dll" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Logging.dll" />
+              <File Id="HIC.LOGGING.PDB" Name="HIC.Logging.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Logging.pdb" />
+              <File Id="HIC.LOGGING.XML" Name="HIC.Logging.xml" Source="..\Anonymisation\ANOStore\bin\Debug\HIC.Logging.xml" />
+              <File Id="ICSHARPCODE.SHARPZIPLIB.DLL" Name="ICSharpCode.SharpZipLib.dll" Source="..\Anonymisation\ANOStore\bin\Debug\ICSharpCode.SharpZipLib.dll" />
               <File Id="MAPSDIRECTLYTODATABASETABLE.DLL" Name="MapsDirectlyToDatabaseTable.dll" Source="..\Anonymisation\ANOStore\bin\Debug\MapsDirectlyToDatabaseTable.dll" />
               <File Id="MAPSDIRECTLYTODATABASETABLE.PDB" Name="MapsDirectlyToDatabaseTable.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\MapsDirectlyToDatabaseTable.pdb" />
+              <File Id="MAPSDIRECTLYTODATABASETABLE.XML" Name="MapsDirectlyToDatabaseTable.xml" Source="..\Anonymisation\ANOStore\bin\Debug\MapsDirectlyToDatabaseTable.xml" />
               <File Id="MYSQL.DATA.DLL" Name="MySql.Data.dll" Source="..\Anonymisation\ANOStore\bin\Debug\MySql.Data.dll" />
-              <File Id="NHIBERNATE.DLL" Name="NHibernate.dll" Source="..\Anonymisation\ANOStore\bin\Debug\NHibernate.dll" />
+              <File Id="MYSQL.DATA.XML" Name="MySql.Data.xml" Source="..\Anonymisation\ANOStore\bin\Debug\MySql.Data.xml" />
+              <File Id="NEWTONSOFT.JSON.DLL" Name="Newtonsoft.Json.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Newtonsoft.Json.dll" />
+              <File Id="NEWTONSOFT.JSON.XML" Name="Newtonsoft.Json.xml" Source="..\Anonymisation\ANOStore\bin\Debug\Newtonsoft.Json.xml" />
+              <File Id="NLOG.DLL" Name="NLog.dll" Source="..\Anonymisation\ANOStore\bin\Debug\NLog.dll" />
+              <File Id="NLOG.XML" Name="NLog.xml" Source="..\Anonymisation\ANOStore\bin\Debug\NLog.xml" />
               <File Id="ORACLE.MANAGEDDATAACCESS.DLL" Name="Oracle.ManagedDataAccess.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Oracle.ManagedDataAccess.dll" />
+              <File Id="PENCIL.CUR" Name="Pencil.cur" Source="..\Anonymisation\ANOStore\bin\Debug\Pencil.cur" />
+              <File Id="PLUGIN.SETTINGS.ABSTRACTIONS.DLL" Name="Plugin.Settings.Abstractions.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Plugin.Settings.Abstractions.dll" />
+              <File Id="PLUGIN.SETTINGS.ABSTRACTIONS.PDB" Name="Plugin.Settings.Abstractions.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\Plugin.Settings.Abstractions.pdb" />
+              <File Id="PLUGIN.SETTINGS.ABSTRACTIONS.XML" Name="Plugin.Settings.Abstractions.xml" Source="..\Anonymisation\ANOStore\bin\Debug\Plugin.Settings.Abstractions.xml" />
+              <File Id="QUERYCACHING.DATABASE.DLL" Name="QueryCaching.Database.dll" Source="..\Anonymisation\ANOStore\bin\Debug\QueryCaching.Database.dll" />
+              <File Id="QUERYCACHING.DATABASE.PDB" Name="QueryCaching.Database.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\QueryCaching.Database.pdb" />
+              <File Id="QUERYCACHING.DATABASE.XML" Name="QueryCaching.Database.xml" Source="..\Anonymisation\ANOStore\bin\Debug\QueryCaching.Database.xml" />
+              <File Id="QUERYCACHING.DLL" Name="QueryCaching.dll" Source="..\Anonymisation\ANOStore\bin\Debug\QueryCaching.dll" />
+              <File Id="QUERYCACHING.PDB" Name="QueryCaching.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\QueryCaching.pdb" />
+              <File Id="QUERYCACHING.XML" Name="QueryCaching.xml" Source="..\Anonymisation\ANOStore\bin\Debug\QueryCaching.xml" />
               <File Id="REUSABLELIBRARYCODE.DLL" Name="ReusableLibraryCode.dll" Source="..\Anonymisation\ANOStore\bin\Debug\ReusableLibraryCode.dll" />
               <File Id="REUSABLELIBRARYCODE.PDB" Name="ReusableLibraryCode.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\ReusableLibraryCode.pdb" />
-              <File Id="ROUNDHOUSE.DATABASES.SQLSERVER.DLL" Name="roundhouse.databases.sqlserver.dll" Source="..\Anonymisation\ANOStore\bin\Debug\roundhouse.databases.sqlserver.dll" />
-              <File Id="ROUNDHOUSE.DATABASES.SQLSERVER.PDB" Name="roundhouse.databases.sqlserver.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\roundhouse.databases.sqlserver.pdb" />
-              <File Id="ROUNDHOUSE.DLL" Name="roundhouse.dll" Source="..\Anonymisation\ANOStore\bin\Debug\roundhouse.dll" />
-              <File Id="ROUNDHOUSE.PDB" Name="roundhouse.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\roundhouse.pdb" />
+              <File Id="REUSABLELIBRARYCODE.XML" Name="ReusableLibraryCode.xml" Source="..\Anonymisation\ANOStore\bin\Debug\ReusableLibraryCode.xml" />
+              <File Id="SHARING.DLL" Name="Sharing.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Sharing.dll" />
+              <File Id="SHARING.PDB" Name="Sharing.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\Sharing.pdb" />
+              <File Id="XCEED.WORDS.NET.DLL" Name="Xceed.Words.NET.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Xceed.Words.NET.dll" />
               <File Id="IDENTIFIERDUMP.DATABASE.DLL" Name="IdentifierDump.Database.dll" Source="..\Anonymisation\IdentifierDump\bin\Debug\IdentifierDump.Database.dll" />
               <File Id="IDENTIFIERDUMP.DATABASE.PDB" Name="IdentifierDump.Database.pdb" Source="..\Anonymisation\IdentifierDump\bin\Debug\IdentifierDump.Database.pdb" />
+              <File Id="IDENTIFIERDUMP.DATABASE.XML" Name="IdentifierDump.Database.xml" Source="..\Anonymisation\IdentifierDump\bin\Debug\IdentifierDump.Database.xml" />
               <File Id="IDENTIFIERDUMP.DLL" Name="IdentifierDump.dll" Source="..\Anonymisation\IdentifierDump\bin\Debug\IdentifierDump.dll" />
               <File Id="IDENTIFIERDUMP.PDB" Name="IdentifierDump.pdb" Source="..\Anonymisation\IdentifierDump\bin\Debug\IdentifierDump.pdb" />
-              <File Id="AUTOCOMPLETEMENUSCINTILLANET.DLL" Name="AutocompleteMenu-ScintillaNET.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\AutocompleteMenu-ScintillaNET.dll" />
-              <File Id="CACHINGENGINE.DLL" Name="CachingEngine.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CachingEngine.dll" />
-              <File Id="CACHINGENGINE.PDB" Name="CachingEngine.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CachingEngine.pdb" />
+              <File Id="IDENTIFIERDUMP.XML" Name="IdentifierDump.xml" Source="..\Anonymisation\IdentifierDump\bin\Debug\IdentifierDump.xml" />
               <File Id="CATALOGUELIBRARY.DATABASE.DLL" Name="CatalogueLibrary.Database.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueLibrary.Database.dll" />
               <File Id="CATALOGUELIBRARY.DATABASE.PDB" Name="CatalogueLibrary.Database.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueLibrary.Database.pdb" />
-              <File Id="CATALOGUELIBRARY.DLL" Name="CatalogueLibrary.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueLibrary.dll" />
-              <File Id="CATALOGUELIBRARY.PDB" Name="CatalogueLibrary.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueLibrary.pdb" />
-              <File Id="CATALOGUEMANAGER.EXE" Name="CatalogueManager.exe" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.exe" />
+              <File Id="CATALOGUELIBRARY.DATABASE.XML" Name="CatalogueLibrary.Database.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueLibrary.Database.xml" />
+              <File Id="CATALOGUEMANAGER.DLL" Name="CatalogueManager.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.dll" />
               <File Id="CATALOGUEMANAGER.PDB" Name="CatalogueManager.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.pdb" />
+              <File Id="CATALOGUEMANAGER.XML" Name="CatalogueManager.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.xml" />
               <File Id="COHORTMANAGER.DLL" Name="CohortManager.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CohortManager.dll" />
               <File Id="COHORTMANAGER.PDB" Name="CohortManager.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CohortManager.pdb" />
-              <File Id="COHORTMANAGERLIBRARY.DLL" Name="CohortManagerLibrary.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CohortManagerLibrary.dll" />
-              <File Id="COHORTMANAGERLIBRARY.PDB" Name="CohortManagerLibrary.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CohortManagerLibrary.pdb" />
+              <File Id="COHORTMANAGER.XML" Name="CohortManager.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CohortManager.xml" />
               <File Id="CSVHELPER.DLL" Name="CsvHelper.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CsvHelper.dll" />
               <File Id="CSVHELPER.PDB" Name="CsvHelper.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CsvHelper.pdb" />
               <File Id="CSVHELPER.XML" Name="CsvHelper.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CsvHelper.xml" />
-              <File Id="DASHBOARD.EXE" Name="Dashboard.exe" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Dashboard.exe" />
+              <File Id="DASHBOARD.DLL" Name="Dashboard.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Dashboard.dll" />
               <File Id="DASHBOARD.PDB" Name="Dashboard.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Dashboard.pdb" />
+              <File Id="DASHBOARD.XML" Name="Dashboard.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Dashboard.xml" />
+              <File Id="DATABASECREATION.EXE" Name="DatabaseCreation.exe" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DatabaseCreation.exe" />
+              <File Id="DATABASECREATION.PDB" Name="DatabaseCreation.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DatabaseCreation.pdb" />
+              <File Id="DATABASECREATION.XML" Name="DatabaseCreation.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DatabaseCreation.xml" />
               <File Id="DATAEXPORTLIBRARY.DATABASE.DLL" Name="DataExportLibrary.Database.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportLibrary.Database.dll" />
               <File Id="DATAEXPORTLIBRARY.DATABASE.PDB" Name="DataExportLibrary.Database.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportLibrary.Database.pdb" />
-              <File Id="DATAEXPORTLIBRARY.DLL" Name="DataExportLibrary.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportLibrary.dll" />
-              <File Id="DATAEXPORTLIBRARY.INTERFACES.DLL" Name="DataExportLibrary.Interfaces.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportLibrary.Interfaces.dll" />
-              <File Id="DATAEXPORTLIBRARY.INTERFACES.PDB" Name="DataExportLibrary.Interfaces.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportLibrary.Interfaces.pdb" />
-              <File Id="DATAEXPORTLIBRARY.PDB" Name="DataExportLibrary.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportLibrary.pdb" />
+              <File Id="DATAEXPORTLIBRARY.DATABASE.XML" Name="DataExportLibrary.Database.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportLibrary.Database.xml" />
               <File Id="DATAEXPORTMANAGER.DLL" Name="DataExportManager.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportManager.dll" />
               <File Id="DATAEXPORTMANAGER.PDB" Name="DataExportManager.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportManager.pdb" />
-              <File Id="DATALOADENGINE.DLL" Name="DataLoadEngine.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataLoadEngine.dll" />
-              <File Id="DATALOADENGINE.PDB" Name="DataLoadEngine.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataLoadEngine.pdb" />
+              <File Id="DATAEXPORTMANAGER.XML" Name="DataExportManager.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataExportManager.xml" />
               <File Id="DATAQUALITYENGINE.DATABASE.DLL" Name="DataQualityEngine.Database.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataQualityEngine.Database.dll" />
               <File Id="DATAQUALITYENGINE.DATABASE.PDB" Name="DataQualityEngine.Database.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataQualityEngine.Database.pdb" />
+              <File Id="DATAQUALITYENGINE.DATABASE.XML" Name="DataQualityEngine.Database.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataQualityEngine.Database.xml" />
               <File Id="DATAQUALITYENGINE.DLL" Name="DataQualityEngine.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataQualityEngine.dll" />
               <File Id="DATAQUALITYENGINE.PDB" Name="DataQualityEngine.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataQualityEngine.pdb" />
-              <File Id="DATASETLOADERUI.EXE" Name="DatasetLoaderUI.exe" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DatasetLoaderUI.exe" />
-              <File Id="DATASETLOADERUI.PDB" Name="DatasetLoaderUI.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DatasetLoaderUI.pdb" />
+              <File Id="DATAQUALITYENGINE.XML" Name="DataQualityEngine.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\DataQualityEngine.xml" />
               <File Id="DIAGNOSTICS.DLL" Name="Diagnostics.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Diagnostics.dll" />
               <File Id="DIAGNOSTICS.PDB" Name="Diagnostics.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Diagnostics.pdb" />
+              <File Id="DIAGNOSTICS.XML" Name="Diagnostics.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Diagnostics.xml" />
               <File Id="GRAPHX.CONTROLS.DLL" Name="GraphX.Controls.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\GraphX.Controls.dll" />
               <File Id="GRAPHX.PCL.COMMON.DLL" Name="GraphX.PCL.Common.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\GraphX.PCL.Common.dll" />
               <File Id="GRAPHX.PCL.LOGIC.DLL" Name="GraphX.PCL.Logic.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\GraphX.PCL.Logic.dll" />
-              <File Id="HIC.COMMON.VALIDATION.DLL" Name="HIC.Common.Validation.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\HIC.Common.Validation.dll" />
-              <File Id="HIC.COMMON.VALIDATION.PDB" Name="HIC.Common.Validation.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\HIC.Common.Validation.pdb" />
-              <File Id="HIC.LOGGING.DATABASE.DLL" Name="HIC.Logging.Database.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\HIC.Logging.Database.dll" />
-              <File Id="HIC.LOGGING.DATABASE.PDB" Name="HIC.Logging.Database.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\HIC.Logging.Database.pdb" />
-              <File Id="HIC.LOGGING.DLL" Name="HIC.Logging.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\HIC.Logging.dll" />
-              <File Id="HIC.LOGGING.PDB" Name="HIC.Logging.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\HIC.Logging.pdb" />
-              <File Id="ICSHARPCODE.SHARPZIPLIB.DLL" Name="ICSharpCode.SharpZipLib.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ICSharpCode.SharpZipLib.dll" />
               <File Id="LOADMODULES.GENERIC.DLL" Name="LoadModules.Generic.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\LoadModules.Generic.dll" />
               <File Id="LOADMODULES.GENERIC.PDB" Name="LoadModules.Generic.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\LoadModules.Generic.pdb" />
-              <File Id="LOG4NET.CONFIG" Name="log4net.config" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\log4net.config" />
+              <File Id="LOADMODULES.GENERIC.XML" Name="LoadModules.Generic.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\LoadModules.Generic.xml" />
+              <File Id="LOADMODULES.GENERICUIS.DLL" Name="LoadModules.GenericUIs.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\LoadModules.GenericUIs.dll" />
+              <File Id="LOADMODULES.GENERICUIS.PDB" Name="LoadModules.GenericUIs.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\LoadModules.GenericUIs.pdb" />
+              <File Id="LOADMODULES.GENERICUIS.XML" Name="LoadModules.GenericUIs.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\LoadModules.GenericUIs.xml" />
               <File Id="MAPSDIRECTLYTODATABASETABLEUI.DLL" Name="MapsDirectlyToDatabaseTableUI.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\MapsDirectlyToDatabaseTableUI.dll" />
               <File Id="MAPSDIRECTLYTODATABASETABLEUI.PDB" Name="MapsDirectlyToDatabaseTableUI.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\MapsDirectlyToDatabaseTableUI.pdb" />
+              <File Id="MAPSDIRECTLYTODATABASETABLEUI.XML" Name="MapsDirectlyToDatabaseTableUI.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\MapsDirectlyToDatabaseTableUI.xml" />
               <File Id="MONO.REFLECTION.DLL" Name="Mono.Reflection.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Mono.Reflection.dll" />
               <File Id="OBJECTLISTVIEW.DLL" Name="ObjectListView.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ObjectListView.dll" />
               <File Id="OBJECTLISTVIEW.XML" Name="ObjectListView.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ObjectListView.xml" />
-              <File Id="PENCIL.CUR" Name="Pencil.cur" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Pencil.cur" />
-              <File Id="QUERYCACHING.DATABASE.DLL" Name="QueryCaching.Database.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\QueryCaching.Database.dll" />
-              <File Id="QUERYCACHING.DATABASE.PDB" Name="QueryCaching.Database.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\QueryCaching.Database.pdb" />
-              <File Id="QUERYCACHING.DLL" Name="QueryCaching.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\QueryCaching.dll" />
-              <File Id="QUERYCACHING.PDB" Name="QueryCaching.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\QueryCaching.pdb" />
+              <File Id="PLUGINPACKAGER.EXE" Name="PluginPackager.exe" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\PluginPackager.exe" />
+              <File Id="PLUGINPACKAGER.PDB" Name="PluginPackager.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\PluginPackager.pdb" />
+              <File Id="PLUGINPACKAGER.XML" Name="PluginPackager.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\PluginPackager.xml" />
               <File Id="QUICKGRAPH.DLL" Name="QuickGraph.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\QuickGraph.dll" />
               <File Id="QUICKGRAPH.XML" Name="QuickGraph.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\QuickGraph.xml" />
               <File Id="RDMPAUTOMATIONSERVICE.EXE" Name="RDMPAutomationService.exe" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPAutomationService.exe" />
+              <File Id="RDMPAUTOMATIONSERVICE.EXE.CONFIG" Name="RDMPAutomationService.exe.config" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPAutomationService.exe.config" />
               <File Id="RDMPAUTOMATIONSERVICE.PDB" Name="RDMPAutomationService.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPAutomationService.pdb" />
-              <File Id="RDMPOBJECTVISUALISATION.DLL" Name="RDMPObjectVisualisation.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPObjectVisualisation.dll" />
-              <File Id="RDMPOBJECTVISUALISATION.PDB" Name="RDMPObjectVisualisation.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPObjectVisualisation.pdb" />
+              <File Id="RDMPAUTOMATIONSERVICE.XML" Name="RDMPAutomationService.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPAutomationService.xml" />
+              <File Id="CatalogueManager.PipelineUIs.DLL" Name="CatalogueManager.PipelineUIs.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.PipelineUIs.dll" />
+              <File Id="CatalogueManager.PipelineUIs.PDB" Name="CatalogueManager.PipelineUIs.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.PipelineUIs.pdb" />
+              <File Id="CatalogueManager.PipelineUIs.XML" Name="CatalogueManager.PipelineUIs.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\CatalogueManager.PipelineUIs.xml" />
               <File Id="RDMPSTARTUP.DLL" Name="RDMPStartup.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPStartup.dll" />
               <File Id="RDMPSTARTUP.PDB" Name="RDMPStartup.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPStartup.pdb" />
+              <File Id="RDMPSTARTUP.XML" Name="RDMPStartup.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\RDMPStartup.xml" />
               <File Id="RENCI.SSHNET.DLL" Name="Renci.SshNet.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Renci.SshNet.dll" />
               <File Id="RENCI.SSHNET.XML" Name="Renci.SshNet.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Renci.SshNet.xml" />
+              <File Id="RESEARCHDATAMANAGEMENTPLATFORM.APPLICATION" Name="ResearchDataManagementPlatform.application" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.application" />
               <File Id="RESEARCHDATAMANAGEMENTPLATFORM.EXE" Name="ResearchDataManagementPlatform.exe" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.exe" />
               <File Id="RESEARCHDATAMANAGEMENTPLATFORM.EXE.CONFIG" Name="ResearchDataManagementPlatform.exe.config" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.exe.config" />
+              <File Id="RESEARCHDATAMANAGEMENTPLATFORM.EXE.MANIFEST" Name="ResearchDataManagementPlatform.exe.manifest" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.exe.manifest" />
               <File Id="RESEARCHDATAMANAGEMENTPLATFORM.PDB" Name="ResearchDataManagementPlatform.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.pdb" />
+              <File Id="RESEARCHDATAMANAGEMENTPLATFORM.VSHOST.APPLICATION" Name="ResearchDataManagementPlatform.vshost.application" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.vshost.application" />
               <File Id="RESEARCHDATAMANAGEMENTPLATFORM.VSHOST.EXE" Name="ResearchDataManagementPlatform.vshost.exe" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.vshost.exe" />
               <File Id="RESEARCHDATAMANAGEMENTPLATFORM.VSHOST.EXE.CONFIG" Name="ResearchDataManagementPlatform.vshost.exe.config" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.vshost.exe.config" />
               <File Id="RESEARCHDATAMANAGEMENTPLATFORM.VSHOST.EXE.MANIFEST" Name="ResearchDataManagementPlatform.vshost.exe.manifest" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.vshost.exe.manifest" />
               <File Id="REUSABLEUICOMPONENTS.DLL" Name="ReusableUIComponents.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ReusableUIComponents.dll" />
               <File Id="REUSABLEUICOMPONENTS.PDB" Name="ReusableUIComponents.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ReusableUIComponents.pdb" />
-              <File Id="SCILEXER.DLL" Name="SciLexer.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\SciLexer.dll" />
-              <File Id="SCILEXER64.DLL" Name="SciLexer64.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\SciLexer64.dll" />
+              <File Id="REUSABLEUICOMPONENTS.XML" Name="ReusableUIComponents.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ReusableUIComponents.xml" />
               <File Id="SCINTILLANET.DLL" Name="ScintillaNET.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ScintillaNET.dll" />
               <File Id="SCINTILLANET.XML" Name="ScintillaNET.xml" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\ScintillaNET.xml" />
               <File Id="SOURCECODEFORSELFAWARENESS.ZIP" Name="SourceCodeForSelfAwareness.zip" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\SourceCodeForSelfAwareness.zip" />
-              <File Id="TEST_HEATMAP.JPG" Name="test_HeatMap.jpg" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\test_HeatMap.jpg" />
-              <File Id="TICKETING.DLL" Name="Ticketing.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Ticketing.dll" />
-              <File Id="TICKETING.PDB" Name="Ticketing.pdb" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\Ticketing.pdb" />
               <File Id="WEIFENLUO.WINFORMSUI.DOCKING.DLL" Name="WeifenLuo.WinFormsUI.Docking.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\WeifenLuo.WinFormsUI.Docking.dll" />
               <File Id="WEIFENLUO.WINFORMSUI.DOCKING.THEMEVS2015.DLL" Name="WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll" Source="..\Application\ResearchDataManagementPlatform\bin\Debug\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll" />
-              <File Id="CACHEDAEMON.EXE" Name="CacheDaemon.exe" Source="..\Caching\CacheDaemon\bin\Debug\CacheDaemon.exe" />
-              <File Id="CACHEDAEMON.EXE.CONFIG" Name="CacheDaemon.exe.config" Source="..\Caching\CacheDaemon\bin\Debug\CacheDaemon.exe.config" />
-              <File Id="CACHEDAEMON.PDB" Name="CacheDaemon.pdb" Source="..\Caching\CacheDaemon\bin\Debug\CacheDaemon.pdb" />
-              <File Id="CACHINGDASHBOARD.EXE" Name="CachingDashboard.exe" Source="..\Caching\CachingDashboard\bin\Debug\CachingDashboard.exe" />
-              <File Id="CACHINGDASHBOARD.EXE.CONFIG" Name="CachingDashboard.exe.config" Source="..\Caching\CachingDashboard\bin\Debug\CachingDashboard.exe.config" />
-              <File Id="CACHINGDASHBOARD.PDB" Name="CachingDashboard.pdb" Source="..\Caching\CachingDashboard\bin\Debug\CachingDashboard.pdb" />
-              <File Id="CACHINGSERVICE.EXE" Name="CachingService.exe" Source="..\Caching\CachingService\bin\Debug\CachingService.exe" />
-              <File Id="CACHINGSERVICE.EXE.CONFIG" Name="CachingService.exe.config" Source="..\Caching\CachingService\bin\Debug\CachingService.exe.config" />
-              <File Id="CACHINGSERVICE.PDB" Name="CachingService.pdb" Source="..\Caching\CachingService\bin\Debug\CachingService.pdb" />
-              <File Id="COMMANDLINE.DLL" Name="CommandLine.dll" Source="..\Caching\CachingService\bin\Debug\CommandLine.dll" />
-              <File Id="COMMANDLINE.XML" Name="CommandLine.xml" Source="..\Caching\CachingService\bin\Debug\CommandLine.xml" />
-              <File Id="COMMON.LOGGING.CORE.DLL" Name="Common.Logging.Core.dll" Source="..\Caching\CachingService\bin\Debug\Common.Logging.Core.dll" />
-              <File Id="COMMON.LOGGING.CORE.PDB" Name="Common.Logging.Core.pdb" Source="..\Caching\CachingService\bin\Debug\Common.Logging.Core.pdb" />
-              <File Id="COMMON.LOGGING.CORE.XML" Name="Common.Logging.Core.xml" Source="..\Caching\CachingService\bin\Debug\Common.Logging.Core.xml" />
-              <File Id="COMMON.LOGGING.DLL" Name="Common.Logging.dll" Source="..\Caching\CachingService\bin\Debug\Common.Logging.dll" />
-              <File Id="COMMON.LOGGING.LOG4NET1213.DLL" Name="Common.Logging.Log4Net1213.dll" Source="..\Caching\CachingService\bin\Debug\Common.Logging.Log4Net1213.dll" />
-              <File Id="COMMON.LOGGING.LOG4NET1213.PDB" Name="Common.Logging.Log4Net1213.pdb" Source="..\Caching\CachingService\bin\Debug\Common.Logging.Log4Net1213.pdb" />
-              <File Id="COMMON.LOGGING.LOG4NET1213.XML" Name="Common.Logging.Log4Net1213.xml" Source="..\Caching\CachingService\bin\Debug\Common.Logging.Log4Net1213.xml" />
-              <File Id="COMMON.LOGGING.PDB" Name="Common.Logging.pdb" Source="..\Caching\CachingService\bin\Debug\Common.Logging.pdb" />
-              <File Id="COMMON.LOGGING.XML" Name="Common.Logging.xml" Source="..\Caching\CachingService\bin\Debug\Common.Logging.xml" />
-              <File Id="NOTIFYCACHINGSERVICEFAILURE.CMD" Name="NotifyCachingServiceFailure.cmd" Source="..\Caching\CachingService\bin\Debug\NotifyCachingServiceFailure.cmd" />
-              <File Id="CACHINGUI.APPLICATION" Name="CachingUI.application" Source="..\Caching\CachingUI\bin\Debug\CachingUI.application" />
-              <File Id="CACHINGUI.EXE" Name="CachingUI.exe" Source="..\Caching\CachingUI\bin\Debug\CachingUI.exe" />
-              <File Id="CACHINGUI.EXE.CONFIG" Name="CachingUI.exe.config" Source="..\Caching\CachingUI\bin\Debug\CachingUI.exe.config" />
-              <File Id="CACHINGUI.EXE.MANIFEST" Name="CachingUI.exe.manifest" Source="..\Caching\CachingUI\bin\Debug\CachingUI.exe.manifest" />
-              <File Id="CACHINGUI.PDB" Name="CachingUI.pdb" Source="..\Caching\CachingUI\bin\Debug\CachingUI.pdb" />
-              <File Id="LOADMODULES.GENERICUIS.DLL" Name="LoadModules.GenericUIs.dll" Source="..\Caching\CachingUI\bin\Debug\LoadModules.GenericUIs.dll" />
-              <File Id="LOADMODULES.GENERICUIS.PDB" Name="LoadModules.GenericUIs.pdb" Source="..\Caching\CachingUI\bin\Debug\LoadModules.GenericUIs.pdb" />
-              <File Id="CACHINGENGINE.DLL.CONFIG" Name="CachingEngine.dll.config" Source="..\Caching\Engine\CachingEngine\bin\Debug\CachingEngine.dll.config" />
-              <File Id="CATALOGUEMANAGER.APPLICATION" Name="CatalogueManager.application" Source="..\CatalogueManager\CatalogueManager\bin\Debug\CatalogueManager.application" />
-              <File Id="CATALOGUEMANAGER.EXE.CONFIG" Name="CatalogueManager.exe.config" Source="..\CatalogueManager\CatalogueManager\bin\Debug\CatalogueManager.exe.config" />
-              <File Id="CATALOGUEMANAGER.EXE.MANIFEST" Name="CatalogueManager.exe.manifest" Source="..\CatalogueManager\CatalogueManager\bin\Debug\CatalogueManager.exe.manifest" />
-              <File Id="CATALOGUEWEBSERVICE.EXE" Name="CatalogueWebService.exe" Source="..\CatalogueManager\CatalogueWebService\bin\Debug\CatalogueWebService.exe" />
-              <File Id="CATALOGUEWEBSERVICE.EXE.CONFIG" Name="CatalogueWebService.exe.config" Source="..\CatalogueManager\CatalogueWebService\bin\Debug\CatalogueWebService.exe.config" />
-              <File Id="CATALOGUEWEBSERVICE.PDB" Name="CatalogueWebService.pdb" Source="..\CatalogueManager\CatalogueWebService\bin\Debug\CatalogueWebService.pdb" />
-              <File Id="NANCY.DLL" Name="Nancy.dll" Source="..\CatalogueManager\CatalogueWebService\bin\Debug\Nancy.dll" />
-              <File Id="NANCY.HOSTING.WCF.DLL" Name="Nancy.Hosting.Wcf.dll" Source="..\CatalogueManager\CatalogueWebService\bin\Debug\Nancy.Hosting.Wcf.dll" />
-              <File Id="NANCY.HOSTING.WCF.XML" Name="Nancy.Hosting.Wcf.xml" Source="..\CatalogueManager\CatalogueWebService\bin\Debug\Nancy.Hosting.Wcf.xml" />
-              <File Id="NANCY.XML" Name="Nancy.xml" Source="..\CatalogueManager\CatalogueWebService\bin\Debug\Nancy.xml" />
-              <File Id="COHORTMANAGER.DLL.CONFIG" Name="CohortManager.dll.config" Source="..\CohortManager\CohortManager\bin\Debug\CohortManager.dll.config" />
-              <File Id="COHORTMANAGERLIBRARY.DLL.CONFIG" Name="CohortManagerLibrary.dll.config" Source="..\CohortManager\CohortManagerLibrary\bin\Debug\CohortManagerLibrary.dll.config" />
-              <File Id="DATAEXPORTLIBRARY.DLL.CONFIG" Name="DataExportLibrary.dll.config" Source="..\DataExportManager\DataExportLibrary\bin\Debug\DataExportLibrary.dll.config" />
-              <File Id="MONO.SECURITY.DLL" Name="Mono.Security.dll" Source="..\DataExportManager\DataExportLibrary\bin\Debug\Mono.Security.dll" />
-              <File Id="NPGSQL.DLL" Name="Npgsql.dll" Source="..\DataExportManager\DataExportLibrary\bin\Debug\Npgsql.dll" />
-              <File Id="NPGSQL.PDB" Name="Npgsql.pdb" Source="..\DataExportManager\DataExportLibrary\bin\Debug\Npgsql.pdb" />
-              <File Id="NPGSQL.XML" Name="Npgsql.xml" Source="..\DataExportManager\DataExportLibrary\bin\Debug\Npgsql.xml" />
-              <File Id="RESTSHARP.DLL" Name="RestSharp.dll" Source="..\DataExportManager\DataExportLibrary\bin\Debug\RestSharp.dll" />
-              <File Id="DATAEXPORTMANAGER.DLL.CONFIG" Name="DataExportManager.dll.config" Source="..\DataExportManager\DataExportManager\bin\Debug\DataExportManager.dll.config" />
-              <File Id="DASHBOARD.APPLICATION" Name="Dashboard.application" Source="..\DataLoad\Applications\Dashboard\bin\Debug\Dashboard.application" />
-              <File Id="DASHBOARD.EXE.CONFIG" Name="Dashboard.exe.config" Source="..\DataLoad\Applications\Dashboard\bin\Debug\Dashboard.exe.config" />
-              <File Id="DASHBOARD.EXE.MANIFEST" Name="Dashboard.exe.manifest" Source="..\DataLoad\Applications\Dashboard\bin\Debug\Dashboard.exe.manifest" />
-              <File Id="DATASETLOADERUI.APPLICATION" Name="DatasetLoaderUI.application" Source="..\DataLoad\Applications\DatasetLoaderUI\bin\Debug\DatasetLoaderUI.application" />
-              <File Id="DATASETLOADERUI.EXE.CONFIG" Name="DatasetLoaderUI.exe.config" Source="..\DataLoad\Applications\DatasetLoaderUI\bin\Debug\DatasetLoaderUI.exe.config" />
-              <File Id="DATASETLOADERUI.EXE.MANIFEST" Name="DatasetLoaderUI.exe.manifest" Source="..\DataLoad\Applications\DatasetLoaderUI\bin\Debug\DatasetLoaderUI.exe.manifest" />
-              <File Id="RDMPAUTOMATIONSERVICE.APPLICATION" Name="RDMPAutomationService.application" Source="..\DataLoad\Applications\RDMPAutomationService\RDMPAutomationService\bin\Debug\RDMPAutomationService.application" />
-              <File Id="RDMPAUTOMATIONSERVICE.EXE.CONFIG" Name="RDMPAutomationService.exe.config" Source="..\DataLoad\Applications\RDMPAutomationService\RDMPAutomationService\bin\Debug\RDMPAutomationService.exe.config" />
-              <File Id="RDMPAUTOMATIONSERVICE.EXE.MANIFEST" Name="RDMPAutomationService.exe.manifest" Source="..\DataLoad\Applications\RDMPAutomationService\RDMPAutomationService\bin\Debug\RDMPAutomationService.exe.manifest" />
-              <File Id="DATALOADENGINE.DLL.CONFIG" Name="DataLoadEngine.dll.config" Source="..\DataLoad\Engine\DataLoadEngine\bin\Debug\DataLoadEngine.dll.config" />
-              <File Id="DIFFIEHELLMAN.DLL" Name="DiffieHellman.dll" Source="..\DataLoad\Engine\LoadModules\LoadModules.Generic\bin\Debug\DiffieHellman.dll" />
-              <File Id="LOADMODULES.GENERIC.DLL.CONFIG" Name="LoadModules.Generic.dll.config" Source="..\DataLoad\Engine\LoadModules\LoadModules.Generic\bin\Debug\LoadModules.Generic.dll.config" />
-              <File Id="ORG.MENTALIS.SECURITY.DLL" Name="Org.Mentalis.Security.dll" Source="..\DataLoad\Engine\LoadModules\LoadModules.Generic\bin\Debug\Org.Mentalis.Security.dll" />
-              <File Id="DATAQUALITYENGINE.DLL.CONFIG" Name="DataQualityEngine.dll.config" Source="..\DataQualityEngine\DataQualityEngine\bin\Debug\DataQualityEngine.dll.config" />
-              <File Id="APP.CONFIG" Name="App.config" Source="..\Developer\CommitAssembly\bin\Debug\App.config" />
-              <File Id="COMMITASSEMBLY.EXE" Name="CommitAssembly.exe" Source="..\Developer\CommitAssembly\bin\Debug\CommitAssembly.exe" />
-              <File Id="COMMITASSEMBLY.EXE.CONFIG" Name="CommitAssembly.exe.config" Source="..\Developer\CommitAssembly\bin\Debug\CommitAssembly.exe.config" />
-              <File Id="COMMITASSEMBLY.EXE.CONFIG.TEMPLATE" Name="CommitAssembly.exe.config.template" Source="..\Developer\CommitAssembly\bin\Debug\CommitAssembly.exe.config.template" />
-              <File Id="COMMITASSEMBLY.PDB" Name="CommitAssembly.pdb" Source="..\Developer\CommitAssembly\bin\Debug\CommitAssembly.pdb" />
-              <File Id="PLUGINPACKAGER.EXE" Name="PluginPackager.exe" Source="..\Developer\PluginPackager\bin\Debug\PluginPackager.exe" />
-              <File Id="PLUGINPACKAGER.EXE.CONFIG" Name="PluginPackager.exe.config" Source="..\Developer\PluginPackager\bin\Debug\PluginPackager.exe.config" />
-              <File Id="PLUGINPACKAGER.PDB" Name="PluginPackager.pdb" Source="..\Developer\PluginPackager\bin\Debug\PluginPackager.pdb" />
-              <File Id="DIAGNOSTICS.DLL.CONFIG" Name="Diagnostics.dll.config" Source="..\Diagnostics\bin\Debug\Diagnostics.dll.config" />
-              <File Id="BUNDLEUPSOURCEINTOZIP.EXE" Name="BundleUpSourceIntoZip.exe" Source="..\Reusable\BundleUpSourceIntoZip\bin\Debug\BundleUpSourceIntoZip.exe" />
-              <File Id="BUNDLEUPSOURCEINTOZIP.EXE.CONFIG" Name="BundleUpSourceIntoZip.exe.config" Source="..\Reusable\BundleUpSourceIntoZip\bin\Debug\BundleUpSourceIntoZip.exe.config" />
-              <File Id="BUNDLEUPSOURCEINTOZIP.PDB" Name="BundleUpSourceIntoZip.pdb" Source="..\Reusable\BundleUpSourceIntoZip\bin\Debug\BundleUpSourceIntoZip.pdb" />
-              <File Id="MAPSDIRECTLYTODATABASETABLE.DLL.CONFIG" Name="MapsDirectlyToDatabaseTable.dll.config" Source="..\Reusable\MapsDirectlyToDatabaseTable\bin\Debug\MapsDirectlyToDatabaseTable.dll.config" />
-              <File Id="MICROSOFT.SQLSERVER.CONNECTIONINFO.DLL" Name="Microsoft.SqlServer.ConnectionInfo.dll" Source="..\Reusable\MapsDirectlyToDatabaseTable\bin\Debug\Microsoft.SqlServer.ConnectionInfo.dll" />
-              <File Id="MICROSOFT.SQLSERVER.MANAGEMENT.SDK.SFC.DLL" Name="Microsoft.SqlServer.Management.Sdk.Sfc.dll" Source="..\Reusable\MapsDirectlyToDatabaseTable\bin\Debug\Microsoft.SqlServer.Management.Sdk.Sfc.dll" />
-              <File Id="MICROSOFT.SQLSERVER.SMO.DLL" Name="Microsoft.SqlServer.Smo.dll" Source="..\Reusable\MapsDirectlyToDatabaseTable\bin\Debug\Microsoft.SqlServer.Smo.dll" />
-              <File Id="MICROSOFT.SQLSERVER.SMOEXTENDED.DLL" Name="Microsoft.SqlServer.SmoExtended.dll" Source="..\Reusable\MapsDirectlyToDatabaseTable\bin\Debug\Microsoft.SqlServer.SmoExtended.dll" />
-              <File Id="REUSABLELIBRARYCODE.DLL.CONFIG" Name="ReusableLibraryCode.dll.config" Source="..\Reusable\ReusableLibraryCode\bin\Debug\ReusableLibraryCode.dll.config" />
+              <File Id="BUNDLEUPSOURCEINTOZIP.EXE" Name="BundleUpSourceIntoZip.exe" Source="..\Plugin\Plugin\bin\Debug\BundleUpSourceIntoZip.exe" />
+              <File Id="BUNDLEUPSOURCEINTOZIP.PDB" Name="BundleUpSourceIntoZip.pdb" Source="..\Plugin\Plugin\bin\Debug\BundleUpSourceIntoZip.pdb" />
+              <File Id="BUNDLEUPSOURCEINTOZIP.XML" Name="BundleUpSourceIntoZip.xml" Source="..\Plugin\Plugin\bin\Debug\BundleUpSourceIntoZip.xml" />
+              <File Id="HIC.RDMP.PLUGIN.DLL" Name="HIC.RDMP.Plugin.dll" Source="..\Plugin\Plugin\bin\Debug\HIC.RDMP.Plugin.dll" />
+              <File Id="HIC.RDMP.PLUGIN.PDB" Name="HIC.RDMP.Plugin.pdb" Source="..\Plugin\Plugin\bin\Debug\HIC.RDMP.Plugin.pdb" />
+              <File Id="HIC.RDMP.PLUGIN.XML" Name="HIC.RDMP.Plugin.xml" Source="..\Plugin\Plugin\bin\Debug\HIC.RDMP.Plugin.xml" />
+              <File Id="HIC.RDMP.PLUGIN.UI.DLL" Name="HIC.RDMP.Plugin.UI.dll" Source="..\Plugin\Plugin.UI\bin\Debug\HIC.RDMP.Plugin.UI.dll" />
+              <File Id="HIC.RDMP.PLUGIN.UI.PDB" Name="HIC.RDMP.Plugin.UI.pdb" Source="..\Plugin\Plugin.UI\bin\Debug\HIC.RDMP.Plugin.UI.pdb" />
+              <File Id="PLUGIN.SETTINGS.DLL" Name="Plugin.Settings.dll" Source="..\Reusable\ReusableLibraryCode\bin\Debug\Plugin.Settings.dll" />
+              <File Id="PLUGIN.SETTINGS.PDB" Name="Plugin.Settings.pdb" Source="..\Reusable\ReusableLibraryCode\bin\Debug\Plugin.Settings.pdb" />
+              <File Id="PLUGIN.SETTINGS.XML" Name="Plugin.Settings.xml" Source="..\Reusable\ReusableLibraryCode\bin\Debug\Plugin.Settings.xml" />
               <File Id="QUICKGRAPH.DATA.DLL" Name="QuickGraph.Data.dll" Source="..\Reusable\ReusableUIComponents\bin\Debug\QuickGraph.Data.dll" />
               <File Id="QUICKGRAPH.DATA.XML" Name="QuickGraph.Data.xml" Source="..\Reusable\ReusableUIComponents\bin\Debug\QuickGraph.Data.xml" />
               <File Id="QUICKGRAPH.GRAPHVIZ.DLL" Name="QuickGraph.Graphviz.dll" Source="..\Reusable\ReusableUIComponents\bin\Debug\QuickGraph.Graphviz.dll" />
               <File Id="QUICKGRAPH.GRAPHVIZ.XML" Name="QuickGraph.Graphviz.xml" Source="..\Reusable\ReusableUIComponents\bin\Debug\QuickGraph.Graphviz.xml" />
               <File Id="QUICKGRAPH.SERIALIZATION.DLL" Name="QuickGraph.Serialization.dll" Source="..\Reusable\ReusableUIComponents\bin\Debug\QuickGraph.Serialization.dll" />
               <File Id="QUICKGRAPH.SERIALIZATION.XML" Name="QuickGraph.Serialization.xml" Source="..\Reusable\ReusableUIComponents\bin\Debug\QuickGraph.Serialization.xml" />
-
-
-
-
+              <File Id="RDMPAUTOMATIONSERVICE.APPLICATION" Name="RDMPAutomationService.application" Source="..\Tools\RDMPAutomationService\bin\Debug\RDMPAutomationService.application" />
+              <File Id="RDMPAUTOMATIONSERVICE.EXE.MANIFEST" Name="RDMPAutomationService.exe.manifest" Source="..\Tools\RDMPAutomationService\bin\Debug\RDMPAutomationService.exe.manifest" />
             </Component>
         </ComponentGroup>
     </Fragment>

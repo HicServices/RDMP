@@ -17,6 +17,7 @@ using CatalogueManager.LocationsMenu;
 using CatalogueManager.LocationsMenu.Ticketing;
 using CatalogueManager.LogViewer;
 using CatalogueManager.MainFormUITabs;
+using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.PluginManagement;
 using CatalogueManager.PluginManagement.CodeGeneration;
 using CatalogueManager.SimpleControls;
@@ -32,6 +33,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using DataQualityEngine;
+using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
 using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
@@ -123,7 +125,7 @@ namespace ResearchDataManagementPlatform.Menus
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandViewLoggedData(_activator,LogViewerNavigationTarget.DataLoadTasks);
+            var cmd = new ExecuteCommandViewLoggedData(_activator,LoggingTables.DataLoadTask);
             cmd.Execute();
         }
         
@@ -283,6 +285,7 @@ namespace ResearchDataManagementPlatform.Menus
             AddToNew(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false));
             AddToNew(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
             AddToNew(new ExecuteCommandCreateNewLoadMetadata(_activator));
+            AddToNew(new ExecuteCommandCreateNewStandardRegex(_activator));
 
             //Saved cohorts database creation
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
@@ -300,6 +303,8 @@ namespace ResearchDataManagementPlatform.Menus
             AddToNew(new ExecuteCommandCreateNewDataExtractionProject(_activator));
             AddToNew(new ExecuteCommandRelease(_activator));
 
+            // Location menu
+            LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(RepositoryLocator)));
         }
 
         private void AddToNew(IAtomicCommand cmd)

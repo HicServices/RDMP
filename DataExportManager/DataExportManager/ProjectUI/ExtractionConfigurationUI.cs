@@ -32,8 +32,8 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
-using RDMPObjectVisualisation.Pipelines;
-using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
+using CatalogueManager.PipelineUIs.Pipelines;
+using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
@@ -203,7 +203,7 @@ namespace DataExportManager.ProjectUI
                 return;
 
             //the use case is extracting a dataset
-            var useCase = new ExtractionPipelineUseCase(_extractionConfiguration.Project);
+            var useCase = ExtractionPipelineUseCase.DesignTime();
 
             //the user is DefaultPipeline_ID field of ExtractionConfiguration
             var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"),ExtractionConfiguration);

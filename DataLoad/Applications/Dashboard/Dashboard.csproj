@@ -92,11 +92,8 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -320,10 +317,6 @@
       <Project>{146b6739-8541-42d3-a390-4917e6f3bcc2}</Project>
       <Name>DataExportLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\DataExportManager\DataExportManager\DataExportManager.csproj">
-      <Project>{7665AFDE-002D-4A53-B3B8-AE17BC8F2BBA}</Project>
-      <Name>DataExportManager</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
       <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
       <Name>DataQualityEngine.Database</Name>
@@ -332,21 +325,9 @@
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
       <Name>DataQualityEngine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Diagnostics\Diagnostics.csproj">
-      <Project>{8937888f-bdac-4b51-a87f-3a83c38447d3}</Project>
-      <Name>Diagnostics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Logging\HIC.Logging\HIC.Logging.csproj">
       <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
       <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\RDMPObjectVisualisation\RDMPObjectVisualisation.csproj">
-      <Project>{B541F57B-631A-4639-8589-8CDA0021AE2D}</Project>
-      <Name>RDMPObjectVisualisation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\RDMPStartup\RDMPStartup.csproj">
-      <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
-      <Name>RDMPStartup</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj">
       <Project>{94797307-05F3-4E72-B60B-DCB51B41CF9C}</Project>
@@ -367,14 +348,6 @@
     <ProjectReference Include="..\..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>
       <Name>HIC.Common.Validation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Engine\DataLoadEngine\DataLoadEngine.csproj">
-      <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
-      <Name>DataLoadEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
-      <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
-      <Name>LoadModules.Generic</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

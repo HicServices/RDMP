@@ -16,7 +16,7 @@
   * [Version 4](#anoPluginVersion4)
 7. [Progress Logging](#progress)
   * [Version 5](#anoPluginVersion5)
-  * [What is wrong with Common.Logging.ILog](#ILog)
+  * [What is wrong with NLog etc?](#NLog)
   * [What other funky things can I do with IDataLoadEventListener?](#funkyIDataLoadEventListener)
 
 <a name="binary"></a>
@@ -1055,16 +1055,9 @@ Run the ToDatabase test case and then open the TEST_Logging database in Sql Mana
 
 One final thing to note is the call to `FinalizeTableLoadInfos`.  Since we might pass the `ToLoggingDatabaseDataLoadEventListener` to multiple components and even possibly multiple pipeline executions (or pipelines within pipelines!) it is not easy to automatically define an end point after which the `DataLoadRun` / `TableLoadRun` should be closed off and marked complete.  Therefore `ToLoggingDatabaseDataLoadEventListener` requires you to call this at some point once you are sure all the things you wanted to log in the run are complete and all relevant components have Disposed etc.
 
-<a name="ILog"></a>
-## What is wrong with Common.Logging.ILog
-Nothing, `Common.Logging.ILog` is a standard API interface for logging messages ( http://netcommon.sourceforge.net/docs/2.0.0/api/html/Common.Logging~Common.Logging.ILog.html )
-and many libraries are designed to log through Common.Logging.  We want to support using third party libraries and writing classes to standard API specifications while seamlessly logging thier messages into our events system.  Therefore you can change an `IDataLoadEventListener` into an `ILog` in the following way:
-
-```csharp
-ILog log = new FromDataLoadEventListenerToILog(this, listener);
-```
-
-Once you have a `Common.Logging.ILog` you should be able to pass it to any dependant assemblies and all messages will be passed back to `listener`.
+<a name="NLog"></a>
+## What is wrong with NLog etc?
+Nothing is stopping you creating your own class logger (e.g. NLog, Log4Net etc).  If you want to send events reported by a `IDataLoadEventListener` to your existing log you can use `NLogIDataLoadEventListener` or `NLogICheckNotifier`.  If you are using Log4Net or another logging package you can follow the pattern and create your own implementation of `IDataLoadEventListener`.
 
 <a name="funkyIDataLoadEventListener"></a>
 ## What other funky things can I do with IDataLoadEventListener?

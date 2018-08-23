@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Xml;
+using CatalogueLibrary.Data.Pipelines;
 
 namespace CatalogueLibrary
 {
@@ -71,7 +72,7 @@ namespace CatalogueLibrary
         public DirectoryInfo ExecutablesPath { get; private set; }
         public FileInfo FTPDetails { get; private set; }
         public bool Test { get; private set; }
-
+        
         object oLockConfigurationDataXML = new object();
         
         public static HICProjectDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)

@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Plugin
+﻿namespace Plugin
 {
     public class PluginNugetClass
     {

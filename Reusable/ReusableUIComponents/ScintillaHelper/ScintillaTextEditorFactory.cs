@@ -1,10 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
-using EnvDTE;
-using MapsDirectlyToDatabaseTable;
-using QuickGraph;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents.CommandExecution;
 using ScintillaNET;

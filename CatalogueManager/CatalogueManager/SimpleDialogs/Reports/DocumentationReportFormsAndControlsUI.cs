@@ -53,7 +53,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
             namespaceToApplication.Add("Diagnostics", "Dataset Management");
             namespaceToApplication.Add("LoadModules", "Dataset Management");
             namespaceToApplication.Add("MapsDirectlyToDatabaseTableUI", "Dataset Management");
-            namespaceToApplication.Add("RDMPObjectVisualisation", "Dataset Management");
 
             namespaceToApplication.Add("DataExportManager", "Data Export Management");
             
@@ -191,8 +190,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
                         try
                         {
                             InitializeWithArbitraryObjectIfSingleDatabaseObjectControl(t, c);
-
-                            InitializeIfToolbox(t, c);
                             f.Invalidate(true);
 
                             return AddImageOf(c);
@@ -217,20 +214,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
             return null;
         }
-
-        private void InitializeIfToolbox(Type type, Control control)
-        {
-            var collection = control as RDMPCollectionUI;
-            if(collection != null)
-            {
-                collection.SetItemActivator(_activator);
-                collection.CommonFunctionality.ExpandOrCollapse(null);
-                
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-            }
-        }
-
+        
         private void InitializeWithArbitraryObjectIfSingleDatabaseObjectControl(Type t, Control c)
         {
             var single = c as IRDMPSingleDatabaseObjectControl;

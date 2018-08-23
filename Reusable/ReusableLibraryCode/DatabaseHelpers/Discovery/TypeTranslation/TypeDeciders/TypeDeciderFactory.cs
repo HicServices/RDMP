@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders
 {
+    /// <summary>
+    /// Hosts all <see cref="IDecideTypesForStrings"/> and indexes them by <see cref="IDecideTypesForStrings.TypesSupported"/>.
+    /// <para>There is only one instance of each <see cref="IDecideTypesForStrings"/> since they do not have any state</para>
+    /// </summary>
     public class TypeDeciderFactory
     {
         public readonly Dictionary<Type, IDecideTypesForStrings> Dictionary = new Dictionary<Type, IDecideTypesForStrings>();

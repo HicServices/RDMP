@@ -34,11 +34,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -137,6 +132,10 @@
     <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj">
       <Project>{3abb76cf-1be8-4eef-9a57-c925c3c98abe}</Project>
       <Name>DatabaseCreation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj">
+      <Project>{27bdabce-8fef-48d9-bad6-8e280b13adf5}</Project>
+      <Name>PluginPackager</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Tools\Tests\RDMPAutomationServiceTests\RDMPAutomationServiceTests.csproj">
       <Project>{33cdfc10-6e3a-44c1-b29c-caf77d846421}</Project>

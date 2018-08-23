@@ -224,7 +224,7 @@ namespace DataExportLibrary.Data.DataTables
             var ei = CatalogueExtractionInformation;
 
             if (ei != null)
-                if (ei.IsExtractionIdentifier != IsExtractionIdentifier || ei.SelectSQL != SelectSQL)
+                if (ei.IsExtractionIdentifier != IsExtractionIdentifier || IsPrimaryKey != ei.IsPrimaryKey || ei.SelectSQL != SelectSQL || ei.HashOnDataRelease != HashOnDataRelease)
                     return true;
 
             return false;

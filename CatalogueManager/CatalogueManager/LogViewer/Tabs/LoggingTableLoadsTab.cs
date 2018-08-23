@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using HIC.Logging;
 
@@ -21,31 +15,17 @@ namespace CatalogueManager.LogViewer.Tabs
         protected override IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
         {
             var tableId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
-            yield return new ExecuteCommandViewLoggedData(_activator, LogViewerNavigationTarget.DataSources, new LogViewerFilter { Table = tableId });
+            yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.DataSource, new LogViewerFilter { Table = tableId });
         }
 
-        protected override DataTable FetchDataTable(LogManager lm)
+        protected override LoggingTables GetTableEnum()
         {
-            return lm.ListTableLoadsAsTable(null);
+            return LoggingTables.TableLoadRun;
         }
 
-        public override void SetFilter(LogViewerFilter filter)
+        protected override void FetchDataTable()
         {
-            base.SetFilter(filter);
-
-            string f = null;
-
-            if (filter.Run != null)
-                f = "dataLoadRunID=" + filter.Run;
-
-            if (filter.Table != null)
-                if (string.IsNullOrEmpty(f))
-                    f = " ID=" + filter.Table;
-                else
-                    f += " AND ID=" + filter.Table;
-
-             SetFilter(f);
+            LoadDataTable(LogManager.GetTable(LoggingTables.TableLoadRun,IDFilter.Run,TopX));
         }
-
     }
 }

@@ -256,11 +256,10 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                     Fatal(ex);
                 }
             }
-            else
-                if(!(_startup.RepositoryLocator is UserSettingsRepositoryFinder))
-                    throw new NotSupportedException("You created Startup with an existing repository finder so we were going to reuse that one but it wasn't a UserSettingsRepositoryFinder (it was a " + _startup.RepositoryLocator.GetType().Name + "!)");
+            //else
+            //    if(!(_startup.RepositoryLocator is UserSettingsRepositoryFinder))
+            //        throw new NotSupportedException("You created Startup with an existing repository finder so we were going to reuse that one but it wasn't a UserSettingsRepositoryFinder (it was a " + _startup.RepositoryLocator.GetType().Name + "!)");
             
-
             Catalogue.Visible = false;
             Catalogue.Reset();
 
@@ -283,7 +282,10 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             llException.Visible = false;
             llChoosePlatformDatabases.Visible = false;
 
-            repositoryFinderUI1.SetRepositoryFinder((UserSettingsRepositoryFinder)_startup.RepositoryLocator);
+            if (_startup.RepositoryLocator is UserSettingsRepositoryFinder)
+                repositoryFinderUI1.SetRepositoryFinder((UserSettingsRepositoryFinder)_startup.RepositoryLocator);
+            else
+                repositoryFinderUI1.SetRepositoryFinder(_startup.RepositoryLocator);
 
             lblStartupComplete1.Visible = false;
             lblStartupComplete2.Visible = false;

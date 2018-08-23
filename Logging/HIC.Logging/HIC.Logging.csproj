@@ -168,6 +168,7 @@
     <Compile Include="Listeners\ToLoggingDatabaseDataLoadEventListener.cs" />
     <Compile Include="Listeners\ToFileDataLoadEventListener.cs" />
     <Compile Include="LoggingDatabaseChecker.cs" />
+    <Compile Include="LoggingTables.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="PastEvents\ArchivalDataSource.cs" />
     <Compile Include="PastEvents\ArchivalFatalError.cs" />
@@ -187,10 +188,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7f56d629-dc24-43a5-a338-073687433e55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5ad03b2f-232a-4e0b-86ff-dc7f49146962}</Project>
       <Name>ReusableLibraryCode</Name>

@@ -212,31 +212,20 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data">
-      <HintPath>..\..\packages\MySql.Data.6.9.3\lib\net45\MySql.Data.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data">
       <Private>False</Private>
     </Reference>
@@ -291,6 +280,7 @@
     <Compile Include="Data\ImportExport\ObjectImport.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
+    <Compile Include="Data\Pipelines\IHasDesignTimeMode.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\IPipelineUser.cs" />
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
@@ -337,7 +327,12 @@
     <Compile Include="Nodes\AllConnectionStringKeywordsNode.cs" />
     <Compile Include="Nodes\AllLoadMetadatasNode.cs" />
     <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
+    <Compile Include="Nodes\AllStandardRegexesNode.cs" />
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\AllPipelinesNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\OtherPipelinesNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\PipelineCompatibleWithUseCaseNode.cs" />
+    <Compile Include="Nodes\PipelineNodes\StandardPipelineUseCaseNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
@@ -581,10 +576,6 @@
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
       <Project>{5ad03b2f-232a-4e0b-86ff-dc7f49146962}</Project>
       <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
-      <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>
-      <Name>CatalogueLibrary.Database</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -277,6 +277,7 @@ namespace CatalogueLibrary.Data
             shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
         }
 
+        /// <inheritdoc/>
         public void InjectKnown(Catalogue instance)
         {
             _knownCatalogue = new Lazy<Catalogue>(()=>instance);
@@ -375,8 +376,9 @@ namespace CatalogueLibrary.Data
         /// for .Contains etc.
         /// </summary>
         /// <param name="guessPool"></param>
+        /// <param name="allowPartial">Set to false to avoid last-resort match based on String.Contains</param>
         /// <returns></returns>
-        public IEnumerable<ColumnInfo> GuessAssociatedColumn(ColumnInfo[] guessPool)
+        public IEnumerable<ColumnInfo> GuessAssociatedColumn(ColumnInfo[] guessPool, bool allowPartial = true)
         {
             //exact matches exist so return those
             ColumnInfo[] Guess = guessPool.Where(col => col.GetRuntimeName().Equals(this.Name)).ToArray();
@@ -389,17 +391,18 @@ namespace CatalogueLibrary.Data
                 return Guess;
 
             //ignore caps and remove spaces match instead
-            Guess =
-                guessPool.Where(col => col.GetRuntimeName().ToLower().Replace(" ", "").Equals(this.Name.ToLower().Replace(" ", ""))).ToArray();
+            Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Replace(" ", "").Equals(this.Name.ToLower().Replace(" ", ""))).ToArray();
             if (Guess.Any())
                 return Guess;
 
-            //contains match is final last resort
-            return guessPool.Where(col =>
-                col.GetRuntimeName().ToLower().Contains(this.Name.ToLower())
-                ||
-                Name.ToLower().Contains(col.GetRuntimeName().ToLower()));
-            
+            if (allowPartial)
+                //contains match is final last resort
+                return guessPool.Where(col =>
+                    col.GetRuntimeName().ToLower().Contains(this.Name.ToLower())
+                    ||
+                    Name.ToLower().Contains(col.GetRuntimeName().ToLower()));
+
+            return new ColumnInfo[0];
         }
 
         /// <inheritdoc/>

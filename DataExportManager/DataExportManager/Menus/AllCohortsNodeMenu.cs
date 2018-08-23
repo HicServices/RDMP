@@ -15,7 +15,6 @@ using DataExportLibrary.Providers.Nodes;
 using DataExportManager.CohortUI;
 using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;

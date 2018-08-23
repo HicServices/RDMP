@@ -32,11 +32,12 @@ namespace CatalogueManager.Collections
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.btnCheckCatalogues = new System.Windows.Forms.Button();
             this.gbColdStorage = new System.Windows.Forms.GroupBox();
+            this.cbProjectSpecific = new System.Windows.Forms.CheckBox();
             this.cbShowInternal = new System.Windows.Forms.CheckBox();
             this.cbShowDeprecated = new System.Windows.Forms.CheckBox();
             this.cbShowColdStorage = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.cbProjectSpecific = new System.Windows.Forms.CheckBox();
+            this.cbShowNonExtractable = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).BeginInit();
             this.gbColdStorage.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -120,16 +121,28 @@ namespace CatalogueManager.Collections
             // gbColdStorage
             // 
             this.gbColdStorage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gbColdStorage.Controls.Add(this.cbShowNonExtractable);
             this.gbColdStorage.Controls.Add(this.cbProjectSpecific);
             this.gbColdStorage.Controls.Add(this.cbShowInternal);
             this.gbColdStorage.Controls.Add(this.cbShowDeprecated);
             this.gbColdStorage.Controls.Add(this.cbShowColdStorage);
             this.gbColdStorage.Location = new System.Drawing.Point(3, 435);
             this.gbColdStorage.Name = "gbColdStorage";
-            this.gbColdStorage.Size = new System.Drawing.Size(360, 36);
+            this.gbColdStorage.Size = new System.Drawing.Size(469, 36);
             this.gbColdStorage.TabIndex = 174;
             this.gbColdStorage.TabStop = false;
             this.gbColdStorage.Text = "Show";
+            // 
+            // cbProjectSpecific
+            // 
+            this.cbProjectSpecific.AutoSize = true;
+            this.cbProjectSpecific.Location = new System.Drawing.Point(260, 15);
+            this.cbProjectSpecific.Name = "cbProjectSpecific";
+            this.cbProjectSpecific.Size = new System.Drawing.Size(100, 17);
+            this.cbProjectSpecific.TabIndex = 157;
+            this.cbProjectSpecific.Text = "Project Specific";
+            this.cbProjectSpecific.UseVisualStyleBackColor = true;
+            this.cbProjectSpecific.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
             // 
             // cbShowInternal
             // 
@@ -176,16 +189,16 @@ namespace CatalogueManager.Collections
             this.panel1.Size = new System.Drawing.Size(500, 405);
             this.panel1.TabIndex = 175;
             // 
-            // cbProjectSpecific
+            // cbShowNonExtractable
             // 
-            this.cbProjectSpecific.AutoSize = true;
-            this.cbProjectSpecific.Location = new System.Drawing.Point(260, 15);
-            this.cbProjectSpecific.Name = "cbProjectSpecific";
-            this.cbProjectSpecific.Size = new System.Drawing.Size(100, 17);
-            this.cbProjectSpecific.TabIndex = 157;
-            this.cbProjectSpecific.Text = "Project Specific";
-            this.cbProjectSpecific.UseVisualStyleBackColor = true;
-            this.cbProjectSpecific.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
+            this.cbShowNonExtractable.AutoSize = true;
+            this.cbShowNonExtractable.Location = new System.Drawing.Point(364, 15);
+            this.cbShowNonExtractable.Name = "cbShowNonExtractable";
+            this.cbShowNonExtractable.Size = new System.Drawing.Size(102, 17);
+            this.cbShowNonExtractable.TabIndex = 158;
+            this.cbShowNonExtractable.Text = "Non Extractable";
+            this.cbShowNonExtractable.UseVisualStyleBackColor = true;
+            this.cbShowNonExtractable.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
             // 
             // CatalogueCollectionUI
             // 
@@ -218,5 +231,6 @@ namespace CatalogueManager.Collections
         private CheckBox cbShowColdStorage;
         private Panel panel1;
         private CheckBox cbProjectSpecific;
+        private CheckBox cbShowNonExtractable;
     }
 }

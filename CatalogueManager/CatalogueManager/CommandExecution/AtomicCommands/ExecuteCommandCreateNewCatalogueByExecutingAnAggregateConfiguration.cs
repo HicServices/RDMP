@@ -1,5 +1,4 @@
 using System;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -7,18 +6,16 @@ using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.DataHelper;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
-using DataExportLibrary.CohortCreationPipeline.Sources;
+using DataExportLibrary.CohortCreationPipeline;
+using DataExportLibrary.CohortCreationPipeline.UseCases;
 using DataExportLibrary.Data.DataTables;
-using DataLoadEngine.DataFlowPipeline.Destinations;
-using RDMPObjectVisualisation.Pipelines;
+using CatalogueManager.PipelineUIs.Pipelines;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
@@ -50,8 +47,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if(_aggregateConfiguration == null)
                 return;
 
-            IDataFlowSource<DataTable> fixedSource = null;
-
             if (_aggregateConfiguration.IsJoinablePatientIndexTable())
             {
                 var dr = MessageBox.Show("Would you like to constrain the records to only those in a committed cohort?","Cohort Records Only", MessageBoxButtons.YesNoCancel);
@@ -69,11 +64,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
                 if(_cohort != null)
                 {
-                    var src = new PatientIndexTableSource();
-                    src.PreInitialize(_aggregateConfiguration, new ThrowImmediatelyDataLoadEventListener());
-                    src.PreInitialize(_cohort, new ThrowImmediatelyDataLoadEventListener());
-                    fixedSource = src;
-
                     var externalData = _cohort.GetExternalData();
                     if(externalData != null)
                     {
@@ -85,34 +75,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 }
             }
 
-            if(fixedSource == null)
-            {
-                var src = new AggregateConfigurationTableSource();
-                src.PreInitialize(_aggregateConfiguration,new ThrowImmediatelyDataLoadEventListener());
-                fixedSource = src;
-            }
-
             _table = SelectTable(true,"Choose destination table name");
 
             if (_table == null)
                 return;
-
-            ((AggregateConfigurationTableSource)fixedSource).TableName = _table.GetRuntimeName();
             
-            var ui = new ConfigureAndExecutePipeline();
-            ui.AddInitializationObject(_aggregateConfiguration);
-            if(_cohort != null)
-                ui.AddInitializationObject(_cohort);
+            var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration,_cohort,_table);
 
-
-            ui.AddInitializationObject(_table.Database);
-
-            var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
-            var context = contextFactory.Create(PipelineUsage.FixedSource);
-            context.MustHaveDestination = typeof (DataTableUploadDestination);
-
-            ui.SetPipelineOptions(fixedSource,null,context,Activator.RepositoryLocator.CatalogueRepository);
-
+            var ui = new ConfigureAndExecutePipeline(useCase,Activator);
             ui.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
 
             Activator.ShowWindow(ui, true);

@@ -129,6 +129,15 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return dialog.SelectedTable;
         }
 
+        protected DiscoveredDatabase SelectDatabase(string taskDescription)
+        {
+            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription, false, false);
+
+            dialog.ShowDialog();
+
+            return dialog.SelectedDatabase;
+        }
+
         /// <summary>
         /// Prompts the user to type in some text (up to a maximum length).  Returns true if they supplied some text or false if they didn't or it was blank/cancelled etc
         /// </summary>

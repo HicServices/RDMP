@@ -12,14 +12,16 @@ namespace CatalogueManager.Collections.Providers.Filtering
         private readonly bool _isDeprecated;
         private readonly bool _isColdStorage;
         private readonly bool _isProjectSpecific;
+        private readonly bool _isNonExtractable;
 
-        public CatalogueCollectionFilter(ICoreChildProvider childProvider, bool isInternal, bool isDeprecated, bool isColdStorage, bool isProjectSpecific)
+        public CatalogueCollectionFilter(ICoreChildProvider childProvider, bool isInternal, bool isDeprecated, bool isColdStorage, bool isProjectSpecific, bool isNonExtractable)
         {
             _childProvider = childProvider;
             _isInternal = isInternal;
             _isDeprecated = isDeprecated;
             _isColdStorage = isColdStorage;
             _isProjectSpecific = isProjectSpecific;
+            _isNonExtractable = isNonExtractable;
         }
 
         public bool Filter(object modelObject)
@@ -37,17 +39,15 @@ namespace CatalogueManager.Collections.Providers.Filtering
                     return true;
             }
 
-            bool isProjectSpecific = cata.IsProjectSpecific(null);
+            bool isProjectSpecific = cata.IsProjectSpecific(null); 
+            bool isExtractable = cata.GetExtractabilityStatus(null) != null && cata.GetExtractabilityStatus(null).IsExtractable;
             
-            //it has hiding flags, show only if one of the true flags matches the checkbox (doesn't need to match on all if a dataset is internal and deprecated then it shows if either is ticked)
-            if (cata.IsInternalDataset || cata.IsColdStorageDataset || cata.IsDeprecated || isProjectSpecific)
-                return 
-                    (_isColdStorage && _isColdStorage == cata.IsColdStorageDataset) ||
-                    (_isDeprecated && _isDeprecated == cata.IsDeprecated) ||
-                    (_isInternal && _isInternal == cata.IsInternalDataset) ||
-                    (_isProjectSpecific && _isProjectSpecific == isProjectSpecific);
-            
-            return true;
+            return ( isExtractable && !cata.IsColdStorageDataset && !cata.IsDeprecated && !cata.IsInternalDataset && !isProjectSpecific) ||
+                    ((_isColdStorage && cata.IsColdStorageDataset) ||
+                    (_isDeprecated && cata.IsDeprecated) ||
+                    (_isInternal && cata.IsInternalDataset) ||
+                    (_isProjectSpecific && isProjectSpecific) ||
+                    (_isNonExtractable && !isExtractable));
         }
     }
 }

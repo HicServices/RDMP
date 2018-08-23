@@ -59,12 +59,12 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             if (request == null)
                 return;
 
+            request.FileToLoad = flatFile;
+
             var configureAndExecuteDialog = GetConfigureAndExecuteControl(request, "Uploading File " + flatFile.File.Name);
 
             //add the flat file to the dialog with an appropriate description of what they are trying to achieve
-            configureAndExecuteDialog.AddInitializationObject(flatFile);
-            configureAndExecuteDialog.TaskDescription = "You are trying to create a new cohort (list of patient identifiers) by importing a single data table from a file, you have just finished selecting the name/project for the new cohort (although it does not exist just yet).  This dialog requires you to select/create an appropriate pipeline to achieve this goal.  " + TaskDescriptionGenerallyHelpfulText;
-
+            
             Activator.ShowWindow(configureAndExecuteDialog, true);
         }
     }

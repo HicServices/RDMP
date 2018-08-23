@@ -16,7 +16,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using RDMPObjectVisualisation.Pipelines.PluginPipelineUsers;
+using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 
@@ -102,10 +102,10 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             if(_pipelineSelectionUI == null)
             {
                 var user = new PipelineUser(_cacheProgress);
-                var useCase = new CachingPipelineUseCase(_cacheProgress,false,null,false);
+                var useCase = CachingPipelineUseCase.DesignTime();
 
                 var selectionFactory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
-                _pipelineSelectionUI = (Control)selectionFactory.Create("Cache Pipeline",DockStyle.Fill,_pipelineSelectionUI);
+                _pipelineSelectionUI = (Control)selectionFactory.Create("Cache Pipeline",DockStyle.Fill,pPipeline);
             }
         }
 

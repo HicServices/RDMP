@@ -1,25 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.TestsAndSetup.StartupUI;
 using CatalogueManager.Tutorials;
 using DatabaseCreation;
 using Diagnostics;
-using Microsoft.Win32;
-using RDMPObjectVisualisation;
 using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
@@ -27,7 +17,6 @@ using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Settings;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
@@ -53,11 +42,6 @@ namespace CatalogueManager.LocationsMenu
     {
         private readonly IActivateItems _activatorIfAny;
         public HelpWorkflow HelpWorkflow { get; private set; }
-
-        public ChoosePlatformDatabases(IActivateItems activator, ICommandExecution command): this(activator.RepositoryLocator, command)
-        {
-            _activatorIfAny = activator;
-        }
 
         private HelpStage _lookAtChecksToSeeWhyItAllFailed;
         private UserSettingsRepositoryFinder _repositoryLocator;
@@ -101,7 +85,6 @@ namespace CatalogueManager.LocationsMenu
 
             _lookAtChecksToSeeWhyItAllFailed = new HelpStage(checksUI1,
                 "Something went wrong with the operation, double click the red lines to see what went wrong.  Then close this help dialog.");
-
         }
 
         protected override void OnLoad(EventArgs e)

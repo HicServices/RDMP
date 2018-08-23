@@ -11,14 +11,16 @@ namespace ReusableLibraryCode.VisualStudioSolutionFileProcessing
     /// </summary>
     public class VisualStudioSolutionFile
     {
+        public DirectoryInfo SolutionDirectory { get; private set; }
         public VisualStudioSolutionFolder[] RootFolders { get; set; }
         public VisualStudioProjectReference[] RootProjects { get; set; }
 
         public List<VisualStudioProjectReference> Projects { get; private set; }
         public List<VisualStudioSolutionFolder> Folders { get; private set; }
 
-        public VisualStudioSolutionFile(FileInfo slnFile)
+        public VisualStudioSolutionFile(DirectoryInfo solutionDirectory, FileInfo slnFile)
         {
+            SolutionDirectory = solutionDirectory;
 
             var slnFileContents = File.ReadAllText(slnFile.FullName);
 

@@ -8,7 +8,6 @@ using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.CohortCreationPipeline.Destinations;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
-using DataLoadEngine.DataFlowPipeline.Destinations;
 using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;

@@ -45,7 +45,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
          $p - Project Name ('e.g. My Project')
          $n - Project Number (e.g. 234)
          $t - Master Ticket (e.g. 'LINK-1234')
-         ", Mandatory = true, DefaultValue = "Proj_$n_$t")]
+         $r - Request Ticket (e.g. 'LINK-1234')
+         $l - Release Ticket (e.g. 'LINK-1234')
+         ", Mandatory = true, DefaultValue = "Proj_$n_$l")]
         public string DatabaseNamingPattern { get; set; }
 
         [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
@@ -61,6 +63,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         
         [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
         public bool DropTableIfLoadFails { get; set; }
+
+        [DemandsInitialization("If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: true)]
+        public bool CleanExtractionFolderBeforeExtraction { get; set; }
 
         public TableLoadInfo TableLoadInfo { get; private set; }
         public DirectoryInfo DirectoryPopulated { get; private set; }
@@ -83,7 +88,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             if (_destination == null)
-                _destination = PrepareDestination(listener);
+                _destination = PrepareDestination(listener, toProcess);
 
             //give the data table the correct name
             toProcess.TableName = GetTableName();
@@ -108,6 +113,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private void WriteBundleContents(IExtractableDatasetBundle datasetBundle, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            var rootDir = _request.GetExtractionDirectory();
+            if (CleanExtractionFolderBeforeExtraction)
+            {
+                rootDir.Delete(true);
+                rootDir.Create();
+            }
+
             var bundle = ((ExtractDatasetCommand)_request).DatasetBundle;
             foreach (var sql in bundle.SupportingSQL)
                 bundle.States[sql] = ExtractSupportingSql(sql, listener, _dataLoadInfo);
@@ -136,8 +148,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
             haveExtractedBundledContent = true;
         }
-        
-        private DataTableUploadDestination PrepareDestination(IDataLoadEventListener listener)
+
+        private DataTableUploadDestination PrepareDestination(IDataLoadEventListener listener, DataTable toProcess)
         {
             //see if the user has entered an extraction server/database 
             if (TargetDatabaseServer == null)
@@ -173,7 +185,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
             _destination = new DataTableUploadDestination();
             
-            PrimeDestinationTypesBasedOnCatalogueTypes();
+            PrimeDestinationTypesBasedOnCatalogueTypes(toProcess);
 
             _destination.AllowResizingColumnsAtUploadTime = true;
             _destination.PreInitialize(_destinationDatabase, listener);
@@ -181,33 +193,37 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return _destination;
         }
 
-        private void PrimeDestinationTypesBasedOnCatalogueTypes()
+        private void PrimeDestinationTypesBasedOnCatalogueTypes(DataTable toProcess)
         { 
             //if the extraction is of a Catalogue
             var datasetCommand = _request as IExtractDatasetCommand;
             
             if(datasetCommand == null)
                 return;
-
+            
             //for every extractable column in the Catalogue
             foreach (var extractionInformation in datasetCommand.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
             {
-                var colName = extractionInformation.GetRuntimeName();
-                var colInfo = extractionInformation.ColumnInfo;
+                var catItem = extractionInformation.CatalogueItem;
 
                 //if we do not know the data type or the ei is a transform
-                if (colInfo == null || extractionInformation.IsProperTransform())
+                if (catItem == null || catItem.ColumnInfo == null || extractionInformation.IsProperTransform())
                     continue;
 
                 //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
                 //transform but it is a good starting point.  We don't want to create a varchar(10) column in the destination if the origin dataset (Catalogue) is a varchar(100)
                 //since it will just confuse the user.  Bear in mind these data types can be degraded later by the destination
-                _destination.AddExplicitWriteType(colName,colInfo.Data_type);
+                var columnName = extractionInformation.Alias ?? catItem.ColumnInfo.GetRuntimeName();
+                var addedType = _destination.AddExplicitWriteType(columnName, catItem.ColumnInfo.Data_type, catItem.ColumnInfo);
+                addedType.IsPrimaryKey = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
             }
 
-            //Also tell the destination about the extraction identifier column name e.g. ReleaseId is a varchar(10).  ReleaseId is not part of the Catalogue, it's part of the Cohort
-            _destination.AddExplicitWriteType(datasetCommand.ExtractableCohort.GetReleaseIdentifier(true),
-            datasetCommand.ExtractableCohort.GetReleaseIdentifierDataType());
+            foreach (ReleaseIdentifierSubstitution sub in datasetCommand.QueryBuilder.SelectColumns.Where(sc => sc.IColumn is ReleaseIdentifierSubstitution).Select(sc => sc.IColumn))
+            {
+                var columnName = sub.GetRuntimeName();
+                var addedType = _destination.AddExplicitWriteType(columnName, datasetCommand.ExtractableCohort.GetReleaseIdentifierDataType());
+                addedType.IsPrimaryKey = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
+            }
         }
         
         public string GetTableName(string suffix = null)
@@ -326,7 +342,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             if (globalsToExtract.Any())
             {
                 var globalsDirectory = request.GetExtractionDirectory();
-                
+                if (CleanExtractionFolderBeforeExtraction)
+                {
+                    globalsDirectory.Delete(true);
+                    globalsDirectory.Create();
+                }
+
                 foreach (var sql in globalsToExtract.SupportingSQL)
                     ExtractSupportingSql(sql, listener, dataLoadInfo);
 
@@ -340,7 +361,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
         }
 
-        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(CatalogueRepository catalogueRepository)
+        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
         {
             return new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
         }
@@ -519,9 +540,20 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         {
             string dbName = DatabaseNamingPattern;
 
+            if(_project.ProjectNumber == null)
+                throw new Exception("Project '"+_project+"' must have a ProjectNumber");
+
+            if (_request == null)
+                throw new Exception("No IExtractCommand Request was passed to this component");
+
+            if (_request.Configuration == null)
+                throw new Exception("Request did not specify any Configuration for Project '" + _project + "'");
+
             dbName = dbName.Replace("$p", _project.Name)
                            .Replace("$n", _project.ProjectNumber.ToString())
-                           .Replace("$t", _project.MasterTicket);
+                           .Replace("$t", _project.MasterTicket)
+                           .Replace("$r", _request.Configuration.RequestTicket)
+                           .Replace("$l", _request.Configuration.ReleaseTicket);
 
             return dbName;
         }
@@ -559,7 +591,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             }
 
-            if (!DatabaseNamingPattern.Contains("$p") && !DatabaseNamingPattern.Contains("$n") && !DatabaseNamingPattern.Contains("$t"))
+            if (!DatabaseNamingPattern.Contains("$p") && !DatabaseNamingPattern.Contains("$n") && !DatabaseNamingPattern.Contains("$t") && !DatabaseNamingPattern.Contains("$r") && !DatabaseNamingPattern.Contains("$l"))
                 notifier.OnCheckPerformed(new CheckEventArgs("DatabaseNamingPattern does not contain any token. The tables may be created alongside existing tables and Release would be impossible.", CheckResult.Warning));
 
             if (!TableNamingPattern.Contains("$d") && !TableNamingPattern.Contains("$a"))
