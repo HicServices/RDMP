@@ -28,7 +28,19 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            _commonFunctionality.ExpandToDepth(int.MaxValue,_rootToExpandFrom);
+            _commonFunctionality.Tree.BeginUpdate();
+            try
+            {
+                _commonFunctionality.ExpandToDepth(int.MaxValue,_rootToExpandFrom);
+
+                var index = _commonFunctionality.Tree.IndexOf(_rootToExpandFrom);
+                if (index != -1)
+                    _commonFunctionality.Tree.EnsureVisible(index);
+            }
+            finally
+            {
+                _commonFunctionality.Tree.EndUpdate();
+            }
         }
 
         public Image GetImage(IIconProvider iconProvider)

@@ -28,16 +28,29 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
             
-            //collapse all children
-            foreach (object o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo))
-                if (_commonFunctionality.Tree.IsExpanded(o))
-                    _commonFunctionality.Tree.Collapse(o);
+            _commonFunctionality.Tree.BeginUpdate();
+            try
+            {
 
-            //and collapse the root
-            _commonFunctionality.Tree.Collapse(_rootToCollapseTo);
+                //collapse all children
+                foreach (object o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo))
+                    if (_commonFunctionality.Tree.IsExpanded(o))
+                        _commonFunctionality.Tree.Collapse(o);
 
-            //then expand it to depth 1
-            _commonFunctionality.ExpandToDepth(1,_rootToCollapseTo);
+                //and collapse the root
+                _commonFunctionality.Tree.Collapse(_rootToCollapseTo);
+
+                //then expand it to depth 1
+                _commonFunctionality.ExpandToDepth(1,_rootToCollapseTo);
+
+                var index = _commonFunctionality.Tree.IndexOf(_rootToCollapseTo);
+                if(index != -1)
+                    _commonFunctionality.Tree.EnsureVisible(index);
+            }
+            finally
+            {
+                _commonFunctionality.Tree.EndUpdate();
+            }
         }
 
         public Image GetImage(IIconProvider iconProvider)

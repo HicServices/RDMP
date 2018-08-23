@@ -24,6 +24,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -43,6 +44,7 @@ using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.Dependencies.Models;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -79,6 +81,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICommandFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
+        
 
         public List<IProblemProvider> ProblemProviders { get; private set; }
 
@@ -396,6 +399,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
         {
             return Activate<DashboardLayoutUI, DashboardLayout>(dashboard);
+        }
+
+        ///<inheritdoc/>
+        public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
+        {
+            return new Lazy<IObjectVisualisation>(() => new CatalogueObjectVisualisation(CoreIconProvider));
         }
 
         public T Activate<T, T2>(T2 databaseObject)

@@ -260,8 +260,16 @@ namespace CatalogueManager.Collections
                 return;
 
             if (args.Request.ExpansionDepth > 0)
-                ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
-
+                try
+                {
+                    Tree.BeginUpdate();
+                    ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
+                }
+                finally
+                {
+                    Tree.EndUpdate();
+                }
+                
             if (args.Request.Pin && Settings.AllowPinning)
                 Pin(args.Request.ObjectToEmphasise, decendancyList);
 

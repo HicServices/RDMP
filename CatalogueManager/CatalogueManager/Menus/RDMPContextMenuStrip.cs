@@ -135,7 +135,7 @@ namespace CatalogueManager.Menus
                 else
                     Add(new ExecuteCommandPin(_activator, databaseEntity));
 
-                Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
+                Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, _activator.GetLazyCatalogueObjectVisualisation()));
             }
             
             foreach (var plugin in _activator.PluginUserInterfaces)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -20,6 +21,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.Dependencies.Models;
 
 namespace CatalogueManager.ItemActivation
 {
@@ -88,6 +90,12 @@ namespace CatalogueManager.ItemActivation
         /// Component for suggesting completion options for an ongoing drag or paste
         /// </summary>
         ICommandExecutionFactory CommandExecutionFactory { get;}
+
+        /// <summary>
+        /// Creates a new late loading <see cref="IObjectVisualisation"/> for use with Dependency graph generation
+        /// </summary>
+        /// <returns></returns>
+        Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation();
 
         /// <summary>
         /// Launches a new instance of the specified RDMPSingleDatabaseObjectControl Type with the supplied DatabaseEntity.  If you already have
