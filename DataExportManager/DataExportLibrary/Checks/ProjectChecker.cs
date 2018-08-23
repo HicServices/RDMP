@@ -64,12 +64,6 @@ namespace DataExportLibrary.Checks
             
             //tell them whether it exists or not
             notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory ('" + _project.ExtractionDirectory+"') " + (_projectDirectory.Exists ? "Exists" : "Does Not Exist"), _projectDirectory.Exists?CheckResult.Success : CheckResult.Fail));
-            
-            //complain if it is Z:\blah because not all users/services might have this mapped
-            if (new DriveInfo(_projectDirectory.Root.ToString()).DriveType == DriveType.Network)
-                notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory is on a mapped network drive (" + _projectDirectory.Root +") which might not be accessible to other data analysts",CheckResult.Warning));
-            else
-                notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory is not a network drive (which is a good thing)", CheckResult.Success));
 
             if (CheckConfigurations)
                 foreach (IExtractionConfiguration extractionConfiguration in _extractionConfigurations)

@@ -70,26 +70,6 @@ namespace DataExportLibrary.Tests
         }
 
         [Test]
-        public void Project_NetworkDriveWarning()
-        {
-            ExtractionConfiguration config;
-            Project p = GetProjectWithConfig(out config);
-            
-            var networkDrive = DriveInfo.GetDrives().FirstOrDefault(d => d.DriveType == DriveType.Network);
-
-            if(networkDrive == null)
-                Assert.Inconclusive();
-
-            if (!networkDrive.RootDirectory.Exists)
-                Assert.Inconclusive();
-
-            p.ExtractionDirectory = networkDrive.RootDirectory.FullName;
-
-            var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-            Assert.IsTrue(ex.Message.Contains("Project ExtractionDirectory is on a mapped network drive"));
-        }
-
-        [Test]
         public void ConfigurationFrozen_Remnants()
         {
             DirectoryInfo dir;
