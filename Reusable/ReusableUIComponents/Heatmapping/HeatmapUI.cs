@@ -189,7 +189,7 @@ namespace ReusableUIComponents.Heatmapping
             double pixelWidth = GetHeatPixelWidth();
 
 
-            int dataTableCol = (int) (1 +( pos.Y/pixelHeight)); //heat map line number + 1 because first column is the axis label
+            int dataTableCol = (int) (pos.Y/pixelHeight); //heat map line number + 1 because first column is the axis label
             int dataTableRow = (int) (pos.X/pixelWidth); //the pixel width corresponds to the number of axis values in the first column
 
             if (dataTableCol >= _dataTable.Columns.Count)
