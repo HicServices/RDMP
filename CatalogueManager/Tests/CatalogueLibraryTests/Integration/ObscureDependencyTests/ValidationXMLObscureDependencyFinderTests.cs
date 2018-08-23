@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using DataQualityEngine.Data;
-using DataQualityEngine.Database;
 using Diagnostics.TestData;
 using HIC.Common.Validation;
 using HIC.Common.Validation.Constraints.Secondary;

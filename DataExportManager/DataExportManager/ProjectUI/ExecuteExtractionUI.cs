@@ -25,7 +25,9 @@ using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
 using CatalogueManager.PipelineUIs.Pipelines;
 using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
@@ -81,7 +83,23 @@ namespace DataExportManager.ProjectUI
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
             pictureBox1.BackColor = Color.FromArgb(240, 240, 240);
 
+            tlvDatasets.CellClick += tlvDatasets_CellClick;
+            
             helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
+        }
+
+        void tlvDatasets_CellClick(object sender, CellClickEventArgs e)
+        {
+            if (e.Column == olvState)
+            {
+                var notifier = GetCheckNotifier(e.Model);
+
+                if(notifier == null)
+                    return;
+
+                var popup = new PopupChecksUI(e.Model.ToString(), false);
+                popup.Check(new ReplayCheckable(notifier));
+            }
         }
 
         private HelpWorkflow BuildHelpFlow()
@@ -164,6 +182,20 @@ namespace DataExportManager.ProjectUI
             return null;
         }
 
+        private ToMemoryCheckNotifier GetCheckNotifier(object rowObject)
+        {
+            var extractionRunner = checkAndExecuteUI1.CurrentRunner as ExtractionRunner;
+
+            if (rowObject == _globalsFolder && extractionRunner != null)
+                return extractionRunner.GetGlobalCheckNotifier();
+
+            var sds = rowObject as SelectedDataSets;
+
+            if (extractionRunner != null && sds != null) 
+                return extractionRunner.GetCheckNotifier(sds.ExtractableDataSet);
+            
+            return null;
+        }
         private object State_AspectGetter(object rowobject)
         {
             var state = GetState(rowobject);
@@ -191,7 +223,13 @@ namespace DataExportManager.ProjectUI
             _extractionConfiguration = databaseObject;
             
             if(!_commonFunctionality.IsSetup)
-                _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings(){AddFavouriteColumn = false,AllowPinning=false,SuppressChildrenAdder=true});
+                _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings()
+                {
+                    AddFavouriteColumn = false,
+                    AllowPinning=false,
+                    SuppressChildrenAdder=true,
+                    SuppressActivate = true
+                });
 
             checkAndExecuteUI1.SetItemActivator(activator);
 
@@ -250,7 +288,13 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.ExpandAll();
 
             if (_isFirstTime)
+            {
                 tlvDatasets.CheckAll();
+                foreach (var disabledObject in tlvDatasets.DisabledObjects.OfType<ArbitraryFolderNode>())
+                {
+                    tlvDatasets.UncheckObject(disabledObject);
+                }
+            }
             else if (checkedBefore.Count > 0)
                 tlvDatasets.CheckObjects(checkedBefore);
 
@@ -324,6 +368,11 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.UncheckAll();
             tlvDatasets.CheckObject(_globalsFolder);
             tlvDatasets.CheckObject(selectedDataSet);
+        }
+
+        private void tlvDatasets_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            checkAndExecuteUI1.Enabled = tlvDatasets.CheckedObjects.Cast<object>().Any();
         }
     }
 

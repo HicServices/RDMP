@@ -6,8 +6,6 @@ using AnonymisationTests;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
-using CatalogueLibraryTests;
-using DataExportLibrary.Repositories;
 using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;

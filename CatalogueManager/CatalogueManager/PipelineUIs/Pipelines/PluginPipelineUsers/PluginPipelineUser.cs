@@ -8,7 +8,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
     /// <summary>
     /// Turns an IDemandToUseAPipeline plugin class into an IPipelineUser and IPipelineUseCase (both) for use with PipelineSelectionUIFactory
     /// </summary>
-    public class PluginPipelineUser : PipelineUseCase,IPipelineUser
+    public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
     {
         private IPipelineUseCase _useCase;
         public PipelineGetter Getter { get; private set; }
@@ -41,12 +41,13 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
 
             foreach (var o in GetInitializationObjects())
                 AddInitializationObject(o);
+
+            GenerateContext();
         }
         
-        protected override IDataFlowPipelineContext GenerateContext()
+        protected override IDataFlowPipelineContext GenerateContextImpl()
         {
             return _useCase.GetContext();
         }
-        
     }
 }

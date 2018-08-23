@@ -26,11 +26,13 @@ namespace DataExportLibrary.Checks
     public class SelectedDataSetsChecker : ICheckable
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        private readonly bool _checkGlobals;
         public ISelectedDataSets SelectedDataSet { get; private set; }
-
-        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        
+        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, IRDMPPlatformRepositoryServiceLocator repositoryLocator, bool checkGlobals = false)
         {
             _repositoryLocator = repositoryLocator;
+            _checkGlobals = checkGlobals;
             SelectedDataSet = selectedDataSet;
         }
 
@@ -133,11 +135,13 @@ namespace DataExportLibrary.Checks
             }
 
             var cata = _repositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>((int)ds.Catalogue_ID);
-            SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(cata);
-            fetcher.Check(notifier);
+            var fetchOptions = _checkGlobals ? FetchOptions.ExtractableGlobalsAndLocals : FetchOptions.ExtractableLocals;
+
+            foreach (var supportingDocument in cata.GetAllSupportingDocuments(fetchOptions))
+                new SupportingDocumentsFetcher(supportingDocument).Check(notifier);
 
             //check catalogue locals
-            foreach (SupportingSQLTable table in cata.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals))
+            foreach (SupportingSQLTable table in cata.GetAllSupportingSQLTablesForCatalogue(fetchOptions))
                 new SupportingSQLTableChecker(table).Check(notifier);
         }
     }

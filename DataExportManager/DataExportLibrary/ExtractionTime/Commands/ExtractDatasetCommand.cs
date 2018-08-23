@@ -120,7 +120,6 @@ namespace DataExportLibrary.ExtractionTime.Commands
             List<ReleaseIdentifierSubstitution> substitutions;
             var host = new ExtractionQueryBuilder(RepositoryLocator.DataExportRepository);
             QueryBuilder = host.GetSQLCommandForFullExtractionSet(this,out substitutions);
-            QueryBuilder.Sort = true;
             ReleaseIdentifierSubstitutions = substitutions;
         }
 

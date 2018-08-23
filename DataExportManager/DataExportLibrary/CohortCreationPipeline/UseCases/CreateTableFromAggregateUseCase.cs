@@ -17,7 +17,7 @@ namespace DataExportLibrary.CohortCreationPipeline.UseCases
     /// Use case which describes creating a new table in the database containing all rows matched by the <see cref="AggregateConfiguration"/>.
     /// The source is fixed the destination and middle components are open.
     /// </summary>
-    public class CreateTableFromAggregateUseCase:PipelineUseCase
+    public sealed class CreateTableFromAggregateUseCase:PipelineUseCase
     {
         /// <summary>
         /// Defines a new use case in which the given <see cref="AggregateConfiguration"/> will be turned into an SQL query and used to generate rows
@@ -52,9 +52,10 @@ namespace DataExportLibrary.CohortCreationPipeline.UseCases
             AddInitializationObject(aggregateConfiguration.Repository);
             AddInitializationObject(table.Database);
 
+            GenerateContext();
         }
 
-        protected override IDataFlowPipelineContext GenerateContext()
+        protected override IDataFlowPipelineContext GenerateContextImpl()
         {
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
             var context = contextFactory.Create(PipelineUsage.FixedSource);
@@ -73,6 +74,7 @@ namespace DataExportLibrary.CohortCreationPipeline.UseCases
                 typeof(ICatalogueRepository)})
         {
             ExplicitSource = new AggregateConfigurationTableSource();
+            GenerateContext();
         }
 
         public static PipelineUseCase DesignTime(CatalogueRepository catalogueRepository)

@@ -1,23 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Events;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using HIC.Logging.Listeners;
-using CatalogueManager.PipelineUIs.DataObjects;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.SingleControlForms;
@@ -76,17 +68,10 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             foreach (var o in useCase.GetInitializationObjects())
                 AddInitializationObject(o);
 
-            SetPipelineOptions((IDataFlowSource<DataTable>)useCase.ExplicitSource, (IDataFlowDestination<DataTable>)useCase.ExplicitDestination, (DataFlowPipelineContext<DataTable>)context, activator.RepositoryLocator.CatalogueRepository);
+            SetPipelineOptions( activator.RepositoryLocator.CatalogueRepository);
 
+           lblTask.Text = "Task:" + useCase.GetType().Name;
         }
-
-
-        [Description("The task you are trying to achieve with this pipeline execution (should tell the user about the context and allowable components etc)")]
-        public string TaskDescription {
-            get { return lblTask.Text; }
-            set { lblTask.Text = value; }
-        }
-
         
         private void AddInitializationObject(object o)
         {
@@ -100,16 +85,15 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 
         private bool _pipelineOptionsSet = false;
 
-        private DataFlowPipelineContext<DataTable> _context;
         
         public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
         
-        private void SetPipelineOptions(IDataFlowSource<DataTable> sourceIfExists, IDataFlowDestination<DataTable> destinationIfExists, DataFlowPipelineContext<DataTable> context, CatalogueRepository repository)
+        private void SetPipelineOptions(CatalogueRepository repository)
         {
             if (_pipelineOptionsSet)
                 throw new Exception("CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
 
-            _context = context;
+            
             _pipelineOptionsSet = true;
 
             _pipelineSelectionUI = new PipelineSelectionUI(_useCase, repository)
@@ -118,6 +102,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             };
             _pipelineSelectionUI.PipelineChanged += _pipelineSelectionUI_PipelineChanged;
             _pipelineSelectionUI.PipelineDeleted += () => pipelineDiagram1.Clear();
+            
+            _pipelineSelectionUI.CollapseToSingleLineMode();
 
             pPipelineSelection.Controls.Add(_pipelineSelectionUI);
             
@@ -127,8 +113,6 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             _pipelineOptionsSet = true;
 
             RefreshDiagram();
-            
-            lblContext.Text = _context.GetHumanReadableDescription();
         }
 
         void _pipelineSelectionUI_PipelineChanged(object sender, EventArgs e)
@@ -171,54 +155,53 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 
             btnExecute.Text = "Stop";
 
-            if(pipeline != null)
+            _cancel = new CancellationTokenSource();
+
+            //clear any old results
+            progressUI1.Clear();
+                
+            if(PipelineExecutionStarted != null)
+                PipelineExecutionStarted(this,new PipelineEngineEventArgs(pipeline));
+
+            progressUI1.ShowRunning(true);
+
+            bool success = false;
+
+            //start a new thread
+            Task t = new Task(() =>
             {
-                _cancel = new CancellationTokenSource();
-
-                //clear any old results
-                progressUI1.Clear();
-                tabControl2.SelectTab(tpExecute);
-
-                if(PipelineExecutionStarted != null)
-                    PipelineExecutionStarted(this,new PipelineEngineEventArgs(pipeline));
-
-                //start a new thread
-                Thread threadExecute = new Thread(() =>
+                try
                 {
-                    try
-                    {
-                        progressUI1.ShowRunning(true);
-                        //execute the pipeline using the cancellation token
-                        pipeline.ExecutePipeline(new GracefulCancellationToken(_cancel.Token, _cancel.Token));
-
-                        //if it successfully got here then Thread has run the engine to completion successfully
-                        if (PipelineExecutionFinishedsuccessfully != null)
-                            Invoke(new MethodInvoker(() => //switch to UI thread
-                                PipelineExecutionFinishedsuccessfully(this, new PipelineEngineEventArgs(pipeline))
-                                //Fire completion success event
-                                ));
-                    }
-                    catch (Exception exception) //Thread crashed during pipeline execution
-                    {
-                        //notify the progress UI
-                        fork.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Error, "Pipeline execution failed", exception));
-
-                        if (IsHandleCreated && !IsDisposed)
-                            //Switch to UI thread 
-                            Invoke(new MethodInvoker(() =>
-                            {
-                                btnExecute.Text = "Execute"; //make it so user can execute again
-                            }));
-                    }
-                    finally
-                    {
-                        progressUI1.ShowRunning(false);
-                    }
-                });
-
-                threadExecute.Start();
+                    pipeline.ExecutePipeline(new GracefulCancellationToken(_cancel.Token, _cancel.Token));
+                    success = true;
+                }
+                catch (Exception ex)
+                {
+                    fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Pipeline execution failed", ex));
+                }
+                
             }
+                
+                
+
+                );
+
+            t.ContinueWith(x => 
+            {
+                if (success)
+                {
+                    //if it successfully got here then Thread has run the engine to completion successfully
+                    if (PipelineExecutionFinishedsuccessfully != null)
+                        PipelineExecutionFinishedsuccessfully(this, new PipelineEngineEventArgs(pipeline));
+                }
+                
+                progressUI1.ShowRunning(false);
+
+                btnExecute.Text = "Execute"; //make it so user can execute again
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+
+            t.Start();
+            
            
         }
 

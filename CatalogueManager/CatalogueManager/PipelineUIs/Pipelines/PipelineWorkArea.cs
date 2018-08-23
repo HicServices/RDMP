@@ -18,7 +18,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 {
     /// <summary>
     /// Main component control of ConfigurePipelineUI (See ConfigurePipelineUI for details).  Shows you all compatible components on the left including any plugin components.  Components in 
-    /// red are not compatible with the current context for example a DelimitedDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is
+    /// red are not compatible with the current context for example a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is
     /// not available.
     /// </summary>
     /// <typeparam name="T"></typeparam>

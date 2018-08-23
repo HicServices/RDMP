@@ -21,7 +21,7 @@ namespace CachingEngine.Factories
     /// not have a configured caching pipeline e.g. to facilitate the user selecting/creating an appropriate pipeline in the first place (set throwIfNoPipeline 
     /// to false under such circumstances).
     /// </summary>
-    public class CachingPipelineUseCase:PipelineUseCase
+    public sealed class CachingPipelineUseCase:PipelineUseCase
     {
         private readonly ICacheProgress _cacheProgress;
         private readonly ICacheFetchRequestProvider _providerIfAny;
@@ -72,9 +72,11 @@ namespace CachingEngine.Factories
 
             AddInitializationObject(_providerIfAny);
             AddInitializationObject(_permissionWindow);
+
+            GenerateContext();
         }
 
-        protected override IDataFlowPipelineContext GenerateContext()
+        protected override IDataFlowPipelineContext GenerateContextImpl()
         {
             //create the context using the standard context factory
             var contextFactory = new DataFlowPipelineContextFactory<ICacheChunk>();
@@ -119,7 +121,7 @@ namespace CachingEngine.Factories
             typeof(ICatalogueRepository)
         })
         {
-            
+            GenerateContext();
         }
 
         public static CachingPipelineUseCase DesignTime()

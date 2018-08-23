@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
-using EnvDTE;
-using EnvDTE80;
 using ReusableLibraryCode;
 
 
@@ -167,28 +158,20 @@ namespace ReusableUIComponents
         {
             try
             {
-                DTE2 dte2;
-                dte2 = (DTE2)Marshal.GetActiveObject("VisualStudio.DTE");
-                dte2.MainWindow.Activate();
-                Window w = dte2.ItemOperations.OpenFile(filename);
-                ((TextSelection)dte2.ActiveDocument.Selection).GotoLine(lineNumber, true);
+                Clipboard.SetText(Path.GetFileName(filename) +":" + lineNumber);
+
+                var viewer = new ViewSourceCodeDialog(filename, lineNumber,Color.LawnGreen);
+                viewer.ShowDialog();
             }
-            catch (Exception)
+            catch (FileNotFoundException)
             {
-                try
-                {
-                    var viewer = new ViewSourceCodeDialog(filename, lineNumber,Color.LawnGreen);
-                    viewer.ShowDialog();
-                }
-                catch (FileNotFoundException)
-                {
-                    //there is no source code in the zip file
-                }
-                catch (Exception ex)
-                {
-                    ExceptionViewer.Show(ex);
-                }
+                //there is no source code in the zip file
             }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show(ex);
+            }
+            
         }
         
         private void button1_Click(object sender, EventArgs e)

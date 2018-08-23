@@ -12,7 +12,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
-    public class ReleaseUseCase : PipelineUseCase
+    public sealed class ReleaseUseCase : PipelineUseCase
     {
         public ReleaseUseCase(IProject project, ReleaseData releaseData, ICatalogueRepository catalogueRepository)
         {
@@ -55,9 +55,11 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             AddInitializationObject(project);
             AddInitializationObject(releaseData);
             AddInitializationObject(catalogueRepository);
+
+            GenerateContext();
         }
 
-        protected override IDataFlowPipelineContext GenerateContext()
+        protected override IDataFlowPipelineContext GenerateContextImpl()
         {
             var contextFactory = new DataFlowPipelineContextFactory<ReleaseAudit>();
             var context = contextFactory.Create(PipelineUsage.FixedSource);
@@ -74,6 +76,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             typeof(CatalogueRepository)})
         {
             ExplicitSource = new NullReleaseSource<ReleaseAudit>();
+            GenerateContext();
         }
 
         public static ReleaseUseCase DesignTime()

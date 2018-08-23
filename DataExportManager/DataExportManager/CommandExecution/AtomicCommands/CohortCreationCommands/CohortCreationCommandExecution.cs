@@ -29,8 +29,6 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         protected ExternalCohortTable ExternalCohortTable;
         protected Project Project;
         
-        protected const string TaskDescriptionGenerallyHelpfulText = "Because cohort management and identifier assignment can vary considerably between companies the RDMP allows for significant adaptability here.  If there is already a pipeline with a description that sounds like what your trying to do then you should try selecting that.  If not then you will have to create new one, start by selecting an appropriate source component for your file type (e.g. if the file is CSV use DelimitedDataFlowSource) then select an appropriate destination component (if you are unsure what the correct one is try the 'BasicCohortDestination').  If you are using 'BasicCohortDestination' then you will have to make sure that your pipeline creates/populates BOTH the private and release identifier columns and that they are given the same names as in your Cohort database (or you can program in C# your own custom plugin component for the destination - See writing MEF Plugins).";
-
         protected CohortCreationCommandExecution(IActivateItems activator) : base(activator)
         {
             var dataExport = activator.CoreChildProvider as DataExportChildProvider;

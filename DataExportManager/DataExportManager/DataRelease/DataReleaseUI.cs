@@ -121,62 +121,26 @@ namespace DataExportManager.DataRelease
             var releaseRunner = checkAndExecuteUI1.CurrentRunner as ReleaseRunner;
             var sds = rowObject as ISelectedDataSets;
             var configuration = rowObject as IExtractionConfiguration;
-            var global = rowObject as IMapsDirectlyToDatabaseTable;
+            var supportingDocument = rowObject as SupportingDocument;
+            var supportingSqlTable = rowObject as SupportingSQLTable;
 
             if (releaseRunner == null)
                 return null;
 
-            ICheckable key = null;
-
             if (configuration != null)
-            {
-                var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<ReleaseEnvironmentPotential>().ToArray().SingleOrDefault(rp => rp.Configuration.Equals(configuration));
-                if (releasePotential != null)
-                    return releasePotential.Assesment;
-                
-                return null;
-            }
+                return releaseRunner.GetState(configuration);
 
             if (sds != null)
-            {
-                var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<ReleasePotential>().ToArray().SingleOrDefault(rp => rp.SelectedDataSet.ID == sds.ID);
+                return releaseRunner.GetState(sds);
 
-                //not been released ever
-                if (releasePotential is NoReleasePotential)
-                    return Releaseability.NeverBeenSuccessfullyExecuted;
+            if (supportingDocument != null)
+                return releaseRunner.GetState(supportingDocument);
 
-                //do we know the release state of the assesments
-                if (releasePotential != null && releasePotential.Assessments != null && releasePotential.Assessments.Any())
-                {
-                    var releasability = releasePotential.Assessments.Values.Min();
-
-                    if (releasability != Releaseability.Undefined)
-                        return releasability;
-                }
-
-                //otherwise use the checks of it
-                key = releasePotential;
-                if (key != null)
-                    return releaseRunner.ChecksDictionary[key].GetWorst();
-
-                return null;
-            }
-
-            if (global != null && (global is SupportingDocument || global is SupportingSQLTable))
-            {
-                var releasePotential = releaseRunner.ChecksDictionary.Keys.OfType<GlobalReleasePotential>().ToList().SingleOrDefault(rp => rp.RelatedGlobal.Equals(global));
-                if (releasePotential != null)
-                    return releasePotential.Releasability;
-
-                return null;
-            }
+            if (supportingSqlTable != null)
+                return releaseRunner.GetState(supportingSqlTable);
 
             if (rowObject.Equals(_globalsNode))
-            {
-                var globalChecker = releaseRunner.ChecksDictionary.Keys.OfType<GlobalsReleaseChecker>().ToList().SingleOrDefault();
-                if (globalChecker != null)
-                    return releaseRunner.ChecksDictionary[globalChecker].GetWorst();
-            }
+                return releaseRunner.GetGlobalReleaseState();
 
             return null;
         }

@@ -260,8 +260,16 @@ namespace CatalogueManager.Collections
                 return;
 
             if (args.Request.ExpansionDepth > 0)
-                ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
-
+                try
+                {
+                    Tree.BeginUpdate();
+                    ExpandToDepth(args.Request.ExpansionDepth, args.Request.ObjectToEmphasise);
+                }
+                finally
+                {
+                    Tree.EndUpdate();
+                }
+                
             if (args.Request.Pin && Settings.AllowPinning)
                 Pin(args.Request.ObjectToEmphasise, decendancyList);
 
@@ -292,7 +300,12 @@ namespace CatalogueManager.Collections
             };
         }
 
-        private void ExpandToDepth(int expansionDepth, object currentObject)
+        /// <summary>
+        /// Expands the current object (which must exist/be visible in the UI) to the given depth
+        /// </summary>
+        /// <param name="expansionDepth"></param>
+        /// <param name="currentObject"></param>
+        public void ExpandToDepth(int expansionDepth, object currentObject)
         {
             if(expansionDepth == 0)
                 return;
@@ -370,7 +383,7 @@ namespace CatalogueManager.Collections
 
                 //no compatible menus so just return default menu
                 var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
-                defaultMenu.AddCommonMenuItems(Settings);
+                defaultMenu.AddCommonMenuItems(this);
                 return defaultMenu;
             }
             else
@@ -449,7 +462,7 @@ namespace CatalogueManager.Collections
             var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(type, args, o);
             
             if(menu != null)
-                menu.AddCommonMenuItems(Settings);
+                menu.AddCommonMenuItems(this);
 
             return menu;
         }
@@ -498,68 +511,30 @@ namespace CatalogueManager.Collections
             if (MaintainRootObjects != null && MaintainRootObjects.Contains(o.GetType()) && exists)
                 //if tree doesn't yet contain the object
                 if (!Tree.Objects.Cast<object>().Contains(o))
+                {
                     Tree.AddObject(o); //add it
-
-            //item deleted?
-            if (!exists)
-            {
+                    return;
+                }
+            
+            if(!IsHiddenByFilter(o))
                 //if we have the object
                 if (Tree.IndexOf(o) != -1)
                 {
-                    var parent = Tree.GetParent(o);
-                    //item was deleted so remove it
+                    //remove it
                     Tree.RemoveObject(o);
 
-                    //if we have a parent it might be a node category that should now disapear too
-                    if (parent != null)
+                    //we don't have the object but do we have something in it's descendancy?
+                    if (knownDescendancy != null)
                     {
-                        //it's a Node (e.g. SupportingDocumentsNode) but not a SingletonNode (e.g. ANOTablesNode)
-                        if (parent.GetType().Name.EndsWith("Node") && !(parent is SingletonNode))
-                        {
-                            //if we are the only child
-                            if (Tree.GetChildren(parent).Cast<object>().Count() <= 1)
-                            {
-                                Tree.RemoveObject(parent);
-                                return;
-                            }
+                        var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
 
-                            //there are other siblings so removing e.Object will not result in the node disapearing
-                            Tree.RefreshObject(parent);
-                        }
+                        if (lastParent != null)
+                            Tree.RefreshObject(lastParent); //refresh parent
                     }
-
+                    else 
+                        if(exists)
+                            Tree.AddObject(o);
                 }
-
-            }
-            else
-            {
-                try
-                {
-                    //but the filter is currently hiding the object?
-                    if (!IsHiddenByFilter(o))
-                    {
-                        //Do we have the object itself?
-                        if (Tree.IndexOf(o) != -1)
-                            Tree.RefreshObject(o);
-                        else
-                            if (knownDescendancy != null) //we don't have the object but do we have something in it's descendancy?
-                            {
-                                var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
-
-                                if (lastParent != null)
-                                    Tree.RefreshObject(lastParent); //refresh parent
-                            }
-                    }
-                }
-                catch (ArgumentException)
-                {
-
-                }
-                catch (IndexOutOfRangeException)
-                {
-
-                }
-            }
         }
 
         private bool IsHiddenByFilter(object o)
@@ -579,42 +554,6 @@ namespace CatalogueManager.Collections
                 _activator.RefreshBus.Unsubscribe(this);
                 _activator.Emphasise -= _activator_Emphasise;
             }
-        }
-
-        private bool expand = true;
-        
-
-
-        /// <summary>
-        /// Expands or collapses the tree view.  Returns true if the tree is now expanded, returns false if the tree is now collapsed
-        /// </summary>
-        /// <param name="btnExpandOrCollapse"></param>
-        /// <returns></returns>
-        public bool ExpandOrCollapse(Button btnExpandOrCollapse)
-        {
-            Tree.UseFiltering = false;
-
-            if (expand)
-            {
-                Tree.ExpandAll();
-                expand = false;
-
-                if(btnExpandOrCollapse != null)
-                    btnExpandOrCollapse.Text = "Collapse";
-                
-            }
-            else
-            {
-                Tree.CollapseAll();
-                expand = true;
-                if(btnExpandOrCollapse != null)
-                    btnExpandOrCollapse.Text = "Expand";
-            }
-
-            Tree.UseFiltering = true;
-            Tree.EnsureVisible(0);
-            
-            return !expand;
         }
     }
 }

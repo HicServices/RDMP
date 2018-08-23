@@ -30,7 +30,7 @@ namespace CatalogueManager.Menus
             
             Items.Add(setUsage);
 
-            Add(new ExecuteCommandViewDependencies(node.Credentials,new CatalogueObjectVisualisation(_activator.CoreIconProvider)));
+            Add(new ExecuteCommandViewDependencies(node.Credentials,_activator.GetLazyCatalogueObjectVisualisation()));
         }
     }
 }

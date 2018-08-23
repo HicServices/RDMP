@@ -13,7 +13,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.Menus

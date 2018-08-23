@@ -103,10 +103,10 @@ namespace DataLoadEngine.LoadExecution.Components.Standard
             _pipeline = new DataFlowPipelineEngine<DataTable>(context, source, destination, job);
 
             //add clean strings component
-            _pipeline.Components.Add(new CleanStrings());
+            _pipeline.ComponentObjects.Add(new CleanStrings());
 
             //add dropping of preload discard columns
-            _pipeline.Components.Add(new BasicAnonymisationEngine());
+            _pipeline.ComponentObjects.Add(new BasicAnonymisationEngine());
             
             _pipeline.Initialize(tableLoadInfo,_tableInfo);
 

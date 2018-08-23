@@ -13,7 +13,6 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.Theme;
 using CohortManager.Collections;
 using DataExportManager.Collections;
-using RDMPStartup;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
@@ -21,7 +20,6 @@ using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
-using WeifenLuo.WinFormsUI.ThemeVS2012;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {

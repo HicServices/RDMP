@@ -1,5 +1,4 @@
 ﻿using System;
-using Google.Protobuf.WellKnownTypes;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;

@@ -50,6 +50,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "DataAge",
             "PatientCareNumber",
             "MyDb",
+            "MyTransform",
             "PatCHI",
             "PatientCHI",
             "MotherCHI",

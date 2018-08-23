@@ -11,7 +11,6 @@ using System.Threading;
 using MapsDirectlyToDatabaseTable.RepositoryResultCaching;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
-using MySql.Data.MySqlClient;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
@@ -240,14 +239,11 @@ namespace MapsDirectlyToDatabaseTable
                                             oTableWrapperObject.GetType().Name + " did not have an ID property");
 
             string wrappedTableName;
-
+            
             if (insertCommand is SqlCommand)
                 wrappedTableName = "[" + tableName + "]";
-            else
-                if (insertCommand is MySqlCommand)
-                    wrappedTableName = "`" + tableName + "`";
                 else
-                    throw new NotSupportedException("InsertCommand was of type " + insertCommand.GetType() + " expect either an SqlCommand or a MySqlCommand");
+                    throw new NotSupportedException("InsertCommand was of type " + insertCommand.GetType() + " expect either an SqlCommand");
             
             if (sql.IndexOf(wrappedTableName) == -1)
                 throw new Exception("Could not find table " + wrappedTableName + " in command " + insertCommand.CommandText);
@@ -346,11 +342,6 @@ namespace MapsDirectlyToDatabaseTable
                     //pattern
 
                     DbCommand cloneCommand = DatabaseCommandHelper.GetInsertCommand(cmd);
-
-                    //we are transitioning from a Microsoft SQL Server Catalogue database to a MySql one so mess around with the syntax and make the command type a MySqlCommand
-                    if (destination.Connection is MySqlConnection)
-                        throw new Exception("you cannot clone into a different database type");
-
                     cloneCommand.Connection = destination.Connection;
 
 
@@ -366,9 +357,7 @@ namespace MapsDirectlyToDatabaseTable
 
                     if (cloneCommand is SqlCommand)
                         cloneCommand.CommandText += ";SELECT @@IDENTITY";
-
-                    if (cloneCommand is MySqlCommand)
-                        cloneCommand.CommandText += ";SELECT LAST_INSERT_ID();";
+                    
                     try
                     {
                         return GetObjectByID<T>(int.Parse(cloneCommand.ExecuteScalar().ToString()));

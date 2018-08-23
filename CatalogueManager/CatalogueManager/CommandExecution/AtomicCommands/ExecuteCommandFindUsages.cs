@@ -9,6 +9,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
+using ReusableUIComponents.Dependencies.Models;
 using Sharing.Dependency.Gathering;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
@@ -31,8 +32,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             var dependencies = _gatherer.GatherDependencies(_o);
-            
-            var cmd  = new ExecuteCommandViewDependencies(dependencies, new CatalogueObjectVisualisation(Activator.CoreIconProvider));
+
+            var cmd = new ExecuteCommandViewDependencies(dependencies, Activator.GetLazyCatalogueObjectVisualisation());
             cmd.Execute();
             
         }

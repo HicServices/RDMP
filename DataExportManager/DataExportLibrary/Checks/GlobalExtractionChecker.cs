@@ -25,10 +25,7 @@ namespace DataExportLibrary.Checks
                 new SupportingSQLTableChecker(table).Check(notifier);
 
             foreach (SupportingDocument document in _configuration.GetGlobals().OfType<SupportingDocument>())
-            {
-                SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(document);
-                fetcher.CheckSingle(notifier); 
-            }
+                new SupportingDocumentsFetcher(document).Check(notifier);
         }
     }
 }

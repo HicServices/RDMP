@@ -47,7 +47,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             Console.WriteLine("Found solution folder in directory:" + slndir.FullName);
 
-            var sln = new VisualStudioSolutionFile(slndir.GetFiles().Single(f => f.Name.Equals(SolutionName)));
+            var sln = new VisualStudioSolutionFile(slndir,slndir.GetFiles().Single(f => f.Name.Equals(SolutionName)));
 
             ProcessFolderRecursive(sln.RootFolders, slndir);
 
@@ -71,6 +71,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             }
 
             Assert.AreEqual(0, errors.Count);
+
+            DependenciesEvaluation dependencies = new DependenciesEvaluation();
+            dependencies.FindProblems(sln);
 
             InterfaceDeclarationsCorrect interfaces = new InterfaceDeclarationsCorrect();
             interfaces.FindProblems(CatalogueRepository.MEF);

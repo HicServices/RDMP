@@ -98,7 +98,7 @@
             this.btnExecuteSql.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnExecuteSql.Name = "btnExecuteSql";
             this.btnExecuteSql.Size = new System.Drawing.Size(23, 22);
-            this.btnExecuteSql.Text = "Execute Query";
+            this.btnExecuteSql.Text = "Execute Query (F5)";
             this.btnExecuteSql.Click += new System.EventHandler(this.btnExecuteSql_Click);
             // 
             // btnResetSql

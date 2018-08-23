@@ -12,17 +12,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
         }
 
-        public override string GetRuntimeName(string s)
-        {
-            var result =  base.GetRuntimeName(s);
-
-            if (string.IsNullOrWhiteSpace(result))
-                return result;
-
-            //nothing is in caps in mysql ever
-            return result.ToLower();
-        }
-
         public override string EnsureWrappedImpl(string databaseOrTableName)
         {
             return "`" + GetRuntimeName(databaseOrTableName) + "`";

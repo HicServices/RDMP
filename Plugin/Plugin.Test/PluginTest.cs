@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Plugin.Test
+﻿namespace Plugin.Test
 {
     public class PluginTest
     {

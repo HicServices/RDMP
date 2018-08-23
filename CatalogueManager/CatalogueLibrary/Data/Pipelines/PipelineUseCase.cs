@@ -28,10 +28,18 @@ namespace CatalogueLibrary.Data.Pipelines
 
         public IDataFlowPipelineContext GetContext()
         {
+            if(_context == null)
+                throw new Exception("Context has not been initialized yet for use case " + GetType() + " make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
+
             return _context;
         }
 
-        protected abstract IDataFlowPipelineContext GenerateContext();
+        protected void GenerateContext()
+        {
+            _context = GenerateContextImpl();
+        }
+
+        protected abstract IDataFlowPipelineContext GenerateContextImpl();
 
         public object ExplicitSource { get; protected set; }
         public object ExplicitDestination { get; protected set; }
@@ -53,7 +61,6 @@ namespace CatalogueLibrary.Data.Pipelines
         protected PipelineUseCase()
         {
             IsDesignTime = false;
-            _context = GenerateContext();
         }
 
         /// <summary>
@@ -66,8 +73,6 @@ namespace CatalogueLibrary.Data.Pipelines
             IsDesignTime = true;
             foreach (Type t in designTimeInitializationObjectTypes)
                 InitializationObjects.Add(t);
-
-            _context = GenerateContext();
         }
 
         public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)

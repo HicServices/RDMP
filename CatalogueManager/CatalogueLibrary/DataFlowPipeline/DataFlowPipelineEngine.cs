@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using CatalogueLibrary.Data.Pipelines;
@@ -23,11 +24,17 @@ namespace CatalogueLibrary.DataFlowPipeline
         private bool initialized = false;
         private string _name;
 
-        public List<IDataFlowComponent<T>> Components { get { return ComponentObjects.Cast<IDataFlowComponent<T>>().ToList(); } }
+        /// <summary>
+        /// Readonly cast of <see cref="ComponentObjects"/>. If you need to add components, add them to <see cref="ComponentObjects"/> instead.
+        /// </summary>
+        public ReadOnlyCollection<IDataFlowComponent<T>> Components { get { return ComponentObjects.Cast<IDataFlowComponent<T>>().ToList().AsReadOnly(); } }
 
         public IDataFlowDestination<T> Destination { get; private set; }
         public IDataFlowSource<T> Source { get; private set; }
 
+        /// <summary>
+        /// Middle components of the pipeline, must be <see cref="IDataFlowComponent"/> with T appropriate to the context.
+        /// </summary>
         public List<object> ComponentObjects { get; set; }
 
         public object DestinationObject { get { return Destination; } }

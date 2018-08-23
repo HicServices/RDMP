@@ -43,6 +43,7 @@ namespace CatalogueLibrary.QueryBuilding
     {
         private readonly TableInfo[] _forceJoinsToTheseTables;
 
+        /// <inheritdoc/>
         public string SQL { get
         {
             if (SQLOutOfDate)
@@ -64,8 +65,6 @@ namespace CatalogueLibrary.QueryBuilding
         public string HavingSQL { get; set; }
         public IAggregateTopX AggregateTopX { get; set; }
 
-        public int LineCount { get; private set; }
-
         public List<QueryTimeColumn> SelectColumns { get; private set; }
         public List<TableInfo> TablesUsedInQuery { get; private set; }
 
@@ -86,16 +85,10 @@ namespace CatalogueLibrary.QueryBuilding
         public IContainer RootFilterContainer { get; set; }
         public bool CheckSyntax { get; set; }
         public TableInfo PrimaryExtractionTable { get; private set; }
-        public bool Sort { get { return true; } set {throw new NotSupportedException();} }
-
-        public int CurrentLine
-        {
-            get { return 0; }
-        }
-
         public ParameterManager ParameterManager { get; private set; }
 
         string _sql;
+        /// <inheritdoc/>
         public bool SQLOutOfDate { get; set; }
 
         public ICollectSqlParameters QueryLevelParameterProvider { get; set; }
@@ -200,12 +193,7 @@ namespace CatalogueLibrary.QueryBuilding
                     _skipGroupByForThese.Add(column);
             }
         }
-
-        public int GetLineNumberForColumn(IColumn column)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         private int _pivotID=-1;
         private bool _doNotWriteOutParameters;
         private IQuerySyntaxHelper _syntaxHelper;
@@ -228,8 +216,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// </summary>
         public void RegenerateSQL()
         {
-            if (Sort)
-                SelectColumns.Sort();
+            SelectColumns.Sort();
 
             //things we discover below, set them all to default values again
             _pivotDimension = null;
@@ -348,11 +335,10 @@ namespace CatalogueLibrary.QueryBuilding
             //put the name in as SQL comments followed by the SQL e.g. the name of an AggregateConfiguration or whatever
             GetSelectSQL(queryLines);
             
-            int[] whoCares;
-            queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetFROMSQL(this, out whoCares), QueryComponent.FROM));
+            queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetFROMSQL(this), QueryComponent.FROM));
             CompileCustomLinesInStageAndAddToList(QueryComponent.JoinInfoJoin, queryLines);
             
-            queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetWHERESQL(this, out whoCares),QueryComponent.WHERE));
+            queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetWHERESQL(this),QueryComponent.WHERE));
 
             CompileCustomLinesInStageAndAddToList(QueryComponent.WHERE,queryLines);
             
@@ -535,15 +521,10 @@ namespace CatalogueLibrary.QueryBuilding
             //HAVING
             if (!string.IsNullOrWhiteSpace(HavingSQL))
             {
-                toReturn += "HAVING" + TakeNewLine();
+                toReturn += "HAVING" + Environment.NewLine;
                 toReturn += HavingSQL;
             }
             return toReturn;
-        }
-
-        public string TakeNewLine()
-        {
-            return Environment.NewLine;
         }
 
         public IEnumerable<Lookup> GetDistinctRequiredLookups()

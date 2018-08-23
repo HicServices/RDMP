@@ -50,8 +50,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             request.CohortIdentificationConfiguration = _cic;
 
             var configureAndExecute = GetConfigureAndExecuteControl(request, "Execute CIC " + _cic + " and commmit results");
-            configureAndExecute.TaskDescription = "You have selected a Cohort Identification Configuration that you created in the CohortManager.  This configuration will be compiled into SQL and executed, the resulting identifier list will be commmented to the named project/cohort ready for data export.  If your query takes a million years to run, try caching some of the subqueries (in CohortManager.exe).  This dialog requires you to select/create an appropriate pipeline. " + TaskDescriptionGenerallyHelpfulText;
-
+            
             configureAndExecute.PipelineExecutionFinishedsuccessfully += OnImportCompletedSuccessfully;
 
             Activator.ShowWindow(configureAndExecute);

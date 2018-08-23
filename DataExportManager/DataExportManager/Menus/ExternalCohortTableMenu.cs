@@ -28,7 +28,6 @@ using HIC.Logging;
 using HIC.Logging.Listeners;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.PipelineUIs.Pipelines;
-using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 

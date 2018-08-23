@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -113,8 +112,8 @@ namespace PluginPackager
         private void SetupWorkingDictionaries(ICheckNotifier notifier)
         {
             _pluginAssemblies = new List<FileInfo>();
-            
-            var sln = new VisualStudioSolutionFile(_solutionToPackage);
+
+            var sln = new VisualStudioSolutionFile(_solutionToPackage.Directory,_solutionToPackage);
             
             var pathsToProcess = new List<string>();
             foreach (VisualStudioProjectReference project in sln.Projects.Where(p => !p.Name.Contains("Tests")))
