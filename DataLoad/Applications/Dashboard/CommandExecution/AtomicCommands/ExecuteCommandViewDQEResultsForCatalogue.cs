@@ -77,7 +77,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
 
         private bool ServerHasAtLeastOneEvaluation(Catalogue c)
         {
-            return new DQERepository(Activator.RepositoryLocator.CatalogueRepository).GetAllEvaluationsFor(c).Any();
+            return new DQERepository(Activator.RepositoryLocator.CatalogueRepository).HasEvaluations(c);
         }
     }
 }
