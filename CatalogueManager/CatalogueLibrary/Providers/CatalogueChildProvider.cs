@@ -64,7 +64,8 @@ namespace CatalogueLibrary.Providers
         public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
         public Dictionary<int,CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
 
-        private Dictionary<int,ColumnInfo> _allColumnInfos;
+        private readonly Dictionary<int,ColumnInfo> _allColumnInfos;
+        
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
         
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
@@ -134,6 +135,7 @@ namespace CatalogueLibrary.Providers
         public readonly IChildProvider[] PluginChildProviders;
         private readonly ICheckNotifier _errorsCheckNotifier;
         private readonly List<IChildProvider> _blacklistedPlugins = new List<IChildProvider>();
+        
 
         public CatalogueChildProvider(CatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
@@ -183,8 +185,8 @@ namespace CatalogueLibrary.Providers
             AllCohortIdentificationConfigurations = repository.GetAllObjects<CohortIdentificationConfiguration>();
             
             AllCatalogueItemsDictionary = repository.GetAllObjects<CatalogueItem>().ToDictionary(i=>i.ID,o=>o);
-            _allColumnInfos = repository.GetAllObjects<ColumnInfo>().ToDictionary(i=>i.ID,o=>o);
-
+            _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);
+            
             //Inject known ColumnInfos into CatalogueItems
             foreach (CatalogueItem ci in AllCatalogueItems)
             {
@@ -896,6 +898,7 @@ namespace CatalogueLibrary.Providers
             foreach (ColumnInfo c in AllColumnInfos.Where(ci => ci.TableInfo_ID == tableInfo.ID))
             {
                 children.Add(c);
+                c.InjectKnown(tableInfo);
                 AddChildren(c,descendancy.Add(c));
             }
 

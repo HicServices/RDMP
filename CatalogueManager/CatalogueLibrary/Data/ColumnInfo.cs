@@ -7,6 +7,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -28,7 +29,7 @@ namespace CatalogueLibrary.Data
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
     /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).</para>
     /// </summary>
-    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation
+    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
     {
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength;
@@ -231,7 +232,7 @@ namespace CatalogueLibrary.Data
         {
             get
             {
-                return Repository.GetObjectByID<TableInfo>(TableInfo_ID);
+                return _knownTableInfo.Value;
             }
         }
         
@@ -305,6 +306,8 @@ namespace CatalogueLibrary.Data
                 {"Data_type", type != null ? (object) type : DBNull.Value},
                 {"TableInfo_ID", parent.ID}
             });
+
+            ClearAllInjections();
         }
 
         internal ColumnInfo(ICatalogueRepository repository, DbDataReader r)
@@ -341,6 +344,7 @@ namespace CatalogueLibrary.Data
 
             DuplicateRecordResolutionIsAscending = Convert.ToBoolean(r["DuplicateRecordResolutionIsAscending"]);
 
+            ClearAllInjections();
         }
 
         /// <summary>
@@ -384,6 +388,7 @@ namespace CatalogueLibrary.Data
         }
 
         private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
+        private Lazy<TableInfo> _knownTableInfo;
 
         ///<inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
@@ -534,6 +539,16 @@ namespace CatalogueLibrary.Data
                 throw new Exception("Column " + this + " is configured as a foreign key to more than 1 primary key (only 1 is allowed), the Lookups are:" + string.Join(",", lookups.Select(l => l.PrimaryKey)));
 
             return lookups.ToArray();
+        }
+
+        public void InjectKnown(TableInfo instance)
+        {
+            _knownTableInfo = new Lazy<TableInfo>(() => instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownTableInfo = new Lazy<TableInfo>(() => Repository.GetObjectByID<TableInfo>(TableInfo_ID));
         }
     }
 }

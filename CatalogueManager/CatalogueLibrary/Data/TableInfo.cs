@@ -120,6 +120,7 @@ namespace CatalogueLibrary.Data
         // Need to fix underlying design issue of having an IRepository in the base when this class requires an ICatalogueRepository
         private readonly ICatalogueRepository _catalogueRepository;
         private Lazy<ColumnInfo[]> _knownColumnInfos;
+        private Lazy<bool> _knownIsLookup;
 
         #region Relationships
         /// <summary>
@@ -332,6 +333,11 @@ namespace CatalogueLibrary.Data
 
         public bool IsLookupTable()
         {
+            return _knownIsLookup.Value;
+        }
+
+        private bool FetchIsLookup()
+        {
             using (var con = _catalogueRepository.GetConnection())
             {
                 DbCommand cmd = DatabaseCommandHelper.GetCommand(
@@ -397,6 +403,7 @@ select 0", con.Connection, con.Transaction);
         public void ClearAllInjections()
         {
             _knownColumnInfos = new Lazy<ColumnInfo[]>(FetchColumnInfos);
+            _knownIsLookup = new Lazy<bool>(FetchIsLookup);
         }
 
         private ColumnInfo[] FetchColumnInfos()

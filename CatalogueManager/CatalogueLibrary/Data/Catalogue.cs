@@ -1133,39 +1133,10 @@ namespace CatalogueLibrary.Data
         ///  one <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on the referencing ColumnInfo.</param>
         public void GetTableInfos(out List<TableInfo> normalTables, out List<TableInfo> lookupTables)
         {
-            var normalTableIds = new HashSet<int>();
-            var lookupTableIds = new HashSet<int>();
+            var tables = GetColumnInfos().Select(c => c.TableInfo).Distinct().ToArray();
 
-            foreach (var col in GetColumnInfos())//get all the ColumnInfos that are associated with any of this Catalogue's CatalogueItems
-            {
-                if (col.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description).Any())//if the column acts as a description for any dataset anywhere
-                {
-                    //it is a lookup table
-
-                    //if we previously identified it as a regular table
-                    if (normalTableIds.Contains(col.TableInfo_ID))
-                        normalTableIds.Remove(col.TableInfo_ID); //it is not a regular table anymore
-
-                    //it is a lookup table
-                    if (!lookupTableIds.Contains(col.TableInfo_ID))
-                        lookupTableIds.Add(col.TableInfo_ID);
-                } 
-                else
-                {
-                    //it is a normal table
-
-                    //unless it is not (it could be that we have a regular column but there are also lookup columns in that table - bit freaky but could happen
-                    if (lookupTableIds.Contains(col.TableInfo_ID))
-                        continue;
-                    
-                    if (!normalTableIds.Contains(col.TableInfo_ID))
-                        normalTableIds.Add(col.TableInfo_ID);
-                }
-            }
-            
-            //now use the IDs to get the unique tables
-            normalTables = Repository.GetAllObjectsInIDList<TableInfo>(normalTableIds).ToList();
-            lookupTables = Repository.GetAllObjectsInIDList<TableInfo>(lookupTableIds).ToList();
+            normalTables = new List<TableInfo>(tables.Where(t=>!t.IsLookupTable()));
+            lookupTables = new List<TableInfo>(tables.Where(t=>t.IsLookupTable()));
         }
 
         private IEnumerable<ColumnInfo> GetColumnInfos()
