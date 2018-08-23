@@ -65,9 +65,6 @@ namespace DataExportLibrary.Checks
             //tell them whether it exists or not
             notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory ('" + _project.ExtractionDirectory+"') " + (_projectDirectory.Exists ? "Exists" : "Does Not Exist"), _projectDirectory.Exists?CheckResult.Success : CheckResult.Fail));
 
-            if (!Path.IsPathRooted(_projectDirectory.Root.ToString()))
-                notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory is not rooted! (" + _projectDirectory.Root + ")", CheckResult.Warning));
-
             if (CheckConfigurations)
                 foreach (IExtractionConfiguration extractionConfiguration in _extractionConfigurations)
                 {
