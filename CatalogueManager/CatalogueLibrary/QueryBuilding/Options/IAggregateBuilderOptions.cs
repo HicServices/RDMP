@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
+﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueManager.AggregationUIs.Advanced
+namespace CatalogueLibrary.QueryBuilding.Options
 {
-    public interface IAggregateEditorOptions
+    public interface IAggregateBuilderOptions
     {
         string GetTitleTextPrefix(AggregateConfiguration aggregate);
-
-        string GetRefreshSQL(AggregateConfiguration aggregate);
 
         //ExtractionInformations which become AggregateDimensions
         IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate);

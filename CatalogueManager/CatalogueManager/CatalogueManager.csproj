@@ -295,10 +295,6 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AggregationUIs\Advanced\IAggregateEditorOptions.cs" />
-    <Compile Include="AggregationUIs\Advanced\Options\AggregateEditorBasicOptions.cs" />
-    <Compile Include="AggregationUIs\Advanced\Options\AggregateEditorCohortOptions.cs" />
-    <Compile Include="AggregationUIs\Advanced\Options\AggregateEditorOptionsFactory.cs" />
     <Compile Include="AggregationUIs\Advanced\AggregateEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>

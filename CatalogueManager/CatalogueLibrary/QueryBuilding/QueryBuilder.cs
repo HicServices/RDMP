@@ -42,6 +42,7 @@ namespace CatalogueLibrary.QueryBuilding
             }
         }
 
+        /// <inheritdoc/>
         public string LimitationSQL { get; private set; }
         
         public List<QueryTimeColumn> SelectColumns { get; private set; }

@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueManager.AggregationUIs.Advanced.Options
+namespace CatalogueLibrary.QueryBuilding.Options
 {
-    class AggregateEditorBasicOptions : IAggregateEditorOptions
+    class AggregateBuilderBasicOptions : IAggregateBuilderOptions
     {
         public string GetTitleTextPrefix(AggregateConfiguration aggregate)
         {
@@ -17,11 +14,6 @@ namespace CatalogueManager.AggregationUIs.Advanced.Options
                 return "Extractable 'Group By' Aggregate:";
 
             return "'Group By' Aggregate:";
-        }
-
-        public string GetRefreshSQL(AggregateConfiguration aggregate)
-        {
-            return aggregate.GetQueryBuilder().SQL;
         }
 
         public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)

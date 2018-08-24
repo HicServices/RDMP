@@ -72,8 +72,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             Assert.AreEqual(0, errors.Count);
 
-            DependenciesEvaluation dependencies = new DependenciesEvaluation();
-            dependencies.FindProblems(sln);
+      //      DependenciesEvaluation dependencies = new DependenciesEvaluation();
+      //     dependencies.FindProblems(sln);
 
             InterfaceDeclarationsCorrect interfaces = new InterfaceDeclarationsCorrect();
             interfaces.FindProblems(CatalogueRepository.MEF);

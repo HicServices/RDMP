@@ -51,7 +51,14 @@ namespace CatalogueLibrary.QueryBuilding
 
             return _sql;
         } }
+
+        /// <inheritdoc/>
         public string LimitationSQL { get; private set; }
+        
+        
+        /// <summary>
+        /// Text to add as an SQL comment before the SELECT section of the query e.g. "bob" would result in the text /*bob*/ appearing at the top of the SELECT
+        /// </summary>
         public string LabelWithComment { get; set; }
 
 
@@ -62,7 +69,16 @@ namespace CatalogueLibrary.QueryBuilding
         AggregateDimension _axisAppliesToDimension = null;
         bool _isCohortIdentificationAggregate;
 
+        /// <summary>
+        /// Optional, SQL to apply a HAVING clause to the GROUP BY query generated
+        /// 
+        /// <para>Do not include the word HAVING in the text since it will automatically be added</para>
+        /// </summary>
         public string HavingSQL { get; set; }
+
+        /// <summary>
+        /// Optional, Limit the results returned.  Depending on the mode the 
+        /// </summary>
         public IAggregateTopX AggregateTopX { get; set; }
 
         public List<QueryTimeColumn> SelectColumns { get; private set; }

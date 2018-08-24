@@ -1,27 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.QueryBuilding.Parameters;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CohortManagerLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup;
-using ReusableLibraryCode;
 
-namespace CatalogueManager.AggregationUIs.Advanced.Options
+namespace CatalogueLibrary.QueryBuilding.Options
 {
-    public class AggregateEditorCohortOptions: IAggregateEditorOptions
+    public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
     {
         private readonly ISqlParameter[] _globals;
 
-        public AggregateEditorCohortOptions(ISqlParameter[] globals)
+        public AggregateBuilderCohortOptions(ISqlParameter[] globals)
         {
             _globals = globals;
         }
@@ -32,11 +24,6 @@ namespace CatalogueManager.AggregationUIs.Advanced.Options
                 return "Patient Index Table:";
 
             return "Cohort Identification Set:";
-        }
-
-        public string GetRefreshSQL(AggregateConfiguration aggregate)
-        {
-            return new CohortQueryBuilder(aggregate, _globals, aggregate.IsJoinablePatientIndexTable()).SQL;
         }
 
         public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)

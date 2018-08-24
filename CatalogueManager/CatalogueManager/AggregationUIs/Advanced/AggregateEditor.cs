@@ -9,8 +9,8 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.AggregationUIs.Advanced.Options;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing.Collections;
@@ -62,7 +62,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
     /// </summary>
     public partial class AggregateEditor : AggregateEditor_Design,ISaveableUI
     {
-        private IAggregateEditorOptions _options;
+        private IAggregateBuilderOptions _options;
         private AggregateConfiguration _aggregate;
         
         private List<TableInfo> _forcedJoins;
@@ -179,11 +179,11 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         }
 
-        public void SetAggregate(IActivateItems activator,AggregateConfiguration configuration, IAggregateEditorOptions options = null)
+        public void SetAggregate(IActivateItems activator,AggregateConfiguration configuration, IAggregateBuilderOptions options = null)
         {
             _activator = activator;
             _aggregate = configuration;
-            _options = options ?? new AggregateEditorOptionsFactory().Create(configuration);
+            _options = options ?? new AggregateBuilderOptionsFactory().Create(configuration);
 
             //can graph it if it isn't a cohort one or patient index table
             btnGraph.Enabled = !_aggregate.IsCohortIdentificationAggregate;

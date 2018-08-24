@@ -337,6 +337,10 @@
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
+    <Compile Include="QueryBuilding\Options\AggregateBuilderBasicOptions.cs" />
+    <Compile Include="QueryBuilding\Options\AggregateBuilderCohortOptions.cs" />
+    <Compile Include="QueryBuilding\Options\AggregateBuilderOptionsFactory.cs" />
+    <Compile Include="QueryBuilding\Options\IAggregateBuilderOptions.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
