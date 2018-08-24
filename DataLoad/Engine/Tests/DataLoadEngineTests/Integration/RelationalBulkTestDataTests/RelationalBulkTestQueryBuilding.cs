@@ -68,8 +68,7 @@ FROM
                 var fk2 = colsFromTable2.Single(e => e.GetRuntimeName().Equals("PKFKClearenceLevel"));
                 CatalogueRepository.JoinInfoFinder.AddJoinInfo(fk2.ColumnInfo, pk2.ColumnInfo, ExtractionJoinType.Left, null);//notice they are in different directions
 
-                qb.RegenerateSQL();
-                QueryBuildingException ex2 = Assert.Throws<QueryBuildingException>(() => Console.WriteLine(qb.SQL));
+                QueryBuildingException ex2 = Assert.Throws<QueryBuildingException>(qb.RegenerateSQL);
 
                 Assert.IsTrue(ex2.Message.Contains(@"Found 2 possible Joins for "));
 
@@ -205,8 +204,7 @@ FROM
                 ei3.Order = 6;
 
                 qb.SelectColumns.Clear();
-                qb.RegenerateSQL();
-
+                
                 qb.AddColumnRange(new IColumn[]
                 {
                     dataset_fk1,
@@ -216,6 +214,8 @@ FROM
                     dataset_fk3,
                     ei3
                 });
+                
+                qb.RegenerateSQL();
 
                 Assert.AreEqual(CollapseWhitespace(@"SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1],
