@@ -191,7 +191,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "AllServersNodeMenu",
             "SomeClass",
             "ProposeExecutionWhenCommandIs",
-            "Log4Net"
+            "Log4Net",
+            "ReleaseLocation"
 
         };
 

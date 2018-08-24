@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.Repositories;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution;
@@ -35,14 +36,16 @@ namespace DataLoadEngine.LoadProcess
         public ExitCodeType? ExitCode { get; private set; }
         public Exception Exception { get; private set; }
 
+        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         protected readonly ILoadMetadata LoadMetadata;
         protected readonly IDataLoadEventListener DataLoadEventListener;
         protected readonly ILogManager LogManager;
 
         private readonly ICheckable _preExecutionChecker;
         
-        public DataLoadProcess(ILoadMetadata loadMetadata, ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener, IDataLoadExecution loadExecution)
+        public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener, IDataLoadExecution loadExecution)
         {
+            _repositoryLocator = repositoryLocator;
             LoadMetadata = loadMetadata;
             DataLoadEventListener = dataLoadEventListener;
             LoadExecution = loadExecution;
@@ -58,7 +61,7 @@ namespace DataLoadEngine.LoadProcess
             PerformPreExecutionChecks();
 
             // create job
-            var job = JobProvider.Create(DataLoadEventListener);
+            var job = JobProvider.Create(_repositoryLocator,DataLoadEventListener);
 
             // if job is null, there are no more jobs to submit
             if (job == null)

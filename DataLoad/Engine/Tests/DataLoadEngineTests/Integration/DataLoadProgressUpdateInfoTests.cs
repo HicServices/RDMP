@@ -29,7 +29,7 @@ namespace DataLoadEngineTests.Integration
             var lmd = MockRepository.GenerateMock<ILoadMetadata>();
             lmd.Expect(m => m.GetAllCatalogues()).Return(new[] { cata });
 
-            _job = new ScheduledDataLoadJob("fish", MockRepository.GenerateMock<ILogManager>(), lmd, null, new ThrowImmediatelyDataLoadJob());
+            _job = new ScheduledDataLoadJob(null,"fish", MockRepository.GenerateMock<ILogManager>(), lmd, null, new ThrowImmediatelyDataLoadJob());
         }
         #endregion
 

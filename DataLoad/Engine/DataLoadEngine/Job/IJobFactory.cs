@@ -1,3 +1,4 @@
+using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job
@@ -7,6 +8,6 @@ namespace DataLoadEngine.Job
     /// </summary>
     public interface IJobFactory
     {
-        IDataLoadJob Create(IDataLoadEventListener listener);
+        IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener);
     }
 }

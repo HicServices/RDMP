@@ -32,6 +32,8 @@ namespace DataLoadEngine.Job
         List<TableInfo> RegularTablesToLoad { get; }
         List<TableInfo> LookupTablesToLoad { get; }
         
+        IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
+
         void StartLogging();
         void CloseLogging();
 

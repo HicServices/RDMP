@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Repositories;
 using DataLoadEngine.DatabaseManagement.Operations;
 using HIC.Logging;
 using ReusableLibraryCode.Progress;
@@ -35,6 +36,8 @@ namespace DataLoadEngine.Job
         public string ArchiveFilepath { get; private set; }
         public List<TableInfo> RegularTablesToLoad { get; set; }
         public List<TableInfo> LookupTablesToLoad { get; private set; }
+        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get { return null; }}
+
         public void StartLogging()
         {
         }

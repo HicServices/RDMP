@@ -18,8 +18,8 @@ namespace DataLoadEngine.Job.Scheduling
         public ILoadProgress LoadProgress { get; set; }
         public List<DateTime> DatesToRetrieve { get; set; }
         
-        public ScheduledDataLoadJob(string description, ILogManager logManager, ILoadMetadata loadMetadata, IHICProjectDirectory hicProjectDirectory, IDataLoadEventListener listener)
-            : base(description, logManager, loadMetadata, hicProjectDirectory, listener)
+        public ScheduledDataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, IHICProjectDirectory hicProjectDirectory, IDataLoadEventListener listener)
+            : base(repositoryLocator,description, logManager, loadMetadata, hicProjectDirectory, listener)
         {
         }
     }

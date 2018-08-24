@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.Contracts;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Repositories;
 using DataLoadEngine.DataProvider;
 using HIC.Logging;
 using ReusableLibraryCode.Progress;
@@ -22,7 +23,7 @@ namespace DataLoadEngine.Job.Scheduling
             LogManager = logManager;
         }
 
-        public abstract IDataLoadJob Create(IDataLoadEventListener listener);
+        public abstract IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener);
         public abstract bool HasJobs();
     }
 }

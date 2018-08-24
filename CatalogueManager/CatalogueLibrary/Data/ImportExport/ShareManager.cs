@@ -269,7 +269,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
         /// </summary>
         /// <param name="toImport"></param>
-        /// <param name="deleteExisting"></param>
+        /// <param name="deleteExisting">Deletes the object if the object has already been imported previously (not a good idea).</param>
         /// <returns></returns>
         internal IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport, bool deleteExisting)
         {

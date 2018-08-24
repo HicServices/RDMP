@@ -24,8 +24,8 @@ namespace DataLoadEngine.LoadProcess.Scheduling
         protected readonly ILoadProgressSelectionStrategy LoadProgressSelectionStrategy;
         protected readonly int? OverrideNumberOfDaysToLoad;
 
-        protected ScheduledDataLoadProcess(ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution, JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory, ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad, ILogManager logManager, IDataLoadEventListener dataLoadEventListener)
-            : base(loadMetadata, preExecutionChecker, logManager, dataLoadEventListener, loadExecution)
+        protected ScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution, JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory, ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad, ILogManager logManager, IDataLoadEventListener dataLoadEventListener)
+            : base(repositoryLocator,loadMetadata, preExecutionChecker, logManager, dataLoadEventListener, loadExecution)
         {
             JobDateGenerationStrategyFactory = jobDateGenerationStrategyFactory;
             LoadProgressSelectionStrategy = loadProgressSelectionStrategy;
