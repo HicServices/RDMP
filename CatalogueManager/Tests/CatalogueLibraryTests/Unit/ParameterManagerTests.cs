@@ -24,9 +24,6 @@ namespace CatalogueLibraryTests.Unit
 
             var overrides = pm.GetOverridenParameters().ToArray();
 
-            Assert.IsFalse(pm.IsTopLevelOverride(myParameter));
-            Assert.IsTrue(pm.IsTopLevelOverride(overridingParameter));
-
             Assert.IsNull(pm.GetOverrideIfAnyFor(overridingParameter));
             Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter), overridingParameter);
 
@@ -52,11 +49,6 @@ namespace CatalogueLibraryTests.Unit
 
             var overrides = pm.GetOverridenParameters().ToArray();
 
-            Assert.IsFalse(pm.IsTopLevelOverride(myParameter1));
-            Assert.IsFalse(pm.IsTopLevelOverride(myParameter2));
-            Assert.IsTrue(pm.IsTopLevelOverride(overridingParameter));
-
-            
             Assert.IsNull(pm.GetOverrideIfAnyFor(overridingParameter));
             Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter1), overridingParameter);
             Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter2), overridingParameter);
@@ -81,7 +73,7 @@ DECLARE @Fish as int;
 SET @Fish=3;
 ", sql);
 
-            var after = QueryBuilder.DeconstructStringIntoParameter(sql, new MicrosoftQuerySyntaxHelper());
+            var after = ConstantParameter.Parse(sql, new MicrosoftQuerySyntaxHelper());
 
             Assert.AreEqual(param.ParameterSQL,after.ParameterSQL);
             Assert.AreEqual(param.Value, after.Value);

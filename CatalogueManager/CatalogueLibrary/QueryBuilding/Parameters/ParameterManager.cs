@@ -32,14 +32,25 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
     /// </summary>
     public class ParameterManager
     {
+        /// <summary>
+        /// <see cref="ParameterManager"/> is a state driven object, it gathers all <see cref="ISqlParameter"/> then resolves them into a final list.  This 
+        /// property records which stage of that lifecycle it is at.
+        /// </summary>
         public ParameterManagerLifecycleState State { get; private set; }
 
+        /// <summary>
+        /// Collection of all the parameters found at each level so far
+        /// <para>Do not modify this yourself</para>
+        /// </summary>
         public Dictionary<ParameterLevel,List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new Dictionary<ParameterLevel, List<ISqlParameter>>();
 
+        /// <summary>
+        /// Creates a new <see cref="ParameterManager"/> with the specified global parameters
+        /// </summary>
+        /// <param name="globals"></param>
         public ParameterManager(ISqlParameter[] globals = null)
         {
             State = ParameterManagerLifecycleState.AllowingGlobals;
-
             
             ParametersFoundSoFarInQueryGeneration.Add(ParameterLevel.TableInfo, new List<ISqlParameter>());
             ParametersFoundSoFarInQueryGeneration.Add(ParameterLevel.QueryLevel, new List<ISqlParameter>());
@@ -50,27 +61,44 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
                 ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].AddRange(globals);
         }
 
-
-        
+        /// <summary>
+        /// Records parameters from the <see cref="TableInfo"/> at the appropriate <see cref="ParameterLevel"/>
+        /// </summary>
         public void AddParametersFor(List<TableInfo> tableInfos)
         {
             AddParametersFor(tableInfos.ToArray(), ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo]);
         }
 
+        /// <summary>
+        /// Records parameters from the <see cref="TableInfo"/> at the appropriate <see cref="ParameterLevel"/>
+        /// </summary>
         public void AddParametersFor(TableInfo tableInfo)
         {
             AddParametersFor(tableInfo, ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo]);
         }
+
+        /// <summary>
+        /// Records parameters from the <see cref="IFilter"/> at the appropriate <see cref="ParameterLevel"/>
+        /// </summary>
         public void AddParametersFor(List<IFilter> filters)
         {
             AddParametersFor(filters.ToArray(), ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel]);
         }
 
+        /// <summary>
+        /// Records parameters from the <see cref="ICollectSqlParameters"/> at the specified <see cref="ParameterLevel"/>
+        /// </summary>
         public void AddParametersFor(ICollectSqlParameters collector, ParameterLevel parameterLevel)
         {
             AddParametersFor(collector, ParametersFoundSoFarInQueryGeneration[parameterLevel]);
         }
 
+        /// <summary>
+        /// Adds a new global parameter which will overridde other parameters declared at lower <see cref="ParameterLevel"/>
+        /// 
+        /// <para>The <see cref="State"/> must be <see cref="ParameterManagerLifecycleState.AllowingGlobals"/> for this to be allowed</para>
+        /// </summary>
+        /// <param name="parameter"></param>
         public void AddGlobalParameter(ISqlParameter parameter)
         {
             if(State != ParameterManagerLifecycleState.AllowingGlobals)
@@ -98,6 +126,12 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             toAddTo.AddRange(collector.GetAllParameters());
         }
 
+
+        /// <summary>
+        /// Resolves all <see cref="ISqlParameter"/> found so far and merges/overrides as appropriate to accomodate identical side by side parameters and 
+        /// global overriding ones etc.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<ISqlParameter> GetFinalResolvedParametersList()
         {
             State = ParameterManagerLifecycleState.Finalized;
@@ -128,7 +162,9 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             return toReturn.Select(t=>t.Parameter);
         }
 
-
+        /// <summary>
+        /// Removes all non global parameters from the <see cref="ParameterManager"/> and returns the <see cref="State"/> to allow new parameters
+        /// </summary>
         public void ClearNonGlobals()
         {
             ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Clear();
@@ -328,6 +364,12 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             return counter;
         }
 
+        /// <summary>
+        /// Returns all <see cref="ISqlParameter"/> which would be overwritten (ignored) because of higher level parameters during <see cref="GetFinalResolvedParametersList"/>
+        /// 
+        /// <para>Does not change the <see cref="State"/>of the <see cref="ParameterManager"/></para>
+        /// </summary>
+        /// <returns></returns>
         public ISqlParameter[] GetOverridenParameters()
         {
             List<ISqlParameter> toReturn = new List<ISqlParameter>();
@@ -356,17 +398,11 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             return toReturn.ToArray();
         }
 
-        public bool IsTopLevelOverride(ISqlParameter candidate)
-        {
-            var overridens = GetOverridenParameters();
-
-            //it is itself overridden
-            if (overridens.Contains(candidate))
-                return false;
-
-            return overridens.Any(o => AreDeclaredTheSame(o, candidate));
-        }
-
+        /// <summary>
+        /// Returns the <see cref="ISqlParameter"/> which would be overwritten (ignored) because of higher level parameters during <see cref="GetFinalResolvedParametersList"/>
+        /// </summary>
+        /// <param name="existing"></param>
+        /// <returns>The overriding parameter or null if there are none</returns>
         public ISqlParameter GetOverrideIfAnyFor(ISqlParameter existing)
         {
             var currentLevel = GetLevelForParameter(existing);
@@ -390,6 +426,12 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             return null;
         }
 
+        /// <summary>
+        /// Makes the <see cref="ParameterManager"/> forget about the given <see cref="ISqlParameter"/>
+        /// 
+        /// <para>This operation ignores <see cref="State"/> so you should not use the <see cref="ParameterManager"/> for code generation after calling this method</para>
+        /// </summary>
+        /// <param name="deleteable"></param>
         public void RemoveParameter(ISqlParameter deleteable)
         {
             foreach (List<ISqlParameter> parameters in ParametersFoundSoFarInQueryGeneration.Values)
@@ -397,9 +439,16 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
                     parameters.Remove(deleteable);
         }
 
-
-        public ParameterLevel GetLevelForParameter(ISqlParameter parameter)
+        /// <summary>
+        /// Returns the <see cref="ParameterLevel"/> that the <see cref="ISqlParameter"/> was found at or null if has not been added to this <see cref="ParameterManager"/>
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public ParameterLevel? GetLevelForParameter(ISqlParameter parameter)
         {
+            if (ParametersFoundSoFarInQueryGeneration.Count(k => k.Value.Contains(parameter)) == 0)
+                return null;
+
             return 
                 ParametersFoundSoFarInQueryGeneration.Single(k => k.Value.Contains(parameter)).Key;
         

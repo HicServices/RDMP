@@ -121,7 +121,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// <summary>
         /// The line of SQL code and it's position in the query which results in result limiting (e.g. LIMIT X in MySql and TOP X in SqlServer)
         /// 
-        /// <para>Changing this manually is not recommended, specify it in the <see cref="IQueryBuilder"/> constructor instead</para>
+        /// <para>Changing this manually is not recommended, specify it in the <see cref="ISqlQueryBuilder"/> constructor instead</para>
         /// </summary>
         CustomLine TopXCustomLine { get; set; }
     }

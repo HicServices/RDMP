@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace CatalogueLibrary.QueryBuilding.Parameters
 {
     /// <summary>
@@ -15,8 +9,19 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
     /// </summary>
     public enum ParameterManagerLifecycleState
     {
+        /// <summary>
+        /// More global parameters can be added
+        /// </summary>
         AllowingGlobals,
+
+        /// <summary>
+        /// Parameter discovery has started, no more globals can be added
+        /// </summary>
         ParameterDiscovery,
+
+        /// <summary>
+        /// The final parameter list has been generated and no more parameters can be added
+        /// </summary>
         Finalized
 
     }

@@ -11,19 +11,28 @@ namespace CatalogueLibrary.QueryBuilding
     /// </summary>
     public class QueryBuildingException : Exception
     {
+        /// <summary>
+        /// List of objects thought to be responsible for the query generation failing
+        /// </summary>
         public List<IMapsDirectlyToDatabaseTable> ProblemObjects {get;private set;}
 
+        
+        /// <inheritdoc cref="QueryBuildingException(string)"/>
         public QueryBuildingException(string message, IEnumerable<IMapsDirectlyToDatabaseTable> problemObjects,
             Exception innerException = null) : base(message, innerException)
         {
             ProblemObjects = new List<IMapsDirectlyToDatabaseTable>(problemObjects);
         }
-
+        
+        /// <inheritdoc cref="QueryBuildingException(string)"/>
         public QueryBuildingException(string message, Exception innerException) : base(message, innerException)
         {
             ProblemObjects = new List<IMapsDirectlyToDatabaseTable>();
         }
 
+        /// <summary>
+        /// Creates a new Exception for when there is a problem with QueryBuilding e.g. being unable to find a compatible IJoin (JoinInfo) between two TableInfos required by a query
+        /// </summary>
         public QueryBuildingException(string message):base (message)
         {
             ProblemObjects = new List<IMapsDirectlyToDatabaseTable>();
