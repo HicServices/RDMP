@@ -16,6 +16,10 @@ namespace CatalogueLibrary.QueryBuilding
     {
         static Random r = new Random();
 
+        /// <summary>
+        /// Allows the given <see cref="ColumnInfo"/> to act as an <see cref="IColumn"/> giving it an Order and setting extraction flags (e.g. <see cref="HashOnDataRelease"/>)to sensible defaults.
+        /// </summary>
+        /// <param name="column"></param>
         public ColumnInfoToIColumn(ColumnInfo column)
         {
             ColumnInfo = column;
@@ -27,22 +31,37 @@ namespace CatalogueLibrary.QueryBuilding
             IsExtractionIdentifier = false;
             IsPrimaryKey = false;
         }
-
+        
+        /// <inheritdoc/>
         public string GetRuntimeName()
         {
             return ColumnInfo.GetRuntimeName();
         }
-
-        public ColumnInfo ColumnInfo { get; private set; }
-        public int Order { get; set; }
         
+        /// <inheritdoc/>
+        public ColumnInfo ColumnInfo { get; private set; }
+
+        /// <inheritdoc/>
+        public int Order { get; set; }
+
+        /// <inheritdoc/>
         [Sql]
         public string SelectSQL { get; set; }
+        /// <inheritdoc/>
         public int ID { get; private set; }
+        /// <inheritdoc/>
         public string Alias { get; set; }
+        /// <inheritdoc/>
         public bool HashOnDataRelease { get; private set; }
+        /// <inheritdoc/>
         public bool IsExtractionIdentifier { get; private set; }
+        /// <inheritdoc/>
         public bool IsPrimaryKey { get; private set; }
+        
+        /// <summary>
+        /// Checks the syntax of the column
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             new ColumnSyntaxChecker(this).Check(notifier);

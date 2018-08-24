@@ -194,12 +194,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
         private void ReloadUIFromDatabase()
         {
             isRefreshing = true;
-            cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.ExtractableTickBox, _aggregate);
+            cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
             cbExtractable.Checked = _aggregate.IsExtractable;
 
-            olvJoin.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.FROM, _aggregate);
-            //gbWhere.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.WHERE, _aggregate);
-            gbHaving.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.HAVING, _aggregate);
             gbPivot.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
             gbAxis.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.AXIS, _aggregate);
 

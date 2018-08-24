@@ -73,45 +73,70 @@ namespace CatalogueLibrary.QueryBuilding
         /// Optional, SQL to apply a HAVING clause to the GROUP BY query generated
         /// 
         /// <para>Do not include the word HAVING in the text since it will automatically be added</para>
+        /// 
+        /// <para>Depending on <see cref="Options.IAggregateBuilderOptions.ShouldBeEnabled"/> this may not be supported for your <see cref="AggregateConfiguration"/></para>
         /// </summary>
         public string HavingSQL { get; set; }
 
         /// <summary>
-        /// Optional, Limit the results returned.  Depending on the mode the 
+        /// Optional, Limit the results returned.
+        /// 
+        /// <para>Depending on <see cref="Options.IAggregateBuilderOptions.ShouldBeEnabled"/> this may not be supported for your <see cref="AggregateConfiguration"/></para>
         /// </summary>
         public IAggregateTopX AggregateTopX { get; set; }
 
+        /// <inheritdoc/>
         public List<QueryTimeColumn> SelectColumns { get; private set; }
-        public List<TableInfo> TablesUsedInQuery { get; private set; }
 
+        /// <inheritdoc/>
+        public List<TableInfo> TablesUsedInQuery { get; private set; }
+        
+        /// <inheritdoc/>
         public List<JoinInfo> JoinsUsedInQuery { get; private set; }
 
+        /// <inheritdoc/>
         public List<CustomLine> CustomLines { get; private set; }
+
+        /// <inheritdoc/>
         public CustomLine TopXCustomLine { get; set; }
 
+        /// <inheritdoc/>
         public CustomLine AddCustomLine(string text, QueryComponent positionToInsert)
         {
             SQLOutOfDate = true;
             return SqlQueryBuilderHelper.AddCustomLine(this,text, positionToInsert);
         }
 
-
+        /// <inheritdoc/>
         public List<IFilter> Filters { get; private set; }
 
+        /// <inheritdoc/>
         public IContainer RootFilterContainer { get; set; }
+
+        /// <inheritdoc/>
         public bool CheckSyntax { get; set; }
+
+        /// <inheritdoc/>
         public TableInfo PrimaryExtractionTable { get; private set; }
+
+        /// <inheritdoc/>
         public ParameterManager ParameterManager { get; private set; }
 
         string _sql;
         /// <inheritdoc/>
         public bool SQLOutOfDate { get; set; }
 
-        public ICollectSqlParameters QueryLevelParameterProvider { get; set; }
+        /// <summary>
+        /// Facilitates injection of <see cref="ISqlParameter"/> from the <see cref="AggregateConfiguration"/> at <see cref="ParameterLevel.QueryLevel"/>
+        /// with consideration for any overriding globals that might already exist
+        /// </summary>
+        private readonly ICollectSqlParameters _queryLevelParameterProvider;
 
-        
-        public bool DoNotWriteOutOrderBy { get; set; }
-
+        /// <summary>
+        /// True to skip writing any parameter declarations (which would normally appear at the top of the query).
+        ///
+        /// <para>This can be used to allow joining several queries together interspersed with INTERSECT / UNION etc without the <see cref="ISqlParameter"/> declarations getting in the way </para>
+        /// </summary>
         public bool DoNotWriteOutParameters
         {
             get { return _doNotWriteOutParameters; }
@@ -132,20 +157,36 @@ namespace CatalogueLibrary.QueryBuilding
         }
 
         /// <summary>
-        /// when adding columns you have the option of either including them in groupby (default) or omitting them from groupby.  If ommitted then the columns will be used to decide how to build the FROM statement (which tables to join etc) but not included in the SELECT and GROUP BY sections of the query
+        /// when adding columns you have the option of either including them in groupby (default) or omitting them from groupby.  If ommitted then the columns will be used to decide how to
+        /// build the FROM statement (which tables to join etc) but not included in the SELECT and GROUP BY sections of the query
         /// </summary>
         private readonly List<IColumn> _skipGroupByForThese = new List<IColumn>();
 
+        /// <inheritdoc cref="AggregateBuilder(string,string,AggregateConfiguration)" />
+        /// <param name="forceJoinsToTheseTables">Tables you definetly want the query to join against in the FROM section (compatible <see cref="JoinInfo"/> must exist if there are multiple)</param>
         public AggregateBuilder(string limitationSQL, string countSQL,AggregateConfiguration aggregateConfigurationIfAny,TableInfo[] forceJoinsToTheseTables)
             : this(limitationSQL, countSQL, aggregateConfigurationIfAny)
         {
             _forceJoinsToTheseTables = forceJoinsToTheseTables;
         }
 
+        /// <summary>
+        /// True to skip the ORDER BY section of the query
+        /// </summary>
+        public bool DoNotWriteOutOrderBy { get; set; }
 
+        /// <summary>
+        /// Build a query based on the current <see cref="AggregateConfiguration"/>
+        /// </summary>
+        /// <param name="limitationSQL">See <see cref="LimitationSQL"/></param>
+        /// <param name="countSQL">
+        /// Intended purpose:The line of SELECT Sql that is an 'Aggregate Function' e.g. count(*).
+        /// <para>Other purposes: You can use this to ram arbitrary lines of code into SELECT section of the query e.g. see CohortQueryBuilder </para>
+        /// </param>
+        /// <param name="aggregateConfigurationIfAny"><see cref="AggregateConfiguration"/> containing columns, filters, parameters etc for the GROUP BY</param>
         public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny)
         {
-            if (limitationSQL != null && limitationSQL.Contains("top"))
+            if (limitationSQL != null && limitationSQL.Trim().StartsWith("top",StringComparison.CurrentCultureIgnoreCase))
                 throw new Exception("Use AggregateTopX property instead of limitation SQL to acheive this");
 
             _aggregateConfigurationIfAny = aggregateConfigurationIfAny;
@@ -165,7 +206,7 @@ namespace CatalogueLibrary.QueryBuilding
 
             LabelWithComment = aggregateConfigurationIfAny != null ? aggregateConfigurationIfAny.Name : "";
 
-            QueryLevelParameterProvider = aggregateConfigurationIfAny;
+            _queryLevelParameterProvider = aggregateConfigurationIfAny;
             
             if (aggregateConfigurationIfAny != null)
             {
@@ -174,7 +215,7 @@ namespace CatalogueLibrary.QueryBuilding
             }
         }
 
-
+        /// <inheritdoc/>
         public void AddColumn(IColumn col)
         {
             AddColumn(col,true);
@@ -193,12 +234,14 @@ namespace CatalogueLibrary.QueryBuilding
                 _skipGroupByForThese.Add(col);
         }
 
+        /// <inheritdoc/>
         public void AddColumnRange(IColumn[] columnsToAdd)
         {
             AddColumnRange(columnsToAdd, true);
         }
 
-
+        /// <inheritdoc/>
+        /// <param name="includeAsGroupBy">false to add the columns only to the SELECT section of the query (and not GROUP BY)</param>
         public void AddColumnRange(IColumn[] columnsToAdd, bool includeAsGroupBy)
         {
             foreach (IColumn column in columnsToAdd)
@@ -213,8 +256,13 @@ namespace CatalogueLibrary.QueryBuilding
         private int _pivotID=-1;
         private bool _doNotWriteOutParameters;
         private IQuerySyntaxHelper _syntaxHelper;
-        private AggregateConfiguration _aggregateConfigurationIfAny;
+        private readonly AggregateConfiguration _aggregateConfigurationIfAny;
 
+        /// <summary>
+        /// Defines a PIVOT on the values in a given column.  This is only valid for <see cref="AggregateConfiguration"/> which are graphs
+        /// <see cref="Options.AggregateBuilderBasicOptions"/> which must also have an axis configured
+        /// </summary>
+        /// <param name="pivot"></param>
         public void SetPivotToDimensionID(AggregateDimension pivot)
         {
             //ensure it has an alias
@@ -242,8 +290,8 @@ namespace CatalogueLibrary.QueryBuilding
 
             ParameterManager.ClearNonGlobals();
 
-            if(QueryLevelParameterProvider != null)
-                ParameterManager.AddParametersFor(QueryLevelParameterProvider,ParameterLevel.QueryLevel);
+            if(_queryLevelParameterProvider != null)
+                ParameterManager.AddParametersFor(_queryLevelParameterProvider,ParameterLevel.QueryLevel);
 
             TableInfo primary;
             TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary);
@@ -543,9 +591,13 @@ namespace CatalogueLibrary.QueryBuilding
             return toReturn;
         }
 
+        /// <summary>
+        /// Throws <see cref="NotSupportedException"/> since <see cref="Lookup"/> canot be part of an aggregate GROUP BY
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Lookup> GetDistinctRequiredLookups()
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

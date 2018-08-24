@@ -9,15 +9,23 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.QueryBuilding.Options
 {
+    /// <summary>
+    /// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running as a 'cohort set' 
+    /// </summary>
     public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
     {
         private readonly ISqlParameter[] _globals;
 
+        /// <summary>
+        /// Creates an <see cref="IAggregateBuilderOptions"/> for use with <see cref="AggregateConfiguration"/> which are <see cref="IAggregateBuilderOptions.IsCohortIdentificationAggregate"/>
+        ///  </summary>
+        /// <param name="globals">Global parameters found in the scope of <see cref="AggregateConfiguration"/> you intend to use</param>
         public AggregateBuilderCohortOptions(ISqlParameter[] globals)
         {
             _globals = globals;
         }
 
+        /// <inheritdoc/>
         public string GetTitleTextPrefix(AggregateConfiguration aggregate)
         {
             if (aggregate.IsJoinablePatientIndexTable())
@@ -26,6 +34,7 @@ namespace CatalogueLibrary.QueryBuilding.Options
             return "Cohort Identification Set:";
         }
 
+        /// <inheritdoc/>
         public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
         {
             //get the existing dimensions
@@ -42,6 +51,7 @@ namespace CatalogueLibrary.QueryBuilding.Options
             return candidates.Where(c => c.IsExtractionIdentifier).ToArray();
         }
 
+        /// <inheritdoc/>
         public IColumn[] GetAvailableWHEREColumns(AggregateConfiguration aggregate)
         {
             var toReturn = new List<IColumn>();
@@ -64,22 +74,15 @@ namespace CatalogueLibrary.QueryBuilding.Options
             return toReturn.ToArray();
         }
 
+        /// <inheritdoc/>
         public bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate)
         {
             switch (section)
             {
-                case AggregateEditorSection.ExtractableTickBox:
+                case AggregateEditorSection.Extractable:
                     return false;
-                case AggregateEditorSection.SELECT:
-                    return true;
                 case AggregateEditorSection.TOPX:
                     return false;
-                case AggregateEditorSection.FROM:
-                    return true;
-                case AggregateEditorSection.WHERE:
-                    return true;
-                case AggregateEditorSection.HAVING:
-                    return true;
                 case AggregateEditorSection.PIVOT:
                     return false;
                 case AggregateEditorSection.AXIS:
@@ -89,6 +92,7 @@ namespace CatalogueLibrary.QueryBuilding.Options
             }
         }
 
+        /// <inheritdoc/>
         public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
         {
             var existingForcedJoinTables = aggregate.ForcedJoins;
@@ -123,6 +127,7 @@ namespace CatalogueLibrary.QueryBuilding.Options
             return toReturn.ToArray();
         }
 
+        /// <inheritdoc/>
         public ISqlParameter[] GetAllParameters(AggregateConfiguration aggregate)
         {
             var parameterManager = new ParameterManager();
@@ -134,6 +139,7 @@ namespace CatalogueLibrary.QueryBuilding.Options
             return parameterManager.GetFinalResolvedParametersList().ToArray();
         }
 
+        /// <inheritdoc/>
         public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate)
         {
             return aggregate.IsJoinablePatientIndexTable()

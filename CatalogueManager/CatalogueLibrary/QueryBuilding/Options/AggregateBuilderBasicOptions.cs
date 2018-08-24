@@ -6,8 +6,12 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.QueryBuilding.Options
 {
-    class AggregateBuilderBasicOptions : IAggregateBuilderOptions
+    /// <summary>
+    /// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running in 'graph mode' 
+    /// </summary>
+    public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
     {
+        /// <inheritdoc/>
         public string GetTitleTextPrefix(AggregateConfiguration aggregate)
         {
             if(aggregate.IsExtractable)
@@ -16,6 +20,7 @@ namespace CatalogueLibrary.QueryBuilding.Options
             return "'Group By' Aggregate:";
         }
 
+        /// <inheritdoc/>
         public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
         {
             var existingDimensions = aggregate.AggregateDimensions.Select(d => d.ExtractionInformation).ToArray();
@@ -28,29 +33,23 @@ namespace CatalogueLibrary.QueryBuilding.Options
 
         }
 
+        /// <inheritdoc/>
         public IColumn[] GetAvailableWHEREColumns(AggregateConfiguration aggregate)
         {
             //for this basic case the WHERE columns can be anything
             return aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Cast<IColumn>().ToArray();
         }
 
+        /// <inheritdoc/>
         public bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate)
         {
             switch (section)
             {
-                case AggregateEditorSection.ExtractableTickBox:
+                case AggregateEditorSection.Extractable:
                     return CanMakeExtractable(aggregate);
-                case AggregateEditorSection.SELECT:
-                    return true;
                 case AggregateEditorSection.TOPX:
                     //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries 
                     return aggregate.PivotOnDimensionID != null || aggregate.GetAxisIfAny() == null;
-                case AggregateEditorSection.FROM:
-                    return true;
-                case AggregateEditorSection.WHERE:
-                    return true;
-                case AggregateEditorSection.HAVING:
-                    return true;
                 case AggregateEditorSection.PIVOT:
                     return aggregate.GetAxisIfAny() != null;//can only pivot if there is an axis
                 case AggregateEditorSection.AXIS:
@@ -60,6 +59,7 @@ namespace CatalogueLibrary.QueryBuilding.Options
             }
         }
 
+        /// <inheritdoc/>
         public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
         {
             var availableTables = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
@@ -88,11 +88,13 @@ namespace CatalogueLibrary.QueryBuilding.Options
             return true;
         }
 
+        /// <inheritdoc/>
         public ISqlParameter[] GetAllParameters(AggregateConfiguration aggregate)
         {
             return aggregate.GetAllParameters();
         }
 
+        /// <inheritdoc/>
         public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate)
         {
             return CountColumnRequirement.MustHaveOne;

@@ -32,35 +32,53 @@ namespace CatalogueLibrary.QueryBuilding
             ParameterSQL = parameterSQL;
         }
 
+        /// <summary>
+        /// Not supported for constant parameters
+        /// </summary>
         public void SaveToDatabase()
         {
             throw new NotSupportedException();
         }
 
+        /// <inheritdoc cref="ParameterName"/>
         public override string ToString()
         {
             return ParameterName;
         }
 
+        /// <summary>
+        /// Checks the syntax of the parameter (See <see cref="ParameterSyntaxChecker"/>)
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             new ParameterSyntaxChecker(this).Check(notifier);
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return _syntaxHelper;
         }
 
+        /// <inheritdoc/>
         public string ParameterName { get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); } }
 
+        /// <inheritdoc/>
         [Sql]
         public string ParameterSQL { get; set; }
 
+        /// <inheritdoc/>
         [Sql]
         public string Value { get; set; }
+
+        /// <inheritdoc/>
         public string Comment { get; set; }
 
+        /// <summary>
+        /// Returns null, <see cref="ConstantParameter"/> are never owned by any objects
+        /// </summary>
+        /// <returns></returns>
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
             return null;
