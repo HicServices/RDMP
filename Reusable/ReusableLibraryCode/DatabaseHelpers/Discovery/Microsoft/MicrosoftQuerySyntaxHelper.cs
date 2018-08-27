@@ -85,7 +85,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 
         public override string HowDoWeAchieveMd5(string selectSql)
         {
-            return "CONVERT(NVARCHAR(32),HASHBYTES('MD5'," + selectSql + "),2)";
+            return "CONVERT(NVARCHAR(32),HASHBYTES('MD5', CONVERT(varbinary," + selectSql + ")),2)";
         }
 
         public override string EnsureWrappedImpl(string databaseOrTableName)
