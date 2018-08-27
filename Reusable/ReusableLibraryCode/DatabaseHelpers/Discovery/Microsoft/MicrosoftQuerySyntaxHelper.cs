@@ -83,6 +83,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             return base.IsTimeout(exception);
         }
 
+        public override string HowDoWeAchieveMd5(string selectSql)
+        {
+            return "CONVERT(NVARCHAR(32),HASHBYTES('MD5'," + selectSql + "),2)";
+        }
+
         public override string EnsureWrappedImpl(string databaseOrTableName)
         {
             return "[" + GetRuntimeName(databaseOrTableName) + "]";

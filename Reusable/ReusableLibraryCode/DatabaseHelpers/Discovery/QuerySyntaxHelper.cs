@@ -290,6 +290,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return exception.Message.ToLower().Contains("timeout");
         }
 
+        public abstract string HowDoWeAchieveMd5(string selectSql);
+
         #region Equality Members
         protected bool Equals(QuerySyntaxHelper other)
         {

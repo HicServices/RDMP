@@ -6,6 +6,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
+using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -25,23 +26,26 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
         {
             // let's look for primary keys in the Extraction Information
-            var allPrimaryKeys = Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions).Where(col => col.IsPrimaryKey).ToList();
+            var cataloguePrimaryKeys = GetCatalogueItemPrimaryKeys();
 
             // if there are some they will be marked in the "GetChunk".
             // If there are none, then we need to synth a new column here.
-            if (!allPrimaryKeys.Any())
+            if (!cataloguePrimaryKeys.Any())
             {
-                var primaryKeys = GetProperTables().SelectMany(GetPrimaryKeys).ToList();
+                var primaryKeys = GetColumnInfoPrimaryKeys().ToArray();
 
                 if (primaryKeys.Any())
                 {
                     string newSql;
-                    if (primaryKeys.Count > 1) // no need to do anything if there is only one.
+                    if (primaryKeys.Length > 1) // no need to do anything if there is only one.
                         newSql = "CONCAT(" + String.Join(",'_',", primaryKeys.Select(apk => apk.ToString())) + ")";
                     else
-                        newSql = primaryKeys.First().ToString();
+                        newSql = primaryKeys.Single().Name;
 
-                    Request.QueryBuilder.AddColumn(new SpontaneouslyInventedColumn(SYNTH_PK_COLUMN, newSql)
+                    var syntaxHelper = Request.Catalogue.GetQuerySyntaxHelper();
+
+                    Request.QueryBuilder.AddColumn(
+                        new SpontaneouslyInventedColumn(SYNTH_PK_COLUMN,syntaxHelper.HowDoWeAchieveMd5(newSql))
                     {
                         HashOnDataRelease = true,
                         IsPrimaryKey = true,
@@ -53,12 +57,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
             return Request.QueryBuilder.SQL;
         }
-
-        private IEnumerable<ColumnInfo> GetPrimaryKeys(TableInfo t)
-        {
-            return t.ColumnInfos.Where(ci => ci.IsPrimaryKey);
-        }
-
+        
         private IEnumerable<TableInfo> GetProperTables()
         {
             if(Request.QueryBuilder.SQLOutOfDate)
@@ -76,9 +75,10 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             if (chunk == null)
                 return null;
 
-            var allPrimaryKeys = Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions).Where(col => col.IsPrimaryKey).Select(c=>c.GetRuntimeName()).ToList();
-            if (allPrimaryKeys.Any())
-                chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c=>allPrimaryKeys.Contains(c.ColumnName,StringComparer.CurrentCultureIgnoreCase)).ToArray();
+            var catalogueItemPkColumns = GetCatalogueItemPrimaryKeys().Select(c => c.GetRuntimeName()).ToArray();
+
+            if (catalogueItemPkColumns.Any())
+                chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c => catalogueItemPkColumns.Contains(c.ColumnName, StringComparer.CurrentCultureIgnoreCase)).ToArray();
             else 
                 if (_synthesizePkCol)
                     chunk.PrimaryKey = new[] { chunk.Columns[SYNTH_PK_COLUMN] };
@@ -92,37 +92,44 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             if (Request == null || Request == ExtractDatasetCommand.EmptyCommand) // it is the globals, and there is no PK involved in there... although there should be...
                 return;
 
-            var allPrimaryKeys = Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions).Where(col => col.IsPrimaryKey).Select(c => c.GetRuntimeName()).ToList();
+            var cataloguePrimaryKeys = GetCatalogueItemPrimaryKeys().ToArray();
             string message;
             CheckResult check;
-            if (!allPrimaryKeys.Any())
+            if (!cataloguePrimaryKeys.Any())
             {
-                message = Request.SelectedDataSets +
-                          ": No catalogue item is flagged as primary key";
+                notifier.OnCheckPerformed(new CheckEventArgs("PKSynthesizer:No CatalogueItems marked IsPrimaryKey in '" + Request.SelectedDataSets + "'",CheckResult.Warning) );
 
-                var primaryKeys = GetProperTables().SelectMany(GetPrimaryKeys).ToList();
+                var columnInfoPrimaryKeys = GetColumnInfoPrimaryKeys().ToArray();
 
-                if (primaryKeys.Any())
-                {
-                    message += ", but I found these underlying columns: " +
-                               String.Join(",", primaryKeys.Select(apk => apk.ToString())) +
-                               ". Will concatenate and hash values into new PK column: " + SYNTH_PK_COLUMN;
-                    check = CheckResult.Success;
-                }
+                if (columnInfoPrimaryKeys.Any())
+                    notifier.OnCheckPerformed(new CheckEventArgs("PKSynthesizer:Found ColumnInfo(s) marked IsPrimaryKey in '" + Request.SelectedDataSets + "'" + string.Join(",",columnInfoPrimaryKeys.Select(c=>c.Name)), CheckResult.Success));
                 else
-                {
-                    message += " and I found no pk columns in the underlying table(s). Resulting extraction will not have any PKs.";
-                    check = CheckResult.Warning;
-                }
+                    notifier.OnCheckPerformed(new CheckEventArgs("PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '" + Request.SelectedDataSets + "'", CheckResult.Fail));
+                
             }
             else
-            {
-                message = Request.SelectedDataSets + ": Found primary key catalogue items: " + String.Join(",", allPrimaryKeys) + 
-                          ". These will become PK columns in the resulting extraction.";
-                check = CheckResult.Success;
-            }
+                notifier.OnCheckPerformed(new CheckEventArgs("PKSynthesizer:Found CatalogueItem(s) marked IsPrimaryKey in '" + Request.SelectedDataSets + "'" + string.Join(",", cataloguePrimaryKeys.Select(c => c.GetRuntimeName())), CheckResult.Success));
+        }
 
-            notifier.OnCheckPerformed(new CheckEventArgs("PkSynthesizer:" + message, check));
+        private IEnumerable<IColumn> GetCatalogueItemPrimaryKeys()
+        {
+            foreach (var column in Request.ColumnsToExtract)
+            {
+                var ri = column as ReleaseIdentifierSubstitution;
+                var ec = column as ExtractableColumn;
+
+                if(ri != null)
+                    if (ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey)
+                        yield return ri;
+
+                if (ec != null && ec.IsExtractionIdentifier)
+                    yield return ec;
+            }
+        }
+
+        private IEnumerable<ColumnInfo> GetColumnInfoPrimaryKeys()
+        {
+            return GetProperTables().SelectMany(t=>t.ColumnInfos).Where(column => column.IsPrimaryKey);
         }
     }
 } 

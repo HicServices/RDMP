@@ -73,6 +73,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
             return new Dictionary<string, string>();
         }
 
+        public override string HowDoWeAchieveMd5(string selectSql)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string DatabaseTableSeparator
         {
             get { return "."; }

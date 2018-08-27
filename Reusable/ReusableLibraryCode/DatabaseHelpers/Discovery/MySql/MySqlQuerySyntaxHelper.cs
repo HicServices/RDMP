@@ -97,5 +97,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 {"case", "CASE WHEN x=y THEN 'something' WHEN x=z THEN 'something2' ELSE 'something3' END"}
             };
         }
+
+        public override string HowDoWeAchieveMd5(string selectSql)
+        {
+            return "md5(" + selectSql + ")";
+        }
     }
 }
