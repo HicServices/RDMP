@@ -36,6 +36,9 @@ namespace CatalogueLibrary.Data.DataLoad
     /// </summary>
     public class ANOTable : VersionedDatabaseEntity, ISaveable, IDeleteable,ICheckable,IRevertable, IHasDependencies
     {
+        /// <summary>
+        /// Prefix to put on anonymous columns
+        /// </summary>
         public const string ANOPrefix = "ANO";
 
         private string _identifiableDataType;
@@ -49,18 +52,29 @@ namespace CatalogueLibrary.Data.DataLoad
         private string _suffix;
         private int _serverID;
 
+        /// <summary>
+        /// The name of the table in the ANO database that stores swapped identifiers
+        /// </summary>
         public string TableName
         {
             get { return _tableName; }
             set { SetField(ref  _tableName, value); }
         }
 
+        /// <summary>
+        /// The number of decimal characters to use when creating ANO mapping identifiers.  This will directly impact the number of possible values that can be generated and therefore
+        /// the number of unique input values before anonymising fails (due to collisions).
+        /// </summary>
         public int NumberOfIntegersToUseInAnonymousRepresentation
         {
             get { return _numberOfIntegersToUseInAnonymousRepresentation; }
             set { SetField(ref  _numberOfIntegersToUseInAnonymousRepresentation, value); }
         }
 
+        /// <summary>
+        /// The number of alphabetic characters to use when creating ANO mapping identifiers.  This will directly impact the number of possible values that can be generated and therefore
+        /// the number of unique input values before anonymising fails (due to collisions).
+        /// </summary>
         public int NumberOfCharactersToUseInAnonymousRepresentation
         {
             get { return _numberOfCharactersToUseInAnonymousRepresentation; }
@@ -96,6 +110,14 @@ namespace CatalogueLibrary.Data.DataLoad
         }
         #endregion
 
+        /// <summary>
+        /// Declares that a new ANOTable (anonymous mapping table) should exist in the referenced database.  You can call this constructor without first creating the table.  If you do
+        /// you should set <see cref="NumberOfIntegersToUseInAnonymousRepresentation"/> and <see cref="NumberOfCharactersToUseInAnonymousRepresentation"/> then <see cref="PushToANOServerAsNewTable"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="externalDatabaseServer"></param>
+        /// <param name="tableName"></param>
+        /// <param name="suffix"></param>
         public ANOTable(ICatalogueRepository repository, ExternalDatabaseServer externalDatabaseServer, string tableName, string suffix)
         {
             if (string.IsNullOrWhiteSpace(tableName))
@@ -125,23 +147,35 @@ namespace CatalogueLibrary.Data.DataLoad
             shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
         }
 
+        /// <summary>
+        /// Saves the current state to the database if the <see cref="ANOTable"/> is in a valid state according to <see cref="Check"/> otherwise throws an Exception 
+        /// </summary>
         public override void SaveToDatabase()
         {
             Check(new ThrowImmediatelyCheckNotifier());
             Repository.SaveToDatabase(this);
         }
 
+        /// <summary>
+        /// Attempts to delete the remote mapping table (only works if it is empty) if the <see cref="ANOTable.IsTablePushed"/> then deletes the <see cref="ANOTable"/> reference
+        /// object (this) from the RDMP platform database.
+        /// </summary>
         public override void DeleteInDatabase()
         {
             DeleteANOTableInANOStore();
             Repository.DeleteFromDatabase(this);
         }
         
+        /// <inheritdoc/>
         public override string ToString()
         {
             return TableName;
         }
         
+        /// <summary>
+        /// Checks that the remote mapping table referenced by this object exists and checks <see cref="ANOTable"/> settings (<see cref="Suffix"/> etc).
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             if (string.IsNullOrWhiteSpace(Suffix))
@@ -172,11 +206,19 @@ namespace CatalogueLibrary.Data.DataLoad
             }
         }
 
+        /// <summary>
+        /// Returns true if the anonymous mapping table (<see cref="TableName"/> exists in the referenced mapping database (<see cref="Server"/>)
+        /// </summary>
+        /// <returns></returns>
         public bool IsTablePushed()
         {
             return GetPushedTable() != null;
         }
 
+        /// <summary>
+        /// Connects to <see cref="Server"/> and returns a <see cref="DiscoveredTable"/> that contains the anonymous identifier mappings
+        /// </summary>
+        /// <returns></returns>
         public DiscoveredTable GetPushedTable()
         {
             var tables = DataAccessPortal.GetInstance()
@@ -186,45 +228,25 @@ namespace CatalogueLibrary.Data.DataLoad
             return tables.SingleOrDefault(t => t.GetRuntimeName().Equals(TableName));
         }
 
+        /// <summary>
+        /// Attempts to delete the anonymous mapping table referenced by <see cref="TableName"/> on the mapping <see cref="Server"/>.  This is safer than just dropping
+        /// from <see cref="GetPushedTable"/> since it will check the table exists, is empty etc.
+        /// </summary>
         public void DeleteANOTableInANOStore()
         {
             RevertToDatabaseState();
 
             var s = Server;
+            if(string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(s.Database) || string.IsNullOrWhiteSpace(TableName))
+                return;
+
+            var tbl = GetPushedTable();
             
-            if(string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(s.Database))
-                return;
-
-            //it must not be broken
-            var server =  DataAccessPortal.GetInstance().ExpectServer(s, DataAccessContext.DataLoad);
-
-            var db = server.ExpectDatabase(Server.Database);
-
-            //ANOTable references a database that does not exist so its ok to delete it
-            if (!db.Exists())
-                return;
-
-            //ANOTable references a table that does not exist so it is ok to delete it (it would fail Check() anyway)
-            if (!db.ExpectTable(TableName).Exists())
-                return;
-            
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                
-                DbCommand cmdHowManyRows = server.GetCommand("Select count(*) from "+ TableName,con);
-                cmdHowManyRows.CommandTimeout = 5000;
-                
-                int rowCount = Convert.ToInt32(cmdHowManyRows.ExecuteScalar());
-
-                if(rowCount != 0)
-                    throw new Exception("Cannot delete ANOTable because it references " + TableName + " which is a table on server " + Server + " which contains " + rowCount + " rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
-
-                DbCommand cmdDelete = server.GetCommand("Drop Table "+ TableName,con);
-                cmdDelete.ExecuteNonQuery();
-
-                con.Close();
-            }
+            if(tbl.Exists())
+                if(!tbl.IsEmpty())
+                    throw new Exception("Cannot delete ANOTable because it references " + TableName + " which is a table on server " + Server + " which contains rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
+                else
+                    tbl.Drop();
         }
 
         /// <summary>
@@ -324,9 +346,17 @@ CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Failed to save state after table was successfully? pushed to ANO server", CheckResult.Fail,e));
             }
-            
         }
 
+
+        /// <summary>
+        /// Anonymisation with an <see cref="ANOTable"/> happens during data load.  This means that the column goes from identifiable in RAW to anonymous in STAGING/LIVE.  This means
+        /// that the datatype of the column changes depending on the <see cref="LoadStage"/>.
+        /// 
+        /// <para>Returns the appropriate datatype for the <see cref="LoadStage"/>.  This is done by connecting to the mapping table and retrieving the mapping table types</para>
+        /// </summary>
+        /// <param name="loadStage"></param>
+        /// <returns></returns>
         public string GetRuntimeDataType(LoadStage loadStage)
         {
             //cache answers
@@ -368,20 +398,14 @@ CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
                     throw new ArgumentOutOfRangeException("loadStage");
             }
         }
-
-        public int GetApproximateRowcount()
-        {
-            return DataAccessPortal.GetInstance()
-                .ExpectDatabase(Server, DataAccessContext.DataLoad)
-                .ExpectTable(TableName)
-                .GetRowCount();
-        }
-
+        
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[0];
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return Repository.GetAllObjectsWithParent<ColumnInfo>(this);

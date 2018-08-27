@@ -384,18 +384,13 @@ namespace Diagnostics
                 }
                 catch (Exception e)
                 {
+                    var tbl = toCleanup.GetPushedTable();
+                    
                     //Maybe we couldn't delete it because it had rows in it?
-                    if (toCleanup.GetApproximateRowcount() > 0)
+                    if (tbl.Exists() && tbl.GetRowCount() > 0)
                     {
-                        var server = DataAccessPortal.GetInstance().ExpectServer(_anoServer, DataAccessContext.DataLoad);
-
-                        using(var con = server.GetConnection())
-                        {
-                            con.Open();
-                            DbCommand cmdTruncate = server.GetCommand("TRUNCATE TABLE " + anoIdentifierTable ,con);
-                            cmdTruncate.ExecuteNonQuery();
-                            con.Close();
-                        }
+                        
+                        tbl.Truncate();
 
                         //should now be possible to delete remannt
                         toCleanup.DeleteInDatabase();

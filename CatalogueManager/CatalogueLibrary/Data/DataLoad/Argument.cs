@@ -25,6 +25,12 @@ namespace CatalogueLibrary.Data.DataLoad
     /// </summary>
     public abstract class Argument : VersionedDatabaseEntity, IArgument
     {
+
+        /// <summary>
+        /// All Types that are supported for <see cref="Type"/> and <see cref="Value"/> of <see cref="IArguments"/>.
+        /// 
+        /// <para>Or to put it another way, don't decorate an <see cref="IArgumentHost"/> property with <see cref="DemandsInitializationAttribute"/> if its Type isn't on this list</para>
+        /// </summary>
         public static readonly Type[] PermissableTypes =
         {
             typeof(char?),typeof(char),
@@ -64,12 +70,14 @@ namespace CatalogueLibrary.Data.DataLoad
         private string _type;
         private string _description;
         
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <inheritdoc/>
         [AdjustableLocation]
         public string Value
         {
@@ -77,12 +85,14 @@ namespace CatalogueLibrary.Data.DataLoad
             set { SetField(ref  _value, value); }
         }
 
+        /// <inheritdoc/>
         public string Type
         {
             get { return _type; }
             protected set { SetField(ref  _type, value); }
         }
 
+        /// <inheritdoc/>
         public string Description
         {
             get { return _description; }
@@ -100,6 +110,7 @@ namespace CatalogueLibrary.Data.DataLoad
         {
         }
 
+        /// <inheritdoc/>
         public object GetValueAsSystemType()
         {
             object customType;
@@ -243,6 +254,7 @@ namespace CatalogueLibrary.Data.DataLoad
             return false;
         }
 
+        /// <inheritdoc/>
         public Type GetSystemType()
         {
             //if we know they type (it is exactly one we are expecting)
@@ -262,11 +274,7 @@ namespace CatalogueLibrary.Data.DataLoad
             return anyType;
         }
 
-        /// <summary>
-        /// Gets the concrete implementation class of GetSystemType if GetSystemType is an interface (that we know about)
-        /// Tries its best to return a concrete type if at all possible, otherwise it will just return the passed in type.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public Type GetConcreteSystemType()
         {
             var type = GetSystemType();
@@ -282,7 +290,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
             return type;
         }
-
+        /// <inheritdoc/>
         public void SetType(Type t)
         {
             //anything that is a child of a permissable type
@@ -291,7 +299,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
             Type = t.ToString();
         }
-
+        /// <inheritdoc/>
         public void SetValue(object o)
         {
             //anything implementing this interface is permitted 
