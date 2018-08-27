@@ -294,7 +294,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
         }
 
 
-        private bool _alreadySetup = false;
         private Bitmap _add;
         private Bitmap _delete;
 
@@ -304,9 +303,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             _activator = activator;
             _options = options;
             _aggregate = aggregate;
-
-            if(_alreadySetup)
-                return;
             
             _availableColumns.Clear();
             _includedColumns.Clear();
@@ -335,8 +331,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             olvSelectColumns.AddObjects(_includedColumns);
             olvSelectColumns.AddObjects(_availableColumns);
-
-            _alreadySetup = true;
         }
 
         private void tbFilter_TextChanged(object sender, EventArgs e)
