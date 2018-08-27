@@ -242,7 +242,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 if(databaseObject == null)
                     throw new NotSupportedException("IDeletable " + deleteable + " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
                 
-                RefreshBus.Publish(this, new RefreshObjectEventArgs(databaseObject));
+                RefreshBus.Publish(this, new RefreshObjectEventArgs(databaseObject){DeletedObjectDescendancy = CoreChildProvider.GetDescendancyListIfAnyFor(databaseObject)});
 
                 return true;
             }
