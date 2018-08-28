@@ -240,6 +240,8 @@ namespace CatalogueLibrary.Data.DataLoad
             
             return liveID != testID ;
         }
+
+        /// <inheritdoc/>
         public DiscoveredServer GetDistinctLiveDatabaseServer()
         {
             var tableInfos = this.GetAllCatalogues().SelectMany(c => c.GetTableInfoList(false)).Distinct().ToArray();

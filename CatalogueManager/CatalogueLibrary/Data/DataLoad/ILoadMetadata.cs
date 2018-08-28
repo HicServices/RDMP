@@ -35,10 +35,19 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
         DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen);
 
+        /// <summary>
+        /// Returns the single server that contains all the live data tables in all the <see cref="ICatalogue"/> that are loaded by the <see cref="LoadMetadata"/>.
+        /// All datasets in a load must be on the same database server.
+        /// </summary>
+        /// <returns></returns>
+        DiscoveredServer GetDistinctLiveDatabaseServer();
+
         string GetDistinctLoggingTask();
 
         ILoadProgress[] LoadProgresses { get; }
         IOrderedEnumerable<ProcessTask> ProcessTasks { get; }
         IEnumerable<ProcessTask> GetAllProcessTasks(bool includeDisabled);
+
+
     }
 }
