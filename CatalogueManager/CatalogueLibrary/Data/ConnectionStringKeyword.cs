@@ -23,22 +23,41 @@ namespace CatalogueLibrary.Data
         private string _name;
         private string _value;
         #endregion
-
+        
+        /// <summary>
+        /// The DBMS (Oracle / MySql etc) which this keyword should be used when connecting to
+        /// </summary>
         public DatabaseType DatabaseType
         {
             get { return _databaseType; }
             set { SetField(ref _databaseType, value); }
         }
+
+        /// <summary>
+        /// The name of the keyword.  Must be a valid connection string key for the <see cref="DatabaseType"/> e.g. IntegratedSecurity
+        /// </summary>
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+
+        /// <summary>
+        /// The value to write into the connection string for the keyword e.g.  sspi
+        /// </summary>
         public string Value
         {
             get { return _value; }
             set { SetField(ref _value, value); }
         }
+
+        /// <summary>
+        /// Defines a new keyword that should be set on all connections to databases of <see cref="DatabaseType"/> when making new connections
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="databaseType"></param>
+        /// <param name="keyword"></param>
+        /// <param name="value"></param>
         public ConnectionStringKeyword(IRepository repository,DatabaseType databaseType, string keyword, string value)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
@@ -51,7 +70,8 @@ namespace CatalogueLibrary.Data
             if (ID == 0 || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
         }
-        public ConnectionStringKeyword(IRepository repository, DbDataReader r)
+
+        internal ConnectionStringKeyword(IRepository repository, DbDataReader r)
             : base(repository, r)
         {
             DatabaseType = (DatabaseType) Enum.Parse(typeof(DatabaseType),r["DatabaseType"].ToString());
@@ -59,11 +79,16 @@ namespace CatalogueLibrary.Data
             Value = r["Value"] as string;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Checks that the keyword is valid syntax for the <see cref="DatabaseType"/> and can be set on a <see cref="DbConnectionStringBuilder"/>
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             try

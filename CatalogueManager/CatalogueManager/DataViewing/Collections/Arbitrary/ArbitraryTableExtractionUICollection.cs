@@ -57,8 +57,13 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
             Password = table.Database.Server.ExplicitPasswordIfAny;
         }
         
+        /// <inheritdoc/>
         public PersistStringHelper Helper { get; private set; }
+
+        /// <inheritdoc/>
         public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
+
+        /// <nheritdoc/>
         public string SaveExtraText()
         {
             return Helper.SaveDictionaryToString(_arguments);

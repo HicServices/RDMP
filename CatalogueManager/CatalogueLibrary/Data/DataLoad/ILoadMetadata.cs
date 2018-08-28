@@ -9,16 +9,29 @@ namespace CatalogueLibrary.Data.DataLoad
     /// <summary>
     /// See LoadMetadata
     /// </summary>
-    public interface ILoadMetadata : IMapsDirectlyToDatabaseTable,ILoadProgressHost
+    public interface ILoadMetadata : ILoadProgressHost,INamed
     {
+        /// <summary>
+        /// The root working directory for a load.  Should have subdirectories like Data, Executables etc
+        /// <para>For structured access to this use a new <see cref="IHICProjectDirectory"/></para>
+        /// </summary>
         string LocationOfFlatFiles { get; set; }
-        string Name { get; }
         
+        /// <summary>
+        /// Returns all datasets this load is responsible for supplying data to.  This determines which <see cref="TableInfo"/> are 
+        /// available during RAW=>STAGING=>LIVE migration (the super set of all tables underlying all catalogues).
+        /// 
+        /// <para>See also <see cref="ICatalogue.LoadMetadata_ID"/></para>
+        /// </summary>
+        /// <returns></returns>
         IEnumerable<ICatalogue> GetAllCatalogues();
 
-        void SaveToDatabase();
-
+        /// <summary>
+        /// The unique logging server for auditing the load
+        /// </summary>
+        /// <returns></returns>
         DiscoveredServer GetDistinctLoggingDatabaseSettings();
+
         string GetDistinctLoggingTask();
 
         DiscoveredServer GetDistinctLiveDatabaseServer();

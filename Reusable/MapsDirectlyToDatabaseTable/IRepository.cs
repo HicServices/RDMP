@@ -62,7 +62,19 @@ namespace MapsDirectlyToDatabaseTable
         void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable);
         RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable);
         
+        /// <summary>
+        /// Returns true if the two supplied objects are the same Type of <see cref="IMapsDirectlyToDatabaseTable"/> with the same <see cref="IMapsDirectlyToDatabaseTable.ID"/>.
+        /// </summary>
+        /// <param name="obj1"></param>
+        /// <param name="obj2"></param>
+        /// <returns></returns>
         bool AreEqual(IMapsDirectlyToDatabaseTable obj1, object obj2);
+
+        /// <summary>
+        /// Returns a hash of the objects Type and it's <see cref="IMapsDirectlyToDatabaseTable.ID"/>
+        /// </summary>
+        /// <param name="obj1"></param>
+        /// <returns></returns>
         int GetHashCode(IMapsDirectlyToDatabaseTable obj1);
 
         Version GetVersion();

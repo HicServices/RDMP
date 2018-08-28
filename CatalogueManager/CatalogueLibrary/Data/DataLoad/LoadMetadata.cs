@@ -142,7 +142,8 @@ namespace CatalogueLibrary.Data.DataLoad
         {
             return Name;
         }
-        
+
+        /// <inheritdoc/>
         public IEnumerable<ICatalogue> GetAllCatalogues()
         {
             return Repository.GetAllObjectsWithParent<Catalogue>(this);
@@ -174,6 +175,7 @@ namespace CatalogueLibrary.Data.DataLoad
             return toReturn;
         }
 
+        /// <inheritdoc/>
         public DiscoveredServer GetDistinctLoggingDatabaseSettings()
         {
             IExternalDatabaseServer whoCares;

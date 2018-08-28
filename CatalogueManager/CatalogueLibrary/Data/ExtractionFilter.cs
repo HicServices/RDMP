@@ -2,16 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {

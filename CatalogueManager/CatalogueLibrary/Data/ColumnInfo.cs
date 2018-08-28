@@ -541,11 +541,13 @@ namespace CatalogueLibrary.Data
             return lookups.ToArray();
         }
 
+        ///<inheritdoc/>
         public void InjectKnown(TableInfo instance)
         {
             _knownTableInfo = new Lazy<TableInfo>(() => instance);
         }
 
+        ///<inheritdoc/>
         public void ClearAllInjections()
         {
             _knownTableInfo = new Lazy<TableInfo>(() => Repository.GetObjectByID<TableInfo>(TableInfo_ID));

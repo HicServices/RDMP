@@ -138,7 +138,7 @@ namespace CatalogueLibrary.Repositories
                 cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@AggregateConfiguration_ID", cmd));
                 cmd.Parameters["@AggregateConfiguration_ID"].Value = configuration.ID;
 
-                return DatabaseEntity.ObjectToNullableInt(cmd.ExecuteScalar());
+                return ObjectToNullableInt(cmd.ExecuteScalar());
             }
         }
         

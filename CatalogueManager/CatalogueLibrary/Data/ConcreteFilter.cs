@@ -37,28 +37,28 @@ namespace CatalogueLibrary.Data
         private string _description;
         private bool _isMandatory;
 
+        /// <inheritdoc/>
         [Sql]
         public string WhereSQL
         {
             get { return _whereSQL; }
             set { SetField(ref  _whereSQL, value); }
         }
-
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <inheritdoc/>
         public string Description
         {
             get { return _description; }
             set { SetField(ref  _description, value); }
         }
 
-        
-
-        //mandatory filters only applies to the catalogues so setting it on AggregateFilters doesn't make much sense... at least for now anyway
+        /// <inheritdoc/>
         public bool IsMandatory
         {
             get { return _isMandatory; }
@@ -73,11 +73,7 @@ namespace CatalogueLibrary.Data
         /// </summary>
         public abstract int? ClonedFromExtractionFilter_ID { get; set; }
 
-        /// <summary>
-        /// An IFilter is a line of WHERE SQL.  To be used by a query builder it must be in an AND/OR <see cref="IContainer"/>.  The container will determine which operator is used
-        /// to separate the lines of SQL when combined.  Obviously if there is only one IFilter in an <see cref="IContainer"/> then no separation operator will be in the resulting
-        /// query.  This property is the ID of the current container.
-        /// </summary>
+        /// <inheritdoc/>
         public abstract int? FilterContainer_ID { get; set; }
 
         /// <summary>

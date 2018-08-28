@@ -7,11 +7,13 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class CredentialsInUseException : Exception
     {
+        /// <inheritdoc cref="base(string)"/>
         public CredentialsInUseException(string s) : base(s)
         {
         
         }
 
+        /// <inheritdoc cref="base(string, Exception)"/>
         public CredentialsInUseException(string s, Exception inner) : base(s, inner)
         {
             

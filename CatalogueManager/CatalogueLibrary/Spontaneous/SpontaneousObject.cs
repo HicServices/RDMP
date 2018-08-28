@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 
@@ -22,7 +17,7 @@ namespace CatalogueLibrary.Spontaneous
     /// <para>SpontaneousObjects all have NEGATIVE IDs which are randomly generated, this lets the RDMP software use ID for object equality without getting confused but prevents the
     /// system from ever accidentally saving a SpontaneousObject into a data table in the Catalogue</para>
     /// </summary>
-    public abstract class SpontaneousObject:IMapsDirectlyToDatabaseTable,ISaveable,IDeleteable,IRevertable
+    public abstract class SpontaneousObject: IRevertable
     {
         static Random random = new Random();
 
@@ -42,7 +37,11 @@ namespace CatalogueLibrary.Spontaneous
         {
             throw new System.NotSupportedException("Spontaneously Invented Objects cannot be saved");
         }
-
+        
+        /// <summary>
+        /// Returns a random negative number (set during construction) to satisfy interface.  SpontaneousObjects do not get stored in 
+        /// the database so the ID is not very meaningful.
+        /// </summary>
         public int ID { get { return _id; }  set{throw new NotSupportedException();}}
         public IRepository Repository { get { throw new NotSupportedException(); } set { throw new NotSupportedException(); } }
         public event PropertyChangedEventHandler PropertyChanged;

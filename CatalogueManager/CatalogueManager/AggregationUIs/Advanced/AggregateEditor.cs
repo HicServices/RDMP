@@ -7,7 +7,6 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueLibrary.Repositories;
@@ -18,14 +17,12 @@ using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using CatalogueManager.Copying;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableUIComponents;
@@ -152,7 +149,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 }
             }
 
-            return CheckState.Indeterminate;
+            return newvalue;
 
         }
 

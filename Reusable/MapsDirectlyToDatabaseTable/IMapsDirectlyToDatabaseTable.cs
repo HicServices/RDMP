@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Data.Common;
 
@@ -13,13 +14,26 @@ namespace MapsDirectlyToDatabaseTable
     /// </summary>
     public interface IMapsDirectlyToDatabaseTable : IDeleteable
     {
+        /// <summary>
+        /// Every database table that stores an <see cref="IMapsDirectlyToDatabaseTable"/> must have an identity column called ID which must be the primary key.
+        /// Therefore for a given <see cref="IRepository"/> this uniquely identifies a given object.
+        /// </summary>
         int ID { get; set; }
         
+        /// <summary>
+        /// The persistence database that stores the object.  For example a <see cref="TableRepository"/>.
+        /// </summary>
         [NoMappingToDatabase]
         IRepository Repository { get; set; }
 
+        /// <summary>
+        /// Event called when any persistent Property is changed to a new unique value (different than it's previous value)
+        /// </summary>
         event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Makes any persistent Proporty change attempts throw an Exception.  (See also <see cref="PropertyChanged"/>)
+        /// </summary>
         void SetReadOnly();
 
         //you must have a Property for each thing in your database table (With the same name)

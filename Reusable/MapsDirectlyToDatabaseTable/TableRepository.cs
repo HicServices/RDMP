@@ -583,6 +583,7 @@ namespace MapsDirectlyToDatabaseTable
             return GetAllObjects<T>(" WHERE ID in (" + inList + ")");
         }
 
+        /// <inheritdoc/>
         public bool AreEqual(IMapsDirectlyToDatabaseTable obj1, object obj2)
         {
             if (obj1 == null && obj2 != null)
@@ -602,11 +603,17 @@ namespace MapsDirectlyToDatabaseTable
             return false;
         }
 
+        /// <inheritdoc/>
         public int GetHashCode(IMapsDirectlyToDatabaseTable obj1)
         {
             return obj1.GetType().GetHashCode()*obj1.ID;
         }
 
+        /// <summary>
+        /// Gets all public properties of the class that are not decorated with [<see cref="NoMappingToDatabase"/>]
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static PropertyInfo[] GetPropertyInfos(Type type)
         {
             return type.GetProperties().Where(prop =>!Attribute.IsDefined(prop, typeof (NoMappingToDatabase))).ToArray();
