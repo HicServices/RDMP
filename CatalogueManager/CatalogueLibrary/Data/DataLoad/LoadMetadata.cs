@@ -162,7 +162,7 @@ namespace CatalogueLibrary.Data.DataLoad
             return ProcessTasks.Where(pt => pt.IsDisabled == false);
         }
 
-        public DiscoveredServer GetDistinctLoggingDatabaseSettings(out IExternalDatabaseServer serverChosen)
+        public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
         {
             var loggingServers = GetLoggingServers();
 
@@ -176,10 +176,10 @@ namespace CatalogueLibrary.Data.DataLoad
         }
 
         /// <inheritdoc/>
-        public DiscoveredServer GetDistinctLoggingDatabaseSettings()
+        public DiscoveredServer GetDistinctLoggingDatabase()
         {
             IExternalDatabaseServer whoCares;
-            return GetDistinctLoggingDatabaseSettings(out whoCares);
+            return GetDistinctLoggingDatabase(out whoCares);
         }
 
         private IDataAccessPoint[] GetLoggingServers()
@@ -250,11 +250,6 @@ namespace CatalogueLibrary.Data.DataLoad
             var toReturn = DataAccessPortal.GetInstance().ExpectDistinctServer(tableInfos, DataAccessContext.DataLoad,true);
 
             return toReturn;
-        }
-
-        public string GetDistinctDatabaseName()
-        {
-            return GetDistinctLiveDatabaseServer().GetCurrentDatabase().GetRuntimeName();
         }
 
         public IHasDependencies[] GetObjectsThisDependsOn()

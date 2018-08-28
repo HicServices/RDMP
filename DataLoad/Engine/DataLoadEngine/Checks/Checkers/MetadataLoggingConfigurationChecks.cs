@@ -72,7 +72,7 @@ namespace DataLoadEngine.Checks.Checkers
 
             try
             {
-                var settings = _loadMetadata.GetDistinctLoggingDatabaseSettings();
+                var settings = _loadMetadata.GetDistinctLoggingDatabase();
                 settings.TestConnection();
                 notifier.OnCheckPerformed(new CheckEventArgs("Connected to logging architecture successfully", CheckResult.Success, null));
 

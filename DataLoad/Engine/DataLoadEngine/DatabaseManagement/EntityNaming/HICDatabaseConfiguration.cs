@@ -36,7 +36,7 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
         /// <param name="lmd"></param>
         /// <param name="namer"></param>
         public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null):
-            this(lmd.GetDistinctLiveDatabaseServer(), namer, new ServerDefaults(((CatalogueRepository)lmd.Repository)))
+            this(lmd.GetDistinctLoggingDatabase(), namer, new ServerDefaults(((CatalogueRepository)lmd.Repository)))
         {
             
         }

@@ -58,7 +58,7 @@ namespace RDMPAutomationService.Runners
             {
                 case CommandLineActivity.run:
                     
-                    var loggingServer = loadMetadata.GetDistinctLoggingDatabaseSettings();
+                    var loggingServer = loadMetadata.GetDistinctLoggingDatabase();
                     var logManager = new LogManager(loggingServer);
                     
                     // Create the pipeline to pass into the DataLoadProcess object

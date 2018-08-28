@@ -27,15 +27,15 @@ namespace CatalogueLibrary.Data.DataLoad
         IEnumerable<ICatalogue> GetAllCatalogues();
 
         /// <summary>
-        /// The unique logging server for auditing the load
+        /// The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer"/>)
         /// </summary>
         /// <returns></returns>
-        DiscoveredServer GetDistinctLoggingDatabaseSettings();
+        DiscoveredServer GetDistinctLoggingDatabase();
+
+        /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
+        DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen);
 
         string GetDistinctLoggingTask();
-
-        DiscoveredServer GetDistinctLiveDatabaseServer();
-        string GetDistinctDatabaseName();
 
         ILoadProgress[] LoadProgresses { get; }
         IOrderedEnumerable<ProcessTask> ProcessTasks { get; }
