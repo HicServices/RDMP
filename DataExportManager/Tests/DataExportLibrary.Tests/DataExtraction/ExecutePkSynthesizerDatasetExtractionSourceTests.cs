@@ -73,7 +73,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
+            Assert.That(firstvalue, Is.EqualTo("HASHED: C24D365B7C271E2C1BC884B5801C2961"));
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000_Dave"));
+            Assert.That(firstvalue, Is.EqualTo("HASHED: 0120C285E394CE647F20ADA19790B09E"));
 
             DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleLookup").Drop();
             DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleJoin").Drop();
@@ -112,7 +112,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
+            Assert.That(firstvalue, Is.EqualTo("HASHED: C24D365B7C271E2C1BC884B5801C2961"));
 
             DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleLookup").Drop();
         }

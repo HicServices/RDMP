@@ -113,7 +113,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         private IEnumerable<IColumn> GetCatalogueItemPrimaryKeys()
         {
-            foreach (var column in Request.ColumnsToExtract)
+            foreach (var column in Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions))
             {
                 var ri = column as ReleaseIdentifierSubstitution;
                 var ec = column as ExtractableColumn;
@@ -122,7 +122,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                     if (ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey)
                         yield return ri;
 
-                if (ec != null && ec.IsExtractionIdentifier)
+                if (ec != null && ec.IsPrimaryKey)
                     yield return ec;
             }
         }
