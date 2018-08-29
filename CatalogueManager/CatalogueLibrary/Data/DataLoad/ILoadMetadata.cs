@@ -6,9 +6,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
-    /// <summary>
-    /// See LoadMetadata
-    /// </summary>
+    /// <inheritdoc cref="LoadMetadata"/>
     public interface ILoadMetadata : ILoadProgressHost,INamed
     {
         /// <summary>
@@ -16,6 +14,11 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <para>For structured access to this use a new <see cref="IHICProjectDirectory"/></para>
         /// </summary>
         string LocationOfFlatFiles { get; set; }
+
+        /// <summary>
+        /// List of all the user configured steps in a data load.  For example you could have 2 ProcessTasks, one that downloads files from an FTP server and one that loads RAW.
+        /// </summary>
+        IOrderedEnumerable<IProcessTask> ProcessTasks { get; }
         
         /// <summary>
         /// Returns all datasets this load is responsible for supplying data to.  This determines which <see cref="TableInfo"/> are 
@@ -42,12 +45,10 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <returns></returns>
         DiscoveredServer GetDistinctLiveDatabaseServer();
 
+        /// <summary>
+        /// Returns the unique value of <see cref="Catalogue.LoggingDataTask"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
+        /// </summary>
+        /// <returns></returns>
         string GetDistinctLoggingTask();
-
-        ILoadProgress[] LoadProgresses { get; }
-        IOrderedEnumerable<ProcessTask> ProcessTasks { get; }
-        IEnumerable<ProcessTask> GetAllProcessTasks(bool includeDisabled);
-
-
     }
 }

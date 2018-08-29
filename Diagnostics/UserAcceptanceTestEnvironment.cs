@@ -76,6 +76,8 @@ namespace Diagnostics
 
         private List<ExternalDatabaseServer> _serversCreated = new List<ExternalDatabaseServer>();
 
+        ArgumentFactory _argumentFactory = new ArgumentFactory();
+
         public UserAcceptanceTestEnvironment(SqlConnectionStringBuilder serverToCreateRawDataOnBuilder, string datasetFolderPath, SqlConnectionStringBuilder loggingBuilder, string LoggingTask, SqlConnectionStringBuilder anoBuilder, SqlConnectionStringBuilder dumpBuilder, IRDMPPlatformRepositoryServiceLocator repositoryLocator) : base(repositoryLocator)
         {
             LoggingServer = new DiscoveredServer(loggingBuilder).ExpectDatabase(loggingBuilder.InitialCatalog);
@@ -250,7 +252,7 @@ namespace Diagnostics
             var repository = RepositoryLocator.CatalogueRepository;
             //"LoadModules.Generic.Mutilators.PrimaryKeyCollisionResolverMutilation"
             //see if process task already exists
-            ProcessTask duplicationProcessTask = _loadMetaData.ProcessTasks.SingleOrDefault(pt => pt.Name.Equals(ResolvePrimaryKeyDuplicationProcessName));
+            IProcessTask duplicationProcessTask = _loadMetaData.ProcessTasks.SingleOrDefault(pt => pt.Name.Equals(ResolvePrimaryKeyDuplicationProcessName));
 
             //it does exist so warn user
             if (duplicationProcessTask != null)
@@ -303,7 +305,7 @@ namespace Diagnostics
             //now set the values for each of the properties that we expect to have been created
             try
             {
-                var arguments = duplicationProcessTask.ProcessTaskArguments.ToArray();
+                var arguments = duplicationProcessTask.GetAllArguments().ToArray();
 
                 //make sure these exist 
                 if (!arguments.Any(a => a.Name.Equals("TargetTable")))
@@ -311,7 +313,7 @@ namespace Diagnostics
                         "Expected ProcessTaskArgument called TargetTable to exist but it did not (Has someone refactored" +typeof (PrimaryKeyCollisionResolverMutilation).Name+"?)", CheckResult.Fail, null));
                 
                 //set their values
-                foreach (ProcessTaskArgument argument in arguments)
+                foreach (IArgument argument in arguments)
                 {
                     try
                     {
@@ -741,7 +743,7 @@ namespace Diagnostics
         {
             var repository = RepositoryLocator.CatalogueRepository;
             //see if process task already exists
-            ProcessTask csvProcessTask = _loadMetaData.ProcessTasks.SingleOrDefault(pt => pt.Name.Equals(CSVAttacherProcessName));
+            IProcessTask csvProcessTask = _loadMetaData.ProcessTasks.SingleOrDefault(pt => pt.Name.Equals(CSVAttacherProcessName));
 
             //it does exist so warn user
             if (csvProcessTask != null)
@@ -769,7 +771,7 @@ namespace Diagnostics
             try
             {
                 //now since all the process task arguments are driven by reflection we need to determine what the class expects and create a ProcessTaskArgument for each DemandsInitialization property
-                var createdArguments = csvProcessTask.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>().ToArray();
+                var createdArguments = _argumentFactory.CreateArgumentsForClassIfNotExistsGeneric<AnySeparatorFileAttacher>(csvProcessTask, csvProcessTask.GetAllArguments().ToArray()).ToArray();
 
                 //if we created some
                 if (createdArguments.Count() != 0)

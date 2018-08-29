@@ -96,10 +96,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _name, value); }
         }
 
-        /// <summary>
-        /// The proprietary SQL datatype of the column in the underlying database table this record points at.  
-        /// <para>E.g. datetime2 or varchar2 (Oracle) or int etc</para>
-        /// </summary>
+        /// <inheritdoc/>
         public string Data_type
         {
             get { return _dataType; }

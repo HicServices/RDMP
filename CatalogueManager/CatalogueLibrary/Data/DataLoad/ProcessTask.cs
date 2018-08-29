@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,10 +9,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
@@ -28,7 +24,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// reflection to query the Path e.g. 'AnySeparatorFileAttacher' for all properties marked with [DemandsInitialization] attribute.  This allows for 3rd party developers
     /// to write plugin classes to easily handle freaky source file types or complex/bespoke data load requirements.</para>
     /// </summary>
-    public class ProcessTask : VersionedDatabaseEntity, IProcessTask, IArgumentHost, ITableInfoCollectionHost, ILoadProgressHost, IOrderable,INamed, ICheckable
+    public class ProcessTask : VersionedDatabaseEntity, IProcessTask, ITableInfoCollectionHost, IOrderable,INamed, ICheckable
     {
         #region Database Properties
 
@@ -41,25 +37,30 @@ namespace CatalogueLibrary.Data.DataLoad
         private ProcessTaskType _processTaskType;
         private bool _isDisabled;
 
-
+        /// <summary>
+        /// The load the process task exists as part of
+        /// </summary>
         public int LoadMetadata_ID
         {
             get { return _loadMetadataID; }
             set { SetField(ref  _loadMetadataID, value); }
         }
-
+        /// <inheritdoc/>
+        [Obsolete("Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
         public int? RelatesSolelyToCatalogue_ID
         {
             get { return _relatesSolelyToCatalogueID; }
             set { SetField(ref  _relatesSolelyToCatalogueID, value); }
         }
 
+        /// <inheritdoc/>
         public int Order
         {
             get { return _order; }
             set { SetField(ref  _order, value); }
         }
 
+        /// <inheritdoc/>
         [AdjustableLocation]
         public string Path
         {
@@ -67,24 +68,25 @@ namespace CatalogueLibrary.Data.DataLoad
             set { SetField(ref  _path, value); }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
-
+        /// <inheritdoc/>
         public LoadStage LoadStage
         {
             get { return _loadStage; }
             set { SetField(ref  _loadStage, value); }
         }
-
+        /// <inheritdoc/>
         public ProcessTaskType ProcessTaskType
         {
             get { return _processTaskType; }
             set { SetField(ref  _processTaskType, value); }
         }
-
+        /// <inheritdoc/>
         public bool IsDisabled
         {
             get { return _isDisabled; }
@@ -99,6 +101,7 @@ namespace CatalogueLibrary.Data.DataLoad
             get { return Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID); }
         }
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get { return Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);} }
 
@@ -113,8 +116,18 @@ namespace CatalogueLibrary.Data.DataLoad
             }
         }
 
+        /// <inheritdoc/>
+        [NoMappingToDatabase]
+        public ILoadProgress[] LoadProgresses { get { return LoadMetadata.LoadProgresses; }}
+
         #endregion
 
+        /// <summary>
+        /// Creates a new operation in the data load (e.g. copy files from A to B, load all CSV files to RAW table B etc)
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parent"></param>
+        /// <param name="stage"></param>
         public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage)
         {
             var order = repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
@@ -157,11 +170,13 @@ namespace CatalogueLibrary.Data.DataLoad
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <inheritdoc/>
         public void Check(ICheckNotifier notifier)
         {
             switch (ProcessTaskType)
@@ -260,26 +275,23 @@ namespace CatalogueLibrary.Data.DataLoad
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<TableInfo> GetTableInfos()
         {
             return LoadMetadata.GetDistinctTableInfoList(true);
         }
 
-        public IEnumerable<ILoadProgress> GetLoadProgresses()
-        {
-            return LoadMetadata.LoadProgresses;
-        }
-
+        /// <inheritdoc/>
         public IEnumerable<IArgument> GetAllArguments()
         {
             return ProcessTaskArguments;
         }
-
+        /// <inheritdoc/>
         public IArgument CreateNewArgument()
         {
             return new ProcessTaskArgument((ICatalogueRepository) Repository,this);
         }
-
+        /// <inheritdoc/>
         public string GetClassNameWhoArgumentsAreFor()
         {
             return Path;
@@ -335,6 +347,7 @@ namespace CatalogueLibrary.Data.DataLoad
             }
         }
 
+        /// <inheritdoc/>
         public IArgument[] CreateArgumentsForClassIfNotExists<T>()
         {
             var argFactory = new ArgumentFactory();
@@ -350,6 +363,13 @@ namespace CatalogueLibrary.Data.DataLoad
                 .ToArray();
         }
 
+        /// <summary>
+        /// Returns true if the <see cref="ProcessTaskType"/> is allowed to happen during the given <see cref="LoadStage"/>  (e.g. you can't use an IAttacher to
+        /// load data into STAGING/LIVE - only RAW). 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="stage"></param>
+        /// <returns></returns>
         public static bool IsCompatibleStage(ProcessTaskType type, LoadStage stage)
         {
             switch (type)
@@ -371,11 +391,21 @@ namespace CatalogueLibrary.Data.DataLoad
             }
         }
 
+        /// <summary>
+        /// True if <see cref="Path"/> is the name of a C# class (as opposed to the path to an executable or SQL file etc)
+        /// </summary>
+        /// <returns></returns>
         public bool IsPluginType()
         {
             return ProcessTaskType == ProcessTaskType.Attacher || ProcessTaskType == ProcessTaskType.MutilateDataTable || ProcessTaskType == ProcessTaskType.DataProvider;
         }
 
+        /// <summary>
+        /// Sets the value of the corresponding <see cref="IArgument"/> (which must already exist) to the given value.  If your argument doesn't exist yet you
+        /// can call <see cref="CreateArgumentsForClassIfNotExists"/>
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="o"></param>
         public void SetArgumentValue(string parameterName, object o)
         {
             var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName));
@@ -384,105 +414,6 @@ namespace CatalogueLibrary.Data.DataLoad
 
             matchingArgument.SetValue(o);
             matchingArgument.SaveToDatabase();
-        }
-    }
-
-    /// <summary>
-    /// The high level type of a ProcessTask, defines what the property Path contains.  If the ProcessTaskType is Executable then Path contains the path to an exe to run, If
-    /// ProcessTaskType is Attacher then Path will be a class name etc.
-    /// </summary>
-    public enum ProcessTaskType
-    {
-        /// <summary>
-        /// ProcessTask is to launch an executable file with parameters telling it about the load stage being operated on (servername, database name etc)
-        /// </summary>
-        Executable,
-
-        /// <summary>
-        /// ProcessTask is to run an SQL file directly on the server
-        /// </summary>
-        SQLFile,
-
-        /// <summary>
-        /// ProcessTask is to execute a stored proceedure defined on the server
-        /// </summary>
-        StoredProcedure,
-
-        /// <summary>
-        /// ProcessTask is to instantiate the IAttacher class Type specified in Path and hydrate it's [DemandsInitialization] properties with values matching 
-        /// ProcessTaskArguments and run it in the specified load stage in an AttacherRuntimeTask wrapper.
-        /// </summary>
-        Attacher,
-
-        /// <summary>
-        /// ProcessTask is to instantiate the IDataProvider class Type specified in Path and hydrate it's [DemandsInitialization] properties with values matching 
-        /// ProcessTaskArguments and run it in the specified load stage in an DataProviderRuntimeTask wrapper.
-        /// </summary>
-        DataProvider,
-        
-        /// <summary>
-        /// ProcessTask is to instantiate the IMutilateDataTables class Type specified in Path and hydrate it's [DemandsInitialization] properties with values matching 
-        /// ProcessTaskArguments and run it in the specified load stage in an MutilateDataTablesRuntimeTask wrapper.
-        /// </summary>
-        MutilateDataTable
-    }
-
-    /// <summary>
-    /// Describes a stage related to the RAW=>STAGING=>LIVE bubble data load model in RDMP.  The stages are more refined than LoadBubbles (RAW / STAGING / LIVE) and
-    /// include such things as GetFiles (where you download remote resources ahead of the actual load etc).
-    /// </summary>
-    public enum LoadStage
-    {
-        [Description("Processes in this category should result in the generation or modification of files (e.g." +
-                     " FTP file download, unzip local file etc).  The data load engine will not provide processes " +
-                     "in this stage with any information about the database being loaded (but it will provide " +
-                     "the root project directory so that processes know where to generate files into)")]
-        GetFiles,
-
-        [Description("Processes in this category should be concerned with moving data from the project directory" +
-                     " into the RAW database.  The data load engine will provide both the root directory and the " +
-                     "location of the RAW database.")]
-        Mounting,
-
-        [Description("Processes in this category should be concerned with modifying the content/structure of the data" +
-                     " in the RAW database.  This data will not be annonymised at this point.  After running all the" +
-                     " processes in this category, the structure of the database must match the _STAGING database.  " +
-                     "Assuming the RAW database structure matches _STAGING, the data load engine will then move the data " +
-                     "(performing appropriate anonymisation steps on a column by column basis as defined in the Catalogue" +
-                     " ColumnInfos)")]
-        AdjustRaw,
-
-        [Description("Processes in this category should be concerned with modifying the content (not structure) of the data" +
-                " in the _STAGING database.  This data will be annonymous.  After all processes have been executed and assuming" +
-                " the _STAGING database structure still matches the LIVE structure, the data load engine will use the primary " +
-                "key informtion defined in the Catalogue ColumnInfos to merge the new data into the current LIVE database")]
-        AdjustStaging,
-
-
-        [Description("Processes in this category are executed after the new data has been merged into the LIVE database.  This" +
-                     "is your opportunity to update dependent data, run longitudinal/dataset wide cleaning algorithms etc.")]
-        PostLoad
-    }
-    
-    public static class LoadStageExtensions
-    {
-        public static LoadBubble ToLoadBubble(this LoadStage loadStage)
-        {
-            switch (loadStage)
-            {
-                case LoadStage.GetFiles:
-                    return LoadBubble.Raw;
-                case LoadStage.Mounting:
-                    return LoadBubble.Raw;
-                case LoadStage.AdjustRaw:
-                    return LoadBubble.Raw;
-                case LoadStage.AdjustStaging:
-                    return LoadBubble.Staging;
-                case LoadStage.PostLoad:
-                    return LoadBubble.Live;
-                default:
-                    throw new ArgumentOutOfRangeException("Unknown value for LoadStage: " + loadStage);
-            }
         }
     }
 

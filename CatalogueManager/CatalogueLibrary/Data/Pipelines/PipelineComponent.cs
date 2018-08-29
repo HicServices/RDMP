@@ -115,6 +115,11 @@ namespace CatalogueLibrary.Data.Pipelines
             return Class;
         }
 
+        IArgument[] IArgumentHost.CreateArgumentsForClassIfNotExists<T>()
+        {
+            throw new NotImplementedException();
+        }
+
 
         public Type GetClassAsSystemType()
         {

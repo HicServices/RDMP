@@ -1167,7 +1167,7 @@ namespace CatalogueLibrary.Data
             if(LoadMetadata_ID == null)
                 return;
             //make sure there are no depencencies amongst the processes in the load
-            foreach (ProcessTask p in LoadMetadata.GetAllProcessTasks(true))
+            foreach (ProcessTask p in LoadMetadata.ProcessTasks)
                 if (p.RelatesSolelyToCatalogue_ID == ID)
                     throw new Exception("Unable to change LoadMetadata for Catalogue " + Name + " because process " + p.Name + " relates solely to this Catalogue - remove the process from the load to fix this problem");
         }

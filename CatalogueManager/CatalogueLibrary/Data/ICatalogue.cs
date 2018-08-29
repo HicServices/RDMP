@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -14,10 +15,10 @@ namespace CatalogueLibrary.Data
     /// <summary>
     /// See Catalogue
     /// </summary>
-    public interface ICatalogue : IMapsDirectlyToDatabaseTable, IHasDependencies, IHasQuerySyntaxHelper
+    public interface ICatalogue : IRevertable, IHasDependencies, IHasQuerySyntaxHelper
     {
         int? LoadMetadata_ID { get; }
-        string LoggingDataTask { get; }
+        string LoggingDataTask { get; set; }
         int? LiveLoggingServer_ID { get; set; }
         string Name { get; }
         string ValidatorXML { get; set; }

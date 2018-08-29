@@ -48,7 +48,7 @@ namespace DataLoadEngine.LoadExecution
 
             //warn user about disabled tasks
             var processTasks = LoadMetadata.ProcessTasks.ToList();
-            foreach (ProcessTask task in processTasks
+            foreach (IProcessTask task in processTasks
                 .Where(p => p.IsDisabled))
                 postLoadEventListener.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Warning, "Found disabled ProcessTask" + task));

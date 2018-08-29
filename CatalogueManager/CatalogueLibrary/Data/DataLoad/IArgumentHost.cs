@@ -29,5 +29,8 @@ namespace CatalogueLibrary.Data.DataLoad
         /// </summary>
         /// <returns></returns>
         string GetClassNameWhoArgumentsAreFor();
+
+        /// <inheritdoc cref="ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric"/>
+        IArgument[] CreateArgumentsForClassIfNotExists<T>();
     }
 }

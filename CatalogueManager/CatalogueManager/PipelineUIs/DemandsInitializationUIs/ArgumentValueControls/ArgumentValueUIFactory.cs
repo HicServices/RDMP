@@ -198,7 +198,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             var h = parent as ILoadProgressHost;
 
             if (h != null)
-                return h.GetLoadProgresses();
+                return h.LoadProgresses;
 
             throw new NotSupportedException("Cannot populate LoadProgress selection list because type " + parent.GetType().Name + " does not support the " + typeof(ILoadProgressHost).Name + " interface");
 

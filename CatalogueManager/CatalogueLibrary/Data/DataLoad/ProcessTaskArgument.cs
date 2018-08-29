@@ -58,7 +58,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// </summary>
         /// <typeparam name="T">A class that has some DemandsInitializations</typeparam>
         /// <param name="parent"></param>
-        public static IArgument[] CreateArgumentsForClassIfNotExists<T>(ProcessTask parent)
+        public static IArgument[] CreateArgumentsForClassIfNotExists<T>(IProcessTask parent)
         {
             var argFactory = new ArgumentFactory();
             return argFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(

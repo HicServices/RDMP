@@ -17,12 +17,12 @@ namespace DataLoadEngine.LoadExecution.Components
     /// </summary>
     public class RuntimeTaskPackager
     {
-        public readonly IEnumerable<ProcessTask> ProcessTasks;
+        public readonly IEnumerable<IProcessTask> ProcessTasks;
         private readonly Dictionary<LoadStage, IStageArgs> _loadArgsDictionary;
         private readonly IEnumerable<ICatalogue> _cataloguesToLoad;
         private readonly CatalogueRepository _repository;
 
-        public RuntimeTaskPackager(IEnumerable<ProcessTask> processTasks, Dictionary<LoadStage, IStageArgs> loadArgsDictionary, IEnumerable<ICatalogue> cataloguesToLoad, CatalogueRepository repository)
+        public RuntimeTaskPackager(IEnumerable<IProcessTask> processTasks, Dictionary<LoadStage, IStageArgs> loadArgsDictionary, IEnumerable<ICatalogue> cataloguesToLoad, CatalogueRepository repository)
         {
             ProcessTasks = processTasks;
             _loadArgsDictionary = loadArgsDictionary;

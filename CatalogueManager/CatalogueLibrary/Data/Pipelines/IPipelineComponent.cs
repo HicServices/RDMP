@@ -19,7 +19,6 @@ namespace CatalogueLibrary.Data.Pipelines
 
         Type GetClassAsSystemType();
         string GetClassNameLastPart();
-        IEnumerable<PipelineComponentArgument> CreateArgumentsForClassIfNotExists<T>();
         PipelineComponent Clone(Pipeline intoTargetPipeline);
     }
 }

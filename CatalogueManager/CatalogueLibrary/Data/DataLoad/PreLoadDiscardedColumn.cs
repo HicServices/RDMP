@@ -50,36 +50,37 @@ namespace CatalogueLibrary.Data.DataLoad
         private int? _duplicateRecordResolutionOrder;
         private bool _duplicateRecordResolutionIsAscending;
 
+        /// <inheritdoc cref="IPreLoadDiscardedColumn.TableInfo"/>
         public int TableInfo_ID
         {
             get { return _tableInfoID; }
             set { SetField(ref  _tableInfoID, value); }
         }
-
+        /// <inheritdoc/>
         public DiscardedColumnDestination Destination
         {
             get { return _destination; }
             set { SetField(ref  _destination, value); }
         }
-
+        /// <inheritdoc/>
         public string RuntimeColumnName
         {
             get { return _runtimeColumnName; }
             set { SetField(ref  _runtimeColumnName, value); }
         }
-
+        /// <inheritdoc/>
         public string SqlDataType
         {
             get { return _sqlDataType; }
             set { SetField(ref  _sqlDataType, value); }
         }
-
+        /// <inheritdoc/>
         public int? DuplicateRecordResolutionOrder
         {
             get { return _duplicateRecordResolutionOrder; }
             set { SetField(ref  _duplicateRecordResolutionOrder, value); }
         }
-
+        /// <inheritdoc/>
         public bool DuplicateRecordResolutionIsAscending
         {
             get { return _duplicateRecordResolutionIsAscending; }
@@ -88,7 +89,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         #endregion
         #region Relationships
-        /// <inheritdoc cref="TableInfo_ID"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ITableInfo TableInfo
         {
@@ -106,6 +107,13 @@ namespace CatalogueLibrary.Data.DataLoad
         [NoMappingToDatabase]
         public string Data_type { get { return SqlDataType; } }
 
+        /// <summary>
+        /// Creates a new virtual column that will be created in RAW during data loads but does not appear in the LIVE table schema.  This allows
+        /// identifiable data to be loaded and processed in a data load without ever hitting the live database.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parent"></param>
+        /// <param name="name"></param>
         public PreLoadDiscardedColumn(ICatalogueRepository repository, TableInfo parent, string name = null)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -132,37 +140,23 @@ namespace CatalogueLibrary.Data.DataLoad
             DuplicateRecordResolutionIsAscending = Convert.ToBoolean(r["DuplicateRecordResolutionIsAscending"]);
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return RuntimeColumnName + " (" + Destination + ")";
         }
-
+        /// <inheritdoc/>
         public string GetRuntimeName()
         {
             //belt and bracers, the user could be typing something mental into this field in his database
             return new MicrosoftQuerySyntaxHelper().GetRuntimeName(RuntimeColumnName);
         }
-        
+        /// <inheritdoc/>
         public string GetRuntimeName(LoadStage stage)
         {
             return GetRuntimeName();
         }
         
-        public void CloneForNewTable(TableInfo newTableInfo)
-        {
-            if(this.TableInfo_ID == newTableInfo.ID)
-                throw new Exception("Cannot clone into same parent.  Clone must be into a different TableInfo");
-
-            
-            //create a new one
-            var newPreLoadDiscardedColumn = new PreLoadDiscardedColumn((ICatalogueRepository) Repository, newTableInfo, RuntimeColumnName);
-            
-            //copy values across
-            newPreLoadDiscardedColumn.SqlDataType = SqlDataType;
-            newPreLoadDiscardedColumn.Destination = Destination;
-            newPreLoadDiscardedColumn.SaveToDatabase();
-        }
-
         /// <summary>
         /// true if destination for column is to store in identifier dump including undiluted versions of dilutes 
         /// (Dillution involves making clean values dirty for purposes of anonymisation and storing the clean values in

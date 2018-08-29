@@ -46,7 +46,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// <para>A LoadMetadata also allows you to override various settings such as forcing a specific alternate server to load - for when you want to overule
     /// the location that TableInfo thinks data is on e.g. into a test environment mirror of live.</para>
     /// </summary>
-    public class LoadMetadata : VersionedDatabaseEntity, IDeleteable, ILoadMetadata, IHasDependencies, IRevertable, INamed, IHasQuerySyntaxHelper
+    public class LoadMetadata : VersionedDatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper
     {
 
         #region Database Properties
@@ -56,27 +56,43 @@ namespace CatalogueLibrary.Data.DataLoad
         private string _description;
         private CacheArchiveType _cacheArchiveType;
         
+        /// <inheritdoc/>
         [AdjustableLocation]
         public string LocationOfFlatFiles
         {
             get { return _locationOfFlatFiles; }
             set { SetField(ref _locationOfFlatFiles, value); }
         }
+
+        /// <summary>
+        /// Not used
+        /// </summary>
         public string AnonymisationEngineClass
         {
             get { return _anonymisationEngineClass; }
             set { SetField(ref _anonymisationEngineClass, value); }
         }
+
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+
+        /// <summary>
+        /// Human readable description of the load, what it does etc
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { SetField(ref _description, value); }
         }
+
+        /// <summary>
+        /// The format for storing files in when reading/writing to a cache with a <see cref="CacheProgress"/>.  This may not be respected depending on the implementation of the 
+        /// sepecific ICacheLayout
+        /// </summary>
         public CacheArchiveType CacheArchiveType
         {
             get { return _cacheArchiveType; }
@@ -90,22 +106,32 @@ namespace CatalogueLibrary.Data.DataLoad
         public static int LocationOfFlatFiles_MaxLength = -1;
 
         #region Relationships
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ILoadProgress[] LoadProgresses
         {
             get { return Repository.GetAllObjectsWithParent<LoadProgress>(this); }
         }
+
+        /// <inheritdoc/>
         [NoMappingToDatabase]
-        public IOrderedEnumerable<ProcessTask> ProcessTasks
+        public IOrderedEnumerable<IProcessTask> ProcessTasks
         {
             get
             {
                 return
-                    Repository.GetAllObjectsWithParent<ProcessTask>(this).OrderBy(pt => pt.Order);
+                    Repository.GetAllObjectsWithParent<ProcessTask>(this).Cast<IProcessTask>().OrderBy(pt => pt.Order);
             }
         }
         #endregion
 
+        /// <summary>
+        /// Create a new DLE load.  This load will not have any <see cref="ProcessTask"/> and will not load any <see cref="TableInfo"/> yet.
+        /// 
+        /// <para>To set the loaded tables, set <see cref="Catalogue.LoadMetadata_ID"/> on some of your datasets</para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
         public LoadMetadata(ICatalogueRepository repository, string name = null)
         {
             if (name == null)
@@ -127,6 +153,7 @@ namespace CatalogueLibrary.Data.DataLoad
             CacheArchiveType = (CacheArchiveType)r["CacheArchiveType"];
         }
         
+        /// <inheritdoc/>
         public override void DeleteInDatabase()
         {
             ICatalogue firstOrDefault = GetAllCatalogues().FirstOrDefault();
@@ -137,7 +164,7 @@ namespace CatalogueLibrary.Data.DataLoad
             base.DeleteInDatabase();
         }
         
-        
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
@@ -149,19 +176,7 @@ namespace CatalogueLibrary.Data.DataLoad
             return Repository.GetAllObjectsWithParent<Catalogue>(this);
         }
 
-        public IEnumerable<ILoadProgress> GetLoadProgresses()
-        {
-            return LoadProgresses;
-        }
-
-        public IEnumerable<ProcessTask> GetAllProcessTasks(bool includeDisabled)
-        {
-            if (includeDisabled)
-                return ProcessTasks;
-
-            return ProcessTasks.Where(pt => pt.IsDisabled == false);
-        }
-
+        /// <inheritdoc/>
         public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
         {
             var loggingServers = GetLoggingServers();
@@ -192,6 +207,7 @@ namespace CatalogueLibrary.Data.DataLoad
             return catalogue.Select(c => c.LiveLoggingServer).ToArray();
         }
 
+        /// <inheritdoc/>
         public string GetDistinctLoggingTask()
         {
             var catalogueMetadatas = GetAllCatalogues().ToArray();
@@ -211,7 +227,11 @@ namespace CatalogueLibrary.Data.DataLoad
             return distinctLoggingTasks[0];
         }
 
-
+        /// <summary>
+        /// Return all <see cref="TableInfo"/> underlying the <see cref="Catalogue"/>(s) which use this load (what tables will be loaded by the DLE).
+        /// </summary>
+        /// <param name="includeLookups">true to include lookup tables (e.g. z_sex etc) configured in the <see cref="Catalogue"/>(s)</param>
+        /// <returns></returns>
         public List<TableInfo> GetDistinctTableInfoList(bool includeLookups)
         {
             List<TableInfo> toReturn = new List<TableInfo>();
@@ -224,6 +244,11 @@ namespace CatalogueLibrary.Data.DataLoad
             return toReturn;
         }
         
+        /// <summary>
+        /// Do not use, just assume true
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete("Test logging databases are a bad idea on a live Catalogue repository")]
         public bool AreLiveAndTestLoggingDifferent()
         {
             Catalogue[] catalogues = GetAllCatalogues().Cast<Catalogue>().ToArray();
@@ -254,17 +279,23 @@ namespace CatalogueLibrary.Data.DataLoad
             return toReturn;
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return null;
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return GetAllCatalogues().ToArray();
         }
 
-        public void EnsureLoggingWorksFor(Catalogue catalogue)
+        /// <summary>
+        /// Tests that the logging database for the load is reachable and that it has an appropriate logging task for the load (if not a new task will be created 'Loading X')
+        /// </summary>
+        /// <param name="catalogue"></param>
+        public void EnsureLoggingWorksFor(ICatalogue catalogue)
         {
             //if theres no logging task / logging server set them up with the same name as the lmd
             IExternalDatabaseServer loggingServer;
@@ -289,9 +320,11 @@ namespace CatalogueLibrary.Data.DataLoad
 
                 lm.CreateNewLoggingTaskIfNotExists(loggingTaskName);
                 catalogue.LoggingDataTask = loggingTaskName;
+                catalogue.SaveToDatabase();
             }
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             var syntax = GetAllCatalogues().Select(c => c.GetQuerySyntaxHelper()).Distinct().ToArray();
