@@ -212,11 +212,13 @@ namespace CatalogueLibrary.Data
         {
             return _selfCertifyingDataAccessPoint.GetQuerySyntaxHelper();
         }
-
+        /// <inheritdoc/>
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
         {
             return _selfCertifyingDataAccessPoint.GetCredentialsIfExists(context);
         }
+
+        /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
             return _selfCertifyingDataAccessPoint.GetDecryptedPassword();

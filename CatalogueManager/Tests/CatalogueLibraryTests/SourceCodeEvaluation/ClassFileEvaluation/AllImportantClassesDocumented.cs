@@ -82,9 +82,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                         continue;
 
                     var match = Regex.Match(beforeDeclaration, "<summary>(.*)</summary>", RegexOptions.Singleline);
+                    var matchInherit = Regex.Match(beforeDeclaration, "<inheritdoc", RegexOptions.Singleline);
 
                     //are there comments?
-                    if (!match.Success)
+                    if (!match.Success && !matchInherit.Success)
                     {
                         //no!
                         if (!strict) //are we being strict?

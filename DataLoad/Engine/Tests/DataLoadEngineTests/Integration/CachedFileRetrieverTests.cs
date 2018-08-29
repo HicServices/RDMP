@@ -174,7 +174,7 @@ namespace DataLoadEngineTests.Integration
             var catalogue = MockRepository.GenerateStub<ICatalogue>();
             catalogue.Stub(c => c.GetTableInfoList(Arg<bool>.Is.Anything)).Return(new TableInfo[0]);
             catalogue.Stub(c => c.GetLookupTableInfoList()).Return(new TableInfo[0]);
-            catalogue.Stub(c => c.LoggingDataTask).Return("TestLogging");
+            catalogue.LoggingDataTask = "TestLogging";
 
             var logManager = MockRepository.GenerateStub<ILogManager>();
             var loadMetadata = MockRepository.GenerateStub<ILoadMetadata>();

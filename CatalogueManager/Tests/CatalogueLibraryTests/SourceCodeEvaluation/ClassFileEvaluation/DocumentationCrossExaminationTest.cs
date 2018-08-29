@@ -192,7 +192,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "SomeClass",
             "ProposeExecutionWhenCommandIs",
             "Log4Net",
-            "ReleaseLocation"
+            "ReleaseLocation",
+            "MyCoolDb",
+            "OperationType",
+
 
         };
 

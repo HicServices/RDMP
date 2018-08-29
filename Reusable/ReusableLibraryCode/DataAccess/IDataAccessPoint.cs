@@ -18,7 +18,7 @@ namespace ReusableLibraryCode.DataAccess
         string Server { get; }
 
         /// <summary>
-        /// The name of the database to connect to e.g. master, tempdb, MyCoolDab etc
+        /// The name of the database to connect to e.g. master, tempdb, MyCoolDb etc
         /// </summary>
         string Database { get; }
 

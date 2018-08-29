@@ -23,6 +23,7 @@ namespace CatalogueLibrary.Data
         private string _description;
         private int _extractionFilterID;
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
