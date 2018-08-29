@@ -14,11 +14,13 @@ namespace CatalogueLibrary.Data
         private readonly IEncryptStrings _encrypter;
         private string _value;
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Value;
         }
 
+        /// <inheritdoc/>
         public string Value
         {
             get
@@ -50,11 +52,17 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// Creates a new encrypted string using <see cref="SimpleStringValueEncryption"/> or the provided <see cref="encrypter"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="encrypter"></param>
         public EncryptedString(ICatalogueRepository repository, IEncryptStrings encrypter = null)
         {
             _encrypter = encrypter ?? new SimpleStringValueEncryption(repository);
         }
 
+        /// <inheritdoc/>
         public string GetDecryptedValue()
         {
             if (string.IsNullOrWhiteSpace(Value))
@@ -67,6 +75,7 @@ namespace CatalogueLibrary.Data
             throw new Exception("Found Value in memory that was not encrypted");
         }
 
+        /// <inheritdoc/>
         public bool IsStringEncrypted(string value)
         {
             return _encrypter.IsStringEncrypted(value);

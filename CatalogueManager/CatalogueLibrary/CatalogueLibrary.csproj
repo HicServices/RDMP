@@ -262,10 +262,11 @@
     <Compile Include="Data\Dashboarding\DashboardObjectUse.cs" />
     <Compile Include="Data\Dashboarding\IPersistableObjectCollection.cs" />
     <Compile Include="Data\Dashboarding\PersistStringHelper.cs" />
+    <Compile Include="Data\DataLoad\Extensions\LoadStageExtensions.cs" />
     <Compile Include="Data\DataLoad\IHasStageSpecificRuntimeName.cs" />
     <Compile Include="Data\DataLoad\IPreLoadDiscardedColumn.cs" />
+    <Compile Include="Data\DataLoad\Extensions\LoadBubbleExtensions.cs" />
     <Compile Include="Data\DataLoad\LoadStage.cs" />
-    <Compile Include="Data\DataLoad\LoadStageExtensions.cs" />
     <Compile Include="Data\DataLoad\ProcessTaskType.cs" />
     <Compile Include="Data\DataLoad\RequiredPropertyInfo.cs" />
     <Compile Include="Data\DemandsNestedInitializationAttribute.cs" />

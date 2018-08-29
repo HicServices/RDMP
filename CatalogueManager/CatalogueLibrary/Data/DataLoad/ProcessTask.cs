@@ -416,24 +416,4 @@ namespace CatalogueLibrary.Data.DataLoad
             matchingArgument.SaveToDatabase();
         }
     }
-
-    public static class LoadBubbleExtensions
-    {
-        public static LoadStage ToLoadStage(this LoadBubble bubble)
-        {
-            switch (bubble)
-            {
-                case LoadBubble.Raw:
-                    return LoadStage.AdjustRaw;
-                case LoadBubble.Staging:
-                    return LoadStage.AdjustStaging;
-                case LoadBubble.Live:
-                    return LoadStage.PostLoad;
-                case LoadBubble.Archive:
-                    throw new Exception("LoadBubble.Archive refers to _Archive tables, therefore it cannot be translated into a LoadStage");
-                default:
-                    throw new ArgumentOutOfRangeException("bubble");
-            }
-        }
-    }
 }

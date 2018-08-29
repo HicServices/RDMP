@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.DataLoad.Extensions;
 using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 

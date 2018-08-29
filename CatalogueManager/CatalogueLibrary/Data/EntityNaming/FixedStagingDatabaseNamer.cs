@@ -23,6 +23,7 @@ namespace CatalogueLibrary.Data.EntityNaming
             _stagingDatabaseName = RDMPQuerySyntaxHelper.EnsureValueIsNotWrapped(stagingDatabaseName);
         }
 
+        /// <inheritdoc/>
         public override string GetName(string tableName, LoadBubble convention)
         {
             if (convention == LoadBubble.Staging)
@@ -31,6 +32,7 @@ namespace CatalogueLibrary.Data.EntityNaming
             return base.GetName(tableName, convention);
         }
         
+        /// <inheritdoc/>
         public override string GetDatabaseName(string rootDatabaseName, LoadBubble stage)
         {
             if (stage == LoadBubble.Staging)

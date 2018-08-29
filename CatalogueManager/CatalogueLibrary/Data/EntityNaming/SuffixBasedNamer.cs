@@ -17,6 +17,7 @@ namespace CatalogueLibrary.Data.EntityNaming
             {LoadBubble.Archive, "_Archive"}
         };
         
+        /// <inheritdoc/>
         public virtual string GetDatabaseName(string rootDatabaseName, LoadBubble stage)
         {
             switch (stage)
@@ -32,6 +33,7 @@ namespace CatalogueLibrary.Data.EntityNaming
             }
         }
 
+        /// <inheritdoc/>
         public virtual string GetName(string tableName, LoadBubble convention)
         {
             if (!Suffixes.ContainsKey(convention))

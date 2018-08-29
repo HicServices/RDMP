@@ -513,8 +513,8 @@ namespace Diagnostics
                 if (externalDatabaseServer != null)
                 {
 
-                    //is it identical?
-                    if (externalDatabaseServer.IsSameDatabase(discoveredDatabase.Server.Name, discoveredDatabase.GetRuntimeName()))
+                                        //is it identical?
+                    if (IsSameDatabase(externalDatabaseServer,discoveredDatabase.Server.Name,discoveredDatabase.GetRuntimeName()))
                         return externalDatabaseServer;
 
 
@@ -594,7 +594,7 @@ namespace Diagnostics
                 if (externalDatabaseServers.Length != 0)
                 {
                     //see if there are any that match the server/database
-                    var correctServer = externalDatabaseServers.Where(s => s.IsSameDatabase(discoveredDatabase.Server.Name, discoveredDatabase.GetRuntimeName())).ToArray();
+                    var correctServer = externalDatabaseServers.Where(s => IsSameDatabase(s,discoveredDatabase.Server.Name, discoveredDatabase.GetRuntimeName())).ToArray();
 
                     //there are two or more external references e.g. JANUS,HICSSISLogging (with integrated security) and then JANUS,HICSSISLogging with user account - at any rate the user has plenty to choose from himself!
                     if (correctServer.Length > 1)
@@ -1307,5 +1307,14 @@ namespace Diagnostics
                     _anoTable.DeleteInDatabase();
             }
         }
+        public bool IsSameDatabase(ExternalDatabaseServer eds, string server, string database)
+        {
+            if (!string.IsNullOrWhiteSpace(eds.Server) && eds.Server.Equals(server))
+                if (!string.IsNullOrWhiteSpace(eds.Database) && eds.Database.Equals(database))
+                    return true;
+
+            return false;
+        }
+
     }
 }

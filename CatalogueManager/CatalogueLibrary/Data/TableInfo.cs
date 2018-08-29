@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.DataLoad.Extensions;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
@@ -237,12 +238,7 @@ namespace CatalogueLibrary.Data
             return namer.GetDatabaseName(baseName, loadStage.ToLoadBubble());
         }
 
-        /// <summary>
-        /// Get the runtime name of the table for a particular load stage, as the table name may be modified depending on the stage.
-        /// </summary>
-        /// <param name="bubble"></param>
-        /// <param name="tableNamingScheme"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public string GetRuntimeName(LoadBubble bubble, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
         {
             // If no naming scheme is specified, the default 'FixedStaging...' prepends the database name and appends '_STAGING'

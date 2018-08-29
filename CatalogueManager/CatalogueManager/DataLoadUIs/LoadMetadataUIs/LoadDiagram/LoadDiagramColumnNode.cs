@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.DataLoad.Extensions;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using CatalogueManager.Icons.IconProvision;

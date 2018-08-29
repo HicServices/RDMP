@@ -7,7 +7,8 @@
     public interface IEncryptedPasswordHost
     {
         /// <summary>
-        /// The encrypted password.  This property should never return a clear text password.  Use GetDecryptedPassword to get the decrypted string.
+        /// The encrypted password stored in memory (and possibly in the database).  This property should never return a clear text password.  Use <see cref="GetDecryptedPassword"/> 
+        /// to get the decrypted string.
         /// </summary>
         string Password { get; set; }
         

@@ -1,6 +1,6 @@
 using System;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace CatalogueLibrary.Data.DataLoad.Extensions
 {
     /// <summary>
     /// Static extensions for <see cref="LoadStage"/>
