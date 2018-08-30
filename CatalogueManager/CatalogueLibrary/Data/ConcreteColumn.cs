@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
@@ -17,7 +18,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)</para>
     /// </summary>
-    public abstract class ConcreteColumn : VersionedDatabaseEntity, IColumn,IOrderable
+    public abstract class ConcreteColumn : VersionedDatabaseEntity, IColumn,IOrderable,IComparable
     {
         #region Database Properties
  
@@ -130,6 +131,19 @@ namespace CatalogueLibrary.Data
         public void Check(ICheckNotifier notifier)
         {
             new ColumnSyntaxChecker(this).Check(notifier);
+        }
+
+        /// <summary>
+        /// Compares columns by <see cref="ConcreteColumn.Order"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public int CompareTo(object obj)
+        {
+            if (obj is IColumn)
+                return this.Order - (obj as IColumn).Order;
+
+            return 0;
         }
     }
 }

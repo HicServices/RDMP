@@ -17,6 +17,9 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public interface ICatalogue : IRevertable, IHasDependencies, IHasQuerySyntaxHelper
     {
+        /// <summary>
+        /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
+        /// </summary>
         int? LoadMetadata_ID { get; }
         string LoggingDataTask { get; set; }
         int? LiveLoggingServer_ID { get; set; }

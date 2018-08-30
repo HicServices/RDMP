@@ -29,13 +29,19 @@ namespace CatalogueLibrary.Data
             get { return _name; }
             set { SetField(ref _name , value);}
         }
-
+       
+        /// <summary>
+        /// Human readable description of what the parameter set identifies e.g. 'Diabetes Drugs' and any supporting information about how it works, quirks etc
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { SetField(ref _description , value);}
         }
 
+        /// <summary>
+        /// The filter which the parameter values are designed to work with
+        /// </summary>
         public int ExtractionFilter_ID
         {
             get { return _extractionFilterID; }
@@ -45,9 +51,14 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Relationships
+
+        /// <inheritdoc cref ="ExtractionFilter_ID"/>
         [NoMappingToDatabase]
         public ExtractionFilter ExtractionFilter { get {return Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);} }
         
+        /// <summary>
+        /// Gets all the individual parameter values required for populating the filter to achieve this concept (e.g. 'Diabetes Drugs' might have 2 parameter values @DrugList='123.122.1,1.2... etc' and @DrugCodeFormat='bnf')
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<ExtractionFilterParameterSetValue> Values { get {return Repository.GetAllObjectsWithParent<ExtractionFilterParameterSetValue>(this);} }
 
@@ -61,6 +72,13 @@ namespace CatalogueLibrary.Data
             ExtractionFilter_ID = Convert.ToInt32(r["ExtractionFilter_ID"]);
         }
 
+        /// <summary>
+        /// Defines a new set of known parameter values to achieve a given goal (e.g. identify 'diabetic drugs' in dataset prescriptions) in combination with a parent <see cref="IFilter"/>.
+        /// <para>A single <see cref="ExtractionFilter"/> (e.g. 'Drug Prescriptions of X' with parameter @DrugList) could have many <see cref="ExtractionFilterParameterSet"/></para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="filter"></param>
+        /// <param name="name"></param>
         public ExtractionFilterParameterSet(ICatalogueRepository repository, ExtractionFilter filter, string name = null)
         {
             name = name ?? "New ExtractionFilterParameterSet " + Guid.NewGuid();
@@ -72,11 +90,14 @@ namespace CatalogueLibrary.Data
             });
         }
 
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <inheritdoc cref="Values"/>
         public ISqlParameter[] GetAllParameters()
         {
             return Values.ToArray();

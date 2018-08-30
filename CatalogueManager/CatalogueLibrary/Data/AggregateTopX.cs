@@ -36,9 +36,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _aggregateConfigurationID , value); }
         }
 
-        /// <summary>
-        /// The number of records to return from the TopX e.g. Top 10
-        /// </summary>
+        /// <inheritdoc/>
         public int TopX
         {
             get { return _topX; }
@@ -54,10 +52,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _orderByDimensionIfAny_ID, value); }
         }
 
-        /// <summary>
-        /// When applying a TopX to an aggregate, this is the direction (Ascending/Descending) for the ORDER BY statement.  Descending means pick top X where
-        /// count / sum etc is highest.
-        /// </summary>
+        /// <inheritdoc/>
         public AggregateTopXOrderByDirection OrderByDirection
         {
             get { return _orderByDirection; }

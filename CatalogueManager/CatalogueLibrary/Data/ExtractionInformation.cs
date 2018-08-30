@@ -29,7 +29,7 @@ namespace CatalogueLibrary.Data
     /// is the column which will be joined against cohorts in data extraction linkages.  This should be the private identifier you use to identify people
     /// in your datasets (e.g. Community Health Index or NHS Number).</para>
     /// </summary>
-    public class ExtractionInformation : ConcreteColumn, IDeleteable, IComparable, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
+    public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
     {
         private bool _columnInfoFoundToBeNull = false;
 
@@ -43,13 +43,18 @@ namespace CatalogueLibrary.Data
         private int _catalogueItemID;
         private ExtractionCategory _extractionCategory;
         
-        //For other properties see ConcreteColumn
+        /// <summary>
+        /// The virtual column (description, name etc) to which this <see cref="ExtractionInformation"/> provides extraction SELECT SQL for.
+        /// </summary>
         public int CatalogueItem_ID
         {
             get { return _catalogueItemID; }
             set { SetField(ref _catalogueItemID , value); }
         }
 
+        /// <summary>
+        /// Which governance conditions is this column/transform extractable under (e.g. Core, SpecialApprovalRequired etc) 
+        /// </summary>
         public ExtractionCategory ExtractionCategory
         {
             get { return _extractionCategory; }
@@ -95,6 +100,10 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// Gets all WHERE logic that can be used to reduce the number of records matched/extracted etc in cohort creation, project extractions etc.  These are master catalogue level
+        /// filters (<see cref="ExtractionFilter"/>) and act as templates that can be imported/cloned into other use cases (e.g. cohort identification, extraction etc).
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<ExtractionFilter> ExtractionFilters {
             get { return Repository.GetAllObjectsWithParent<ExtractionFilter>(this); }
@@ -102,6 +111,14 @@ namespace CatalogueLibrary.Data
         #endregion
 
 
+        /// <summary>
+        /// Makes the given <see cref="CatalogueItem"/> which has an underlying column <see cref="ColumnInfo"/> in the data repository database extractable using the
+        /// provided SQL code which must be a single line of SELECT sql.
+        /// </summary>
+        /// <param name="repository">Platform database to store the new object in</param>
+        /// <param name="catalogueItem">The virtual column to make extractable (could be a transform e.g. YearOfBirth)</param>
+        /// <param name="column">The column underlying the virtual column (e.g. `MyTable`.`DateOfBirth`)</param>
+        /// <param name="selectSQL">The fully specified column name or transform SQL to execute as a line of SELECT Sql </param>
         public ExtractionInformation(ICatalogueRepository repository, CatalogueItem catalogueItem, ColumnInfo column, string selectSQL)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -148,23 +165,24 @@ namespace CatalogueLibrary.Data
         private Lazy<ColumnInfo> _knownColumninfo;
         private Lazy<CatalogueItem> _knownCatalogueItem;
 
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _knownColumninfo = new Lazy<ColumnInfo>(()=>CatalogueItem.ColumnInfo);
             _knownCatalogueItem = new Lazy<CatalogueItem>(() => Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
         }
 
-
+        /// <inheritdoc/>
         public void InjectKnown(ColumnInfo instance)
         {
             _knownColumninfo = new Lazy<ColumnInfo>(()=>instance);
         }
-
+        /// <inheritdoc/>
         public void InjectKnown(CatalogueItem instance)
         {
             _knownCatalogueItem = new Lazy<CatalogueItem>(() => instance);
         }
-        
+        /// <inheritdoc/>
         public override string ToString()
         {
             //prefer alias, then prefer catalogue name
@@ -179,26 +197,18 @@ namespace CatalogueLibrary.Data
                 return "BROKEN ExtractionInformation:" + SelectSQL;
             }
         }
-
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return ID.GetHashCode();
         }
-        public int CompareTo(object obj)
-        {
-            if(obj is ExtractionInformation)
-            {
-                return this.Order - (obj as ExtractionInformation).Order;
-            }
-            else
-                return 0;
-        }
-
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return ColumnInfo != null? new IHasDependencies[] {ColumnInfo}: new IHasDependencies[0];
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             List<IHasDependencies> dependencies = new List<IHasDependencies>();
@@ -209,6 +219,10 @@ namespace CatalogueLibrary.Data
             return dependencies.ToArray();
         }
 
+        /// <summary>
+        /// Returns true if the SELECT SQL is different from the fully qualified underlying column name e.g. 'UPPER(MyCol)' would return true
+        /// </summary>
+        /// <returns></returns>
         public bool IsProperTransform()
         {
             if (string.IsNullOrWhiteSpace(SelectSQL))
@@ -221,6 +235,7 @@ namespace CatalogueLibrary.Data
             return !SelectSQL.Equals(ColumnInfo.Name);
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             if (ColumnInfo == null)

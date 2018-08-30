@@ -595,9 +595,7 @@ namespace CatalogueLibrary.Data
 
         private int? _loadMetadataId;
 
-        /// <summary>
-        /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
-        /// </summary>
+        /// <inheritdoc/>
         [DoNotExtractProperty]
         [Relationship(typeof(LoadMetadata), RelationshipType.IgnoreableLocalReference)]
         public int? LoadMetadata_ID
