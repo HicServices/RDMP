@@ -39,7 +39,7 @@ namespace CatalogueLibrary.Data
     /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
 
-    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, INamed, IHasQuerySyntaxHelper, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
+    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
     {
         #region Database Properties
         
@@ -156,9 +156,7 @@ namespace CatalogueLibrary.Data
 
         private Lazy<CatalogueItem[]> _knownCatalogueItems;
         
-        /// <summary>
-        /// Shorthand (recommended 3 characters or less) for referring to this dataset (e.g. 'DEM' for the dataset 'Demography')
-        /// </summary>
+        /// <inheritdoc/>
         public string Acronym
         {
             get { return _acronym; }
@@ -479,10 +477,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _ticket, value); }
         }
         
-        /// <summary>
-        /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue. 
-        /// <seealso cref="HIC.Logging.LogManager"/>
-        /// </summary>
+        /// <inheritdoc/>
         [DoNotExtractProperty]
         public string LoggingDataTask
         {
@@ -490,9 +485,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _loggingDataTask, value); }
         }
 
-        /// <summary>
-        /// Currently configured validation rules for columns in a Catalogue, this can be deserialized into a <see cref="HIC.Common.Validation.Validator"/>
-        /// </summary>
+        /// <inheritdoc/>
         [DoNotExtractProperty]
         public string ValidatorXML
         {
@@ -500,11 +493,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _validatorXml, value); }
         }
 
-        /// <summary>
-        /// The <see cref="ExtractionInformation"/> which indicates the time field (in dataset time) of the dataset.  This should be a column in your table
-        /// that indicates for every row when it became active e.g. 'PrescribedDate' for prescribing.  Try to avoid using columns that have lots of nulls or 
-        /// where the date is arbitrary (e.g. 'RecordLoadedDate')
-        /// </summary>
+        /// <inheritdoc/>
         [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference)] //todo do we want to share this?
         [DoNotExtractProperty]
         public int? TimeCoverage_ExtractionInformation_ID
@@ -513,13 +502,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _timeCoverageExtractionInformationID, value); }
         }
 
-        /// <summary>
-        /// The <see cref="ExtractionInformation"/> which can provide a useful subdivision of the dataset e.g. 'Healthboard'.  This should be a logical subdivision
-        /// that helps in the assesment of data quality e.g. you might imagine that if you have 10% errors in data quality and 10 healthboards knowing that all the errors
-        /// are from a single healthboard would be handy.
-        /// 
-        /// <para>This chosen column should not have hundreds/thousands of unique values</para>
-        /// </summary>
+        /// <inheritdoc/>
         [DoNotExtractProperty]
         [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference)] 
         public int? PivotCategory_ExtractionInformation_ID
@@ -528,10 +511,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _pivotCategoryExtractionInformationID, value); }
         }
 
-        /// <summary>
-        /// Bit flag indicating whether the dataset should be considered Deprecated (i.e. do not use anymore).  This is preferred to deleting a Catalogue.  The implications
-        /// of this are that it no longer appears in UIs by default and that warnings will appear when trying to do extractions of the Catalogue
-        /// </summary>
+        /// <inheritdoc/>
         [DoNotExtractProperty]
         public bool IsDeprecated
         {
@@ -539,9 +519,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _isDeprecated, value); }
         }
 
-        /// <summary>
-        /// Bit flag indicating whether the dataset should NEVER be extracted and ONLY EVER used internally by data analysts.
-        /// </summary>
+        /// <inheritdoc/>
         [DoNotExtractProperty]
         public bool IsInternalDataset
         {
@@ -549,10 +527,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _isInternalDataset, value); }
         }
 
-        /// <summary>
-        /// Bit flag indicating whether the Catalogue is a seldom used dataset that should be hidden by default.  Use this if you are importing lots of researcher
-        /// datasets for cohort generation / extraction but don't want them to clog up your user interface.
-        /// </summary>
+        /// <inheritdoc/>
         [DoNotExtractProperty]
         public bool IsColdStorageDataset
         {
@@ -560,9 +535,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _isColdStorageDataset, value); }
         }
 
-        /// <summary>
-        /// The ID of the logging server that is to be used to log data loads of the dataset <see cref="HIC.Logging.LogManager"/>
-        /// </summary>
+        /// <inheritdoc/>
         [Relationship(typeof(ExternalDatabaseServer), RelationshipType.LocalReference)]
         [DoNotExtractProperty]
         public int? LiveLoggingServer_ID
@@ -583,10 +556,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _testLoggingServerID, value); }
         }
 
-        /// <summary>
-        /// The alledged user specified date at which data began being collected.  For a more accurate answer you should run the DQE (See also DatasetTimespanCalculator)
-        /// <para>This field is optional</para>
-        /// </summary>
+        /// <inheritdoc/>
         public DateTime? DatasetStartDate
         {
             get { return _datasetStartDate; }
@@ -611,7 +581,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Relationships
-        /// <inheritdoc cref="CatalogueItem"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public CatalogueItem[] CatalogueItems
         {
@@ -621,7 +591,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        /// <inheritdoc cref="LoadMetadata_ID"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public LoadMetadata LoadMetadata
         {
@@ -634,18 +604,14 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        /// <summary>
-        /// Returns all <see cref="AggregateConfiguration"/> that are associated with the Catalogue.  This includes both summary graphs, patient index tables and all
-        /// cohort aggregates that are built to query this dataset.
-        /// </summary>
-        /// <seealso cref="AggregateConfiguration"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public AggregateConfiguration[] AggregateConfigurations
         {
             get { return Repository.GetAllObjectsWithParent<AggregateConfiguration>(this); }
         }
 
-        /// <inheritdoc cref="LiveLoggingServer_ID"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ExternalDatabaseServer LiveLoggingServer
         {
@@ -669,7 +635,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        /// <inheritdoc cref="TimeCoverage_ExtractionInformation_ID"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ExtractionInformation TimeCoverage_ExtractionInformation {
             get
@@ -680,7 +646,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        /// <inheritdoc cref="PivotCategory_ExtractionInformation_ID"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ExtractionInformation PivotCategory_ExtractionInformation
         {
@@ -1094,10 +1060,7 @@ namespace CatalogueLibrary.Data
             f.Check(notifier);
         }
 
-        /// <summary>
-        /// Retrieves all the TableInfo objects associated with a particular catalogue
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public TableInfo[] GetTableInfoList(bool includeLookupTables)
         {
             List<TableInfo> normalTables, lookupTables;
@@ -1109,10 +1072,7 @@ namespace CatalogueLibrary.Data
             return normalTables.ToArray();
         }
 
-        /// <summary>
-        /// Retrieves all the TableInfo objects associated with a particular catalogue
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public TableInfo[] GetLookupTableInfoList()
         {
             List<TableInfo> normalTables, lookupTables;
@@ -1121,15 +1081,7 @@ namespace CatalogueLibrary.Data
             return lookupTables.ToArray();
         }
         
-        /// <summary>
-        /// Gets all distinct underlying <see cref="TableInfo"/> that are referenced by the <see cref="CatalogueItem"/>s of the Catalogue.  The tables are divided into
-        /// 'normalTables' and 'lookupTables' depending on whether there are any <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on any of the
-        /// Catalogue referenced ColumnInfos.
-        /// <para>The sets are exclusive, a TableInfo is either a normal data contributor or it is a linked lookup table</para>
-        /// </summary>
-        /// <param name="normalTables">Unique TableInfos amongst all CatalogueItems in the Catalogue</param>
-        /// <param name="lookupTables">Unique TableInfos amongst all CatalogueItems in the Catalogue where there is at least
-        ///  one <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on the referencing ColumnInfo.</param>
+        /// <inheritdoc/>
         public void GetTableInfos(out List<TableInfo> normalTables, out List<TableInfo> lookupTables)
         {
             var tables = GetColumnInfos().Select(c => c.TableInfo).Distinct().ToArray();
@@ -1143,19 +1095,13 @@ namespace CatalogueLibrary.Data
             return CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null);
         }
 
-        /// <summary>
-        /// Gets all <see cref="ExtractionFilter"/> declared under any <see cref="ExtractionInformation"/> in the Catalogue where the IsMandatory flag is set.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ExtractionFilter[] GetAllMandatoryFilters()
         {
              return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f=>f.ExtractionFilters).Where(f=>f.IsMandatory).ToArray();
         }
 
-        /// <summary>
-        /// Gets all <see cref="ExtractionFilter"/> declared under any <see cref="ExtractionInformation"/> in the Catalogue.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ExtractionFilter[] GetAllFilters()
         {
             return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters).ToArray();
@@ -1171,34 +1117,7 @@ namespace CatalogueLibrary.Data
                     throw new Exception("Unable to change LoadMetadata for Catalogue " + Name + " because process " + p.Name + " relates solely to this Catalogue - remove the process from the load to fix this problem");
         }
 
-        /// <summary>
-        /// For a particular destination naming convention (e.g. RAW, STAGING), return a map of all table names in the catalogue and their correct
-        /// mapping according to the convention and the table naming scheme
-        /// </summary>
-        /// <param name="destination"></param>
-        /// <param name="namer"></param>
-        /// <returns></returns>
-        public Dictionary<string, string> GetListOfTableNameMappings(LoadBubble destination, INameDatabasesAndTablesDuringLoads namer)
-        {
-            var mappings = new Dictionary<string, string>();
-
-            var normalTableInfoList = GetTableInfoList(false).ToList();
-            
-            normalTableInfoList.ForEach(info =>
-                mappings.Add(info.GetRuntimeName(), info.GetRuntimeName(destination.ToLoadStage(), namer)));
-
-            return mappings;
-        }
-
-        /// <summary>
-        /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is 
-        /// determined by comparing all the underlying <see cref="TableInfo"/> that power the <see cref="ExtractionInformation"/> of the Catalogue and looking for a shared
-        /// servername.  This will handle when the tables are in different databases but only if you set <see cref="setInitialDatabase"/> to false
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="setInitialDatabase">True to require all tables be in the same database.  False will just connect to master / unspecified database</param>
-        /// <param name="distinctAccessPoint"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint)
         {
             var tables = GetTableInfosIdeallyJustFromMainTables();
@@ -1208,7 +1127,7 @@ namespace CatalogueLibrary.Data
             return DataAccessPortal.GetInstance().ExpectDistinctServer(tables, context, setInitialDatabase);
         }
 
-        /// <inheritdoc cref="GetDistinctLiveDatabaseServer(DataAccessContext,bool,out IDataAccessPoint)"/>
+        /// <inheritdoc/>
         public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
         {
             return DataAccessPortal.GetInstance().ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
@@ -1227,12 +1146,7 @@ namespace CatalogueLibrary.Data
             return tables;
         }
 
-        /// <summary>
-        /// Returns the unique <see cref="DatabaseType"/> shared by all <see cref="TableInfo"/> which underlie the Catalogue.  This is similar to GetDistinctLiveDatabaseServer 
-        /// but is faster and more tolerant of failure i.e. if there are no underlying <see cref="TableInfo"/> at all or they are on different servers this will still return
-        /// the shared / null <see cref="DatabaseType"/>
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public DatabaseType? GetDistinctLiveDatabaseServerType()
         {
             var tables = GetTableInfosIdeallyJustFromMainTables();
@@ -1294,13 +1208,13 @@ namespace CatalogueLibrary.Data
         }
 
 
-        /// <inheritdoc cref="CatalogueItemIssue"/>
+        /// <inheritdoc/>
         public CatalogueItemIssue[] GetAllIssues()
         {
             return Repository.GetAllObjects<CatalogueItemIssue>("WHERE CatalogueItem_ID in (select ID from CatalogueItem WHERE Catalogue_ID =  " + ID + ")").ToArray();
         }
 
-        /// <inheritdoc cref="SupportingDocument"/>
+        /// <inheritdoc/>
         public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
         {
             string sql = GetFetchSQL(fetch);
@@ -1308,7 +1222,7 @@ namespace CatalogueLibrary.Data
             return Repository.GetAllObjects<SupportingDocument>(sql).ToArray();
         }
         
-        /// <inheritdoc cref="SupportingSQLTable"/>
+        /// <inheritdoc/>
         public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
         {
             string sql = GetFetchSQL(fetch);
@@ -1341,14 +1255,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        /// <summary>
-        /// Returns all <see cref="ExtractionInformation"/> declared under this <see cref="Catalogue"/> <see cref="CatalogueItem"/>s.  This can be restricted by 
-        /// <see cref="ExtractionCategory"/> 
-        /// 
-        /// <para>pass <see cref="ExtractionCategory.Any"/> to fetch all <see cref="ExtractionInformation"/> regardless of category</para>
-        /// </summary>
-        /// <param name="category"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category)
         {
             return
@@ -1384,12 +1291,7 @@ namespace CatalogueLibrary.Data
             _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem>(this));
         }
 
-        /// <summary>
-        /// Returns the extractability of the Catalogue if it is known.  If it is not known then the repository will be used to find out (and the result will be cached)
-        /// <para>If a null dataExportRepository is passed then you will get the cached answer or null</para>
-        /// </summary>
-        /// <param name="dataExportRepository">Pass null to fetch only the cached value (or null if that is not known)</param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository)
         {
             if (_extractabilityStatus != null)

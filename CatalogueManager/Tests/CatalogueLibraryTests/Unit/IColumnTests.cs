@@ -3,6 +3,7 @@ using CatalogueLibrary.Checks;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using NUnit.Framework;
@@ -16,7 +17,7 @@ namespace CatalogueLibraryTests.Unit
     public class IColumnTests
     {
 
-        private class TestColumn:IColumn
+        private class TestColumn:SpontaneousObject,IColumn
         {
             public string GetRuntimeName()
             {
@@ -28,7 +29,6 @@ namespace CatalogueLibraryTests.Unit
 
             [Sql]
             public string SelectSQL { get; set; }
-            public int ID { get; private set; }
             public string Alias { get; set; }
             public bool HashOnDataRelease { get; private set; }
             public bool IsExtractionIdentifier { get; private set; }

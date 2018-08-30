@@ -38,11 +38,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _order, value); }
         }
 
-        /// <summary>
-        /// The single line of SQL that should be executed in a SELECT statement built by an <see cref="CatalogueLibrary.QueryBuilding.ISqlQueryBuilder"/>
-        /// <para>This may just be the fully qualified column name verbatim or it could be a transform</para>
-        /// <para>This does not include the <see cref="Alias"/> section of the SELECT line e.g. " AS MyTransform"</para>
-        /// </summary>
+        /// <inheritdoc/>
         [Sql]
         public string SelectSQL
         {
@@ -57,10 +53,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        /// <summary>
-        /// The alias (if any) for the column when it is included in a SELECT statement.  This should not include the " AS " bit only the text that would come after.
-        /// <para>Only use if the <see cref="SelectSQL"/> is a transform e.g. "UPPER([mydb]..[mytbl].[mycol])" </para>
-        /// </summary>
+        /// <inheritdoc/>
         public string Alias
         {
             get { return _alias; }
@@ -102,9 +95,7 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
 
-        /// <summary>
-        /// Gets the underlying <see cref="ColumnInfo"/> behind this line of SELECT SQL.
-        /// </summary>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public abstract ColumnInfo ColumnInfo { get; }
 

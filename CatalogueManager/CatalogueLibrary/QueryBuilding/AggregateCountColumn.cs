@@ -1,11 +1,9 @@
-﻿using System;
-using CatalogueLibrary.Checks.SyntaxChecking;
+﻿using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
-using MapsDirectlyToDatabaseTable;
+using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
@@ -13,7 +11,7 @@ namespace CatalogueLibrary.QueryBuilding
     /// <summary>
     /// The count(*) column in an AggregateConfiguration, this is used by AggregateBuilder.  This can be any aggregate function such as 'sum', 'avg' etc.
     /// </summary>
-    public class AggregateCountColumn:IColumn
+    public class AggregateCountColumn:SpontaneousObject,IColumn
     {
         private IQuerySyntaxHelper _syntaxHelper;
         private readonly string _sql;
@@ -32,8 +30,7 @@ namespace CatalogueLibrary.QueryBuilding
         {
             _sql = sql;
         }
-
-
+        
         /// <summary>
         /// Initializes the <see cref="IQuerySyntaxHelper"/> for the column and optionally ensures that it has an alias.  If no <see cref="Alias"/> has
         /// been specified or was found in the current sql then <see cref="DefaultAliasName"/> is set.
@@ -83,9 +80,6 @@ namespace CatalogueLibrary.QueryBuilding
         [Sql]
         public string SelectSQL { get; set; }
         
-        /// <inheritdoc/>
-        public int ID { get { return -1; }}
-
         /// <inheritdoc/>
         public string Alias{get; private set; }
 
