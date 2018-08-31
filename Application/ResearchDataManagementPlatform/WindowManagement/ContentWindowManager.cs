@@ -71,7 +71,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICoreChildProvider CoreChildProvider { get; private set; }
 
-        public RDMPDocumentationStore DocumentationStore;
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
@@ -110,8 +109,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             KeywordHelpTextListbox.HelpKeywordsIconProvider = CoreIconProvider;
 
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
-
-            DocumentationStore = new RDMPDocumentationStore(RepositoryLocator);
 
             WindowArranger = new WindowArranger(this,_toolboxWindowManager,_mainDockPanel);
             

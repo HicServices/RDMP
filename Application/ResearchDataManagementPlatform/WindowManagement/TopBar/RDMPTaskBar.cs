@@ -86,14 +86,16 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             try
             {
-                btnHome.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(HomeUI));
-                btnCatalogues.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(CatalogueCollectionUI));
-                btnCohorts.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(CohortIdentificationCollectionUI));
-                btnSavedCohorts.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(SavedCohortsCollectionUI));
-                btnDataExport.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(DataExportCollectionUI));
-                btnTables.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(TableInfoCollectionUI));
-                btnLoad.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(LoadMetadataCollectionUI));
-                btnFavourites.ToolTipText = _manager.ContentManager.DocumentationStore.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(FavouritesCollectionUI)); 
+                var store = _manager.ContentManager.RepositoryLocator.CatalogueRepository.CommentStore;
+
+                btnHome.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(HomeUI));
+                btnCatalogues.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(CatalogueCollectionUI));
+                btnCohorts.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(CohortIdentificationCollectionUI));
+                btnSavedCohorts.ToolTipText =  store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(SavedCohortsCollectionUI));
+                btnDataExport.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(DataExportCollectionUI));
+                btnTables.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(TableInfoCollectionUI));
+                btnLoad.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(LoadMetadataCollectionUI));
+                btnFavourites.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(FavouritesCollectionUI)); 
 
             }
             catch (Exception e)

@@ -75,11 +75,11 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        #endregion
-
         /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
         [NoMappingToDatabase]
         public IColumn OrderByColumn { get { return OrderByDimensionIfAny; } }
+
+        #endregion
 
         /// <summary>
         /// Creates an instance by reading it out of the database for the provided reader

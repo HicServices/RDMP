@@ -16,7 +16,7 @@ namespace ReusableUIComponents
 {
     /// <summary>
     /// Part of ExceptionViewer, displays keywords that relate to the Exception being viewed.  For example if the Exception Message or StackTrace talks about Catalogue then the keyword 
-    /// 'Catalogue' will appear in the KeywordHelpTextListbox.  The keywords and descriptions stored in HelpKeywordsDictionary which is populated both from the source code (zip file) and
+    /// 'Catalogue' will appear in the KeywordHelpTextListbox.  The keywords and descriptions stored in the <see cref="CommentStore"/> which is populated both from the xmldocs and
     /// from the additional help keyword resources.  This includes keywords for all DatabaseEntity types (Catalogue, TableInfo etc) as well as all foreign keys (that do not CASCADE).
     /// </summary>
     public partial class KeywordHelpTextListbox : UserControl
@@ -26,18 +26,6 @@ namespace ReusableUIComponents
         private static Bitmap _information;
 
         public static CommentStore CommentStore;
-
-        
-        public static bool ContainsKey(string key)
-        {
-            return CommentStore.ContainsKey(key);
-        }
-
-        public static void ShowKeywordHelp(string key)
-        {
-            if(ContainsKey(key))
-                ShowHelpSection(new HelpSection(key, CommentStore[key]));
-        }
 
         #endregion
         
@@ -111,5 +99,11 @@ namespace ReusableUIComponents
         {
             WideMessageBox.Show(hs.Keyword + ":" + Environment.NewLine + hs.HelpText, Environment.StackTrace, false, hs.Keyword, "Help Keyword:" + hs.Keyword, (Bitmap)ImageGetter(hs),WideMessageBoxTheme.Help);
         }
+
+        public static void ShowKeywordHelp(string key, string docs)
+        {
+            ShowHelpSection(new HelpSection(key, docs));
+        }
+
     }
 }

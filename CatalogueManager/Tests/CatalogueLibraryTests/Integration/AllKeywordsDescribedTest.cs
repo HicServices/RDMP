@@ -37,10 +37,15 @@ namespace CatalogueLibraryTests.Integration
             List<Exception> ex;
             var databaseTypes = CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex).Where(t => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract && !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
 
-            foreach (var type in databaseTypes)
-                if (!CatalogueRepository.CommentStore.ContainsKey(type.Name) || string.IsNullOrWhiteSpace(CatalogueRepository.CommentStore[type.Name]))
-                    problems.Add("Type " + type.Name + " does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
 
+            foreach (var type in databaseTypes)
+            {
+                var docs = CatalogueRepository.CommentStore[type.Name]??CatalogueRepository.CommentStore["I"+type.Name];
+                
+                if(string.IsNullOrWhiteSpace(docs))
+                    problems.Add("Type " + type.Name + " does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
+                
+            }
             foreach (string problem in problems)
                 Console.WriteLine("Fatal Problem:" + problem);
 

@@ -195,8 +195,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "ReleaseLocation",
             "MyCoolDb",
             "OperationType",
-
-
+            "DrugList",
+            "DrugCodeFormat",
+            "GenderCodeDescription"
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text.RegularExpressions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 
@@ -45,19 +41,11 @@ namespace CatalogueLibrary.Reports
                 //it's an abstract empty design class
                 if(t.Name.EndsWith("_Design"))
                     continue;
-                    
-                string toFind;
 
-                //if it's a generic
-                if (t.Name.EndsWith("`1"))
-                    toFind = t.Name.Substring(0, t.Name.Length - "`1".Length); //trim off the tick 1
-                else
-                    toFind = t.Name;//its just regular
+                var docs = _commentStore.GetTypeDocumentationIfExists(t);
 
-                if (_commentStore.ContainsKey(toFind))
-                    Summaries.Add(t, _commentStore[toFind]);
-                else if (_commentStore.ContainsKey("I" + toFind))
-                    Summaries.Add(t, _commentStore["I" + toFind]);
+                if(docs != null)
+                    Summaries.Add(t, docs);
                 else
                     notifier.OnCheckPerformed(
                         new CheckEventArgs("Failed to get definition for class " + t.FullName, CheckResult.Fail));

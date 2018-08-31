@@ -32,7 +32,7 @@ namespace CatalogueLibrary.Data
         ILoadMetadata LoadMetadata { get; }
 
         /// <summary>
-        /// If the data load involves iteratively loading dat from a date based cache of fetched data then this will be the <see cref="ICacheProress"/> which is responsible for fetching
+        /// If the data load involves iteratively loading dat from a date based cache of fetched data then this will be the <see cref="ICacheProgress"/> which is responsible for fetching
         /// and saving the cached data to disk (this occurs seperately from the data loading).
         /// </summary>
         ICacheProgress CacheProgress { get; }

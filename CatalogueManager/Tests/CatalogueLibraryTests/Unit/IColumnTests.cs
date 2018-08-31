@@ -14,9 +14,12 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 namespace CatalogueLibraryTests.Unit
 {
     [Category("Unit")]
-    public class IColumnTests
+    class IColumnTests
     {
 
+        /// <summary>
+        /// For tests
+        /// </summary>
         private class TestColumn:SpontaneousObject,IColumn
         {
             public string GetRuntimeName()
