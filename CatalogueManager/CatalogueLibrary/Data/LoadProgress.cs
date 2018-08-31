@@ -27,16 +27,23 @@ namespace CatalogueLibrary.Data
             get { return _isDisabled; }
             set { SetField(ref _isDisabled, value); }
         }
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+        /// <inheritdoc/>
         public DateTime? OriginDate
         {
             get { return _originDate; }
             set { SetField(ref _originDate, value); }
         }
+
+        /// <summary>
+        /// Not used
+        /// </summary>
+        [Obsolete("Do not use")]
         public string LoadPeriodicity
         {
             get { return _loadPeriodicity; }
@@ -79,6 +86,7 @@ namespace CatalogueLibrary.Data
         }
 #endregion
 
+        /// <inheritdoc cref="ILoadProgress"/>
         public LoadProgress(ICatalogueRepository repository, LoadMetadata parent)
         {
             repository.InsertAndHydrate(this,  
@@ -101,6 +109,7 @@ namespace CatalogueLibrary.Data
             DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(r["DefaultNumberOfDaysToLoadEachTime"]);
         }
         
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name + " ID=" + ID;

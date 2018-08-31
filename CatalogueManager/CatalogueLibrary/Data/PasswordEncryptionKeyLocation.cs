@@ -19,11 +19,20 @@ namespace CatalogueLibrary.Data
     {
         private readonly ICatalogueRepository _repository;
 
+        /// <summary>
+        /// Prepares to retrieve/create the key file for the given platform database
+        /// </summary>
+        /// <param name="repository"></param>
         public PasswordEncryptionKeyLocation(ICatalogueRepository repository)
         {
             _repository = repository;
         }
 
+        /// <summary>
+        /// Gets the physical file path to the currently configured RSA private key for encrypting/decrypting passwords or null if no
+        /// custom keyfile has been created yet.
+        /// </summary>
+        /// <returns></returns>
         public string GetKeyFileLocation()
         {
             using (var con = _repository.DiscoveredServer.GetConnection())
@@ -35,9 +44,12 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// Connects to the private key location and returns the encryption/decryption parameters stored in it
+        /// </summary>
+        /// <returns></returns>
         public RSAParameters OpenKeyFile()
         {
-
             string existingKey = GetKeyFileLocation();
 
             return DeserializeFromLocation(existingKey);
@@ -72,6 +84,12 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// Creates a new private RSA encryption key certificate at the given location and sets the catalogue repository to use it for encrypting passwords.
+        /// This will make any existing serialized passwords iretrievable unless you restore and reset the original key file location. 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public FileInfo CreateNewKeyFile(string path)
         {
             string existingKey = GetKeyFileLocation();
@@ -125,6 +143,10 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// Deletes the location of the RSA private key file from the platform database (does not delete the physical
+        /// file).
+        /// </summary>
         public void DeleteKey()
         {
             string existingKey = GetKeyFileLocation();

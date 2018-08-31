@@ -9,28 +9,8 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
-    /// <summary>
-    /// Describes the flow of strongly typed objects (usually DataTables) from a source to a destination (e.g. extracting linked cohort data into a flat file ).  
-    /// This entity is the serialized version of DataFlowPipelineEngine&lt;T&gt; (built by a DataFlowPipelineEngineFactory&lt;T&gt; ).
-    /// 
-    /// <para>It is the hanging off point of a sequence of steps e.g. 'clean strings', 'substitute column X for column Y by mapping values off of remote server B'.</para>
-    /// 
-    /// <para>The functionality of the class is like a microcosm of LoadMetadata (a sequence of predominately reflection driven operations) but it happens in memory 
-    /// (rather than in the RAW=>STAGING=>LIVE databases).</para>
-    /// 
-    /// <para>Any time data flows from one location to another there is usually a pipeline involved (e.g. read from a flat file and bulk insert into a database), it 
-    /// may be an empty pipeline but the fact that it is there allows for advanced/freaky user requirements such as:</para>
-    ///
-    /// <para>"Can we count all dates to the first Monday of the week on all extracts we do from now on? - it's a requirement of our new Data Governance Officer"</para>
-    /// 
-    /// <para>A Pipeline can be missing either/both a source and destination.  This means that the pipeline can only be used in a situation where the context forces
-    /// a particular source/destination (for example if the user is trying to bulk insert a CSV file then the Destination might be a fixed instance of DataTableUploadDestination
-    /// initialized with a specific server/database that the user had picked on a user interface).</para>
-    /// 
-    /// <para>Remember that Pipeline is the serialization, pipelines are used all over the place in RDMP software under different contexts (caching, data extraction etc)
-    /// and sometimes we even create DataFlowPipelineEngine on the fly without even having a Pipeline serialization to create it from.</para>
-    /// </summary>
-    public class Pipeline : VersionedDatabaseEntity, IPipeline,IHasDependencies, IInjectKnown<IPipelineComponent[]>
+    /// <inheritdoc cref="IPipeline"/>
+    public class Pipeline : VersionedDatabaseEntity, IPipeline,IHasDependencies
     {
         #region Database Properties
 
@@ -39,24 +19,27 @@ namespace CatalogueLibrary.Data.Pipelines
         private int? _destinationPipelineComponentID;
         private int? _sourcePipelineComponentID;
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <inheritdoc/>
         public string Description
         {
             get { return _description; }
             set { SetField(ref  _description, value); }
         }
 
+        /// <inheritdoc/>
         public int? DestinationPipelineComponent_ID
         {
             get { return _destinationPipelineComponentID; }
             set { SetField(ref  _destinationPipelineComponentID, value); }
         }
-
+        /// <inheritdoc/>
         public int? SourcePipelineComponent_ID
         {
             get { return _sourcePipelineComponentID; }
@@ -66,12 +49,14 @@ namespace CatalogueLibrary.Data.Pipelines
         #endregion
 
         #region Relationships
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IList<IPipelineComponent> PipelineComponents { get
         {
             return _knownPipelineComponents.Value;
         }}
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IPipelineComponent Destination {
             get
@@ -81,7 +66,7 @@ namespace CatalogueLibrary.Data.Pipelines
                     :_knownPipelineComponents.Value.Single(c=>c.ID == DestinationPipelineComponent_ID.Value);
             }
         }
-
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IPipelineComponent Source
         {

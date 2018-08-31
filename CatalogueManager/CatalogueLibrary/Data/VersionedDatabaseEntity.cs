@@ -13,6 +13,9 @@ namespace CatalogueLibrary.Data
 
         private string _softwareVersion;
 
+        /// <summary>
+        /// The version of RDMP that was running when the object was created
+        /// </summary>
         [DoNotExtractProperty]
         public string SoftwareVersion
         {

@@ -54,7 +54,8 @@ namespace CatalogueLibraryTests.Unit
             var utcTime = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
             var period1 = new PermissionWindowPeriod((int)DateTime.Now.DayOfWeek, utcTime.Subtract(fiveMinutes), utcTime.Add(fiveMinutes));
 
-            var permissionWindow = new PermissionWindow(new List<PermissionWindowPeriod> {period1});
+            var permissionWindow = new PermissionWindow(CatalogueRepository); 
+            permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod> { period1 });
             Assert.IsTrue(permissionWindow.WithinPermissionWindow());
         }
 
@@ -70,7 +71,8 @@ namespace CatalogueLibraryTests.Unit
             var utcTime = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
             var period1 = new PermissionWindowPeriod((int)DateTime.Now.DayOfWeek, utcTime.Add(oneMinute), utcTime.Add(oneMinute));
 
-            var permissionWindow = new PermissionWindow(new List<PermissionWindowPeriod> { period1 });
+            var permissionWindow = new PermissionWindow(CatalogueRepository);
+            permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod> { period1 });
             Assert.IsFalse(permissionWindow.WithinPermissionWindow());
         }
     }

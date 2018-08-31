@@ -41,26 +41,42 @@ namespace CatalogueLibrary.Data
         private string _collation;
         private ExtractionJoinType _extractionJoinType;
 
+        /// <summary>
+        /// The column in the lookup table containing the lookup description for the code e.g. [z_GenderLookup].[GenderCodeDescription]
+        /// </summary>
         public int Description_ID
         {
             get { return _description_ID; }
             set { SetField(ref _description_ID, value); }
         }
+
+        /// <summary>
+        /// The column in the lookup table containing the lookup code e.g. [z_GenderLookup].[Gender]
+        /// </summary>
         public int ForeignKey_ID
         {
             get { return _foreignKey_ID; }
             set { SetField(ref _foreignKey_ID, value); }
         }
+
+        /// <summary>
+        /// The column in the main dataset containing the lookup code e.g. [Prescribing].[Gender]
+        /// </summary>
         public int PrimaryKey_ID
         {
             get { return _primaryKey_ID; }
             set { SetField(ref _primaryKey_ID, value); }
         }
+
+        /// <inheritdoc/>
         public string Collation
         {
             get { return _collation; }
             set { SetField(ref _collation, value); }
         }
+
+        /// <inheritdoc/>
+        ///<remarks>For <see cref="Lookups"/> this should almost always be LEFT</remarks>
         public ExtractionJoinType ExtractionJoinType
         {
             get { return _extractionJoinType; }
@@ -114,6 +130,15 @@ namespace CatalogueLibrary.Data
         #endregion
 
 
+        /// <summary>
+        /// Declares that the columns provide form a foreign key join to lookup table relationship
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="description">The lookup table description column</param>
+        /// <param name="foreignKey">The main dataset column that joins to the lookup e.g. Prescribing.DrugCode</param>
+        /// <param name="primaryKey">The lookup table column that contains the code e.g. z_DrugLookup.Code</param>
+        /// <param name="type"></param>
+        /// <param name="collation"></param>
         public Lookup(ICatalogueRepository repository, ColumnInfo description, ColumnInfo foreignKey, ColumnInfo primaryKey, ExtractionJoinType type, string collation)
         {
             //do checks before it hits the database.
@@ -159,6 +184,7 @@ namespace CatalogueLibrary.Data
         }
 
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return ToStringCached();
@@ -170,7 +196,13 @@ namespace CatalogueLibrary.Data
             return _cachedToString ?? (_cachedToString = " " + ForeignKey.Name + " = " + PrimaryKey.Name);
         }
 
-
+        /// <summary>
+        /// Returns all <see cref="Lookup"/> relationships that exist between the main dataset <see cref="foreignKeyTable"/> and the
+        /// assumed lookup table <see cref="primaryKeyTable"/>
+        /// </summary>
+        /// <param name="foreignKeyTable">The main dataset table</param>
+        /// <param name="primaryKeyTable">The hypothesized lookup table</param>
+        /// <returns>All lookup relationships, a given table could have 2+ of these e.g. SendingLocation and DischargeLocation could both reference z_Location lookup</returns>
         public static Lookup[] GetAllLookupsBetweenTables(TableInfo foreignKeyTable,TableInfo primaryKeyTable)
         {
             if(foreignKeyTable.Equals(primaryKeyTable))
@@ -212,8 +244,10 @@ namespace CatalogueLibrary.Data
             }
         }
      
-
-        
+        /// <summary>
+        /// Checks that the Lookup configuration is legal (e.g. not a table linking against itself etc).
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             
@@ -224,6 +258,7 @@ namespace CatalogueLibrary.Data
                 notifier.OnCheckPerformed(new CheckEventArgs("Description Key and Primary Key are from different tables (Not allowed) in Lookup " + this.ID, CheckResult.Fail));
         }
         
+        /// <inheritdoc/>
         public override void SaveToDatabase()
         {
             //do checks before it hits the database.
@@ -239,37 +274,33 @@ namespace CatalogueLibrary.Data
             base.SaveToDatabase();
         }
 
-
-        public static int CountUniquePrimaryKeyTablesInLookupCollection(Lookup[] foreignKeyLookupInvolvement)
-        {
-            HashSet<int> primaryKeyTableIDsSeen = new HashSet<int>();
-
-            foreach (Lookup l in foreignKeyLookupInvolvement)
-                primaryKeyTableIDsSeen.Add(l.PrimaryKey.TableInfo_ID);
-
-            return primaryKeyTableIDsSeen.Count;
-        }
-
+        /// <inheritdoc/>
         public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
         {
             return Repository.GetAllObjects<LookupCompositeJoinInfo>("WHERE OriginalLookup_ID=" + ID);
         }
-
+        /// <inheritdoc/>
         public ExtractionJoinType GetInvertedJoinType()
         {
             throw new NotSupportedException("Lookup joins should never be inverted... can't see why you would want to do that... they are always LEFT joined ");
         }
-
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new[] {Description, ForeignKey, PrimaryKey};
         }
-
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return null;
         }
 
+        /// <summary>
+        /// Tells the the <see cref="Lookup"/> what the objects are referenced by <see cref="PrimaryKey_ID"/>, <see cref="ForeignKey_ID"/> and
+        /// <see cref="Description_ID"/> so that it doesn't have to fetch them from the database.
+        /// </summary>
+        /// <param name="primaryKey"></param>
+        /// <param name="foreignKey"></param>
         public void SetKnownColumns(ColumnInfo primaryKey, ColumnInfo foreignKey, ColumnInfo descriptionColumn)
         {
             if(PrimaryKey_ID != primaryKey.ID || ForeignKey_ID != foreignKey.ID || Description_ID != descriptionColumn.ID)

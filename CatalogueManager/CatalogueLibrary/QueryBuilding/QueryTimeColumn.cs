@@ -128,7 +128,7 @@ namespace CatalogueLibrary.QueryBuilding
                 Lookup[] foreignKeyLookupInvolvement = allAvailableLookups.Where(l=>l.ForeignKey_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
                 Lookup[] lookupDescriptionInvolvement = allAvailableLookups.Where(l=>l.Description_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
 
-                if (Lookup.CountUniquePrimaryKeyTablesInLookupCollection(foreignKeyLookupInvolvement) > 1)
+                if (foreignKeyLookupInvolvement.Select(l => l.PrimaryKey.TableInfo_ID).Distinct().Count() > 1)
                     throw new Exception("Column " + ColumnsInOrder[i].UnderlyingColumn + " is configured as a foreign key for multiple different Lookup tables");
 
                 if (foreignKeyLookupInvolvement.Length > 0)

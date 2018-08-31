@@ -10,6 +10,9 @@ namespace CatalogueLibrary.Data.Pipelines
     /// </summary>
     public interface IHasDesignTimeMode
     {
+        /// <summary>
+        /// True if the user is trying to edit a <see cref="Pipeline"/> independent of carrying out the task (i.e. no input objects have been selected).
+        /// </summary>
         bool IsDesignTime { get; }
     }
 }

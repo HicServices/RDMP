@@ -25,24 +25,30 @@ namespace CatalogueLibrary.Data
         private string _description;
         private bool _requiresSynchronousAccess;
         
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <inheritdoc/>
         public string Description
         {
             get { return _description; }
             set { SetField(ref  _description, value); }
         }
 
+        /// <inheritdoc/>
         public bool RequiresSynchronousAccess
         {
             get { return _requiresSynchronousAccess; }
             set { SetField(ref  _requiresSynchronousAccess, value); }
         }
         
+        /// <summary>
+        /// The serialized string of <see cref="PermissionWindowPeriods"/> which is written/read from the catalogue database
+        /// </summary>
         public string PermissionPeriodConfig {
             get { return SerializePermissionWindowPeriods(); }
             set
@@ -56,12 +62,14 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IEnumerable<ICacheProgress> CacheProgresses {
             get { return Repository.GetAllObjectsWithParent<CacheProgress>(this); }
         }
         #endregion
         
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
 
@@ -85,7 +93,7 @@ namespace CatalogueLibrary.Data
                 PermissionWindowPeriods = deserializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
             }
         }
-
+        /// <inheritdoc/>
         public bool WithinPermissionWindow()
         {
             if (!PermissionWindowPeriods.Any())
@@ -94,6 +102,7 @@ namespace CatalogueLibrary.Data
             return WithinPermissionWindow(DateTime.UtcNow);
         }
 
+        /// <inheritdoc/>
         public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
         {
             
@@ -103,6 +112,10 @@ namespace CatalogueLibrary.Data
             return PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
         }
 
+        /// <summary>
+        /// Create a new time window in which you can restrict things (caching, loading etc) from happening outside
+        /// </summary>
+        /// <param name="repository"></param>
         public PermissionWindow(ICatalogueRepository repository)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -119,19 +132,14 @@ namespace CatalogueLibrary.Data
             RequiresSynchronousAccess = Convert.ToBoolean(r["RequiresSynchronousAccess"]);
             PermissionPeriodConfig = r["PermissionPeriodConfig"].ToString();
         }
-
-        public PermissionWindow(List<PermissionWindowPeriod> permissionPeriods)
-        {
-            PermissionWindowPeriods = permissionPeriods;
-            RequiresSynchronousAccess = true;
-        }
-
         
+        /// <inheritdoc/>
         public override string ToString()
         {
             return (string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name) + "(ID = " + ID + ")";
         }
         
+        /// <inheritdoc/>
         public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
         {
             PermissionWindowPeriods = windowPeriods;
