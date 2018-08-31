@@ -449,12 +449,6 @@ dtCreated as dtCreated
 
         }
         
-        [Obsolete("Use Discover instead")]
-        public DiscoveredDatabase GetExpectDatabase()
-        {
-            return Discover();
-        }
-
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[0];

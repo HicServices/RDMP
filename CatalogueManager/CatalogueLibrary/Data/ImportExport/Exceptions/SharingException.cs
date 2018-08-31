@@ -7,10 +7,13 @@ namespace CatalogueLibrary.Data.ImportExport.Exceptions
     /// </summary>
     public class SharingException:Exception
     {
+        /// <inheritdoc/>
         public SharingException(string msg) : base(msg)
         {
             
         }
+
+        /// <inheritdoc/>
         public SharingException(string msg, Exception ex):base(msg,ex)
         {
             

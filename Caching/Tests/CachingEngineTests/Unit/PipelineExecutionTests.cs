@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using CachingEngine.Locking;
 using CachingEngine.PipelineExecution;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
@@ -32,13 +31,9 @@ namespace CachingEngineTests.Unit
                 {engine1, loadProgress1},
                 {engine2, loadProgress2}
             };
-            var lockProvider = new LoadCacheEngineLockProvider(engineMap);
-
+            
             // create the execution object
-            var pipelineExecutor = new SerialPipelineExecution
-            {
-                EngineLockProvider = lockProvider
-            };
+            var pipelineExecutor = new SerialPipelineExecution();
 
             // Act
             pipelineExecutor.Execute(new [] {engine1, engine2}, tokenSource.Token, listener);
@@ -78,13 +73,8 @@ namespace CachingEngineTests.Unit
                 {engine1, loadProgress1},
                 {engine2, loadProgress2}
             };
-            var lockProvider = new LoadCacheEngineLockProvider(engineMap);
-
             // create the execution object
-            var pipelineExecutor = new RoundRobinPipelineExecution()
-            {
-                EngineLockProvider = lockProvider
-            };
+            var pipelineExecutor = new RoundRobinPipelineExecution();
 
             // Act
             pipelineExecutor.Execute(new[] { engine1, engine2 }, tokenSource.Token, listener);

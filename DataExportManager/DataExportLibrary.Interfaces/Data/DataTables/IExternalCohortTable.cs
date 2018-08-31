@@ -23,10 +23,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         string DefinitionTableForeignKeyField { get; set; }
         
         DiscoveredDatabase Discover();
-
-        [Obsolete("Use Discover instead")]
-        DiscoveredDatabase GetExpectDatabase();
-
+        
         void PushToServer(ICohortDefinition newCohortDefinition, IManagedConnection connection);
         bool IDExistsInCohortTable(int originID);
         string GetReleaseIdentifier(IExtractableCohort cohort);

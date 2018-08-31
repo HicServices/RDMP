@@ -37,9 +37,16 @@ namespace CatalogueLibrary.Data
         /// </summary>
         ICacheProgress CacheProgress { get; }
 
-
+        
+        /// <summary>
+        /// Do not use, is not respected
+        /// </summary>
+        [Obsolete("Not respected")]
         bool IsDisabled { get; set; }
         
+        /// <summary>
+        /// The number of days to load each time the DLE is run with the <see cref="ILoadProgress"/>
+        /// </summary>
         int DefaultNumberOfDaysToLoadEachTime { get; }
     }
 }

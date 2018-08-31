@@ -21,6 +21,7 @@ namespace CatalogueLibrary.Data
         private int _loadMetadata_ID;
         private int _defaultNumberOfDaysToLoadEachTime;
 
+        /// <inheritdoc/>
         public bool IsDisabled
         {
             get { return _isDisabled; }
@@ -53,6 +54,8 @@ namespace CatalogueLibrary.Data
             get { return _loadMetadata_ID; }
             set { SetField(ref _loadMetadata_ID, value); }
         }
+
+        /// <inheritdoc/>
         public int DefaultNumberOfDaysToLoadEachTime
         {
             get { return _defaultNumberOfDaysToLoadEachTime; }

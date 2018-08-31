@@ -51,6 +51,10 @@ namespace CatalogueManager.PipelineUIs.Pipelines
            
            InitializeComponent();
 
+           //designer mode
+           if(useCase == null && activator == null)
+               return;
+
             rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
 
             pipelineDiagram1 = new PipelineDiagram();

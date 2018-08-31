@@ -317,7 +317,7 @@ namespace DataExportLibrary.Data.DataTables
 
         public static DataTable GetImportableCohortDefinitionsTable(ExternalCohortTable externalSource, out string displayMemberName, out string valueMemberName, out string versionMemberName, out string projectNumberMemberName)
         {
-            var server = externalSource.GetExpectDatabase().Server;
+            var server = externalSource.Discover().Server;
             using (var con = server.GetConnection())
             {
                 con.Open();

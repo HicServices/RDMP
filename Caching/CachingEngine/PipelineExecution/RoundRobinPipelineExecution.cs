@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CachingEngine.Locking;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
@@ -15,8 +14,6 @@ namespace CachingEngine.PipelineExecution
     /// </summary>
     public class RoundRobinPipelineExecution : IMultiPipelineEngineExecutionStrategy
     {
-        public IEngineLockProvider EngineLockProvider { get; set; }
-
         public void Execute(IEnumerable<IDataFlowPipelineEngine> engines, GracefulCancellationToken cancellationToken, IDataLoadEventListener listener)
         {
             // Execute one pass through a pipeline before moving to the next. Continue until completion.
@@ -30,9 +27,6 @@ namespace CachingEngine.PipelineExecution
                 foreach (var engine in engineList)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-
-                    if (EngineLockProvider.IsLocked(engine))
-                        continue;
 
                     // assigned to temporary variable here to make the logic a bit more explicit
                     var hasMoreData = engine.ExecuteSinglePass(cancellationToken);
