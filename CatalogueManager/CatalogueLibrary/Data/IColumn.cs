@@ -33,8 +33,23 @@ namespace CatalogueLibrary.Data
         /// </summary>
         string Alias { get; }
 
+        /// <summary>
+        /// True if the <see cref="ColumnInfo"/> should be wrapped with a standard hashing algorithmn (e.g. MD5) when extracted to researchers in a data extract.
+        /// <para>Hashing algorithmn must be defined in data export database</para>
+        /// </summary>
         bool HashOnDataRelease { get; }
+
+        /// <summary>
+        /// Indicates whether this column holds patient identifiers which can be used for cohort creation and which must be substituted for anonymous release
+        /// identifiers on data extraction (to a researcher).
+        /// </summary>
         bool IsExtractionIdentifier { get; }
+
+        /// <summary>
+        /// Indicates whether this column is the Primary Key (or part of a composite Primary Key) when extracted.  This flag is not copied / imputed from 
+        /// <see cref="CatalogueLibrary.Data.ColumnInfo.IsPrimaryKey"/> because primary keys can often contain sensitive information (e.g. lab number) and
+        /// you may have a transform or hash configured or your <see cref="Catalogue"/> may involve joining multiple <see cref="TableInfo"/> together.
+        /// </summary>
         bool IsPrimaryKey { get; }
         
     }

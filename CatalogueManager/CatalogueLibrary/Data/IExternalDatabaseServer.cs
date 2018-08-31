@@ -9,11 +9,8 @@ namespace CatalogueLibrary.Data
     /// <summary>
     /// See ExternalDatabaseServer
     /// </summary>
-    public interface IExternalDatabaseServer : IDataAccessPoint, IMapsDirectlyToDatabaseTable
+    public interface IExternalDatabaseServer : IDataAccessPoint, INamed
     {
-        string Name { get; }
-
-        
         /// <summary>
         /// Determines whether the given database server was created by the specified .Database assembly e.g. (DataQualityEngine.Database.dll).  If it is then the 
         /// schema will match, database objects will be retrievable through the host assembly (e.g. DataQualityEngine.dll) etc.

@@ -22,6 +22,8 @@ namespace DataExportLibrary.ExtractionTime
     public class ReleaseIdentifierSubstitution :SpontaneousObject, IColumn
     {
         public string JoinSQL { get; private set; }
+
+        /// <inheritdoc/>
         public IColumn OriginalDatasetColumn;
 
         [Sql]

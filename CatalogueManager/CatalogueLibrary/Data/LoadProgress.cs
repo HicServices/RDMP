@@ -6,15 +6,11 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
-    /// <summary>
-    /// Describes the progress of a long term epic data load operation which cannot be completed in a single Data load bubble (execution of LoadMetadata through the data load engine).
-    /// This entity includes start and end dates for what is trying to be loaded as well as how far through that process progess has been made up to.
-    /// </summary>
-    public class LoadProgress : VersionedDatabaseEntity, ILoadProgress,INamed
+    /// <inheritdoc cref="ILoadProgress"/>
+    public class LoadProgress : VersionedDatabaseEntity, ILoadProgress
     {
         #region Database Properties
         private bool _isDisabled;
@@ -45,11 +41,13 @@ namespace CatalogueLibrary.Data
             get { return _loadPeriodicity; }
             set { SetField(ref _loadPeriodicity, value); }
         }
+        /// <inheritdoc/>
         public DateTime? DataLoadProgress
         {
             get { return _dataLoadProgress; }
             set { SetField(ref _dataLoadProgress, value); }
         }
+        /// <inheritdoc/>
         public int LoadMetadata_ID
         {
             get { return _loadMetadata_ID; }
@@ -63,9 +61,11 @@ namespace CatalogueLibrary.Data
 
         #endregion
         #region Relationships
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ILoadMetadata LoadMetadata { get { return Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID); }}
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ICacheProgress CacheProgress
         {
@@ -98,16 +98,6 @@ namespace CatalogueLibrary.Data
             DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(r["DefaultNumberOfDaysToLoadEachTime"]);
         }
         
-        public TimeSpan GetLoadPeriodicity()
-        {
-            return TimeSpan.Parse(LoadPeriodicity);
-        }
-
-        public void SetLoadPeriodicity(TimeSpan period)
-        {
-            LoadPeriodicity = period.ToString();
-        }
-
         public override string ToString()
         {
             return Name + " ID=" + ID;

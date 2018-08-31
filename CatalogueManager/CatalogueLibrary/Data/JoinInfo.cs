@@ -77,18 +77,23 @@ namespace CatalogueLibrary.Data
         private ColumnInfo _foreignKey;
         private ColumnInfo _primaryKey;
 
-        //properties for retrieving cached answers
+        
+        /// <inheritdoc/>
         public ColumnInfo ForeignKey
         {
             get { return _foreignKey ?? (_foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID)); }
         }
 
+        /// <inheritdoc/>
         public ColumnInfo PrimaryKey
         {
             get { return _primaryKey ?? (_primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID)); }
         }
 
+        /// <inheritdoc/>
         public string Collation { get; set; }
+
+        /// <inheritdoc/>
         public ExtractionJoinType ExtractionJoinType { get; set; }
 
         /// <summary>
