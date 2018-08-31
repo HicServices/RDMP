@@ -15,9 +15,15 @@ namespace CatalogueLibraryTests.Integration
 {
     public class AllKeywordsDescribedTest :DatabaseTests
     {
-        static AllKeywordsDescribedTest()
+
+        [TestFixtureSetUp]
+        public void SetupCommentStore()
         {
+
             CatalogueRepository.SuppressHelpLoading = false;
+            CatalogueRepository.LoadHelp();
+            CatalogueRepository.SuppressHelpLoading = true;
+
         }
 
         [Test]
@@ -32,7 +38,7 @@ namespace CatalogueLibraryTests.Integration
             var databaseTypes = CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex).Where(t => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract && !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
 
             foreach (var type in databaseTypes)
-                if (!CatalogueRepository.HelpText.ContainsKey(type.Name) || string.IsNullOrWhiteSpace(CatalogueRepository.HelpText[type.Name]))
+                if (!CatalogueRepository.CommentStore.ContainsKey(type.Name) || string.IsNullOrWhiteSpace(CatalogueRepository.CommentStore[type.Name]))
                     problems.Add("Type " + type.Name + " does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
 
             foreach (string problem in problems)
@@ -56,7 +62,7 @@ namespace CatalogueLibraryTests.Integration
             List<string> problems = new List<string>();
             foreach (string fkName in allKeys)
             {
-                if(!CatalogueRepository.HelpText.ContainsKey(fkName))
+                if (!CatalogueRepository.CommentStore.ContainsKey(fkName))
                     problems.Add(fkName + " is a foreign Key (which does not CASCADE) but does not have any HelpText");
             }
             
@@ -81,7 +87,7 @@ namespace CatalogueLibraryTests.Integration
             List<string> problems = new List<string>();
             foreach (string idx in allIndexes)
             {
-                if (!CatalogueRepository.HelpText.ContainsKey(idx))
+                if (!CatalogueRepository.CommentStore.ContainsKey(idx))
                     problems.Add(idx + " is an index but does not have any HelpText");
             }
             

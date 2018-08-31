@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.Icons;
 
@@ -21,30 +22,21 @@ namespace ReusableUIComponents
     public partial class KeywordHelpTextListbox : UserControl
     {
         #region Static setup of dictionary of keywords
-        private static Dictionary<string, string> HelpKeywordsDictionary = new Dictionary<string, string>();
         public static IIconProvider HelpKeywordsIconProvider;
         private static Bitmap _information;
 
-        public static void AddToHelpDictionaryIfNotExists(string key, string value)
-        {
-            //get rid of newlines
-            value = value.Replace(Environment.NewLine, " ");
-            
-            if(!HelpKeywordsDictionary.ContainsKey(key))
-                HelpKeywordsDictionary.Add(key,value);
+        public static CommentStore CommentStore;
 
-            _information = ChecksAndProgressIcons.Information;
-        }
-
+        
         public static bool ContainsKey(string key)
         {
-            return HelpKeywordsDictionary.ContainsKey(key);
+            return CommentStore.ContainsKey(key);
         }
 
         public static void ShowKeywordHelp(string key)
         {
             if(ContainsKey(key))
-                ShowHelpSection(new HelpSection(key,HelpKeywordsDictionary[key]));
+                ShowHelpSection(new HelpSection(key, CommentStore[key]));
         }
 
         #endregion
@@ -68,7 +60,7 @@ namespace ReusableUIComponents
             //unless the text is unreasonably long
             if(richTextBoxToHighlight.TextLength < 100000)
                 //Highlight keywords and add the help text to the olvlistbox
-                foreach (KeyValuePair<string, string> kvp in HelpKeywordsDictionary)
+                foreach (KeyValuePair<string, string> kvp in CommentStore)
                     if (richTextBoxToHighlight.Text.Contains(kvp.Key))
                     {
                         if (keywordNotToAdd != null && kvp.Key.Equals(keywordNotToAdd))//if it is the one keyword we are not supposed to be adding (this is used when you double click a help and get a WideMessageBox with help for yourself you shouldn't add your own keyword)

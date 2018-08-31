@@ -36,9 +36,6 @@ namespace DataExportLibrary.Repositories
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
         {
             CatalogueRepository = catalogueRepository;
-
-            //add our documentation to the repository too
-            catalogueRepository.AddToHelp(GetType().Assembly);
         }
         
         public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)

@@ -315,7 +315,6 @@
     <Compile Include="Unit\CacheLagPeriodUnitTests.cs" />
     <Compile Include="Unit\CatalogueNamingTests.cs" />
     <Compile Include="Unit\DataFlowPipelineEngineTests.cs" />
-    <Compile Include="Unit\DocumentationReportMapsDirectlyToDatabaseTest.cs" />
     <Compile Include="Unit\ExerciseData\TestBiochemistryCreation.cs" />
     <Compile Include="Unit\ExerciseData\TestDemographyCreation.cs" />
     <Compile Include="Unit\ExerciseData\TestPrescribingCreation.cs" />

@@ -189,14 +189,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
 
 
             if (_startup != null && _startup.RepositoryLocator != null && _startup.RepositoryLocator.CatalogueRepository != null)
-                SetupHelpKeywords(_startup.RepositoryLocator.CatalogueRepository);
-        }
-
-
-        private void SetupHelpKeywords(CatalogueRepository repo)
-        {
-            foreach (var kvp in repo.HelpText)
-                KeywordHelpTextListbox.AddToHelpDictionaryIfNotExists(kvp.Key,kvp.Value);
+                KeywordHelpTextListbox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
         }
 
         void t_Tick(object sender, EventArgs e)

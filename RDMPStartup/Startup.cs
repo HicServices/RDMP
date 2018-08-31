@@ -358,6 +358,14 @@ namespace RDMPStartup
 
             MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(_mefCheckNotifier, toProcess.Select(d=>d.FullName).ToArray());
             catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
+
+            _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
+            var sw = Stopwatch.StartNew();
+            catalogueRepository.LoadHelp();
+
+            sw.Stop();
+            _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));
+
         }
         #endregion
     }

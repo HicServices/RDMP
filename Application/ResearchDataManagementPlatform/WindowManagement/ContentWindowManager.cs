@@ -404,7 +404,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         ///<inheritdoc/>
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
         {
-            return new Lazy<IObjectVisualisation>(() => new CatalogueObjectVisualisation(CoreIconProvider));
+            return new Lazy<IObjectVisualisation>(() => new CatalogueObjectVisualisation(RepositoryLocator.CatalogueRepository.CommentStore,CoreIconProvider));
         }
 
         public T Activate<T, T2>(T2 databaseObject)

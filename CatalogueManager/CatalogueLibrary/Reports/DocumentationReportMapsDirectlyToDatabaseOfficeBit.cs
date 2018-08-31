@@ -8,6 +8,7 @@ using System.Reflection;
 using CatalogueLibrary.Data;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 using Xceed.Words.NET;
@@ -23,11 +24,11 @@ namespace CatalogueLibrary.Reports
     {
         private DocumentationReportMapsDirectlyToDatabase _report;
 
-        public void GenerateReport(ICheckNotifier notifier, IIconProvider iconProvider,params Assembly[] assemblies)
+        public void GenerateReport(CommentStore commentStore,ICheckNotifier notifier, IIconProvider iconProvider,params Assembly[] assemblies)
         {
             try
             {
-                _report = new DocumentationReportMapsDirectlyToDatabase(assemblies);
+                _report = new DocumentationReportMapsDirectlyToDatabase(commentStore, assemblies);
                 _report.Check(notifier);
 
                 var f = GetUniqueFilenameInWorkArea("RDMPDocumentation");
@@ -60,27 +61,6 @@ namespace CatalogueLibrary.Reports
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Report generation failed", CheckResult.Fail, e));
             }
-        }
-
-
-        private Bitmap GetImage(Type type, Dictionary<string, Bitmap> imagesDictionary)
-        {
-            string key = type.Name;
-
-            if (typeof (IFilter).IsAssignableFrom(type))
-                key = "Filter";
-
-            if (typeof (IContainer).IsAssignableFrom(type))
-                key = "FilterContainer";
-
-            if (typeof(ISqlParameter).IsAssignableFrom(type))
-                key = "ParametersNode";
-            
-            //if it has an image associated with it add it
-            if (imagesDictionary.ContainsKey(key))
-                return imagesDictionary[key];
-
-            return null;
         }
     }
 }

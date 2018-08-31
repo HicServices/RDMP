@@ -51,8 +51,7 @@ namespace Tests.Common
 
         static DatabaseTests()
         {
-            if (CatalogueRepository.SuppressHelpLoading == null)
-                CatalogueRepository.SuppressHelpLoading = true;
+            CatalogueRepository.SuppressHelpLoading = true;
             
             ReadSettingsFile();
         }

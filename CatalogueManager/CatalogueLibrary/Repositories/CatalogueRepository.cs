@@ -21,6 +21,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Repositories
 {
@@ -43,16 +44,16 @@ namespace CatalogueLibrary.Repositories
         public MEF MEF { get; set; }
         
         readonly ObjectConstructor _constructor = new ObjectConstructor();
+
+        public CommentStore CommentStore { get; set; }
         
         /// <summary>
         /// By default CatalogueRepository will execute DocumentationReportMapsDirectlyToDatabase which will load all the Types and find documentation in the source code for 
         /// them obviously this affects test performance so set this to true if you want it to skip this process.  Note where this is turned on, it's in the static constructor
         /// of DatabaseTests which means if you stick a static constructor in your test you can override it if you need access to the help text somehow in your test
         /// </summary>
-        public static bool? SuppressHelpLoading;
+        public static bool SuppressHelpLoading;
 
-        public readonly Dictionary<string,string> HelpText = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
-        
         public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
         {
             AggregateForcedJoiner = new AggregateForcedJoin(this);
@@ -62,52 +63,41 @@ namespace CatalogueLibrary.Repositories
             MEF = new MEF(this);
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
+        }
 
-            AddToHelp(Resources.KeywordHelp);
-
-            AddToHelp(GetType().Assembly);
+        public void LoadHelp()
+        {
+            if (!SuppressHelpLoading)
+            {
+                CommentStore = new CommentStore();
+                CommentStore.ReadComments();
+                AddToHelp(Resources.KeywordHelp);
+            }
         }
 
         private void AddToHelp(string keywordHelpFileContents)
         {
             //null is true for us loading help
-            if (SuppressHelpLoading != null && SuppressHelpLoading.Value)
+            if (SuppressHelpLoading)
                 return;
-            
-            var lines = keywordHelpFileContents.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+
+            var lines = keywordHelpFileContents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var line in lines)
             {
-                if(string.IsNullOrWhiteSpace(line))
+                if (string.IsNullOrWhiteSpace(line))
                     continue;
 
                 var split = line.Split(':');
 
-                if(split.Length != 2)
-                    throw new Exception("Malformed line in Resources.KeywordHelp, line is:"+Environment.NewLine + line +Environment.NewLine + "We expected it to have exactly one colon in it");
+                if (split.Length != 2)
+                    throw new Exception("Malformed line in Resources.KeywordHelp, line is:" + Environment.NewLine + line + Environment.NewLine + "We expected it to have exactly one colon in it");
 
-                if(!HelpText.ContainsKey(split[0]))
-                    HelpText.Add(split[0], split[1]);
+                if (!CommentStore.ContainsKey(split[0]))
+                    CommentStore.Add(split[0], split[1]);
             }
         }
-
-        public void AddToHelp(Assembly assembly)
-        {
-            //null is true for us loading help
-            if (SuppressHelpLoading != null && SuppressHelpLoading.Value)
-                return;
-            
-            Console.WriteLine("Setting up help for assembly " + assembly);
-
-            DocumentationReportMapsDirectlyToDatabase types = new DocumentationReportMapsDirectlyToDatabase(assembly);
-            types.Check(new IgnoreAllErrorsCheckNotifier());
-
-            if (types.Summaries != null)
-                foreach (var kvp in types.Summaries)
-                    if (!HelpText.ContainsKey(kvp.Key.Name))
-                        HelpText.Add(kvp.Key.Name, kvp.Value + Environment.NewLine+"(DatabaseEntity)");
-        }
-
+        
         public IEnumerable<CatalogueItem> GetAllCatalogueItemsNamed(string name, bool ignoreCase)
         {
             string sql;

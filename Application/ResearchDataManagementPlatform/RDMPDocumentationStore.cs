@@ -1,11 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.SimpleDialogs.Reports;
-using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
 
 namespace ResearchDataManagementPlatform
 {
@@ -18,24 +12,11 @@ namespace ResearchDataManagementPlatform
     /// </summary>
     public class RDMPDocumentationStore
     {
-        /// <summary>
-        /// Source code for each class 
-        /// </summary>
-        public Dictionary<Type, string> TypeDocumentation { get; set; }
+        private CatalogueRepository _catalogueRepository;
 
         public RDMPDocumentationStore(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            var ui = new DocumentationReportFormsAndControlsUI(null);
-            ui.RepositoryLocator = repositoryLocator;
-            var controlTypes = ui.GetAllFormsAndControlTypes();
-
-            DocumentationReportFormsAndControls controlsDescriptions = new DocumentationReportFormsAndControls(controlTypes.ToArray());
-            controlsDescriptions.Check(new IgnoreAllErrorsCheckNotifier());
-
-            TypeDocumentation = controlsDescriptions.Summaries;
-
-            foreach (KeyValuePair<Type, string> kvp in TypeDocumentation)
-                KeywordHelpTextListbox.AddToHelpDictionaryIfNotExists(kvp.Key.Name, kvp.Value);
+            _catalogueRepository = repositoryLocator.CatalogueRepository;
         }
 
         /// <summary>
@@ -46,12 +27,12 @@ namespace ResearchDataManagementPlatform
         /// <returns></returns>
         public string GetTypeDocumentationIfExists(int maxLength, Type type)
         {
-            if (!TypeDocumentation.ContainsKey(type))
+            if (!_catalogueRepository.CommentStore.ContainsKey(type.Name))
                 return null;
 
             maxLength = Math.Max(10, maxLength - 3);
 
-            string documentation = TypeDocumentation[type];
+            string documentation = _catalogueRepository.CommentStore[type.Name];
 
             if (documentation.Length <= maxLength)
                 return documentation;

@@ -10,6 +10,7 @@ using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 using ReusableUIComponents.Dependencies.Models;
 using Sharing.Dependency.Gathering;
 
@@ -20,11 +21,11 @@ namespace CatalogueManager.ObjectVisualisation
         private readonly ICoreIconProvider _coreIconProvider;
         private Dictionary<Type, string> _summaries;
 
-        public CatalogueObjectVisualisation(ICoreIconProvider coreIconProvider)
+        public CatalogueObjectVisualisation(CommentStore commentStore, ICoreIconProvider coreIconProvider)
         {
             _coreIconProvider = coreIconProvider;
 
-            var documentation = new DocumentationReportMapsDirectlyToDatabase(typeof(Catalogue).Assembly,typeof(ExtractionConfiguration).Assembly);
+            var documentation = new DocumentationReportMapsDirectlyToDatabase(commentStore,typeof(Catalogue).Assembly, typeof(ExtractionConfiguration).Assembly);
             documentation.Check(new IgnoreAllErrorsCheckNotifier());
             _summaries = documentation.Summaries;
         }

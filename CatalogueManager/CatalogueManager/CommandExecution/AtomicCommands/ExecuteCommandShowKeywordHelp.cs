@@ -54,6 +54,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if (KeywordHelpTextListbox.ContainsKey(modelType.Name))
                 KeywordHelpTextListbox.ShowKeywordHelp(modelType.Name);
+            else if (KeywordHelpTextListbox.ContainsKey("I"+modelType.Name)) //maybe the interface has the documentation?
+                KeywordHelpTextListbox.ShowKeywordHelp("I" + modelType.Name);
             else
                 MessageBox.Show(MEF.GetCSharpNameForType(modelType));
         }

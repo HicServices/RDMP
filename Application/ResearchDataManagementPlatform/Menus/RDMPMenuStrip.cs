@@ -207,7 +207,7 @@ namespace ResearchDataManagementPlatform.Menus
         private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var report = new DocumentationReportMapsDirectlyToDatabaseOfficeBit();
-            report.GenerateReport(
+            report.GenerateReport( _activator.RepositoryLocator.CatalogueRepository.CommentStore,
                 new PopupChecksUI("Generating class summaries", false),
                 _activator.CoreIconProvider,
                 typeof(Catalogue).Assembly,
@@ -226,20 +226,20 @@ namespace ResearchDataManagementPlatform.Menus
             if(currentTab == null)
                 return;
             
-            var typeDocs = _windowManager.ContentManager.DocumentationStore.TypeDocumentation;
+            var typeDocs = _windowManager.ContentManager.RepositoryLocator.CatalogueRepository.CommentStore;
 
             StringBuilder sb = new StringBuilder();
 
             string firstMatch = null;
 
             foreach (var c in currentTab.Controls)
-                if (typeDocs.ContainsKey(c.GetType()))
+                if (typeDocs.ContainsKey(c.GetType().Name))
                 {
                     if (firstMatch == null)
                         firstMatch = c.GetType().Name;
 
                     sb.AppendLine(c.GetType().Name);
-                    sb.AppendLine(typeDocs[c.GetType()]);
+                    sb.AppendLine(typeDocs[c.GetType().Name]);
                     sb.AppendLine();
                 }
             
