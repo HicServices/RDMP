@@ -20,6 +20,7 @@ namespace CatalogueLibrary.Data.Pipelines
 
         private int _pipelineComponentID;
 
+        /// <inheritdoc/>
         public int PipelineComponent_ID
         {
             get { return _pipelineComponentID; }
@@ -30,6 +31,7 @@ namespace CatalogueLibrary.Data.Pipelines
 
         #region Relationship Properties
 
+        /// <inheritdoc cref="PipelineComponent_ID"/>
         [NoMappingToDatabase]
         public IHasDependencies PipelineComponent { get
         {

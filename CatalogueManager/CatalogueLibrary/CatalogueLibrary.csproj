@@ -505,7 +505,6 @@
     <Compile Include="ExternalDatabaseServerPatching\IPatcher.cs" />
     <Compile Include="ForwardEngineerCatalogue.cs" />
     <Compile Include="HICProjectDirectory.cs" />
-    <Compile Include="IArgumentSerializableObject.cs" />
     <Compile Include="ExternalDatabaseServerPatching\DataQualityEnginePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\LoggingDatabasePatcher.cs" />
     <Compile Include="QueryBuilding\AggregateBuilder.cs" />

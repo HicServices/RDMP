@@ -56,6 +56,14 @@ namespace CatalogueLibrary.Data.Pipelines
 
         /// <inheritdoc cref="SourcePipelineComponent_ID"/>
         IPipelineComponent Source { get; }
+
+
+        /// <summary>
+        /// Creates a complete copy (in the database) of the current <see cref="Pipeline"/> including all new copies of components and arguments
+        /// </summary>
+        /// <returns></returns>
+        Pipeline Clone();
+
     }
 
     

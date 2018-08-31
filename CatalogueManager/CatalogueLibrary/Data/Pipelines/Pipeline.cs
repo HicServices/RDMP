@@ -149,24 +149,24 @@ namespace CatalogueLibrary.Data.Pipelines
 
             return clonePipe;
         }
-
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[0];
         }
-
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return PipelineComponents.Cast<IHasDependencies>().ToArray();
         }
 
         private Lazy<IList<IPipelineComponent>> _knownPipelineComponents;
-
+        /// <inheritdoc/>
         public void InjectKnown(IPipelineComponent[] instance)
         {
             _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(()=>instance.OrderBy(p=>p.Order).ToList());
         }
-
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(FetchPipelineComponents);
