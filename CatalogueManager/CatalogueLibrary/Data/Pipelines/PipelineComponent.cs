@@ -121,12 +121,6 @@ namespace CatalogueLibrary.Data.Pipelines
         }
 
         /// <inheritdoc/>
-        public IArgument[] CreateArgumentsForClassIfNotExists<T>()
-        {
-            return CreateArgumentsForClassIfNotExists(typeof (T));
-        }
-
-        /// <inheritdoc/>
         public Type GetClassAsSystemType()
         {
             return ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(Class);
@@ -162,6 +156,12 @@ namespace CatalogueLibrary.Data.Pipelines
             clone.SaveToDatabase();
             
             return clone;
+        }
+
+        /// <inheritdoc/>
+        public IArgument[] CreateArgumentsForClassIfNotExists<T>()
+        {
+            return CreateArgumentsForClassIfNotExists(typeof(T));
         }
 
         /// <inheritdoc/>

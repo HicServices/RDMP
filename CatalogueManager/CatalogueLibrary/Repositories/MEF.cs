@@ -75,6 +75,11 @@ namespace CatalogueLibrary.Repositories
                 throw new NotSupportedException("MEF was not loaded by Startup?!!");
         }
         
+        /// <summary>
+        /// Makes the given Type appear as a MEF exported class.  Can be used to test your types without 
+        /// building and committing an actual <see cref="Plugin"/>
+        /// </summary>
+        /// <param name="type"></param>
         public void AddTypeToCatalogForTesting(Type type)
         {
             SetupMEFIfRequired();

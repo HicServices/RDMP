@@ -80,6 +80,12 @@ namespace CatalogueLibrary.Data.Pipelines
 
         #endregion
 
+        /// <summary>
+        /// Creates a new empty <see cref="Pipeline"/> in the database, this is a sequence of <see cref="PipelineComponent"/> which when combined
+        /// with an <see cref="IPipelineUseCase"/> achieve a specific goal (e.g. loading records into the database from a flat file).
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
         public Pipeline(ICatalogueRepository repository, string name = null)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -112,11 +118,17 @@ namespace CatalogueLibrary.Data.Pipelines
             ClearAllInjections();
         }
         
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Creates (in the database) and returns a new <see cref="Pipeline"/> which is an identical copy of the current.  This includes creating new copies
+        /// of all child objects (i.e. <see cref="PipelineComponent"/> and <see cref="PipelineComponentArgument"/>) 
+        /// </summary>
+        /// <returns></returns>
         public Pipeline Clone()
         {
             var clonePipe = new Pipeline((ICatalogueRepository)Repository, Name + "(Clone)");

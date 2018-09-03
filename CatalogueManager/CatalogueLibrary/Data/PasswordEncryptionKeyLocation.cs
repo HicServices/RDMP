@@ -122,6 +122,10 @@ namespace CatalogueLibrary.Data
             return fileInfo;
         }
 
+        /// <summary>
+        /// Changes the location of the RSA private key file to a physical location on disk (which must exist)
+        /// </summary>
+        /// <param name="newLocation"></param>
         public void ChangeLocation(string newLocation)
         {
             if (!File.Exists(newLocation))

@@ -19,23 +19,39 @@ namespace CatalogueLibrary.Data
     /// 'Good Assembly' (was loaded).  GoodAssemblies are exposed as AssemblyCatalogs (MEF) which area  collection of ComposablePartDefinition (Parts).
     /// 
     /// <para>These can then be constructed/queried like you normally do with MEF (See MEF.LocateExportInContainerByTypeName).</para>
+    /// 
+    /// <para>This class deliberately tries to filter interfaces and abstract class exports since the goal is to construct instances of plugin classes</para>
     /// </summary>
     public class SafeDirectoryCatalog : ComposablePartCatalog
     {
         Regex[] blacklist = new Regex[] { new Regex("SciLexer6?4?.dll$") };
 
+        /// <summary>
+        /// Assemblies succesfully loaded
+        /// </summary>
         public Dictionary<string, Assembly> GoodAssemblies = new Dictionary<string, Assembly>();
+
+        /// <summary>
+        /// Assemblies which could not be loaded
+        /// </summary>
         public Dictionary<string,Exception> BadAssembliesDictionary { get; set; }
 
+        /// <summary>
+        /// All MEF Export classes found in all assemblies loaded
+        /// </summary>
         public Dictionary<string, AssemblyCatalog> PartsByFileDictionary = new Dictionary<string, AssemblyCatalog>();
 
         private readonly AggregateCatalog _catalog;
 
-
+        /// <summary>
+        /// Creates a new list of MEF plugin classes from the dlls/files in the directory list provided
+        /// </summary>
+        /// <param name="directories"></param>
         public SafeDirectoryCatalog(params string[] directories):this(null,directories)
         {
         }
 
+        /// <inheritdoc cref="SafeDirectoryCatalog(string[])"/>
         public SafeDirectoryCatalog(ICheckNotifier listener, params string[] directories)
         {
             BadAssembliesDictionary = new Dictionary<string, Exception>();
@@ -108,7 +124,7 @@ namespace CatalogueLibrary.Data
 
         HashSet<Type> _injectedTypes = new HashSet<Type>();
 
-        public void AddType(Type type)
+        internal void AddType(Type type)
         {
             //Only add novel types
             if(_injectedTypes.Contains(type))
@@ -121,12 +137,22 @@ namespace CatalogueLibrary.Data
             _injectedTypes.Add(type);
         }
 
+        /// <summary>
+        /// Gets all MEF exported classes that were succesfully loaded
+        /// </summary>
         public override IQueryable<ComposablePartDefinition> Parts
         {
             get { return _catalog.Parts; }
         }
 
         private static readonly object PartIteratorLock = new object();
+
+        /// <summary>
+        /// Returns <see cref="Parts"/> as System.Type
+        /// 
+        /// <para>Excludes interfaces and abstract classes</para>
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Type> GetAllTypes()
         {
             lock (PartIteratorLock)

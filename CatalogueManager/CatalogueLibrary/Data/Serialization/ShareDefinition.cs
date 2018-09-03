@@ -15,17 +15,36 @@ namespace CatalogueLibrary.Data.Serialization
     [Serializable]
     public class ShareDefinition
     {
+        /// <summary>
+        /// The unique number that identifies this shared object.  This is created when the object is first shared as an <see cref="ObjectExport"/> and persisted by all 
+        /// other systems that import the object as an <see cref="ObjectImport"/>.
+        /// </summary>
         public Guid SharingGuid { get; set; }
 
+        /// <summary>
+        /// The <see cref="DatabaseEntity.ID"/> of the object in the original database the share was created from (this will be different to the ID it has when imported elsewhere)
+        /// </summary>
         [JsonIgnore]
         public int ID { get; set; }
 
+        /// <summary>
+        /// The System.Type and therefore database table of the <see cref="DatabaseEntity"/> that is being shared
+        /// </summary>
         public Type Type { get; set; }
 
-
+        /// <summary>
+        /// The values of all non public properties on the <see cref="DatabaseEntity"/>.  This does not include any foreign key ID properties e.g. <see cref="CatalogueItem.Catalogue_ID"/>
+        /// which will instead be stored in <see cref="RelationshipProperties"/>
+        /// </summary>
         public Dictionary<string, object> Properties { get; set; }
+
+        /// <summary>
+        /// The values of all foreign key properties on the <see cref="DatabaseEntity"/> (e.g. <see cref="CatalogueItem.Catalogue_ID"/>).  This is the SharingGuid of the referenced object.
+        /// An object cannot be shared unless it is also shared with all such dependencies.
+        /// </summary>
         public JsonCompatibleDictionary<RelationshipAttribute, Guid> RelationshipProperties = new JsonCompatibleDictionary<RelationshipAttribute, Guid>();
-        
+
+        /// <inheritdoc cref="ShareDefinition"/>
         public ShareDefinition(Guid sharingGuid, int id, Type type, Dictionary<string, object> properties, Dictionary<RelationshipAttribute, Guid> relationshipProperties)
         {
             if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))

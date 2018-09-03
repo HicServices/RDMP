@@ -16,18 +16,25 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessCredentials, IDataAccessPoint
     {
+
+        /// <inheritdoc cref="SelfCertifyingDataAccessPoint"/>
         public SelfCertifyingDataAccessPoint(CatalogueRepository repository, DatabaseType databaseType) : base(repository)
         {
             DatabaseType = databaseType;
         }
 
+        /// <inheritdoc/>
         public string Server { get; set; }
+        /// <inheritdoc/>
         public string Database { get; set; }
+        /// <inheritdoc/>
         public string Username { get; set; }
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public DatabaseType DatabaseType { get; set; }
 
+        /// <inheritdoc/>
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
         {
             //this class is not configured with a username so pretend like we don't have any credentials
@@ -38,6 +45,7 @@ namespace CatalogueLibrary.Data
             return this;
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return new QuerySyntaxHelperFactory().Create(DatabaseType);

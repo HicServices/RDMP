@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace CatalogueLibrary.Data.DataLoad
@@ -32,5 +33,8 @@ namespace CatalogueLibrary.Data.DataLoad
 
         /// <inheritdoc cref="ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric"/>
         IArgument[] CreateArgumentsForClassIfNotExists<T>();
+
+        /// <inheritdoc cref="ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric"/>
+        IArgument[] CreateArgumentsForClassIfNotExists(Type underlyingComponentType);
     }
 }

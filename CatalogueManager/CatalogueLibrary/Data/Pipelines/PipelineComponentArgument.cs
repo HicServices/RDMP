@@ -40,6 +40,13 @@ namespace CatalogueLibrary.Data.Pipelines
 
         #endregion
 
+        /// <summary>
+        /// Creates a new argument storage object for one of the arguments in <see cref="PipelineComponent"/>.  
+        /// 
+        /// <para>You should probably call <see cref="PipelineComponent.CreateArgumentsForClassIfNotExists"/> intead</para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parent"></param>
         public PipelineComponentArgument(ICatalogueRepository repository, PipelineComponent parent)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>() { 
@@ -58,18 +65,18 @@ namespace CatalogueLibrary.Data.Pipelines
            Description = r["Description"] as string;
         }
 
-        
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
-
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new[] {PipelineComponent};
         }
-        
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];

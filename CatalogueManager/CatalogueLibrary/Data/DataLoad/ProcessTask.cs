@@ -348,10 +348,11 @@ namespace CatalogueLibrary.Data.DataLoad
         }
 
         /// <inheritdoc/>
-        public IArgument[] CreateArgumentsForClassIfNotExists<T>()
+        public IArgument[] CreateArgumentsForClassIfNotExists(Type t)
         {
             var argFactory = new ArgumentFactory();
-            return argFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(
+            return argFactory.CreateArgumentsForClassIfNotExistsGeneric(
+                t,
 
                 //tell it how to create new instances of us related to parent
                 this,
@@ -361,6 +362,14 @@ namespace CatalogueLibrary.Data.DataLoad
 
                 //convert the result back from generic to specific (us)
                 .ToArray();
+        }
+
+
+
+        /// <inheritdoc/>
+        public IArgument[] CreateArgumentsForClassIfNotExists<T>()
+        {
+            return CreateArgumentsForClassIfNotExists(typeof(T));
         }
 
         /// <summary>
