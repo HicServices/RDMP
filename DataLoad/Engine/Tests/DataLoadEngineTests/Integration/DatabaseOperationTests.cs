@@ -101,7 +101,7 @@ namespace DataLoadEngineTests.Integration
             toCleanUp.Push(cat);
 
             //push the credentials if there are any
-            var creds = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            var creds = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             if (creds != null)
                 toCleanUp.Push(creds);
             

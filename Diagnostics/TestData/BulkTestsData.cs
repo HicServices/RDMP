@@ -413,7 +413,7 @@ dt.Columns.Add(SpecialFieldNames.DataLoadRunID);
 
         public void DeleteCatalogue()
         {
-            var creds = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            var creds = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             tableInfo.DeleteInDatabase();
             if(creds != null)
                 try

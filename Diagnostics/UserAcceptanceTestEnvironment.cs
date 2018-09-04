@@ -1279,7 +1279,7 @@ namespace Diagnostics
             DemographyCatalogue.DeleteInDatabase();
             lmd.DeleteInDatabase();
 
-            var credentials = DemographyTableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            var credentials = (DataAccessCredentials)DemographyTableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             DemographyTableInfo.DeleteInDatabase();
 
             if(credentials != null)

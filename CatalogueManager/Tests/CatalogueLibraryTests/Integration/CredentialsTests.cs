@@ -116,7 +116,7 @@ namespace CatalogueLibraryTests.Integration
                 tableInfo.SaveToDatabase();
 
                 //attempt to request ANY credentials
-                DataAccessCredentials creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.Any);
+                DataAccessCredentials creds2 = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.Any);
 
             }
             finally
@@ -234,7 +234,7 @@ namespace CatalogueLibraryTests.Integration
                 tableInfo.SaveToDatabase();
 
                 //Go via TableInfo and get credentials
-                DataAccessCredentials creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+                DataAccessCredentials creds2 = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
                 Assert.AreEqual(creds2.Name, creds.Name);
             }
             finally

@@ -20,6 +20,9 @@ namespace CatalogueLibrary.Data
         private string _regex;
         private string _description;
 
+        /// <summary>
+        /// Short human readable name for what the regex identifies e.g. 'chis'
+        /// </summary>
         public string ConceptName
         {
             get { return _conceptName; }
@@ -34,6 +37,10 @@ namespace CatalogueLibrary.Data
             get { return _regex; }
             set { SetField(ref _regex, value); }
         }
+
+        /// <summary>
+        /// Verbose user provided description of the Regex, history, purpose, how it works etc
+        /// </summary>
         public string Description
         {
             get { return _description; }
@@ -42,6 +49,11 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
+        /// <summary>
+        /// Creates a new standardised reusable regular expression in the database that can be referenced by pipeline components (this helps centralise patterns
+        /// rather than having replication between components/pipelines)
+        /// </summary>
+        /// <param name="repository"></param>
         public StandardRegex(ICatalogueRepository repository)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -59,6 +71,7 @@ namespace CatalogueLibrary.Data
             Description = r["Description"] as string;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return ConceptName;

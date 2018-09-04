@@ -35,6 +35,10 @@ namespace CatalogueLibrary.Data
         /// </summary>
         private readonly Dictionary<PermissableDefaults, string> StringExpansionDictionary = new Dictionary<PermissableDefaults, string>();
 
+        /// <summary>
+        /// Creates a new reader for the defaults configured in the <see cref="repository"/> platform database
+        /// </summary>
+        /// <param name="repository"></param>
         public ServerDefaults(CatalogueRepository repository)
         {
             Repository = repository;
@@ -85,6 +89,10 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// Sets the database <see cref="toDelete"/> default to null (not configured)
+        /// </summary>
+        /// <param name="toDelete"></param>
         public void ClearDefault(PermissableDefaults toDelete)
         {
             // Repository strictly complains if there is nothing to delete, so we'll check first (probably good for the repo to be so strict?)
@@ -98,6 +106,11 @@ namespace CatalogueLibrary.Data
                 });
         }
 
+        /// <summary>
+        /// Changes the database <see cref="toChange"/> default to the specified server
+        /// </summary>
+        /// <param name="toChange"></param>
+        /// <param name="externalDatabaseServer"></param>
         public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
         {
             if(toChange == PermissableDefaults.None)

@@ -384,7 +384,7 @@ namespace AnonymisationTests
                     column.DeleteInDatabase();
 
 
-                var credentials = toCleanup.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+                var credentials = (DataAccessCredentials)toCleanup.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
                 toCleanup.DeleteInDatabase();
 
                 if(credentials != null)

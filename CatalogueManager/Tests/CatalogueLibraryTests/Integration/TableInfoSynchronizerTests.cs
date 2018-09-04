@@ -158,7 +158,7 @@ namespace CatalogueLibraryTests.Integration
         [TearDown]
         public void DropTables()
         {
-            var credentials = tableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            var credentials = (DataAccessCredentials)tableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
 
             //if credentials were created, we should only be one user
             if(credentials != null)

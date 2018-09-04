@@ -102,7 +102,7 @@ namespace DataLoadEngineTests.Integration
                 foreach (JoinInfo j in joinInfos)
                     j.DeleteInDatabase();
 
-                var credentials = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+                var credentials = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
                 tableInfo.DeleteInDatabase();
 
                 try
