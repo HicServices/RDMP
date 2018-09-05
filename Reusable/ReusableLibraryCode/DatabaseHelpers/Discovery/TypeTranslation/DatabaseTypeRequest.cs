@@ -28,9 +28,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             typeof(string)
         });
 
-        public Type CSharpType { get; private set; }
-        public int? MaxWidthForStrings { get; private set; }
-        public DecimalSize DecimalPlacesBeforeAndAfter { get; private set; }
+        public Type CSharpType { get; set; }
+        public int? MaxWidthForStrings { get; set; }
+        public DecimalSize DecimalPlacesBeforeAndAfter { get; set; }
 
         public DatabaseTypeRequest(Type cSharpType, int? maxWidthForStrings = null,
             DecimalSize decimalPlacesBeforeAndAfter = null)
