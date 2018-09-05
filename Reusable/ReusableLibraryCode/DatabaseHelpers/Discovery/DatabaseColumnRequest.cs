@@ -22,7 +22,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <summary>
         /// The cross database platform type descriptior for the column e.g. 'able to store strings up to 18 in length'.
         /// 
-        /// <para>This is ignored if you have specified an <see cref="ExplicityDbType"/></para>
+        /// <para>This is ignored if you have specified an <see cref="ExplicitDbType"/></para>
         /// 
         /// <para>See also <see cref="GetSQLDbType"/></para>
         /// </summary>

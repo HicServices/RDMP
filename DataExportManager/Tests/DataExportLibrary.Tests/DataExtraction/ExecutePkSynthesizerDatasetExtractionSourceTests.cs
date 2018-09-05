@@ -26,6 +26,13 @@ namespace DataExportLibrary.Tests.DataExtraction
 {
     public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAnExtractionConfiguration
     {
+
+        [SetUp]
+        public void SetHash()
+        {
+            new ConfigurationProperties(false, DataExportRepository).SetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern, "CONCAT('HASHED: ',{0})");
+        }
+
         [Test]
         public void Test_CatalogueItems_ExtractionInformationPrimaryKey_IsRespected()
         {
@@ -59,8 +66,6 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void Test_CatalogueItems_NonExtractedPrimaryKey_AreRespected()
         {
-            new ConfigurationProperties(false, DataExportRepository).SetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern, "CONCAT('HASHED: ',{0})");
-            
             var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", new string[] { }, pkColumnInfos: new [] { "DateOfBirth" });
 
             var source = new ExecutePkSynthesizerDatasetExtractionSource();
