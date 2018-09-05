@@ -11,9 +11,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     /// </summary>
     public class DatabaseColumnRequest:ISupplementalColumnInformation
     {
-        private readonly string _explicitDbType;
+        /// <summary>
+        /// The fixed string proprietary data type to use.  This overrides <see cref="TypeRequested"/> if specified.
+        ///
+        /// <para>See also <see cref="GetSQLDbType"/></para>
+        /// </summary>
+        public string ExplicitDbType { get; set; }
         public string ColumnName { get; set; }
-        private readonly DatabaseTypeRequest _typeRequested;
+
+        /// <summary>
+        /// The cross database platform type descriptior for the column e.g. 'able to store strings up to 18 in length'.
+        /// 
+        /// <para>This is ignored if you have specified an <see cref="ExplicityDbType"/></para>
+        /// 
+        /// <para>See also <see cref="GetSQLDbType"/></para>
+        /// </summary>
+        public DatabaseTypeRequest TypeRequested { get; set; }
+
         public bool AllowNulls { get; set; }
         public bool IsPrimaryKey { get; set; }
 
@@ -24,20 +38,25 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public DatabaseColumnRequest(string columnName, DatabaseTypeRequest typeRequested, bool allowNulls = true)
         {
             ColumnName = columnName;
-            _typeRequested = typeRequested;
+            TypeRequested = typeRequested;
             AllowNulls = allowNulls;
         }
 
         public DatabaseColumnRequest(string columnName, string explicitDbType, bool allowNulls = true)
         {
-            _explicitDbType = explicitDbType;
+            ExplicitDbType = explicitDbType;
             ColumnName = columnName;
             AllowNulls = allowNulls;
         }
 
+        /// <summary>
+        /// Returns <see cref="ExplicitDbType"/> if set or uses the <see cref="typeTranslater"/> to generate a proprietary type name for <see cref="TypeRequested"/>
+        /// </summary>
+        /// <param name="typeTranslater"></param>
+        /// <returns></returns>
         public string GetSQLDbType(ITypeTranslater typeTranslater)
         {
-            return _explicitDbType??typeTranslater.GetSQLDBTypeForCSharpType(_typeRequested);
+            return ExplicitDbType??typeTranslater.GetSQLDBTypeForCSharpType(TypeRequested);
         }
     }
 }
