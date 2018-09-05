@@ -191,7 +191,10 @@ namespace LoadModules.Generic.Attachers
             string sql;
 
             var remoteTables = _remoteDatabase.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
-            var loadables = _dbInfo.DiscoverTables(false).Select(t => t.GetRuntimeName()).ToArray();
+            var loadables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).Select(t => t.GetRuntimeName()).ToArray();
+
+            if (loadables.Except(remoteTables).Any())
+                throw new Exception("Not all loadable tables were found on the remote DB!");
 
             foreach (var table in remoteTables)
             {
