@@ -30,6 +30,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public Image GetImage(IIconProvider iconProvider)
         {
+            if (_o == null)
+                return null;
+
             return iconProvider.GetImage(_o, OverlayKind.Edit);
         }
 
