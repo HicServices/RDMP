@@ -57,6 +57,9 @@ namespace CatalogueManager.Icons.IconProvision
 
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
+            if (concept == null)
+                return null;
+
             //the only valid strings are "Catalogue" etc where the value exactly maps to an RDMPConcept
             if(concept is string)
             {
