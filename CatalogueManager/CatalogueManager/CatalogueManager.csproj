@@ -2097,6 +2097,10 @@
       <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
       <Name>DataLoadEngine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
+      <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>
+      <Name>LoadModules.GenericUIs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
       <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
       <Name>LoadModules.Generic</Name>
