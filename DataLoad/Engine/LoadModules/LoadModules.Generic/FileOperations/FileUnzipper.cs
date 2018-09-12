@@ -23,9 +23,9 @@ namespace LoadModules.Generic.FileOperations
 {
     /// <summary>
     /// load component which Unzips files in ForLoading
+    /// <para>Searches the forLoading directory for *.zip and unzips all entries in all zip archives found.  If the forLoading directory already contains a file with the same name then 
+    /// it is overwritten (unless the file size is also the same in which case the entry is skipped)</para>
     /// </summary>
-    [Description(
-        @"Searches the forLoading directory for *.zip and unzips all entries in all zip archives found.  If the forLoading directory already contains a file with the same name then it is overwritten (unless the file size is also the same in which case the entry is skipped) ")]
     public class FileUnzipper : IPluginDataProvider
     {
         [DemandsInitialization("Leave blank to extract all zip archives or populate with a REGULAR EXPRESSION to extract only specific zip filenames e.g. \"nhs_readv2*\\.zip\" - notice the escaped dot to match absoltely the dot bit")]

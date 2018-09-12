@@ -1,26 +1,19 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using CatalogueLibrary;
-using DataLoadEngine.DataProvider;
 using Renci.SshNet;
-using Renci.SshNet.Sftp;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.FTP
 {
     /// <summary>
     /// load component which downloads files from a remote SFTP (Secure File Transfer Protocol) server to the ForLoading directory
+    /// 
+    /// <para>Operates in the same way as <see cref="FTPDownloader"/> except that it uses SSH via the API Tamir.SharpSsh.  In addition this 
+    /// class will not bother downloading any files that already exist in the forLoading directory (have the same name - file size is NOT checked)</para>
     /// </summary>
-    [Description(
-        "Operates in the same way as it's parent except that it uses SSH via the API Tamir.SharpSsh.  In addition this class will not bother downloading any files that already exist in the forLoading directory (have the same name - file size is NOT checked)")]
     public class SFTPDownloader:FTPDownloader
     {
         

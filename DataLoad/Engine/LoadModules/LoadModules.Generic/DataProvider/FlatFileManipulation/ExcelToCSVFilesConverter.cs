@@ -27,7 +27,6 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
     /// DLE component which converts Microsoft Excel Workbooks into CSV files.  Workbooks can have multiple worksheets in which case 1 csv will be created for
     /// each worksheet.  Uses Interop to SaveAs csv format so runs faster for large / complex workbooks than using an ExcelAttacher.
     /// </summary>
-    [Description("Converts between any file format openable by Excel into comma separated format")]
     public class ExcelToCSVFilesConverter: IPluginDataProvider
     {
         [DemandsInitialization("Pattern to match Excel files in forLoading directory", Mandatory = true)]

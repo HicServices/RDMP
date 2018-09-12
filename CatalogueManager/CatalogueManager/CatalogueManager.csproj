@@ -814,8 +814,6 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.Designer.cs">
       <DependentUpon>CacheProgressUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\AdvertisedProcessTask.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\AdvertisedProcessTaskFilter.cs" />
     <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseHICProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>

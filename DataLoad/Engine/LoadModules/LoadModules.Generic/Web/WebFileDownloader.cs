@@ -21,7 +21,6 @@ namespace LoadModules.Generic.Web
     /// <summary>
     /// Data load component which downloads a file from a remote URL (e.g. http) into the ForLoading directory of the load.
     /// </summary>
-    [Description("Connects to the given PathToFile and downloads the file it finds at the url")]
     public class WebFileDownloader : IPluginDataProvider
     {
 

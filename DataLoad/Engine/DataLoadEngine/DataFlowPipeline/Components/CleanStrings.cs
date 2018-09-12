@@ -17,7 +17,6 @@ namespace DataLoadEngine.DataFlowPipeline.Components
     /// Pipeline component which trims all strings (removes leading and trailing whitespace) and turns blank strings into proper nulls (DBNull.Value).  Columns
     /// are only processed if they are destined to go into a char field in the database (According to the TableInfo being processed).
     /// </summary>
-    [Description("Cleans all string values, currently only Trims")]
     public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<TableInfo>
     {
         private int _rowsProcessed = 0;

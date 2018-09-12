@@ -16,7 +16,6 @@ namespace DataLoadEngine.Attachers
     /// A Class which will run during Data Load Engine execution and result in the creation or population of a RAW database, the database may or not require 
     /// to already exist (e.g. MDFAttacher would expect it not to exist but AnySeparatorFileAttacher would require the tables/databases already exist).
     /// </summary>
-    [Description(@"A Class which will run during Data Load Engine execution and result in the creation or population of a RAW database, the database may or not require to already exist (e.g. MDFAttacher would expect it not to exist but AnySeparatorFileAttacher would require the tables/databases already exist).")]
     public abstract class Attacher : IAttacher
     {
         protected DiscoveredDatabase _dbInfo;

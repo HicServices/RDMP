@@ -28,7 +28,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
     /// Executes a single Dataset extraction by linking a cohort with a dataset (either core or custom data - See IExtractCommand).  Also calculates the number
     /// of unique identifiers seen, records row validation failures etc.
     /// </summary>
-    [Description("The default source for data extraction, performs a join between a dataset and a cohort on the same server and substitutes private identifier for release identifier in datasets entering the pipeline")]
     public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<IExtractCommand>
     {
         //Request is either for one of these

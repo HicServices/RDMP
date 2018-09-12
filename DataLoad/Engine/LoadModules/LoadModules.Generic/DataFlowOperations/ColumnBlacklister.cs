@@ -15,8 +15,9 @@ namespace LoadModules.Generic.DataFlowOperations
     /// if it sees columns which match the blacklist.  Use cases for this include when the user wants to prevent private identifiers being accidentally released
     /// due to system misconfiguration e.g. you might blacklist all columns containing the strings starting "Patient" on the grounds that they are likely to be
     /// identifiable (PatientName, PatientDob etc).
+    /// 
+    /// <para>Crashes the pipeline if any column matches the regex e.g. '^(mCHI)|(chi)$'</para>
     /// </summary>
-    [Description("Crashes the pipeline if any column matches the regex e.g. '^(mCHI)|(chi)$'")]
     public class ColumnBlacklister : IPluginDataFlowComponent<DataTable>
     {
         [DemandsInitialization("Crashes the load if any column name matches this regex")]

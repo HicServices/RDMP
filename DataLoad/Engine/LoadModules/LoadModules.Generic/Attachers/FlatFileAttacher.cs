@@ -1,20 +1,14 @@
 using System;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Exceptions;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
@@ -23,9 +17,11 @@ using DataTable = System.Data.DataTable;
 
 namespace LoadModules.Generic.Attachers
 {
-    [Description(
-        @"Base class for an Attacher which expects to be passed a Filepath which is the location of a textual file in which values for a single DataTable are stored (e.g. csv or fixed width etc).  This attacher requires that the RAW database server be setup and contain the correct tables for loading (it is likely that the DataLoadEngine handles all this - as a user you dont need to worry about this)."
-        )]
+    /// <summary>
+    /// Base class for an Attacher which expects to be passed a Filepath which is the location of a textual file in which values for a single DataTable are stored
+    ///  (e.g. csv or fixed width etc).  This attacher requires that the RAW database server be setup and contain the correct tables for loading (it is likely that 
+    /// the DataLoadEngine handles all this - as a user you dont need to worry about this).
+    /// </summary>
     public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     {
 

@@ -42,7 +42,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
     /// Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g. CSV).  Also copies SupportingDocuments, 
     /// lookups etc into accompanying folders in the ExtractionDirectory.
     /// </summary>
-    [Description("The Extraction target for DataExportManager into a Flat file (e.g. CSV), this should only be used by ExtractionPipelineHost as it is the only class that knows how to correctly call PreInitialize ")]
     public class ExecuteDatasetExtractionFlatFileDestination : IExecuteDatasetExtractionDestination
     {
         private FileOutputFormat _output;

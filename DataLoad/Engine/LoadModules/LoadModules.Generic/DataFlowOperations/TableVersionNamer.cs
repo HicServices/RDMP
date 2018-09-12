@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
@@ -17,7 +13,6 @@ namespace LoadModules.Generic.DataFlowOperations
     /// <summary>
     /// Renames DataTables in the pipeline so that they do not collide with any tables at the destination database.  This is done by appending V1,V2,V3 etc to the table
     /// </summary>
-    [Description("Renames DataTables in the pipeline so that they do not collide with any tables at the destination database.  This is done by appending V1,V2,V3 etc to the table")]
     public class TableVersionNamer : IPluginDataFlowComponent<DataTable>,IPipelineRequirement<DiscoveredDatabase>
     {
         private string[] _tableNamesAtDestination;

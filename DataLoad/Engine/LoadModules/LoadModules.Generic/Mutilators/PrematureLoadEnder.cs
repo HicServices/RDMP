@@ -14,8 +14,9 @@ namespace LoadModules.Generic.Mutilators
 {
     /// <summary>
     /// load component which can stop an ongoing load early if a given PrematureLoadEndCondition is met with a given ExitCodeType.
+    /// 
+    /// <para>Conditionally ends the data load early if a given set of circumstances occurs e.g. you might choose to return LoadNotRequired if there are no records in RAW</para>
     /// </summary>
-    [Description("Conditionally ends the data load early if a given set of circumstances occurs e.g. you might choose to return LoadNotRequired if there are no records in RAW")]
     public class PrematureLoadEnder : IPluginMutilateDataTables
     {
         private DiscoveredDatabase _databaseInfo;
