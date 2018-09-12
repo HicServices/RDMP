@@ -51,7 +51,7 @@ namespace CatalogueLibrary.QueryBuilding
 
         /// <summary>
         /// List of all the <see cref="JoinInfo"/> found for joining the <see cref="TablesUsedInQuery"/> for building the query.
-        // <para>Do not modify this manually</para>
+        /// <para>Do not modify this manually</para>
         /// </summary>
         List<JoinInfo> JoinsUsedInQuery { get; }
 

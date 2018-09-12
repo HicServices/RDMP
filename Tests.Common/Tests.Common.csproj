@@ -160,7 +160,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleExampleTests.cs" />
     <Compile Include="TestableTableValuedFunction.cs" />
-    <Compile Include="TestDatabaseHelper.cs" />
     <Compile Include="TestDatabasesSettings.cs" />
     <Compile Include="TestHICProjectDirectory.cs" />
     <Compile Include="TestDirectoryHelper.cs" />

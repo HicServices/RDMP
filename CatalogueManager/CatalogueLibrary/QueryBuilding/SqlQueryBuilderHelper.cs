@@ -539,7 +539,7 @@ namespace CatalogueLibrary.QueryBuilding
         }
 
         /// <summary>
-        /// Applies <see cref="topx"/> to the <see cref="ISqlQueryBuilder"/> as a <see cref="CustomLine"/> based on the database engine syntax e.g. LIMIT vs TOP
+        /// Applies <see cref="topX"/> to the <see cref="ISqlQueryBuilder"/> as a <see cref="CustomLine"/> based on the database engine syntax e.g. LIMIT vs TOP
         /// and puts in in the correct location in the query (<see cref="QueryComponent"/>)
         /// </summary>
         /// <param name="queryBuilder"></param>

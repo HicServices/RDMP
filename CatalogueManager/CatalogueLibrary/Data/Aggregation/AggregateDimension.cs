@@ -52,7 +52,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         /// <summary>
-        /// Specifies the column alias section of the SELECT statement.  When building the query (See <see cref="AggregateBuilder"/>) the Alias will be added in the SELECT section
+        /// Specifies the column alias section of the SELECT statement.  When building the query (See AggregateBuilder) the Alias will be added in the SELECT section
         /// of the query generated e.g. if the Alias is 'Bob' and the SelectSQL is 'GetDate()' then the resultant line of SELECT in the query will be 'GetDate() as Bob'.
         /// </summary>
         public string Alias
@@ -63,7 +63,7 @@ namespace CatalogueLibrary.Data.Aggregation
 
         /// <summary>
         /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and/or ORDER BY sections of an <see cref="AggregateConfiguration"/>.  This property defines
-        /// the Sql that should appear in SELECT, GROUP BY and/or ORDER BY sections of the query when it is built by the <see cref="AggregateBuilder"/>.  This will start out
+        /// the Sql that should appear in SELECT, GROUP BY and/or ORDER BY sections of the query when it is built by the AggregateBuilder.  This will start out
         /// with the exact same string as the parent <see cref="ExtractionInformation_ID"/> but can be changed as needed e.g. wrapping in UPPER.  If you change the SelectSQL
         /// to a scalar function you should add an <see cref="Alias"/>.
         /// </summary>
@@ -91,19 +91,19 @@ namespace CatalogueLibrary.Data.Aggregation
         
         #region Relationships
 
-        /// <inheritdoc cref="CatalogueLibrary.Data.ExtractionInformation.HashOnDataRelease"/>
+        /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.HashOnDataRelease"/>
         [NoMappingToDatabase]
         public bool HashOnDataRelease { get{CacheExtractionInformation(); return _extractionInformation.HashOnDataRelease; } }
 
-        /// <inheritdoc cref="CatalogueLibrary.Data.ExtractionInformation.IsExtractionIdentifier"/>
+        /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.IsExtractionIdentifier"/>
         [NoMappingToDatabase]
         public bool IsExtractionIdentifier { get { CacheExtractionInformation(); return _extractionInformation.IsExtractionIdentifier; } }
 
-        /// <inheritdoc cref="CatalogueLibrary.Data.ExtractionInformation.IsPrimaryKey"/>
+        /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.IsPrimaryKey"/>
         [NoMappingToDatabase]
         public bool IsPrimaryKey { get { CacheExtractionInformation(); return _extractionInformation.IsPrimaryKey; } }
 
-        /// <inheritdoc cref="CatalogueLibrary.Data.ExtractionInformation.ColumnInfo"/>
+        /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.ColumnInfo"/>
         [NoMappingToDatabase]
         public ColumnInfo ColumnInfo { get { CacheExtractionInformation(); return _extractionInformation.ColumnInfo; } }
 

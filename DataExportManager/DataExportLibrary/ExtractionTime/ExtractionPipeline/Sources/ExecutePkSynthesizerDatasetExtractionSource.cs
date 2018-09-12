@@ -14,7 +14,7 @@ using ReusableLibraryCode.Progress;
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 {
     /// <summary>
-    /// Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on <see cref="CatalogueLibrary.Data.ExtractionInformation.IsPrimaryKey"/> of the
+    /// Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on <see cref="CatalogueLibrary.Data.IColumn.IsPrimaryKey"/> of the
     /// columns extracted and is not garuanteed to actually be unique (depending on how you have configured the flags).  
     /// 
     /// <para>The primary use case for this is when extracting to database where you want to have meaningful primary keys</para>

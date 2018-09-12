@@ -343,7 +343,6 @@ namespace CatalogueLibrary.Providers
         /// <summary>
         /// Creates new <see cref="StandardPipelineUseCaseNode"/>s and fills it with all compatible Pipelines - do not call this method more than once
         /// </summary>
-        /// <param name="useCase"></param>
         protected void AddPipelineUseCases(Dictionary<string,PipelineUseCase> useCases)
         {
             var descendancy = new DescendancyList(AllPipelinesNode);

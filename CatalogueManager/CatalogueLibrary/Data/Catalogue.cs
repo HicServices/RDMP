@@ -457,8 +457,8 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Identifier for a ticket in your <see cref="ITicketingSystem"/> for documenting / auditing work on the Catalogue and for recording issues (if you are not
-        /// using the RDMP issue system (See <see cref="CatalogueItemIssue"/>
+        /// Identifier for a ticket in your <see cref="CatalogueLibrary.Ticketing.ITicketingSystem"/> for documenting / auditing work on the Catalogue and for 
+        /// recording issues (if you are not using the RDMP issue system (See <see cref="CatalogueItemIssue"/>))
         /// </summary>
         public string Ticket
         {

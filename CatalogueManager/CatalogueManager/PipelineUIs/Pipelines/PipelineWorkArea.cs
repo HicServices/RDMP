@@ -21,7 +21,6 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     /// red are not compatible with the current context for example a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is
     /// not available.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public partial class PipelineWorkArea : UserControl
     {
         private PipelineDiagram _pipelineDiagram;
