@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NuDoq;
 
 namespace ReusableLibraryCode.Comments
@@ -13,13 +14,33 @@ namespace ReusableLibraryCode.Comments
     {
         private readonly Dictionary<string,string> _dictionary = new Dictionary<string, string>();
 
+        private string[] _ignoreHelpFor = new[]
+        {
+            "CsvHelper.xml",
+            "Google.Protobuf.xml",
+            "MySql.Data.xml",
+            "Newtonsoft.Json.xml",
+            "NLog.xml",
+            "NuDoq.xml",
+            "ObjectListView.xml",
+            "QuickGraph.xml",
+            "Renci.SshNet.xml",
+            "ScintillaNET.xml"
+        };
+
         public void ReadComments()
         {
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
+                if(assembly.FullName.Contains("LoadModules"))
+                    Console.WriteLine("Here");
 
-                var xmlFile = Path.GetFileNameWithoutExtension(assembly.GetName().Name) + ".xml";
+                var xmlFile = assembly.GetName().Name + ".xml";
+
+                //we don't need to provide help for system classes
+                if (xmlFile.StartsWith("System") || _ignoreHelpFor.Contains(xmlFile))
+                    continue;
 
                 if(File.Exists(xmlFile))
                 {

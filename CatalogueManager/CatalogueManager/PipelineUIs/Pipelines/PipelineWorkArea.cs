@@ -80,9 +80,9 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             gbArguments.Enabled = true;
 
             if (selected == null)
-                _arumentsCollection1.Setup(null, null);
+                _arumentsCollection1.Setup(null, null,_catalogueRepository);
             else
-                _arumentsCollection1.Setup(selected, selected.GetClassAsSystemType());
+                _arumentsCollection1.Setup(selected, selected.GetClassAsSystemType(), _catalogueRepository);
         }
 
         private void RowFormatter(OLVListItem olvItem)
