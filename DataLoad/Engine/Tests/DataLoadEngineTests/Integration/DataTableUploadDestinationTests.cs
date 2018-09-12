@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using NUnit.Framework;
@@ -788,6 +789,46 @@ CREATE TABLE [dbo].[TestResizing](
             {
                 tbl.Drop();
             }
+        }
+
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void DataTableUploadDestinationTests_PrimaryKeyDataTableWithAlterSizeLater(DatabaseType dbtype)
+        {
+            var db = GetCleanedServer(dbtype);
+
+            var destination = new DataTableUploadDestination();
+            
+            destination.AllowResizingColumnsAtUploadTime = true;
+            destination.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
+
+            DataTable dt1 = new DataTable();
+            dt1.TableName = "MyTable";
+            dt1.Columns.Add("Name");
+            dt1.Rows.Add("Fish");
+
+            dt1.PrimaryKey = dt1.Columns.Cast<DataColumn>().ToArray();
+
+            destination.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
+            
+            DataTable dt2 = new DataTable();
+            dt2.TableName = "MyTable";
+            dt2.Columns.Add("Name");
+            dt2.Rows.Add("Fish Monkey Fish Fish"); //notice that this is longer so the column must be resized
+
+            dt2.PrimaryKey = dt2.Columns.Cast<DataColumn>().ToArray();
+
+            destination.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+
+            destination.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
+
+            var tbl = db.ExpectTable("MyTable");
+            
+            Assert.AreEqual(2,tbl.GetRowCount());
+            Assert.IsTrue(tbl.DiscoverColumns().Single().IsPrimaryKey);
+
+
         }
 
         [Test]
