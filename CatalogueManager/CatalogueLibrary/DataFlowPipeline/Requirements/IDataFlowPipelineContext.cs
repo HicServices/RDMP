@@ -31,7 +31,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         /// <summary>
         /// Determines whether a given IDataFlowComponent Type is compatible with the current context
         /// </summary>
-        /// <param name="type">The Type of an IDataFlowComponent</param>
+        /// <param name="t">The Type of an IDataFlowComponent</param>
         /// <returns>true if the component is compatible with the context</returns>
         bool IsAllowable(Type t);
         
@@ -55,7 +55,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
 
 
         /// <summary>
-        /// Calls all <see cref="IPipelineRequirement.PreInitialize"/> methods on the component (which must be an <see cref="IDataFlowComponent"/> or <see cref="IDataFlowSource"/>)
+        /// Calls all <see cref="IPipelineRequirement{T}.PreInitialize"/> methods on the component (which must be an <see cref="IDataFlowComponent{T}"/> or <see cref="IDataFlowSource{T}"/>)
         /// </summary>
         /// <param name="listener"></param>
         /// <param name="component"></param>

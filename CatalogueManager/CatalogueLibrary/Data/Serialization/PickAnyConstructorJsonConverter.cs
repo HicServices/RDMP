@@ -21,7 +21,7 @@ namespace CatalogueLibrary.Data.Serialization
         private ObjectConstructor _objectConstructor;
 
         /// <summary>
-        /// Creates a JSON deserializer that can use any constructors on the class which match <see cref="constructorObjects"/>
+        /// Creates a JSON deserializer that can use any constructors on the class which match <paramref name="constructorObjects"/>
         /// </summary>
         /// <param name="constructorObjects"></param>
         public PickAnyConstructorJsonConverter(params object[] constructorObjects)
@@ -50,10 +50,10 @@ namespace CatalogueLibrary.Data.Serialization
         }
 
         /// <summary>
-        /// Returns a hydrated object from <see cref="reader"/> by invoking the appropriate constructor identified by <see cref="ObjectConstructor.GetConstructors"/> 
+        /// Returns a hydrated object from <paramref name="reader"/> by invoking the appropriate constructor identified by <see cref="ObjectConstructor.GetConstructors"/> 
         /// whitch matches the parameters provided to <see cref="PickAnyConstructorJsonConverter"/> when it was constructed.
         /// 
-        /// <para>If the <see cref="objectType"/> is <see cref="IPickAnyConstructorFinishedCallback"/> then <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction"/>
+        /// <para>If the <paramref name="objectType"/> is <see cref="IPickAnyConstructorFinishedCallback"/> then <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction"/>
         /// will be called</para>
         /// </summary>
         /// <param name="reader"></param>
@@ -77,7 +77,7 @@ namespace CatalogueLibrary.Data.Serialization
         }
 
         /// <summary>
-        /// Returns true if the <see cref="objectType"/> is a non value Type with one constructor compatible with the parameters provided to
+        /// Returns true if the <paramref name="objectType"/> is a non value Type with one constructor compatible with the parameters provided to
         /// <see cref="PickAnyConstructorJsonConverter"/> when it was constructed.
         /// </summary>
         /// <param name="objectType"></param>

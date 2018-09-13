@@ -53,7 +53,7 @@ namespace CatalogueLibrary.Data.Pipelines
         string GetClassNameLastPart();
 
         /// <summary>
-        /// Creates a new copy of the current <see cref="IPipelineComponent"/> into another <see cref="Pipeline"/> <see cref="intoTargetPipeline"/>
+        /// Creates a new copy of the current <see cref="IPipelineComponent"/> into another <see cref="Pipeline"/> <paramref name="intoTargetPipeline"/>
         /// <para>This is usually done as part of <see cref="IPipeline.Clone"/></para>
         /// </summary>
         /// <param name="intoTargetPipeline"></param>

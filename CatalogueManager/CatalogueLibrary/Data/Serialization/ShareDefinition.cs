@@ -7,17 +7,17 @@ using Newtonsoft.Json;
 namespace CatalogueLibrary.Data.Serialization
 {
     /// <summary>
-    /// Describes a DatabaseEntity which has been made exportable from RDMP via <see cref="ObjectExport"/>.  This class includes the properties that are directly recorded for the object
-    /// e.g. Name, SelectSQL etc.  For Foreign Key columns (See <see cref="RelationshipAttribute"/>) e.g. <see cref="CatalogueItem.Catalogue_ID"/> the Guid of another 
-    /// <see cref="ShareDefinition"/> is given (e.g. of the <see cref="Catalogue"/>).  This means that a <see cref="ShareDefinition"/> is only valid when all it's dependencies are
-    /// also available (See <see cref="Sharing.Dependency.Gathering.Gatherer"/> for how to do this)
+    /// Describes a DatabaseEntity which has been made exportable from RDMP via <see cref="CatalogueLibrary.Data.ImportExport.ObjectExport"/>.  This class includes the properties that are
+    /// directly recorded for the object e.g. Name, SelectSQL etc.  For Foreign Key columns (See <see cref="RelationshipAttribute"/>) e.g. <see cref="CatalogueItem.Catalogue_ID"/> the Guid 
+    /// of another <see cref="ShareDefinition"/> is given (e.g. of the <see cref="Catalogue"/>).  This means that a <see cref="ShareDefinition"/> is only valid when all it's dependencies are
+    /// also available (See Sharing.Dependency.Gathering.Gatherer for how to do this)
     /// </summary>
     [Serializable]
     public class ShareDefinition
     {
         /// <summary>
-        /// The unique number that identifies this shared object.  This is created when the object is first shared as an <see cref="ObjectExport"/> and persisted by all 
-        /// other systems that import the object as an <see cref="ObjectImport"/>.
+        /// The unique number that identifies this shared object.  This is created when the object is first shared as an <see cref="CatalogueLibrary.Data.ImportExport.ObjectExport"/> and 
+        /// persisted by all other systems that import the object as an <see cref="CatalogueLibrary.Data.ImportExport.ObjectImport"/>.
         /// </summary>
         public Guid SharingGuid { get; set; }
 

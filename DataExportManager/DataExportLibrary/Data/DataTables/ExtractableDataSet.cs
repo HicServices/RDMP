@@ -186,7 +186,7 @@ namespace DataExportLibrary.Data.DataTables
                 cata.InjectKnown(GetCatalogueExtractabilityStatus());
                 return cata;
             }
-            catch (KeyNotFoundException e)
+            catch (KeyNotFoundException)
             {
                 //Catalogue has been deleted!
                 return null;

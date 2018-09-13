@@ -44,7 +44,7 @@ namespace CatalogueLibrary.Data
         /// Returns all IFilters that are declared in the current container or any of it's subcontainers (recursively).  This includes children of children 
         /// etc down the tree.
         /// </summary>
-        /// <param name="current"></param>
+        /// <param name="container"></param>
         /// <returns></returns>
         public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively(IContainer container)
         {

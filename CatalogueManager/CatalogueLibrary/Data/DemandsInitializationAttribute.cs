@@ -23,8 +23,8 @@ namespace CatalogueLibrary.Data
         public DemandType DemandType { get; set; }
 
         /// <summary>
-        /// The value to use if the user hasn't picked a value yet (created an <see cref="IArgument"/>).  This will also be the default value set
-        /// on any <see cref="IArgument"/> when it is created.
+        /// The value to use if the user hasn't picked a value yet (created an <see cref="CatalogueLibrary.Data.DataLoad.IArgument"/>).  This will also be the default value set
+        /// on any argument when it is created.
         /// </summary>
         public object DefaultValue { get; set; }
 
@@ -41,8 +41,9 @@ namespace CatalogueLibrary.Data
         public Type TypeOf { get; set; }
 
         /// <summary>
-        /// Marks a public property on an RDMP plugin class as editable by the user.  The user can pick a value at design time for use with the plugin e.g. in a <see cref="Pipeline"/>
-        /// then when the pipeline is run your class will be instantiated and all properties will be hydrated from the corresponding <see cref="IArguments"/>.
+        /// Marks a public property on an RDMP plugin class as editable by the user.  The user can pick a value at design time for use with the plugin e.g. in
+        /// a <see cref="CatalogueLibrary.Data.Pipelines.Pipeline"/> then when the pipeline is run your class will be instantiated and all properties will be 
+        /// hydrated from the corresponding <see cref="CatalogueLibrary.Data.DataLoad.IArgument"/>s.
         /// </summary>
         /// <param name="description"></param>
         /// <param name="demandType"></param>

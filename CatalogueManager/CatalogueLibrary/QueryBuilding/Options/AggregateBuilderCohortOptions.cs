@@ -17,7 +17,7 @@ namespace CatalogueLibrary.QueryBuilding.Options
         private readonly ISqlParameter[] _globals;
 
         /// <summary>
-        /// Creates an <see cref="IAggregateBuilderOptions"/> for use with <see cref="AggregateConfiguration"/> which are <see cref="IAggregateBuilderOptions.IsCohortIdentificationAggregate"/>
+        /// Creates an <see cref="IAggregateBuilderOptions"/> for use with <see cref="AggregateConfiguration"/> which are <see cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>
         ///  </summary>
         /// <param name="globals">Global parameters found in the scope of <see cref="AggregateConfiguration"/> you intend to use</param>
         public AggregateBuilderCohortOptions(ISqlParameter[] globals)

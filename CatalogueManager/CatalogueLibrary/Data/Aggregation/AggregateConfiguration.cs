@@ -419,7 +419,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         /// <summary>
-        /// Gets an IQuerySyntaxHelper from the Catalogue powering this AggregateConfiguration (<see cref="ICatalogue.GetQuerySyntaxHelper"/>)
+        /// Gets an IQuerySyntaxHelper from the Catalogue powering this AggregateConfiguration (<see cref="IHasQuerySyntaxHelper.GetQuerySyntaxHelper"/>)
         /// </summary>
         /// <returns></returns>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()

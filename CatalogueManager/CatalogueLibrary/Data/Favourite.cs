@@ -80,7 +80,7 @@ namespace CatalogueLibrary.Data
 
 
         /// <summary>
-        /// Records that the current Environment.UserName wants to mark the <see cref="objectToFavourite"/> as one of his favourite objects
+        /// Records that the current Environment.UserName wants to mark the <paramref name="objectToFavourite"/> as one of his favourite objects
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="objectToFavourite"></param>
@@ -97,7 +97,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// True if the <see cref="mapsDirectlyToDatabaseTable"/> is the object that is explicitly referenced by this class instance
+        /// True if the <paramref name="mapsDirectlyToDatabaseTable"/> is the object that is explicitly referenced by this class instance
         /// </summary>
         /// <param name="mapsDirectlyToDatabaseTable"></param>
         /// <returns></returns>

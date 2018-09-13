@@ -27,7 +27,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var manageServers = new ManageExternalServers(Activator.CoreIconProvider);
+            var manageServers = new ManageExternalServers();
             manageServers.RepositoryLocator = Activator.RepositoryLocator;
             manageServers.Show();
         }

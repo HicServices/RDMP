@@ -75,8 +75,8 @@ namespace CatalogueLibrary.Data.Pipelines
         }
 
         /// <summary>
-        /// Creates a new component in the <see cref="parent"/> <see cref="Pipeline"/>.  This will mean that when run the <see cref="Pipeline"/>
-        /// will instantiate and run the given <see cref="componentType"/>.
+        /// Creates a new component in the <paramref name="parent"/> <see cref="Pipeline"/>.  This will mean that when run the <see cref="Pipeline"/>
+        /// will instantiate and run the given <paramref name="componentType"/>.
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="parent"></param>

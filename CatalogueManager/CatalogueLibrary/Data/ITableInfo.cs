@@ -14,7 +14,7 @@ namespace CatalogueLibrary.Data
     public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IHasDependencies, ICollectSqlParameters, IMapsDirectlyToDatabaseTable
     {
         /// <summary>
-        /// Gets the name of the table in the given RAW=>STAGING=>LIVE section of a DLE run using the provided <see cref="tableNamingScheme"/>
+        /// Gets the name of the table in the given RAW=>STAGING=>LIVE section of a DLE run using the provided <paramref name="tableNamingScheme"/>
         /// </summary>
         /// <param name="bubble"></param>
         /// <param name="tableNamingScheme"></param>

@@ -38,8 +38,6 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
         private FileInfo _selectedFile;
         private DataFlowPipelineContext<DataTable> _context;
 
-        private CreateNewCatalogueByImportingFileUI_Advanced advanced;
-
         public HelpWorkflow HelpWorkflow { get; set; }
 
         public CreateNewCatalogueByImportingFileUI(IActivateItems activator, ExecuteCommandCreateNewCatalogueByImportingFile command)
@@ -129,8 +127,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                     btnConfirmDatabase.Enabled = false;
 
                     btnAdvanced.Enabled = false;
-                    advanced = null;
-
+                    
                     _selectedFile = null;
 
                     //turn things on
@@ -146,7 +143,6 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                     //turn things on
                     pbFile.Visible = true;
                     btnAdvanced.Enabled = false;
-                    advanced = null;
                     gbPickDatabase.Enabled = true;
 
                     //text of the file they selected

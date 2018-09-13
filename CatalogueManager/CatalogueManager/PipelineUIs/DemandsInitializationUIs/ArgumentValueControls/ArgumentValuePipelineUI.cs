@@ -25,8 +25,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         private readonly CatalogueRepository _catalogueRepository;
         private Argument _argument;
         private DemandsInitializationAttribute _demand;
-        private bool _bLoading = true;
-
+        
         private IPipelineSelectionUI _pipelineSelectionUIInstance;
         private Type _typeOfUnderlyingClass;
 
@@ -47,7 +46,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         
         public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
         {
-            _bLoading = true;
             _argument = argument;
             _demand = requirement.Demand;
 
@@ -83,8 +81,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             {
                 ragSmiley1.Fatal(e);
             }
-
-            _bLoading = false;
         }
 
         private void BombIfMandatoryAndEmpty()

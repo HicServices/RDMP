@@ -23,8 +23,6 @@ namespace ReusableUIComponents
     {
         #region Static setup of dictionary of keywords
         public static IIconProvider HelpKeywordsIconProvider;
-        private static Bitmap _information;
-
         public static CommentStore CommentStore;
 
         #endregion
@@ -66,9 +64,9 @@ namespace ReusableUIComponents
         {
             var section = (HelpSection) rowObject;
             if (HelpKeywordsIconProvider != null)
-                return HelpKeywordsIconProvider.GetImage(section.Keyword) ?? _information;
+                return HelpKeywordsIconProvider.GetImage(section.Keyword);
 
-            return _information;
+            return null;
         }
 
         public static void HighlightText(RichTextBox myRtb, string word, Color color)

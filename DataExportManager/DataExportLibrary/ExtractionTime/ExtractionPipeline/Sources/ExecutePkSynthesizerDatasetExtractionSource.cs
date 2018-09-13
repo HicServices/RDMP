@@ -93,8 +93,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 return;
 
             var cataloguePrimaryKeys = GetCatalogueItemPrimaryKeys().ToArray();
-            string message;
-            CheckResult check;
             if (!cataloguePrimaryKeys.Any())
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("PKSynthesizer:No CatalogueItems marked IsPrimaryKey in '" + Request.SelectedDataSets + "'",CheckResult.Warning) );

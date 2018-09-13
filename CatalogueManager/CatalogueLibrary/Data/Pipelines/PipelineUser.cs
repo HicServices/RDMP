@@ -30,8 +30,8 @@ namespace CatalogueLibrary.Data.Pipelines
 
 
         /// <summary>
-        /// Declares that the given <see cref="property"/> (which must be nullable int) stores the ID (or null) of a <see cref="Pipeline"/> declared
-        /// in the RDMP platform databases.  The property must belong to <see cref="user"/> 
+        /// Declares that the given <paramref name="property"/> (which must be nullable int) stores the ID (or null) of a <see cref="Pipeline"/> declared
+        /// in the RDMP platform databases.  The property must belong to <paramref name="user"/> 
         /// </summary>
         /// <param name="property"></param>
         /// <param name="user"></param>

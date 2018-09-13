@@ -96,9 +96,9 @@ namespace DataExportManager.ProjectUI.Datasets
         void olvSelected_FormatCell(object sender, FormatCellEventArgs e)
         {
             if(e.Column == olvIssues)
-                if(e.CellValue == "None")
+                if((string) e.CellValue == "None")
                     e.SubItem.ForeColor = Color.Gray;
-                else if (e.CellValue == "Different")
+                else if ((string) e.CellValue == "Different")
                     e.SubItem.ForeColor = Color.Red;
         }
 

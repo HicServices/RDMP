@@ -100,7 +100,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         /// <summary>
-        /// Creates a new WHERE SQL block for reuse with the <see cref="Catalogue"/> in which the <see cref="parent"/> resides.  This is a top level master filter and can be
+        /// Creates a new WHERE SQL block for reuse with the <see cref="Catalogue"/> in which the <paramref name="parent"/> resides.  This is a top level master filter and can be
         /// copied out in <see cref="CatalogueLibrary.Data.Cohort.CohortIdentificationConfiguration"/>, ExtractionConfiguration etc.  This ensures a single curated block of
         /// logic that everyone shares.
         /// </summary>

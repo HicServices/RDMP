@@ -61,7 +61,7 @@ namespace CatalogueLibrary.QueryBuilding
         IContainer RootFilterContainer{get;set;}
         
         /// <summary>
-        /// True to check the syntax of columns, parameters etc.  This should result in <see cref="SyntaxErrorException"/> being thrown when generating the SQL if it is substantially malformed
+        /// True to check the syntax of columns, parameters etc.  This should result in SyntaxErrorException being thrown when generating the SQL if it is substantially malformed
         /// </summary>
         bool CheckSyntax { get; set; }
 

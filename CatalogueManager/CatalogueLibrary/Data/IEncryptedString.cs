@@ -13,7 +13,7 @@ namespace CatalogueLibrary.Data
         string GetDecryptedValue();
 
         /// <summary>
-        /// Returns true if the <see cref="value"/> looks like it is encrypted
+        /// Returns true if the <paramref name="value"/> looks like it is encrypted
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>

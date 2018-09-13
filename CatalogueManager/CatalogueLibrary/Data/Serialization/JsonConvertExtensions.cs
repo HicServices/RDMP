@@ -34,8 +34,8 @@ namespace CatalogueLibrary.Data.Serialization
         /// Deserializes a string created with <see cref="SerializeObject(object,IRDMPPlatformRepositoryServiceLocator)"/>.  This involves two additional areas of functionality
         /// beyond basic JSON:
         /// 
-        /// <para>1. Any database pointer (e.g. Catalogue 123 0xab1d) will be fetched and returned from the appropriate platform database (referenced by <see cref="repositoryLocator"/>)</para>
-        /// <para>2. Objects do not need a default constructor, instead <see cref="PickAnyConstructorJsonConverter"/> will be used with <see cref="objectsForConstructingStuffWith"/></para>
+        /// <para>1. Any database pointer (e.g. Catalogue 123 0xab1d) will be fetched and returned from the appropriate platform database (referenced by <paramref name="repositoryLocator"/>)</para>
+        /// <para>2. Objects do not need a default constructor, instead <see cref="PickAnyConstructorJsonConverter"/> will be used with <paramref name="objectsForConstructingStuffWith"/></para>
         /// <para>3. Any objects implementing <see cref="IPickAnyConstructorFinishedCallback"/> will have <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction"/> called</para>
         /// </summary>
         /// <param name="value"></param>

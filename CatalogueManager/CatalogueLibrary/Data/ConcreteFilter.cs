@@ -111,8 +111,8 @@ namespace CatalogueLibrary.Data
 
         /// <summary>
         /// Every IFilter is ultimately tied to a single <see cref="Catalogue"/> either because it is a master filter declared on a column in one or because it is being used
-        /// in the extraction of a dataset or an <see cref="AggregateConfiguration"/> graph / cohort set which are again tied to a single <see cref="Catalogue"/>.   When
-        /// overridden this method returns the associated Catalogue. 
+        /// in the extraction of a dataset or an <see cref="CatalogueLibrary.Data.Aggregation.AggregateConfiguration"/> graph / cohort set which are again tied to a 
+        /// single <see cref="Catalogue"/>.   When overridden this method returns the associated Catalogue. 
         /// </summary>
         /// <returns></returns>
         public abstract Catalogue GetCatalogue();

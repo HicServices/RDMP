@@ -31,8 +31,6 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
     {
-        private bool _columnInfoFoundToBeNull = false;
-
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int SelectSQL_MaxLength = -1;
         
