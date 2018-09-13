@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -16,8 +16,7 @@ using ReusableUIComponents;
 namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
 {
     /// <summary>
-    /// Lets you configure a column in a dataset as discarded during the load process (either completely - Oblivion or stored in an identifiers only area - StoreInIdentifiersDump).  For
-    /// full details of how to configure a PreLoadDiscardedColumn see ConfigurePreLoadDiscardedColumns
+    /// Lets you configure a column in a dataset as discarded during the load process (either completely - Oblivion or stored in an identifiers only area - StoreInIdentifiersDump).
     ///  
     /// <para>BACKGROUND:
     /// PreLoadDiscardedColumn(s) are an alternative (to ANOTables) way of anonymising dataset columns.  A well implemented anonymisation protocol will include both ANOTable substitutions 
@@ -47,7 +46,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
     /// <para>If you already have a data table and you want to drop some of the columns from it then you can paste in a list of column names and any that match known columns will automatically 
     /// get created as the appropriate datatype/name.  After doing that you will have to manually drop the columns yourself on your server though.</para>
     ///  
-    ///  
+    /// <para> </para>
     /// </summary>
     public partial class PreLoadDiscardedColumnUI : PreLoadDiscardedColumnUI_Design, ISaveableUI
     {

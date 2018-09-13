@@ -11,7 +11,7 @@ namespace LoadModules.Generic.FTP
     /// <summary>
     /// load component which downloads files from a remote SFTP (Secure File Transfer Protocol) server to the ForLoading directory
     /// 
-    /// <para>Operates in the same way as <see cref="FTPDownloader"/> except that it uses SSH via the API Tamir.SharpSsh.  In addition this 
+    /// <para>Operates in the same way as <see cref="FTPDownloader"/> except that it uses SSH.  In addition this 
     /// class will not bother downloading any files that already exist in the forLoading directory (have the same name - file size is NOT checked)</para>
     /// </summary>
     public class SFTPDownloader:FTPDownloader

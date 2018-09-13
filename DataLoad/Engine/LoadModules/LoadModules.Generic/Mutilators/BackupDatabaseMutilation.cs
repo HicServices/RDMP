@@ -15,7 +15,7 @@ namespace LoadModules.Generic.Mutilators
     /// Creates a database backup of the LIVE database which contains the specified TableInfo.  Do a test of this component with your server/user configuration
     /// before assuming it will simply work and writing anything drastic.
     ///
-    /// <para>This mutilation should only be put into AdjustSTAGING otherwise it will fill up your backup storage as debug load errors in RAW and Migration to STAGING</para>
+    /// <para>This mutilation should only be put into AdjustStaging otherwise it will fill up your backup storage as debug load errors in RAW and Migration to STAGING</para>
     /// </summary>
     public class BackupDatabaseMutilation:IMutilateDataTables
     {

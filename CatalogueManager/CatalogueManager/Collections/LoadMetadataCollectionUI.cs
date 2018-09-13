@@ -56,7 +56,7 @@ namespace CatalogueManager.Collections
     /// 
     /// <para>Attacher tasks can only be used in 'Mounting' and are concerned with taking loading records into RAW tables</para>
     /// 
-    /// <para>Mutilator tasks operate in the Adjust stages (usually AdjustRAW or AdjustSTAGING - mutilating LIVE would be a very bad idea).  These can do any task on a table(s) e.g. resolve duplication</para>
+    /// <para>Mutilator tasks operate in the Adjust stages (usually AdjustRaw or AdjustStaging - mutilating LIVE would be a very bad idea).  These can do any task on a table(s) e.g. resolve duplication</para>
     ///  
     /// <para>The above guidelines are deliberately vague because plugins (especially third party plugins - see PluginManagementForm) can do almost anything.  For example you could have 
     /// a DataProvider which emailed you every time the data load began or a Mutilator which read data and sent it to a remote web service (or anything!).  Always read the descriptions of plugins 
