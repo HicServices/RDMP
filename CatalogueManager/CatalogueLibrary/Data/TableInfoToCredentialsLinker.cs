@@ -30,7 +30,7 @@ namespace CatalogueLibrary.Data
         //Cannot query Find all links between [collection of access points] and [collection of credentials] yet (probably never need to do this)
 
         /// <summary>
-        /// Creates a new helper class instance for writting/deleting credential usages for <see cref="TableInfo"/> objects in the <see cref="repository"/>
+        /// Creates a new helper class instance for writting/deleting credential usages for <see cref="TableInfo"/> objects in the <paramref name="repository"/>
         /// </summary>
         /// <param name="repository"></param>
         public TableInfoToCredentialsLinker(ICatalogueRepository repository)
@@ -40,8 +40,8 @@ namespace CatalogueLibrary.Data
 
 
         /// <summary>
-        /// Declares that the given <see cref="tableInfo"/> can be accessed using the <see cref="credentials"/> (username / encrypted password) under the 
-        /// usage <see cref="context"/> 
+        /// Declares that the given <paramref name="tableInfo"/> can be accessed using the <paramref name="credentials"/> (username / encrypted password) under the 
+        /// usage <paramref name="context"/> 
         /// </summary>
         /// <param name="credentials"></param>
         /// <param name="tableInfo"></param>
@@ -64,7 +64,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Removes the right to use passed <see cref="credentials"/> to access the <see cref="tableInfo"/> under the <see cref="context"/>
+        /// Removes the right to use passed <paramref name="credentials"/> to access the <paramref name="tableInfo"/> under the <paramref name="context"/>
         /// </summary>
         /// <param name="credentials"></param>
         /// <param name="tableInfo"></param>
@@ -82,7 +82,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Removes all rights to use the passed <see cref="credentials"/> to access the <see cref="tableInfo"/>
+        /// Removes all rights to use the passed <paramref name="credentials"/> to access the <paramref name="tableInfo"/>
         /// </summary>
         /// <param name="credentials"></param>
         /// <param name="tableInfo"></param>
@@ -142,7 +142,7 @@ namespace CatalogueLibrary.Data
 
 
         /// <summary>
-        /// Fetches all <see cref="DataAccessContext"/> under which the given <see cref="credential"/> (username and encrypted password) can be used to access the <see cref="TableInfo"/>.
+        /// Fetches all <see cref="DataAccessContext"/> under which the given <paramref name="credential"/> (username and encrypted password) can be used to access the <see cref="TableInfo"/>.
         /// </summary>
         /// <param name="tableInfo"></param>
         /// <returns></returns>
@@ -188,7 +188,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Returns all credential usage permissions for the given set of <see cref="allTableInfos"/> and <see cref="allCredentials"/>
+        /// Returns all credential usage permissions for the given set of <paramref name="allTableInfos"/> and <paramref name="allCredentials"/>
         /// </summary>
         /// <param name="allCredentials"></param>
         /// <param name="allTableInfos"></param>
@@ -234,7 +234,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Returns all the <see cref="TableInfo"/> that are allowed to use the given <see cref="credentials"/>
+        /// Returns all the <see cref="TableInfo"/> that are allowed to use the given <paramref name="credentials"/>
         /// </summary>
         /// <param name="credentials"></param>
         /// <returns></returns>
@@ -294,7 +294,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Returns the existing <see cref="DataAccessCredentials"/> if any which match the unencrypted <see cref="username"/> and <see cref="password"/> combination.  Throws
+        /// Returns the existing <see cref="DataAccessCredentials"/> if any which match the unencrypted <paramref name="username"/> and <paramref name="password"/> combination.  Throws
         /// if there are more than 1 
         /// </summary>
         /// <param name="username"></param>
@@ -335,7 +335,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Changes the <see cref="DataAccessContext"/> under which the <see cref="node"/> credentials are usable to access the <see cref="node"/> table 
+        /// Changes the <see cref="DataAccessContext"/> under which the <paramref name="node"/> credentials are usable to access the <paramref name="node"/> table 
         /// </summary>
         /// <param name="node"></param>
         /// <param name="destinationContext"></param>

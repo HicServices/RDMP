@@ -102,7 +102,7 @@ namespace CatalogueLibrary.QueryBuilding
 
         /// <summary>
         /// Computes and records the <see cref="Lookup"/> related facts about all the <see cref="QueryTimeColumn"/> provided when building a query which requires the 
-        /// supplied list of <see cref="tablesUsedInQuery"/>.
+        /// supplied list of <paramref name="tablesUsedInQuery"/>.
         /// </summary>
         /// <param name="ColumnsInOrder"></param>
         /// <param name="tablesUsedInQuery"></param>

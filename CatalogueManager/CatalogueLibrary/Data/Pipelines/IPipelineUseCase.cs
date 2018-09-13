@@ -48,7 +48,7 @@ namespace CatalogueLibrary.Data.Pipelines
         object ExplicitDestination { get; }
 
         /// <summary>
-        /// Constructs and engine from the provided <see cref="pipeline"/> initialized by <see cref="GetInitializationObjects"/>
+        /// Constructs and engine from the provided <paramref name="pipeline"/> initialized by <see cref="GetInitializationObjects"/>
         /// </summary>
         /// <param name="pipeline"></param>
         /// <param name="listener"></param>

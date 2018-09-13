@@ -121,7 +121,7 @@ namespace CatalogueLibrary.Data.Dashboarding
         }
 
         /// <summary>
-        /// Adds a new IDashboardableControl (<see cref="controlType"/>) to the given <see cref="DashboardLayout"/> (<see cref="parent"/>) at the specified position.
+        /// Adds a new IDashboardableControl (<paramref name="controlType"/>) to the given <see cref="DashboardLayout"/> (<paramref name="parent"/>) at the specified position.
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="parent"></param>

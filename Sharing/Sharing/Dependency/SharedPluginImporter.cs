@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
-using ReusableLibraryCode.Checks;
 
 namespace Sharing.Dependency
 {
@@ -17,8 +12,7 @@ namespace Sharing.Dependency
     /// </summary>
     public class SharedPluginImporter
     {
-        private readonly Stream _stream;
-        private ShareManager _shareManager;
+        private readonly ShareManager _shareManager;
 
         public SharedPluginImporter(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {

@@ -24,9 +24,12 @@ namespace CatalogueManager.CommandExecution.Proposals
         public abstract void Activate(T target);
 
         /// <summary>
-        /// 
+        /// Decides which (if any) command should be advertised/run when combining the dragged object (cmd) with the drop target
         /// </summary>
-        /// <param name="cmd">Self contained class describing both the object(s) being dragged and salient facts about it e.g. if  it is a <see cref="CatalogueManager.Copying.Commands.CatalogueCommand"/> then it will know whether the dragged <see cref="Catalogue"/> has at least one patient identifier column.</param>
+        /// <param name="cmd">Self contained class describing both the object(s) being dragged and salient facts about it e.g. if  it is a
+        /// <see cref="CatalogueManager.Copying.Commands.CatalogueCommand"/> then it will know whether the dragged <see cref="CatalogueLibrary.Data.Catalogue"/>
+        /// has at least one patient identifier column.</param>
+        /// 
         /// <param name="target"> The object the cursor is currently hovering over </param>
         /// <param name="insertOption">Whether the cursor is above or below or ontop of your object (if the collection the object is in supports it)</param>
         /// <returns></returns>

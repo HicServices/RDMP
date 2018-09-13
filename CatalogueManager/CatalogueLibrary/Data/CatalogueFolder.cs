@@ -25,7 +25,7 @@ namespace CatalogueLibrary.Data
 
         /// <summary>
         /// The full path of the folder (starts and ends with a slash).  Throws if you try to set property to an invalid path 
-        /// <seealso cref="IsValidPath"/> 
+        /// <seealso cref="IsValidPath(string)"/> 
         /// </summary>
         public string Path
         {

@@ -88,7 +88,7 @@ namespace CatalogueLibrary.Data.ImportExport
 
         /// <summary>
         /// Deserializes the given persistence string (created by <see cref="GetPersistenceString"/>) into an actual database object.  The 
-        /// <see cref="persistenceString"/> is a pointer (ID / SharingUI) of the object not a value serialization.  If you want to export the
+        /// <paramref name="persistenceString"/> is a pointer (ID / SharingUI) of the object not a value serialization.  If you want to export the
         /// definition use <see cref="ShareDefinition"/> or Gatherer instead
         /// </summary>
         /// <param name="persistenceString"></param>
@@ -128,7 +128,7 @@ namespace CatalogueLibrary.Data.ImportExport
         }
 
         /// <summary>
-        /// Returns true if there is an <see cref="ObjectExport"/> declared which matches the provided object <see cref="o"/>
+        /// Returns true if there is an <see cref="ObjectExport"/> declared which matches the provided object <paramref name="o"/>
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
@@ -139,7 +139,7 @@ namespace CatalogueLibrary.Data.ImportExport
 
 
         /// <summary>
-        /// Returns true if there is an <see cref="ObjectImport"/> declared which matches the provided object <see cref="o"/>
+        /// Returns true if there is an <see cref="ObjectImport"/> declared which matches the provided object <paramref name="o"/>
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
@@ -149,7 +149,7 @@ namespace CatalogueLibrary.Data.ImportExport
         }
 
         /// <summary>
-        /// Returns true if an <see cref="ObjectImport"/> has been declared for the given shared object identified by it's <see cref="sharingUID"/>
+        /// Returns true if an <see cref="ObjectImport"/> has been declared for the given shared object identified by it's <paramref name="sharingUID"/>
         /// </summary>
         /// <param name="sharingUID"></param>
         /// <returns></returns>
@@ -185,7 +185,7 @@ namespace CatalogueLibrary.Data.ImportExport
 
 
         /// <summary>
-        /// Returns the local object which was imported under the given <see cref="sharingUID"/> (or null if the object has never
+        /// Returns the local object which was imported under the given <paramref name="sharingUID"/> (or null if the object has never
         /// been imported)
         /// </summary>
         /// <param name="sharingUID"></param>
@@ -207,7 +207,7 @@ namespace CatalogueLibrary.Data.ImportExport
         }
 
         /// <summary>
-        /// Returns the local object which was exported under the given <see cref="sharingUID"/> (or null if the object has never
+        /// Returns the local object which was exported under the given <paramref name="sharingUID"/> (or null if the object has never
         /// been exported)
         /// </summary>
         /// <param name="sharingUID"></param>
@@ -262,7 +262,7 @@ namespace CatalogueLibrary.Data.ImportExport
         }
 
         /// <summary>
-        /// Marks the given local object <see cref="o"/> as an imported instance of a shared object (identified by it's <see cref="sharingUID"/>)
+        /// Marks the given local object <paramref name="o"/> as an imported instance of a shared object (identified by it's <paramref name="sharingUID"/>)
         /// </summary>
         /// <param name="sharingUID"></param>
         /// <param name="o"></param>
@@ -305,15 +305,25 @@ namespace CatalogueLibrary.Data.ImportExport
         }
 
         /// <summary>
-        /// Creates imported objects from a serialized list of <see cref="ShareDefinition"/> - usually loaded from a .so file (See <see cref="Gatherer"/>)
+        /// Creates imported objects from a serialized list of <see cref="ShareDefinition"/> - usually loaded from a .so file (See Sharing.Dependency.Gathering.Gatherer)
         /// </summary>
         /// <param name="sharedObjectsFileText"></param>
         /// <returns></returns>
         public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText, bool deleteExisting = false)
         {
-            var toImport = (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(sharedObjectsFileText, typeof(List<ShareDefinition>), RepositoryLocator);
+            var toImport = GetShareDefinitionList(sharedObjectsFileText);
 
             return ImportSharedObject(toImport);
+        }
+
+        /// <summary>
+        /// Deserializes the json which must be the contents of a .sd file i.e. a ShareDefinitionList
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public List<ShareDefinition> GetShareDefinitionList(string json)
+        {
+            return (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(json, typeof (List<ShareDefinition>), RepositoryLocator);
         }
 
         /// <summary>
@@ -359,12 +369,12 @@ namespace CatalogueLibrary.Data.ImportExport
         }
 
         /// <summary>
-        /// When importing a <see cref="shareDefinition"/> for a child class with a parent, this method will return the ID of parent for the given <see cref="property"/>
-        /// on the child.  For example if you are importing a <see cref="ShareDefinition"/> for a <see cref="CatalogueItem"/> then the property <see cref="Catalogue_ID"/> should 
+        /// When importing a <paramref name="shareDefinition"/> for a child class with a parent, this method will return the ID of parent for the given <paramref name="property"/>
+        /// on the child.  For example if you are importing a <see cref="ShareDefinition"/> for a <see cref="CatalogueItem"/> then the property <see cref="CatalogueItem.Catalogue_ID"/> should 
         /// have the ID of the locally held <see cref="Catalogue"/> to which it will become a part of.
         /// </summary>
-        /// <param name="property">The child class property you need to fill e.g. <see cref="Catalogue_ID"/></param>
-        /// <param name="relationshipAttribute">The attribute that decorates the <see cref="property"/> which indicates what type of object the parent is etc</param>
+        /// <param name="property">The child class property you need to fill e.g. <see cref="CatalogueItem.Catalogue_ID"/></param>
+        /// <param name="relationshipAttribute">The attribute that decorates the <paramref name="property"/> which indicates what type of object the parent is etc</param>
         /// <param name="shareDefinition">The serialization of the child you are trying to import</param>
         /// <returns></returns>
         public int? GetLocalReference(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
@@ -382,6 +392,24 @@ namespace CatalogueLibrary.Data.ImportExport
                      " on class " + property.DeclaringType.Name));
 
             return LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
+        }
+
+        /// <summary>
+        /// Updates the user configurable (non ID) properties of the object <pararef name="o"/> to match the <paramref name="shareDefinition"/>
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="shareDefinition"></param>
+        public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
+        {
+            if (shareDefinition.Type != o.GetType())
+                throw new Exception("Share Definition is not for a " + o.GetType());
+
+            //for each property that isn't [NoMappingToDatabase]
+            foreach (var kvp in shareDefinition.GetDictionaryForImport())
+            {
+                var prop = o.GetType().GetProperty(kvp.Key);
+                RepositoryLocator.CatalogueRepository.SetValue(prop,kvp.Value,o);   
+            }
         }
     }
 

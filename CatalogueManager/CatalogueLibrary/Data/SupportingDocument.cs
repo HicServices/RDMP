@@ -73,7 +73,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// <see cref="ITicketingSystem"/> identifier of a ticket for logging time curating / updating etc the document
+        /// <see cref="CatalogueLibrary.Ticketing.ITicketingSystem"/> identifier of a ticket for logging time curating / updating etc the document
         /// </summary>
         public string Ticket
         {
@@ -103,7 +103,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         /// <summary>
-        /// Creates a new supporting document for helping understand the dataset <see cref="parent"/>
+        /// Creates a new supporting document for helping understand the dataset <paramref name="parent"/>
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="parent"></param>

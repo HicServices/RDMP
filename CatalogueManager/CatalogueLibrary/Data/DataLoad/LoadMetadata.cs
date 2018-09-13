@@ -90,8 +90,8 @@ namespace CatalogueLibrary.Data.DataLoad
         }
 
         /// <summary>
-        /// The format for storing files in when reading/writing to a cache with a <see cref="CacheProgress"/>.  This may not be respected depending on the implementation of the 
-        /// sepecific ICacheLayout
+        /// The format for storing files in when reading/writing to a cache with a <see cref="CatalogueLibrary.Data.Cache.CacheProgress"/>.  This may not be respected
+        /// depending on the implementation of the sepecific ICacheLayout
         /// </summary>
         public CacheArchiveType CacheArchiveType
         {

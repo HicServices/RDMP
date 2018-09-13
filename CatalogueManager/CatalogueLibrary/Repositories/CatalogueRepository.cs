@@ -320,21 +320,11 @@ namespace CatalogueLibrary.Repositories
         public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
         {
             //Make a dictionary of the normal properties we are supposed to be importing
-            Dictionary<string,object> propertiesDictionary = shareDefinition.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Dictionary<string,object> propertiesDictionary = shareDefinition.GetDictionaryForImport();
 
             //for finding properties decorated with [Relationship]
             var finder = new AttributePropertyFinder<RelationshipAttribute>(toCreate);
-
-            //remove null arguments they won't help us here
-            foreach (string key in propertiesDictionary.Keys.ToArray())
-            {
-                if (propertiesDictionary[key] is CatalogueFolder)
-                    propertiesDictionary[key] = propertiesDictionary[key].ToString();
-
-                if (propertiesDictionary[key] == null)
-                    propertiesDictionary.Remove(key);
-            }
-
+            
             //If we have already got a local copy of this shared object?
             //either as an import or as an export
             T actual = (T)shareManager.GetExistingImportObject(shareDefinition.SharingGuid) ?? (T)shareManager.GetExistingExportObject(shareDefinition.SharingGuid);
@@ -350,30 +340,7 @@ namespace CatalogueLibrary.Repositories
                     //don't update any ID columns or any with relationships on UPDATE
                     if (propertiesDictionary.ContainsKey(prop.Name) && finder.GetAttribute(prop) == null)
                     {
-                        //sometimes json decided to swap types on you e.g. int64 for int32
-                        var val = propertiesDictionary[prop.Name];
-                        var propertyType = prop.PropertyType;
-
-                        //if it is a nullable int etc
-                        if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
-                            propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
-                        
-                        if (val != null && val != DBNull.Value && !propertyType.IsInstanceOfType(val))
-                            if (propertyType == typeof(CatalogueFolder))
-                            {
-                                //will be passed as a string
-                                string folderAsString = (string)propertiesDictionary["Folder"];
-                                val = new CatalogueFolder((Catalogue)(object)toCreate, folderAsString);
-                            }
-                            else
-                            if (typeof(Enum).IsAssignableFrom(propertyType))
-                                val = Enum.ToObject(propertyType, val);//if the property is an enum
-                            else
-                                val = Convert.ChangeType(val, propertyType); //the property is not an enum
-
-                        
-                        prop.SetValue(toCreate, val); //if it's a shared property (most properties) use the new shared value being imported
-                        
+                        SetValue(prop, propertiesDictionary[prop.Name], toCreate);
                     }
                     else
                         prop.SetValue(toCreate, prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
@@ -442,8 +409,30 @@ namespace CatalogueLibrary.Repositories
                 //document that a local import of the share now exists and should be updated/reused from now on when that same GUID comes in / gets used by child objects
                 shareManager.GetImportAs(shareDefinition.SharingGuid.ToString(), toCreate);
             }
-            
+        }
 
+        public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
+        {
+            //sometimes json decided to swap types on you e.g. int64 for int32
+            var propertyType = prop.PropertyType;
+
+            //if it is a nullable int etc
+            if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
+                propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
+
+            if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
+                if (propertyType == typeof(CatalogueFolder))
+                {
+                    //will be passed as a string
+                    value = value is string ? new CatalogueFolder((Catalogue)onObject, (string)value):(CatalogueFolder) value;
+                }
+                else
+                    if (typeof(Enum).IsAssignableFrom(propertyType))
+                        value = Enum.ToObject(propertyType, value);//if the property is an enum
+                    else
+                        value = Convert.ChangeType(value, propertyType); //the property is not an enum
+
+            prop.SetValue(onObject, value); //if it's a shared property (most properties) use the new shared value being imported
         }
     }
 

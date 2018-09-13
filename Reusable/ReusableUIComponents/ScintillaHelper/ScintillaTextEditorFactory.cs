@@ -15,6 +15,7 @@ namespace ReusableUIComponents.ScintillaHelper
         /// dropping components into the window.  The ICommandFactory will decide whether the given object can be translated into an ICommand and hence into a unique bit of SQL
         /// to add to the editor</param>
         /// <param name="language"></param>
+        /// <param name="syntaxHelper"></param>
         /// <returns></returns>
         public Scintilla Create(ICommandFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null)
         {

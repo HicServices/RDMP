@@ -27,7 +27,7 @@ namespace CatalogueLibrary.Data.DataLoad
     {
 
         /// <summary>
-        /// All Types that are supported for <see cref="Type"/> and <see cref="Value"/> of <see cref="IArguments"/>.
+        /// All Types that are supported for <see cref="Type"/> and <see cref="Value"/> of <see cref="IArgument"/>s.
         /// 
         /// <para>Or to put it another way, don't decorate an <see cref="IArgumentHost"/> property with <see cref="DemandsInitializationAttribute"/> if its Type isn't on this list</para>
         /// </summary>

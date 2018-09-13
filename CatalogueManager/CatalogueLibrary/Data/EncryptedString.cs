@@ -53,7 +53,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Creates a new encrypted string using <see cref="SimpleStringValueEncryption"/> or the provided <see cref="encrypter"/>
+        /// Creates a new encrypted string using <see cref="SimpleStringValueEncryption"/> or the provided <paramref name="encrypter"/>
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="encrypter"></param>

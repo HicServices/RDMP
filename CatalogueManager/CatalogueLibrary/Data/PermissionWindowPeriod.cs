@@ -71,7 +71,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// True if the <see cref="timeToTest"/> falls with the allowable time range (and on the correct <see cref="DayOfWeek"/>)
+        /// True if the <paramref name="timeToTest"/> falls with the allowable time range (and on the correct <see cref="DayOfWeek"/>)
         /// </summary>
         /// <param name="timeToTest"></param>
         /// <param name="testToNearestSecond"></param>

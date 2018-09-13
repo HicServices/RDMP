@@ -112,7 +112,7 @@ namespace CatalogueLibrary.Data
 
         /// <summary>
         /// Returns a folder name suitable for storing the dlls for the plugin in as a subdirectory of 
-        /// <see cref="downloadDirectoryRoot"/>
+        /// <paramref name="downloadDirectoryRoot"/>
         /// </summary>
         /// <param name="downloadDirectoryRoot"></param>
         /// <returns></returns>

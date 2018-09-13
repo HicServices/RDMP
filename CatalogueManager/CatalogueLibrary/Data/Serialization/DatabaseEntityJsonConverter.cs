@@ -85,7 +85,7 @@ namespace CatalogueLibrary.Data.Serialization
         }
 
         /// <summary>
-        /// True if <see cref="objectType"/> is a <see cref="DatabaseEntity"/> (the only thing this class can serialize)
+        /// True if <paramref name="objectType"/> is a <see cref="DatabaseEntity"/> (the only thing this class can serialize)
         /// </summary>
         /// <param name="objectType"></param>
         /// <returns></returns>

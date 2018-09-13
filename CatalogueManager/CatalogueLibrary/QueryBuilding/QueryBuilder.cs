@@ -141,7 +141,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// </summary>
         /// <param name="limitationSQL">Any text you want after SELECT to limit the results e.g. "DISTINCT" or "TOP 10"</param>
         /// <param name="hashingAlgorithm"></param>
-        /// <param name="selectedDatasetsForcedJoins"></param>
+        /// <param name="forceJoinsToTheseTables"></param>
         public QueryBuilder(string limitationSQL, string hashingAlgorithm, TableInfo[] forceJoinsToTheseTables = null)
         {
             _forceJoinsToTheseTables = forceJoinsToTheseTables;

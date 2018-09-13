@@ -106,7 +106,7 @@ namespace ReusableLibraryCode
         /// <para>Also handles converting DateTime representations since many DBMS are a bit rubbish at that</para> 
         /// </summary>
         /// <param name="paramName">The name for the parameter e.g. @myParamter</param>
-        /// <param name="syntaxHelper">The syntax that can figure out Types for the DBMS you are targetting, grab from your nearest <see cref="IHasQuerySyntaxHelper"/> e.g. <see cref="DiscoveredColumn.Table"/></param>
+        /// <param name="syntaxHelper">The syntax that can figure out Types for the DBMS you are targetting, grab from your nearest <see cref="ReusableLibraryCode.DataAccess.IHasQuerySyntaxHelper"/> e.g. <see cref="DiscoveredColumn.Table"/></param>
         /// <param name="discoveredColumn">The column the parameter is for loading - this is used to determine the DbType for the paramter</param>
         /// <param name="value">The value to populate into the command, this will be converted to DBNull.Value if the value is nullish</param>
         /// <returns></returns>

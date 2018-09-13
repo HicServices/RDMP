@@ -109,7 +109,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// Prompts user to select 1 of the objects of type T from all the ones stored in the repository provided, returns true if they made a non null selection
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="availableObjects"></param>
+        /// <param name="repository"></param>
         /// <param name="selected"></param>
         /// <returns></returns>
         protected bool SelectOne<T>(IRepository repository, out T selected) where T : DatabaseEntity

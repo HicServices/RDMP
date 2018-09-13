@@ -213,10 +213,7 @@ namespace CatalogueManager.Collections
             ExtractionBroken,
             TOP1Worked
         }
-
-        private object _lastSelected = null;
-        private bool _showCatalogueItems;
-
+        
         private void btnCheckCatalogues_Click(object sender, EventArgs e)
         {
             CheckCatalogues();

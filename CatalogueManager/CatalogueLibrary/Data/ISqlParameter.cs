@@ -38,7 +38,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// Returns the <see cref="IMapsDirectlyToDatabaseTable"/> (usually an <see cref="IFilter"/>) that the parameter is declared on.  If the parameter is a global level
         /// parameter e.g. declared at <see cref="CatalogueLibrary.Data.Aggregation.AggregateConfiguration"/> level then the corresponding higher level object will be returned 
-        ///  (e.g. <see cref="AnyTableSqlParameter"/>).
+        ///  (e.g. <see cref="CatalogueLibrary.Data.Cohort.AnyTableSqlParameter"/>).
         /// </summary>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable GetOwnerIfAny();

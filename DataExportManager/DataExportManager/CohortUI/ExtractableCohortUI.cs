@@ -48,8 +48,6 @@ namespace DataExportManager.CohortUI
     /// </summary>
     public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableUI
     {
-        internal event ChangesSavedHandler ChangesSaved;
-
         private ExtractableCohort _extractableCohort; 
         
         public ExtractableCohort ExtractableCohort

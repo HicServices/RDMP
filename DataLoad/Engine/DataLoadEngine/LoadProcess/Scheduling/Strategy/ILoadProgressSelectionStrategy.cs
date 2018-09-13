@@ -11,7 +11,6 @@ namespace DataLoadEngine.LoadProcess.Scheduling.Strategy
         /// <summary>
         /// Return a list of the runnable load progresses
         /// </summary>
-        /// <param name="respectAndAcquire"></param>
         /// <returns></returns>
         List<ILoadProgress> GetAllLoadProgresses();
     }

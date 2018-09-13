@@ -173,7 +173,7 @@ namespace DataExportLibrary.Data.DataTables
             {
                 v = _cacheData.Value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _cacheData = new Lazy<IExternalCohortDefinitionData>(()=>null);    
             }

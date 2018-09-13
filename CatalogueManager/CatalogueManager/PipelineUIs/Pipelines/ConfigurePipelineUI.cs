@@ -133,7 +133,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                 lblPreviewStatus.Text = "Preview Generated successfully";
                 lblPreviewStatus.ForeColor = Color.Green;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return;//could not generate preview
             }

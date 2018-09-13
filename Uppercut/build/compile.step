@@ -199,6 +199,7 @@
               <property name="OutputPath" value="${msbuild.outputpath}" />
               <property name="Platform" value="${msbuild.platform}" />
               <property name="WarningLevel" value="${msbuild.warninglevel}" />
+              <property name="TreatWarningsAsErrors" value="${msbuild.treatwarningsaserrors}" />
               <!--property name="Logger" value="${msbuild.logger};&quot;${dirs.build_results}${path.separator}msbuild-${microsoft.framework.specific}-results.xml&quot;" /-->
               <!--arg line="/l:${msbuild.logger};&quot;${dirs.build_results}${path.separator}msbuild-${microsoft.framework.specific}-results.xml&quot;" /-->
             </msbuild>
