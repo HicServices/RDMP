@@ -200,7 +200,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <summary>
         /// Creates a primary key on the table if none exists yet
         /// </summary>
-        /// <param name="discoverColumn"></param>
+        /// <param name="discoverColumns"></param>
         public void CreatePrimaryKey(params DiscoveredColumn[] discoverColumns)
         {
             using (IManagedConnection connection = Database.Server.GetManagedConnection())
