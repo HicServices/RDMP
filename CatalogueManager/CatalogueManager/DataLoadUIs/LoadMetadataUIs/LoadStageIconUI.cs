@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Icons.IconProvision;
 using ReusableUIComponents;
@@ -14,7 +6,7 @@ using ReusableUIComponents;
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
 {
     /// <summary>
-    /// Icon for describing something relates to a given data LoadStage (e.g. AdjustRAW, AdjustSTAGING etc)
+    /// Icon for describing something relates to a given data LoadStage (e.g. AdjustRaw, AdjustStaging etc)
     /// </summary>
     [TechnicalUI]
     public partial class LoadStageIconUI : UserControl

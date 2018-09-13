@@ -267,10 +267,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 }
             _timeSpentCalculatingDISTINCT.Stop();
 
-
-            //if it is test mode reset the host so it is ready to go again if called a second time
-            _hostedSource = null;
-            
             return chunk;
         }
         
