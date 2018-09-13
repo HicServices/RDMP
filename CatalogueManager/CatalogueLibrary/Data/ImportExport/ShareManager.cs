@@ -311,9 +311,19 @@ namespace CatalogueLibrary.Data.ImportExport
         /// <returns></returns>
         public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText, bool deleteExisting = false)
         {
-            var toImport = (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(sharedObjectsFileText, typeof(List<ShareDefinition>), RepositoryLocator);
+            var toImport = GetShareDefinitionList(sharedObjectsFileText);
 
             return ImportSharedObject(toImport);
+        }
+
+        /// <summary>
+        /// Deserializes the json which must be the contents of a .sd file i.e. a ShareDefinitionList
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public List<ShareDefinition> GetShareDefinitionList(string json)
+        {
+            return (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(json, typeof (List<ShareDefinition>), RepositoryLocator);
         }
 
         /// <summary>
@@ -382,6 +392,24 @@ namespace CatalogueLibrary.Data.ImportExport
                      " on class " + property.DeclaringType.Name));
 
             return LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
+        }
+
+        /// <summary>
+        /// Updates the user configurable (non ID) properties of the object <pararef name="o"/> to match the <paramref name="shareDefinition"/>
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="shareDefinition"></param>
+        public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
+        {
+            if (shareDefinition.Type != o.GetType())
+                throw new Exception("Share Definition is not for a " + o.GetType());
+
+            //for each property that isn't [NoMappingToDatabase]
+            foreach (var kvp in shareDefinition.GetDictionaryForImport())
+            {
+                var prop = o.GetType().GetProperty(kvp.Key);
+                RepositoryLocator.CatalogueRepository.SetValue(prop,kvp.Value,o);   
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Newtonsoft.Json;
@@ -59,6 +60,27 @@ namespace CatalogueLibrary.Data.Serialization
             
             foreach (var kvp in relationshipProperties)
                 RelationshipProperties.Add(kvp.Key, kvp.Value);
+        }
+
+        /// <summary>
+        /// Removes null entries and fixes problematic value types e.g. <see cref="CatalogueFolder"/> which is better imported as a string
+        /// </summary>
+        public Dictionary<string, object> GetDictionaryForImport()
+        {
+            //Make a dictionary of the normal properties we are supposed to be importing
+            Dictionary<string, object> newDictionary = Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            //remove null arguments they won't help us here
+            foreach (string key in newDictionary.Keys.ToArray())
+            {
+                if (newDictionary[key] is CatalogueFolder)
+                    newDictionary[key] = newDictionary[key].ToString();
+
+                if (newDictionary[key] == null)
+                    newDictionary.Remove(key);
+            }
+
+            return newDictionary;
         }
     }
 }

@@ -28,7 +28,10 @@ namespace CatalogueManager.CommandExecution.Proposals
             var sourceFileCollection = cmd as FileCollectionCommand;
 
             if(sourceFileCollection != null)
-                return new ExecuteCommandAddFilesAsSupportingDocuments(ItemActivator,sourceFileCollection, targetCatalogue);
+                if (sourceFileCollection.IsShareDefinition)
+                    return new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,targetCatalogue);
+                else
+                    return new ExecuteCommandAddFilesAsSupportingDocuments(ItemActivator,sourceFileCollection, targetCatalogue);
 
             return null;
         }
