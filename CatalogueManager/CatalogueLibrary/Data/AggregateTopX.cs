@@ -60,7 +60,7 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
-        /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
+        
         #region Relationships
         /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
         [NoMappingToDatabase]

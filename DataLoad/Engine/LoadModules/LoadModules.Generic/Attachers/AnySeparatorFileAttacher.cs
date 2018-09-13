@@ -1,15 +1,14 @@
-using System.ComponentModel;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace LoadModules.Generic.Attachers
 {
     /// <summary>
     /// Data load component for loading flat files into RAW tables (flat files must be delimited by a specific character (or sequence) e.g. csv)
+    /// 
+    /// Allows you to load zero or more flat files which are delimited by a given character or sequence of characters.  For example comma separated (use Separator ',')
+    /// or Tab separated (Use Separator '\t').
     /// </summary>
-    [Description(@"Allows you to load zero or more flat files which are delimited by a given character or sequence of characters.  For example comma separated (use Separator ',') or Tab separated (Use Separator '\t').")]
     public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
     {
         [DemandsInitialization(@"The file separator e.g. , for CSV.  For tabs type \t", Mandatory = true)]

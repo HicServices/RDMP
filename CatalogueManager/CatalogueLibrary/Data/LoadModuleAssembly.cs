@@ -166,7 +166,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// The assembly (pdb) file if any for the <see cref="dll"/> which contains debugging symbols
+        /// The assembly (pdb) file if any for the <see cref="Dll"/> which contains debugging symbols
         /// as a Byte[], use File.WriteAllBytes to write it to disk
         /// </summary>
         public Byte[] Pdb

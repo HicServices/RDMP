@@ -209,6 +209,7 @@
     <Compile Include="Attachers\DelimitedFlatFileAttacher.cs" />
     <Compile Include="Attachers\ExcelAttacher.cs" />
     <Compile Include="Attachers\KVPAttacherPipelineUseCase.cs" />
+    <Compile Include="Attachers\RemoteDatabaseAttacher.cs" />
     <Compile Include="Checks\ExcelInstalledChecker.cs" />
     <Compile Include="DataFlowDestinations\DoNothingCacheDestination.cs" />
     <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasException.cs" />

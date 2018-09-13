@@ -1,16 +1,10 @@
-using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Data;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
@@ -22,10 +16,10 @@ namespace LoadModules.Generic.Attachers
     /// lab systems and places where large volumes of data are outputted.
     /// 
     /// <para>To use this attacher you will need a 'FormatFile' which describes the length/type of each field (See FixedWidthFormatFile).</para>
+    /// 
+    /// <para>The width of the file MUST match exactly the width of the data table being loaded - although the table may contain varchar columns in which case the 
+    /// max width specified on the varchar will be assumed as the width of the flat file column e.g. varchar(5) will be mapped to column width of 5</para>
     /// </summary>
-    [Description(
-        "Populates a data table using the given flat file.  The flat file will have columns of fixed width.  The width of the file MUST match exactly the width of the data table being loaded - although the table may contain varchar columns in which case the max width specified on the varchar will be assumed as the width of the flat file column e.g. varchar(5) will be mapped to column width of 5"
-        )]
     public class FixedWidthAttacher : FlatFileAttacher
     {
 

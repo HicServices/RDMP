@@ -27,7 +27,7 @@ namespace MapsDirectlyToDatabaseTable
         /// <see cref="IObscureDependencyFinder"/> thinks are dependent in a way similar to a CASCADE foreign key constraint.  This should only ever include cases
         /// where it is not possible to model the behaviour at database level e.g. when the dependency is cross server/databse.
         /// 
-        /// <para><remarks>Do not attempt to Save or Delete or really do any other database level operations with the parameter <see cref="oTableWrapperObject"/> because
+        /// <para><remarks>Do not attempt to Save or Delete or really do any other database level operations with the parameter <paramref name="oTableWrapperObject"/> because
         /// it will no longer exists in the database as a record (<see cref="IRevertable.Exists"/> will be false).</remarks></para>
         /// </summary>
         /// <param name="oTableWrapperObject"></param>

@@ -396,7 +396,6 @@ namespace CatalogueLibrary.Data.Aggregation
         /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
         /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method <see cref="IsJoinablePatientIndexTable"/>
         /// </summary>
-        /// <param name="joinable"></param>
         public void InjectKnown(JoinableCohortAggregateConfiguration instance)
         {
             _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>instance);
@@ -420,7 +419,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         /// <summary>
-        /// Gets an IQuerySyntaxHelper from the Catalogue powering this AggregateConfiguration (<see cref="Catalogue.GetQuerySyntaxHelper"/>)
+        /// Gets an IQuerySyntaxHelper from the Catalogue powering this AggregateConfiguration (<see cref="IHasQuerySyntaxHelper.GetQuerySyntaxHelper"/>)
         /// </summary>
         /// <returns></returns>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()

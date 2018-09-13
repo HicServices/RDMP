@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using CsvHelper.Configuration;
-using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -25,8 +20,10 @@ namespace LoadModules.Generic.DataFlowSources
     /// <summary>
     /// Pipeline component (source) for reading from a flat file delimited by by a specific character (or string) e.g. csv.  The file is batch processed into
     /// DataTables of size MaxBatchSize (to avoid memory problems in large files).
+    /// 
+    /// <para>Values read are fed into the pipeline as a DataTable with the Name of the DataTable being the name of the file being read.  Example usage would 
+    /// be setting the separator to , to read CSV files.</para>
     /// </summary>
-    [Description("Reads a single flat file and splits the lines read into cells based on the Separator character(s).  Values read are fed into the pipeline as a DataTable with the Name of the DataTable being the name of the file being read.  Example usage would be setting the separator to , to read CSV files.")]
     public class DelimitedFlatFileDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<FlatFileToLoad>
     {
         private CsvReader _reader;

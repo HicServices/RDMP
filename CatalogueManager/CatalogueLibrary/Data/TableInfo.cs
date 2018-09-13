@@ -184,7 +184,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         /// <summary>
-        /// Defines a new table reference in the platform database <see cref="repository"/>.  
+        /// Defines a new table reference in the platform database <paramref name="repository"/>.  
         /// <para>Usually you should use <see cref="TableInfoImporter"/> instead</para>
         /// </summary>
         /// <param name="repository"></param>
@@ -278,7 +278,7 @@ namespace CatalogueLibrary.Data
 
 
         /// <summary>
-        /// Returns the <see cref="Database"/> name at the given <see cref="loadStage"/> of a DLE run (RAW=>STAGING=>LIVE)
+        /// Returns the <see cref="Database"/> name at the given <paramref name="loadStage"/> of a DLE run (RAW=>STAGING=>LIVE)
         /// </summary>
         /// <param name="loadStage"></param>
         /// <param name="namer"></param>
@@ -321,7 +321,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Declares that the given <see cref="credentials"/> should be used to access the data table referenced by this 
+        /// Declares that the given <paramref name="credentials"/> should be used to access the data table referenced by this 
         /// <see cref="TableInfo"/> under the given <see cref="DataAccessContext"/> (loading data etc).
         /// </summary>
         /// <param name="credentials">Credentials to use (username / encrypted password)</param>

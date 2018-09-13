@@ -1,7 +1,7 @@
 namespace HIC.Logging
 {
     /// <summary>
-    /// Enum indicating which <see cref="CatalogueManager.LogViewer.Tabs.LoggingTab"/> is being talked about (being navigated to, shown etc).
+    /// Enum indicating one of the logging tables in the logging relational database
     /// </summary>
     public enum LoggingTables
     {

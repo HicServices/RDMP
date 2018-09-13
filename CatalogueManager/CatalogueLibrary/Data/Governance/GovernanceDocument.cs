@@ -68,7 +68,7 @@ namespace CatalogueLibrary.Data.Governance
         #endregion
 
         /// <summary>
-        /// Marks a given <see cref="file"/> as being important in the obtaining of the <see cref="parent"/> <see cref="GovernancePeriod"/>
+        /// Marks a given <paramref name="file"/> as being important in the obtaining of the <paramref name="parent"/> <see cref="GovernancePeriod"/>
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="parent"></param>

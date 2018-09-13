@@ -22,7 +22,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
-    public interface ICatalogue : IRevertable, IHasDependencies, IHasQuerySyntaxHelper,INamed
+    public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed
     {
         /// <summary>
         /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
@@ -41,7 +41,7 @@ namespace CatalogueLibrary.Data
         int? LiveLoggingServer_ID { get; set; }
 
         /// <summary>
-        /// Currently configured validation rules for columns in a Catalogue, this can be deserialized into a <see cref="HIC.Common.Validation.Validator"/>
+        /// Currently configured validation rules for columns in a Catalogue, this can be deserialized into a HIC.Common.Validation.Validator
         /// </summary>
         string ValidatorXML { get; set; }
 
@@ -138,7 +138,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is 
         /// determined by comparing all the underlying <see cref="TableInfo"/> that power the <see cref="ExtractionInformation"/> of the Catalogue and looking for a shared
-        /// servername.  This will handle when the tables are in different databases but only if you set <see cref="setInitialDatabase"/> to false
+        /// servername.  This will handle when the tables are in different databases but only if you set <paramref name="setInitialDatabase"/> to false
         /// </summary>
         /// <param name="context"></param>
         /// <param name="setInitialDatabase">True to require all tables be in the same database.  False will just connect to master / unspecified database</param>
@@ -169,7 +169,7 @@ namespace CatalogueLibrary.Data
         SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch);
 
         /// <summary>
-        /// Gets all <see cref="ExtractionFilter"/> declared under any <see cref="ExtractionInformation"/> in the Catalogue where the  <see cref="ExtractionFilter.IsMandatory"/> flag is set.
+        /// Gets all <see cref="ExtractionFilter"/> declared under any <see cref="ExtractionInformation"/> in the Catalogue where the  <see cref="IFilter.IsMandatory"/> flag is set.
         /// </summary>
         /// <returns></returns>
         ExtractionFilter[] GetAllMandatoryFilters();

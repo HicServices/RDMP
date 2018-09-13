@@ -6,6 +6,7 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Repositories
 {
@@ -20,6 +21,8 @@ namespace CatalogueLibrary.Repositories
         JoinInfoFinder JoinInfoFinder { get; set; }
         MEF MEF { get; set; }
         IEnumerable<CatalogueItem> GetAllCatalogueItemsNamed(string name, bool ignoreCase);
+
+        CommentStore CommentStore { get; }
 
         /// <summary>
         /// If the configuration is part of any aggregate container anywhere this method will return the order within that container

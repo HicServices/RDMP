@@ -64,6 +64,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         public List<DatabaseColumnRequest> ExplicitTypes { get; set; }
 
         private bool _firstTime = true;
+        private DataColumn[] _primaryKey;
+        private DiscoveredTable discoveredTable;
 
         private const int AlterTimeout = 300;
 
@@ -74,6 +76,9 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            if (toProcess == null)
+                return null;
+
             //work out the table name for the table we are going to create
             if (TargetTableName == null)
             {
@@ -81,6 +86,13 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
                 
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSane(toProcess.TableName);
+            }
+
+            //handle primary keyness by removing it until Dispose step
+            if (toProcess.PrimaryKey.Any())
+            {
+                _primaryKey = toProcess.PrimaryKey.ToArray();
+                toProcess.PrimaryKey = new DataColumn[0];
             }
 
             StartAuditIfExists(TargetTableName);
@@ -95,7 +107,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 if (!_database.Exists())
                     throw new Exception("Database " + _database + " does not exist");
 
-                var discoveredTable = _database.ExpectTable(TargetTableName);
+                discoveredTable = _database.ExpectTable(TargetTableName);
 
                 //table already exists
                 if (discoveredTable.Exists())
@@ -132,16 +144,14 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     ResizeColumnsIfRequired(toProcess, listener);
 
                 //push the data
-                if (toProcess != null)
-                {
-                    swTimeSpentWritting.Start();
+                swTimeSpentWritting.Start();
 
-                    _affectedRows += _bulkcopy.Upload(toProcess);
+                _affectedRows += _bulkcopy.Upload(toProcess);
                     
-                    swTimeSpentWritting.Stop();
-                    listener.OnProgress(this, new ProgressEventArgs("Uploading to " + TargetTableName, new ProgressMeasurement(_affectedRows, ProgressType.Records), swTimeSpentWritting.Elapsed));
+                swTimeSpentWritting.Stop();
+                listener.OnProgress(this, new ProgressEventArgs("Uploading to " + TargetTableName, new ProgressMeasurement(_affectedRows, ProgressType.Records), swTimeSpentWritting.Elapsed));
 
-                }
+                
             }
             catch (Exception e)
             {
@@ -244,8 +254,6 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
                     }
-
-                    
                 }
             }
             catch (Exception e)
@@ -254,8 +262,28 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
             }
 
-            EndAuditIfExists();
+            //if we have a primary key to create
+            if (pipelineFailureExceptionIfAny == null && _primaryKey != null && _primaryKey.Any() && discoveredTable != null && discoveredTable.Exists())
+            {
+                //Find the columns in the destination
+                var allColumns = discoveredTable.DiscoverColumns();
+                
+                //if there are not yet any primary keys
+                if(allColumns.All(c=>!c.IsPrimaryKey))
+                {
+                    //find the columns the user decorated in his DataTable
+                    DiscoveredColumn[] pkColumnsToCreate = allColumns.Where(c => _primaryKey.Any(pk => pk.ColumnName.Equals(c.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase))).ToArray();
 
+                    //make sure we found all of them
+                    if(pkColumnsToCreate.Length != _primaryKey.Length)
+                        throw new Exception("Could not find primary key column(s) " + string.Join(",",_primaryKey.Select(c=>c.ColumnName)) + " in table " + discoveredTable);
+
+                    //create the primary key to match user provided columns
+                    discoveredTable.CreatePrimaryKey(pkColumnsToCreate);
+                }
+            }
+
+            EndAuditIfExists();
         }
 
         private void EndAuditIfExists()

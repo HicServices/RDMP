@@ -52,8 +52,7 @@ namespace CatalogueLibrary.Data.Cache
         TimeSpan ChunkPeriod { get; set; }
 
         /// <summary>
-        /// The pipeline configuration responsible for populating the cache.  This will be run repeatedly for each date range fetched 
-        /// <see cref="CachingEngine.Factories.CachingPipelineUseCase"/>
+        /// The pipeline configuration responsible for populating the cache.  This will be run repeatedly for each date range fetched (See CachingEngine.Factories.CachingPipelineUseCase)
         /// </summary>
         int? Pipeline_ID { get; set; }
 

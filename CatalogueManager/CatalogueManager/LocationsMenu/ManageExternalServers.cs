@@ -1,18 +1,11 @@
 using System;
-using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.SimpleDialogs;
-using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
 
 namespace CatalogueManager.LocationsMenu
@@ -27,18 +20,11 @@ namespace CatalogueManager.LocationsMenu
     /// </summary>
     public partial class ManageExternalServers : RDMPForm
     {
-        private ExternalDatabaseServer _externalDatabaseServer;
-        
         ServerDefaults defaults;
-        private readonly ICoreIconProvider _coreIconProvider;
-
-
-        bool bloading;
-
-        public ManageExternalServers(ICoreIconProvider coreIconProvider)
+        
+        public ManageExternalServers()
         {
             InitializeComponent();
-            _coreIconProvider = coreIconProvider;
         }
 
         protected override void OnLoad(EventArgs e)

@@ -200,7 +200,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <summary>
         /// Creates a primary key on the table if none exists yet
         /// </summary>
-        /// <param name="discoverColumn"></param>
+        /// <param name="discoverColumns"></param>
         public void CreatePrimaryKey(params DiscoveredColumn[] discoverColumns)
         {
             using (IManagedConnection connection = Database.Server.GetManagedConnection())
@@ -246,7 +246,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// Overload which will discover the columns by name for you.
         /// </summary>
         /// <param name="toInsert"></param>
-        /// <param name="connection"></param>
+        /// <param name="transaction">ongoing transaction this insert should be part of</param>
         /// <returns></returns>
         public int Insert(Dictionary<string, object> toInsert, IManagedTransaction transaction = null)
         {

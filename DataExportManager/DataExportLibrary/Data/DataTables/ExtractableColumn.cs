@@ -60,9 +60,9 @@ namespace DataExportLibrary.Data.DataTables
         
         #region Relationships
 
+
         /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
         [CanBeNull]
-        /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation CatalogueExtractionInformation
         {

@@ -83,7 +83,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         /// <summary>
-        /// Creates a new parameter on the given <see cref="parent"/>
+        /// Creates a new parameter on the given <paramref name="parent"/>
         /// <para>It is better to use <see cref="CatalogueLibrary.FilterImporting.ParameterCreator"/> to automatically generate parameters based on the WHERE Sql</para>
         /// </summary>
         /// <param name="repository"></param>

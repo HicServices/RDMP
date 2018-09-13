@@ -795,12 +795,6 @@
       <DependentUpon>ColumnInfoToANOTableConverterUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\PatternPredictor.cs" />
-    <Compile Include="DataLoadUIs\ANOUIs\PreLoadDiscarding\ConfigurePreLoadDiscardedColumns.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DataLoadUIs\ANOUIs\PreLoadDiscarding\ConfigurePreLoadDiscardedColumns.Designer.cs">
-      <DependentUpon>ConfigurePreLoadDiscardedColumns.cs</DependentUpon>
-    </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressAnnotation.cs" />
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagram.cs">
       <SubType>UserControl</SubType>
@@ -814,8 +808,6 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.Designer.cs">
       <DependentUpon>CacheProgressUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\AdvertisedProcessTask.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\AdvertisedProcessTaskFilter.cs" />
     <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseHICProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1802,9 +1794,6 @@
       <DependentUpon>ColumnInfoToANOTableConverterUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\ANOUIs\PreLoadDiscarding\ConfigurePreLoadDiscardedColumns.resx">
-      <DependentUpon>ConfigurePreLoadDiscardedColumns.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagram.resx">
       <DependentUpon>LoadProgressDiagram.cs</DependentUpon>
     </EmbeddedResource>
@@ -2098,6 +2087,10 @@
     <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
       <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
       <Name>DataLoadEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
+      <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>
+      <Name>LoadModules.GenericUIs</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
       <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>

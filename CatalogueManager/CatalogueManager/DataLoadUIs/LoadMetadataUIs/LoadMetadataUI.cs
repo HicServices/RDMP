@@ -23,7 +23,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
     public partial class LoadMetadataUI : LoadMetadataUI_Design, ISaveableUI
     {
         private LoadMetadata _loadMetadata;
-        private bool _bLoading;
         
         public LoadMetadata LoadMetadata
         {

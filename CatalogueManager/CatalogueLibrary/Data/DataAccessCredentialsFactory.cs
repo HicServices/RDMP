@@ -12,7 +12,7 @@ namespace CatalogueLibrary.Data
         private readonly CatalogueRepository _cataRepository;
 
         /// <summary>
-        /// Creates a new <see cref="DataAccessCredentialsFactory"/> for creating <see cref="DataAccessCredentials"/> which will be stored in the database provided (<see cref="cataRepository"/>)
+        /// Creates a new <see cref="DataAccessCredentialsFactory"/> for creating <see cref="DataAccessCredentials"/> which will be stored in the database provided (<paramref name="cataRepository"/>)
         /// </summary>
         /// <param name="cataRepository"></param>
         public DataAccessCredentialsFactory(CatalogueRepository cataRepository)

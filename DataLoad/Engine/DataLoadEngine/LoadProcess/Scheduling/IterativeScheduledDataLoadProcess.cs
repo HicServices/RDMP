@@ -59,8 +59,6 @@ namespace DataLoadEngine.LoadProcess.Scheduling
 
             //should be Operation Not Required or Error since the token inside handles stopping
             return result;
-
-            return ExitCodeType.Success;
         }
     }
 }

@@ -313,7 +313,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
         }
  
         private bool isRefreshing;
-        private bool _popupToolboxOnLoad;
        
         private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)
         {

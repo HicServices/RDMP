@@ -76,7 +76,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <inheritdoc/>
-        ///<remarks>For <see cref="Lookups"/> this should almost always be LEFT</remarks>
+        ///<remarks>For <see cref="Lookup"/> this should almost always be LEFT</remarks>
         public ExtractionJoinType ExtractionJoinType
         {
             get { return _extractionJoinType; }
@@ -197,8 +197,8 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Returns all <see cref="Lookup"/> relationships that exist between the main dataset <see cref="foreignKeyTable"/> and the
-        /// assumed lookup table <see cref="primaryKeyTable"/>
+        /// Returns all <see cref="Lookup"/> relationships that exist between the main dataset <paramref name="foreignKeyTable"/> and the
+        /// assumed lookup table <paramref name="primaryKeyTable"/>
         /// </summary>
         /// <param name="foreignKeyTable">The main dataset table</param>
         /// <param name="primaryKeyTable">The hypothesized lookup table</param>

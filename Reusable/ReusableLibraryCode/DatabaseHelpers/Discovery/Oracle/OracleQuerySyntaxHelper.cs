@@ -59,7 +59,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         }
 
         /// <summary>
-        /// Always returns null for Oracle since this is handled by <see cref="OracleTableHelper.GetCreateTableSql"/>
+        /// Always returns null for Oracle since this is handled by <see cref="OracleDatabaseHelper.GetCreateTableSql"/>
         /// </summary>
         /// <returns></returns>
         public override string GetAutoIncrementKeywordIfAny()

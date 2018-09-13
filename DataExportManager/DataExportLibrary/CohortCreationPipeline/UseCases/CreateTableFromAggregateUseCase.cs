@@ -24,7 +24,7 @@ namespace DataExportLibrary.CohortCreationPipeline.UseCases
         /// that will be released into the pipeline.  The source is fixed the destination and middle components are open.
         /// </summary>
         /// <param name="aggregateConfiguration">The aggregate query that will be run to generate the rows</param>
-        /// <param name="constrainByCohort">Only applies if <see cref="aggregateConfiguration"/> is a patient index table, specifying a cohort will only commit rows 
+        /// <param name="constrainByCohort">Only applies if <see cref="AggregateConfiguration"/> is a patient index table, specifying a cohort will only commit rows 
         /// in which the patient id appears in the cohort</param>
         /// <param name="table">The destination table in which to put the matched records.
         /// <para> (table does not have to exist yet, you can use <see cref="DiscoveredDatabase.ExpectTable"/> to obtain a reference to a non existant table)</para></param>

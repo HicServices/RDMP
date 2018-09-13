@@ -17,7 +17,8 @@
         public bool AllowPinning { get; set; }
 
         /// <summary>
-        /// True to add an extra column (not visible by default) to the tree view which the ID property of objects that are <see cref="IMapsDirectlyToDatabaseTable"/>
+        /// True to add an extra column (not visible by default) to the tree view which the ID property of objects that are
+        ///  <see cref="MapsDirectlyToDatabaseTable.IMapsDirectlyToDatabaseTable"/>
         ///  <para>Defaults to true</para>
         /// </summary>
         public bool AddIDColumn { get; set; }

@@ -28,7 +28,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
     /// Executes a single Dataset extraction by linking a cohort with a dataset (either core or custom data - See IExtractCommand).  Also calculates the number
     /// of unique identifiers seen, records row validation failures etc.
     /// </summary>
-    [Description("The default source for data extraction, performs a join between a dataset and a cohort on the same server and substitutes private identifier for release identifier in datasets entering the pipeline")]
     public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<IExtractCommand>
     {
         //Request is either for one of these
@@ -132,10 +131,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 if (firstGlobalChunk)
                 {
                     //unless we are checking, start auditing
-                    if (!_testMode)
-                    {
-                        StartAuditGlobals();
-                    }
+                    StartAuditGlobals();
+                    
                     firstGlobalChunk = false;
                     return new DataTable(ExtractionDirectory.GLOBALS_DATA_NAME);
                 }
@@ -153,18 +150,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             
            if (_hostedSource == null)
             {
-               //unless we are checking, start auditing
-               if(!_testMode)
-               {
-                   StartAudit(Request.QueryBuilder.SQL);
-               }
-
+               StartAudit(Request.QueryBuilder.SQL);
+               
                if(Request.DatasetBundle.DataSet.DisableExtraction)
                    throw new Exception("Cannot extract " + Request.DatasetBundle.DataSet + " because DisableExtraction is set to true");
 
                 _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
                     "ExecuteDatasetExtraction " + Request.DatasetBundle.DataSet,
-                    _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false).Builder, _testMode ? 30 : 50000);
+                    _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false).Builder, 50000);
 
                 _hostedSource.AllowEmptyResultSets = AllowEmptyExtractions;
                 _hostedSource.BatchSize = BatchSize;
@@ -276,8 +269,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
 
             //if it is test mode reset the host so it is ready to go again if called a second time
-            if (_testMode)
-                _hostedSource = null;
+            _hostedSource = null;
             
             return chunk;
         }
@@ -441,7 +433,5 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 return;
             }
         }
-
-        private bool _testMode;
     }
 }

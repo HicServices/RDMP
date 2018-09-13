@@ -138,7 +138,7 @@
     <Content Include="RDMPAutomationService.exe.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Reference Include="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Runtime">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Compile Include="Menus\MenuItems\DataExportMenu.cs" />
@@ -284,6 +284,14 @@
     <ProjectReference Include="..\..\DataLoad\Applications\Dashboard\Dashboard.csproj">
       <Project>{66DCB9F0-41A3-4B14-ACC8-2036383A79C2}</Project>
       <Name>Dashboard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
+      <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>
+      <Name>LoadModules.GenericUIs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
+      <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
+      <Name>LoadModules.Generic</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
@@ -649,16 +657,6 @@
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="RDMPAutomationService.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="RDMPObjectVisualisation.pdb">
       <Visible>False</Visible>
       <Group>
       </Group>

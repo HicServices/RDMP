@@ -86,7 +86,7 @@ namespace CatalogueLibrary.QueryBuilding
         }
 
         /// <summary>
-        /// Attempts to parse the provided <see cref="sql"/> text into a <see cref="ConstantParameter"/>
+        /// Attempts to parse the provided <paramref name="sql"/> text into a <see cref="ConstantParameter"/>
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="syntaxHelper"></param>

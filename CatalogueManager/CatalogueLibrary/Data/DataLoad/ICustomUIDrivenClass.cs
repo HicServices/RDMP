@@ -15,7 +15,7 @@ namespace CatalogueLibrary.Data.DataLoad
     {
         /// <summary>
         /// Hydrate the <see cref="ICustomUIDrivenClass"/> by deserializing the supplied string.  If there is no <see cref="IArgument"/> value configured yet
-        /// then <see cref="value"/> may be null
+        /// then <paramref name="value"/> may be null
         /// </summary>
         /// <param name="value"></param>
         void RestoreStateFrom([CanBeNull]string value);

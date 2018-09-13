@@ -25,9 +25,6 @@ namespace LoadModules.Generic.Attachers
     /// will function normally.  It is up to the user to ensure that the table names/columns in the attached MDF match expected LIVE tables on your server (or 
     /// write AdjustRAW scripts to harmonise).</para>
     /// </summary>
-    [Description(
-        @"Loads an MDF file to the RAW server.  The MDF file will be copied to the data directory (discovered by querying sys.master_files) and then attached to the server."
-        )]
     public class MDFAttacher : Attacher,IPluginAttacher
     {
         private const string GetDefaultSQLServerDatabaseDirectory = @"SELECT LEFT(physical_name,LEN(physical_name)-CHARINDEX('\',REVERSE(physical_name))+1) 

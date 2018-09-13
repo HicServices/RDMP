@@ -4,7 +4,7 @@ using NLog;
 namespace HIC.Logging.Listeners.NLogListeners
 {
     /// <summary>
-    /// Base class for all RDMP Listeners (e.g. <see cref="ICheckNotifier"/>) which handle events by writing to an NLog.LogManager
+    /// Base class for all RDMP Listeners (e.g. <see cref="ReusableLibraryCode.Checks.ICheckNotifier"/>) which handle events by writing to an NLog.LogManager
     /// </summary>
     public abstract class NLogListener
     {

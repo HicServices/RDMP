@@ -198,7 +198,6 @@
     <Compile Include="CohortCreationPipeline\CohortRefreshEngine.cs" />
     <Compile Include="CohortCreationPipeline\UseCases\CreateTableFromAggregateUseCase.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\BasicCohortDestination.cs" />
-    <Compile Include="CohortCreationPipeline\Destinations\CustomCohortDataDestination.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\GuidReleaseIdentifierAllocator.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\IAllocateReleaseIdentifiers.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\NullAllocateReleaseIdentifiers.cs" />

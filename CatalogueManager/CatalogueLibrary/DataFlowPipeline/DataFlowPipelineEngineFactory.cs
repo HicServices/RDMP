@@ -22,7 +22,6 @@ namespace CatalogueLibrary.DataFlowPipeline
     /// 
     /// <para>In general rather than trying to use this class directly you should package up your requirements/initialization objects into a PipelineUseCase and call GetEngine. </para>
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     {
         private readonly MEF _mefPlugins;

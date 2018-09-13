@@ -18,7 +18,6 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
     /// Pipeline component for anonymising DataTable batches in memory according to the configuration of ANOTables / PreLoadDiscardedColumn(s) in the TableInfo.
     /// Actual functionality is implemented in IdentifierDumper and ANOTransformer(s).
     /// </summary>
-    [Description("Anonymises a DataTable in memory according to the configuration of ANOTables / PreLoadDiscardedColumn(s) in the TableInfo")]
     public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipelineRequirement<TableInfo>
     {
         private bool _bInitialized = false;
