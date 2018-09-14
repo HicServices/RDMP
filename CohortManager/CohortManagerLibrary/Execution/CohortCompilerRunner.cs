@@ -37,6 +37,11 @@ namespace CohortManagerLibrary.Execution
         /// </summary>
         public bool RunSubcontainers { get; set; }
         
+        /// <summary>
+        /// Creates a new runner for the given <paramref name="compiler"/> which will facilitate running it's Tasks in a sensible order using result caching if possible
+        /// </summary>
+        /// <param name="compiler"></param>
+        /// <param name="timeout">CommandTimeout for each individual command in seconds</param>
         public CohortCompilerRunner(CohortCompiler compiler, int timeout)
         {
             _timeout = timeout;
@@ -128,7 +133,7 @@ namespace CohortManagerLibrary.Execution
             var tasks = toRun.ToArray();
 
             foreach (var r in tasks)
-                Compiler.LaunchSingleTask(r, _timeout);
+                Compiler.LaunchSingleTask(r, _timeout,false);
 
             //while there are executing tasks
             while (tasks.Any(t => t.State == CompilationState.Scheduled || t.State == CompilationState.Executing))

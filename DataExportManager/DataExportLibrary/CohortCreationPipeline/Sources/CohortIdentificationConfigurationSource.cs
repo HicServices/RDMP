@@ -111,7 +111,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
             //add root container task
             var task = cohortCompiler.AddTask(_cohortIdentificationConfiguration.RootCohortAggregateContainer, _cohortIdentificationConfiguration.GetAllParameters());
 
-            cohortCompiler.LaunchSingleTask(task, Timeout);
+            cohortCompiler.LaunchSingleTask(task, Timeout,false);
 
             //timeout is in seconds
             int countDown = Timeout * 1000;
