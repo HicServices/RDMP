@@ -155,5 +155,58 @@ namespace DataLoadEngineTests.Integration
             //either way you shouldn't have the null one
             Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
         }
+
+
+
+        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+        [TestCase(DatabaseType.MYSQLServer, true)]
+        public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_Dates_RecordsDeleted(DatabaseType dbType, bool preferLarger)
+        {
+            var db = GetCleanedServer(dbType);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("PK");
+            dt.Columns.Add("ResolveOn");
+            dt.Columns.Add("AnotherCol");
+
+            dt.Rows.Add(1, null, "cat");
+            dt.Rows.Add(1, new DateTime(2001,01,01), "flop");
+            dt.Rows.Add(1, new DateTime(2002, 01, 01), "flop");
+            dt.Rows.Add(2, null, "flop");
+            dt.Rows.Add(3, null, "franl");
+
+            var tbl = db.CreateTable("MyTable", dt);
+
+            TableInfo ti;
+            ColumnInfo[] cis;
+            Import(tbl, out ti, out cis);
+
+            var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
+            pk.IsPrimaryKey = true;
+            pk.SaveToDatabase();
+
+            var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
+
+            var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
+            mutilation.ColumnToResolveOn = resolveOn;
+
+            mutilation.PreferLargerValues = preferLarger;
+            mutilation.PreferNulls = false;
+
+            mutilation.Initialize(db, LoadStage.AdjustRaw);
+            mutilation.Mutilate(new ThrowImmediatelyDataLoadEventListener());
+
+            Assert.AreEqual(3, tbl.GetRowCount());
+            var result = tbl.GetDataTable();
+
+            //if you like larger values then you want 2002 thats larger than 2001
+            Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002,01,01)) && r["AnotherCol"] as string == "flop"));
+            Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2001,01,01))  && r["AnotherCol"] as string == "flop"));
+
+            //either way you shouldn't have the null one
+            Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+        }
     }
 }
