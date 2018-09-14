@@ -308,10 +308,10 @@ namespace ReusableLibraryCode {
       int Delta = (UpperA - LowerA) - (UpperB - LowerB);
       bool oddDelta = (Delta & 1) != 0;
 
-      /// vector for the (0,0) to (x,y) search
+      // vector for the (0,0) to (x,y) search
       int[] DownVector = new int[2* MAX + 2];
 
-      /// vector for the (u,v) to (N,M) search
+      // vector for the (u,v) to (N,M) search
       int[] UpVector = new int[2 * MAX + 2];
       
       // The vectors in the publication accepts negative indexes. the vectors implemented here are 0-based

@@ -4,11 +4,9 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using MapsDirectlyToDatabaseTable.RepositoryResultCaching;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode;
@@ -34,26 +32,6 @@ namespace MapsDirectlyToDatabaseTable
         public DbConnectionStringBuilder ConnectionStringBuilder { get { return _connectionStringBuilder; } }
 
         public DiscoveredServer DiscoveredServer { get; protected set; }
-
-
-        SuperCacheManager _superCacheManager = new SuperCacheManager();
-
-        /// <summary>
-        /// Turns super caching mode on for the duration of the using statement.... MAKE SURE YOU ARE USING A USING STATEMENT!
-        /// </summary>
-        /// <param name="types">Optional: a list of types of objects from which you want to load all objects in the database (warming up the cache rather than building it dribs and drabs at a time for your favourite data types)</param>
-        /// <returns></returns>
-        [Obsolete("Turns out caching objects is very dangerous... really just better to fetch them every time and optomise your code yourself")]
-        public IDisposable SuperCachingMode(Type[] types = null)
-        {
-            var stopToken =  _superCacheManager.StartCachingOnThreadForDurationOfDisposable();
-
-            if(types != null)
-                foreach (Type type in types)//Start by fetching all these types into memory from where we can return objects
-                    GetAllObjects(type);
-
-            return stopToken;
-        }
 
         //If you are calling this constructor then make sure to set the connection strings in your derrived class constructor
         public TableRepository()
@@ -97,8 +75,6 @@ namespace MapsDirectlyToDatabaseTable
 
         public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            _superCacheManager.ThrowIfCaching();
-
             lock (_oLockUpdateCommands)
             {
                 using (IManagedConnection managedConnection = GetConnection())
@@ -302,19 +278,6 @@ namespace MapsDirectlyToDatabaseTable
 
         public bool StillExists(Type type, int id)
         {
-            
-            #region tryCache
-            bool? existsCache = _superCacheManager.TryExists(type, id);
-
-            if(existsCache.HasValue)
-            {
-                AuditCacheHit();
-                return existsCache.Value;
-            }
-
-            AuditCacheMiss();
-            #endregion
-
             //otherwise it isn't cached so it might or might not exist (or caching isn't turned on)
             bool exists;
 
@@ -322,8 +285,6 @@ namespace MapsDirectlyToDatabaseTable
             using (var connection = GetConnection())
                 using ( DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT case when exists(select * FROM " + type.Name + " WHERE ID= " + id +") then 1 else 0 end", connection.Connection, connection.Transaction))
                      exists = Convert.ToBoolean(selectCommand.ExecuteScalar());
-
-            _superCacheManager.SuperCacheExistsResult(type, id, exists);
             
             return exists;
         }
@@ -378,18 +339,6 @@ namespace MapsDirectlyToDatabaseTable
         /// <returns></returns>
         public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
         {
-            #region TryCache
-            //Get cached result if there is one
-            var cachedResult = _superCacheManager.TryGetAllObjectsWithParent<T>(parent);
-            if (cachedResult != null)
-            {
-                AuditCacheHit();
-                return cachedResult;
-            }
-
-            AuditCacheMiss();
-            #endregion
-
             //no cached result so fallback on regular method
             string fieldName = parent.GetType().Name + "_ID";
             return GetAllObjects<T>("WHERE " + fieldName + "=" + parent.ID );
@@ -410,18 +359,6 @@ namespace MapsDirectlyToDatabaseTable
 
             string typename = type.Name;
 
-            #region Try Cache
-            IMapsDirectlyToDatabaseTable answer;
-            if (_superCacheManager.TryGetObjectByID(type, id, out answer))
-            {
-                AuditCacheHit();
-                return answer;
-            }
-
-            AuditCacheMiss();
-            #endregion
-
-
             using (var connection = GetConnection())
             using (DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT * FROM " + typename + " WHERE ID=" + id, connection.Connection, connection.Transaction))
             {
@@ -433,8 +370,6 @@ namespace MapsDirectlyToDatabaseTable
                     r.Read();
                     
                     var result = ConstructEntity(type,r);
-
-                    _superCacheManager.SuperCacheResult(type,id,result);
 
                     return result;
                 }
@@ -470,17 +405,6 @@ namespace MapsDirectlyToDatabaseTable
 
             List<T> toReturn = new List<T>();
 
-            #region Try Cache
-            T[] found;
-            if (_superCacheManager.TrySuperCacheGetAllObjects<T>(whereSQL, out found))
-            {
-                AuditCacheHit();
-                return found;
-            }
-
-            AuditCacheMiss();
-            #endregion
-
             using (var opener = GetConnection())
             {
                 DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT * FROM " + typename, opener.Connection, opener.Transaction);
@@ -494,10 +418,7 @@ namespace MapsDirectlyToDatabaseTable
 
             var result = toReturn.ToArray();
 
-            _superCacheManager.SuperCacheResult<T>(whereSQL, result);
-
             return result;
-
         }
 
         
@@ -621,8 +542,6 @@ namespace MapsDirectlyToDatabaseTable
 
         public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable localCopy)
         {
-            _superCacheManager.ThrowIfCaching();
-
             //get new copy out of database
             IMapsDirectlyToDatabaseTable databaseState = GetObjectByID(localCopy.GetType(),localCopy.ID);
 
@@ -1033,8 +952,6 @@ namespace MapsDirectlyToDatabaseTable
 
         public void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName, object propertyValue)
         {
-            _superCacheManager.ThrowIfCaching();
-
             var prop = entity.GetType().GetProperty(propertyName);
             prop.SetValue(entity, propertyValue);
 

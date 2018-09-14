@@ -193,7 +193,7 @@
                 commandline='${solution.path.windows.mono} /nologo /property:OutputPath="${msbuild.outputpath.windows.mono}" /property:Configuration=${msbuild.configuration} /verbosity:${build.verbosity}' />
           </if>
           <if test="${framework::get-family(microsoft.framework.specific) != 'mono'}" >
-            <echo level="Warning" message="Imma charging ma lazeeeeer!" />
+            <echo level="Warning" message="Build NOT mono, NOT multitargeting" />
             <msbuild project="${solution.path}" verbosity="${build.verbosity}" if="${microsoft.framework.specific != 'net-1.0' and microsoft.framework.specific != 'net-1.1'}">
               <property name="Configuration" value="${msbuild.configuration}" />
               <property name="OutputPath" value="${msbuild.outputpath}" />

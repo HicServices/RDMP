@@ -67,7 +67,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -154,11 +153,6 @@
     <Compile Include="ITableRepository.cs" />
     <Compile Include="ObjectDeletedException.cs" />
     <Compile Include="Attributes\RelationshipAttribute.cs" />
-    <Compile Include="RepositoryResultCaching\SuperCache.cs" />
-    <Compile Include="RepositoryResultCaching\SuperCacheManager.cs" />
-    <Compile Include="RepositoryResultCaching\SuperCachingDisposalToken.cs" />
-    <Compile Include="RepositoryResultCaching\SuperCachingModeIsOnException.cs" />
-    <Compile Include="RepositoryResultCaching\SuperResultCache.cs" />
     <Compile Include="Attributes\SqlAttribute.cs" />
     <Compile Include="TableRepository.cs" />
     <Compile Include="IObscureDependencyFinder.cs" />
