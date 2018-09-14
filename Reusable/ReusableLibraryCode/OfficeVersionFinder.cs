@@ -22,10 +22,11 @@ namespace ReusableLibraryCode
             Outlook
         }
 
-        /// <span class="code-SummaryComment"><summary></span>
+        /// <summary>
         /// gets the component's path from the registry. if it can't find it - retuns 
-        ///an empty string
-        /// <span class="code-SummaryComment"></summary></span>
+        /// an empty string
+        /// </summary>
+        /// <param name="_component"></param>
         public static string GetComponentPath(OfficeComponent _component)
         {
             const string RegKey = @"Software\Microsoft\Windows\CurrentVersion\App Paths";
@@ -84,10 +85,11 @@ namespace ReusableLibraryCode
             return toReturn;
         }
 
-        /// <span class="code-SummaryComment"><summary></span>
+        /// <summary>
         /// Gets the major version of the path. if file not found (or any other        
         /// exception occures - returns 0
-        /// <span class="code-SummaryComment"></summary></span>
+        /// </summary>
+        /// <param name="component"></param>
         public static int GetMajorVersion(OfficeComponent component)
         {
             int toReturn = 0;
