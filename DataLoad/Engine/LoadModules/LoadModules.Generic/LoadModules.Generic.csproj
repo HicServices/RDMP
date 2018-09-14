@@ -260,6 +260,7 @@
     <Compile Include="Mutilators\PrematureLoadEnder.cs" />
     <Compile Include="Mutilators\PrimaryKeyCollisionResolverMutilation.cs" />
     <Compile Include="Mutilators\QueryBuilders\BackfillSqlHelper.cs" />
+    <Compile Include="Mutilators\SafePrimaryKeyCollisionResolverMutilation.cs" />
     <Compile Include="Mutilators\StagingBackfillMutilator.cs" />
     <Compile Include="Mutilators\TableVarcharMaxer.cs" />
     <Compile Include="ScheduleStrategy.cs" />
