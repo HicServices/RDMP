@@ -45,7 +45,10 @@ namespace CatalogueLibrary.Reports
                 var docs = _commentStore.GetTypeDocumentationIfExists(t);
 
                 if(docs != null)
-                    Summaries.Add(t, docs);
+                {
+                    if (!Summaries.ContainsKey(t))
+                        Summaries.Add(t, docs);
+                }
                 else
                     notifier.OnCheckPerformed(
                         new CheckEventArgs("Failed to get definition for class " + t.FullName, CheckResult.Fail));
