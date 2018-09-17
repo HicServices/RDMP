@@ -426,60 +426,7 @@ namespace ReusableLibraryCode
                         throw new NotSupportedException("Found float value " + value + " in data table, SQLServer does not support floats in bulk insert, instead you should use doubles otherwise you will end up with the value 0.85 turning into :0.850000023841858 in your database");
                 }
         }
-
-        public static StackTrace GetStackTrace(Thread targetThread)
-        {
-            using (ManualResetEvent fallbackThreadReady = new ManualResetEvent(false), exitedSafely = new ManualResetEvent(false))
-            {
-                Thread fallbackThread = new Thread(delegate()
-                {
-                    fallbackThreadReady.Set();
-                    while (!exitedSafely.WaitOne(200))
-                    {
-                        try
-                        {
-                            targetThread.Resume();
-                        }
-                        catch (Exception) {/*Whatever happens, do never stop to resume the target-thread regularly until the main-thread has exited safely.*/}
-                    }
-                });
-                fallbackThread.Name = "GetStackFallbackThread";
-                try
-                {
-                    fallbackThread.Start();
-                    fallbackThreadReady.WaitOne();
-                    //From here, you have about 200ms to get the stack-trace.
-                    targetThread.Suspend();
-                    StackTrace trace = null;
-                    try
-                    {
-                        trace = new StackTrace(targetThread, true);
-                    }
-                    catch (ThreadStateException)
-                    {
-                        //failed to get stack trace, since the fallback-thread resumed the thread
-                        //possible reasons:
-                        //1.) This thread was just too slow (not very likely)
-                        //2.) The deadlock ocurred and the fallbackThread rescued the situation.
-                        //In both cases just return null.
-                    }
-                    try
-                    {
-                        targetThread.Resume();
-                    }
-                    catch (ThreadStateException) {/*Thread is running again already*/}
-                    return trace;
-                }
-                finally
-                {
-                    //Just signal the backup-thread to stop.
-                    exitedSafely.Set();
-                    //Join the thread to avoid disposing "exited safely" too early. And also make sure that no leftover threads are cluttering iis by accident.
-                    fallbackThread.Join();
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Locates a manifest resource in the assembly under the manifest name subspace.  If you want to spray the resource MySoftwareSuite.MyApplication.MyResources.Bob.txt then pass:
         /// 1. the assembly containing the resource (e.g. typeof(MyClass1).Assembly)

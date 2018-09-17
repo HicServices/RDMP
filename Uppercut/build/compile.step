@@ -193,10 +193,13 @@
                 commandline='${solution.path.windows.mono} /nologo /property:OutputPath="${msbuild.outputpath.windows.mono}" /property:Configuration=${msbuild.configuration} /verbosity:${build.verbosity}' />
           </if>
           <if test="${framework::get-family(microsoft.framework.specific) != 'mono'}" >
+            <echo level="Warning" message="Build NOT mono, NOT multitargeting" />
             <msbuild project="${solution.path}" verbosity="${build.verbosity}" if="${microsoft.framework.specific != 'net-1.0' and microsoft.framework.specific != 'net-1.1'}">
               <property name="Configuration" value="${msbuild.configuration}" />
               <property name="OutputPath" value="${msbuild.outputpath}" />
               <property name="Platform" value="${msbuild.platform}" />
+              <property name="WarningLevel" value="${msbuild.warninglevel}" />
+              <property name="TreatWarningsAsErrors" value="${msbuild.treatwarningsaserrors}" />
               <!--property name="Logger" value="${msbuild.logger};&quot;${dirs.build_results}${path.separator}msbuild-${microsoft.framework.specific}-results.xml&quot;" /-->
               <!--arg line="/l:${msbuild.logger};&quot;${dirs.build_results}${path.separator}msbuild-${microsoft.framework.specific}-results.xml&quot;" /-->
             </msbuild>

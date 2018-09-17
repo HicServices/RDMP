@@ -29,7 +29,6 @@ namespace MapsDirectlyToDatabaseTable
         void TestConnection();
         bool SupportsObjectType(Type type);
 
-        IDisposable SuperCachingMode(Type[] types = null);
     }
 
 }

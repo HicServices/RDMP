@@ -35,14 +35,12 @@ namespace HIC.Logging
 
         public ProgressLogging ProgressLogging { get; private set; }
         private readonly FatalErrorLogging _fatalErrorLogging;
-        private readonly RowErrorLogging _rowErrorLogging;
         
-        public LogManager(DiscoveredServer server, ProgressLogging progressLogging = null, FatalErrorLogging fatalErrorLogging = null, RowErrorLogging rowErrorLogging = null)
+        public LogManager(DiscoveredServer server, ProgressLogging progressLogging = null, FatalErrorLogging fatalErrorLogging = null)
         {
             Server = server;
             ProgressLogging = progressLogging ?? ProgressLogging.GetInstance();
             _fatalErrorLogging = fatalErrorLogging?? FatalErrorLogging.GetInstance();
-            _rowErrorLogging = rowErrorLogging ?? RowErrorLogging.GetInstance();
         }
 
         public LogManager(IDataAccessPoint loggingServer) : this(DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging))
@@ -193,13 +191,13 @@ namespace HIC.Logging
             _fatalErrorLogging.LogFatalError(dataLoadInfo, errorSource, errorDescription);
         }
 
-        /// <summary>
-        /// Added so calling code is not dependent on the RowErrorLogging singleton, which could later be factored into an injectable service
-        /// </summary>
-        public void LogRowError(ITableLoadInfo tableLoadInfo, RowErrorLogging.RowErrorType typeOfError, string description, string locationOfRow, bool requiresReloading, string columnName = null)
-        {
-            _rowErrorLogging.LogRowError(tableLoadInfo, typeOfError, description, locationOfRow, requiresReloading, columnName);
-        }
+        ///// <summary>
+        ///// Added so calling code is not dependent on the RowErrorLogging singleton, which could later be factored into an injectable service
+        ///// </summary>
+        //public void LogRowError(ITableLoadInfo tableLoadInfo, RowErrorLogging.RowErrorType typeOfError, string description, string locationOfRow, bool requiresReloading, string columnName = null)
+        //{
+        //    _rowErrorLogging.LogRowError(tableLoadInfo, typeOfError, description, locationOfRow, requiresReloading, columnName);
+        //}
 
         public ArchivalDataLoadInfo GetLoadStatusOf(PastEventType mostRecent, string newLoggingDataTask)
         {

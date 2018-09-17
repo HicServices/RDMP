@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using Oracle.ManagedDataAccess.Client;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;

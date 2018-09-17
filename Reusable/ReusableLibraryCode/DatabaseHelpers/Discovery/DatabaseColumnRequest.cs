@@ -50,7 +50,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
         /// <summary>
-        /// Returns <see cref="ExplicitDbType"/> if set or uses the <paramref name="typeTranslater"/> to generate a proprietary type name for <see cref="TypeRequested"/>
+        /// Returns <see cref="ExplicitDbType"/> if set or uses the <see cref="TypeTranslater"/> to generate a proprietary type name for <see cref="TypeRequested"/>
         /// </summary>
         /// <param name="typeTranslater"></param>
         /// <returns></returns>

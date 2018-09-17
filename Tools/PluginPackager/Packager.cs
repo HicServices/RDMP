@@ -5,11 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using System.Security.AccessControl;
-using System.Xml;
 using CatalogueLibrary.Data;
-using MapsDirectlyToDatabaseTable.RepositoryResultCaching;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
