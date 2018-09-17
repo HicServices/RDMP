@@ -75,13 +75,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         /// <param name="selectSql"></param>
         /// <returns></returns>
         string HowDoWeAchieveMd5(string selectSql);
-        
-        /// <summary>
-        /// Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" 
-        /// </summary>
-        /// <param name="query">the SQL you want to determine the parameter names in</param>
-        /// <returns>parameter names that are required by the SQL</returns>
-        HashSet<string> GetAllParameterNamesFromQuery(string query);
     }
 
     public enum MandatoryScalarFunctions

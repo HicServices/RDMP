@@ -47,7 +47,7 @@ namespace CatalogueLibrary.FilterImporting
             ISqlParameter[] sqlParameters = filterToCreateFor.GetAllParameters()??new ISqlParameter[0];
 
             //all parameters in the Select SQL
-            HashSet<string> parametersRequiredByWhereSQL = GetRequiredParamaterNamesForQuery(filterToCreateFor, _globals);
+            HashSet<string> parametersRequiredByWhereSQL = GetRequiredParamaterNamesForQuery(filterToCreateFor.WhereSQL, _globals);
 
             //find which current parameters are redundant and delete them
             foreach (ISqlParameter parameter in sqlParameters)
@@ -137,9 +137,9 @@ namespace CatalogueLibrary.FilterImporting
         /// <param name="filter">the SQL filter you want to determine the parameter names in, does not have to include WHERE (infact probably shouldnt)</param>
         /// <param name="globals">optional parameter, an enumerable of parameters that already exist in a superscope (i.e. global parametetrs)</param>
         /// <returns>parameter names that are required by the SQL but are not already declared in the globals</returns>
-        private HashSet<string> GetRequiredParamaterNamesForQuery(IFilter filter, IEnumerable<ISqlParameter> globals)
+        private HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql, IEnumerable<ISqlParameter> globals)
         {
-            HashSet<string> toReturn = filter.GetQuerySyntaxHelper().GetAllParameterNamesFromQuery(filter.WhereSQL);
+            HashSet<string> toReturn = QuerySyntaxHelper.GetAllParameterNamesFromQuery(whereSql);
 
             //remove any global parameters (these don't need to be created)
             if (globals != null)

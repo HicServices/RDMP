@@ -79,6 +79,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
             existingParameter.Stub(x => x.ParameterName).Return("@bob");
 
             var f = MockRepository.GenerateStub<IFilter>();
+            f.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             f.WhereSQL = "@bob = 'bob'";
             f.Expect(m => m.GetAllParameters()).Return(new[] {existingParameter});
 

@@ -54,10 +54,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             }
         }
 
-        /// <inheritdoc />
-        public virtual HashSet<string> GetAllParameterNamesFromQuery(string query)
+        /// <summary>
+        /// Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" 
+        /// </summary>
+        /// <param name="query">the SQL you want to determine the parameter names in</param>
+        /// <returns>parameter names that are required by the SQL</returns>
+        public static HashSet<string> GetAllParameterNamesFromQuery(string query)
         {
-            var regex = new Regex(@"[\s=]+" + ParameterNamesRegex + @"\b");
+            //Only look at the start of the string or following an equals or whitespace and stop at word boundaries
+            var regex = new Regex(@"(?:^|[\s=])+" + ParameterNamesRegex + @"\b");
 
             var toReturn = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 

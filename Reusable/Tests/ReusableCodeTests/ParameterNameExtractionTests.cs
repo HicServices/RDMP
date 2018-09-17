@@ -14,6 +14,7 @@ namespace ReusableCodeTests
         [TestCase("[bob]=   @bobby")]
         [TestCase("[bob]=@bobby OR [bob2]=@bobby")]
         [TestCase("[bob]=@bobby OR [bob2]=@BObby")]
+        [TestCase("@bobby='active'")]
         public void TestExtractionOfParmaetersFromSQL_FindOne(string sql)
         {
             var querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
