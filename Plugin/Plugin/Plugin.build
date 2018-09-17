@@ -19,7 +19,7 @@
         </PropertyGroup>
     -->
 
-        <Exec Command="nuget pack Plugin.csproj -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects -Symbols -Version $(Version) -Exclude **/*/*.sql;**/*/_BuildInfo.xml;**/*/readme.txt;**/*/Microsoft.SqlServer.*;**/*/Pencil.cur" />    
+        <Exec Command="nuget pack Plugin.csproj -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects -Symbols -Version $(Version) -Exclude **/*/*.sql;**/*/_BuildInfo.xml;**/*/readme.txt;**/*/Microsoft.SqlServer.*" />    
         <Exec Command="nuget push HIC.RDMP.Plugin.$(Version).nupkg -Source $(ReleaseNugetPackageSource) $(ReleaseNugetPushParams)" />    
     </Target>
 

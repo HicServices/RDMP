@@ -369,9 +369,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dashboard.ico" />
-    <Content Include="Pencil.cur">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <PublishFile Include="ANOStore.Database.pdb">
