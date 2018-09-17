@@ -1,6 +1,7 @@
 using System;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Settings;
 
 namespace RDMPStartup
@@ -57,11 +58,18 @@ namespace RDMPStartup
         {
             //we have mef?
             MEF mef = null;
+            CommentStore commentStore = null;
             
             //if we have a catalogue repository with loaded MEF then grab it
-            if (_linkedRepositoryProvider != null && _linkedRepositoryProvider.CatalogueRepository != null &&
-                _linkedRepositoryProvider.CatalogueRepository.MEF != null)
-                mef = _linkedRepositoryProvider.CatalogueRepository.MEF;
+            if (_linkedRepositoryProvider != null && _linkedRepositoryProvider.CatalogueRepository != null)
+            {
+
+                if(_linkedRepositoryProvider.CatalogueRepository.MEF != null)
+                    mef = _linkedRepositoryProvider.CatalogueRepository.MEF;
+
+                if (_linkedRepositoryProvider.CatalogueRepository.CommentStore != null)
+                    commentStore = _linkedRepositoryProvider.CatalogueRepository.CommentStore;
+            }
 
             //user must have a Catalogue
             string catalogueString = UserSettings.CatalogueConnectionString;
@@ -72,18 +80,20 @@ namespace RDMPStartup
             var newrepo = new LinkedRepositoryProvider(catalogueString, dataExportManagerConnectionString);
 
             //preserve the currently loaded MEF assemblies
-            if (
-                //if we have a new repo
-                newrepo.CatalogueRepository != null &&
-                
-                //and the new repo doesn't have MEF loaded
-                newrepo.CatalogueRepository.MEF != null && !newrepo.CatalogueRepository.MEF.HaveDownloadedAllAssemblies 
-                
-                //but the old one did
-                && mef != null && mef.HaveDownloadedAllAssemblies) 
 
-                //use the old MEF    
-                newrepo.CatalogueRepository.MEF = mef;
+
+            //if we have a new repo
+            if (newrepo.CatalogueRepository != null)
+            {
+                //and the new repo doesn't have MEF loaded
+                if(newrepo.CatalogueRepository.MEF != null && !newrepo.CatalogueRepository.MEF.HaveDownloadedAllAssemblies && mef != null && mef.HaveDownloadedAllAssemblies)
+                    //use the old MEF    
+                    newrepo.CatalogueRepository.MEF = mef;
+
+                newrepo.CatalogueRepository.CommentStore = commentStore ?? newrepo.CatalogueRepository.CommentStore;
+
+            }
+            
 
             _linkedRepositoryProvider = newrepo;
         }
