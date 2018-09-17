@@ -376,6 +376,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAnonymiseColumnInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkImportTableInfos.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCheck.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
