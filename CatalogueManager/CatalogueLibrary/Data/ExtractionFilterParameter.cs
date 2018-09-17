@@ -70,7 +70,7 @@ namespace CatalogueLibrary.Data
         /// </summary>
         [NoMappingToDatabase]
         public string ParameterName {
-            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         #region Relationships

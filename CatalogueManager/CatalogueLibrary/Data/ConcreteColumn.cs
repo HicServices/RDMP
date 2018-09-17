@@ -104,9 +104,15 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public string GetRuntimeName()
         {
-            return RDMPQuerySyntaxHelper.GetRuntimeName(this);
-        }
+            var helper = ColumnInfo.GetQuerySyntaxHelper();
+            if (!String.IsNullOrWhiteSpace(Alias))
+                return helper.GetRuntimeName(Alias);//.GetRuntimeName(); RDMPQuerySyntaxHelper.GetRuntimeName(this);
 
+            if (!String.IsNullOrWhiteSpace(SelectSQL))
+                return helper.GetRuntimeName(SelectSQL);
+
+            return ColumnInfo.GetRuntimeName();
+        }
 
         /// <inheritdoc cref="ColumnSyntaxChecker"/>
         public void Check(ICheckNotifier notifier)

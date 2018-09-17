@@ -6,7 +6,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.FilterImporting.Construction;
 using MapsDirectlyToDatabaseTable;
-
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
@@ -47,7 +47,7 @@ namespace CatalogueLibrary.FilterImporting
             ISqlParameter[] sqlParameters = filterToCreateFor.GetAllParameters()??new ISqlParameter[0];
 
             //all parameters in the Select SQL
-            HashSet<string> parametersRequiredByWhereSQL = GetRequiredParamaterNamesForQuery(filterToCreateFor.WhereSQL, _globals);
+            HashSet<string> parametersRequiredByWhereSQL = GetRequiredParamaterNamesForQuery(filterToCreateFor, _globals);
 
             //find which current parameters are redundant and delete them
             foreach (ISqlParameter parameter in sqlParameters)
@@ -130,25 +130,16 @@ namespace CatalogueLibrary.FilterImporting
             }
         }
 
-
         /// <summary>
         /// Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" unless 
         /// there is already a global parameter called @bob.  globals is optional, pass in null if there aren't any
         /// </summary>
-        /// <param name="whereSql">the SQL you want to determine the parameter names in, does not have to include WHERE (infact probably shouldnt)</param>
+        /// <param name="filter">the SQL filter you want to determine the parameter names in, does not have to include WHERE (infact probably shouldnt)</param>
         /// <param name="globals">optional parameter, an enumerable of parameters that already exist in a superscope (i.e. global parametetrs)</param>
         /// <returns>parameter names that are required by the SQL but are not already declared in the globals</returns>
-        private HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql, IEnumerable<ISqlParameter> globals)
+        private HashSet<string> GetRequiredParamaterNamesForQuery(IFilter filter, IEnumerable<ISqlParameter> globals)
         {
-            HashSet<string> toReturn = new HashSet<string>();
-
-            if (string.IsNullOrWhiteSpace(whereSql))
-                return toReturn;
-
-            foreach (Match match in RDMPQuerySyntaxHelper.ParameterSQLRegex.Matches(whereSql))
-                if (!toReturn.Contains(match.Value.Trim())) //dont add duplicates
-                    toReturn.Add(match.Value.Trim());
-
+            HashSet<string> toReturn = filter.GetQuerySyntaxHelper().GetAllParameterNamesFromQuery(filter.WhereSQL);
 
             //remove any global parameters (these don't need to be created)
             if (globals != null)

@@ -63,7 +63,7 @@ namespace CatalogueLibrary.QueryBuilding
         }
 
         /// <inheritdoc/>
-        public string ParameterName { get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); } }
+        public string ParameterName { get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); } }
 
         /// <inheritdoc/>
         [Sql]

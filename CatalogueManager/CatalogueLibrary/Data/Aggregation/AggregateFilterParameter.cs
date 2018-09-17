@@ -82,7 +82,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public string ParameterName
         {
-            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         /// <summary>
