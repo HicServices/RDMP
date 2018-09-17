@@ -21,6 +21,7 @@ using MapsDirectlyToDatabaseTable;
 using CatalogueManager.Copying;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Collections
@@ -53,15 +54,21 @@ namespace CatalogueManager.Collections
 
         //constructor
 
+        private bool bLoading = true;
         public CatalogueCollectionUI()
         {
             InitializeComponent();
-            //prevent visual studio crashes
-            if (VisualStudioDesignMode)
-                return;
+            
+            cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
+            cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues ;
+            cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
+            cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
+            cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
 
             olvCheckResult.ImageGetter += CheckImageGetter;
             olvFilters.AspectGetter += FilterAspectGetter;
+            
+            bLoading = false;
         }
 
         //The color to highlight each Catalogue based on its extractability status
@@ -201,9 +208,17 @@ namespace CatalogueManager.Collections
 
         public void ApplyFilters()
         {
+            if(bLoading)
+                return;
+
+            UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
+            UserSettings.ShowDeprecatedCatalogues = cbShowDeprecated.Checked;
+            UserSettings.ShowColdStorageCatalogues = cbShowColdStorage.Checked;
+            UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
+            UserSettings.ShowNonExtractableCatalogues = cbShowNonExtractable.Checked;
+            
             tlvCatalogues.UseFiltering = true;
-            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider,
-                cbShowInternal.Checked, cbShowDeprecated.Checked, cbShowColdStorage.Checked, cbProjectSpecific.Checked, cbShowNonExtractable.Checked);
+            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider);
         }
 
         public enum HighlightCatalogueType

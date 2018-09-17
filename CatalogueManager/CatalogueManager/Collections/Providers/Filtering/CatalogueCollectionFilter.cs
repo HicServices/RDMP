@@ -2,6 +2,7 @@ using System.Linq;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Providers;
+using ReusableLibraryCode.Settings;
 
 namespace CatalogueManager.Collections.Providers.Filtering
 {
@@ -14,14 +15,14 @@ namespace CatalogueManager.Collections.Providers.Filtering
         private readonly bool _isProjectSpecific;
         private readonly bool _isNonExtractable;
 
-        public CatalogueCollectionFilter(ICoreChildProvider childProvider, bool isInternal, bool isDeprecated, bool isColdStorage, bool isProjectSpecific, bool isNonExtractable)
+        public CatalogueCollectionFilter(ICoreChildProvider childProvider)
         {
             _childProvider = childProvider;
-            _isInternal = isInternal;
-            _isDeprecated = isDeprecated;
-            _isColdStorage = isColdStorage;
-            _isProjectSpecific = isProjectSpecific;
-            _isNonExtractable = isNonExtractable;
+            _isInternal = UserSettings.ShowInternalCatalogues;
+            _isDeprecated = UserSettings.ShowDeprecatedCatalogues;
+            _isColdStorage = UserSettings.ShowColdStorageCatalogues;
+            _isProjectSpecific = UserSettings.ShowProjectSpecificCatalogues;
+            _isNonExtractable = UserSettings.ShowNonExtractableCatalogues;
         }
 
         public bool Filter(object modelObject)
