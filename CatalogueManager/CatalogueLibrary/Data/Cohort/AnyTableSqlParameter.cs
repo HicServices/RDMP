@@ -84,7 +84,7 @@ namespace CatalogueLibrary.Data.Cohort
         [NoMappingToDatabase]
         public string ParameterName
         {
-            get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         /// <summary>

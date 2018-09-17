@@ -37,7 +37,7 @@ namespace CatalogueLibrary.Spontaneous
 
         public string ParameterName
         {
-            get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()

@@ -24,10 +24,11 @@ namespace DataExportLibrary.Data.DataTables
     /// </summary>
     public class GlobalExtractionFilterParameter : VersionedDatabaseEntity, ISqlParameter, IInjectKnown<IQuerySyntaxHelper>
     {
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public string ParameterName
         {
-            get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); }
+            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
         #region Database Properties

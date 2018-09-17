@@ -75,14 +75,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
         /// <param name="selectSql"></param>
         /// <returns></returns>
         string HowDoWeAchieveMd5(string selectSql);
-
-        /// <summary>
-        /// Looks for @something within the line of SQL and returns @something (including the @ symbol)
-        /// </summary>
-        /// <param name="parameterSQL"></param>
-        /// <returns></returns>
-        string GetParameterNameFromDeclarationSQL(string parameterSQL);
-
+        
         /// <summary>
         /// Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" 
         /// </summary>

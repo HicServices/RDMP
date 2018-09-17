@@ -55,6 +55,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             olvParameters.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
             
             olvParameterName.ImageGetter += ImageGetter;
+            olvParameterName.AspectGetter += ParameterName_AspectGetter;
+
             olvOwner.AspectGetter += OwnerAspectGetter;
             olvParameters.CellToolTipShowing += olvParameters_CellToolTipShowing;
 
@@ -63,7 +65,24 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             parameterEditorScintillaControl1.ProblemObjectsFound += RefreshProblemObjects;
         }
 
-        
+        private object ParameterName_AspectGetter(object rowObject)
+        {
+            var p = rowObject as ISqlParameter;
+
+            if (p == null)
+                return null;
+
+            try
+            {
+                return p.ParameterName;
+            }
+            catch (Exception)
+            {
+                return "Unknown";
+            }
+        }
+
+
         private void olvParameters_AboutToCreateGroups(object sender, CreateGroupsEventArgs e)
         {
 
@@ -233,8 +252,15 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
             e.Column.PutAspectByName(e.RowObject, e.NewValue);
 
-            if (parameter != null)
-                newParameterName = parameter.ParameterName;
+            try
+            {
+                if (parameter != null)
+                    newParameterName = parameter.ParameterName;
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
             if (revertable != null)
             {
@@ -258,6 +284,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             }
             else
                 throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
+         
         }
         
         private object GroupKeyGetter(object rowObject)

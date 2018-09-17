@@ -1371,6 +1371,7 @@
     <Compile Include="Validation\ValidationSetupForm.Designer.cs">
       <DependentUpon>ValidationSetupForm.cs</DependentUpon>
     </Compile>
+    <None Include="ExtractionUIs\FilterUIs\ParameterUIs\Parameters.cd" />
     <None Include="LogViewer\LoggingUI.cd" />
     <None Include="PipelineUIs\Pipelines\Pipelines.cd" />
     <None Include="SimpleControls\CheckAndExecuteUI.cd" />

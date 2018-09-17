@@ -20,6 +20,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
         public void NoParametersTest_CreateNotCalled()
         {
             var f = MockRepository.GenerateMock<IFilter>();
+            f.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
 
             var factory = MockRepository.GenerateMock<IFilterFactory>();
             factory.Expect(m => m.CreateNewParameter(null, null)).Repeat.Never();
@@ -74,6 +75,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
             p.Expect(m => m.SaveToDatabase()).Repeat.Never();//save should not be called
 
             var existingParameter = MockRepository.GenerateStub<ISqlParameter>();
+            existingParameter.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             existingParameter.Stub(x => x.ParameterName).Return("@bob");
 
             var f = MockRepository.GenerateStub<IFilter>();

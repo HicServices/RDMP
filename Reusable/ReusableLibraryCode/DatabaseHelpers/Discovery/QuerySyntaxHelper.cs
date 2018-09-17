@@ -19,10 +19,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public abstract string DatabaseTableSeparator { get; }
         
         /// <summary>
-        /// Regex for identifying parameters in blocks of SQL
+        /// Regex for identifying parameters in blocks of SQL (starts with @ or : (Oracle)
         /// </summary>
         /// <returns></returns>
-        protected readonly Regex ParameterNamesRegex = new Regex("(@[A-Za-z0-9_]*)\\s?", RegexOptions.IgnoreCase);
+        protected static Regex ParameterNamesRegex = new Regex("([@:][A-Za-z0-9_]*)\\s?", RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Symbols (for all database types) which denote wrapped entity names e.g. [dbo].[mytable] contains qualifiers '[' and ']'
@@ -57,20 +57,22 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <inheritdoc />
         public virtual HashSet<string> GetAllParameterNamesFromQuery(string query)
         {
-            var toReturn = new HashSet<string>();
+            var regex = new Regex(@"[\s=]+" + ParameterNamesRegex + @"\b");
+
+            var toReturn = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 
             if (string.IsNullOrWhiteSpace(query))
                 return toReturn;
 
-            foreach (Match match in ParameterNamesRegex.Matches(query))
+            foreach (Match match in regex.Matches(query))
                 if (!toReturn.Contains(match.Value.Trim())) //dont add duplicates
-                    toReturn.Add(match.Value.Trim());
+                    toReturn.Add(match.Groups[1].Value.Trim());
 
             return toReturn;
         }
 
         /// <inheritdoc />
-        public virtual string GetParameterNameFromDeclarationSQL(string parameterSQL)
+        public static string GetParameterNameFromDeclarationSQL(string parameterSQL)
         {
             if (!ParameterNamesRegex.IsMatch(parameterSQL))
                 throw new Exception("ParameterSQL does not match regex pattern:" + ParameterNamesRegex);
