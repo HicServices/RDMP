@@ -35,10 +35,10 @@ namespace CatalogueLibrary.Spontaneous
             Comment = comment;
         }
 
-        public string ParameterName { get
+        public string ParameterName
         {
-            return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
-        }}
+            get { return GetQuerySyntaxHelper().GetParameterNameFromDeclarationSQL(ParameterSQL); }
+        }
 
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
