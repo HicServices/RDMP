@@ -7,22 +7,17 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Reports;
 using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.FindAndReplace;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.LocationsMenu;
 using CatalogueManager.LocationsMenu.Ticketing;
-using CatalogueManager.LogViewer;
 using CatalogueManager.MainFormUITabs;
-using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.PluginManagement;
 using CatalogueManager.PluginManagement.CodeGeneration;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.Governance;
 using CatalogueManager.SimpleDialogs.NavigateTo;
 using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup;
@@ -40,7 +35,6 @@ using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
@@ -111,12 +105,6 @@ namespace ResearchDataManagementPlatform.Menus
             _activator.ShowWindow(ui,true);
         }
 
-        private void governanceManagementToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            GovernanceUI dialog = new GovernanceUI();
-            dialog.RepositoryLocator = RepositoryLocator;
-            dialog.ShowDialog();
-        }
 
         private void governanceReportToolStripMenuItem_Click(object sender, EventArgs e)
         {

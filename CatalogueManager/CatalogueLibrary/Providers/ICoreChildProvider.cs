@@ -4,6 +4,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Pipelines;
@@ -27,7 +28,10 @@ namespace CatalogueLibrary.Providers
         TableInfoServerNode[] AllServers { get; }
         TableInfo[] AllTableInfos { get;}
         CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
+        
         Catalogue[] AllCatalogues { get; }
+        Dictionary<int, Catalogue> AllCatalogueDictionary { get; }
+
         AllANOTablesNode AllANOTablesNode { get; }
         ANOTable[] AllANOTables { get; }
         AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; }
@@ -52,6 +56,13 @@ namespace CatalogueLibrary.Providers
         AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         AllStandardRegexesNode AllStandardRegexesNode { get;}
         AllPipelinesNode AllPipelinesNode { get; }
+
+        AllGovernanceNode AllGovernanceNode { get; }
+        GovernancePeriod[] AllGovernancePeriods { get; }
+        GovernanceDocument[] AllGovernanceDocuments { get;}
+
+        /// <inheritdoc cref="GovernancePeriod.GetAllGovernedCataloguesForAllGovernancePeriods"/>
+        Dictionary<int, HashSet<int>> GovernanceCoverage { get;}
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
 

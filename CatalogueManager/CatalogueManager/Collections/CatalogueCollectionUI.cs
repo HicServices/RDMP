@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections.Providers;
@@ -170,10 +171,7 @@ namespace CatalogueManager.Collections
         private bool isFirstTime = true;
 
         public void RefreshUIFromDatabase(object oRefreshFrom)
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Restart();
-            
+        {   
             //if there are new catalogues we don't already have in our tree
             if (_allCatalogues != null)
             {
@@ -186,8 +184,6 @@ namespace CatalogueManager.Collections
             }
 
             _allCatalogues = CommonFunctionality.CoreChildProvider.AllCatalogues;
-
-            Console.WriteLine("Stage 1:"+sw.ElapsedMilliseconds);
             
             if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
@@ -195,6 +191,7 @@ namespace CatalogueManager.Collections
                 ExpandAllFolders(CatalogueFolder.Root);
                 isFirstTime = false;
             }
+
         }
 
         private void ExpandAllFolders(CatalogueFolder model)
@@ -258,7 +255,12 @@ namespace CatalogueManager.Collections
                 //we have our own custom filter logic so no need to pass tbFilter
                 olvColumn1 //also the renameable column
                 );
-            
+
+            CommonFunctionality.MaintainRootObjects = new[]
+            {
+                typeof (AllGovernanceNode)
+            };
+
             //Things that are always visible regardless
             CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
             {
@@ -269,8 +271,8 @@ namespace CatalogueManager.Collections
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
+            tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
             tlvCatalogues.AddObject(CatalogueFolder.Root);
-            
             ApplyFilters();
 
             RefreshUIFromDatabase(CatalogueFolder.Root);
@@ -312,6 +314,9 @@ namespace CatalogueManager.Collections
             var o = e.Object;
             var cata = o as Catalogue;
 
+            if(o is GovernancePeriod || o is GovernanceDocument)
+                tlvCatalogues.RefreshObject(_activator.CoreChildProvider.AllGovernanceNode);
+
             if (cata != null)
             {
                 var oldFolder = tlvCatalogues.GetParent(cata) as CatalogueFolder;
@@ -341,7 +346,7 @@ namespace CatalogueManager.Collections
 
         public static bool IsRootObject(object root)
         {
-            return root.Equals(CatalogueFolder.Root);
+            return root.Equals(CatalogueFolder.Root) || root is AllGovernanceNode;
         }
 
         public void SelectCatalogue(Catalogue catalogue)

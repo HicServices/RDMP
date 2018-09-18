@@ -30,6 +30,9 @@ True - Delete the smaller value
 False - Delete the larger value")]
         public bool PreferLargerValues { get; set; }
 
+        [DemandsInitialization("Timeout in seconds to allow the operation to run for",DefaultValue=600)]
+        public int Timeout { get; set; }
+
         public void DeleteRows(DiscoveredTable tbl,ColumnInfo[] primaryKeys,IDataLoadEventListener listener)
         {
             string join = string.Join(" AND ", primaryKeys.Select(k => "t1." + k.GetRuntimeName() + "=t2." + k.GetRuntimeName()));
@@ -65,6 +68,8 @@ False - Delete the larger value")]
             {
                 con.Open();
                 var cmd = tbl.Database.Server.GetCommand(sql, con);
+                cmd.CommandTimeout = Timeout;
+
                 int affectedRows = cmd.ExecuteNonQuery();
                 
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Deleted " + affectedRows + " rows"));

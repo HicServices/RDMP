@@ -183,6 +183,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllGovernanceNode {
+            get {
+                object obj = ResourceManager.GetObject("AllGovernanceNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllLoadMetadatasNode {
             get {
                 object obj = ResourceManager.GetObject("AllLoadMetadatasNode", resourceCulture);
@@ -996,6 +1006,26 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap GetFilesStage {
             get {
                 object obj = ResourceManager.GetObject("GetFilesStage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GovernanceDocument {
+            get {
+                object obj = ResourceManager.GetObject("GovernanceDocument", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GovernancePeriod {
+            get {
+                object obj = ResourceManager.GetObject("GovernancePeriod", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
