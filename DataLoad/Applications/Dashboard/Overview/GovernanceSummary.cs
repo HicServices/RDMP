@@ -14,7 +14,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 namespace Dashboard.Overview
 {
     /// <summary>
-    /// Provides a list of all the Catalogues for which there is at least one GovernancePeriod (See GovernanceUI) configured but for which the expiry date of the most recent 
+    /// Provides a list of all the Catalogues for which there is at least one GovernancePeriod (See GovernancePeriodUI) configured but for which the expiry date of the most recent 
     /// GovernancePeriod is in the past (i.e. the governance period has expired).
     /// </summary>
     public partial class GovernanceSummary : RDMPUserControl

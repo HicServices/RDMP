@@ -472,7 +472,7 @@
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Menus\AllConnectionStringKeywordsNodeMenu.cs" />
-    <Compile Include="Menus\AllGovernanceNode.cs" />
+    <Compile Include="Menus\AllGovernanceNodeMenu.cs" />
     <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="Menus\GovernancePeriodMenu.cs" />
