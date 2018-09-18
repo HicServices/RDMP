@@ -47,12 +47,15 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.btnImportCatalogues = new System.Windows.Forms.Button();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.lblExpired = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(4, 335);
+            this.label3.Location = new System.Drawing.Point(11, 207);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(58, 13);
             this.label3.TabIndex = 5;
@@ -60,7 +63,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // dtpStartDate
             // 
-            this.dtpStartDate.Location = new System.Drawing.Point(71, 329);
+            this.dtpStartDate.Location = new System.Drawing.Point(78, 201);
             this.dtpStartDate.Name = "dtpStartDate";
             this.dtpStartDate.Size = new System.Drawing.Size(159, 20);
             this.dtpStartDate.TabIndex = 4;
@@ -69,7 +72,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 357);
+            this.label4.Location = new System.Drawing.Point(11, 229);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(55, 13);
             this.label4.TabIndex = 5;
@@ -77,7 +80,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // ticketingControl1
             // 
-            this.ticketingControl1.Location = new System.Drawing.Point(71, 269);
+            this.ticketingControl1.Location = new System.Drawing.Point(78, 141);
             this.ticketingControl1.Name = "ticketingControl1";
             this.ticketingControl1.Size = new System.Drawing.Size(303, 54);
             this.ticketingControl1.TabIndex = 3;
@@ -86,7 +89,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // rbNeverExpires
             // 
             this.rbNeverExpires.AutoSize = true;
-            this.rbNeverExpires.Location = new System.Drawing.Point(71, 357);
+            this.rbNeverExpires.Location = new System.Drawing.Point(78, 229);
             this.rbNeverExpires.Name = "rbNeverExpires";
             this.rbNeverExpires.Size = new System.Drawing.Size(91, 17);
             this.rbNeverExpires.TabIndex = 6;
@@ -98,7 +101,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(2, 32);
+            this.label2.Location = new System.Drawing.Point(9, 32);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 13);
             this.label2.TabIndex = 0;
@@ -107,7 +110,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // rbExpiresOn
             // 
             this.rbExpiresOn.AutoSize = true;
-            this.rbExpiresOn.Location = new System.Drawing.Point(71, 380);
+            this.rbExpiresOn.Location = new System.Drawing.Point(78, 252);
             this.rbExpiresOn.Name = "rbExpiresOn";
             this.rbExpiresOn.Size = new System.Drawing.Size(79, 17);
             this.rbExpiresOn.TabIndex = 6;
@@ -118,7 +121,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // tbName
             // 
-            this.tbName.Location = new System.Drawing.Point(71, 3);
+            this.tbName.Location = new System.Drawing.Point(78, 3);
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(444, 20);
             this.tbName.TabIndex = 1;
@@ -126,7 +129,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // dtpEndDate
             // 
-            this.dtpEndDate.Location = new System.Drawing.Point(156, 377);
+            this.dtpEndDate.Location = new System.Drawing.Point(163, 249);
             this.dtpEndDate.Name = "dtpEndDate";
             this.dtpEndDate.Size = new System.Drawing.Size(159, 20);
             this.dtpEndDate.TabIndex = 7;
@@ -135,7 +138,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 6);
+            this.label1.Location = new System.Drawing.Point(9, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 0;
@@ -146,9 +149,9 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.lbCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbCatalogues.FormattingEnabled = true;
-            this.lbCatalogues.Location = new System.Drawing.Point(384, 283);
+            this.lbCatalogues.Location = new System.Drawing.Point(390, 157);
             this.lbCatalogues.Name = "lbCatalogues";
-            this.lbCatalogues.Size = new System.Drawing.Size(667, 303);
+            this.lbCatalogues.Size = new System.Drawing.Size(681, 186);
             this.lbCatalogues.TabIndex = 9;
             this.lbCatalogues.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbCatalogues_KeyUp);
             // 
@@ -157,17 +160,17 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.tbDescription.AcceptsReturn = true;
             this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDescription.Location = new System.Drawing.Point(71, 29);
+            this.tbDescription.Location = new System.Drawing.Point(78, 29);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(993, 234);
+            this.tbDescription.Size = new System.Drawing.Size(997, 106);
             this.tbDescription.TabIndex = 1;
             this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(377, 267);
+            this.label5.Location = new System.Drawing.Point(387, 141);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(234, 13);
             this.label5.TabIndex = 10;
@@ -175,8 +178,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // btnAddCatalogue
             // 
-            this.btnAddCatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddCatalogue.Location = new System.Drawing.Point(384, 589);
+            this.btnAddCatalogue.Location = new System.Drawing.Point(387, 349);
             this.btnAddCatalogue.Name = "btnAddCatalogue";
             this.btnAddCatalogue.Size = new System.Drawing.Size(98, 23);
             this.btnAddCatalogue.TabIndex = 11;
@@ -186,8 +188,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // btnImportCatalogues
             // 
-            this.btnImportCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImportCatalogues.Location = new System.Drawing.Point(488, 589);
+            this.btnImportCatalogues.Location = new System.Drawing.Point(491, 349);
             this.btnImportCatalogues.Name = "btnImportCatalogues";
             this.btnImportCatalogues.Size = new System.Drawing.Size(282, 23);
             this.btnImportCatalogues.TabIndex = 11;
@@ -200,44 +201,66 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(321, 375);
+            this.ragSmiley1.Location = new System.Drawing.Point(328, 247);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 18;
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(71, 407);
+            this.objectSaverButton1.Location = new System.Drawing.Point(78, 279);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
             this.objectSaverButton1.TabIndex = 19;
             // 
+            // lblExpired
+            // 
+            this.lblExpired.BackColor = System.Drawing.Color.MistyRose;
+            this.lblExpired.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblExpired.Location = new System.Drawing.Point(0, 0);
+            this.lblExpired.Name = "lblExpired";
+            this.lblExpired.Size = new System.Drawing.Size(1078, 13);
+            this.lblExpired.TabIndex = 20;
+            this.lblExpired.Text = "Period Expired";
+            this.lblExpired.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tbName);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.btnImportCatalogues);
+            this.panel1.Controls.Add(this.objectSaverButton1);
+            this.panel1.Controls.Add(this.btnAddCatalogue);
+            this.panel1.Controls.Add(this.tbDescription);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.lbCatalogues);
+            this.panel1.Controls.Add(this.ragSmiley1);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.ticketingControl1);
+            this.panel1.Controls.Add(this.dtpStartDate);
+            this.panel1.Controls.Add(this.rbExpiresOn);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.rbNeverExpires);
+            this.panel1.Controls.Add(this.dtpEndDate);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 13);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1078, 408);
+            this.panel1.TabIndex = 21;
+            // 
             // GovernancePeriodUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.objectSaverButton1);
-            this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.btnImportCatalogues);
-            this.Controls.Add(this.btnAddCatalogue);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.tbDescription);
-            this.Controls.Add(this.dtpStartDate);
-            this.Controls.Add(this.lbCatalogues);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.ticketingControl1);
-            this.Controls.Add(this.dtpEndDate);
-            this.Controls.Add(this.rbNeverExpires);
-            this.Controls.Add(this.tbName);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.rbExpiresOn);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.lblExpired);
             this.Name = "GovernancePeriodUI";
-            this.Size = new System.Drawing.Size(1078, 615);
+            this.Size = new System.Drawing.Size(1078, 421);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -260,5 +283,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private System.Windows.Forms.Label label3;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
         private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private System.Windows.Forms.Label lblExpired;
+        private System.Windows.Forms.Panel panel1;
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
+using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -37,43 +38,36 @@ namespace CatalogueManager.SimpleDialogs.Governance
             set
             {
                 _governancePeriod = value;
-
-                this.Enabled = value != null;
-
+                
                 //clear related catalogues
                 lbCatalogues.Items.Clear();
                 
-                if (value == null)
-                {
-                    tbName.Text = "";
-                    tbDescription.Text = "";
-                    ticketingControl1.TicketText = null;
-                }
+                tbName.Text = value.Name;
+                tbDescription.Text = value.Description;
+                ticketingControl1.TicketText = value.Ticket;
+
+                lblExpired.Visible = value.IsExpired();
+
+                dtpStartDate.Value = value.StartDate;
+
+                if (value.EndDate == null)
+                    rbNeverExpires.Checked = true;
                 else
                 {
-                    tbName.Text = value.Name;
-                    tbDescription.Text = value.Description;
-                    ticketingControl1.TicketText = value.Ticket;
-
-                    dtpStartDate.Value = value.StartDate;
-
-                    if (value.EndDate == null)
-                        rbNeverExpires.Checked = true;
-                    else
-                    {
-                        rbExpiresOn.Checked = true;
-                        dtpEndDate.Value = (DateTime) value.EndDate;
-                    }
-                    
-                    //add related catalogues
-                    lbCatalogues.Items.AddRange(value.GovernedCatalogues.ToArray());
+                    rbExpiresOn.Checked = true;
+                    dtpEndDate.Value = (DateTime) value.EndDate;
                 }
+                    
+                //add related catalogues
+                lbCatalogues.Items.AddRange(value.GovernedCatalogues.ToArray());
+                
             }
         }
 
         public GovernancePeriodUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.Catalogue;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, GovernancePeriod databaseObject)
