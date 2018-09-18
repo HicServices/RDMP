@@ -102,22 +102,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults
         public void EnforceOptions(DbConnectionStringBuilder connectionStringBuilder)
         {
             foreach (var keyword in _keywords)
-            {
-                //This is a system default so can be overridden by the object
-                if (keyword.Value.Item2 <= ConnectionStringKeywordPriority.SystemDefaultHigh)
-                {
-                    var beforeValue = connectionStringBuilder[keyword.Key];
-
-                    int keysBefore = connectionStringBuilder.Keys.Count;
-
-                    connectionStringBuilder[keyword.Key] = keyword.Value.Item1;
-
-                    if(keysBefore == connectionStringBuilder.Keys.Count && beforeValue != null)
-                        connectionStringBuilder[keyword.Key] = beforeValue;
-                }
-                else
-                    connectionStringBuilder[keyword.Key] = keyword.Value.Item1;
-            }
+                connectionStringBuilder[keyword.Key] = keyword.Value.Item1;
         }
     }
 
