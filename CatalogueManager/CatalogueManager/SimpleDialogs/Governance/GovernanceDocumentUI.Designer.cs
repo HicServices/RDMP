@@ -39,6 +39,7 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
             this.btnOpenContainingFolder = new System.Windows.Forms.Button();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
             // 
             // label1
@@ -147,10 +148,19 @@
             this.btnOpenContainingFolder.UseVisualStyleBackColor = true;
             this.btnOpenContainingFolder.Click += new System.EventHandler(this.btnOpenContainingFolder_Click);
             // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(500, 40);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
+            this.objectSaverButton1.TabIndex = 8;
+            // 
             // GovernanceDocumentUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.btnOpenContainingFolder);
             this.Controls.Add(this.btnOpen);
             this.Controls.Add(this.btnBrowse);
@@ -182,5 +192,6 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.Button btnOpenContainingFolder;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

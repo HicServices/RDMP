@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Pipelines;
@@ -135,7 +136,11 @@ namespace CatalogueLibrary.Providers
         public readonly IChildProvider[] PluginChildProviders;
         private readonly ICheckNotifier _errorsCheckNotifier;
         private readonly List<IChildProvider> _blacklistedPlugins = new List<IChildProvider>();
-        
+
+        public AllGovernanceNode AllGovernanceNode { get; private set; }
+        public GovernancePeriod[] AllGovernancePeriods { get; private set; }
+        public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
+
 
         public CatalogueChildProvider(CatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
@@ -278,8 +283,38 @@ namespace CatalogueLibrary.Providers
                 ac.InjectKnown(joinable);
             }
                     
+            AllGovernanceNode = new AllGovernanceNode();
+            AllGovernancePeriods = repository.GetAllObjects<GovernancePeriod>();
+            AllGovernanceDocuments = repository.GetAllObjects<GovernanceDocument>();
+
+            AddChildren(AllGovernanceNode);
         }
-        
+
+        private void AddChildren(AllGovernanceNode allGovernanceNode)
+        {
+            HashSet<object> children = new HashSet<object>();
+            var descendancy = new DescendancyList(allGovernanceNode);
+
+            foreach (GovernancePeriod gp in AllGovernancePeriods)
+            {
+                children.Add(gp);
+                AddChildren(gp, descendancy.Add(gp));
+            }
+
+            AddToDictionaries(children, descendancy);
+        }
+
+        private void AddChildren(GovernancePeriod governancePeriod, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+            
+            foreach (GovernanceDocument doc in AllGovernanceDocuments.Where(d=>d.GovernancePeriod_ID == governancePeriod.ID))
+                children.Add(doc);
+            
+            AddToDictionaries(children, descendancy);
+        }
+
+
         private void AddChildren(AllLoadMetadatasNode allLoadMetadatasNode)
         {
             HashSet<object> children = new HashSet<object>();

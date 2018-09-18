@@ -155,6 +155,10 @@ namespace CatalogueManager.Icons.IconProvision
 
         AllPipelinesNode,
         OtherPipelinesNode,
-        StandardPipelineUseCaseNode
+        StandardPipelineUseCaseNode,
+
+        AllGovernanceNode,
+        GovernancePeriod,
+        GovernanceDocument
     }
 }

@@ -410,6 +410,8 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
     <Compile Include="CommandExecution\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernancePeriod.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
@@ -1136,12 +1138,6 @@
     <Compile Include="SimpleDialogs\Governance\GovernancePeriodUI.Designer.cs">
       <DependentUpon>GovernancePeriodUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Governance\GovernanceUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\Governance\GovernanceUI.Designer.cs">
-      <DependentUpon>GovernanceUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="SimpleDialogs\Remoting\RemoteRDMPUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1540,12 +1536,15 @@
     <None Include="Icons\AllConnectionStringKeywordsNode.png" />
     <None Include="Icons\AllStandardRegexesNode.png" />
     <None Include="Icons\AllPipelinesNode.png" />
+    <None Include="Icons\AllGovernanceNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
     <None Include="Icons\GetFilesStage.png" />
     <None Include="Icons\FrozenExtractionConfigurationsNode.png" />
     <None Include="Icons\FileMissing.png" />
+    <None Include="Icons\GovernancePeriod.png" />
+    <None Include="Icons\GovernanceDocument.png" />
     <Content Include="Icons\importFile.png" />
     <None Include="Icons\Parameter1.bmp" />
     <None Include="Icons\ParameterSet.png" />
@@ -1925,9 +1924,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Governance\GovernancePeriodUI.resx">
       <DependentUpon>GovernancePeriodUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Governance\GovernanceUI.resx">
-      <DependentUpon>GovernanceUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Remoting\RemoteRDMPUI.resx">
       <DependentUpon>RemoteRDMPUI.cs</DependentUpon>

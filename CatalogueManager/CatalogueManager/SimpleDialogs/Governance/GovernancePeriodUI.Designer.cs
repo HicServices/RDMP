@@ -30,7 +30,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnSave = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dtpStartDate = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
@@ -46,24 +45,9 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.label5 = new System.Windows.Forms.Label();
             this.btnAddCatalogue = new System.Windows.Forms.Button();
             this.btnImportCatalogues = new System.Windows.Forms.Button();
-            this.btnAddAttachment = new System.Windows.Forms.Button();
-            this.governanceDocumentUI1 = new CatalogueManager.SimpleDialogs.Governance.GovernanceDocumentUI();
-            this.lbDocuments = new System.Windows.Forms.ListBox();
-            this.gbAttachments = new System.Windows.Forms.GroupBox();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
-            this.gbAttachments.SuspendLayout();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
-            // 
-            // btnSave
-            // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSave.Location = new System.Drawing.Point(7, 854);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // label3
             // 
@@ -159,13 +143,12 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // lbCatalogues
             // 
-            this.lbCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.lbCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbCatalogues.FormattingEnabled = true;
             this.lbCatalogues.Location = new System.Drawing.Point(384, 283);
             this.lbCatalogues.Name = "lbCatalogues";
-            this.lbCatalogues.Size = new System.Drawing.Size(667, 95);
+            this.lbCatalogues.Size = new System.Drawing.Size(667, 303);
             this.lbCatalogues.TabIndex = 9;
             this.lbCatalogues.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbCatalogues_KeyUp);
             // 
@@ -192,8 +175,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // btnAddCatalogue
             // 
-            this.btnAddCatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddCatalogue.Location = new System.Drawing.Point(383, 383);
+            this.btnAddCatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddCatalogue.Location = new System.Drawing.Point(384, 589);
             this.btnAddCatalogue.Name = "btnAddCatalogue";
             this.btnAddCatalogue.Size = new System.Drawing.Size(98, 23);
             this.btnAddCatalogue.TabIndex = 11;
@@ -203,8 +186,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // btnImportCatalogues
             // 
-            this.btnImportCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImportCatalogues.Location = new System.Drawing.Point(487, 383);
+            this.btnImportCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImportCatalogues.Location = new System.Drawing.Point(488, 589);
             this.btnImportCatalogues.Name = "btnImportCatalogues";
             this.btnImportCatalogues.Size = new System.Drawing.Size(282, 23);
             this.btnImportCatalogues.TabIndex = 11;
@@ -212,71 +195,31 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.btnImportCatalogues.UseVisualStyleBackColor = true;
             this.btnImportCatalogues.Click += new System.EventHandler(this.btnImportCatalogues_Click);
             // 
-            // btnAddAttachment
-            // 
-            this.btnAddAttachment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAddAttachment.Location = new System.Drawing.Point(6, 405);
-            this.btnAddAttachment.Name = "btnAddAttachment";
-            this.btnAddAttachment.Size = new System.Drawing.Size(98, 23);
-            this.btnAddAttachment.TabIndex = 14;
-            this.btnAddAttachment.Text = "Add Attachment";
-            this.btnAddAttachment.UseVisualStyleBackColor = true;
-            this.btnAddAttachment.Click += new System.EventHandler(this.btnAddAttachment_Click);
-            // 
-            // governanceDocumentUI1
-            // 
-            this.governanceDocumentUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.governanceDocumentUI1.GovernanceDocument = null;
-            this.governanceDocumentUI1.Location = new System.Drawing.Point(204, 19);
-            this.governanceDocumentUI1.Name = "governanceDocumentUI1";
-            this.governanceDocumentUI1.Size = new System.Drawing.Size(833, 409);
-            this.governanceDocumentUI1.TabIndex = 16;
-            // 
-            // lbDocuments
-            // 
-            this.lbDocuments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.lbDocuments.FormattingEnabled = true;
-            this.lbDocuments.Location = new System.Drawing.Point(6, 19);
-            this.lbDocuments.Name = "lbDocuments";
-            this.lbDocuments.Size = new System.Drawing.Size(202, 381);
-            this.lbDocuments.TabIndex = 12;
-            this.lbDocuments.SelectedIndexChanged += new System.EventHandler(this.lbDocuments_SelectedIndexChanged);
-            this.lbDocuments.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbDocuments_KeyUp);
-            // 
-            // gbAttachments
-            // 
-            this.gbAttachments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbAttachments.Controls.Add(this.lbDocuments);
-            this.gbAttachments.Controls.Add(this.governanceDocumentUI1);
-            this.gbAttachments.Controls.Add(this.btnAddAttachment);
-            this.gbAttachments.Location = new System.Drawing.Point(8, 412);
-            this.gbAttachments.Name = "gbAttachments";
-            this.gbAttachments.Size = new System.Drawing.Size(1043, 436);
-            this.gbAttachments.TabIndex = 17;
-            this.gbAttachments.TabStop = false;
-            this.gbAttachments.Text = "Attachments";
-            // 
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.ragSmiley1.Location = new System.Drawing.Point(321, 375);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 18;
             // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(71, 407);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
+            this.objectSaverButton1.TabIndex = 19;
+            // 
             // GovernancePeriodUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.gbAttachments);
             this.Controls.Add(this.btnImportCatalogues);
-            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnAddCatalogue);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label5);
@@ -292,8 +235,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.Controls.Add(this.label2);
             this.Controls.Add(this.rbExpiresOn);
             this.Name = "GovernancePeriodUI";
-            this.Size = new System.Drawing.Size(1078, 880);
-            this.gbAttachments.ResumeLayout(false);
+            this.Size = new System.Drawing.Size(1078, 615);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -301,11 +243,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
 
         #endregion
 
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.GroupBox gbAttachments;
-        private System.Windows.Forms.ListBox lbDocuments;
-        private GovernanceDocumentUI governanceDocumentUI1;
-        private System.Windows.Forms.Button btnAddAttachment;
         private System.Windows.Forms.Button btnImportCatalogues;
         private System.Windows.Forms.Button btnAddCatalogue;
         private System.Windows.Forms.Label label5;
@@ -322,5 +259,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private System.Windows.Forms.DateTimePicker dtpStartDate;
         private System.Windows.Forms.Label label3;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

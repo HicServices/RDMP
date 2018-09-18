@@ -170,10 +170,7 @@ namespace CatalogueManager.Collections
         private bool isFirstTime = true;
 
         public void RefreshUIFromDatabase(object oRefreshFrom)
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Restart();
-            
+        {   
             //if there are new catalogues we don't already have in our tree
             if (_allCatalogues != null)
             {
@@ -186,8 +183,6 @@ namespace CatalogueManager.Collections
             }
 
             _allCatalogues = CommonFunctionality.CoreChildProvider.AllCatalogues;
-
-            Console.WriteLine("Stage 1:"+sw.ElapsedMilliseconds);
             
             if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
@@ -269,8 +264,8 @@ namespace CatalogueManager.Collections
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
+            tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
             tlvCatalogues.AddObject(CatalogueFolder.Root);
-            
             ApplyFilters();
 
             RefreshUIFromDatabase(CatalogueFolder.Root);

@@ -4,6 +4,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Pipelines;
@@ -52,6 +53,10 @@ namespace CatalogueLibrary.Providers
         AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         AllStandardRegexesNode AllStandardRegexesNode { get;}
         AllPipelinesNode AllPipelinesNode { get; }
+
+        AllGovernanceNode AllGovernanceNode { get; }
+        GovernancePeriod[] AllGovernancePeriods { get; }
+        GovernanceDocument[] AllGovernanceDocuments { get;}
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
 

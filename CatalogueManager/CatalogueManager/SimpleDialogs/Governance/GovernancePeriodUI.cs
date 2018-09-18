@@ -1,18 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
+using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
 namespace CatalogueManager.SimpleDialogs.Governance
@@ -30,7 +26,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
     /// <para>If a GovernancePeriod expires all datasets (Catalogues) in the period will be assumed to have expired governance and will appear in the Dashboard as expired unless there is a new
     /// GovernancePeriod that is active (See GovernanceSummary).</para>
     /// </summary>
-    public partial class GovernancePeriodUI : RDMPUserControl
+    public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
     {
         private GovernancePeriod _governancePeriod;
         public event EventHandler ChangesSaved;
@@ -46,7 +42,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
 
                 //clear related catalogues
                 lbCatalogues.Items.Clear();
-                lbDocuments.Items.Clear();
                 
                 if (value == null)
                 {
@@ -69,14 +64,9 @@ namespace CatalogueManager.SimpleDialogs.Governance
                         rbExpiresOn.Checked = true;
                         dtpEndDate.Value = (DateTime) value.EndDate;
                     }
-
-
                     
                     //add related catalogues
                     lbCatalogues.Items.AddRange(value.GovernedCatalogues.ToArray());
-
-                    //get all governance documents for this period
-                    lbDocuments.Items.AddRange(value.GovernanceDocuments.ToArray());
                 }
             }
         }
@@ -86,14 +76,12 @@ namespace CatalogueManager.SimpleDialogs.Governance
             InitializeComponent();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        public override void SetDatabaseObject(IActivateItems activator, GovernancePeriod databaseObject)
         {
-            ragSmiley1.StartChecking(GovernancePeriod);
-            GovernancePeriod.SaveToDatabase();
+            base.SetDatabaseObject(activator, databaseObject);
 
-            var h = ChangesSaved;
-            if (h != null)
-                h(this, null);
+            GovernancePeriod = databaseObject;
+            objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
         }
 
         private void tbName_TextChanged(object sender, EventArgs e)
@@ -185,47 +173,9 @@ namespace CatalogueManager.SimpleDialogs.Governance
                     }
             }
         }
-
-        private void btnAddAttachment_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.CheckFileExists = true;
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                var filename = new FileInfo(ofd.FileName);
-
-                var doc = new GovernanceDocument(RepositoryLocator.CatalogueRepository, _governancePeriod, filename);
-                lbDocuments.Items.Add(doc);//add it to the listbox
-                lbDocuments.SelectedItem = doc; //and select it
-
-            }
-        }
-
-        private void lbDocuments_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            governanceDocumentUI1.GovernanceDocument = lbDocuments.SelectedItem as GovernanceDocument;
-        }
-
-        private void lbDocuments_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-            {
-                var toDelete = lbDocuments.SelectedItem as GovernanceDocument;
-
-                if (toDelete != null)
-                    if (MessageBox.Show("Are you sure you want to delete reference to GovernanceDocument '" + toDelete + "' (will not actually delete the file just the reference)", "Confirm Deleting GovernanceDocument?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        toDelete.DeleteInDatabase();
-                        lbDocuments.Items.Remove(toDelete);
-                    }
-            }
-        }
-
+        
         private void btnImportCatalogues_Click(object sender, EventArgs e)
         {
-
-
             GovernancePeriod[] toImportFrom = RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>()
                 .Where(gov=>gov.ID != GovernancePeriod.ID)
                 .ToArray();
@@ -253,5 +203,15 @@ namespace CatalogueManager.SimpleDialogs.Governance
                         AddCatalogue(c);
             }
         }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<GovernancePeriodUI_Design, UserControl>))]
+    public abstract class GovernancePeriodUI_Design : RDMPSingleDatabaseObjectControl<GovernancePeriod>
+    {
     }
 }
