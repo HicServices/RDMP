@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections.Providers;
@@ -190,6 +191,7 @@ namespace CatalogueManager.Collections
                 ExpandAllFolders(CatalogueFolder.Root);
                 isFirstTime = false;
             }
+
         }
 
         private void ExpandAllFolders(CatalogueFolder model)
@@ -253,7 +255,12 @@ namespace CatalogueManager.Collections
                 //we have our own custom filter logic so no need to pass tbFilter
                 olvColumn1 //also the renameable column
                 );
-            
+
+            CommonFunctionality.MaintainRootObjects = new[]
+            {
+                typeof (AllGovernanceNode)
+            };
+
             //Things that are always visible regardless
             CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
             {
@@ -306,6 +313,9 @@ namespace CatalogueManager.Collections
         {
             var o = e.Object;
             var cata = o as Catalogue;
+
+            if(o is GovernancePeriod || o is GovernanceDocument)
+                tlvCatalogues.RefreshObject(_activator.CoreChildProvider.AllGovernanceNode);
 
             if (cata != null)
             {
