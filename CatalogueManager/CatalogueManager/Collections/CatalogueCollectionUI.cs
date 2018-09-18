@@ -346,7 +346,7 @@ namespace CatalogueManager.Collections
 
         public static bool IsRootObject(object root)
         {
-            return root.Equals(CatalogueFolder.Root);
+            return root.Equals(CatalogueFolder.Root) || root is AllGovernanceNode;
         }
 
         public void SelectCatalogue(Catalogue catalogue)

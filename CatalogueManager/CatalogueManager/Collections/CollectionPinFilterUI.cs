@@ -13,6 +13,7 @@ using CatalogueLibrary.Data;
 
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Providers;
 using CatalogueManager.Refreshing;
@@ -46,6 +47,8 @@ namespace CatalogueManager.Collections
             typeof (LoadMetadata),
             typeof (Project),
             typeof(CohortIdentificationConfiguration),
+
+            typeof(GovernancePeriod),
             
             //TableInfoCollectionUI pinnables
             typeof(ExtractableDataSetPackage),
