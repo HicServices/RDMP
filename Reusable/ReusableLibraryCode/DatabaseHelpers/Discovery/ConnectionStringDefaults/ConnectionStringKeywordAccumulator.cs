@@ -64,6 +64,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults
             }
         }
 
+        /// <summary>
+        /// Returns the best alias for <paramref name="keyword"/> or null if there are no known aliases.  This is because some builders allow multiple keys for changing the same underlying
+        /// property.
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private string GetCollisionWithKeyword(string keyword, string value)
         {
             //lets evaluate this alleged keyword!
@@ -95,7 +102,22 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults
         public void EnforceOptions(DbConnectionStringBuilder connectionStringBuilder)
         {
             foreach (var keyword in _keywords)
-                connectionStringBuilder[keyword.Key] = keyword.Value.Item1;
+            {
+                //This is a system default so can be overridden by the object
+                if (keyword.Value.Item2 <= ConnectionStringKeywordPriority.SystemDefaultHigh)
+                {
+                    var beforeValue = connectionStringBuilder[keyword.Key];
+
+                    int keysBefore = connectionStringBuilder.Keys.Count;
+
+                    connectionStringBuilder[keyword.Key] = keyword.Value.Item1;
+
+                    if(keysBefore == connectionStringBuilder.Keys.Count && beforeValue != null)
+                        connectionStringBuilder[keyword.Key] = beforeValue;
+                }
+                else
+                    connectionStringBuilder[keyword.Key] = keyword.Value.Item1;
+            }
         }
     }
 
