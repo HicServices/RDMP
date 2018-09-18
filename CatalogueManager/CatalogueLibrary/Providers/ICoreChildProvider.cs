@@ -28,7 +28,10 @@ namespace CatalogueLibrary.Providers
         TableInfoServerNode[] AllServers { get; }
         TableInfo[] AllTableInfos { get;}
         CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
+        
         Catalogue[] AllCatalogues { get; }
+        Dictionary<int, Catalogue> AllCatalogueDictionary { get; }
+
         AllANOTablesNode AllANOTablesNode { get; }
         ANOTable[] AllANOTables { get; }
         AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; }
@@ -57,6 +60,9 @@ namespace CatalogueLibrary.Providers
         AllGovernanceNode AllGovernanceNode { get; }
         GovernancePeriod[] AllGovernancePeriods { get; }
         GovernanceDocument[] AllGovernanceDocuments { get;}
+
+        /// <inheritdoc cref="GovernancePeriod.GetAllGovernedCataloguesForAllGovernancePeriods"/>
+        Dictionary<int, HashSet<int>> GovernanceCoverage { get;}
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
 

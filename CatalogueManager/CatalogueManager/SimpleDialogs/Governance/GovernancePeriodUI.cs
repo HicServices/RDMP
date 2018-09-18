@@ -149,6 +149,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
                 {
                     ExceptionViewer.Show("Could not add relationship to Catalogue:" + selector.Selected,ex);
                 }
+
+                Publish(_governancePeriod);
             }
             
         }
@@ -171,6 +173,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
                         _governancePeriod.DeleteGovernanceRelationshipTo(toDelete);
                         lbCatalogues.Items.Remove(toDelete);
                     }
+
+                Publish(GovernancePeriod);
             }
         }
         
@@ -199,8 +203,12 @@ namespace CatalogueManager.SimpleDialogs.Governance
                     MessageBox.Show("Selected GovernancePeriod '" + dialog.Selected +
                                     "' does not govern any novel Catalogues (Catalogues already in your configuration are not repeat imported)");
                 else
+                {
                     foreach (var c in toAdd)
                         AddCatalogue(c);
+
+                    Publish(_governancePeriod);
+                }
             }
         }
 

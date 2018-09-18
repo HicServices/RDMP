@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 
 namespace CatalogueLibrary.Providers
@@ -19,7 +20,7 @@ namespace CatalogueLibrary.Providers
         public void RefreshProblems(ICoreChildProvider childProvider)
         {
             _childProvider = childProvider;
-
+            
             //Take all the catalogue items which DONT have an associated ColumnInfo (should hopefully be quite rare)
             var orphans = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null);
             
@@ -29,6 +30,7 @@ namespace CatalogueLibrary.Providers
 
                 //store just the ID for performance
                 .Select(i=>i.ID));
+
             
         }
 
@@ -39,6 +41,9 @@ namespace CatalogueLibrary.Providers
 
         public string DescribeProblem(object o)
         {
+            if (o is AllGovernanceNode)
+                return DescribeProblem((AllGovernanceNode) o);
+
             if (o is CatalogueItem)
                 return DescribeProblem((CatalogueItem) o);
 
@@ -48,6 +53,39 @@ namespace CatalogueLibrary.Providers
             if (o is ExtractionInformation)
                 return DescribeProblem((ExtractionInformation) o);
 
+            return null;
+        }
+
+        public string DescribeProblem(AllGovernanceNode allGovernanceNode)
+        {
+            HashSet<int> expiredCatalogueIds = new HashSet<int>();
+
+            //Get all expired Catalogue IDs
+            foreach (KeyValuePair<int, HashSet<int>> kvp in _childProvider.GovernanceCoverage)
+            {
+                var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
+
+                if (gp.IsExpired())
+                    foreach (var i in kvp.Value)
+                        expiredCatalogueIds.Add(i);
+            }
+
+            //Throw out any covered by a not expired one
+            foreach (KeyValuePair<int, HashSet<int>> kvp in _childProvider.GovernanceCoverage)
+            {
+                var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
+
+                if (!gp.IsExpired())
+                    foreach (var i in kvp.Value)
+                        expiredCatalogueIds.Remove(i);
+            }
+
+            var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCatalogueDictionary[id]).Where(c => !(c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/)).ToArray();
+
+            if (expiredCatalogues.Any())
+                return "Governance Expired On:" +Environment.NewLine + string.Join(Environment.NewLine, expiredCatalogues.Take(5));
+
+            //no expired governance
             return null;
         }
 

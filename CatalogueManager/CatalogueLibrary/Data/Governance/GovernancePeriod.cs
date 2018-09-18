@@ -189,5 +189,36 @@ namespace CatalogueLibrary.Data.Governance
 
             return DateTime.Now.Date > EndDate.Value.Date;
         }
+
+        /// <summary>
+        /// Returns the IDs of all <see cref="GovernancePeriod"/> with the corresponding set of <see cref="Catalogue"/> IDs which are covered by the governance.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <returns></returns>
+        public static Dictionary<int, HashSet<int>> GetAllGovernedCataloguesForAllGovernancePeriods(ICatalogueRepository repository)
+        {
+            var toReturn = new Dictionary<int, HashSet<int>>();
+
+            var server = repository.DiscoveredServer;
+            using (var con = server.GetConnection())
+            {
+                con.Open();
+                var cmd = server.GetCommand(@"SELECT GovernancePeriod_ID,Catalogue_ID FROM GovernancePeriod_Catalogue",con);
+                var r = cmd.ExecuteReader();
+
+                while (r.Read())
+                {
+                    int gp = (int) r["GovernancePeriod_ID"];
+                    int cata = (int) r["Catalogue_ID"];
+
+                    if (!toReturn.ContainsKey(gp))
+                        toReturn.Add(gp, new HashSet<int>());
+
+                    toReturn[gp].Add(cata);
+                }
+            }
+
+            return toReturn;
+        }
     }
 }
