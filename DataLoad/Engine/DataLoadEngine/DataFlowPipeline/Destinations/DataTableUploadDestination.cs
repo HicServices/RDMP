@@ -266,7 +266,6 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             catch (Exception e)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Commit failed on transaction (probably there was a previous error?)", e));
-
             }
 
             //if we have a primary key to create

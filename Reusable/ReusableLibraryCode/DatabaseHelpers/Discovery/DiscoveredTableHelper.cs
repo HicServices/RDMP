@@ -101,6 +101,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public virtual void CreatePrimaryKey(DiscoveredTable table, DiscoveredColumn[] discoverColumns, IManagedConnection connection, int timeout = 0)
         {
+            var columnHelper = GetColumnHelper();
+            foreach (var col in discoverColumns.Where(dc => dc.AllowNulls))
+            {
+                var alterSql = columnHelper.GetAlterColumnToSql(col, col.DataType.SQLType, false);
+                var alterCmd = DatabaseCommandHelper.GetCommand(alterSql, connection.Connection, connection.Transaction);
+                alterCmd.CommandTimeout = timeout;
+                alterCmd.ExecuteNonQuery();
+            }
             string sql = string.Format("ALTER TABLE {0} ADD PRIMARY KEY ({1})",
                      table.GetFullyQualifiedName(),
                     string.Join(",", discoverColumns.Select(c => c.GetRuntimeName()))
