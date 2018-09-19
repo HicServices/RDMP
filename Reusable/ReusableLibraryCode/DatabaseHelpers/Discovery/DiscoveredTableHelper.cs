@@ -99,15 +99,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             cmd.ExecuteNonQuery();
         }
 
-        public virtual void CreatePrimaryKey(DiscoveredTable table, DiscoveredColumn[] discoverColumns, IManagedConnection connection)
+        public virtual void CreatePrimaryKey(DiscoveredTable table, DiscoveredColumn[] discoverColumns, IManagedConnection connection, int timeout = 0)
         {
             string sql = string.Format("ALTER TABLE {0} ADD PRIMARY KEY ({1})",
                      table.GetFullyQualifiedName(),
                     string.Join(",", discoverColumns.Select(c => c.GetRuntimeName()))
                     );
             
-
             DbCommand cmd = DatabaseCommandHelper.GetCommand(sql,connection.Connection,connection.Transaction);
+            cmd.CommandTimeout = timeout;
             cmd.ExecuteNonQuery();
         }
 

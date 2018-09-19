@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -203,9 +204,19 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <param name="discoverColumns"></param>
         public void CreatePrimaryKey(params DiscoveredColumn[] discoverColumns)
         {
+            CreatePrimaryKey(0, discoverColumns);
+        }
+
+        /// <summary>
+        /// Creates a primary key on the table if none exists yet
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <param name="discoverColumns"></param>
+        public void CreatePrimaryKey(int timeout, params DiscoveredColumn[] discoverColumns)
+        {
             using (IManagedConnection connection = Database.Server.GetManagedConnection())
             {
-                Helper.CreatePrimaryKey(this,discoverColumns, connection);
+                Helper.CreatePrimaryKey(this, discoverColumns, connection, timeout);
             }
         }
 
