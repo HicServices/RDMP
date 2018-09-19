@@ -66,6 +66,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         [DemandsInitialization("If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: true)]
         public bool CleanExtractionFolderBeforeExtraction { get; set; }
 
+        [DemandsInitialization(DataTableUploadDestination.AlterTimeout_Description, DefaultValue = 300)]
+        public int AlterTimeout { get; set; }
+
         public TableLoadInfo TableLoadInfo { get; private set; }
         public DirectoryInfo DirectoryPopulated { get; private set; }
         public bool GeneratesFiles { get { return false; } }
@@ -75,7 +78,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private DiscoveredDatabase _destinationDatabase;
         private DataTableUploadDestination _destination;
-        
+
         private DataLoadInfo _dataLoadInfo;
         private bool haveExtractedBundledContent = false;
 
@@ -187,6 +190,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             PrimeDestinationTypesBasedOnCatalogueTypes(toProcess);
 
             _destination.AllowResizingColumnsAtUploadTime = true;
+            _destination.AlterTimeout = AlterTimeout;
+
             _destination.PreInitialize(_destinationDatabase, listener);
 
             return _destination;
