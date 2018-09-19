@@ -14,7 +14,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
         {
             AddConnectionStringKeyword(DatabaseType.MYSQLServer, "AllowUserVariables","True",ConnectionStringKeywordPriority.ApiRule);
             AddConnectionStringKeyword(DatabaseType.MYSQLServer, "AllowBatch", "True", ConnectionStringKeywordPriority.ApiRule);
-            AddConnectionStringKeyword(DatabaseType.MYSQLServer, "SslMode", "None", ConnectionStringKeywordPriority.SystemDefaultLow);
         }
 
         public MySqlServerHelper() : base(DatabaseType.MYSQLServer)

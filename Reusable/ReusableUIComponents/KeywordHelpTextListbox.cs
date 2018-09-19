@@ -46,18 +46,19 @@ namespace ReusableUIComponents
             //unless the text is unreasonably long
             if(richTextBoxToHighlight.TextLength < 100000)
                 //Highlight keywords and add the help text to the olvlistbox
-                foreach (KeyValuePair<string, string> kvp in CommentStore)
-                    if (richTextBoxToHighlight.Text.Contains(kvp.Key))
-                    {
-                        if (keywordNotToAdd != null && kvp.Key.Equals(keywordNotToAdd))//if it is the one keyword we are not supposed to be adding (this is used when you double click a help and get a WideMessageBox with help for yourself you shouldn't add your own keyword)
-                            continue;
+                if (CommentStore != null)
+                    foreach (KeyValuePair<string, string> kvp in CommentStore)
+                        if (richTextBoxToHighlight.Text.Contains(kvp.Key))
+                        {
+                            if (keywordNotToAdd != null && kvp.Key.Equals(keywordNotToAdd))//if it is the one keyword we are not supposed to be adding (this is used when you double click a help and get a WideMessageBox with help for yourself you shouldn't add your own keyword)
+                                continue;
 
-                        HighlightText(richTextBoxToHighlight, kvp.Key, Color.MediumOrchid);
-                        olvHelpSections.Visible = true;
-                        HasEntries = true;
+                            HighlightText(richTextBoxToHighlight, kvp.Key, Color.MediumOrchid);
+                            olvHelpSections.Visible = true;
+                            HasEntries = true;
 
-                        olvHelpSections.AddObject(new HelpSection(kvp.Key, kvp.Value));
-                    }
+                            olvHelpSections.AddObject(new HelpSection(kvp.Key, kvp.Value));
+                        }
         }
 
         private static object ImageGetter(object rowObject)
