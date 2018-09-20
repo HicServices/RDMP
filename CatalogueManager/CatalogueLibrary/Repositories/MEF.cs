@@ -401,7 +401,10 @@ namespace CatalogueLibrary.Repositories
                 }
 
                 if (fullMatches.Any())
-                    toReturn = fullMatches.Single();
+                    if(fullMatches.Count>1)
+                        throw new Exception("Found " + fullMatches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, fullMatches.Select(m => m.AssemblyQualifiedName + " (Located:" + m.Assembly.CodeBase +")")));
+                    else
+                        toReturn = fullMatches.Single();
 
                 if (matches.Any())
                     if (matches.Count > 1)
