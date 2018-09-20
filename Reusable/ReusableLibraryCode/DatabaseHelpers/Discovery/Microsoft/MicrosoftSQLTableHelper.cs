@@ -173,6 +173,27 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             return new MicrosoftSQLBulkCopy(discoveredTable,connection);
         }
 
+        public override void CreatePrimaryKey(DiscoveredTable table, DiscoveredColumn[] discoverColumns, IManagedConnection connection,int timeout = 0)
+        {
+            try
+            {
+                var columnHelper = GetColumnHelper();
+                foreach (var col in discoverColumns.Where(dc => dc.AllowNulls))
+                {
+                    var alterSql = columnHelper.GetAlterColumnToSql(col, col.DataType.SQLType, false);
+                    var alterCmd = DatabaseCommandHelper.GetCommand(alterSql, connection.Connection, connection.Transaction);
+                    alterCmd.CommandTimeout = timeout;
+                    alterCmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed to create primary key on table " + table + " using columns (" + string.Join(",", discoverColumns.Select(c => c.GetRuntimeName())) + ")", e);
+            }
+
+            base.CreatePrimaryKey(table, discoverColumns, connection, timeout);
+        }
+
         protected override string GetRenameTableSql(DiscoveredTable discoveredTable, string newName)
         {
             string oldName = "["+discoveredTable.GetRuntimeName() +"]";

@@ -45,6 +45,7 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CreatePrimaryKeyTest.cs" />
     <Compile Include="CrossPlatformTests.cs" />
     <Compile Include="ExpectedIdenticalStringsExceptionTests.cs" />
     <Compile Include="ParameterNameExtractionTests.cs" />

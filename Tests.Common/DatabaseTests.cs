@@ -103,7 +103,18 @@ namespace Tests.Common
             CreateScratchArea();
             
             if (TestDatabaseSettings.MySql != null)
-                _discoveredMySqlServer = new DiscoveredServer(new MySqlConnectionStringBuilder(TestDatabaseSettings.MySql));
+            {
+                var builder = new MySqlConnectionStringBuilder(TestDatabaseSettings.MySql);
+                
+                foreach (string k in builder.Keys)
+                {
+                    if (k == "server" || k == "database" || k== "user id" || k =="password")
+                        continue;
+
+                    new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MYSQLServer, k, builder[k].ToString());
+                }
+                _discoveredMySqlServer = new DiscoveredServer(builder);
+            }
 
             if (TestDatabaseSettings.Oracle != null)
                 _discoveredOracleServer = new DiscoveredServer(TestDatabaseSettings.Oracle, DatabaseType.Oracle);
@@ -240,6 +251,7 @@ namespace Tests.Common
         public const string BlitzDatabases = @"
 --If you want to blitz everything out of your test catalogue and data export database(s) then run the following SQL (adjusting for database names):
 
+delete from {0}..ConnectionStringKeyword
 delete from {0}..JoinableCohortAggregateConfigurationUse
 delete from {0}..JoinableCohortAggregateConfiguration
 delete from {0}..CohortIdentificationConfiguration

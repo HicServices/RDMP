@@ -225,8 +225,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             foreach (ReleaseIdentifierSubstitution sub in datasetCommand.QueryBuilder.SelectColumns.Where(sc => sc.IColumn is ReleaseIdentifierSubstitution).Select(sc => sc.IColumn))
             {
                 var columnName = sub.GetRuntimeName();
-                var addedType = _destination.AddExplicitWriteType(columnName, datasetCommand.ExtractableCohort.GetReleaseIdentifierDataType(), sub.ColumnInfo);
-                addedType.IsPrimaryKey = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
+                bool isPk = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
+
+                var addedType = _destination.AddExplicitWriteType(columnName, datasetCommand.ExtractableCohort.GetReleaseIdentifierDataType());
+                addedType.IsPrimaryKey = isPk;
+                addedType.AllowNulls = !isPk;
             }
         }
         

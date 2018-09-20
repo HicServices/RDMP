@@ -214,9 +214,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <param name="discoverColumns"></param>
         public void CreatePrimaryKey(int timeout, params DiscoveredColumn[] discoverColumns)
         {
-            using (IManagedConnection connection = Database.Server.GetManagedConnection())
+            using (IManagedConnection connection = Database.Server.BeginNewTransactedConnection())
             {
                 Helper.CreatePrimaryKey(this, discoverColumns, connection, timeout);
+                connection.ManagedTransaction.CommitAndCloseConnection();
             }
         }
 
