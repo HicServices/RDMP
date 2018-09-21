@@ -96,12 +96,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
             var running = new List<Task<int>>();
 
+            var parameters = new List<MySqlParameter>();
+
             foreach(DataRow dr in dt.Rows)
             {
                 sb.Append('(');
-
-                var parameters = new List<MySqlParameter>();
-
+                
                 var keys = matchedColumns.Keys.ToArray();
                 for (int col = 0; col < keys.Length; col++)
                 {
@@ -136,8 +136,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             //send final batch
             if(sb.Length > 0)
             {
+                cmd.Parameters.AddRange(parameters.ToArray());
                 cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
                 affected += cmd.ExecuteNonQuery();
+                
+                cmd.Parameters.Clear();
                 sb.Clear();
             }
 
