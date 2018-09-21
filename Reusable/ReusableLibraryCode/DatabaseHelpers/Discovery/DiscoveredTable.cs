@@ -155,6 +155,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         
         public IBulkCopy BeginBulkInsert(IManagedTransaction transaction = null)
         {
+            Database.Server.EnableAsync();
             IManagedConnection connection = Database.Server.GetManagedConnection(transaction);
             return Helper.BeginBulkInsert(this, connection);
         }

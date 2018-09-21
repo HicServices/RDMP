@@ -32,8 +32,6 @@ namespace LoadModules.Generic.DataFlowSources
         private IDataLoadEventListener _listener;
 
         
-        public int MaxBatchSize = 10000;
-
         public const string ForceHeaders_DemandDescription = "Forces specific headers to be interpreted for columns, this is a string that will effectively be appended to the front of the file when it is read.  WARNING: Use this argument only when the file does not have any headers (Note that you must use the appropriate separator for your file)";
         public const string ForceHeadersReplacesFirstLineInFile_Description = "Only used when ForceHeaders is specified, if true then the line will replace the first line of the file.  If left as false (default) then the line will be appended to the file.  Use true if you want to replace existing headers in the file and false if hte file doesn't have any headers in it at all.";
         public const string UnderReadBehaviour_DemandDescription = "Determines the systems behaviour when less cells are read in a row than the number of headers.  This usually occurs when there are newlines in the middle or records but can also occur when you use ForceHeaders with more headers than there are columns in the actual file.  Ignore will attempt commit the row anyway with the missing cells left as NULL, AppendNextLineToCurrentRow will attempt to create a complete record by reading more lines from the file until the matched number of headers are obtained";
@@ -72,6 +70,9 @@ namespace LoadModules.Generic.DataFlowSources
         
         [DemandsInitialization("BatchSize to use when predicting datatypes i.e. if you set this to 1000 then the first 1000 rows have int field then the 5000th row has a string you will get an error.  Set to 0 to use MaxBatchSize.  Set to -1 to load the entire file before computing datatypes (can result in out of memory for super large files)")]
         public int StronglyTypeInputBatchSize { get; set; }
+
+        [DemandsInitialization("Number of rows to read at once from the input file in each go (after the first - See StronglyTypeInputBatchSize)",DefaultValue=10000)]
+        public int MaxBatchSize {get;set;}
 
         [DemandsInitialization("A collection of column names that are expected to be found in the input file which you want to specify as explicit types (e.g. you load barcodes like 0110 and 1111 and want these all loaded as char(4) instead of int)")]
         public ExplicitTypingCollection ExplicitlyTypedColumns { get; set; }

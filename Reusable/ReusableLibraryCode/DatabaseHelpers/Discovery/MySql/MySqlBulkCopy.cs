@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
+using NuDoq;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
@@ -92,9 +94,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
             var querySyntaxHelper = TargetTable.GetQuerySyntaxHelper();
 
+            var running = new List<Task<int>>();
+
             foreach(DataRow dr in dt.Rows)
             {
                 sb.Append('(');
+
+                var parameters = new List<MySqlParameter>();
 
                 var keys = matchedColumns.Keys.ToArray();
                 for (int col = 0; col < keys.Length; col++)
@@ -108,7 +114,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
                     var p = DatabaseCommandHelper.GetParameter(paramName,querySyntaxHelper, matchedColumns[keys[col]], dr[keys[col]]);
                     //add a corresponding parameter
-                    cmd.Parameters.Add(p);
+                    parameters.Add((MySqlParameter)p);
                 }
                 
                 sb.AppendLine("),");
@@ -117,9 +123,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 //don't let command get too long
                 if (row%1000 == 0)
                 {
+                    cmd.Parameters.AddRange(parameters.ToArray());
+
                     cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
-                    affected += cmd.ExecuteNonQuery();
-                        
+                    running.Add(cmd.ExecuteNonQueryAsync());
+                    
                     cmd.Parameters.Clear();
                     sb.Clear();
                 }
@@ -131,6 +139,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
                 affected += cmd.ExecuteNonQuery();
                 sb.Clear();
+            }
+
+            Task.WaitAll(running.ToArray());
+
+            foreach (var task in running)
+            {
+                if (task.IsFaulted && task.Exception != null)
+                    throw task.Exception;
+
+                affected += task.Result;
             }
                
             return affected;
