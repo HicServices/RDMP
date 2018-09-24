@@ -128,6 +128,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                     cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
                     running.Add(cmd.ExecuteNonQueryAsync());
                     
+                    parameters.Clear();
                     cmd.Parameters.Clear();
                     sb.Clear();
                 }

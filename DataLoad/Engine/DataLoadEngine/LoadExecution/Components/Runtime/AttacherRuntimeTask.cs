@@ -44,8 +44,10 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
 
         public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            
-            var stringBefore = RuntimeArguments.StageSpecificArguments.DbInfo.Server.Builder.ConnectionString;
+
+            var beforeServer = RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name;
+            var beforeDatabase = RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetCurrentDatabase().GetRuntimeName();
+            var beforeDatabaseType = RuntimeArguments.StageSpecificArguments.DbInfo.Server.DatabaseType;
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Attacher class is:" + Attacher.GetType().FullName));
@@ -61,9 +63,11 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
             }
             finally
             {
-                string stringAfter = RuntimeArguments.StageSpecificArguments.DbInfo.Server.Builder.ConnectionString;
-
-                if(!stringBefore.Equals(stringAfter))
+                var afterServer = RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name;
+                var afterDatabase = RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetCurrentDatabase().GetRuntimeName();
+                var afterDatabaseType = RuntimeArguments.StageSpecificArguments.DbInfo.Server.DatabaseType;
+                
+                if(!(beforeServer.Equals(afterServer) && beforeDatabase.Equals(afterDatabase) && beforeDatabaseType == afterDatabaseType))
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Attacher " + Attacher.GetType().Name + " modified the ConnectionString during attaching"));
                 
             }

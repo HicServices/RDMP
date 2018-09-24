@@ -149,6 +149,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
             if(behaviour.HasValue)
                 source.UnderReadBehaviour = behaviour.Value;
+            source.MaxBatchSize = 10000;
 
             source.StronglyTypeInput = true;//makes the source interpret the file types properly
 
@@ -178,6 +179,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
             source.ForceHeaders = "CHI\tStudyID\tDate";
+            source.MaxBatchSize = 10000;
 
             var dt = source.GetChunk(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
