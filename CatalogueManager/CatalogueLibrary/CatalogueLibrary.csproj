@@ -72,7 +72,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    <NoWarn>1591,1573,1584</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -262,8 +261,12 @@
     <Compile Include="Data\Dashboarding\DashboardObjectUse.cs" />
     <Compile Include="Data\Dashboarding\IPersistableObjectCollection.cs" />
     <Compile Include="Data\Dashboarding\PersistStringHelper.cs" />
+    <Compile Include="Data\DataLoad\Extensions\LoadStageExtensions.cs" />
     <Compile Include="Data\DataLoad\IHasStageSpecificRuntimeName.cs" />
     <Compile Include="Data\DataLoad\IPreLoadDiscardedColumn.cs" />
+    <Compile Include="Data\DataLoad\Extensions\LoadBubbleExtensions.cs" />
+    <Compile Include="Data\DataLoad\LoadStage.cs" />
+    <Compile Include="Data\DataLoad\ProcessTaskType.cs" />
     <Compile Include="Data\DataLoad\RequiredPropertyInfo.cs" />
     <Compile Include="Data\DemandsNestedInitializationAttribute.cs" />
     <Compile Include="Data\DemandType.cs" />
@@ -272,7 +275,6 @@
     <Compile Include="Data\ExtractionFilterParameterSetValue.cs" />
     <Compile Include="Data\Favourite.cs" />
     <Compile Include="Data\IAggregateTopX.cs" />
-    <Compile Include="Data\IColumnInfo.cs" />
     <Compile Include="Data\IMasqueradeAs.cs" />
     <Compile Include="Data\ImportExport\Exceptions\SharingException.cs" />
     <Compile Include="Data\ImportExport\ShareManager.cs" />
@@ -325,6 +327,7 @@
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\QueryCachingDatabasePatcher.cs" />
     <Compile Include="Nodes\AllConnectionStringKeywordsNode.cs" />
+    <Compile Include="Nodes\AllGovernanceNode.cs" />
     <Compile Include="Nodes\AllLoadMetadatasNode.cs" />
     <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
     <Compile Include="Nodes\AllStandardRegexesNode.cs" />
@@ -337,6 +340,10 @@
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
+    <Compile Include="QueryBuilding\Options\AggregateBuilderBasicOptions.cs" />
+    <Compile Include="QueryBuilding\Options\AggregateBuilderCohortOptions.cs" />
+    <Compile Include="QueryBuilding\Options\AggregateBuilderOptionsFactory.cs" />
+    <Compile Include="QueryBuilding\Options\IAggregateBuilderOptions.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
@@ -498,7 +505,6 @@
     <Compile Include="ExternalDatabaseServerPatching\IPatcher.cs" />
     <Compile Include="ForwardEngineerCatalogue.cs" />
     <Compile Include="HICProjectDirectory.cs" />
-    <Compile Include="IArgumentSerializableObject.cs" />
     <Compile Include="ExternalDatabaseServerPatching\DataQualityEnginePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\LoggingDatabasePatcher.cs" />
     <Compile Include="QueryBuilding\AggregateBuilder.cs" />

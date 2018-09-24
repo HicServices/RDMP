@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
@@ -102,9 +103,9 @@ namespace DataExportLibrary.Tests.DataExtraction
             //set the destination pipeline
             var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
             var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>().ToList();
-            PipelineComponentArgument argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
-            PipelineComponentArgument argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
-            PipelineComponentArgument argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
+            IArgument argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
+            IArgument argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
+            IArgument argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
 
             Assert.AreEqual("TargetDatabaseServer", argumentServer.Name);
             argumentServer.SetValue(_extractionServer);

@@ -67,6 +67,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax
 
         bool IsBasicallyNull(object value);
         bool IsTimeout(Exception exception);
+        
+        /// <summary>
+        /// Returns SQL that will wrap a single line of SQL with the SQL to calculate MD5 hash e.g. change `MyTable`.`MyColumn` to md5(`MyTable`.`MyColumn`)
+        /// <para>The SQL might include transform functions e.g. UPPER etc</para>
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        string HowDoWeAchieveMd5(string selectSql);
     }
 
     public enum MandatoryScalarFunctions

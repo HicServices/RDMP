@@ -29,11 +29,6 @@ namespace LoadModules.GenericUIs.DataProvider
             SetUnderlyingObjectTo((WebServiceConfiguration)value, previewIfAvailable);
         }
 
-        public ICustomUIDrivenClass GetGenericFinalStateOfUnderlyingObject()
-        {
-            return GetFinalStateOfUnderlyingObject();
-        }
-
         public void SetUnderlyingObjectTo(WebServiceConfiguration value, DataTable previewIfAvailable)
         {
             var config = value ?? new WebServiceConfiguration(CatalogueRepository);
@@ -57,7 +52,7 @@ namespace LoadModules.GenericUIs.DataProvider
             tbMaxReceivedMessageSize.Text = config.MaxReceivedMessageSize.ToString();
         }
 
-        public WebServiceConfiguration GetFinalStateOfUnderlyingObject()
+        public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
         {
             return new WebServiceConfiguration(CatalogueRepository)
             {

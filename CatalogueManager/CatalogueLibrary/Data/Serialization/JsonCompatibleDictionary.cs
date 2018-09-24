@@ -17,11 +17,17 @@ namespace CatalogueLibrary.Data.Serialization
     [JsonObject(MemberSerialization.OptIn)]
     public class JsonCompatibleDictionary<TK, TV> : Dictionary<TK, TV>
     {
+        /// <summary>
+        /// Returns the keys of the dictionary as an Array.  Json loves arrays and hates dictionary keys
+        /// </summary>
         [JsonProperty]
         public TK[] SerializeableKeys { get { return Keys.ToArray(); }
             set { Hydrate(value);}
         }
-        
+
+        /// <summary>
+        /// Returns the values of the dictionary as an Array.
+        /// </summary>
         [JsonProperty]
         public TV[] SerializeableValues
         {

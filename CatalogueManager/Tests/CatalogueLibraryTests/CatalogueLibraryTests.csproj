@@ -69,7 +69,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -279,7 +278,6 @@
     <Compile Include="Integration\QueryBuildingTests\AggregateBuilderTests\MySqlAggregateBuilderTests.cs" />
     <Compile Include="Integration\QueryBuildingTests\QueryBuilderTests\MySqlQueryBuilderTests.cs" />
     <Compile Include="Integration\ServerDefaultsTests.cs" />
-    <Compile Include="Integration\SuperCachedModeTests\SuperCacheModeBasicTests.cs" />
     <Compile Include="Integration\TableInfoSynchronizerTests.cs" />
     <Compile Include="Integration\TableNamingConventionTests.cs" />
     <Compile Include="Integration\TableValuedFunctionTests\AggregationTests.cs" />
@@ -315,7 +313,6 @@
     <Compile Include="Unit\CacheLagPeriodUnitTests.cs" />
     <Compile Include="Unit\CatalogueNamingTests.cs" />
     <Compile Include="Unit\DataFlowPipelineEngineTests.cs" />
-    <Compile Include="Unit\DocumentationReportMapsDirectlyToDatabaseTest.cs" />
     <Compile Include="Unit\ExerciseData\TestBiochemistryCreation.cs" />
     <Compile Include="Unit\ExerciseData\TestDemographyCreation.cs" />
     <Compile Include="Unit\ExerciseData\TestPrescribingCreation.cs" />

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+using System.Runtime.CompilerServices;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -157,6 +155,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         
         public IBulkCopy BeginBulkInsert(IManagedTransaction transaction = null)
         {
+            Database.Server.EnableAsync();
             IManagedConnection connection = Database.Server.GetManagedConnection(transaction);
             return Helper.BeginBulkInsert(this, connection);
         }
@@ -203,12 +202,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <summary>
         /// Creates a primary key on the table if none exists yet
         /// </summary>
-        /// <param name="discoverColumn"></param>
+        /// <param name="discoverColumns"></param>
         public void CreatePrimaryKey(params DiscoveredColumn[] discoverColumns)
         {
-            using (IManagedConnection connection = Database.Server.GetManagedConnection())
+            CreatePrimaryKey(0, discoverColumns);
+        }
+
+        /// <summary>
+        /// Creates a primary key on the table if none exists yet
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <param name="discoverColumns"></param>
+        public void CreatePrimaryKey(int timeout, params DiscoveredColumn[] discoverColumns)
+        {
+            using (IManagedConnection connection = Database.Server.BeginNewTransactedConnection())
             {
-                Helper.CreatePrimaryKey(this,discoverColumns, connection);
+                Helper.CreatePrimaryKey(this, discoverColumns, connection, timeout);
+                connection.ManagedTransaction.CommitAndCloseConnection();
             }
         }
 
@@ -249,7 +259,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// Overload which will discover the columns by name for you.
         /// </summary>
         /// <param name="toInsert"></param>
-        /// <param name="connection"></param>
+        /// <param name="transaction">ongoing transaction this insert should be part of</param>
         /// <returns></returns>
         public int Insert(Dictionary<string, object> toInsert, IManagedTransaction transaction = null)
         {

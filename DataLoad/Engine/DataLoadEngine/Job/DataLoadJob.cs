@@ -34,15 +34,17 @@ namespace DataLoadEngine.Job
 
         public List<TableInfo> RegularTablesToLoad { get; private set; }
         public List<TableInfo> LookupTablesToLoad { get; private set; }
+        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
         private Stack<IDisposeAfterDataLoad> _disposalStack = new Stack<IDisposeAfterDataLoad>();
 
 
         private string _loggingTask;
 
-        public DataLoadJob(string description, ILogManager logManager, ILoadMetadata loadMetadata, IHICProjectDirectory hicProjectDirectory, IDataLoadEventListener listener)
+        public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator,string description, ILogManager logManager, ILoadMetadata loadMetadata, IHICProjectDirectory hicProjectDirectory, IDataLoadEventListener listener)
         {
             _logManager = logManager;
+            RepositoryLocator = repositoryLocator;
             LoadMetadata = loadMetadata;
             HICProjectDirectory = hicProjectDirectory;
             _listener = listener;

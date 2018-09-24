@@ -14,7 +14,7 @@ namespace CatalogueLibrary.Data
     /// A collection of LoadModuleAssembly objects that make up a complete Plugin.  The Plugin is the head in which a name, upload location and verison are recorded then each
     /// dll that makes up the functionality is linked as LoadModuleAssemblies (See LoadModuleAssembly)
     /// </summary>
-    public class Plugin : DatabaseEntity
+    public class Plugin : DatabaseEntity,INamed
     {
         #region Database Properties
 
@@ -22,18 +22,26 @@ namespace CatalogueLibrary.Data
         private string _uploadedFromDirectory;
         private Version _pluginVersion;
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// Where the plugin files were uploaded from
+        /// </summary>
         public string UploadedFromDirectory
         {
             get { return _uploadedFromDirectory; }
             set { SetField(ref  _uploadedFromDirectory, value); }
         }
 
+        /// <summary>
+        /// The master version of the <see cref="Plugin"/> (not the dlls inside - See <see cref="LoadModuleAssembly.DllFileVersion"/>).
+        /// <para>Not currently used</para>
+        /// </summary>
         public Version PluginVersion
         {
             get { return _pluginVersion; }
@@ -42,6 +50,11 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
+        /// <summary>
+        /// Defines a new collection of dlls that provide plugin functionality for RDMP
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="pluginZipFile"></param>
         public Plugin(ICatalogueRepository repository, FileInfo pluginZipFile)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
@@ -79,12 +92,17 @@ namespace CatalogueLibrary.Data
             shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this, shareManager, shareDefinition);
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
         #region Relationships
+
+        /// <summary>
+        /// Gets all the dlls and source code(if available) stored as <see cref="LoadModuleAssembly"/> in the catalogue database
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<LoadModuleAssembly> LoadModuleAssemblies { get
         {
@@ -92,9 +110,20 @@ namespace CatalogueLibrary.Data
         } }
         #endregion
 
+        /// <summary>
+        /// Returns a folder name suitable for storing the dlls for the plugin in as a subdirectory of 
+        /// <paramref name="downloadDirectoryRoot"/>
+        /// </summary>
+        /// <param name="downloadDirectoryRoot"></param>
+        /// <returns></returns>
         public string GetPluginDirectoryName(DirectoryInfo downloadDirectoryRoot)
         {
-            return downloadDirectoryRoot.FullName +"\\"+ Name.Replace(".zip", "");
+            var pluginName = Path.GetFileNameWithoutExtension(Name);
+
+            if(string.IsNullOrWhiteSpace(pluginName))
+                throw new Exception("Plugin doens't have a valid name");
+
+            return Path.Combine(downloadDirectoryRoot.FullName ,pluginName);
         }
     }
 }

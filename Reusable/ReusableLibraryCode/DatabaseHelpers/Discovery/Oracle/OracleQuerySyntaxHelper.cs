@@ -59,7 +59,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         }
 
         /// <summary>
-        /// Always returns null for Oracle since this is handled by <see cref="OracleTableHelper.GetCreateTableSql"/>
+        /// Always returns null for Oracle since this is handled by <see cref="OracleDatabaseHelper.GetCreateTableSql"/>
         /// </summary>
         /// <returns></returns>
         public override string GetAutoIncrementKeywordIfAny()
@@ -71,6 +71,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         public override Dictionary<string, string> GetSQLFunctionsDictionary()
         {
             return new Dictionary<string, string>();
+        }
+
+        public override string HowDoWeAchieveMd5(string selectSql)
+        {
+            throw new NotImplementedException();
         }
 
         public override string DatabaseTableSeparator

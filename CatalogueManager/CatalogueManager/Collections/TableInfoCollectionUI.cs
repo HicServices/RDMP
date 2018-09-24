@@ -135,7 +135,8 @@ namespace CatalogueManager.Collections
             if(e.Object is Catalogue || e.Object is TableInfo) 
                 tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
 
-            tlvTableInfos.RefreshObject(_activator.CoreChildProvider.AllPipelinesNode);
+            if (tlvTableInfos.IndexOf(_activator.CoreChildProvider.AllPipelinesNode) != -1)
+                tlvTableInfos.RefreshObject(_activator.CoreChildProvider.AllPipelinesNode);
         }
         
         public static bool IsRootObject(object root)

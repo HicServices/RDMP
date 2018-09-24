@@ -20,7 +20,11 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataProvider.FromCache
 {
-    [Description("Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be done (e.g. data is cached but not yet loaded).  Cached data is unzipped to the forLoading directory.  The Dispose method (which should be called after the entire DataLoad has completed successfully) will clear out the cached file(s) that were loaded and update the schedule to indicate the successful loading of data")]
+    /// <summary>
+    /// Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be done (e.g. data is cached but not yet loaded).  
+    /// Cached data is unzipped to the forLoading directory.  The Dispose method (which should be called after the entire DataLoad has completed successfully) will clear
+    /// out the cached file(s) that were loaded and update the schedule to indicate the successful loading of data
+    /// </summary>
     public abstract class CachedFileRetriever : ICachedDataProvider
     {
         [DemandsInitialization("The LoadProgress (which must also have a CacheProgress with a valid Caching Pipeline associated with it)",mandatory:true)]

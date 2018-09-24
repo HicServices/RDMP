@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,7 +11,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.Job;
@@ -25,9 +22,11 @@ namespace LoadModules.Generic.FTP
 {
     /// <summary>
     /// load component which downloads files from a remote FTP server to the ForLoading directory
+    /// 
+    /// <para>Checks the HICProjectDirectory for an FTP configuration file (ftp_details.xml).  It then attempts to connect to the FTP server and download all files in the 
+    /// landing folder of the FTP (make sure you really want everything in the root folder - if not then configure redirection on the FTP so you land in the correct directory). 
+    /// Files are downloaded into the ForLoading folder</para>
     /// </summary>
-    [Description(
-        @"Checks the HICProjectDirectory for an FTP configuration file (ftp_details.xml).  It then attempts to connect to the FTP server and download all files in the landing folder of the FTP (make sure you really want everything in the root folder - if not then configure redirection on the FTP so you land in the correct directory).  Files are downloaded into the ForLoading folder")]
     public class FTPDownloader : IPluginDataProvider
     {
         protected string _host;

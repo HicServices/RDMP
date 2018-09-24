@@ -25,15 +25,15 @@ namespace CatalogueLibrary.Data
     /// <para>A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
     /// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]</para>
     /// </summary>
-    public abstract class DatabaseEntity : IRevertable, IDeleteable, INotifyPropertyChanged
+    public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged
     {
-        // Does this need DoNotExtract set?
-        // It was present for the following, but no others: Catalogue, CatalogueItem, CatalogueItemIssue
+        /// <inheritdoc/>
         public int ID { get; set; }
 
         protected bool MaxLengthSet = false;
         private bool _readonly;
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IRepository Repository { get; set; }
 
@@ -68,7 +68,7 @@ namespace CatalogueLibrary.Data
             return false;
         }
 
-        public Uri ParseUrl(DbDataReader r, string fieldName)
+        protected Uri ParseUrl(DbDataReader r, string fieldName)
         {
             object uri = r[fieldName];
 
@@ -78,11 +78,13 @@ namespace CatalogueLibrary.Data
             return new Uri(uri.ToString());
         }
 
+        /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)"/>
         public override int GetHashCode()
         {
             return Repository.GetHashCode(this);
         }
 
+        /// <inheritdoc cref="IRepository.AreEqual(IMapsDirectlyToDatabaseTable,object)"/>
         public override bool Equals(object obj)
         {
             return Repository.AreEqual(this, obj);
@@ -100,16 +102,19 @@ namespace CatalogueLibrary.Data
             Repository.DeleteFromDatabase(this);
         }
 
+        /// <inheritdoc/>
         public virtual void RevertToDatabaseState()
         {
             Repository.RevertToDatabaseState(this);
         }
 
+        /// <inheritdoc/>
         public RevertableObjectReport HasLocalChanges()
         {
             return Repository.HasLocalChanges(this);
         }
 
+        /// <inheritdoc/>
         public bool Exists()
         {
             return Repository.StillExists(this);
@@ -126,7 +131,8 @@ namespace CatalogueLibrary.Data
             if (r[columnName] is DBNull) return null;
             return Convert.ToInt32(r[columnName].ToString());
         }
-        public DateTime? ObjectToNullableDateTime(object o)
+
+        protected DateTime? ObjectToNullableDateTime(object o)
         {
             if (o == null || o == DBNull.Value)
                 return null;
@@ -134,14 +140,14 @@ namespace CatalogueLibrary.Data
             return (DateTime)o;
         }
 
-        public static int? ObjectToNullableInt(object o)
+        protected int? ObjectToNullableInt(object o)
         {
             if (o == null || o == DBNull.Value)
                 return null;
 
             return int.Parse(o.ToString());
         }
-        public static bool? ObjectToNullableBool(object o)
+        protected bool? ObjectToNullableBool(object o)
         {
             if (o == null || o == DBNull.Value)
                 return null;
@@ -149,6 +155,7 @@ namespace CatalogueLibrary.Data
             return Convert.ToBoolean(o);
         }
 
+        /// <inheritdoc cref="IMapsDirectlyToDatabaseTable.PropertyChanged"/>
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -169,6 +176,7 @@ namespace CatalogueLibrary.Data
             return true;
         }
 
+        /// <inheritdoc/>
         public void SetReadOnly()
         {
             _readonly = true;

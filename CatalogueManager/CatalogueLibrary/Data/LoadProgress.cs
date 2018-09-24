@@ -6,15 +6,11 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
-    /// <summary>
-    /// Describes the progress of a long term epic data load operation which cannot be completed in a single Data load bubble (execution of LoadMetadata through the data load engine).
-    /// This entity includes start and end dates for what is trying to be loaded as well as how far through that process progess has been made up to.
-    /// </summary>
-    public class LoadProgress : VersionedDatabaseEntity, ILoadProgress,INamed
+    /// <inheritdoc cref="ILoadProgress"/>
+    public class LoadProgress : VersionedDatabaseEntity, ILoadProgress
     {
         #region Database Properties
         private bool _isDisabled;
@@ -25,36 +21,48 @@ namespace CatalogueLibrary.Data
         private int _loadMetadata_ID;
         private int _defaultNumberOfDaysToLoadEachTime;
 
+        /// <inheritdoc/>
         public bool IsDisabled
         {
             get { return _isDisabled; }
             set { SetField(ref _isDisabled, value); }
         }
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+        /// <inheritdoc/>
         public DateTime? OriginDate
         {
             get { return _originDate; }
             set { SetField(ref _originDate, value); }
         }
+
+        /// <summary>
+        /// Not used
+        /// </summary>
+        [Obsolete("Do not use")]
         public string LoadPeriodicity
         {
             get { return _loadPeriodicity; }
             set { SetField(ref _loadPeriodicity, value); }
         }
+        /// <inheritdoc/>
         public DateTime? DataLoadProgress
         {
             get { return _dataLoadProgress; }
             set { SetField(ref _dataLoadProgress, value); }
         }
+        /// <inheritdoc/>
         public int LoadMetadata_ID
         {
             get { return _loadMetadata_ID; }
             set { SetField(ref _loadMetadata_ID, value); }
         }
+
+        /// <inheritdoc/>
         public int DefaultNumberOfDaysToLoadEachTime
         {
             get { return _defaultNumberOfDaysToLoadEachTime; }
@@ -63,9 +71,11 @@ namespace CatalogueLibrary.Data
 
         #endregion
         #region Relationships
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ILoadMetadata LoadMetadata { get { return Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID); }}
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ICacheProgress CacheProgress
         {
@@ -76,6 +86,7 @@ namespace CatalogueLibrary.Data
         }
 #endregion
 
+        /// <inheritdoc cref="ILoadProgress"/>
         public LoadProgress(ICatalogueRepository repository, LoadMetadata parent)
         {
             repository.InsertAndHydrate(this,  
@@ -98,16 +109,7 @@ namespace CatalogueLibrary.Data
             DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(r["DefaultNumberOfDaysToLoadEachTime"]);
         }
         
-        public TimeSpan GetLoadPeriodicity()
-        {
-            return TimeSpan.Parse(LoadPeriodicity);
-        }
-
-        public void SetLoadPeriodicity(TimeSpan period)
-        {
-            LoadPeriodicity = period.ToString();
-        }
-
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name + " ID=" + ID;

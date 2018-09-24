@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Checks;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
 using NUnit.Framework;
+using RDMPStartup;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
@@ -45,6 +49,33 @@ namespace CatalogueLibraryTests.Integration
             m.Check(new ThrowImmediatelyCheckNotifier());
 
         }
+
+        [Test]
+        public void FileDuplication()
+        {
+            var badDir = new DirectoryInfo("Bad");
+
+            if(badDir.Exists)
+                badDir.Delete(true);
+            
+            badDir.Create();
+
+            var dllToCopy = new FileInfo("LoadModules.Generic.dll");
+
+            File.Copy(dllToCopy.FullName, Path.Combine(badDir.FullName,"LoadModules.Generic.dll"));
+
+            var tomem = new ToMemoryCheckNotifier();
+
+            new SafeDirectoryCatalog(tomem, Environment.CurrentDirectory);
+            var warnings  = tomem.Messages.Where(m => m.Result == CheckResult.Warning).ToArray();
+
+            Assert.GreaterOrEqual(warnings.Count(m => m.Message.StartsWith("Found 2 copies of")), 1);
+            
+
+            badDir.Delete(true);
+
+        }
+
 
 
     }

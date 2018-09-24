@@ -43,11 +43,16 @@ namespace CatalogueLibrary.Data
             _encryptedString = new FakeEncryptedString();
         }
 
+        /// <summary>
+        /// Prepares the object for decrypting/encrypting passwords based on the <see cref="PasswordEncryptionKeyLocation"/>
+        /// </summary>
+        /// <param name="repository"></param>
         public EncryptedPasswordHost(ICatalogueRepository repository)
         {
             _encryptedString = new EncryptedString(repository);
         }
 
+        /// <inheritdoc/>
         public string Password
         {
             get
@@ -60,6 +65,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
             return _encryptedString.GetDecryptedValue();

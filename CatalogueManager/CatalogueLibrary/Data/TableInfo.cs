@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.DataLoad.Extensions;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
@@ -54,36 +55,53 @@ namespace CatalogueLibrary.Data
         private bool _isPrimaryExtractionTable;
         private int? _identifierDumpServer_ID;
         private bool _isTableValuedFunction;
-
+        
+        /// <summary>
+        /// Fully specified table name
+        /// </summary>
         [Sql]
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+
+        /// <inheritdoc/>
         public DatabaseType DatabaseType
         {
             get { return _databaseType; }
             set { SetField(ref _databaseType, value); }
         }
+
+        /// <inheritdoc/>
         public string Server
         {
             get { return _server; }
             set { SetField(ref _server, value); }
         }
 
+        /// <inheritdoc/>
         [Sql]
         public string Database
         {
             get { return _database; }
             set { SetField(ref _database, value); }
         }
+
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        [Obsolete("Not used for anything")]
         public string State
         {
             get { return _state; }
             set { SetField(ref _state, value); }
         }
 
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        [Obsolete("Not used for anything")]
         [DoNotExtractProperty]
         public string ValidationXml
         {
@@ -103,11 +121,20 @@ namespace CatalogueLibrary.Data
             get { return _isPrimaryExtractionTable; }
             set { SetField(ref _isPrimaryExtractionTable, value); }
         }
+
+        /// <summary>
+        /// The server that stores <see cref="PreLoadDiscardedColumn"/> values which do not make it to LIVE during a data load e.g. because they contain identifiable data that
+        /// must be split off (e.g. <see cref="DiscardedColumnDestination.StoreInIdentifiersDump"/>).
+        /// </summary>
         public int? IdentifierDumpServer_ID
         {
             get { return _identifierDumpServer_ID; }
             set { SetField(ref _identifierDumpServer_ID, value); }
         }
+
+        /// <summary>
+        /// True if the table referenced is an sql server table valued function (which probably takes parameters)
+        /// </summary>
         public bool IsTableValuedFunction
         {
             get { return _isTableValuedFunction; }
@@ -132,6 +159,13 @@ namespace CatalogueLibrary.Data
             return _knownColumnInfos.Value;
         }}
 
+        /// <summary>
+        /// Gets all the <see cref="PreLoadDiscardedColumn"/> declared against this table reference.  These are virtual columns which 
+        /// do not exist in the LIVE table schema (Unless <see cref="DiscardedColumnDestination.Dilute"/>) but which appear in the RAW 
+        /// stage of the data load.  
+        /// 
+        /// <para>See <see cref="PreLoadDiscardedColumn"/> for more information</para>
+        /// </summary>
         [NoMappingToDatabase]
         public PreLoadDiscardedColumn[] PreLoadDiscardedColumns { get
         {
@@ -149,6 +183,12 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
+        /// <summary>
+        /// Defines a new table reference in the platform database <paramref name="repository"/>.  
+        /// <para>Usually you should use <see cref="TableInfoImporter"/> instead</para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
         public TableInfo(ICatalogueRepository repository, string name)
         {
             _catalogueRepository = repository;
@@ -187,21 +227,23 @@ namespace CatalogueLibrary.Data
             ClearAllInjections();
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
-        public override int GetHashCode()
-        {
-            return ID.GetHashCode();
-        }
-
+        /// <inheritdoc/>
         public ISqlParameter[] GetAllParameters()
         {
             return _catalogueRepository.GetAllParametersForParentTable(this).ToArray();
         }
 
+        /// <summary>
+        /// Sorts two <see cref="TableInfo"/> alphabetically
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public int CompareTo(object obj)
         {
             if (obj is TableInfo)
@@ -212,21 +254,35 @@ namespace CatalogueLibrary.Data
             throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
         }
 
+
+        /// <inheritdoc/>
         public string GetRuntimeName()
         {
             return GetQuerySyntaxHelper().GetRuntimeName(Name);
         }
 
+        /// <inheritdoc/>
         public string GetFullyQualifiedName()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Returns <see cref="Database"/> trimmed of any database qualifiers (e.g. square brackets)
+        /// </summary>
+        /// <returns></returns>
         public string GetDatabaseRuntimeName()
         {
             return Database.Trim(QuerySyntaxHelper.TableNameQualifiers);
         }
 
+
+        /// <summary>
+        /// Returns the <see cref="Database"/> name at the given <paramref name="loadStage"/> of a DLE run (RAW=>STAGING=>LIVE)
+        /// </summary>
+        /// <param name="loadStage"></param>
+        /// <param name="namer"></param>
+        /// <returns></returns>
         public string GetDatabaseRuntimeName(LoadStage loadStage,INameDatabasesAndTablesDuringLoads namer = null)
         {
             var baseName = GetDatabaseRuntimeName();
@@ -237,12 +293,7 @@ namespace CatalogueLibrary.Data
             return namer.GetDatabaseName(baseName, loadStage.ToLoadBubble());
         }
 
-        /// <summary>
-        /// Get the runtime name of the table for a particular load stage, as the table name may be modified depending on the stage.
-        /// </summary>
-        /// <param name="bubble"></param>
-        /// <param name="tableNamingScheme"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public string GetRuntimeName(LoadBubble bubble, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
         {
             // If no naming scheme is specified, the default 'FixedStaging...' prepends the database name and appends '_STAGING'
@@ -254,24 +305,28 @@ namespace CatalogueLibrary.Data
             return tableNamingScheme.GetName(baseName, bubble);
         }
 
+        /// <inheritdoc/>
         public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
         {
             return GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
         }
         
-        IDataAccessCredentials IDataAccessPoint.GetCredentialsIfExists(DataAccessContext context)
+        /// <inheritdoc/>
+        public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
         {
-            return GetCredentialsIfExists(context);
-        }
-
-        public DataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-        { 
-            if(context == DataAccessContext.Any)
+            if (context == DataAccessContext.Any)
                 throw new Exception("You cannot ask for any credentials, you must supply a usage context.");
 
             return _catalogueRepository.TableInfoToCredentialsLinker.GetCredentialsIfExistsFor(this, context);
         }
 
+        /// <summary>
+        /// Declares that the given <paramref name="credentials"/> should be used to access the data table referenced by this 
+        /// <see cref="TableInfo"/> under the given <see cref="DataAccessContext"/> (loading data etc).
+        /// </summary>
+        /// <param name="credentials">Credentials to use (username / encrypted password)</param>
+        /// <param name="context">When the credentials can be used (Use Any for any case)</param>
+        /// <param name="allowOverwritting">False will throw if there is already credentials declared for the table/context</param>
         public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context, bool allowOverwritting = false)
         {
             var existingCredentials = _catalogueRepository.TableInfoToCredentialsLinker.GetCredentialsIfExistsFor(this, context);
@@ -299,6 +354,7 @@ namespace CatalogueLibrary.Data
             _catalogueRepository.TableInfoToCredentialsLinker.CreateLinkBetween(credentials, this, context);
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return 
@@ -307,13 +363,18 @@ namespace CatalogueLibrary.Data
                 .Cast<IHasDependencies>()
                 .ToArray();
         }
-
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return ColumnInfos.ToArray();
         }
 
 
+        /// <summary>
+        /// Checks that the table referenced exists on the database server and that it's properties and <see cref="ColumnInfo"/> etc are synchronized with the live
+        /// table as it exists on the server.
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             if (IsLookupTable())
@@ -331,6 +392,10 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// True if the <see cref="TableInfo"/> has <see cref="Lookup"/> relationships declared which make it a linkable lookup table in queries.
+        /// </summary>
+        /// <returns></returns>
         public bool IsLookupTable()
         {
             return _knownIsLookup.Value;
@@ -369,6 +434,11 @@ select 0", con.Connection, con.Transaction);
 
         }
 
+        /// <summary>
+        /// Returns all column names for the given <see cref="LoadStage"/> (RAW=>STAGING=>LIVE) of a data load
+        /// </summary>
+        /// <param name="loadStage"></param>
+        /// <returns></returns>
         public IEnumerable<IHasStageSpecificRuntimeName> GetColumnsAtStage(LoadStage loadStage)
         {
             //if it is AdjustRaw then it will also have the pre load discarded columns
@@ -390,16 +460,19 @@ select 0", con.Connection, con.Transaction);
                     yield return c;
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return new QuerySyntaxHelperFactory().Create(DatabaseType);
         }
 
+        /// <inheritdoc/>
         public void InjectKnown(ColumnInfo[] instance)
         {
             _knownColumnInfos = new Lazy<ColumnInfo[]>(() => instance);
         }
 
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _knownColumnInfos = new Lazy<ColumnInfo[]>(FetchColumnInfos);
@@ -411,6 +484,13 @@ select 0", con.Connection, con.Transaction);
             return Repository.GetAllObjectsWithParent<ColumnInfo>(this);
         }
 
+        /// <summary>
+        /// Creates an object for interacting with the table as it exists on the live server referenced by this <see cref="TableInfo"/>
+        /// <para>This will not throw if the table doesn't exist, instead you should use <see cref="DiscoveredTable.Exists"/> on the
+        /// returned value</para>
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public DiscoveredTable Discover(DataAccessContext context)
         {
             var db = DataAccessPortal.GetInstance().ExpectDatabase(this, context);

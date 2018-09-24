@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.AggregationUIs.Advanced.Options;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;

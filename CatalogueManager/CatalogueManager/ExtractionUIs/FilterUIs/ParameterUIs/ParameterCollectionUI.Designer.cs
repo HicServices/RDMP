@@ -41,9 +41,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvOwner = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.parameterEditorScintillaControl1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterEditorScintillaControl();
             this.btnOverride = new System.Windows.Forms.Button();
             this.lblUseCase = new System.Windows.Forms.Label();
-            this.parameterEditorScintillaControl1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterEditorScintillaControl();
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -99,7 +99,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             // 
             // olvParameterName
             // 
-            this.olvParameterName.AspectName = "ParameterName";
+            this.olvParameterName.AspectName = "";
             this.olvParameterName.IsEditable = false;
             this.olvParameterName.Text = "ParameterName";
             this.olvParameterName.Width = 150;
@@ -164,6 +164,15 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.splitContainer1.SplitterDistance = 421;
             this.splitContainer1.TabIndex = 13;
             // 
+            // parameterEditorScintillaControl1
+            // 
+            this.parameterEditorScintillaControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.parameterEditorScintillaControl1.Location = new System.Drawing.Point(0, 0);
+            this.parameterEditorScintillaControl1.Name = "parameterEditorScintillaControl1";
+            this.parameterEditorScintillaControl1.Options = null;
+            this.parameterEditorScintillaControl1.Size = new System.Drawing.Size(419, 522);
+            this.parameterEditorScintillaControl1.TabIndex = 0;
+            // 
             // btnOverride
             // 
             this.btnOverride.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -185,15 +194,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.lblUseCase.Size = new System.Drawing.Size(1268, 74);
             this.lblUseCase.TabIndex = 14;
             this.lblUseCase.Text = "Use Case:";
-            // 
-            // parameterEditorScintillaControl1
-            // 
-            this.parameterEditorScintillaControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.parameterEditorScintillaControl1.Location = new System.Drawing.Point(0, 0);
-            this.parameterEditorScintillaControl1.Name = "parameterEditorScintillaControl1";
-            this.parameterEditorScintillaControl1.Options = null;
-            this.parameterEditorScintillaControl1.Size = new System.Drawing.Size(419, 522);
-            this.parameterEditorScintillaControl1.TabIndex = 0;
             // 
             // ParameterCollectionUI
             // 

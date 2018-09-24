@@ -24,6 +24,9 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class SupportingSQLTable : VersionedDatabaseEntity,INamed
     {
+        /// <summary>
+        /// The subfolder of extractions in which to put <see cref="Extractable"/> <see cref="SupportingSQLTable"/> when doing project extractions
+        /// </summary>
         public const string ExtractionFolderName = "SupportingDataTables";
 
         #region Database Properties
@@ -36,41 +39,71 @@ namespace CatalogueLibrary.Data
         private string _ticket;
         private bool _isGlobal;
 
+        /// <summary>
+        /// The dataset the <see cref="SupportingSQLTable"/> helps you to understand
+        /// </summary>
         public int Catalogue_ID
         {
             get { return _catalogue_ID; }
             set { SetField(ref _catalogue_ID, value); }
         }
+
+        /// <summary>
+        /// Human readable description of what the table referenced by <see cref="SQL"/> contains
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { SetField(ref _description, value); }
         }
+
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+
+        /// <summary>
+        /// Sql to execute on the server to return the supplemental table that helps with understanding/interpreting <see cref="Catalogue_ID"/>
+        /// </summary>
         public string SQL
         {
             get { return _sQL; }
             set { SetField(ref _sQL, value); }
         }
+
+        /// <summary>
+        /// If true then the table should be copied to the output directory of project extractions that include the <see cref="Catalogue_ID"/>.
+        /// </summary>
         public bool Extractable
         {
             get { return _extractable; }
             set { SetField(ref _extractable, value); }
         }
+
+        /// <summary>
+        /// The server on which the <see cref="SQL"/> should be executed on
+        /// </summary>
         public int? ExternalDatabaseServer_ID
         {
             get { return _externalDatabaseServer_ID; }
             set { SetField(ref _externalDatabaseServer_ID, value); }
         }
+
+        /// <summary>
+        /// <see cref="CatalogueLibrary.Ticketing.ITicketingSystem"/> identifier of a ticket for logging time curating / updating etc the table
+        /// </summary>
         public string Ticket
         {
             get { return _ticket; }
             set { SetField(ref _ticket, value); }
         }
+
+        /// <summary>
+        /// If <see cref="Extractable"/>  and <see cref="IsGlobal"/> then the table will be copied to the ouptut directory of all project extractions
+        /// regardless of whether or not the <see cref="Catalogue_ID"/> dataset is included in the extraction
+        /// </summary>
         public bool IsGlobal
         {
             get { return _isGlobal; }
@@ -95,6 +128,12 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
+        /// <summary>
+        /// Defines a new table that helps in understanding the given dataset <paramref name="parent"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parent"></param>
+        /// <param name="name"></param>
         public SupportingSQLTable(ICatalogueRepository repository, Catalogue parent, string name)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -122,6 +161,7 @@ namespace CatalogueLibrary.Data
             Ticket = r["Ticket"] as string;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
@@ -142,14 +182,39 @@ namespace CatalogueLibrary.Data
         }
     }
 
+    /// <summary>
+    /// Identifies which collection of extractable resources should be returned from the database
+    /// </summary>
     public enum FetchOptions
     {
+        /// <summary>
+        /// All resources
+        /// </summary>
         AllGlobalsAndAllLocals,
+
+        /// <summary>
+        /// Global resources only
+        /// </summary>
         AllGlobals,
+
+        /// <summary>
+        /// Non Global resources only
+        /// </summary>
         AllLocals,
 
+        /// <summary>
+        /// Global resources only AND only if they are marked Extractable
+        /// </summary>
         ExtractableGlobals,
+
+        /// <summary>
+        /// Non Global resources only AND only if they are marked Extractable
+        /// </summary>
         ExtractableLocals,
+
+        /// <summary>
+        /// All resources that are marked Extractable
+        /// </summary>
         ExtractableGlobalsAndLocals
     }
 }

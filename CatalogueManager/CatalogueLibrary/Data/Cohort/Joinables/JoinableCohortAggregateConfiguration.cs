@@ -104,7 +104,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
         }
 
         /// <summary>
-        /// Mandates that the passed <see cref="AggregateConfiguration"/> should join with this patient index table at query generation time.  The <see cref="user"/> must 
+        /// Mandates that the passed <see cref="AggregateConfiguration"/> should join with this patient index table at query generation time.  The <paramref name="user"/> must 
         /// be part of the same <see cref="CohortIdentificationConfiguration"/> as the patient index table (<see cref="CohortIdentificationConfiguration_ID"/>)
         /// </summary>
         /// <param name="user"></param>

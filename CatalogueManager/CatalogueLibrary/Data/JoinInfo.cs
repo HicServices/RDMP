@@ -68,27 +68,38 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class JoinInfo : IDeleteable, IJoin,IHasDependencies
     {
+        /// <summary>
+        /// The catalogue repository database in which the joins are stored
+        /// </summary>
         public IRepository Repository { get; set; }
-        //raw values read from database
+
+        /// <inheritdoc cref="IJoin.ForeignKey"/>
         public int ForeignKey_ID { get; private set; }
+
+        /// <inheritdoc cref="IJoin.PrimaryKey"/>
         public int PrimaryKey_ID { get; private set; }
 
         //cached answer
         private ColumnInfo _foreignKey;
         private ColumnInfo _primaryKey;
 
-        //properties for retrieving cached answers
+        
+        /// <inheritdoc/>
         public ColumnInfo ForeignKey
         {
             get { return _foreignKey ?? (_foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID)); }
         }
 
+        /// <inheritdoc/>
         public ColumnInfo PrimaryKey
         {
             get { return _primaryKey ?? (_primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID)); }
         }
 
+        /// <inheritdoc/>
         public string Collation { get; set; }
+
+        /// <inheritdoc/>
         public ExtractionJoinType ExtractionJoinType { get; set; }
 
         /// <summary>
@@ -115,11 +126,13 @@ namespace CatalogueLibrary.Data
                 throw new Exception("Join key 1 and 2 are the same, lookup is broken");
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return " " + ForeignKey.Name + " = " + PrimaryKey.Name;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -130,6 +143,7 @@ namespace CatalogueLibrary.Data
 
         #region Database specific stuff for this table only
         
+        /// <inheritdoc/>
         public void DeleteInDatabase()
         {
             using(var con = ((CatalogueRepository)Repository).GetConnection())
@@ -159,6 +173,7 @@ namespace CatalogueLibrary.Data
             return Equals(ForeignKey.ID, other.ForeignKey.ID) && Equals(PrimaryKey.ID, other.PrimaryKey.ID) && ExtractionJoinType == other.ExtractionJoinType;
         }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             unchecked
@@ -173,6 +188,11 @@ namespace CatalogueLibrary.Data
          
         private List<JoinInfo> _queryTimeComboJoins = new List<JoinInfo>();
         
+        /// <summary>
+        /// Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of
+        /// which have to appear on the SQL ON section of the query
+        /// </summary>
+        /// <param name="availableJoin"></param>
         public void AddQueryBuildingTimeComboJoinDiscovery(JoinInfo availableJoin)
         {
             if(availableJoin.Equals(this))
@@ -182,6 +202,7 @@ namespace CatalogueLibrary.Data
                 _queryTimeComboJoins.Add(availableJoin);
         }
 
+        /// <inheritdoc/>
         public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
         {
             //Supplemental Joins are not currently supported by JoinInfo, only Lookups
@@ -193,6 +214,7 @@ namespace CatalogueLibrary.Data
             });
         }
 
+        /// <inheritdoc/>
         public ExtractionJoinType GetInvertedJoinType()
         {
             switch (ExtractionJoinType)
@@ -208,11 +230,23 @@ namespace CatalogueLibrary.Data
 
         private class QueryTimeComboJoin :ISupplementalJoin
         {
+            /// <inheritdoc cref="IJoin.ForeignKey"/>
             public ColumnInfo ForeignKey { get; set; }
+
+            /// <inheritdoc cref="IJoin.PrimaryKey"/>
             public ColumnInfo PrimaryKey { get; set; }
+
+            /// <inheritdoc cref="IJoin.Collation"/>
             public string Collation { get; set; }
         }
 
+
+        /// <summary>
+        /// Tells the the <see cref="JoinInfo"/> what the objects are referenced by <see cref="PrimaryKey_ID"/> and <see cref="ForeignKey_ID"/>
+        /// so that it doesn't have to fetch them from the database.
+        /// </summary>
+        /// <param name="primaryKey"></param>
+        /// <param name="foreignKey"></param>
         public void SetKnownColumns(ColumnInfo primaryKey, ColumnInfo foreignKey)
         {
             if (PrimaryKey_ID != primaryKey.ID || ForeignKey_ID != foreignKey.ID)
@@ -222,11 +256,13 @@ namespace CatalogueLibrary.Data
             _foreignKey = foreignKey;
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new[] {PrimaryKey, ForeignKey};
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];

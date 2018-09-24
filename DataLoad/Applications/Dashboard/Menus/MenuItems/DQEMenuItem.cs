@@ -43,7 +43,7 @@ namespace Dashboard.Menus.MenuItems
             {
                 Exception ex;
 
-                if (!dqeServer.RespondsWithinTime(5, DataAccessContext.InternalDataProcessing, out ex))
+                if (!dqeServer.Discover(DataAccessContext.InternalDataProcessing).Server.RespondsWithinTime(5, out ex))
                 {
                     DropDownItems.Add(new ToolStripMenuItem("Data Quality Engine Server Broken!", _activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Problem), (s, e) => ExceptionViewer.Show(ex)));
                     return;

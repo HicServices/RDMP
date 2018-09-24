@@ -17,7 +17,7 @@ namespace CatalogueLibrary.Data.PerformanceImprovement
     /// 
     /// <para>This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the method on IContainer directly (which goes back to the database).</para>
     /// </summary>
-    public class CohortHierarchy
+    class CohortHierarchy
     {
         private readonly CatalogueChildProvider _childProvider;
         public CohortAggregateContainer[] AllContainers { get; private set; }

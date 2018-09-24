@@ -115,7 +115,7 @@ namespace Diagnostics.TestData.Relational
 
             foreach (TableInfo info in forCleanupTableInfos)
             {
-                var credentials = info.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+                var credentials = (DataAccessCredentials)info.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
 
                 info.DeleteInDatabase();
 

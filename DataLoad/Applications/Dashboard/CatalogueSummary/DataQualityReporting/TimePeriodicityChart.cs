@@ -259,7 +259,7 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting
             annotating = true;
             btnAnnotator.Enabled = false;
             btnPointer.Enabled = true;
-            this.Cursor = new Cursor(Application.StartupPath + "\\Pencil.cur");
+            this.Cursor = Cursors.Cross;
         }
 
         private void btnPointer_Click(object sender, EventArgs e)

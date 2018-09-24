@@ -25,6 +25,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
             
             //The factory will return this value
             var constructed = MockRepository.GenerateStub<IFilter>();
+            constructed.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
 
             //The factory Mock
             var factory = MockRepository.GenerateStrictMock<IFilterFactory>();
@@ -55,6 +56,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
 
             //The factory will return this value
             var constructed = MockRepository.GenerateStub<IFilter>();
+            constructed.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
 
             //The factory Mock
             var factory = MockRepository.GenerateStrictMock<IFilterFactory>();
@@ -102,6 +104,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
 
             //The existing parameter declared on the filter we are cloning
             var masterParameter = MockRepository.GenerateStub<ISqlParameter>();
+            masterParameter.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             masterParameter.Stub(p => p.ParameterName).Return("@hall");
             masterParameter.Comment = "SomeComment";
             masterParameter.Value = "500";
@@ -113,6 +116,7 @@ namespace CatalogueLibraryTests.Integration.FilterImportingTests
 
             //The return values for our Mock factory
             var constructed = MockRepository.GenerateStub<IFilter>();
+            constructed.Stub(x => x.GetQuerySyntaxHelper()).Return(new MicrosoftQuerySyntaxHelper());
             var constructedParameter = MockRepository.GenerateStub<ISqlParameter>();
             constructedParameter.ParameterSQL = "DECLARE @hall AS int";
 

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
@@ -48,7 +49,7 @@ namespace DataLoadEngine.Checks.Checkers
 
         public void Check(ICheckNotifier notifier)
         {
-            foreach (ProcessTask processTask in _loadMetadata.GetAllProcessTasks(false))
+            foreach (ProcessTask processTask in _loadMetadata.ProcessTasks.Where(pt=>!pt.IsDisabled))
                 Check(processTask, notifier);
         }
     }

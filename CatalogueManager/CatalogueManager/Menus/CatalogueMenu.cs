@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using ReusableLibraryCode.Checks;
-using ReusableUIComponents.ChecksUI;
 using CatalogueLibrary.Data;
 
 namespace CatalogueManager.Menus
@@ -21,7 +18,7 @@ namespace CatalogueManager.Menus
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
 
-            Items.Add("View Checks", CatalogueIcons.TinyYellow, (s, e) => PopupChecks(catalogue));
+            Add(new ExecuteCommandCheck(_activator,catalogue));
 
             Items.Add(new ToolStripSeparator());
 
@@ -58,13 +55,6 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator));
             Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true));
             Add(new ExecuteCommandCreateNewEmptyCatalogue(_activator));
-        }
-
-        
-        public void PopupChecks(ICheckable checkable)
-        {
-            var popupChecksUI = new PopupChecksUI("Checking " + checkable, false);
-            popupChecksUI.StartChecking(checkable);
         }
     }
 }

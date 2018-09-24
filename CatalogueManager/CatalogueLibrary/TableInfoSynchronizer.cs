@@ -90,7 +90,7 @@ namespace CatalogueLibrary
             ColumnInfo[] catalogueColumns = _tableToSync.ColumnInfos.ToArray();
 
 
-            DataAccessCredentials credentialsIfExists = _tableToSync.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            IDataAccessCredentials credentialsIfExists = _tableToSync.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             string pwd = null;
             string usr = null;
             if (credentialsIfExists != null)

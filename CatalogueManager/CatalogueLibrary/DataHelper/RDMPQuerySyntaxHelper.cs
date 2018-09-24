@@ -23,33 +23,14 @@ namespace CatalogueLibrary.DataHelper
 
         public static readonly string ParameterSQLRegex_Pattern = "(@[A-Za-z0-9_]*)\\s?";
         public static Regex ParameterSQLRegex = new Regex(ParameterSQLRegex_Pattern);
-        
-        /// <summary>
-        /// Looks for @something within the line of SQL and returns @something (including the @ symbol)
-        /// </summary>
-        /// <param name="parameterSQL"></param>
-        /// <returns></returns>
-        public static string GetParameterNameFromDeclarationSQL(string parameterSQL)
-        {
 
-            if (!ParameterSQLRegex.IsMatch(parameterSQL))
-                    throw new Exception("ParameterSQL does not match regex pattern:" + ParameterSQLRegex);
-
-            return ParameterSQLRegex.Match(parameterSQL).Value.Trim();
-        }
-
-        public static bool IsValidParameterName(string parameterSQL)
-        {
-            return ParameterSQLRegex.IsMatch(parameterSQL);
-        }
-        
-       private const string IsScalarValuedFunctionRegex = @"\(.*\)";
+        private const string IsScalarValuedFunctionRegex = @"\(.*\)";
 
         public static string GetRuntimeName(IColumn column)
         {
             if (!String.IsNullOrWhiteSpace(column.Alias))
                 return _syntaxHelper.GetRuntimeName(column.Alias);
-            
+
             if (!String.IsNullOrWhiteSpace(column.SelectSQL))
                 if (Regex.IsMatch(column.SelectSQL, IsScalarValuedFunctionRegex))
                     throw new SyntaxErrorException("The IExtractableColumn.SelectSQL value \"" + column.SelectSQL + "\" looks like a ScalarValuedFunction but it is missing an Alias.  Add an Alias so that it has a runtime name.");
@@ -65,22 +46,22 @@ namespace CatalogueLibrary.DataHelper
         public static void CheckSyntax(IColumn col)
         {
             string regexIsWrapped = @"^[\[`].*[\]`]$";
-            char[] invalidColumnValues = new[] {',', '[', ']','`','.'};
-            char[] whiteSpace = new[] {' ','\t','\n','\r'};
+            char[] invalidColumnValues = new[] { ',', '[', ']', '`', '.' };
+            char[] whiteSpace = new[] { ' ', '\t', '\n', '\r' };
 
-            char[] openingCharacters = new[] {'[','('};
-            char[] closingCharacters = new[] {']',')'};
+            char[] openingCharacters = new[] { '[', '(' };
+            char[] closingCharacters = new[] { ']', ')' };
 
             //it has an alias
             if (!String.IsNullOrWhiteSpace(col.Alias))
                 if (!Regex.IsMatch(col.Alias, regexIsWrapped)) //alias is NOT wrapped
-                    if(col.Alias.Any(invalidColumnValues.Contains)) //there are invalid characters
-                        throw new SyntaxErrorException("Invalid characters found in Alias \""+col.Alias+"\"");
+                    if (col.Alias.Any(invalidColumnValues.Contains)) //there are invalid characters
+                        throw new SyntaxErrorException("Invalid characters found in Alias \"" + col.Alias + "\"");
                     else
-                    if(col.Alias.Any(whiteSpace.Contains))
-                        throw new SyntaxErrorException("Whitespace found in unwrapped Alias \"" + col.Alias + "\"");
+                        if (col.Alias.Any(whiteSpace.Contains))
+                            throw new SyntaxErrorException("Whitespace found in unwrapped Alias \"" + col.Alias + "\"");
 
-            ParityCheckCharacterPairs(openingCharacters, closingCharacters,col.SelectSQL);
+            ParityCheckCharacterPairs(openingCharacters, closingCharacters, col.SelectSQL);
         }
 
         /// <summary>
@@ -95,11 +76,11 @@ namespace CatalogueLibrary.DataHelper
             //it has select sql
             if (!String.IsNullOrWhiteSpace(sql))
                 for (int i = 0; i < openingCharacters.Length; i++)
-                    if(openingCharacters[i] == closingCharacters[i]) //if the opening and closing characters are the same character then there should be an even number of them
+                    if (openingCharacters[i] == closingCharacters[i]) //if the opening and closing characters are the same character then there should be an even number of them
                     {
                         //if it is not an even number of them
-                        if(sql.Count(c => c == openingCharacters[i])%2 == 1)
-                            throw new SyntaxErrorException("Number of instances of character " + openingCharacters[i] + " are not even (method was informed that this character is both an opening and closing character)");       
+                        if (sql.Count(c => c == openingCharacters[i]) % 2 == 1)
+                            throw new SyntaxErrorException("Number of instances of character " + openingCharacters[i] + " are not even (method was informed that this character is both an opening and closing character)");
                     }
                     else //opening and closing characters are different e.g. '('  and ')', there should be the same number of each of them
                         if (sql.Count(c => c == openingCharacters[i]) != sql.Count(c => c == closingCharacters[i]))
@@ -110,16 +91,16 @@ namespace CatalogueLibrary.DataHelper
         {
             try
             {
-                ParityCheckCharacterPairs(new []{'(','['},new []{')',']'},filter.WhereSQL);
+                ParityCheckCharacterPairs(new[] { '(', '[' }, new[] { ')', ']' }, filter.WhereSQL);
             }
             catch (SyntaxErrorException exception)
             {
-                throw new SyntaxErrorException("Failed to validate the bracket parity of filter " + filter,exception);
+                throw new SyntaxErrorException("Failed to validate the bracket parity of filter " + filter, exception);
             }
 
-            foreach(ISqlParameter parameter in filter.GetAllParameters())
+            foreach (ISqlParameter parameter in filter.GetAllParameters())
                 CheckSyntax(parameter);
-       }
+        }
 
         public static void CheckSyntax(ISqlParameter parameter)
         {
@@ -137,9 +118,9 @@ namespace CatalogueLibrary.DataHelper
                 {
                     int userSpecifiedLength = Int32.Parse(matchLength.Value.Substring(1, matchLength.Value.Length - 2));
                     int actualLength = matchValue.Value.Trim().Length - 2;
-                    
+
                     if (actualLength > userSpecifiedLength)
-                        throw new SyntaxErrorException("You created a parameter of length " + userSpecifiedLength + " ("+parameter.ParameterName+") but then put a value in it that is " + actualLength + " characters long, the parameter with the problem was:" + parameter.ParameterName);
+                        throw new SyntaxErrorException("You created a parameter of length " + userSpecifiedLength + " (" + parameter.ParameterName + ") but then put a value in it that is " + actualLength + " characters long, the parameter with the problem was:" + parameter.ParameterName);
                 }
             }
 
@@ -148,7 +129,7 @@ namespace CatalogueLibrary.DataHelper
 
             try
             {
-                ParityCheckCharacterPairs(new[] { '(', '[' ,'\''}, new[] { ')', ']','\'' }, parameter.ParameterSQL);
+                ParityCheckCharacterPairs(new[] { '(', '[', '\'' }, new[] { ')', ']', '\'' }, parameter.ParameterSQL);
                 ParityCheckCharacterPairs(new[] { '(', '[', '\'' }, new[] { ')', ']', '\'' }, parameter.Value);
             }
             catch (SyntaxErrorException exception)
@@ -157,7 +138,7 @@ namespace CatalogueLibrary.DataHelper
             }
         }
 
-        public static string EnsureValueIsWrapped(string s, DatabaseType type= DatabaseType.MicrosoftSQLServer)
+        public static string EnsureValueIsWrapped(string s, DatabaseType type = DatabaseType.MicrosoftSQLServer)
         {
             if (type == DatabaseType.MicrosoftSQLServer)
             {
@@ -182,9 +163,9 @@ namespace CatalogueLibrary.DataHelper
             if (s == null)
                 return null;
 
-            string toReturn =  s.Trim(new char[] {'[', ']', '`'});
-            
-            if(
+            string toReturn = s.Trim(new char[] { '[', ']', '`' });
+
+            if (
                 toReturn.Contains("[") ||
                 toReturn.Contains("]") ||
                 toReturn.Contains("'"))
@@ -227,44 +208,44 @@ namespace CatalogueLibrary.DataHelper
 
         public static ValueType GetDataType(string dataType)
         {
-            if(
+            if (
                 dataType.StartsWith("decimal") ||
                 dataType.StartsWith("float") ||
-                dataType.Equals("bigint")||
-                dataType.Equals("bit")||
-                dataType.Contains("decimal")||
-                dataType.Equals("int")||
-                dataType.Equals("money")||
-                dataType.Contains("numeric")||
-                dataType.Equals("smallint")||
-                dataType.Equals("smallmoney")||
-                dataType.Equals("smallint")||
-                dataType.Equals("tinyint")||
-                dataType.Equals("real")) 
-                    return ValueType.Numeric;
+                dataType.Equals("bigint") ||
+                dataType.Equals("bit") ||
+                dataType.Contains("decimal") ||
+                dataType.Equals("int") ||
+                dataType.Equals("money") ||
+                dataType.Contains("numeric") ||
+                dataType.Equals("smallint") ||
+                dataType.Equals("smallmoney") ||
+                dataType.Equals("smallint") ||
+                dataType.Equals("tinyint") ||
+                dataType.Equals("real"))
+                return ValueType.Numeric;
 
-            if(dataType.Contains("date"))
+            if (dataType.Contains("date"))
                 return ValueType.DateTime;
-            
+
             if (dataType.Contains("time"))
                 return ValueType.Time;
 
-            if(dataType.Contains("char") || dataType.Contains("text"))
+            if (dataType.Contains("char") || dataType.Contains("text"))
                 return ValueType.CharacterString;
 
-            if (dataType.Contains("binary")||dataType.Contains("image"))
+            if (dataType.Contains("binary") || dataType.Contains("image"))
                 return ValueType.Binary;
 
-            if (dataType.Equals("cursor")||
-                dataType.Contains("timestamp")||
-                dataType.Contains("hierarchyid")||
-                dataType.Contains("uniqueidentifier")||
-                dataType.Contains("sql_variant")||
-                dataType.Contains("xml")||
-                dataType.Contains("table")||
+            if (dataType.Equals("cursor") ||
+                dataType.Contains("timestamp") ||
+                dataType.Contains("hierarchyid") ||
+                dataType.Contains("uniqueidentifier") ||
+                dataType.Contains("sql_variant") ||
+                dataType.Contains("xml") ||
+                dataType.Contains("table") ||
                 dataType.Contains("spacial"))
                 return ValueType.Freaky;
-            
+
             throw new Exception("Could not figure out the ValueType of SQL Type \"" + dataType + "\"");
 
 
@@ -280,11 +261,11 @@ namespace CatalogueLibrary.DataHelper
             Freaky
         }
 
-        public static string GetNullSubstituteForComparisonsWithDataType(string datatype,bool min)
+        public static string GetNullSubstituteForComparisonsWithDataType(string datatype, bool min)
         {
             //technically these can go lower (real and float) but how realistic is that espcially when SqlServer plays fast and loose with very small numbers in floats... 
-            if(datatype.Equals("bigint") || datatype.Equals("real") || datatype.StartsWith("float"))
-                if(min)
+            if (datatype.Equals("bigint") || datatype.Equals("real") || datatype.StartsWith("float"))
+                if (min)
                     return "-9223372036854775808";
                 else
                     return "9223372036854775807";
@@ -307,7 +288,7 @@ namespace CatalogueLibrary.DataHelper
                 else
                     return "255";
 
-            if(datatype.Equals("bit"))
+            if (datatype.Equals("bit"))
                 if (min)
                     return "0";
                 else
@@ -320,7 +301,7 @@ namespace CatalogueLibrary.DataHelper
 
                 if (min)
                     toReturn = "-";
-                
+
                 //ignore element zero because elment zero is always a duplicate see https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.match.groups%28v=vs.110%29.aspx
                 if (digits.Groups.Count == 3 && string.IsNullOrWhiteSpace(digits.Groups[2].Value))
                 {
@@ -335,8 +316,8 @@ namespace CatalogueLibrary.DataHelper
                     int totalDigits = Convert.ToInt32(digits.Groups[1].Value);
                     int digitsAfterDecimal = Convert.ToInt32(digits.Groups[2].Value);
 
-                    for (int i = 0; i < totalDigits+1; i++)
-                        if(i == totalDigits - digitsAfterDecimal)
+                    for (int i = 0; i < totalDigits + 1; i++)
+                        if (i == totalDigits - digitsAfterDecimal)
                             toReturn += ".";
                         else
                             toReturn += "9";
@@ -348,7 +329,7 @@ namespace CatalogueLibrary.DataHelper
             ValueType valueType = GetDataType(datatype);
 
             if (valueType == ValueType.CharacterString)
-                if(min)
+                if (min)
                     return "''";
                 else
                     throw new NotSupportedException("Cannot think what the maxmimum character string would be, maybe use min = true instead?");
@@ -372,9 +353,8 @@ namespace CatalogueLibrary.DataHelper
                 throw new NotSupportedException("Cannot predict null value substitution for binary datatypes like " + datatype);
 
 
-            throw new NotSupportedException("Didn't know what minimum value type to use for " +datatype);
+            throw new NotSupportedException("Didn't know what minimum value type to use for " + datatype);
 
         }
     }
 }
-    

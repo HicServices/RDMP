@@ -61,7 +61,6 @@ namespace CatalogueLibrary.CommandExecution
         /// <param name="catalogueRepository"></param>
         /// <param name="foreignKeyExtractionInformation">The extractable column in the main dataset which contains the lookup code foreign key e.g. PatientSexCode </param>
         /// <param name="lookupDescriptionColumn">The column in the lookup table containing the code description that you want</param>
-        /// <param name="mainDatasetForeignKey">The column in the main dataset which contains the code e.g. SendingLocationCode</param>
         /// <param name="lookupTablePrimaryKey">The column in the lookup which contains the code e.g. LocationCode</param>
         /// <param name="collation">Optional - the collation to use when linking the columns</param>
         /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of 

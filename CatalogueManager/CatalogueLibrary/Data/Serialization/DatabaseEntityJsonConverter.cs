@@ -1,10 +1,6 @@
 using System;
-using System.Linq;
-using System.Reflection;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
-using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
 
 namespace CatalogueLibrary.Data.Serialization
@@ -20,11 +16,24 @@ namespace CatalogueLibrary.Data.Serialization
     {
         private readonly ShareManager _shareManager;
 
+        /// <summary>
+        /// Creates a new serializer for objects stored in RDMP platform databases (only supports <see cref="DatabaseEntity"/>)
+        /// 
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
         public DatabaseEntityJsonConverter(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _shareManager = new ShareManager(repositoryLocator);
         }
 
+        /// <summary>
+        /// Serializes a <see cref="DatabaseEntity"/> by sharing it with <see cref="ShareManager.GetObjectFromPersistenceString"/>.  This
+        /// creates a pointer only e.g. "Catalogue 123" and if an <see cref="ObjectExport"/> exists then also the <see cref="ObjectExport.SharingUID"/> 
+        /// so that the JSON can be used in other instances (that have imported the <see cref="ShareDefinition"/> of the serialized object)
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="value"></param>
+        /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value == null)
@@ -39,6 +48,15 @@ namespace CatalogueLibrary.Data.Serialization
             writer.WriteEndObject();
         }
         
+        /// <summary>
+        /// Deserializes a persisted <see cref="DatabaseEntity"/> by resolving it as a reference and fetching the original 
+        /// object using <see cref="ShareManager.GetObjectFromPersistenceString"/>.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="objectType"></param>
+        /// <param name="existingValue"></param>
+        /// <param name="serializer"></param>
+        /// <returns></returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null) return null;
@@ -66,6 +84,11 @@ namespace CatalogueLibrary.Data.Serialization
             return o;
         }
 
+        /// <summary>
+        /// True if <paramref name="objectType"/> is a <see cref="DatabaseEntity"/> (the only thing this class can serialize)
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <returns></returns>
         public override bool CanConvert(Type objectType)
         {
             return typeof(DatabaseEntity).IsAssignableFrom(objectType);

@@ -40,8 +40,9 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 
                 //requires a use case
                 typeof(ExecuteCommandCreateNewPipeline),
-                typeof(ExecuteCommandEditPipelineWithUseCase)
+                typeof(ExecuteCommandEditPipelineWithUseCase),
 
+                typeof(ExecuteCommandCheck)
             });
 
         [Test]
@@ -49,7 +50,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         {
             List<Exception> ex;
             
-            Console.WriteLine("Looking in"+ typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
+            Console.WriteLine("Looking in" + typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandViewCohortAggregateGraph).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandUnpin).Assembly);
             Console.WriteLine("Looking in" + typeof(PluginAtomicCommand).Assembly);

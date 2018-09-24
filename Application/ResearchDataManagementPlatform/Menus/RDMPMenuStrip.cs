@@ -7,22 +7,17 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Reports;
 using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.FindAndReplace;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.LocationsMenu;
 using CatalogueManager.LocationsMenu.Ticketing;
-using CatalogueManager.LogViewer;
 using CatalogueManager.MainFormUITabs;
-using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.PluginManagement;
 using CatalogueManager.PluginManagement.CodeGeneration;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.Governance;
 using CatalogueManager.SimpleDialogs.NavigateTo;
 using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup;
@@ -40,7 +35,6 @@ using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
@@ -111,12 +105,6 @@ namespace ResearchDataManagementPlatform.Menus
             _activator.ShowWindow(ui,true);
         }
 
-        private void governanceManagementToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            GovernanceUI dialog = new GovernanceUI();
-            dialog.RepositoryLocator = RepositoryLocator;
-            dialog.ShowDialog();
-        }
 
         private void governanceReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -207,7 +195,7 @@ namespace ResearchDataManagementPlatform.Menus
         private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var report = new DocumentationReportMapsDirectlyToDatabaseOfficeBit();
-            report.GenerateReport(
+            report.GenerateReport( _activator.RepositoryLocator.CatalogueRepository.CommentStore,
                 new PopupChecksUI("Generating class summaries", false),
                 _activator.CoreIconProvider,
                 typeof(Catalogue).Assembly,
@@ -226,20 +214,20 @@ namespace ResearchDataManagementPlatform.Menus
             if(currentTab == null)
                 return;
             
-            var typeDocs = _windowManager.ContentManager.DocumentationStore.TypeDocumentation;
+            var typeDocs = _windowManager.ContentManager.RepositoryLocator.CatalogueRepository.CommentStore;
 
             StringBuilder sb = new StringBuilder();
 
             string firstMatch = null;
 
             foreach (var c in currentTab.Controls)
-                if (typeDocs.ContainsKey(c.GetType()))
+                if (typeDocs.ContainsKey(c.GetType().Name))
                 {
                     if (firstMatch == null)
                         firstMatch = c.GetType().Name;
 
                     sb.AppendLine(c.GetType().Name);
-                    sb.AppendLine(typeDocs[c.GetType()]);
+                    sb.AppendLine(typeDocs[c.GetType().Name]);
                     sb.AppendLine();
                 }
             

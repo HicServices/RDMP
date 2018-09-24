@@ -12,7 +12,7 @@ namespace CatalogueLibrary.Data.PerformanceImprovement
     /// AggregateConfigurations 
     /// 
     /// </summary>
-    public class CatalogueFilterHierarchy
+    class CatalogueFilterHierarchy
     {
         //Filters for Aggregates (includes filter containers (AND/OR)
         public Dictionary<int,AggregateFilterContainer> AllAggregateContainers;

@@ -25,6 +25,7 @@ namespace LoadModules.Generic.DataFlowSources
         /// </summary>
         public Dictionary<string, Type> ExplicitTypesCSharp = new Dictionary<string, Type>();
         
+        /// <inheritdoc/>
         public void RestoreStateFrom(string value)
         { 
             if(value == null)
@@ -46,6 +47,7 @@ namespace LoadModules.Generic.DataFlowSources
 
         }
 
+        /// <inheritdoc/>
         public string SaveStateToString()
         {
            StringBuilder sb = new StringBuilder();

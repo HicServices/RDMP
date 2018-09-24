@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Pipelines;
@@ -50,6 +51,7 @@ namespace CatalogueLibrary.Providers
 
         //Catalogue side of things
         public Catalogue[] AllCatalogues { get; set; }
+        public Dictionary<int, Catalogue> AllCatalogueDictionary { get; private set; }
         
         public SupportingDocument[] AllSupportingDocuments { get; set; }
         public SupportingSQLTable[] AllSupportingSQL { get; set; }
@@ -60,6 +62,7 @@ namespace CatalogueLibrary.Providers
         //This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
         //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
         private Dictionary<object, DescendancyList> _descendancyDictionary = new Dictionary<object, DescendancyList>();
+
 
         public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
         public Dictionary<int,CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
@@ -135,7 +138,11 @@ namespace CatalogueLibrary.Providers
         public readonly IChildProvider[] PluginChildProviders;
         private readonly ICheckNotifier _errorsCheckNotifier;
         private readonly List<IChildProvider> _blacklistedPlugins = new List<IChildProvider>();
-        
+
+        public AllGovernanceNode AllGovernanceNode { get; private set; }
+        public GovernancePeriod[] AllGovernancePeriods { get; private set; }
+        public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
+        public Dictionary<int, HashSet<int>> GovernanceCoverage { get; private set; }
 
         public CatalogueChildProvider(CatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
@@ -151,6 +158,8 @@ namespace CatalogueLibrary.Providers
             AddChildren(AllANOTablesNode);
             
             AllCatalogues = repository.GetAllObjects<Catalogue>();
+            AllCatalogueDictionary = AllCatalogues.ToDictionary(i => i.ID, o => o);
+
             AllLoadMetadatas = repository.GetAllObjects<LoadMetadata>();
             AllProcessTasks = repository.GetAllObjects<ProcessTask>();
             AllLoadProgresses = repository.GetAllObjects<LoadProgress>();
@@ -278,8 +287,41 @@ namespace CatalogueLibrary.Providers
                 ac.InjectKnown(joinable);
             }
                     
+            AllGovernanceNode = new AllGovernanceNode();
+            AllGovernancePeriods = repository.GetAllObjects<GovernancePeriod>();
+            AllGovernanceDocuments = repository.GetAllObjects<GovernanceDocument>();
+            GovernanceCoverage = GovernancePeriod.GetAllGovernedCataloguesForAllGovernancePeriods(repository);
+
+            AddChildren(AllGovernanceNode);
         }
+
         
+
+        private void AddChildren(AllGovernanceNode allGovernanceNode)
+        {
+            HashSet<object> children = new HashSet<object>();
+            var descendancy = new DescendancyList(allGovernanceNode);
+
+            foreach (GovernancePeriod gp in AllGovernancePeriods)
+            {
+                children.Add(gp);
+                AddChildren(gp, descendancy.Add(gp));
+            }
+
+            AddToDictionaries(children, descendancy);
+        }
+
+        private void AddChildren(GovernancePeriod governancePeriod, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+            
+            foreach (GovernanceDocument doc in AllGovernanceDocuments.Where(d=>d.GovernancePeriod_ID == governancePeriod.ID))
+                children.Add(doc);
+            
+            AddToDictionaries(children, descendancy);
+        }
+
+
         private void AddChildren(AllLoadMetadatasNode allLoadMetadatasNode)
         {
             HashSet<object> children = new HashSet<object>();
@@ -343,7 +385,6 @@ namespace CatalogueLibrary.Providers
         /// <summary>
         /// Creates new <see cref="StandardPipelineUseCaseNode"/>s and fills it with all compatible Pipelines - do not call this method more than once
         /// </summary>
-        /// <param name="useCase"></param>
         protected void AddPipelineUseCases(Dictionary<string,PipelineUseCase> useCases)
         {
             var descendancy = new DescendancyList(AllPipelinesNode);

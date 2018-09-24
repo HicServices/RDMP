@@ -272,7 +272,7 @@ namespace CohortManagerLibrary.Execution
             return task;
         }
 
-        public void LaunchSingleTask(ICompileable compileable,int timeout)
+        public void LaunchSingleTask(ICompileable compileable,int timeout,bool cacheOnCompletion)
         {
             if(!Tasks.ContainsKey(compileable))
                 throw new KeyNotFoundException("Cannot launch task because it is not in the list of current Tasks");
@@ -280,23 +280,23 @@ namespace CohortManagerLibrary.Execution
             if(compileable.State != CompilationState.NotScheduled)
                 throw new ArgumentException("Task must be in state NotScheduled, try clicking Reset");
 
-            KickOff(compileable, Tasks[compileable], timeout);
+            KickOff(compileable, Tasks[compileable], timeout, cacheOnCompletion);
         }
 
-        public void LaunchScheduledTasksAsync(int timeout)
+        public void LaunchScheduledTasksAsync(int timeout,bool cacheOnCompletion)
         {
             foreach (KeyValuePair<ICompileable, CohortIdentificationTaskExecution> kvp in Tasks)
                 if (kvp.Key.State == CompilationState.NotScheduled)
-                    KickOff(kvp.Key, kvp.Value, timeout);
+                    KickOff(kvp.Key, kvp.Value, timeout, cacheOnCompletion);
         }
 
-        private void KickOff(ICompileable task, CohortIdentificationTaskExecution execution, int timeout)
+        private void KickOff(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,bool cacheOnCompletion)
         {
             task.State = CompilationState.Scheduled;
             task.Stopwatch = new Stopwatch();
             task.Stopwatch.Start();
 
-            var t = new Thread(() => DoTaskAsync(task, execution, timeout,true));
+            var t = new Thread(() => DoTaskAsync(task, execution, timeout, cacheOnCompletion));
             Threads.Add(t);
             t.Start();
         }

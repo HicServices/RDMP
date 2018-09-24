@@ -15,17 +15,13 @@ namespace CatalogueLibrary.Data.Pipelines
     /// </summary>
     public abstract class PipelineUseCase : IPipelineUseCase
     {
-        /// <summary>
-        /// Array of all the objects available for executing the Pipeline.  
-        /// <para>OR: If <see cref="IsDesignTime"/> then an array of the Types of objects that should be around at runtime
-        /// when performing the task described by the PipelineUseCase</para>
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public HashSet<object> GetInitializationObjects()
         {
             return InitializationObjects;
         }
 
+        /// <inheritdoc/>
         public IDataFlowPipelineContext GetContext()
         {
             if(_context == null)
@@ -41,7 +37,9 @@ namespace CatalogueLibrary.Data.Pipelines
 
         protected abstract IDataFlowPipelineContext GenerateContextImpl();
 
+        /// <inheritdoc/>
         public object ExplicitSource { get; protected set; }
+        /// <inheritdoc/>
         public object ExplicitDestination { get; protected set; }
 
         /// <summary>
@@ -75,12 +73,14 @@ namespace CatalogueLibrary.Data.Pipelines
                 InitializationObjects.Add(t);
         }
 
+        /// <inheritdoc/>
         public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
         {
             var context = GetContext();
             return pipelines.Where(context.IsAllowable);
         }
         
+        /// <inheritdoc/>
         public virtual IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)
         {
             var engine = new DataFlowPipelineEngineFactory(this, pipeline).Create(pipeline, listener);

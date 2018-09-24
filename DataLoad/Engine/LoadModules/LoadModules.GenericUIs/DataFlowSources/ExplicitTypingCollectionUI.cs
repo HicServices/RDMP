@@ -67,9 +67,9 @@ namespace LoadModules.GenericUIs.DataFlowSources
             SetUnderlyingObjectTo((ExplicitTypingCollection)value, previewIfAvailable);
         }
 
-        public ICustomUIDrivenClass GetGenericFinalStateOfUnderlyingObject()
+        public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
         {
-            return GetFinalStateOfUnderlyingObject();
+            return GetToReturn();
         }
 
         private ExplicitTypingCollection GetToReturn()
@@ -91,12 +91,7 @@ namespace LoadModules.GenericUIs.DataFlowSources
 
             ReLayoutTable();
         }
-
-        public ExplicitTypingCollection GetFinalStateOfUnderlyingObject()
-        {
-            return GetToReturn();
-        }
-
+        
         private void btnOk_Click(object sender, EventArgs e)
         {
             try

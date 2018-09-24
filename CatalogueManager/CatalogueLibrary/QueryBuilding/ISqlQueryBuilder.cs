@@ -51,7 +51,7 @@ namespace CatalogueLibrary.QueryBuilding
 
         /// <summary>
         /// List of all the <see cref="JoinInfo"/> found for joining the <see cref="TablesUsedInQuery"/> for building the query.
-        // <para>Do not modify this manually</para>
+        /// <para>Do not modify this manually</para>
         /// </summary>
         List<JoinInfo> JoinsUsedInQuery { get; }
 
@@ -61,7 +61,7 @@ namespace CatalogueLibrary.QueryBuilding
         IContainer RootFilterContainer{get;set;}
         
         /// <summary>
-        /// True to check the syntax of columns, parameters etc.  This should result in <see cref="SyntaxErrorException"/> being thrown when generating the SQL if it is substantially malformed
+        /// True to check the syntax of columns, parameters etc.  This should result in SyntaxErrorException being thrown when generating the SQL if it is substantially malformed
         /// </summary>
         bool CheckSyntax { get; set; }
 
@@ -121,7 +121,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// <summary>
         /// The line of SQL code and it's position in the query which results in result limiting (e.g. LIMIT X in MySql and TOP X in SqlServer)
         /// 
-        /// <para>Changing this manually is not recommended, specify it in the <see cref="IQueryBuilder"/> constructor instead</para>
+        /// <para>Changing this manually is not recommended, specify it in the <see cref="ISqlQueryBuilder"/> constructor instead</para>
         /// </summary>
         CustomLine TopXCustomLine { get; set; }
     }

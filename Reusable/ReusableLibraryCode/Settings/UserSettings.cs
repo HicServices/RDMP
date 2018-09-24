@@ -67,7 +67,35 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("DataExportConnectionString", ""); }
             set { AppSettings.AddOrUpdateValue("DataExportConnectionString", value); }
         }
-        
+
+        #region Catalogue flag visibility settings
+        public static bool ShowInternalCatalogues
+        {
+            get { return AppSettings.GetValueOrDefault("ShowInternalCatalogues", true); }
+            set { AppSettings.AddOrUpdateValue("ShowInternalCatalogues", value); }
+        }
+        public static bool ShowDeprecatedCatalogues
+        {
+            get { return AppSettings.GetValueOrDefault("ShowDeprecatedCatalogues", true); }
+            set { AppSettings.AddOrUpdateValue("ShowDeprecatedCatalogues", value); }
+        }
+        public static bool ShowColdStorageCatalogues
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColdStorageCatalogues", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColdStorageCatalogues", value); }
+        }
+        public static bool ShowProjectSpecificCatalogues
+        {
+            get { return AppSettings.GetValueOrDefault("ShowProjectSpecificCatalogues", true); }
+            set { AppSettings.AddOrUpdateValue("ShowProjectSpecificCatalogues", value); }
+        }
+        public static bool ShowNonExtractableCatalogues
+        {
+            get { return AppSettings.GetValueOrDefault("ShowNonExtractableCatalogues", true); }
+            set { AppSettings.AddOrUpdateValue("ShowNonExtractableCatalogues", value); }
+        }
+        #endregion
+
         public static bool GetTutorialDone(Guid tutorialGuid)
         {
             return AppSettings.GetValueOrDefault("T_" + tutorialGuid.ToString("N"), false); 
@@ -93,9 +121,7 @@ namespace ReusableLibraryCode.Settings
 #if NETSTANDARD1_0 || NETSTANDARD2_0
             return null;
 #else
-#pragma warning disable IDE0022 // Use expression body for methods
             return new RDMPApplicationSettings();
-#pragma warning restore IDE0022 // Use expression body for methods
 #endif
         }
     }

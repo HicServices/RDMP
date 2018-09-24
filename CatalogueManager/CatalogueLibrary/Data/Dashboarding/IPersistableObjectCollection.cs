@@ -13,11 +13,28 @@ namespace CatalogueLibrary.Data.Dashboarding
     /// </summary>
     public interface IPersistableObjectCollection
     {
+        /// <summary>
+        /// Gets the class you can use to serialize/deserialize values for this collection
+        /// </summary>
         PersistStringHelper Helper { get; }
 
+        /// <summary>
+        /// A list of all the currently used objects in this collection
+        /// </summary>
         List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
         
+        /// <summary>
+        /// Serialize any current state information about the collection that is not encapsulated in <see cref="DatabaseObjects"/> e.g. tickboxes, options, selected enums etc.
+        /// <para>Returns null if there is no supplemental information to save about the collection</para>
+        /// </summary>
+        /// <returns></returns>
         string SaveExtraText();
+
+        /// <summary>
+        /// Hydrate the <see cref="IPersistableObjectCollection"/> state with a value that was created by <see cref="SaveExtraText"/>.  This does not include populating <see cref="DatabaseObjects"/>
+        /// which happens seperately.
+        /// </summary>
+        /// <param name="s"></param>
         void LoadExtraText(string s);
     }
 }

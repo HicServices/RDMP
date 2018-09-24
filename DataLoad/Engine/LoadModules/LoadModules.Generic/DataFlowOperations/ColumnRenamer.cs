@@ -11,8 +11,8 @@ namespace LoadModules.Generic.DataFlowOperations
 {
     /// <summary>
     /// Pipeline component for renaming a single column in DataTables passing through the component.
+    /// <para>Renames a column with a given name to have a new name e.g. 'mCHI' to 'CHI'</para>
     /// </summary>
-    [Description("Renames a column with a given name to have a new name e.g. 'mCHI' to 'CHI'")]
     public class ColumnRenamer : IPluginDataFlowComponent<DataTable>
     {
         [DemandsInitialization("Looks for a column with exactly this name", Mandatory = true)]

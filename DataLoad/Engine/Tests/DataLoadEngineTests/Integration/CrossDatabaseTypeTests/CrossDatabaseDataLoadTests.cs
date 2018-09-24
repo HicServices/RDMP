@@ -171,7 +171,7 @@ MrMurder,2001-01-01,Yella");
                 var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
             
                 var exitCode = exe.Run(
-                    new DataLoadJob("Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener()),
+                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener()),
                     new GracefulCancellationToken());
 
                 Assert.AreEqual(ExitCodeType.Success,exitCode);
@@ -313,7 +313,7 @@ MrMurder,2001-01-01,Yella");
                 var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
 
                 var exitCode = exe.Run(
-                    new DataLoadJob("Go go go!", logManager, lmd, projectDirectory, new ThrowImmediatelyDataLoadEventListener()),
+                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory, new ThrowImmediatelyDataLoadEventListener()),
                     new GracefulCancellationToken());
 
                 Assert.AreEqual(ExitCodeType.Success, exitCode);

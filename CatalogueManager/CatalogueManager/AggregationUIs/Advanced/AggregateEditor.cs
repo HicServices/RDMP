@@ -7,10 +7,9 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.AggregationUIs.Advanced.Options;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing.Collections;
@@ -18,14 +17,12 @@ using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using CatalogueManager.Copying;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableUIComponents;
@@ -62,7 +59,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
     /// </summary>
     public partial class AggregateEditor : AggregateEditor_Design,ISaveableUI
     {
-        private IAggregateEditorOptions _options;
+        private IAggregateBuilderOptions _options;
         private AggregateConfiguration _aggregate;
         
         private List<TableInfo> _forcedJoins;
@@ -152,7 +149,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 }
             }
 
-            return CheckState.Indeterminate;
+            return newvalue;
 
         }
 
@@ -179,11 +176,11 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         }
 
-        public void SetAggregate(IActivateItems activator,AggregateConfiguration configuration, IAggregateEditorOptions options = null)
+        public void SetAggregate(IActivateItems activator,AggregateConfiguration configuration, IAggregateBuilderOptions options = null)
         {
             _activator = activator;
             _aggregate = configuration;
-            _options = options ?? new AggregateEditorOptionsFactory().Create(configuration);
+            _options = options ?? new AggregateBuilderOptionsFactory().Create(configuration);
 
             //can graph it if it isn't a cohort one or patient index table
             btnGraph.Enabled = !_aggregate.IsCohortIdentificationAggregate;
@@ -194,12 +191,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
         private void ReloadUIFromDatabase()
         {
             isRefreshing = true;
-            cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.ExtractableTickBox, _aggregate);
+            cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
             cbExtractable.Checked = _aggregate.IsExtractable;
 
-            olvJoin.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.FROM, _aggregate);
-            //gbWhere.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.WHERE, _aggregate);
-            gbHaving.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.HAVING, _aggregate);
             gbPivot.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
             gbAxis.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.AXIS, _aggregate);
 
@@ -319,7 +313,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
         }
  
         private bool isRefreshing;
-        private bool _popupToolboxOnLoad;
        
         private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)
         {

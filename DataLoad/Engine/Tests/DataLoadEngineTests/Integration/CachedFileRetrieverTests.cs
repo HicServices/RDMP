@@ -174,13 +174,13 @@ namespace DataLoadEngineTests.Integration
             var catalogue = MockRepository.GenerateStub<ICatalogue>();
             catalogue.Stub(c => c.GetTableInfoList(Arg<bool>.Is.Anything)).Return(new TableInfo[0]);
             catalogue.Stub(c => c.GetLookupTableInfoList()).Return(new TableInfo[0]);
-            catalogue.Stub(c => c.LoggingDataTask).Return("TestLogging");
+            catalogue.LoggingDataTask = "TestLogging";
 
             var logManager = MockRepository.GenerateStub<ILogManager>();
             var loadMetadata = MockRepository.GenerateStub<ILoadMetadata>();
             loadMetadata.Stub(lm => lm.GetAllCatalogues()).Return(new[] { catalogue });
 
-            var j =  new ScheduledDataLoadJob("Test job", logManager, loadMetadata, hicProjectDirectory, new ThrowImmediatelyDataLoadEventListener());
+            var j =  new ScheduledDataLoadJob(RepositoryLocator,"Test job", logManager, loadMetadata, hicProjectDirectory, new ThrowImmediatelyDataLoadEventListener());
             j.LoadProgress = _lpMock;
             return j;
         }

@@ -12,10 +12,26 @@ namespace ReusableLibraryCode.DataAccess
     /// </summary>
     public interface IDataAccessPoint:IHasQuerySyntaxHelper
     {
+        /// <summary>
+        /// The name of the server e.g. localhost\sqlexpress
+        /// </summary>
         string Server { get; }
+
+        /// <summary>
+        /// The name of the database to connect to e.g. master, tempdb, MyCoolDb etc
+        /// </summary>
         string Database { get; }
+
+        /// <summary>
+        /// The DBMS type of the server e.g. Sql Server / MySql / Oracle
+        /// </summary>
         DatabaseType DatabaseType { get; }
         
+        /// <summary>
+        /// The username/password to use when connecting to the server (otherwise integrated security is used)
+        /// </summary>
+        /// <param name="context">What you intend to do after you have connected (may determine which credentials to use e.g. readonly vs readwrite)</param>
+        /// <returns></returns>
         IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context);
     }
 }

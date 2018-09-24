@@ -1,7 +1,7 @@
 ﻿using System;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueManager.AggregationUIs.Advanced.Options;
+using CatalogueLibrary.QueryBuilding.Options;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
 {
@@ -19,7 +19,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
                 throw new Exception("AggregateFilter '" + aggregateFilter + "' (ID="+aggregateFilter.ID+") does not belong to any AggregateConfiguration, is it somehow an orphan?");
             
             //it part of an AggregateConfiguration so get the same factory that is used by AggregateEditorUI to tell us about the globals and the columns
-            var options = new AggregateEditorOptionsFactory().Create(aggregateConfiguration);
+            var options = new AggregateBuilderOptionsFactory().Create(aggregateConfiguration);
             _globals = options.GetAllParameters(aggregateConfiguration);
 
             //get all the tables 

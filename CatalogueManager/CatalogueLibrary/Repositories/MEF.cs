@@ -39,7 +39,7 @@ namespace CatalogueLibrary.Repositories
         
         private readonly string _localPath = null;
 
-        public MEF(CatalogueRepository repository)
+        public MEF()
         {
             //try to use the app data folder to download MEF but also evaluate everything in _localPath
             _localPath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath);
@@ -75,6 +75,11 @@ namespace CatalogueLibrary.Repositories
                 throw new NotSupportedException("MEF was not loaded by Startup?!!");
         }
         
+        /// <summary>
+        /// Makes the given Type appear as a MEF exported class.  Can be used to test your types without 
+        /// building and committing an actual <see cref="Plugin"/>
+        /// </summary>
+        /// <param name="type"></param>
         public void AddTypeToCatalogForTesting(Type type)
         {
             SetupMEFIfRequired();
@@ -342,73 +347,80 @@ namespace CatalogueLibrary.Repositories
         }
 
         readonly Dictionary<string,Type> _cachedTypes = new Dictionary<string, Type>();
+        public object _oLockcachedTypes = new object();
 
         public Type GetTypeByNameFromAnyLoadedAssembly(string name, Type expectedBaseClassType = null, StringComparison comparisonType = StringComparison.CurrentCulture)
         {
-            if (_cachedTypes.ContainsKey(name))
-                return _cachedTypes[name];
-
-            Type toReturn = null;
-
-            SetupMEFIfRequired();
-
-            if (string.IsNullOrWhiteSpace(name))
-                return null;
-
-            //could be custom imported type
-            foreach (Type type in GetAllTypes())
+            lock (_oLockcachedTypes)
             {
-                if (type == null)
-                    throw new InvalidOperationException("The type array produced by GetAllTypes should not contain any nulls");
+                if (_cachedTypes.ContainsKey(name))
+                    return _cachedTypes[name];
 
-                if (type.FullName.Equals(name,comparisonType))
-                    toReturn =  type;
-            }
+                Type toReturn = null;
 
-            if(toReturn == null)
-            {
-                List<Type> matches = new List<Type>();
-                List<Type> fullMatches = new List<Type>();
+                SetupMEFIfRequired();
 
-                //could be basic type
-                foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+                if (string.IsNullOrWhiteSpace(name))
+                    return null;
+
+                //could be custom imported type
+                foreach (Type type in GetAllTypes())
                 {
-                    try
-                    {
-                        foreach (Type type in asm.GetTypes())
-                        {
-                            //type doesn't match base type
-                            if (expectedBaseClassType != null)
-                                if (!expectedBaseClassType.IsAssignableFrom(type))
-                                    continue;
+                    if (type == null)
+                        throw new InvalidOperationException("The type array produced by GetAllTypes should not contain any nulls");
 
-                            if (type.FullName.Equals(name, comparisonType))
-                                fullMatches.Add(type);
-                            else
-                                if (type.Name.Equals(name, comparisonType))
-                                    matches.Add(type);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        continue;
-                    }
+                    if (type.FullName.Equals(name,comparisonType))
+                        toReturn =  type;
                 }
 
-                if (fullMatches.Any())
-                    toReturn = fullMatches.Single();
+                if(toReturn == null)
+                {
+                    List<Type> matches = new List<Type>();
+                    List<Type> fullMatches = new List<Type>();
 
-                if (matches.Any())
-                    if (matches.Count > 1)
-                        throw new Exception("Found " + matches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, matches.Select(m => m.FullName)));
-                    else
-                        toReturn = matches.Single();
+                    //could be basic type
+                    foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        try
+                        {
+                            foreach (Type type in asm.GetTypes())
+                            {
+                                //type doesn't match base type
+                                if (expectedBaseClassType != null)
+                                    if (!expectedBaseClassType.IsAssignableFrom(type))
+                                        continue;
+
+                                if (type.FullName.Equals(name, comparisonType))
+                                    fullMatches.Add(type);
+                                else
+                                    if (type.Name.Equals(name, comparisonType))
+                                        matches.Add(type);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (fullMatches.Any())
+                        if(fullMatches.Count>1)
+                            throw new Exception("Found " + fullMatches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, fullMatches.Select(m => m.AssemblyQualifiedName + " (Located:" + m.Assembly.CodeBase +")")));
+                        else
+                            toReturn = fullMatches.Single();
+
+                    if (matches.Any())
+                        if (matches.Count > 1)
+                            throw new Exception("Found " + matches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, matches.Select(m => m.FullName)));
+                        else
+                            toReturn = matches.Single();
+                }
+
+                //cache the answer even if it is null (could not resolve Type name)
+                _cachedTypes.Add(name,toReturn);
+
+                return toReturn;
             }
-
-            //cache the answer even if it is null (could not resolve Type name)
-            _cachedTypes.Add(name,toReturn);
-
-            return toReturn;
         }
 
 

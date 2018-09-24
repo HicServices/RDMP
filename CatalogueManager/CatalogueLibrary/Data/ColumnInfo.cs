@@ -29,7 +29,7 @@ namespace CatalogueLibrary.Data
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
     /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).</para>
     /// </summary>
-    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IColumnInfo, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
+    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
     {
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength;
@@ -96,10 +96,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _name, value); }
         }
 
-        /// <summary>
-        /// The proprietary SQL datatype of the column in the underlying database table this record points at.  
-        /// <para>E.g. datetime2 or varchar2 (Oracle) or int etc</para>
-        /// </summary>
+        /// <inheritdoc/>
         public string Data_type
         {
             get { return _dataType; }
@@ -172,27 +169,21 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _validationRules, value); }
         }
 
-        /// <summary>
-        /// Records whether the column in the underlying database table this record points at is part of the primary key or not.
-        /// </summary>
+        /// <inheritdoc/>
         public bool IsPrimaryKey
         {
             get { return _isPrimaryKey; }
             set { SetField(ref  _isPrimaryKey, value); }
         }
 
-        /// <summary>
-        /// Records whether the column in the underlying database table this record points at is an anto increment identity column
-        /// </summary>
+        /// <inheritdoc/>
         public bool IsAutoIncrement
         {
             get { return _isAutoIncrement; }
             set { SetField(ref  _isAutoIncrement, value); }
         }
 
-        /// <summary>
-        /// Records the collation of the column in the underlying database table this record points at if explicitly declared by dbms (only applicable for char datatypes)
-        /// </summary>
+        /// <inheritdoc/>
         public string Collation
         {
             get { return _collation; }
@@ -541,11 +532,13 @@ namespace CatalogueLibrary.Data
             return lookups.ToArray();
         }
 
+        ///<inheritdoc/>
         public void InjectKnown(TableInfo instance)
         {
             _knownTableInfo = new Lazy<TableInfo>(() => instance);
         }
 
+        ///<inheritdoc/>
         public void ClearAllInjections()
         {
             _knownTableInfo = new Lazy<TableInfo>(() => Repository.GetObjectByID<TableInfo>(TableInfo_ID));

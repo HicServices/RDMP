@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.DataLoad.Extensions;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using CatalogueManager.Copying.Commands;

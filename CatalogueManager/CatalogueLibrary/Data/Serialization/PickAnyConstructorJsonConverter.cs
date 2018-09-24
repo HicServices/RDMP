@@ -20,6 +20,10 @@ namespace CatalogueLibrary.Data.Serialization
         private readonly object[] _constructorObjects;
         private ObjectConstructor _objectConstructor;
 
+        /// <summary>
+        /// Creates a JSON deserializer that can use any constructors on the class which match <paramref name="constructorObjects"/>
+        /// </summary>
+        /// <param name="constructorObjects"></param>
         public PickAnyConstructorJsonConverter(params object[] constructorObjects)
         {
             _constructorObjects = constructorObjects;
@@ -34,11 +38,29 @@ namespace CatalogueLibrary.Data.Serialization
             get { return false; }
         }
 
+        /// <summary>
+        /// Cannot write, throws NotImplementedException
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="value"></param>
+        /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Returns a hydrated object from <paramref name="reader"/> by invoking the appropriate constructor identified by <see cref="ObjectConstructor.GetConstructors"/> 
+        /// whitch matches the parameters provided to <see cref="PickAnyConstructorJsonConverter"/> when it was constructed.
+        /// 
+        /// <para>If the <paramref name="objectType"/> is <see cref="IPickAnyConstructorFinishedCallback"/> then <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction"/>
+        /// will be called</para>
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="objectType"></param>
+        /// <param name="existingValue"></param>
+        /// <param name="serializer"></param>
+        /// <returns></returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var constructor = GetConstructors(objectType).Single();
@@ -54,6 +76,12 @@ namespace CatalogueLibrary.Data.Serialization
             return instance;
         }
 
+        /// <summary>
+        /// Returns true if the <paramref name="objectType"/> is a non value Type with one constructor compatible with the parameters provided to
+        /// <see cref="PickAnyConstructorJsonConverter"/> when it was constructed.
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <returns></returns>
         public override bool CanConvert(Type objectType)
         {
             //we do not handle strings,ints etc!

@@ -84,7 +84,6 @@
               <File Id="NLOG.DLL" Name="NLog.dll" Source="..\Anonymisation\ANOStore\bin\Debug\NLog.dll" />
               <File Id="NLOG.XML" Name="NLog.xml" Source="..\Anonymisation\ANOStore\bin\Debug\NLog.xml" />
               <File Id="ORACLE.MANAGEDDATAACCESS.DLL" Name="Oracle.ManagedDataAccess.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Oracle.ManagedDataAccess.dll" />
-              <File Id="PENCIL.CUR" Name="Pencil.cur" Source="..\Anonymisation\ANOStore\bin\Debug\Pencil.cur" />
               <File Id="PLUGIN.SETTINGS.ABSTRACTIONS.DLL" Name="Plugin.Settings.Abstractions.dll" Source="..\Anonymisation\ANOStore\bin\Debug\Plugin.Settings.Abstractions.dll" />
               <File Id="PLUGIN.SETTINGS.ABSTRACTIONS.PDB" Name="Plugin.Settings.Abstractions.pdb" Source="..\Anonymisation\ANOStore\bin\Debug\Plugin.Settings.Abstractions.pdb" />
               <File Id="PLUGIN.SETTINGS.ABSTRACTIONS.XML" Name="Plugin.Settings.Abstractions.xml" Source="..\Anonymisation\ANOStore\bin\Debug\Plugin.Settings.Abstractions.xml" />

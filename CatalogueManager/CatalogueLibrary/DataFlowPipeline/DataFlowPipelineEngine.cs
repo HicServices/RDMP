@@ -33,7 +33,7 @@ namespace CatalogueLibrary.DataFlowPipeline
         public IDataFlowSource<T> Source { get; private set; }
 
         /// <summary>
-        /// Middle components of the pipeline, must be <see cref="IDataFlowComponent"/> with T appropriate to the context.
+        /// Middle components of the pipeline, must be <see cref="IDataFlowComponent{T}"/> with T appropriate to the context.
         /// </summary>
         public List<object> ComponentObjects { get; set; }
 

@@ -8,7 +8,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 namespace CatalogueLibrary.Data.Aggregation
 {
     /// <summary>
-    /// Each AggregateConfiguration can have a single AggregateDimension defined as a date axis, this specifies the start/end and increment of the aggregate e.g.
+    /// Each AggregateConfiguration graph can have a single AggregateDimension defined as a date axis, this specifies the start/end and increment of the aggregate e.g.
     /// PrescribedDate dimension may have an axis defining it as running from 2001-2009 in increments of 1 month.  
     /// 
     /// <para>For this to work the AggregateDimension output data should be of type a date also.</para>

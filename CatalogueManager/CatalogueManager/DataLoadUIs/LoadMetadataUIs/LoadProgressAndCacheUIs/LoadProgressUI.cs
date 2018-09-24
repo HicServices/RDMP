@@ -26,8 +26,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
     {
         private LoadProgress _loadProgress;
         
-        public event EventHandler Saved;
-
         public LoadProgressUI()
         {
             InitializeComponent();

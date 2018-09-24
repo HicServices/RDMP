@@ -226,7 +226,7 @@ namespace CatalogueLibrary.Data
         #endregion
 
         /// <summary>
-        /// Creates a new virtual column description for for a column in the dataset (<see cref="parent"/>) supplied with the given Name.
+        /// Creates a new virtual column description for for a column in the dataset (<paramref name="parent"/>) supplied with the given Name.
         /// <para><remarks>You should next choose which <see cref="ColumnInfo"/> powers it and optionally create an <see cref="ExtractionInformation"/> to
         /// make the column extractable</remarks></para>
         /// </summary>
@@ -342,7 +342,7 @@ namespace CatalogueLibrary.Data
         }
         
         /// <summary>
-        /// Copies the descriptive metadata from one <see cref="CatalogueItem"/> (this) into a new <see cref="CatalogueItem"/> in the supplied <see cref="cataToImportTo"/>
+        /// Copies the descriptive metadata from one <see cref="CatalogueItem"/> (this) into a new <see cref="CatalogueItem"/> in the supplied <paramref name="cataToImportTo"/>
         /// </summary>
         /// <param name="cataToImportTo">The <see cref="Catalogue"/> to import into (cannot be the current <see cref="CatalogueItem"/> parent)</param>
         /// <returns></returns>
@@ -431,7 +431,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// Changes the CatalogueItem in the database to be based off of the specified ColumnInfo (or none if null is specified).  This will
         /// likely result in the ExtractionInformation being corrupt / out of sync in terms of the SQL appearing in it's
-        /// <see cref="CatalogueLibrary.Data.ExtractionInformation.SelectSQL"/>.
+        /// <see cref="CatalogueLibrary.Data.IColumn.SelectSQL"/>.
         /// </summary>
         /// <param name="columnInfo"></param>
         public void SetColumnInfo(ColumnInfo columnInfo)

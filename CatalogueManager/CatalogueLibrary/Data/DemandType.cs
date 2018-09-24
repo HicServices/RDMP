@@ -7,7 +7,14 @@
     /// </summary>
     public enum DemandType
     {
+        /// <summary>
+        /// There is no special subcategory
+        /// </summary>
         Unspecified,
+
+        /// <summary>
+        /// The property is String but it should be rendered/edited the user interface as a SQL syntax (e.g. big editor with highlighting)
+        /// </summary>
         SQL
     }
 }

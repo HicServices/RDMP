@@ -39,6 +39,7 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
             this(lmd.GetDistinctLiveDatabaseServer(), namer, new ServerDefaults(((CatalogueRepository)lmd.Repository)))
         {
             
+            
         }
 
         /// <summary>

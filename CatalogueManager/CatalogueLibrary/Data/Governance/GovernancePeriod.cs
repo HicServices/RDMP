@@ -22,7 +22,7 @@ namespace CatalogueLibrary.Data.Governance
     /// <para>The correct usage of GovernancePeriods is to never delete them e.g. your dataset
     /// MyDataset1 would have Governacne 2001-2002 (with attachment letters of approval) and another one for 2003-2004 and another from 2005 onwards etc.</para>
     /// </summary>
-    public class GovernancePeriod : DatabaseEntity, ICheckable
+    public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     {
         #region Database Properties
 
@@ -32,30 +32,43 @@ namespace CatalogueLibrary.Data.Governance
         private string _description;
         private string _ticket;
 
+        /// <summary>
+        /// When did the governance come into effect (in realtime not dataset time)
+        /// </summary>
         public DateTime StartDate
         {
             get { return _startDate; }
             set { SetField(ref  _startDate, value); }
         }
 
+        /// <summary>
+        /// Does governane for the described datasets ever expire (e.g. if you need to get annual approval for holding datasets)
+        /// </summary>
         public DateTime? EndDate
         {
             get { return _endDate; }
             set { SetField(ref  _endDate, value); }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// Who gave the governance and what it covers in human readable broad terms
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { SetField(ref  _description, value); }
         }
 
+        /// <summary>
+        /// <see cref="CatalogueLibrary.Ticketing.ITicketingSystem"/> ticket number for tracking effort / progress towards obtaining the governance
+        /// </summary>
         public string Ticket
         {
             get { return _ticket; }
@@ -65,11 +78,19 @@ namespace CatalogueLibrary.Data.Governance
         #endregion
 
         #region Relationships
+
+        /// <summary>
+        /// All documents (emails sent, pdfs, letters of permission etc) that were involved in obtaining and which grant permission to hold the datasets described by the
+        /// <see cref="GovernancePeriod"/>
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<GovernanceDocument> GovernanceDocuments {
             get { return Repository.GetAllObjectsWithParent<GovernanceDocument>(this); }
         }
 
+        /// <summary>
+        /// All datasets to which this governance grants permission to hold
+        /// </summary>
         [NoMappingToDatabase]
         public IEnumerable<Catalogue> GovernedCatalogues
         { get{ return
@@ -80,6 +101,10 @@ namespace CatalogueLibrary.Data.Governance
 
         #endregion
 
+        /// <summary>
+        /// Creates a new <see cref="GovernancePeriod"/> in the database.  This grants (ethical) permission to hold datasets referenced by <see cref="GovernedCatalogues"/>.
+        /// </summary>
+        /// <param name="repository"></param>
         public GovernancePeriod(IRepository repository)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -102,11 +127,16 @@ namespace CatalogueLibrary.Data.Governance
             Description = r["Description"] as string;
         }
         
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
         
+        /// <summary>
+        /// Checks that the governance has not expired before it began etc
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             if (EndDate == null)
@@ -121,6 +151,10 @@ namespace CatalogueLibrary.Data.Governance
                 doc.Check(notifier);
         }
         
+        /// <summary>
+        /// Marks the given <see cref="Catalogue"/> as no longer requiring governance approval from this <see cref="GovernancePeriod"/>.
+        /// </summary>
+        /// <param name="c"></param>
         public void DeleteGovernanceRelationshipTo(Catalogue c)
         {
             var affectedRows = Repository.Delete(string.Format(@"DELETE FROM GovernancePeriod_Catalogue WHERE Catalogue_ID={0} AND GovernancePeriod_ID={1}",c.ID, ID));
@@ -129,6 +163,14 @@ namespace CatalogueLibrary.Data.Governance
                 throw new Exception("somehow we deleted more than 1 row when trying to erase a specific governance relationship to Catalogue " + c + ", affected rows was " + affectedRows);
         }
 
+        /// <summary>
+        /// Declares that the given <see cref="Catalogue"/> requires governance to hold and that this <see cref="GovernancePeriod"/> describes the specifics
+        /// as well as any <see cref="EndDate"/> to the governance.
+        /// 
+        /// <para>A <see cref="Catalogue"/> belonging to 0 <see cref="GovernancePeriod"/> is not assumed to require any governance.  A <see cref="Catalogue"/> can
+        /// belong to multiple <see cref="GovernancePeriod"/> e.g. 'Tayside Governance 2001', 'Tayside Governance 2002' etc</para>
+        /// </summary>
+        /// <param name="c"></param>
         public void CreateGovernanceRelationshipTo(Catalogue c)
         {
             Repository.Insert(string.Format(
@@ -136,13 +178,47 @@ namespace CatalogueLibrary.Data.Governance
                 c.ID, ID), null);
         }
 
-        
+        /// <summary>
+        /// True if the current date is after the <see cref="EndDate"/> (if there is one)
+        /// </summary>
+        /// <returns></returns>
         public bool IsExpired()
         {
             if (EndDate == null)
                 return false;
 
             return DateTime.Now.Date > EndDate.Value.Date;
+        }
+
+        /// <summary>
+        /// Returns the IDs of all <see cref="GovernancePeriod"/> with the corresponding set of <see cref="Catalogue"/> IDs which are covered by the governance.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <returns></returns>
+        public static Dictionary<int, HashSet<int>> GetAllGovernedCataloguesForAllGovernancePeriods(ICatalogueRepository repository)
+        {
+            var toReturn = new Dictionary<int, HashSet<int>>();
+
+            var server = repository.DiscoveredServer;
+            using (var con = server.GetConnection())
+            {
+                con.Open();
+                var cmd = server.GetCommand(@"SELECT GovernancePeriod_ID,Catalogue_ID FROM GovernancePeriod_Catalogue",con);
+                var r = cmd.ExecuteReader();
+
+                while (r.Read())
+                {
+                    int gp = (int) r["GovernancePeriod_ID"];
+                    int cata = (int) r["Catalogue_ID"];
+
+                    if (!toReturn.ContainsKey(gp))
+                        toReturn.Add(gp, new HashSet<int>());
+
+                    toReturn[gp].Add(cata);
+                }
+            }
+
+            return toReturn;
         }
     }
 }

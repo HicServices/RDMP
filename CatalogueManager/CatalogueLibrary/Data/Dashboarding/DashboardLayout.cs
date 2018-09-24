@@ -21,16 +21,25 @@ namespace CatalogueLibrary.Data.Dashboarding
         private DateTime _created;
         private string _username;
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+
+        /// <summary>
+        /// The time the new dashboard was created
+        /// </summary>
         public DateTime Created
         {
             get { return _created; }
             set { SetField(ref _created, value); }
         }
+
+        /// <summary>
+        /// The user who created the dashboard
+        /// </summary>
         public string Username
         {
             get { return _username; }
@@ -39,6 +48,10 @@ namespace CatalogueLibrary.Data.Dashboarding
         #endregion
 
         #region Relationships
+
+        /// <summary>
+        /// Returns all controls that should be rendered on the given dashboard
+        /// </summary>
         [NoMappingToDatabase]
         public DashboardControl[] Controls{ get { return Repository.GetAllObjectsWithParent<DashboardControl>(this); }}
         #endregion
@@ -51,6 +64,11 @@ namespace CatalogueLibrary.Data.Dashboarding
             Username = r["Username"].ToString();
         }
 
+        /// <summary>
+        /// Creates a new empty dashboard with the given name ready for controls to be added by the user
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
         public DashboardLayout(ICatalogueRepository repository, string name)
         {
             Repository = repository;
@@ -62,6 +80,7 @@ namespace CatalogueLibrary.Data.Dashboarding
             });   
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;

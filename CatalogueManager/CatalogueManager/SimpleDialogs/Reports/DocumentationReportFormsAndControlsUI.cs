@@ -128,7 +128,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
                     icons.Add(c.ToString(), _activator.CoreIconProvider.GetImage(c));
                 }
 
-                office.GenerateReport(checksUI1, applicationToClasses, GetImagesForType, images, icons);
+                office.GenerateReport(_activator.RepositoryLocator.CatalogueRepository.CommentStore,checksUI1, applicationToClasses, GetImagesForType, images, icons);
             }
             catch (Exception exception)
             {

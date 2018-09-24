@@ -2,6 +2,7 @@
 using System.Drawing;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.DataLoad.Extensions;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueManager.Icons.IconOverlays;
 

@@ -12,6 +12,7 @@ using System.Web.UI.WebControls;
 using System.Xml.Linq;
 using CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 using Xceed.Words.NET;
 using Image = System.Drawing.Image;
 
@@ -26,11 +27,8 @@ namespace CatalogueLibrary.Reports
     /// </summary>
     public class DocumentationReportFormsAndControlsOfficeBit:RequiresMicrosoftOffice
     {
-        private Dictionary<string, Bitmap> _wordImageDictionary;
-
-        public void GenerateReport(ICheckNotifier notifier, Dictionary<string, List<Type>> formsAndControlsByApplication, RequestTypeImagesHandler imageFetcher, Dictionary<string, Bitmap> wordImageDictionary, Dictionary<string, Bitmap> icons)
+        public void GenerateReport(CommentStore commentStore,ICheckNotifier notifier, Dictionary<string, List<Type>> formsAndControlsByApplication, RequestTypeImagesHandler imageFetcher, Dictionary<string, Bitmap> wordImageDictionary, Dictionary<string, Bitmap> icons)
         {
-            _wordImageDictionary = wordImageDictionary;
             try
             {
                 var f = GetUniqueFilenameInWorkArea("DocumentationReport");
@@ -49,7 +47,7 @@ namespace CatalogueLibrary.Reports
 
                         InsertHeader(document,kvp.Key);
 
-                        var report = new DocumentationReportFormsAndControls(kvp.Value.ToArray());
+                        var report = new DocumentationReportFormsAndControls(commentStore,kvp.Value.ToArray());
                         report.Check(notifier);
 
                         Type[] keys = report.Summaries.Keys.ToArray();

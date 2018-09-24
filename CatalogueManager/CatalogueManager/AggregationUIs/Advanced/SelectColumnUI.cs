@@ -11,6 +11,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Filtering;
@@ -42,7 +43,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
     /// </summary>
     public partial class SelectColumnUI : RDMPUserControl
     {
-        private IAggregateEditorOptions _options;
+        private IAggregateBuilderOptions _options;
         private AggregateConfiguration _aggregate;
         private IActivateItems _activator;
 
@@ -293,19 +294,15 @@ namespace CatalogueManager.AggregationUIs.Advanced
         }
 
 
-        private bool _alreadySetup = false;
         private Bitmap _add;
         private Bitmap _delete;
 
-        public void SetUp(IActivateItems activator, IAggregateEditorOptions options, AggregateConfiguration aggregate)
+        public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, AggregateConfiguration aggregate)
         {
             //record new states so we don't accidentally erase names of stuff
             _activator = activator;
             _options = options;
             _aggregate = aggregate;
-
-            if(_alreadySetup)
-                return;
             
             _availableColumns.Clear();
             _includedColumns.Clear();
@@ -334,8 +331,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             olvSelectColumns.AddObjects(_includedColumns);
             olvSelectColumns.AddObjects(_availableColumns);
-
-            _alreadySetup = true;
         }
 
         private void tbFilter_TextChanged(object sender, EventArgs e)

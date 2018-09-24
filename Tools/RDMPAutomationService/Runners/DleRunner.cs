@@ -58,7 +58,7 @@ namespace RDMPAutomationService.Runners
             {
                 case CommandLineActivity.run:
                     
-                    var loggingServer = loadMetadata.GetDistinctLoggingDatabaseSettings();
+                    var loggingServer = loadMetadata.GetDistinctLoggingDatabase();
                     var logManager = new LogManager(loggingServer);
                     
                     // Create the pipeline to pass into the DataLoadProcess object
@@ -76,12 +76,12 @@ namespace RDMPAutomationService.Runners
                         var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress);
                     
                         dataLoadProcess = _options.Iterative
-                            ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener) :
-                                new SingleJobScheduledDataLoadProcess(loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener);
+                            ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(locator,loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener) :
+                                new SingleJobScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener);
                     }
                     else
                         //OnDemand
-                        dataLoadProcess = new DataLoadProcess(loadMetadata, checkable, logManager, listener, execution);
+                        dataLoadProcess = new DataLoadProcess(locator, loadMetadata, checkable, logManager, listener, execution);
 
                     var exitCode = dataLoadProcess.Run(token);
             

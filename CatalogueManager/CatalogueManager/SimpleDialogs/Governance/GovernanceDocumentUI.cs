@@ -10,7 +10,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Governance;
+using CatalogueManager.Collections;
+using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Revertable;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 
@@ -19,14 +23,14 @@ namespace CatalogueManager.SimpleDialogs.Governance
     /// <summary>
     /// The RDMP is designed to store sensitive clinical datasets and make them available in research ready (anonymous) form.  This usually requires governance approval from the data
     /// provider.  It is important to store the document trail and schedule (e.g. do you require yearly re-approval) for audit purposes.  The RDMP does this through Governance Periods
-    /// (See GovernanceUI).  
+    /// (See GovernancePeriodUI).  
     /// 
     /// <para>This control allows you to configure/view attachments of a GovernancePeriod (e.g. an email, a scan of a signed approval letter etc). For ease of reference you should describe
     /// what is in the document (e.g. 'letter to Fife healthboard (Mary Sue) listing the datasets we host and requesting re-approval for 2016.  Letter is signed by Dr Governancer.)'</para>
     /// 
     /// <para>This control saves changes as you make them (there is no need to press Ctrl+S)</para>
     /// </summary>
-    public partial class GovernanceDocumentUI : UserControl
+    public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveableUI
     {
         private GovernanceDocument _governanceDocument;
 
@@ -36,23 +40,12 @@ namespace CatalogueManager.SimpleDialogs.Governance
             set
             {
                 _governanceDocument = value;
-
-                this.Enabled = value != null;
-
-                if (value == null)
-                {
-                    tbName.Text = "";
-                    tbDescription.Text = "";
-                    tbID.Text = "";
-                    tbPath.Text = "";
-                }
-                else
-                {
-                    tbName.Text = value.Name;
-                    tbDescription.Text = value.Description;
-                    tbID.Text = value.ID.ToString();
-                    tbPath.Text = value.URL;
-                }
+                
+                tbName.Text = value.Name;
+                tbDescription.Text = value.Description;
+                tbID.Text = value.ID.ToString();
+                tbPath.Text = value.URL;
+                
 
             }
         }
@@ -60,6 +53,15 @@ namespace CatalogueManager.SimpleDialogs.Governance
         public GovernanceDocumentUI()
         {
             InitializeComponent();
+            AssociatedCollection = RDMPCollection.Catalogue;
+        }
+
+        public override void SetDatabaseObject(IActivateItems activator, GovernanceDocument databaseObject)
+        {
+            base.SetDatabaseObject(activator, databaseObject);
+            
+            GovernanceDocument = databaseObject;
+            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -84,10 +86,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             try
             {
                 if (_governanceDocument != null)
-                {
                     _governanceDocument.Name = tbName.Text;
-                    _governanceDocument.SaveToDatabase();
-                }
 
                 tbName.ForeColor = Color.Black;
             }
@@ -102,10 +101,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
             try
             {
                 if (_governanceDocument != null)
-                {
                     _governanceDocument.Description = tbDescription.Text;
-                    _governanceDocument.SaveToDatabase();
-                }
+
                 tbDescription.ForeColor = Color.Black;
             }
             catch (Exception)
@@ -158,5 +155,14 @@ namespace CatalogueManager.SimpleDialogs.Governance
             }
         }
 
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<GovernanceDocumentUI_Design, UserControl>))]
+    public abstract class GovernanceDocumentUI_Design : RDMPSingleDatabaseObjectControl<GovernanceDocument>
+    {
     }
 }

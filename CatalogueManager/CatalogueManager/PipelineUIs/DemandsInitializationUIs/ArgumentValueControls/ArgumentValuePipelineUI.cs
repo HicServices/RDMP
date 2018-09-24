@@ -17,7 +17,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
     /// <summary>
     /// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
     /// 
-    /// <para>This Control is for setting Properties that are Pipeline, (Requires the class to implement IDemandToUseAPipeline<T>).</para>
+    /// <para>This Control is for setting Properties that are Pipeline, (Requires the class to implement <see cref="IDemandToUseAPipeline"/>).</para>
     /// </summary>
     [TechnicalUI]
     public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
@@ -25,11 +25,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         private readonly CatalogueRepository _catalogueRepository;
         private Argument _argument;
         private DemandsInitializationAttribute _demand;
-        private bool _bLoading = true;
-
-        /// <summary>
-        /// is a typeof(PipelineSelectionUI<>)
-        /// </summary>
+        
         private IPipelineSelectionUI _pipelineSelectionUIInstance;
         private Type _typeOfUnderlyingClass;
 
@@ -50,7 +46,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         
         public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
         {
-            _bLoading = true;
             _argument = argument;
             _demand = requirement.Demand;
 
@@ -86,8 +81,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             {
                 ragSmiley1.Fatal(e);
             }
-
-            _bLoading = false;
         }
 
         private void BombIfMandatoryAndEmpty()

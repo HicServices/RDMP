@@ -17,10 +17,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// </summary>
     public class ArgumentFactory
     {
-        /// <summary>
-        /// Interrogates a class via reflection and enumerates it's properties to find any that have the attribute [DemandsInitialization]
-        /// Each one of these that is found is created as a ProcessTaskArgument of the appropriate Name and PropertyType under the parent ProcessTask
-        /// </summary>
+        /// <inheritdoc cref = "CreateArgumentsForClassIfNotExistsGeneric(Type,IArgumentHost,IArgument[])"/>
         /// <typeparam name="T">A class with one or more Properties marked with DemandsInitialization</typeparam>
         /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
         public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>( IArgumentHost host, IArgument[] existingArguments)
@@ -28,6 +25,11 @@ namespace CatalogueLibrary.Data.DataLoad
             return CreateArgumentsForClassIfNotExistsGeneric(typeof (T),host,existingArguments);
         }
 
+        /// <summary>
+        /// Interrogates a class via reflection and enumerates it's properties to find any that have the attribute [DemandsInitialization]
+        /// Each one of these that is found is created as a ProcessTaskArgument of the appropriate Name and PropertyType under the parent ProcessTask
+        /// </summary>
+        /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
         public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric(
             Type underlyingClassTypeForWhichArgumentsWillPopulate,IArgumentHost host,
             IArgument[] existingArguments)
@@ -65,6 +67,13 @@ namespace CatalogueLibrary.Data.DataLoad
             }
         }
 
+        /// <summary>
+        /// Gets all public properties of the given <paramref name="classType"/> decorated with <see cref="DemandsInitializationAttribute"/>.  
+        /// 
+        /// <para>If there are any public properties encountered with <see cref="DemandsNestedInitializationAttribute"/> then the referenced class is also investigated in the same manner.</para>
+        /// </summary>
+        /// <param name="classType"></param>
+        /// <returns></returns>
         public List<RequiredPropertyInfo> GetRequiredProperties(Type classType)
         {
             List<RequiredPropertyInfo> required = new List<RequiredPropertyInfo>();
@@ -100,6 +109,12 @@ namespace CatalogueLibrary.Data.DataLoad
             return required;
         }
         
+        /// <summary>
+        /// Creates <see cref="IArgument"/> instances for all demanded properties (See <see cref="GetRequiredProperties"/>) of the given class and deletes any old arguments
+        /// which are no longer required by the class (e.g. due to an API change).
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>
         public void SyncArgumentsForClass(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
         {
             if(host.GetClassNameWhoArgumentsAreFor() != underlyingClassTypeForWhichArgumentsWillPopulate.FullName)
@@ -131,7 +146,14 @@ namespace CatalogueLibrary.Data.DataLoad
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Synchronizes all arguments (See SyncArgumentsForClass) for the supplied class (<paramref name="underlyingClassTypeForWhichArgumentsWillPopulate"/>) and returns the mapping
+        /// between <see cref="IArgument"/> (which stores the value) and public class property (<see cref="RequiredPropertyInfo"/>)
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>
+        /// <returns></returns>
         public Dictionary<IArgument, RequiredPropertyInfo> GetDemandDictionary(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
         {
             var toReturn = new Dictionary<IArgument, RequiredPropertyInfo>();

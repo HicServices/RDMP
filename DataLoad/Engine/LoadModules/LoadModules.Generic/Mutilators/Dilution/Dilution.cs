@@ -18,10 +18,13 @@ namespace LoadModules.Generic.Mutilators.Dilution
     /// the undiluted values will have been stored in the IdentifierDump).  The mutilation might change the data type of the column (e.g. from date to bit in the
     /// above example) based on the user specified IDilutionOperation.
     /// 
+    /// <para>This operation MUST only appear in AdjustStaging.  It works in concert with <see cref="PreLoadDiscardedColumn"/>s.  Create a PreLoadDiscardedColumn 
+    /// with Destination=Dilution, this operation can then be used to mutilate the value (for example cutting off the ends of postcodes).  The pristene (un-mutilated)
+    /// value will be stored in the IdentifierDump along with all the other dumped columns but the LIVE will also contain the mutilated value</para>
+    /// 
     /// <para>Checking for this component is quite good and should detect incompatible Types (where LIVE column does not match the IDilutionOperation), missing columns
     /// / dump server configuration etc.</para>
     /// </summary>
-    [Description("This operation MUST only appear in AdjustSTAGING.  It works in concert with PreLoadDiscardedColumns.  Create a PreLoadDiscardedColumn with Destination=Dilution, this operation can then be used to mutilate the value (for example cutting off the ends of postcodes).  The pristene (un-mutilated) value will be stored in the IdentifierDump along with all the other dumped columns but the LIVE will also contain the mutilated value")]
     public class Dilution : IPluginMutilateDataTables
     {
 

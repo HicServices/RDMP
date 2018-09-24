@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using CachingEngine.Factories;
-using CachingEngine.Locking;
 using CachingEngine.PipelineExecution;
 using CachingEngine.Requests.FetchRequestProvider;
 using CatalogueLibrary.Data;
@@ -127,11 +124,7 @@ namespace CachingEngine.DataRetrievers
             
             // CreateCachingEngine also populates the engineMap as it knows about both the load schedule and pipeline engine at the same time
             var cachingEngines = _cacheProgressItems.Select(createEngineFunc).ToList();
-
-            // This particular lock provider uses the LoadProgress object to determine whether a particular engine is locked (the pipeline engine itself has no concept of locking, but the execution strategy does)
-            var engineLockProvider = new LoadCacheEngineLockProvider(_engineMap);
-            _pipelineEngineExecutionStrategy.EngineLockProvider = engineLockProvider;
-
+            
             return RunOnce(cancellationToken, cachingEngines);
         }
 

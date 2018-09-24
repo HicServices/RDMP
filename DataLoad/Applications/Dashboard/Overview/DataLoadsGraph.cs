@@ -120,7 +120,7 @@ namespace Dashboard.Overview
                             try
                             {
                                 //get the logging connection
-                                logManager = new LogManager(metadata.GetDistinctLoggingDatabaseSettings());
+                                logManager = new LogManager(metadata.GetDistinctLoggingDatabase());
                             }
                             catch (NotSupportedException e)
                             {

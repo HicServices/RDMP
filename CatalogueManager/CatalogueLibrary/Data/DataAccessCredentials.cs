@@ -23,17 +23,21 @@ namespace CatalogueLibrary.Data
         private string _name;
         private string _username;
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <inheritdoc/>
         public string Username
         {
             get { return _username; }
             set { SetField(ref  _username, value); }
         }
+        
+        /// <inheritdoc/>
         public string Password
         {
             get { return _encryptedPasswordHost.Password; }
@@ -49,6 +53,14 @@ namespace CatalogueLibrary.Data
         
         #endregion
 
+        /// <summary>
+        /// Records a new (initially blank) set of credentials that can be used to access a <see cref="TableInfo"/> or other object requiring authentication.
+        /// <para>A single <see cref="DataAccessCredentials"/> can be shared by multiple tables</para>
+        /// 
+        /// <para>You can also use <see cref="DataAccessCredentialsFactory"/> for easier credentials creation</para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
         public DataAccessCredentials(ICatalogueRepository repository, string name= null)
         {
             name = name ?? "New Credentials " + Guid.NewGuid();
@@ -71,6 +83,7 @@ namespace CatalogueLibrary.Data
             Password = r["Password"].ToString();
         }
 
+        /// <inheritdoc/>
         public override void DeleteInDatabase()
         {
             try
@@ -86,28 +99,35 @@ namespace CatalogueLibrary.Data
             }
         }
         
+        /// <summary>
+        /// Returns all the <see cref="TableInfo"/> that rely on the credentials to access the table(s).  This is split into the contexts under which the 
+        /// credentials are used e.g. <see cref="DataAccessContext.DataLoad"/>
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<DataAccessContext, List<TableInfo>> GetAllTableInfosThatUseThis()
         {
             return ((CatalogueRepository)Repository).TableInfoToCredentialsLinker.GetAllTablesUsingCredentials(this);
         }
 
-        
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
-
+        /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
             return _encryptedPasswordHost.GetDecryptedPassword();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[0];
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return GetAllTableInfosThatUseThis().SelectMany(kvp=>kvp.Value).Cast<IHasDependencies>().ToArray();

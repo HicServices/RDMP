@@ -55,12 +55,6 @@ namespace DataExportManager.ProjectUI
     /// </summary>
     public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     {
-        /// <summary>
-        /// Happens when the user saves or rejects a save change (leaving the in memory state of the object different from the database), this lets all subscribers
-        /// know they should go refresh the state of their Project related objects.
-        /// </summary>
-        internal event EventHandler GlobalChangesIncurred;
-        
         private Project _project;
         
         public Project Project

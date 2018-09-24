@@ -25,7 +25,9 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class LoadModuleAssembly : VersionedDatabaseEntity
     {
-        //also prohibited are anything with Test in the title (the captial T is needed i.e. detest.dll would not be excluded but dTest.dll would be)
+        /// <summary>
+        /// List of dlls which will not be packaged up if present in your plugins bin directory since they already form part of the RDMP core architecture
+        /// </summary>
         public static readonly string[] ProhibitedDllNames = new []
         {
             //part of main Platform
@@ -136,42 +138,73 @@ namespace CatalogueLibrary.Data
         private string _dllFileVersion;
         private int _plugin_ID;
 
+        /// <summary>
+        /// The name of the dll or src file within the <see cref="Plugin"/>
+        /// </summary>
         public string Name
         {
 	        get { return _name;}
 	        set { SetField(ref _name,value);}
         }
+
+        /// <summary>
+        /// Not currently used
+        /// </summary>
         public string Description
         {
 	        get { return _description;}
 	        set { SetField(ref _description,value);}
         }
+
+        /// <summary>
+        /// The assembly (dll) file as a Byte[], use File.WriteAllBytes to write it to disk
+        /// </summary>
         public Byte[] Dll
         {
 	        get { return _dll;}
 	        set { SetField(ref _dll,value);}
         }
+
+        /// <summary>
+        /// The assembly (pdb) file if any for the <see cref="Dll"/> which contains debugging symbols
+        /// as a Byte[], use File.WriteAllBytes to write it to disk
+        /// </summary>
         public Byte[] Pdb
         {
 	        get { return _pdb;}
 	        set { SetField(ref _pdb,value);}
         }
+
+        /// <summary>
+        /// The user who uploaded the dll
+        /// </summary>
         public string Committer
         {
 	        get { return _committer;}
 	        set { SetField(ref _committer,value);}
         }
+
+        /// <summary>
+        /// The date the dll was uploaded
+        /// </summary>
         public DateTime UploadDate
         {
 	        get { return _uploadDate;}
 	        set { SetField(ref _uploadDate,value);}
         }
+
+        /// <summary>
+        /// The version number of the dll
+        /// </summary>
         public string DllFileVersion
         {
 	        get { return _dllFileVersion;}
 	        set { SetField(ref _dllFileVersion,value);}
         }
 
+        /// <summary>
+        /// The plugin this file forms a part of (each <see cref="Plugin"/> will usually have multiple dlls as part of it's dependencies)
+        /// </summary>
         [Relationship(typeof(Plugin), RelationshipType.SharedObject)]
         public int Plugin_ID
         {
@@ -183,6 +216,7 @@ namespace CatalogueLibrary.Data
 
         #region Relationships
         
+        /// <inheritdoc cref="Plugin_ID"/>
         [NoMappingToDatabase]
         public Plugin Plugin { get { return Repository.GetObjectByID<Plugin>(Plugin_ID); }}
 
@@ -221,11 +255,20 @@ namespace CatalogueLibrary.Data
             shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this, shareManager, shareDefinition);
         }
 
+        /// <summary>
+        /// Returns true if the file is on the list of <see cref="ProhibitedDllNames"/>
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
         public static bool IsDllProhibited(FileInfo f)
         {
             return ProhibitedDllNames.Contains(f.Name);
         }
         
+        /// <summary>
+        /// Downloads the plugin dll/pdb/src to the given directory
+        /// </summary>
+        /// <param name="downloadDirectory"></param>
         public void DownloadAssembly(DirectoryInfo downloadDirectory)
         {
             string targetDirectory = downloadDirectory.FullName;
@@ -281,7 +324,7 @@ namespace CatalogueLibrary.Data
                 if (!f.Extension.ToLower().Equals(".dll"))
                     throw new NotSupportedException("Only .dll files can be commited");
 
-                if (ProhibitedDllNames.Contains(f.Name) || ProhibitedDllNames.Contains("Test"))
+                if (ProhibitedDllNames.Contains(f.Name))
                     throw new ArgumentException("Cannot commit assembly " + f.Name + " because it is a prohibited dll or has the word 'Test' in its filename");
 
                 var pdb = new FileInfo(f.FullName.Substring(0, f.FullName.Length - ".dll".Length) + ".pdb");
@@ -322,6 +365,10 @@ namespace CatalogueLibrary.Data
             return dictionaryParameters;
         }
 
+        /// <summary>
+        /// Updates the current state to match the dll file on disk
+        /// </summary>
+        /// <param name="toCommit"></param>
         public void UpdateTo(FileInfo toCommit)
         {
             var dict = GetDictionaryParameters(toCommit, Plugin);
@@ -344,6 +391,7 @@ namespace CatalogueLibrary.Data
             return true;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;

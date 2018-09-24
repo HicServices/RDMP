@@ -260,7 +260,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             {
                 try
                 {
-                    _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabaseSettings());
+                    _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabase());
                     results = _logManager.GetArchivalLoadInfoFor(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
 
                     if(results.Length == ArchivalDataLoadInfo.MaxChildrenToFetch)

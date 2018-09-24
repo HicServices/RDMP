@@ -28,18 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TimePeriodicityChart));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cbShowGaps = new System.Windows.Forms.CheckBox();
             this.btnPointer = new System.Windows.Forms.Button();
             this.btnAnnotator = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.cbShowGaps = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -49,17 +51,17 @@
             // 
             // chart1
             // 
-            chartArea3.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea3);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.chart1.Legends.Add(legend3);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(3, 3);
             this.chart1.Name = "chart1";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.chart1.Series.Add(series3);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(1304, 652);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -83,6 +85,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.cbShowGaps);
             this.tabPage1.Controls.Add(this.btnPointer);
             this.tabPage1.Controls.Add(this.btnAnnotator);
@@ -94,6 +98,20 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Graph";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // cbShowGaps
+            // 
+            this.cbShowGaps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbShowGaps.AutoSize = true;
+            this.cbShowGaps.Checked = true;
+            this.cbShowGaps.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbShowGaps.Location = new System.Drawing.Point(1227, 603);
+            this.cbShowGaps.Name = "cbShowGaps";
+            this.cbShowGaps.Size = new System.Drawing.Size(81, 17);
+            this.cbShowGaps.TabIndex = 2;
+            this.cbShowGaps.Text = "Show Gaps";
+            this.cbShowGaps.UseVisualStyleBackColor = true;
+            this.cbShowGaps.CheckedChanged += new System.EventHandler(this.cbShowGaps_CheckedChanged);
             // 
             // btnPointer
             // 
@@ -139,19 +157,27 @@
             this.dataGridView1.Size = new System.Drawing.Size(1304, 652);
             this.dataGridView1.TabIndex = 0;
             // 
-            // cbShowGaps
+            // label2
             // 
-            this.cbShowGaps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbShowGaps.AutoSize = true;
-            this.cbShowGaps.Checked = true;
-            this.cbShowGaps.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbShowGaps.Location = new System.Drawing.Point(1227, 603);
-            this.cbShowGaps.Name = "cbShowGaps";
-            this.cbShowGaps.Size = new System.Drawing.Size(81, 17);
-            this.cbShowGaps.TabIndex = 2;
-            this.cbShowGaps.Text = "Show Gaps";
-            this.cbShowGaps.UseVisualStyleBackColor = true;
-            this.cbShowGaps.CheckedChanged += new System.EventHandler(this.cbShowGaps_CheckedChanged);
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.White;
+            this.label2.Location = new System.Drawing.Point(1228, 577);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(43, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Pointer:";
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(1218, 543);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Annotate:";
             // 
             // TimePeriodicityChart
             // 
@@ -180,5 +206,7 @@
         private System.Windows.Forms.Button btnAnnotator;
         private System.Windows.Forms.Button btnPointer;
         private System.Windows.Forms.CheckBox cbShowGaps;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
     }
 }

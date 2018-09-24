@@ -6,9 +6,17 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public interface IEncryptedString
     {
+        /// <inheritdoc cref="ReusableLibraryCode.DataAccess.IEncryptedPasswordHost.Password"/>
         string Value { get; set; }
-        
+
+        /// <inheritdoc cref="ReusableLibraryCode.DataAccess.IEncryptedPasswordHost.GetDecryptedPassword"/>
         string GetDecryptedValue();
+
+        /// <summary>
+        /// Returns true if the <paramref name="value"/> looks like it is encrypted
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         bool IsStringEncrypted(string value);
     }
 }

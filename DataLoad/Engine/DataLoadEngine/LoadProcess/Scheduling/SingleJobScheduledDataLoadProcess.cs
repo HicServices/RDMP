@@ -3,6 +3,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.Repositories;
 using DataLoadEngine.Job.Scheduling;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
@@ -22,8 +23,8 @@ namespace DataLoadEngine.LoadProcess.Scheduling
         private SingleScheduledJobFactory _scheduledJobFactory;
 
         // todo: refactor to cut down on ctor params
-        public SingleJobScheduledDataLoadProcess(ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution, JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory, ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad, ILogManager logManager, IDataLoadEventListener dataLoadEventListener) :
-            base(loadMetadata, preExecutionChecker, loadExecution, jobDateGenerationStrategyFactory, loadProgressSelectionStrategy, overrideNumberOfDaysToLoad, logManager, dataLoadEventListener)
+        public SingleJobScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution, JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory, ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad, ILogManager logManager, IDataLoadEventListener dataLoadEventListener) :
+            base(repositoryLocator,loadMetadata, preExecutionChecker, loadExecution, jobDateGenerationStrategyFactory, loadProgressSelectionStrategy, overrideNumberOfDaysToLoad, logManager, dataLoadEventListener)
         {
         }
 

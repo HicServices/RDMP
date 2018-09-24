@@ -76,6 +76,8 @@ namespace Diagnostics
 
         private List<ExternalDatabaseServer> _serversCreated = new List<ExternalDatabaseServer>();
 
+        ArgumentFactory _argumentFactory = new ArgumentFactory();
+
         public UserAcceptanceTestEnvironment(SqlConnectionStringBuilder serverToCreateRawDataOnBuilder, string datasetFolderPath, SqlConnectionStringBuilder loggingBuilder, string LoggingTask, SqlConnectionStringBuilder anoBuilder, SqlConnectionStringBuilder dumpBuilder, IRDMPPlatformRepositoryServiceLocator repositoryLocator) : base(repositoryLocator)
         {
             LoggingServer = new DiscoveredServer(loggingBuilder).ExpectDatabase(loggingBuilder.InitialCatalog);
@@ -250,7 +252,7 @@ namespace Diagnostics
             var repository = RepositoryLocator.CatalogueRepository;
             //"LoadModules.Generic.Mutilators.PrimaryKeyCollisionResolverMutilation"
             //see if process task already exists
-            ProcessTask duplicationProcessTask = _loadMetaData.ProcessTasks.SingleOrDefault(pt => pt.Name.Equals(ResolvePrimaryKeyDuplicationProcessName));
+            IProcessTask duplicationProcessTask = _loadMetaData.ProcessTasks.SingleOrDefault(pt => pt.Name.Equals(ResolvePrimaryKeyDuplicationProcessName));
 
             //it does exist so warn user
             if (duplicationProcessTask != null)
@@ -303,7 +305,7 @@ namespace Diagnostics
             //now set the values for each of the properties that we expect to have been created
             try
             {
-                var arguments = duplicationProcessTask.ProcessTaskArguments.ToArray();
+                var arguments = duplicationProcessTask.GetAllArguments().ToArray();
 
                 //make sure these exist 
                 if (!arguments.Any(a => a.Name.Equals("TargetTable")))
@@ -311,7 +313,7 @@ namespace Diagnostics
                         "Expected ProcessTaskArgument called TargetTable to exist but it did not (Has someone refactored" +typeof (PrimaryKeyCollisionResolverMutilation).Name+"?)", CheckResult.Fail, null));
                 
                 //set their values
-                foreach (ProcessTaskArgument argument in arguments)
+                foreach (IArgument argument in arguments)
                 {
                     try
                     {
@@ -384,18 +386,13 @@ namespace Diagnostics
                 }
                 catch (Exception e)
                 {
+                    var tbl = toCleanup.GetPushedTable();
+                    
                     //Maybe we couldn't delete it because it had rows in it?
-                    if (toCleanup.GetApproximateRowcount() > 0)
+                    if (tbl.Exists() && tbl.GetRowCount() > 0)
                     {
-                        var server = DataAccessPortal.GetInstance().ExpectServer(_anoServer, DataAccessContext.DataLoad);
-
-                        using(var con = server.GetConnection())
-                        {
-                            con.Open();
-                            DbCommand cmdTruncate = server.GetCommand("TRUNCATE TABLE " + anoIdentifierTable ,con);
-                            cmdTruncate.ExecuteNonQuery();
-                            con.Close();
-                        }
+                        
+                        tbl.Truncate();
 
                         //should now be possible to delete remannt
                         toCleanup.DeleteInDatabase();
@@ -516,8 +513,8 @@ namespace Diagnostics
                 if (externalDatabaseServer != null)
                 {
 
-                    //is it identical?
-                    if (externalDatabaseServer.IsSameDatabase(discoveredDatabase.Server.Name, discoveredDatabase.GetRuntimeName()))
+                                        //is it identical?
+                    if (IsSameDatabase(externalDatabaseServer,discoveredDatabase.Server.Name,discoveredDatabase.GetRuntimeName()))
                         return externalDatabaseServer;
 
 
@@ -597,7 +594,7 @@ namespace Diagnostics
                 if (externalDatabaseServers.Length != 0)
                 {
                     //see if there are any that match the server/database
-                    var correctServer = externalDatabaseServers.Where(s => s.IsSameDatabase(discoveredDatabase.Server.Name, discoveredDatabase.GetRuntimeName())).ToArray();
+                    var correctServer = externalDatabaseServers.Where(s => IsSameDatabase(s,discoveredDatabase.Server.Name, discoveredDatabase.GetRuntimeName())).ToArray();
 
                     //there are two or more external references e.g. JANUS,HICSSISLogging (with integrated security) and then JANUS,HICSSISLogging with user account - at any rate the user has plenty to choose from himself!
                     if (correctServer.Length > 1)
@@ -746,7 +743,7 @@ namespace Diagnostics
         {
             var repository = RepositoryLocator.CatalogueRepository;
             //see if process task already exists
-            ProcessTask csvProcessTask = _loadMetaData.ProcessTasks.SingleOrDefault(pt => pt.Name.Equals(CSVAttacherProcessName));
+            IProcessTask csvProcessTask = _loadMetaData.ProcessTasks.SingleOrDefault(pt => pt.Name.Equals(CSVAttacherProcessName));
 
             //it does exist so warn user
             if (csvProcessTask != null)
@@ -774,7 +771,7 @@ namespace Diagnostics
             try
             {
                 //now since all the process task arguments are driven by reflection we need to determine what the class expects and create a ProcessTaskArgument for each DemandsInitialization property
-                var createdArguments = csvProcessTask.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>().ToArray();
+                var createdArguments = _argumentFactory.CreateArgumentsForClassIfNotExistsGeneric<AnySeparatorFileAttacher>(csvProcessTask, csvProcessTask.GetAllArguments().ToArray()).ToArray();
 
                 //if we created some
                 if (createdArguments.Count() != 0)
@@ -1282,7 +1279,7 @@ namespace Diagnostics
             DemographyCatalogue.DeleteInDatabase();
             lmd.DeleteInDatabase();
 
-            var credentials = DemographyTableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            var credentials = (DataAccessCredentials)DemographyTableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             DemographyTableInfo.DeleteInDatabase();
 
             if(credentials != null)
@@ -1310,5 +1307,14 @@ namespace Diagnostics
                     _anoTable.DeleteInDatabase();
             }
         }
+        public bool IsSameDatabase(ExternalDatabaseServer eds, string server, string database)
+        {
+            if (!string.IsNullOrWhiteSpace(eds.Server) && eds.Server.Equals(server))
+                if (!string.IsNullOrWhiteSpace(eds.Database) && eds.Database.Equals(database))
+                    return true;
+
+            return false;
+        }
+
     }
 }

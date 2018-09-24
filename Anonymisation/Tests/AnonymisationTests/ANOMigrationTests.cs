@@ -109,7 +109,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         {
             DeleteANOEndpoint();
 
-            var credentials = _tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            var credentials = (DataAccessCredentials)_tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             _tableInfo.DeleteInDatabase();
 
             if(credentials != null)

@@ -34,107 +34,80 @@ namespace CatalogueLibrary.Data.Cache
             set { SetField(ref _name, value); }
         }
 
-        /// <summary>
-        /// The LoadProgress which is responsible for loading data from this cache.
-        /// </summary>
+        /// <inheritdoc/>
         public int LoadProgress_ID
         {
             get { return _loadProgressID; }
             set { SetField(ref _loadProgressID, value); }
         }
 
-        /// <summary>
-        /// When we can run the cache (e.g. evenings only).  Also serves as the locking object for preventing multiple caching engines/automation servers from executing
-        /// caching activities belonging to the same window.
-        /// </summary>
+        /// <inheritdoc/>
         public int? PermissionWindow_ID
         {
             get { return _permissionWindowID; }
             set { SetField(ref  _permissionWindowID, value); }
         }
 
-        /// <summary>
-        /// How far through the caching activity are we? files up to this date should be on disk in archives
-        /// </summary>
+        /// <inheritdoc/>
         public DateTime? CacheFillProgress
         {
             get { return _cacheFillProgress; }
             set { SetField(ref  _cacheFillProgress, value); }
         }
 
-        /// <summary>
-        /// The period of time e.g. 1m that is never fetched expressed as an offset from DateTime.Now.  This handles the case where the cache source
-        /// is not real time i.e. we expect it to take at least 1 month for data to appear on the cache endpoint so don't make requests for data that would
-        /// originate very recently.  
-        /// </summary>
+        ///<inheritdoc/>
         public string CacheLagPeriod
         {
             get { return _cacheLagPeriod; }
             set { SetField(ref  _cacheLagPeriod, value); }
         } // stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod
 
-        /// <summary>
-        /// The pipeline configuration responsible for populating the cache.  This will be run repeatedly for each date range fetched 
-        /// <see cref="CachingEngine.Factories.CachingPipelineUseCase"/>
-        /// </summary>
+        ///<inheritdoc/>
         public int? Pipeline_ID
         {
             get { return _pipelineID; }
             set { SetField(ref  _pipelineID, value); }
         }
 
-        /// <summary>
-        /// The amount of time to request at a time from the cache source e.g. (fetch 6 hours of data at a time).
-        /// </summary>
+        ///<inheritdoc/>
         public TimeSpan ChunkPeriod
         {
             get { return _chunkPeriod; }
             set { SetField(ref  _chunkPeriod, value); }
         }
 
-        /// <summary>
-        /// Used by the automation server to decide whether to execute a CacheProgress.  This period is the minimum amount of available to fetch data that must
-        /// exist before starting a caching activity.  E.g. if the cache is up to date (including the lag period offset) and 1 second passes then we don't want to 
-        /// make a request for 1 second of data.  Similarly we don't want to just use the ChunkPeriod otherwise we would be executing arbitrary manner.  
-        /// 
-        /// <para>This lets you say 'only execute the cache if theres at least 1 month of data (assumed) to exist on the cache source' (CacheLagPeriodLoadDelay) and don't
-        /// request any data generated within the last month (CacheLagPeriod).  This means the cache will execute once a month and fetch a month of data at a time but
-        /// the CacheFillProgress will always be 1-2 months behind DateTime.Now (depending on how recently the execution occured).</para>
-        /// </summary>
+        ///<inheritdoc/>
         public string CacheLagPeriodLoadDelay
         {
             get { return _cacheLagPeriodLoadDelay; }
             set { SetField(ref  _cacheLagPeriodLoadDelay, value); }
-        } // stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod
+        } 
 
         #endregion
 
         #region Relationships
 
-        /// <summary>
-        /// Returns all failed cache requests documented.  This is an array of dates that were requested of the caching endpoint but were no data was available due
-        /// to the endpoint reporting an Exception at the time it was requested. 
-        /// </summary>
+        ///<inheritdoc/>
         [NoMappingToDatabase]
         public IEnumerable<ICacheFetchFailure> CacheFetchFailures {
             get { return Repository.GetAllObjectsWithParent<CacheFetchFailure>(this); }
         }
 
-        /// <inheritdoc cref="LoadProgress_ID"/>
+        /// <inheritdoc cref="ICacheProgress.LoadProgress_ID"/>
         [NoMappingToDatabase]
         public ILoadProgress LoadProgress
         {
             get { return Repository.GetObjectByID<LoadProgress>(LoadProgress_ID); }
         }
 
-        /// <inheritdoc cref="Pipeline_ID"/>
+        /// <inheritdoc cref="ICacheProgress.Pipeline_ID"/>
         [NoMappingToDatabase]
         public IPipeline Pipeline
         {
             get { return Pipeline_ID == null ? null : Repository.GetObjectByID<Pipeline>((int)Pipeline_ID); }
         }
 
-        /// <inheritdoc cref="PermissionWindow_ID"/>
+        /// <inheritdoc cref="ICacheProgress.PermissionWindow_ID"/>
         [NoMappingToDatabase]
         public IPermissionWindow PermissionWindow
         {
@@ -147,7 +120,7 @@ namespace CatalogueLibrary.Data.Cache
         }
 
         #endregion
-        /// <inheritdoc cref="CacheLagPeriod"/>
+        /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
         public CacheLagPeriod GetCacheLagPeriod()
         {
             if (string.IsNullOrWhiteSpace(CacheLagPeriod))
@@ -156,7 +129,7 @@ namespace CatalogueLibrary.Data.Cache
             return new CacheLagPeriod(CacheLagPeriod);
         }
 
-        /// <inheritdoc cref="CacheLagPeriodLoadDelay"/>
+        /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
         public CacheLagPeriod GetCacheLagPeriodLoadDelay()
         {
             if (string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay))
@@ -165,13 +138,13 @@ namespace CatalogueLibrary.Data.Cache
             return new CacheLagPeriod(CacheLagPeriodLoadDelay);
         }
         
-        /// <inheritdoc cref="CacheLagPeriod"/>
+        /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
         public void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod)
         {
             CacheLagPeriod = (cacheLagPeriod == null) ? "" : cacheLagPeriod.ToString();
         }
 
-        /// <inheritdoc cref="CacheLagPeriodLoadDelay"/>
+        /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
         public void SetCacheLagPeriodLoadDelay(CacheLagPeriod cacheLagLoadDelayPeriod)
         {
             CacheLagPeriodLoadDelay = (cacheLagLoadDelayPeriod == null) ? "" : cacheLagLoadDelayPeriod.ToString();
@@ -233,12 +206,7 @@ FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction);
             return Repository.GetAllObjectsInIDList<CacheFetchFailure>(toReturnIds); 
         }
 
-        /// <summary>
-        /// Returns the maximum amount of time that could be loaded from this cache (based on the origin date of the dataset or the max date of current data cached) and todays date (offset by lag period)
-        /// e.g. if the data has been cached to 2016-01-01 and todays date is 2016-01-05 then the TimeSpan will be +4 days.  A Negative shortfall indicates that it has overcached ahead of the lag period or
-        /// it has cached future data (as in data from the future!).
-        /// </summary>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public TimeSpan GetShortfall()
         {
             var lag = GetCacheLagPeriod();

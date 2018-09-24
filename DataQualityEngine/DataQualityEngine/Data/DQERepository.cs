@@ -40,8 +40,6 @@ namespace DataQualityEngine.Data
 
              DiscoveredServer = DataAccessPortal.GetInstance().ExpectServer(server, DataAccessContext.InternalDataProcessing);
              _connectionStringBuilder = DiscoveredServer.Builder;
-
-            catalogueRepository.AddToHelp(GetType().Assembly);
         }
 
         public Evaluation GetMostRecentEvaluationFor(Catalogue c)

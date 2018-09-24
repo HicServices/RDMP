@@ -3,6 +3,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
+using CatalogueLibrary.Repositories;
 using DataLoadEngine;
 using DataLoadEngine.DatabaseManagement.Operations;
 using DataLoadEngine.Job;
@@ -26,6 +27,8 @@ namespace DataLoadEngineTests.Integration
         public string ArchiveFilepath { get; private set; }
         public List<TableInfo> RegularTablesToLoad { get; private set; }
         public List<TableInfo> LookupTablesToLoad { get; private set; }
+        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get { return null; }}
+
         public void StartLogging()
         {
         }

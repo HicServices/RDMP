@@ -80,7 +80,7 @@ END
 
         public void Destroy()
         {
-            var credentials = TableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            var credentials = (DataAccessCredentials)TableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
 
             TableInfoCreated.DeleteInDatabase();
 

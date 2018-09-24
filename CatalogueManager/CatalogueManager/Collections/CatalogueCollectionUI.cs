@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections.Providers;
@@ -21,6 +22,7 @@ using MapsDirectlyToDatabaseTable;
 using CatalogueManager.Copying;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Collections
@@ -53,15 +55,21 @@ namespace CatalogueManager.Collections
 
         //constructor
 
+        private bool bLoading = true;
         public CatalogueCollectionUI()
         {
             InitializeComponent();
-            //prevent visual studio crashes
-            if (VisualStudioDesignMode)
-                return;
+            
+            cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
+            cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues ;
+            cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
+            cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
+            cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
 
             olvCheckResult.ImageGetter += CheckImageGetter;
             olvFilters.AspectGetter += FilterAspectGetter;
+            
+            bLoading = false;
         }
 
         //The color to highlight each Catalogue based on its extractability status
@@ -163,10 +171,7 @@ namespace CatalogueManager.Collections
         private bool isFirstTime = true;
 
         public void RefreshUIFromDatabase(object oRefreshFrom)
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Restart();
-            
+        {   
             //if there are new catalogues we don't already have in our tree
             if (_allCatalogues != null)
             {
@@ -179,8 +184,6 @@ namespace CatalogueManager.Collections
             }
 
             _allCatalogues = CommonFunctionality.CoreChildProvider.AllCatalogues;
-
-            Console.WriteLine("Stage 1:"+sw.ElapsedMilliseconds);
             
             if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
@@ -188,6 +191,7 @@ namespace CatalogueManager.Collections
                 ExpandAllFolders(CatalogueFolder.Root);
                 isFirstTime = false;
             }
+
         }
 
         private void ExpandAllFolders(CatalogueFolder model)
@@ -201,9 +205,17 @@ namespace CatalogueManager.Collections
 
         public void ApplyFilters()
         {
+            if(bLoading)
+                return;
+
+            UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
+            UserSettings.ShowDeprecatedCatalogues = cbShowDeprecated.Checked;
+            UserSettings.ShowColdStorageCatalogues = cbShowColdStorage.Checked;
+            UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
+            UserSettings.ShowNonExtractableCatalogues = cbShowNonExtractable.Checked;
+            
             tlvCatalogues.UseFiltering = true;
-            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider,
-                cbShowInternal.Checked, cbShowDeprecated.Checked, cbShowColdStorage.Checked, cbProjectSpecific.Checked, cbShowNonExtractable.Checked);
+            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider);
         }
 
         public enum HighlightCatalogueType
@@ -213,10 +225,7 @@ namespace CatalogueManager.Collections
             ExtractionBroken,
             TOP1Worked
         }
-
-        private object _lastSelected = null;
-        private bool _showCatalogueItems;
-
+        
         private void btnCheckCatalogues_Click(object sender, EventArgs e)
         {
             CheckCatalogues();
@@ -246,7 +255,12 @@ namespace CatalogueManager.Collections
                 //we have our own custom filter logic so no need to pass tbFilter
                 olvColumn1 //also the renameable column
                 );
-            
+
+            CommonFunctionality.MaintainRootObjects = new[]
+            {
+                typeof (AllGovernanceNode)
+            };
+
             //Things that are always visible regardless
             CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
             {
@@ -257,8 +271,8 @@ namespace CatalogueManager.Collections
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
+            tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
             tlvCatalogues.AddObject(CatalogueFolder.Root);
-            
             ApplyFilters();
 
             RefreshUIFromDatabase(CatalogueFolder.Root);
@@ -300,6 +314,9 @@ namespace CatalogueManager.Collections
             var o = e.Object;
             var cata = o as Catalogue;
 
+            if(o is GovernancePeriod || o is GovernanceDocument)
+                tlvCatalogues.RefreshObject(_activator.CoreChildProvider.AllGovernanceNode);
+
             if (cata != null)
             {
                 var oldFolder = tlvCatalogues.GetParent(cata) as CatalogueFolder;
@@ -329,7 +346,7 @@ namespace CatalogueManager.Collections
 
         public static bool IsRootObject(object root)
         {
-            return root.Equals(CatalogueFolder.Root);
+            return root.Equals(CatalogueFolder.Root) || root is AllGovernanceNode;
         }
 
         public void SelectCatalogue(Catalogue catalogue)

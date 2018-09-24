@@ -191,8 +191,13 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "AllServersNodeMenu",
             "SomeClass",
             "ProposeExecutionWhenCommandIs",
-            "Log4Net"
-
+            "Log4Net",
+            "ReleaseLocation",
+            "MyCoolDb",
+            "OperationType",
+            "DrugList",
+            "DrugCodeFormat",
+            "GenderCodeDescription"
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

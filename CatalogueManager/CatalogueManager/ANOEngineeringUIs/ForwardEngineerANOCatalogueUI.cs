@@ -301,7 +301,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                 if (e.Column == olvDestinationExtractionCategory)
                 {
                     var cbx = (ComboBox)e.Control;
-                    if (cbx.SelectedItem == "Clear")
+                    if ((string) cbx.SelectedItem == "Clear")
                         plan.ExtractionCategoryIfAny = null;
                     else
                     {

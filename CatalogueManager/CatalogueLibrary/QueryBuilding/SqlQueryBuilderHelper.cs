@@ -51,6 +51,7 @@ namespace CatalogueLibrary.QueryBuilding
             return toAdd;
         }
 
+        /// <inheritdoc cref="QueryTimeColumn.SetLookupStatus"/>
         public static void FindLookups(ISqlQueryBuilder qb)
         {
             //if there is only one table then user us selecting stuff from the lookup table only 
@@ -167,11 +168,11 @@ namespace CatalogueLibrary.QueryBuilding
 
         }
 
-        public static IEnumerable<Lookup> GetRequiredLookups(ISqlQueryBuilder qb)
-        {
-            return from column in qb.SelectColumns where column.IsLookupDescription select column.LookupTable;
-        }
-
+        /// <summary>
+        /// Returns all <see cref="Lookup"/> linked to for the FROM section of the query
+        /// </summary>
+        /// <param name="qb"></param>
+        /// <returns></returns>
         public static IEnumerable<Lookup> GetDistinctRequiredLookups(ISqlQueryBuilder qb)
         {
             //from all columns
@@ -285,6 +286,12 @@ namespace CatalogueLibrary.QueryBuilding
             return toReturn;
         }
 
+        /// <summary>
+        /// Generates the FROM sql including joins for all the <see cref="TableInfo"/> required by the <see cref="ISqlQueryBuilder"/>.  <see cref="JoinInfo"/> must exist for 
+        /// this process to work 
+        /// </summary>
+        /// <param name="qb"></param>
+        /// <returns></returns>
         public static string GetFROMSQL(ISqlQueryBuilder qb)
         {
             //add the from bit
@@ -428,6 +435,11 @@ namespace CatalogueLibrary.QueryBuilding
             return toAdd;
         }
 
+        /// <summary>
+        /// Generates the WHERE section of the query for the <see cref="ISqlQueryBuilder"/> based on recursively processing the <see cref="ISqlQueryBuilder.RootFilterContainer"/>
+        /// </summary>
+        /// <param name="qb"></param>
+        /// <returns>WHERE block or empty string if there are no <see cref="IContainer"/></returns>
         public static string GetWHERESQL(ISqlQueryBuilder qb)
         {
             string toReturn = "";
@@ -505,6 +517,12 @@ namespace CatalogueLibrary.QueryBuilding
             return toReturn;
         }
 
+        /// <summary>
+        /// Returns the unique database server type <see cref="IQuerySyntaxHelper"/> by evaluating the <see cref="TableInfo"/> used in the query.
+        /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para> 
+        /// </summary>
+        /// <param name="tablesUsedInQuery"></param>
+        /// <returns></returns>
         public static IQuerySyntaxHelper GetSyntaxHelper(List<TableInfo> tablesUsedInQuery)
         {
             if (!tablesUsedInQuery.Any())
@@ -520,6 +538,13 @@ namespace CatalogueLibrary.QueryBuilding
             return helper.GetQuerySyntaxHelper();
         }
 
+        /// <summary>
+        /// Applies <paramref name="topX"/> to the <see cref="ISqlQueryBuilder"/> as a <see cref="CustomLine"/> based on the database engine syntax e.g. LIMIT vs TOP
+        /// and puts in in the correct location in the query (<see cref="QueryComponent"/>)
+        /// </summary>
+        /// <param name="queryBuilder"></param>
+        /// <param name="syntaxHelper"></param>
+        /// <param name="topX"></param>
         public static void HandleTopX(ISqlQueryBuilder queryBuilder, IQuerySyntaxHelper syntaxHelper, int topX)
         {
             //if we have a lingering custom line from last time
@@ -531,6 +556,10 @@ namespace CatalogueLibrary.QueryBuilding
             queryBuilder.TopXCustomLine.Role = CustomLineRole.TopX;
         }
 
+        /// <summary>
+        /// Removes the SELECT TOP X logic from the supplied <see cref="ISqlQueryBuilder"/>
+        /// </summary>
+        /// <param name="queryBuilder"></param>
         public static void ClearTopX(ISqlQueryBuilder queryBuilder)
         {
             //if we have a lingering custom line from last time
@@ -541,6 +570,13 @@ namespace CatalogueLibrary.QueryBuilding
             }
         }
 
+        /// <summary>
+        /// Returns all <see cref="CustomLine"/> declared in <see cref="ISqlQueryBuilder.CustomLines"/> for the given stage but also adds some new ones to ensure valid syntax (for example
+        /// adding the word WHERE/AND depending on whether there is an existing <see cref="ISqlQueryBuilder.RootFilterContainer"/>.
+        /// </summary>
+        /// <param name="queryBuilder"></param>
+        /// <param name="stage"></param>
+        /// <returns></returns>
         public static IEnumerable<CustomLine> GetCustomLinesSQLForStage(ISqlQueryBuilder queryBuilder, QueryComponent stage)
         {
             var lines = queryBuilder.CustomLines.Where(c => c.LocationToInsert == stage).ToArray();

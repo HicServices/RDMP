@@ -9,16 +9,7 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
-    /// <summary>
-    /// Each Pipeline has 0 or more PipelineComponents.  A Pipeline Component is a persistence record for a user configuration of a class implementing IDataFlowComponent with
-    /// zero or more [DemandsInitialization] properties.  The class the user has chosen is stored in Class property and a PipelineComponentArgument will exist for each 
-    /// [DemandsInitialization] property.  
-    /// 
-    /// <para>PipelineComponents are turned into IDataFlowComponents when stamping out the Pipeline for use at a given time (See DataFlowPipelineEngineFactory.Create) </para>
-    /// 
-    /// <para>PipelineComponent is the Design time class (where it appears in Pipeline, what argument values it should be hydrated with etc) while IDataFlowComponent is 
-    /// the runtime instance of the configuration. </para>
-    /// </summary>
+    /// <inheritdoc cref="IPipelineComponent"/>
     public class PipelineComponent : VersionedDatabaseEntity, IPipelineComponent
     {
         #region Database Properties
@@ -28,24 +19,26 @@ namespace CatalogueLibrary.Data.Pipelines
         private int _pipelineID;
         private string _class;
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <inheritdoc/>
         public int Order
         {
             get { return _order; }
             set { SetField(ref  _order, value); }
         }
-
+        /// <inheritdoc/>
         public int Pipeline_ID
         {
             get { return _pipelineID; }
             set { SetField(ref  _pipelineID, value); }
         }
-
+        /// <inheritdoc/>
         public string Class
         {
             get { return _class; }
@@ -56,6 +49,7 @@ namespace CatalogueLibrary.Data.Pipelines
 
         #region Relationships
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments {
             get { return Repository.GetAllObjectsWithParent<PipelineComponentArgument>(this); }
@@ -69,6 +63,7 @@ namespace CatalogueLibrary.Data.Pipelines
 
         #endregion
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             string classLastBit = Class;
@@ -79,6 +74,15 @@ namespace CatalogueLibrary.Data.Pipelines
             return Name + "(" + classLastBit + ")";
         }
 
+        /// <summary>
+        /// Creates a new component in the <paramref name="parent"/> <see cref="Pipeline"/>.  This will mean that when run the <see cref="Pipeline"/>
+        /// will instantiate and run the given <paramref name="componentType"/>.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parent"></param>
+        /// <param name="componentType"></param>
+        /// <param name="order"></param>
+        /// <param name="name"></param>
         public PipelineComponent(ICatalogueRepository repository, IPipeline parent, Type componentType, int order,
             string name = null)
         {
@@ -100,27 +104,29 @@ namespace CatalogueLibrary.Data.Pipelines
             Name = r["Name"].ToString();
         }
         
+        /// <inheritdoc/>
         public IEnumerable<IArgument> GetAllArguments()
         {
             return PipelineComponentArguments;
         }
-
+        /// <inheritdoc/>
         public IArgument CreateNewArgument()
         {
             return new PipelineComponentArgument((ICatalogueRepository)Repository,this);
         }
-
+        /// <inheritdoc/>
         public string GetClassNameWhoArgumentsAreFor()
         {
             return Class;
         }
 
-
+        /// <inheritdoc/>
         public Type GetClassAsSystemType()
         {
             return ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(Class);
         }
 
+        /// <inheritdoc/>
         public string GetClassNameLastPart()
         {
             if (string.IsNullOrWhiteSpace(Class))
@@ -128,16 +134,8 @@ namespace CatalogueLibrary.Data.Pipelines
 
             return Class.Substring(Class.LastIndexOf('.') + 1);
         }
-
-        /// <summary>
-        /// Creates new ProcessTaskArguments for the supplied class T (based on what DemandsInitialization fields it has).  Parent is the ProcessTask that hosts the class T e.g. IAttacher
-        /// </summary>
-        /// <typeparam name="T">A class that has some DemandsInitialization fields</typeparam>
-        public IEnumerable<PipelineComponentArgument> CreateArgumentsForClassIfNotExists<T>()
-        {
-           return CreateArgumentsForClassIfNotExists(typeof(T));
-        }
-
+        
+        /// <inheritdoc/>
         public PipelineComponent Clone(Pipeline intoTargetPipeline)
         {
             var cataRepo = (ICatalogueRepository) intoTargetPipeline.Repository;
@@ -160,7 +158,14 @@ namespace CatalogueLibrary.Data.Pipelines
             return clone;
         }
 
-        public PipelineComponentArgument[] CreateArgumentsForClassIfNotExists(Type underlyingComponentType)
+        /// <inheritdoc/>
+        public IArgument[] CreateArgumentsForClassIfNotExists<T>()
+        {
+            return CreateArgumentsForClassIfNotExists(typeof(T));
+        }
+
+        /// <inheritdoc/>
+        public IArgument[] CreateArgumentsForClassIfNotExists(Type underlyingComponentType)
         {
             var argFactory = new ArgumentFactory();
             return argFactory.CreateArgumentsForClassIfNotExistsGeneric(underlyingComponentType,
@@ -175,11 +180,13 @@ namespace CatalogueLibrary.Data.Pipelines
                 .Cast<PipelineComponentArgument>().ToArray();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[] {Pipeline};
         }
-        
+
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return PipelineComponentArguments.Cast<IHasDependencies>().ToArray();

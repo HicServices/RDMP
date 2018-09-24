@@ -25,8 +25,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
     /// Data Extraction Source which can fulfill the IExtractCommand even when the dataset in the command is on a different server from the cohort.  This is done
     /// by copying the Cohort from the cohort database into tempdb for the duration of the pipeline execution and doing the linkage against that instead of
     /// the original cohort table.
+    /// 
     /// </summary>
-    [Description("This source generates a linked (anonymised) dataset using a linkage cohort in the same way as ExecuteDatasetExtractionSource with the exception that it copies the Cohort from the cohort database into tempdb (allowing cross server data extraction)")]
     public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractionSource
     {
         private bool _haveCopiedCohortAndAdjustedSql = false;

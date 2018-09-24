@@ -42,15 +42,21 @@ namespace CatalogueLibrary.QueryBuilding
             }
         }
 
+        /// <inheritdoc/>
         public string LimitationSQL { get; private set; }
-        
+        /// <inheritdoc/>
         public List<QueryTimeColumn> SelectColumns { get; private set; }
+        /// <inheritdoc/>
         public List<TableInfo> TablesUsedInQuery { get; private set; }
+        /// <inheritdoc/>
         public List<JoinInfo> JoinsUsedInQuery { get; private set; }
+        /// <inheritdoc/>
         public List<CustomLine> CustomLines { get; private set; }
 
+        /// <inheritdoc/>
         public CustomLine TopXCustomLine { get; set; }
-
+        
+        /// <inheritdoc/>
         public ParameterManager ParameterManager { get; private set; }
         
         /// <summary>
@@ -71,7 +77,8 @@ namespace CatalogueLibrary.QueryBuilding
                 SQLOutOfDate = true;
             }
         }
-
+        
+        /// <inheritdoc/>
         public bool CheckSyntax { get; set; }
 
 
@@ -90,7 +97,7 @@ namespace CatalogueLibrary.QueryBuilding
             _salt = salt;
         }
 
-        public void SetLimitationSQL(string limitationSQL)
+        private void SetLimitationSQL(string limitationSQL)
         {
             if(limitationSQL != null && limitationSQL.Contains("top"))
                 throw new Exception("Use TopX property instead of limitation SQL to acheive this");
@@ -99,8 +106,12 @@ namespace CatalogueLibrary.QueryBuilding
             SQLOutOfDate = true;
         }
 
+        /// <inheritdoc/>
         public List<IFilter> Filters { get; private set; }
 
+        /// <summary>
+        /// Limits the number of returned rows to the supplied maximum or -1 if there is no maximum 
+        /// </summary>
         public int TopX
         {
             get { return _topX; }
@@ -130,7 +141,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// </summary>
         /// <param name="limitationSQL">Any text you want after SELECT to limit the results e.g. "DISTINCT" or "TOP 10"</param>
         /// <param name="hashingAlgorithm"></param>
-        /// <param name="selectedDatasetsForcedJoins"></param>
+        /// <param name="forceJoinsToTheseTables"></param>
         public QueryBuilder(string limitationSQL, string hashingAlgorithm, TableInfo[] forceJoinsToTheseTables = null)
         {
             _forceJoinsToTheseTables = forceJoinsToTheseTables;
@@ -146,7 +157,7 @@ namespace CatalogueLibrary.QueryBuilding
             TopX = -1;
         }
 
-        #region public stuff
+        /// <inheritdoc/>
         public void AddColumnRange(IColumn[] columnsToAdd)
         {
             //add the new ones to the list
@@ -156,6 +167,7 @@ namespace CatalogueLibrary.QueryBuilding
             SQLOutOfDate = true;
         }
 
+        /// <inheritdoc/>
         public void AddColumn(IColumn col)
         {
             QueryTimeColumn toAdd = new QueryTimeColumn(col);
@@ -167,40 +179,14 @@ namespace CatalogueLibrary.QueryBuilding
                 SQLOutOfDate = true;
             }   
         }
-        
+
+        /// <inheritdoc/>
         public CustomLine AddCustomLine(string text, QueryComponent positionToInsert)
         {
             SQLOutOfDate = true;
             return SqlQueryBuilderHelper.AddCustomLine(this, text, positionToInsert);
         }
-       
-        [Pure]
-        public JoinInfo[] GetRequiredJoins()
-        {
-            if (SQLOutOfDate)
-                RegenerateSQL();
-
-            return JoinsUsedInQuery.ToArray();
-        }
-
-        [Pure]
-        public Lookup[] GetRequiredLookups()
-        {
-            if(SQLOutOfDate)
-                RegenerateSQL();
-
-            return SqlQueryBuilderHelper.GetRequiredLookups(this).ToArray();
-        }
-
-      
-        [Pure]
-        public int ColumnCount()
-        {
-            return SelectColumns.Count;
-        }
         
-        #endregion
-
         /// <summary>
         /// Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to manually call it. 
         /// </summary>
@@ -330,39 +316,18 @@ namespace CatalogueLibrary.QueryBuilding
 
             return toReturn;
         }
-        
 
+        /// <inheritdoc/>
         public IEnumerable<Lookup> GetDistinctRequiredLookups()
         {
             return SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
         }
         
-        public static ConstantParameter DeconstructStringIntoParameter(string sql, IQuerySyntaxHelper syntaxHelper)
-        {
-            string[] lines = sql.Split(new[] {'\n'},StringSplitOptions.RemoveEmptyEntries);
-
-            string comment = null;
-
-            Regex commentRegex = new Regex(@"/\*(.*)\*/");
-            var matchComment = commentRegex.Match(lines[0]);
-            if (lines.Length >= 3 && matchComment.Success)
-                comment = matchComment.Groups[1].Value;
-
-            string declaration = comment == null ? lines[0]:lines[1];
-            declaration = declaration.TrimEnd(new[] {'\r'});
-
-            string valueLine = comment == null ? lines[1] : lines[2];
-
-            if(!valueLine.StartsWith("SET"))
-                throw new Exception("Value line did not start with SET:" + sql);
-
-            var valueLineSplit = valueLine.Split(new[] {'='});
-            var value = valueLineSplit[1].TrimEnd(new[] {';','\r'});
-
-
-            return new ConstantParameter(declaration.Trim(), value.Trim(), comment, syntaxHelper);
-        }
-
+        /// <summary>
+        /// Generates Sql to comment, declare and set the initial value for the supplied <see cref="ISqlParameter"/>.
+        /// </summary>
+        /// <param name="sqlParameter"></param>
+        /// <returns></returns>
         public static string GetParameterDeclarationSQL(ISqlParameter sqlParameter)
         {
             string toReturn = "";
@@ -380,11 +345,5 @@ namespace CatalogueLibrary.QueryBuilding
             
             return toReturn;
         }
-
-        public void Invalidate()
-        {
-            SQLOutOfDate = true;
-        }
-
     }
 }

@@ -6,6 +6,10 @@
     /// </summary>
     public interface IMasqueradeAs
     {
+        /// <summary>
+        /// Gets the object that the <see cref="IMasqueradeAs"/> is pretending to be (wrapping).
+        /// </summary>
+        /// <returns></returns>
         object MasqueradingAs();
     }
 }

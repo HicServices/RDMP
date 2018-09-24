@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
     /// <summary>
-    /// Describes to QueryBuilder a secondary/tertiary etc join requirement when making a Lookup join (see description of Lookup.cs)
+    /// Describes to QueryBuilder a secondary/tertiary etc join requirement when making a Lookup join (see <see cref="Lookup"/>)
+    /// 
+    /// <para>This is only the case if you have a given lookup code which changes meaning based on another column e.g. testcode X means a different thing
+    /// in healthboard A vs healthboard B</para>
     /// </summary>
     public class LookupCompositeJoinInfo : VersionedDatabaseEntity, ISupplementalJoin
     {
@@ -19,21 +20,29 @@ namespace CatalogueLibrary.Data
         private int _primaryKey_ID;
         private string _collation;
 
+        /// <summary>
+        /// The Main <see cref="Lookup"/> to which this column pair must also be joined in the ON SQL block
+        /// </summary>
         public int OriginalLookup_ID
         {
             get { return _originalLookup_ID; }
             set { SetField(ref _originalLookup_ID, value); }
         }
+
+        /// <inheritdoc cref="IJoin.ForeignKey"/>
         public int ForeignKey_ID
         {
             get { return _foreignKey_ID; }
             set { SetField(ref _foreignKey_ID, value); }
         }
+        /// <inheritdoc cref="IJoin.PrimaryKey"/>
         public int PrimaryKey_ID
         {
             get { return _primaryKey_ID; }
             set { SetField(ref _primaryKey_ID, value); }
         }
+
+        /// <inheritdoc/>
         public string Collation
         {
             get { return _collation; }
@@ -43,16 +52,19 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Relationships
+
+        /// <inheritdoc cref="IJoin.ForeignKey"/>
         [NoMappingToDatabase]
         public ColumnInfo ForeignKey { get { return Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID); } }
 
-        /// <inheritdoc cref="PrimaryKey_ID"/>
+        /// <inheritdoc cref="IJoin.PrimaryKey"/>
         [NoMappingToDatabase]
         public ColumnInfo PrimaryKey {
             get { return Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID); }
         }
         #endregion
 
+        /// <inheritdoc cref="LookupCompositeJoinInfo"/>
         public LookupCompositeJoinInfo(ICatalogueRepository repository, Lookup parent, ColumnInfo foreignKey,
             ColumnInfo primaryKey, string collation = null)
         {
@@ -81,7 +93,7 @@ namespace CatalogueLibrary.Data
             PrimaryKey_ID = int.Parse(r["PrimaryKey_ID"].ToString());
         }
 
-        
+        /// <inheritdoc/>
         public override string ToString()
         {
             return ToStringCached();
@@ -93,6 +105,7 @@ namespace CatalogueLibrary.Data
             return _cachedToString ?? (_cachedToString = ForeignKey.Name + " = " + PrimaryKey.Name);
         }
 
+        /// <inheritdoc/>
         public override void SaveToDatabase()
         {
             if (ForeignKey.ID == PrimaryKey.ID)
@@ -102,11 +115,6 @@ namespace CatalogueLibrary.Data
                 throw new ArgumentException("Join Key 1 and Join Key 2 are from the same table, this is not cool");
 
             base.SaveToDatabase();
-        }
-
-        public IEnumerable<IJoin> GetSupplementalJoins()
-        {
-            return null;
         }
     }
 }

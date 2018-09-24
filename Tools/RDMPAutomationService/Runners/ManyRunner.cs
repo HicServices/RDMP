@@ -131,7 +131,7 @@ namespace RDMPAutomationService.Runners
         /// <summary>
         /// Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type (of which there must only be one in the dictionary e.g. a globals checker).
         /// 
-        /// <para>Use <see cref="GetCheckers"/> to get multiple </para>
+        /// <para>Use GetCheckerResults to get multiple </para>
         /// 
         /// <para>Returns null if there are no checkers of the given Type</para>
         /// </summary>

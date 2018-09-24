@@ -53,7 +53,7 @@ namespace CatalogueManager.Menus.MenuItems
 
                     if (match.Success)
                     {
-                        var helpDict = _activator.RepositoryLocator.CatalogueRepository.HelpText;
+                        var helpDict = _activator.RepositoryLocator.CatalogueRepository.CommentStore;
 
                         if (helpDict != null && helpDict.ContainsKey(match.Value))
                         {

@@ -28,36 +28,63 @@ namespace CatalogueLibrary.Data.Dashboarding
         private string _controlType;
         private string _persistenceString;
 
+        /// <summary>
+        /// Records which <see cref="DashboardLayout"/> the control exists on
+        /// </summary>
         public int DashboardLayout_ID
         {
             get { return _dashboardLayout_ID; }
             set { SetField(ref _dashboardLayout_ID, value); }
         }
+
+        /// <summary>
+        /// The X Coordinate of the control within the <see cref="DashboardLayout"/> window
+        /// </summary>
         public int X
         {
             get { return _x; }
             set { SetField(ref _x, value); }
         }
+
+        /// <summary>
+        /// The Y Coordinate of the control within the <see cref="DashboardLayout"/> window
+        /// </summary>
         public int Y
         {
             get { return _y; }
             set { SetField(ref _y, value); }
         }
+
+        /// <summary>
+        /// The Width of the control within the <see cref="DashboardLayout"/> window
+        /// </summary>
         public int Width
         {
             get { return _width; }
             set { SetField(ref _width, value); }
         }
+
+        /// <summary>
+        /// The Height of the control within the <see cref="DashboardLayout"/> window
+        /// </summary>
         public int Height
         {
             get { return _height; }
             set { SetField(ref _height, value); }
         }
+
+        /// <summary>
+        /// The C# Class name of an IDashboardableControl which this class documents the existence of
+        /// </summary>
         public string ControlType
         {
             get { return _controlType; }
             set { SetField(ref _controlType, value); }
         }
+
+        /// <summary>
+        /// Serialized settings as configured by the user for the IDashboardableControl referenced by <see cref="ControlType"/>
+        /// </summary>
         public string PersistenceString
         {
             get { return _persistenceString; }
@@ -67,9 +94,15 @@ namespace CatalogueLibrary.Data.Dashboarding
         #endregion
 
         #region Relationships
+
+        /// <summary>
+        /// Gets all <see cref="IMapsDirectlyToDatabaseTable"/> objects used by the IDashboardableControl.  E.g. if the control is a pie chart of which columns in a dataset
+        /// are missing column descriptions then this will return the <see cref="ICatalogue"/> which represents that dataset
+        /// </summary>
         [NoMappingToDatabase]
         public DashboardObjectUse[] ObjectsUsed{ get { return Repository.GetAllObjectsWithParent<DashboardObjectUse>(this); }}
 
+        /// <inheritdoc cref="DashboardLayout_ID"/>
         [NoMappingToDatabase]
         public DashboardLayout ParentLayout { get { return Repository.GetObjectByID<DashboardLayout>(DashboardLayout_ID); } }
         #endregion
@@ -87,6 +120,17 @@ namespace CatalogueLibrary.Data.Dashboarding
             PersistenceString = r["PersistenceString"] as string;//can be null
         }
 
+        /// <summary>
+        /// Adds a new IDashboardableControl (<paramref name="controlType"/>) to the given <see cref="DashboardLayout"/> (<paramref name="parent"/>) at the specified position.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parent"></param>
+        /// <param name="controlType"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="w"></param>
+        /// <param name="h"></param>
+        /// <param name="persistenceString"></param>
         public DashboardControl(ICatalogueRepository repository, DashboardLayout parent, Type controlType, int x, int y, int w, int h, string persistenceString)
         {
             Repository = repository;
@@ -102,11 +146,17 @@ namespace CatalogueLibrary.Data.Dashboarding
                 {"PersistenceString",persistenceString}
             });   
         }
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             return ControlType + "( " + ID + " )";
         }
 
+        /// <summary>
+        /// Serializes the current state settings of the IDashboardableControl into <see cref="PersistenceString"/>
+        /// </summary>
+        /// <param name="collection"></param>
         public void SaveCollectionState(IPersistableObjectCollection collection)
         {
             //save ourselves
@@ -119,8 +169,6 @@ namespace CatalogueLibrary.Data.Dashboarding
 
             foreach (IMapsDirectlyToDatabaseTable objectToSave in collection.DatabaseObjects)
                 new DashboardObjectUse((ICatalogueRepository) Repository, this, objectToSave);
-            
-            
         }
     }
 }

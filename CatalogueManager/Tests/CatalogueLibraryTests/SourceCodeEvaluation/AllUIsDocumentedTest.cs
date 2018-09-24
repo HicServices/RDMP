@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Reports;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.SimpleDialogs.Reports;
 using Dashboard.Raceway;
@@ -29,6 +30,11 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         [Test]
         public void AllUIControlsDocumented()
         {
+            CatalogueRepository.SuppressHelpLoading = false;
+            CatalogueRepository.LoadHelp();
+            CatalogueRepository.SuppressHelpLoading = true;
+
+
             List<string> undocumented = new List<string>();
 
             Console.WriteLine("////////////////////Documentation of UI Controls////////////////");
@@ -41,7 +47,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             controlsFinding.RepositoryLocator = RepositoryLocator;
             var types = controlsFinding.GetAllFormsAndControlTypes();
 
-            DocumentationReportFormsAndControls controlsDescriptions = new DocumentationReportFormsAndControls(types.ToArray());
+            DocumentationReportFormsAndControls controlsDescriptions = new DocumentationReportFormsAndControls(CatalogueRepository.CommentStore,types.ToArray());
             controlsDescriptions.Check(new IgnoreAllErrorsCheckNotifier());
 
             

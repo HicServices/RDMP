@@ -20,6 +20,9 @@ namespace CatalogueLibrary.Data.DataLoad
         #region Database Properties
         private int _processTask_ID;
 
+        /// <summary>
+        /// The task for which this <see cref="ProcessTaskArgument"/> stores values
+        /// </summary>
         public int ProcessTask_ID
         {
             get { return _processTask_ID; }
@@ -28,6 +31,12 @@ namespace CatalogueLibrary.Data.DataLoad
 
         #endregion
 
+        /// <summary>
+        /// Stores a new argument value for the class hosted by <see cref="ProcessTask"/>. Use
+        /// <see cref="ArgumentFactory"/> if you want to do this in a more structured manner. 
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parent"></param>
         public ProcessTaskArgument(ICatalogueRepository repository, ProcessTask parent)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -48,6 +57,7 @@ namespace CatalogueLibrary.Data.DataLoad
             Description = r["Description"] as string;
         }
         
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
@@ -58,7 +68,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// </summary>
         /// <typeparam name="T">A class that has some DemandsInitializations</typeparam>
         /// <param name="parent"></param>
-        public static IArgument[] CreateArgumentsForClassIfNotExists<T>(ProcessTask parent)
+        public static IArgument[] CreateArgumentsForClassIfNotExists<T>(IProcessTask parent)
         {
             var argFactory = new ArgumentFactory();
             return argFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(

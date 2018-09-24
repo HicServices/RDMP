@@ -71,7 +71,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICoreChildProvider CoreChildProvider { get; private set; }
 
-        public RDMPDocumentationStore DocumentationStore;
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
@@ -110,8 +109,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             KeywordHelpTextListbox.HelpKeywordsIconProvider = CoreIconProvider;
 
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
-
-            DocumentationStore = new RDMPDocumentationStore(RepositoryLocator);
 
             WindowArranger = new WindowArranger(this,_toolboxWindowManager,_mainDockPanel);
             
@@ -242,7 +239,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 if(databaseObject == null)
                     throw new NotSupportedException("IDeletable " + deleteable + " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
                 
-                RefreshBus.Publish(this, new RefreshObjectEventArgs(databaseObject));
+                RefreshBus.Publish(this, new RefreshObjectEventArgs(databaseObject){DeletedObjectDescendancy = CoreChildProvider.GetDescendancyListIfAnyFor(databaseObject)});
 
                 return true;
             }
@@ -404,7 +401,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         ///<inheritdoc/>
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
         {
-            return new Lazy<IObjectVisualisation>(() => new CatalogueObjectVisualisation(CoreIconProvider));
+            return new Lazy<IObjectVisualisation>(() => new CatalogueObjectVisualisation(RepositoryLocator.CatalogueRepository.CommentStore,CoreIconProvider));
         }
 
         public T Activate<T, T2>(T2 databaseObject)

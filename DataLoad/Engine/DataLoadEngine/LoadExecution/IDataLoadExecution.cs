@@ -14,7 +14,7 @@ namespace DataLoadEngine.LoadExecution
     /// </summary>
     public interface IDataLoadExecution
     {
-        List<DataLoadComponent> Components { get; }
+        List<IDataLoadComponent> Components { get; }
         ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken executionCancellationToken);
     }
 

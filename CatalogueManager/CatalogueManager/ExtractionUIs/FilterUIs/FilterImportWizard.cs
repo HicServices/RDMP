@@ -6,8 +6,8 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
+using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.AggregationUIs.Advanced.Options;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTableUI;
 
@@ -103,7 +103,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             if (aggregatecontainer != null)
             {
                 var aggregate = aggregatecontainer.GetAggregate();
-                var factory = new AggregateEditorOptionsFactory();
+                var factory = new AggregateBuilderOptionsFactory();
                 var options = factory.Create(aggregate);
 
                 globals = options.GetAllParameters(aggregate);

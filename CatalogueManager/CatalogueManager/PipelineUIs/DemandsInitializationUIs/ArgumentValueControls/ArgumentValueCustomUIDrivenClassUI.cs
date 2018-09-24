@@ -96,7 +96,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 
                 if(dr != DialogResult.Cancel)
                 {
-                    var result = instanceAsCustomUI.GetGenericFinalStateOfUnderlyingObject();
+                    var result = instanceAsCustomUI.GetFinalStateOfUnderlyingObject();
 
                     _argument.SetValue(result);
                     _argument.SaveToDatabase();

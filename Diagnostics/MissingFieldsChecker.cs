@@ -51,7 +51,7 @@ namespace Diagnostics
             }
 
             _assemblyName = assembly.GetName().Name;
-            _typesToCheck = assembly.GetTypes().Where(t => typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsAbstract).ToArray();
+            _typesToCheck = assembly.GetTypes().Where(t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract).ToArray();
             _discoveredDatabase = new DiscoveredServer(_connectionStringBuilder).ExpectDatabase(_connectionStringBuilder.InitialCatalog);
         }
         

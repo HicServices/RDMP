@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 
@@ -38,7 +40,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private bool bLoading = false;
 
-        public void SetUp(IActivateItems activator, IAggregateEditorOptions options, AggregateConfiguration aggregate)
+        public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, AggregateConfiguration aggregate)
         {
             _activator = activator;
             Enabled = options.ShouldBeEnabled(AggregateEditorSection.TOPX, aggregate);

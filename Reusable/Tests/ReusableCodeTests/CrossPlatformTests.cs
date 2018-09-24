@@ -152,7 +152,7 @@ namespace ReusableCodeTests
         }
 
 
-        [TestCase(DatabaseType.MicrosoftSQLServer, "1:11 PM")]
+        //[TestCase(DatabaseType.MicrosoftSQLServer, "1:11 PM")] Microsoft doesn't like this time format
         [TestCase(DatabaseType.MYSQLServer, "1:11 PM")]
         [TestCase(DatabaseType.Oracle, "1:11 PM")]
         [TestCase(DatabaseType.MicrosoftSQLServer, "13:11:10")]

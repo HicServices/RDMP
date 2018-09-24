@@ -41,7 +41,7 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
                 CatalogueRepository.JoinInfoFinder.AddJoinInfo(fk1.ColumnInfo, pk1.ColumnInfo, ExtractionJoinType.Right, null);
 
                 //reset the query builder
-                qb.Invalidate();
+                qb.RegenerateSQL();
 
                 //get new sql
                 string sql = null;
@@ -68,8 +68,7 @@ FROM
                 var fk2 = colsFromTable2.Single(e => e.GetRuntimeName().Equals("PKFKClearenceLevel"));
                 CatalogueRepository.JoinInfoFinder.AddJoinInfo(fk2.ColumnInfo, pk2.ColumnInfo, ExtractionJoinType.Left, null);//notice they are in different directions
 
-                qb.Invalidate();
-                QueryBuildingException ex2 = Assert.Throws<QueryBuildingException>(() => Console.WriteLine(qb.SQL));
+                QueryBuildingException ex2 = Assert.Throws<QueryBuildingException>(qb.RegenerateSQL);
 
                 Assert.IsTrue(ex2.Message.Contains(@"Found 2 possible Joins for "));
 
@@ -84,7 +83,7 @@ FROM
                 j2.DeleteInDatabase();
                 CatalogueRepository.JoinInfoFinder.AddJoinInfo(fk2.ColumnInfo, pk2.ColumnInfo, ExtractionJoinType.Right, null);//notice they are in different directions
 
-                qb.Invalidate();
+                qb.RegenerateSQL();
                 Assert.DoesNotThrow(() => sql = qb.SQL);
                 Assert.IsTrue(
                     sql.Contains(
@@ -169,7 +168,7 @@ FROM
                 //create the lookup relationship
                 var cleanup1 = new Lookup(CatalogueRepository, lookup_desc.ColumnInfo, dataset_fk1.ColumnInfo, lookup_pk.ColumnInfo, ExtractionJoinType.Left, "");
 
-                qb.Invalidate();
+                qb.RegenerateSQL();
                 Assert.AreEqual(CollapseWhitespace(@"SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1],
 lookup_1.[Name]
@@ -205,8 +204,7 @@ FROM
                 ei3.Order = 6;
 
                 qb.SelectColumns.Clear();
-                qb.Invalidate();
-
+                
                 qb.AddColumnRange(new IColumn[]
                 {
                     dataset_fk1,
@@ -216,6 +214,8 @@ FROM
                     dataset_fk3,
                     ei3
                 });
+                
+                qb.RegenerateSQL();
 
                 Assert.AreEqual(CollapseWhitespace(@"SELECT 
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[CIATestReport].[CIATestInformantSignatory1],
@@ -232,7 +232,7 @@ FROM
 
                 //now we remove one of the fks from the query 
                 qb.SelectColumns.Remove(qb.SelectColumns.Single(qtc => qtc.IColumn.ID == dataset_fk2.ID));
-                qb.Invalidate();
+                qb.RegenerateSQL();
 
                 //notice how now it doesn't have the fk it will think that both the lookup descriptions refer to the fk it encounters first 
                 Assert.AreEqual(CollapseWhitespace(@"SELECT 
@@ -249,7 +249,7 @@ FROM
                 //remove 2 lookup descriptions
                 qb.SelectColumns.Remove(qb.SelectColumns.Single(qtc => qtc.IColumn.ID == ei1.ID));
                 qb.SelectColumns.Remove(qb.SelectColumns.Single(qtc => qtc.IColumn.ID == ei2.ID));
-                qb.Invalidate();
+                qb.RegenerateSQL();
 
 
                 cleanup1.DeleteInDatabase();

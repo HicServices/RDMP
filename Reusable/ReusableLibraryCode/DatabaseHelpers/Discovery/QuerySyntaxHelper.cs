@@ -14,21 +14,27 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
-    public abstract class QuerySyntaxHelper:IQuerySyntaxHelper
+    public abstract class QuerySyntaxHelper : IQuerySyntaxHelper
     {
-       public abstract string DatabaseTableSeparator { get; }
+        public abstract string DatabaseTableSeparator { get; }
+        
+        /// <summary>
+        /// Regex for identifying parameters in blocks of SQL (starts with @ or : (Oracle)
+        /// </summary>
+        /// <returns></returns>
+        protected static Regex ParameterNamesRegex = new Regex("([@:][A-Za-z0-9_]*)\\s?", RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Symbols (for all database types) which denote wrapped entity names e.g. [dbo].[mytable] contains qualifiers '[' and ']'
         /// </summary>
-        public static char[] TableNameQualifiers = { '[',']','`'};
-        
+        public static char[] TableNameQualifiers = { '[', ']', '`' };
+
         public ITypeTranslater TypeTranslater { get; private set; }
         public IAggregateHelper AggregateHelper { get; private set; }
         public IUpdateHelper UpdateHelper { get; set; }
         public DatabaseType DatabaseType { get; private set; }
 
-        public virtual char ParameterSymbol { get { return '@'; }}
+        public virtual char ParameterSymbol { get { return '@'; } }
 
         protected virtual Regex GetAliasRegex()
         {
@@ -39,12 +45,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             return " AS ";
         }
-
-        /// <summary>
-        /// Regex for identifying parameters in blocks of SQL
-        /// </summary>
-        /// <returns></returns>
-        private static Regex _parameterNamesRegex = new Regex("(@[A-Za-z0-9_]*)\\s?", RegexOptions.IgnoreCase);
         
         public string AliasPrefix
         {
@@ -53,26 +53,44 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 return ValidateAlias(GetAliasConst());
             }
         }
-        
+
         /// <summary>
-        /// Looks for @something within the line of SQL and returns @something (including the @ symbol)
+        /// Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" 
         /// </summary>
-        /// <param name="parameterSQL"></param>
-        /// <returns></returns>
+        /// <param name="query">the SQL you want to determine the parameter names in</param>
+        /// <returns>parameter names that are required by the SQL</returns>
+        public static HashSet<string> GetAllParameterNamesFromQuery(string query)
+        {
+            //Only look at the start of the string or following an equals or whitespace and stop at word boundaries
+            var regex = new Regex(@"(?:^|[\s=])+" + ParameterNamesRegex + @"\b");
+
+            var toReturn = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+
+            if (string.IsNullOrWhiteSpace(query))
+                return toReturn;
+
+            foreach (Match match in regex.Matches(query))
+                if (!toReturn.Contains(match.Value.Trim())) //dont add duplicates
+                    toReturn.Add(match.Groups[1].Value.Trim());
+
+            return toReturn;
+        }
+
+        /// <inheritdoc />
         public static string GetParameterNameFromDeclarationSQL(string parameterSQL)
         {
-            if (!_parameterNamesRegex.IsMatch(parameterSQL))
-                throw new Exception("ParameterSQL does not match regex pattern:" + _parameterNamesRegex);
+            if (!ParameterNamesRegex.IsMatch(parameterSQL))
+                throw new Exception("ParameterSQL does not match regex pattern:" + ParameterNamesRegex);
 
-            return _parameterNamesRegex.Match(parameterSQL).Value.Trim();
+            return ParameterNamesRegex.Match(parameterSQL).Value.Trim();
         }
 
         public bool IsValidParameterName(string parameterSQL)
         {
-            return _parameterNamesRegex.IsMatch(parameterSQL);
+            return ParameterNamesRegex.IsMatch(parameterSQL);
         }
 
-        protected QuerySyntaxHelper(ITypeTranslater translater, IAggregateHelper aggregateHelper,IUpdateHelper updateHelper, DatabaseType databaseType)
+        protected QuerySyntaxHelper(ITypeTranslater translater, IAggregateHelper aggregateHelper, IUpdateHelper updateHelper, DatabaseType databaseType)
         {
             TypeTranslater = translater;
             AggregateHelper = aggregateHelper;
@@ -92,10 +110,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return s.Substring(s.LastIndexOf(".") + 1).Trim('[', ']', '`');
         }
 
-        
+
         public string EnsureWrapped(string databaseOrTableName)
         {
-            if(databaseOrTableName.Contains(DatabaseTableSeparator))
+            if (databaseOrTableName.Contains(DatabaseTableSeparator))
                 throw new Exception("Strings passed to EnsureWrapped cannot contain separators i.e. '" + DatabaseTableSeparator + "'");
 
             return EnsureWrappedImpl(databaseOrTableName);
@@ -107,21 +125,21 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
 
             string toReturn = GetRuntimeName(databaseName);
-            
+
             if (!string.IsNullOrWhiteSpace(schema))
                 toReturn += "." + schema;
-            
+
             toReturn += "." + GetRuntimeName(tableName);
 
             return toReturn;
         }
 
-        public virtual string EnsureFullyQualified(string databaseName, string schema, string tableName, string columnName, bool isTableValuedFunction=false)
+        public virtual string EnsureFullyQualified(string databaseName, string schema, string tableName, string columnName, bool isTableValuedFunction = false)
         {
             if (isTableValuedFunction)
                 return GetRuntimeName(tableName) + "." + GetRuntimeName(columnName);//table valued functions do not support database name being in the column level selection list area of sql queries
 
-            return EnsureFullyQualified(databaseName,schema,tableName)+ "." +GetRuntimeName(columnName);
+            return EnsureFullyQualified(databaseName, schema, tableName) + "." + GetRuntimeName(columnName);
         }
 
         public virtual string Escape(string sql)
@@ -143,16 +161,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         private string ValidateAlias(string getAlias)
         {
             if (!(getAlias.StartsWith(" ") && getAlias.EndsWith(" ")))
-                throw new NotSupportedException("GetAliasConst method on Type " + this.GetType().Name +" returned a value that was not bounded by whitespace ' '.  GetAliasConst must start and end with a space e.g. ' AS '");
+                throw new NotSupportedException("GetAliasConst method on Type " + this.GetType().Name + " returned a value that was not bounded by whitespace ' '.  GetAliasConst must start and end with a space e.g. ' AS '");
 
             var testString = "col " + getAlias + " bob";
             var match = GetAliasRegex().Match(testString);
-            if(!match.Success)
+            if (!match.Success)
                 throw new NotSupportedException("GetAliasConst method on Type " + this.GetType().Name + " returned a value that was not matched by  GetAliasRegex()");
 
             if (match.Groups.Count < 2 || !match.Groups[1].Value.Equals("bob"))
                 throw new NotSupportedException("GetAliasRegex method on Type " + this.GetType().Name + @" must return a regex with a capture group that matches the runtime name of the line e.g. \s+AS\s+(\w+)$");
-                
+
 
             return getAlias;
         }
@@ -179,7 +197,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             //could end with the alias and then be blank if the user is busy typing it all in a oner
             if (splitPoint + AliasPrefix.Length < lineToSplit.Length)
             {
-                alias = lineToSplit.Substring(splitPoint + AliasPrefix.Length).TrimEnd(',',' ','\n','\r');
+                alias = lineToSplit.Substring(splitPoint + AliasPrefix.Length).TrimEnd(',', ' ', '\n', '\r');
 
                 return true;
             }
@@ -199,19 +217,19 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <param name="contents"></param>
         public void SplitLineIntoOuterMostMethodAndContents(string lineToSplit, out string method, out string contents)
         {
-            if(string.IsNullOrWhiteSpace(lineToSplit))
-                throw new ArgumentException("line must not be blank",lineToSplit);
+            if (string.IsNullOrWhiteSpace(lineToSplit))
+                throw new ArgumentException("line must not be blank", lineToSplit);
 
-            if(lineToSplit.Count(c=>c.Equals('(')) != lineToSplit.Count(c=>c.Equals(')')))
+            if (lineToSplit.Count(c => c.Equals('(')) != lineToSplit.Count(c => c.Equals(')')))
                 throw new ArgumentException("The number of opening parentheses must match the number of closing parentheses", "lineToSplit");
 
             int firstBracket = lineToSplit.IndexOf('(');
 
-            if(firstBracket == -1)
-                throw new ArgumentException("Line must contain at least one pair of parentheses","lineToSplit");
+            if (firstBracket == -1)
+                throw new ArgumentException("Line must contain at least one pair of parentheses", "lineToSplit");
 
             method = lineToSplit.Substring(0, firstBracket).Trim();
-            
+
             int lastBracket = lineToSplit.LastIndexOf(')');
 
             int length = lastBracket - (firstBracket + 1);
@@ -270,10 +288,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public abstract string GetAutoIncrementKeywordIfAny();
         public abstract Dictionary<string, string> GetSQLFunctionsDictionary();
-        
+
         public bool IsBasicallyNull(object value)
         {
-            if(value is string)
+            if (value is string)
                 return string.IsNullOrWhiteSpace((string)value);
 
             return value == null || value == DBNull.Value;
@@ -283,12 +301,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
 
             var oleE = exception as OleDbException;
-            
+
             if (oleE != null && oleE.ErrorCode == -2147217871)
                 return true;
-            
+
             return exception.Message.ToLower().Contains("timeout");
         }
+
+        public abstract string HowDoWeAchieveMd5(string selectSql);
 
         #region Equality Members
         protected bool Equals(QuerySyntaxHelper other)
@@ -304,7 +324,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((QuerySyntaxHelper) obj);
+            return Equals((QuerySyntaxHelper)obj);
         }
 
         public override int GetHashCode()

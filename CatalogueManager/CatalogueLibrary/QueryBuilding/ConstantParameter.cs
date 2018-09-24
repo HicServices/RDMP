@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
@@ -32,38 +33,87 @@ namespace CatalogueLibrary.QueryBuilding
             ParameterSQL = parameterSQL;
         }
 
+        /// <summary>
+        /// Not supported for constant parameters
+        /// </summary>
         public void SaveToDatabase()
         {
             throw new NotSupportedException();
         }
 
+        /// <inheritdoc cref="ParameterName"/>
         public override string ToString()
         {
             return ParameterName;
         }
 
+        /// <summary>
+        /// Checks the syntax of the parameter (See <see cref="ParameterSyntaxChecker"/>)
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             new ParameterSyntaxChecker(this).Check(notifier);
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return _syntaxHelper;
         }
 
+        /// <inheritdoc/>
         public string ParameterName { get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); } }
 
+        /// <inheritdoc/>
         [Sql]
         public string ParameterSQL { get; set; }
 
+        /// <inheritdoc/>
         [Sql]
         public string Value { get; set; }
+
+        /// <inheritdoc/>
         public string Comment { get; set; }
 
+        /// <summary>
+        /// Returns null, <see cref="ConstantParameter"/> are never owned by any objects
+        /// </summary>
+        /// <returns></returns>
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
             return null;
+        }
+
+        /// <summary>
+        /// Attempts to parse the provided <paramref name="sql"/> text into a <see cref="ConstantParameter"/>
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="syntaxHelper"></param>
+        /// <returns></returns>
+        public static ConstantParameter Parse(string sql, IQuerySyntaxHelper syntaxHelper)
+        {
+            string[] lines = sql.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            string comment = null;
+
+            Regex commentRegex = new Regex(@"/\*(.*)\*/");
+            var matchComment = commentRegex.Match(lines[0]);
+            if (lines.Length >= 3 && matchComment.Success)
+                comment = matchComment.Groups[1].Value;
+
+            string declaration = comment == null ? lines[0] : lines[1];
+            declaration = declaration.TrimEnd(new[] { '\r' });
+
+            string valueLine = comment == null ? lines[1] : lines[2];
+
+            if (!valueLine.StartsWith("SET"))
+                throw new Exception("Value line did not start with SET:" + sql);
+
+            var valueLineSplit = valueLine.Split(new[] { '=' });
+            var value = valueLineSplit[1].TrimEnd(new[] { ';', '\r' });
+            
+            return new ConstantParameter(declaration.Trim(), value.Trim(), comment, syntaxHelper);
         }
     }
 }

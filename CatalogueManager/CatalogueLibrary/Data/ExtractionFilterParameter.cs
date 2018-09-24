@@ -31,18 +31,21 @@ namespace CatalogueLibrary.Data
         private string _comment;
         private string _parameterSQL;
         private int _extractionFilterID;
-
+        
+        /// <inheritdoc/>
         [Sql]
         public string Value
         {
             get { return _value; }
             set { SetField(ref _value, value); }
         }
+        /// <inheritdoc/>
         public string Comment
         {
             get { return _comment; }
             set { SetField(ref _comment, value); }
         }
+        /// <inheritdoc/>
         [Sql]
         public string ParameterSQL
         {
@@ -50,6 +53,9 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _parameterSQL, value); }
         }
 
+        /// <summary>
+        /// The filter which requires this parameter belongs e.g. an <see cref="ExtractionFilter"/>'Healthboard X' could have a required property (<see cref="ExtractionFilterParameter"/>) @Hb 
+        /// </summary>
         public int ExtractionFilter_ID
         {
             get { return _extractionFilterID; }
@@ -76,6 +82,13 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
+        /// <summary>
+        /// Creates a new parameter on the given <paramref name="parent"/>
+        /// <para>It is better to use <see cref="CatalogueLibrary.FilterImporting.ParameterCreator"/> to automatically generate parameters based on the WHERE Sql</para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parameterSQL"></param>
+        /// <param name="parent"></param>
         public ExtractionFilterParameter(ICatalogueRepository repository, string parameterSQL, ExtractionFilter parent)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
@@ -95,32 +108,44 @@ namespace CatalogueLibrary.Data
             Comment = r["Comment"] as string;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             //return the name of the variable
             return ParameterName;
         }
 
+        /// <inheritdoc cref="ParameterSyntaxChecker"/>
         public void Check(ICheckNotifier notifier)
         {
             new ParameterSyntaxChecker(this).Check(notifier);
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return ExtractionFilter.GetQuerySyntaxHelper();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new[] {ExtractionFilter};
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return null;
         }
 
+        /// <summary>
+        /// Returns true if a  <see cref="Comment"/> has been provided and an example/initial <see cref="Value"/> specified.  This is a requirement of
+        /// publishing a filter as a master filter
+        /// </summary>
+        /// <param name="sqlParameter"></param>
+        /// <param name="reasonParameterRejected"></param>
+        /// <returns></returns>
         public static bool IsProperlyDocumented(ISqlParameter sqlParameter, out string reasonParameterRejected)
         {
             reasonParameterRejected = null;
@@ -138,6 +163,7 @@ namespace CatalogueLibrary.Data
             return reasonParameterRejected == null;
         }
 
+        /// <inheritdoc/>
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
             return ExtractionFilter;

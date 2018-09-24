@@ -9,6 +9,10 @@ namespace CatalogueLibrary.Data.DataLoad
     /// </summary>
     public interface ITableInfoCollectionHost
     {
+        /// <summary>
+        /// Gets all <see cref="TableInfo"/> that are part of the load
+        /// </summary>
+        /// <returns></returns>
         IEnumerable<TableInfo> GetTableInfos();
     }
 }

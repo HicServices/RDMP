@@ -1,31 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CatalogueLibrary.CommandExecution;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataHelper;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
-using Tests.Common;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {
     public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAnExtractionConfiguration
     {
+        //C24D365B7C271E2C1BC884B5801C2961
+        Regex reghex = new Regex(@"^HASHED: [A-F\d]{32}");
+
+        [SetUp]
+        public void SetHash()
+        {
+            new ConfigurationProperties(false, DataExportRepository).SetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern, "CONCAT('HASHED: ',{0})");
+        }
+
         [Test]
         public void Test_CatalogueItems_ExtractionInformationPrimaryKey_IsRespected()
         {
@@ -59,8 +62,6 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void Test_CatalogueItems_NonExtractedPrimaryKey_AreRespected()
         {
-            new ConfigurationProperties(false, DataExportRepository).SetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern, "CONCAT('HASHED: ',{0})");
-            
             var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", new string[] { }, pkColumnInfos: new [] { "DateOfBirth" });
 
             var source = new ExecutePkSynthesizerDatasetExtractionSource();
@@ -73,7 +74,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
+            Assert.IsTrue(reghex.IsMatch(firstvalue));
         }
 
         [Test]
@@ -91,7 +92,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000_Dave"));
+            Assert.IsTrue(reghex.IsMatch(firstvalue));
 
             DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleLookup").Drop();
             DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleJoin").Drop();
@@ -112,7 +113,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-            Assert.That(firstvalue, Is.EqualTo("HASHED: 2001-01-01 00:00:00.0000000"));
+            Assert.IsTrue(reghex.IsMatch(firstvalue));
 
             DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleLookup").Drop();
         }

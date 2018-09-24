@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -14,7 +15,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         /// <summary>
         /// Notifies the <see cref="IBulkCopy"/> that the table schema has been changed mid insert! e.g. a column changing data type. This change must have taken place on the same
-        /// <see cref="DbTransaction"/> as the bulkc copy.
+        /// DbTransaction as the bulkc copy.
         /// </summary>
         void InvalidateTableSchema();
     }

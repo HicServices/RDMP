@@ -87,7 +87,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    <NoWarn>1591</NoWarn>
+    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -220,7 +220,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-        <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -257,6 +257,7 @@
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseMergeCommandTest.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseConstraintsTests.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseInsertTests.cs" />
+    <Compile Include="Integration\CrossDatabaseTypeTests\HowDoWeAchieveMd5Test.cs" />
     <Compile Include="Integration\DatabaseClonerTests.cs" />
     <Compile Include="Integration\DataLoadProgressUpdateInfoTests.cs" />
     <Compile Include="Integration\DataTableUploadDestinationTests.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="Integration\PrematureLoadEnderTests.cs" />
     <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestQueryBuilding.cs" />
     <Compile Include="Integration\RuntimeTaskFactoryTests.cs" />
+    <Compile Include="Integration\SafePrimaryKeyCollisionResolverMutilationTests.cs" />
     <Compile Include="Integration\SingleJobPipelineTests.cs" />
     <Compile Include="Integration\BackfillTests.cs" />
     <Compile Include="Integration\PipelineTests\ArchiveFilesTests.cs" />

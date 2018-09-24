@@ -8,9 +8,27 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public interface IJoin
     {
+        /// <summary>
+        /// The column in the secondary table that should be joined iwth the <see cref="PrimaryKey"/> column
+        /// </summary>
         ColumnInfo ForeignKey { get; }
+
+        /// <summary>
+        /// The column in the main table which should be joined
+        /// </summary>
         ColumnInfo PrimaryKey { get; }
+
+        /// <summary>
+        /// The collation type to apply to the join if <see cref="ForeignKey"/> and <see cref="PrimaryKey"/> have different column collations.  If there are <see cref="ISupplementalJoin"/> 
+        /// then they must match on <see cref="Collation"/>
+        /// 
+        /// <para>Only set this if you are sure you have a collation problem</para>
+        /// </summary>
         string Collation { get; }
+
+        /// <summary>
+        /// Which SQL join keyword to use when linking the <see cref="PrimaryKey"/> and <see cref="ForeignKey"/>.
+        /// </summary>
         ExtractionJoinType ExtractionJoinType { get; }
         
         /// <summary>

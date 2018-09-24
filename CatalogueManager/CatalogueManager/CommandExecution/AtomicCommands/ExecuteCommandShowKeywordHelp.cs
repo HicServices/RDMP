@@ -52,8 +52,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 modelType = masqueradingAs.GetType();
             }
 
-            if (KeywordHelpTextListbox.ContainsKey(modelType.Name))
-                KeywordHelpTextListbox.ShowKeywordHelp(modelType.Name);
+            var docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(modelType);
+
+            if (docs != null)
+                KeywordHelpTextListbox.ShowKeywordHelp(modelType.Name, docs);
             else
                 MessageBox.Show(MEF.GetCSharpNameForType(modelType));
         }

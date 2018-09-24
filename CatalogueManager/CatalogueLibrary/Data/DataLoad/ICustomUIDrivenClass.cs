@@ -1,3 +1,5 @@
+using ReusableLibraryCode.Annotations;
+
 namespace CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
@@ -11,7 +13,17 @@ namespace CatalogueLibrary.Data.DataLoad
     /// </summary>
     public interface ICustomUIDrivenClass
     {
-        void RestoreStateFrom(string value);
+        /// <summary>
+        /// Hydrate the <see cref="ICustomUIDrivenClass"/> by deserializing the supplied string.  If there is no <see cref="IArgument"/> value configured yet
+        /// then <paramref name="value"/> may be null
+        /// </summary>
+        /// <param name="value"></param>
+        void RestoreStateFrom([CanBeNull]string value);
+
+        /// <summary>
+        /// Persist the current state of the <see cref="ICustomUIDrivenClass"/> as a string.  This must be compatible with <see cref="RestoreStateFrom"/>
+        /// </summary>
+        /// <returns></returns>
         string SaveStateToString();
     }
 }

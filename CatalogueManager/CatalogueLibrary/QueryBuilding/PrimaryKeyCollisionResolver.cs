@@ -31,13 +31,20 @@ namespace CatalogueLibrary.QueryBuilding
 FROM CTE 
 WHERE DuplicateCount > 1";
 
-
+        /// <summary>
+        /// Creates a new collision resolver using the primary keys and resolution order of the supplied <see cref="TableInfo"/>
+        /// </summary>
+        /// <param name="tableInfo"></param>
         public PrimaryKeyCollisionResolver(TableInfo tableInfo)
         {
             _tableInfo = tableInfo;
             _syntaxHelper = new MicrosoftQuerySyntaxHelper();
         }
 
+        /// <summary>
+        /// Get the SQL to run to delete records colliding on primary key
+        /// </summary>
+        /// <returns></returns>
         public string GenerateSQL()
         {
             ColumnInfo[] pks;
@@ -132,6 +139,10 @@ WHERE DuplicateCount > 1";
             return sql + "ISNULL(" + colname + "," + RDMPQuerySyntaxHelper.GetNullSubstituteForComparisonsWithDataType(col.Data_type, true) + ")" + direction + "," + Environment.NewLine;
         }
 
+        /// <summary>
+        /// Generates the SQL that will be run to determine whether there are any record collisions on primary key (in RAW)
+        /// </summary>
+        /// <returns></returns>
         public string GenerateCollisionDetectionSQL()
         {
             string tableNameInRAW = GetTableName();
@@ -149,6 +160,11 @@ WHERE DuplicateCount > 1";
             return sql;
         }
 
+        /// <summary>
+        /// Generates SQL to show which records would be deleted by primary key collision resolution.  This should be run manually by the data analyst if he is unsure about the 
+        /// resolution order / current primary keys
+        /// </summary>
+        /// <returns></returns>
         public string GeneratePreviewSQL()
         {
             

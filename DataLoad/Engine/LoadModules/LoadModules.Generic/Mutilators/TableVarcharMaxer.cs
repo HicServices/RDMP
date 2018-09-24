@@ -23,7 +23,6 @@ namespace LoadModules.Generic.Mutilators
     /// STAGING or merging with LIVE because the datatypes are not valid according to LIVE but you will have an easier time debugging than trying to look through
     /// a flat file for problematic values.</para>
     /// </summary>
-    [Description("Runs in in Mounting or RAW (ideally as the first module in Mounting) which turns all columns in all tables in the bubble into a different data type (e.g. varchar(max)).")]
     public class TableVarcharMaxer : IPluginMutilateDataTables
     {
         private DiscoveredDatabase _dbInfo;

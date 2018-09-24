@@ -23,25 +23,36 @@ namespace CatalogueLibrary.Data.Dashboarding
         private string _repositoryTypeName;
         private int _dashboardControlID;
 
+        /// <summary>
+        /// The <see cref="DashboardControl"/> for which the class records object usage for
+        /// </summary>
         public int DashboardControl_ID
         {
             get { return _dashboardControlID; }
             set { SetField(ref _dashboardControlID , value); }
         }
 
+        /// <summary>
+        /// The C# System.Type name of the object being used e.g. <see cref="CatalogueLibrary.Data.Catalogue"/>
+        /// </summary>
         public string TypeName
         {
             get { return _typeName; }
             set { SetField(ref _typeName, value); }
         }
 
+        /// <summary>
+        /// The <see cref="DatabaseEntity.ID"/> of the object being used by the referenced <see cref="DashboardControl_ID"/>
+        /// </summary>
         public int ObjectID
         {
             get { return _objectID; }
             set { SetField(ref _objectID, value); }
         }
 
-        //Tells you which repository the Favourite object is stored in, either the Catalogue or DataExport database
+        /// <summary>
+        /// The C# System.Type name of the <see cref="IRepository"/> in which the object is stored e.g. the Catalogue or DataExport database
+        /// </summary>
         public string RepositoryTypeName
         {
             get { return _repositoryTypeName; }
@@ -60,7 +71,13 @@ namespace CatalogueLibrary.Data.Dashboarding
             RepositoryTypeName = r["RepositoryTypeName"].ToString();
 
         }
-
+         
+        /// <summary>
+        /// Records the fact that the given <see cref="DashboardControl"/> targets the given object (and hopefully displays information about it)
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="parentControl"></param>
+        /// <param name="objectToSave"></param>
         public DashboardObjectUse(ICatalogueRepository repository, DashboardControl parentControl, IMapsDirectlyToDatabaseTable objectToSave)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>

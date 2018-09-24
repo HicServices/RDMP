@@ -15,8 +15,6 @@ namespace CatalogueManager.Issues
     /// </summary>
     public partial class SelectIssueSystemUser : RDMPForm
     {
-        private IssueSystemUser _selectedUser;
-
         public SelectIssueSystemUser()
         {
             InitializeComponent();
@@ -46,9 +44,6 @@ namespace CatalogueManager.Issues
             lbUsers.AddObjects(issueSystemUsers);
         }
 
-        private bool bLoading;
-
-        
         private void btnNewUser_Click(object sender, EventArgs e)
         {
             new IssueSystemUser(RepositoryLocator.CatalogueRepository);

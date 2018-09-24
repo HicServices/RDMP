@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.Spontaneous;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -18,9 +19,11 @@ namespace DataExportLibrary.ExtractionTime
     /// 
     /// <para>This class is an IColumn and is designed to be added as a new Column to a QueryBuilder as normal (See ExtractionQueryBuilder)</para>
     /// </summary>
-    public class ReleaseIdentifierSubstitution : IColumn
+    public class ReleaseIdentifierSubstitution :SpontaneousObject, IColumn
     {
         public string JoinSQL { get; private set; }
+
+        /// <inheritdoc/>
         public IColumn OriginalDatasetColumn;
 
         [Sql]
@@ -38,7 +41,6 @@ namespace DataExportLibrary.ExtractionTime
             get { return OriginalDatasetColumn.Order; }
             set { }
         }
-        public int ID { get { return -1; } }
         public bool HashOnDataRelease { get { return false; } }
         public bool IsExtractionIdentifier { get { return OriginalDatasetColumn.IsExtractionIdentifier; } }
         public bool IsPrimaryKey { get { return OriginalDatasetColumn.IsPrimaryKey; } }

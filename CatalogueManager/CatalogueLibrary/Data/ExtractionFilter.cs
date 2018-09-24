@@ -2,16 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -37,6 +31,10 @@ namespace CatalogueLibrary.Data
         #region Database Properties
         private int _extractionInformationID;
 
+        /// <summary>
+        /// The column in the <see cref="Catalogue"/> which is best/most associated with this filter.  A filter can query any column in any of the table(s) under
+        /// the <see cref="Catalogue"/> but must always be associated with only one specific extractable column (<see cref="ExtractionInformation"/>)
+        /// </summary>
         public int ExtractionInformation_ID
         {
             get { return _extractionInformationID; }
@@ -78,6 +76,7 @@ namespace CatalogueLibrary.Data
             return ExtractionInformation.CatalogueItem.Catalogue;
         }
 
+        /// <inheritdoc/>
         public override ISqlParameter[] GetAllParameters()
         {
             return ExtractionFilterParameters.ToArray();
@@ -89,14 +88,25 @@ namespace CatalogueLibrary.Data
         public static int Description_MaxLength = -1;
 
         #region Relationships
+
+        /// <inheritdoc cref="ExtractionInformation_ID"/>
         [NoMappingToDatabase]
         public ExtractionInformation ExtractionInformation {get { return Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID); }}
 
+        /// <inheritdoc cref="ConcreteFilter.GetAllParameters"/>
         [NoMappingToDatabase]
         public IEnumerable<ExtractionFilterParameter> ExtractionFilterParameters { get { return Repository.GetAllObjectsWithParent<ExtractionFilterParameter>(this); } }
 
         #endregion
 
+        /// <summary>
+        /// Creates a new WHERE SQL block for reuse with the <see cref="Catalogue"/> in which the <paramref name="parent"/> resides.  This is a top level master filter and can be
+        /// copied out in <see cref="CatalogueLibrary.Data.Cohort.CohortIdentificationConfiguration"/>, ExtractionConfiguration etc.  This ensures a single curated block of
+        /// logic that everyone shares.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
+        /// <param name="parent"></param>
         public ExtractionFilter(ICatalogueRepository repository, string name, ExtractionInformation parent)
         {
             name = name ?? "New Filter " + Guid.NewGuid();
@@ -118,6 +128,7 @@ namespace CatalogueLibrary.Data
             IsMandatory = (bool) r["IsMandatory"];
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
@@ -126,6 +137,10 @@ namespace CatalogueLibrary.Data
         //we are an extraction filter ourselves! so obviously we werent cloned from one! (this is for aggregate and data export filters and satisfies IFilter).  Actually we can
         //be cloned via the publishing (elevation) from a custom filter defined at Aggregate level for example.  But in this case we don't need to know the ID anyway since we 
         //become the new master anyway since we are at the highest level for filters
+
+        /// <summary>
+        /// Returns null, <see cref="ExtractionFilter"/> are master level filters and therefore never cloned from another filter
+        /// </summary>
         [NoMappingToDatabase]
         public override int? ClonedFromExtractionFilter_ID
         {
@@ -139,11 +154,13 @@ namespace CatalogueLibrary.Data
             }
         }
         
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[] { ExtractionInformation };
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return ExtractionFilterParameters.ToArray();

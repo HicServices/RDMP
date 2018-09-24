@@ -1,5 +1,6 @@
 ﻿using System;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Providers;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueManager.Refreshing
@@ -8,6 +9,8 @@ namespace CatalogueManager.Refreshing
     {
         public DatabaseEntity Object { get; set; }
         public bool Exists { get; private set; }
+
+        public DescendancyList DeletedObjectDescendancy { get; set; }
 
         public RefreshObjectEventArgs(DatabaseEntity o)
         {

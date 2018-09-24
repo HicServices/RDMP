@@ -21,6 +21,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Repositories
 {
@@ -43,71 +44,60 @@ namespace CatalogueLibrary.Repositories
         public MEF MEF { get; set; }
         
         readonly ObjectConstructor _constructor = new ObjectConstructor();
+
+        public CommentStore CommentStore { get; set; }
         
         /// <summary>
         /// By default CatalogueRepository will execute DocumentationReportMapsDirectlyToDatabase which will load all the Types and find documentation in the source code for 
         /// them obviously this affects test performance so set this to true if you want it to skip this process.  Note where this is turned on, it's in the static constructor
         /// of DatabaseTests which means if you stick a static constructor in your test you can override it if you need access to the help text somehow in your test
         /// </summary>
-        public static bool? SuppressHelpLoading;
+        public static bool SuppressHelpLoading;
 
-        public readonly Dictionary<string,string> HelpText = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
-        
         public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
         {
             AggregateForcedJoiner = new AggregateForcedJoin(this);
             TableInfoToCredentialsLinker = new TableInfoToCredentialsLinker(this);
             PasswordEncryptionKeyLocation = new PasswordEncryptionKeyLocation(this);
             JoinInfoFinder = new JoinInfoFinder(this);
-            MEF = new MEF(this);
+            MEF = new MEF();
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
+        }
 
-            AddToHelp(Resources.KeywordHelp);
-
-            AddToHelp(GetType().Assembly);
+        public void LoadHelp()
+        {
+            if (!SuppressHelpLoading)
+            {
+                CommentStore = new CommentStore();
+                CommentStore.ReadComments();
+                AddToHelp(Resources.KeywordHelp);
+            }
         }
 
         private void AddToHelp(string keywordHelpFileContents)
         {
             //null is true for us loading help
-            if (SuppressHelpLoading != null && SuppressHelpLoading.Value)
+            if (SuppressHelpLoading)
                 return;
-            
-            var lines = keywordHelpFileContents.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+
+            var lines = keywordHelpFileContents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var line in lines)
             {
-                if(string.IsNullOrWhiteSpace(line))
+                if (string.IsNullOrWhiteSpace(line))
                     continue;
 
                 var split = line.Split(':');
 
-                if(split.Length != 2)
-                    throw new Exception("Malformed line in Resources.KeywordHelp, line is:"+Environment.NewLine + line +Environment.NewLine + "We expected it to have exactly one colon in it");
+                if (split.Length != 2)
+                    throw new Exception("Malformed line in Resources.KeywordHelp, line is:" + Environment.NewLine + line + Environment.NewLine + "We expected it to have exactly one colon in it");
 
-                if(!HelpText.ContainsKey(split[0]))
-                    HelpText.Add(split[0], split[1]);
+                if (!CommentStore.ContainsKey(split[0]))
+                    CommentStore.Add(split[0], split[1]);
             }
         }
-
-        public void AddToHelp(Assembly assembly)
-        {
-            //null is true for us loading help
-            if (SuppressHelpLoading != null && SuppressHelpLoading.Value)
-                return;
-            
-            Console.WriteLine("Setting up help for assembly " + assembly);
-
-            DocumentationReportMapsDirectlyToDatabase types = new DocumentationReportMapsDirectlyToDatabase(assembly);
-            types.Check(new IgnoreAllErrorsCheckNotifier());
-
-            if (types.Summaries != null)
-                foreach (var kvp in types.Summaries)
-                    if (!HelpText.ContainsKey(kvp.Key.Name))
-                        HelpText.Add(kvp.Key.Name, kvp.Value + Environment.NewLine+"(DatabaseEntity)");
-        }
-
+        
         public IEnumerable<CatalogueItem> GetAllCatalogueItemsNamed(string name, bool ignoreCase)
         {
             string sql;
@@ -138,7 +128,7 @@ namespace CatalogueLibrary.Repositories
                 cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@AggregateConfiguration_ID", cmd));
                 cmd.Parameters["@AggregateConfiguration_ID"].Value = configuration.ID;
 
-                return DatabaseEntity.ObjectToNullableInt(cmd.ExecuteScalar());
+                return ObjectToNullableInt(cmd.ExecuteScalar());
             }
         }
         
@@ -330,21 +320,11 @@ namespace CatalogueLibrary.Repositories
         public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
         {
             //Make a dictionary of the normal properties we are supposed to be importing
-            Dictionary<string,object> propertiesDictionary = shareDefinition.Properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Dictionary<string,object> propertiesDictionary = shareDefinition.GetDictionaryForImport();
 
             //for finding properties decorated with [Relationship]
             var finder = new AttributePropertyFinder<RelationshipAttribute>(toCreate);
-
-            //remove null arguments they won't help us here
-            foreach (string key in propertiesDictionary.Keys.ToArray())
-            {
-                if (propertiesDictionary[key] is CatalogueFolder)
-                    propertiesDictionary[key] = propertiesDictionary[key].ToString();
-
-                if (propertiesDictionary[key] == null)
-                    propertiesDictionary.Remove(key);
-            }
-
+            
             //If we have already got a local copy of this shared object?
             //either as an import or as an export
             T actual = (T)shareManager.GetExistingImportObject(shareDefinition.SharingGuid) ?? (T)shareManager.GetExistingExportObject(shareDefinition.SharingGuid);
@@ -360,30 +340,7 @@ namespace CatalogueLibrary.Repositories
                     //don't update any ID columns or any with relationships on UPDATE
                     if (propertiesDictionary.ContainsKey(prop.Name) && finder.GetAttribute(prop) == null)
                     {
-                        //sometimes json decided to swap types on you e.g. int64 for int32
-                        var val = propertiesDictionary[prop.Name];
-                        var propertyType = prop.PropertyType;
-
-                        //if it is a nullable int etc
-                        if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
-                            propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
-                        
-                        if (val != null && val != DBNull.Value && !propertyType.IsInstanceOfType(val))
-                            if (propertyType == typeof(CatalogueFolder))
-                            {
-                                //will be passed as a string
-                                string folderAsString = (string)propertiesDictionary["Folder"];
-                                val = new CatalogueFolder((Catalogue)(object)toCreate, folderAsString);
-                            }
-                            else
-                            if (typeof(Enum).IsAssignableFrom(propertyType))
-                                val = Enum.ToObject(propertyType, val);//if the property is an enum
-                            else
-                                val = Convert.ChangeType(val, propertyType); //the property is not an enum
-
-                        
-                        prop.SetValue(toCreate, val); //if it's a shared property (most properties) use the new shared value being imported
-                        
+                        SetValue(prop, propertiesDictionary[prop.Name], toCreate);
                     }
                     else
                         prop.SetValue(toCreate, prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
@@ -452,8 +409,30 @@ namespace CatalogueLibrary.Repositories
                 //document that a local import of the share now exists and should be updated/reused from now on when that same GUID comes in / gets used by child objects
                 shareManager.GetImportAs(shareDefinition.SharingGuid.ToString(), toCreate);
             }
-            
+        }
 
+        public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
+        {
+            //sometimes json decided to swap types on you e.g. int64 for int32
+            var propertyType = prop.PropertyType;
+
+            //if it is a nullable int etc
+            if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
+                propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
+
+            if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
+                if (propertyType == typeof(CatalogueFolder))
+                {
+                    //will be passed as a string
+                    value = value is string ? new CatalogueFolder((Catalogue)onObject, (string)value):(CatalogueFolder) value;
+                }
+                else
+                    if (typeof(Enum).IsAssignableFrom(propertyType))
+                        value = Enum.ToObject(propertyType, value);//if the property is an enum
+                    else
+                        value = Convert.ChangeType(value, propertyType); //the property is not an enum
+
+            prop.SetValue(onObject, value); //if it's a shared property (most properties) use the new shared value being imported
         }
     }
 

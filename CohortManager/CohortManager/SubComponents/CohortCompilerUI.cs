@@ -348,7 +348,7 @@ namespace CohortManager.SubComponents
             task = Compiler.AddTask(configOrContainer, _globals);
 
             //Task is now in state NotScheduled so we can start it
-            Compiler.LaunchSingleTask(task, _timeout);
+            Compiler.LaunchSingleTask(task, _timeout,true);
         }
 
         public void CancelAll()

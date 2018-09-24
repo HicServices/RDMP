@@ -48,7 +48,7 @@ goto build
 
 SET ENV=LOCAL
 IF NOT '%1' == '' SET ENV=%1
-SET EXTRA_FLAGS=%2
+for /f "tokens=1,* delims= " %%a in ("%*") do set EXTRA_FLAGS=%%b
 SET DIR=%cd%
 SET BUILD_DIR=%~d0%~p0%
 SET PROJECT_DIR=%BUILD_DIR%..\

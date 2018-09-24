@@ -8,15 +8,10 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
-    /// <summary>
-    /// Server defaults let you identify a role a server plays (e.g. IdentifierDumpServer) and make it the default one of it's type for all rows created which have an IdentifierDump.
-    /// For example TableInfo.IdentifierDumpServer_ID defaults to whichever IdentifierDump ExternalDatabaseServer is configured (can be DBNull.Value).
-    /// 
-    /// <para>A scalar valued function GetDefaultExternalServerIDFor is used to retrieve defaults so that even if the user creates a new record in the TableInfo table himself manually without
-    /// using our library (very dangerous anyway btw) it will still have the default.</para>
-    /// </summary>
+    /// <inheritdoc cref="IServerDefaults"/>
     public class ServerDefaults : IServerDefaults
     {
+        /// <inheritdoc/>
         public CatalogueRepository Repository { get; private set; }
 
         /// <summary>
@@ -40,6 +35,10 @@ namespace CatalogueLibrary.Data
         /// </summary>
         private readonly Dictionary<PermissableDefaults, string> StringExpansionDictionary = new Dictionary<PermissableDefaults, string>();
 
+        /// <summary>
+        /// Creates a new reader for the defaults configured in the <paramref name="repository"/> platform database
+        /// </summary>
+        /// <param name="repository"></param>
         public ServerDefaults(CatalogueRepository repository)
         {
             Repository = repository;
@@ -58,12 +57,7 @@ namespace CatalogueLibrary.Data
             
         }
 
-        /// <summary>
-        /// Pass in an enum to have it mapped to the scalar GetDefaultExternalServerIDFor function input that provides default values for columns that reference the given value - now note that this 
-        /// might be a scalability issue at some point if there are multiple references from separate tables (or no references at all! like in DQE) 
-        /// </summary>
-        /// <param name="field"></param>
-        /// <returns>the currently configured ExternalDatabaseServer the user wants to use as the default for the supplied role or null if no default has yet been picked</returns>
+        /// <inheritdoc/>
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
         {
             if (field == PermissableDefaults.None)
@@ -95,6 +89,10 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <summary>
+        /// Sets the database <paramref name="toDelete"/> default to null (not configured)
+        /// </summary>
+        /// <param name="toDelete"></param>
         public void ClearDefault(PermissableDefaults toDelete)
         {
             // Repository strictly complains if there is nothing to delete, so we'll check first (probably good for the repo to be so strict?)
@@ -108,6 +106,11 @@ namespace CatalogueLibrary.Data
                 });
         }
 
+        /// <summary>
+        /// Changes the database <paramref name="toChange"/> default to the specified server
+        /// </summary>
+        /// <param name="toChange"></param>
+        /// <param name="externalDatabaseServer"></param>
         public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
         {
             if(toChange == PermissableDefaults.None)
@@ -154,6 +157,11 @@ namespace CatalogueLibrary.Data
                 });
         }
 
+        /// <summary>
+        /// Translates the given <see cref="PermissableDefaults"/> (a default that can be set) to a <see cref="Tier2DatabaseType"/> (identifies what type of database it is).
+        /// </summary>
+        /// <param name="permissableDefault"></param>
+        /// <returns></returns>
         public static Tier2DatabaseType? PermissableDefaultToTier2DatabaseType(PermissableDefaults permissableDefault)
         {
             switch (permissableDefault)

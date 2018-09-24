@@ -21,13 +21,25 @@ namespace CatalogueLibrary.Data.ImportExport
     /// </summary>
     public class ShareManager
     {
+        /// <summary>
+        /// Tells the location of the platform databases to create objects/import references in
+        /// </summary>
         public readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
         private readonly ICatalogueRepository _catalogueRepository;
 
         private const string PersistenceSeparator = "|";
 
+        /// <summary>
+        /// Delegate method for populating environment specific properties e.g. <see cref="ICatalogue.LiveLoggingServer_ID"/> when importing 
+        /// <see cref="ShareDefinition"/> since this ID will be different from the origin.
+        /// </summary>
         public LocalReferenceGetterDelegate LocalReferenceGetter;
 
+        /// <summary>
+        /// Creates a new manager for importing and exporting objects from the given platform databases
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <param name="localReferenceGetter"></param>
         public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, LocalReferenceGetterDelegate localReferenceGetter = null)
         {
             RepositoryLocator = repositoryLocator;
@@ -74,6 +86,13 @@ namespace CatalogueLibrary.Data.ImportExport
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Deserializes the given persistence string (created by <see cref="GetPersistenceString"/>) into an actual database object.  The 
+        /// <paramref name="persistenceString"/> is a pointer (ID / SharingUI) of the object not a value serialization.  If you want to export the
+        /// definition use <see cref="ShareDefinition"/> or Gatherer instead
+        /// </summary>
+        /// <param name="persistenceString"></param>
+        /// <returns></returns>
         public IMapsDirectlyToDatabaseTable GetObjectFromPersistenceString(string persistenceString)
         {
             if (string.IsNullOrWhiteSpace(persistenceString))
@@ -108,15 +127,32 @@ namespace CatalogueLibrary.Data.ImportExport
             return o;
         }
 
+        /// <summary>
+        /// Returns true if there is an <see cref="ObjectExport"/> declared which matches the provided object <paramref name="o"/>
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
         {
             return _catalogueRepository.GetAllObjects<ObjectExport>("WHERE ObjectID = " + o.ID + " AND ObjectTypeName = '" + o.GetType().Name + "' AND RepositoryTypeName = '" + o.Repository.GetType().Name + "'").Any();
         }
 
+
+        /// <summary>
+        /// Returns true if there is an <see cref="ObjectImport"/> declared which matches the provided object <paramref name="o"/>
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
         {
             return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE LocalObjectID = " + o.ID + " AND LocalTypeName = '" + o.GetType().Name + "' AND RepositoryTypeName = '" + o.Repository.GetType().Name + "'").Any();
         }
+
+        /// <summary>
+        /// Returns true if an <see cref="ObjectImport"/> has been declared for the given shared object identified by it's <paramref name="sharingUID"/>
+        /// </summary>
+        /// <param name="sharingUID"></param>
+        /// <returns></returns>
         public bool IsImported(string sharingUID)
         {
             //empty guids are never imported
@@ -126,6 +162,12 @@ namespace CatalogueLibrary.Data.ImportExport
             return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").Any();
         }
 
+        /// <summary>
+        /// Returns an existing export definition for the object o or generates a new one.  This will give you a SharingUID and 
+        /// enable the object for sharing with other users who have RDMP.
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public ObjectExport GetNewOrExistingExportFor(IMapsDirectlyToDatabaseTable o)
         {
             var existingExport = _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
@@ -141,6 +183,13 @@ namespace CatalogueLibrary.Data.ImportExport
             return new ObjectExport(_catalogueRepository, o,Guid.NewGuid());
         }
 
+
+        /// <summary>
+        /// Returns the local object which was imported under the given <paramref name="sharingUID"/> (or null if the object has never
+        /// been imported)
+        /// </summary>
+        /// <param name="sharingUID"></param>
+        /// <returns></returns>
         public IMapsDirectlyToDatabaseTable GetExistingImportObject(string sharingUID)
         {
             var import = GetExistingImport(sharingUID);
@@ -150,11 +199,19 @@ namespace CatalogueLibrary.Data.ImportExport
 
             return import.GetLocalObject(RepositoryLocator);
         }
+
+        /// <inheritdoc cref="GetExistingImportObject(string)"/>
         public object GetExistingImportObject(Guid sharingGuid)
         {
             return GetExistingImportObject(sharingGuid.ToString());
         }
 
+        /// <summary>
+        /// Returns the local object which was exported under the given <paramref name="sharingUID"/> (or null if the object has never
+        /// been exported)
+        /// </summary>
+        /// <param name="sharingUID"></param>
+        /// <returns></returns>
         public IMapsDirectlyToDatabaseTable GetExistingExportObject(string sharingUID)
         {
             var export = GetExistingExport(sharingUID);
@@ -164,6 +221,8 @@ namespace CatalogueLibrary.Data.ImportExport
 
             return export.GetLocalObject(RepositoryLocator);
         }
+
+        /// <inheritdoc cref="GetExistingExportObject(string)"/>
         public object GetExistingExportObject(Guid sharingGuid)
         {
             return GetExistingExportObject(sharingGuid.ToString());
@@ -202,14 +261,16 @@ namespace CatalogueLibrary.Data.ImportExport
             return GetExistingExport(sharingUID.ToString());
         }
 
+        /// <summary>
+        /// Marks the given local object <paramref name="o"/> as an imported instance of a shared object (identified by it's <paramref name="sharingUID"/>)
+        /// </summary>
+        /// <param name="sharingUID"></param>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o)
         {
-            var existing = _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsImportedObject(o));
-
-            return existing ?? new ObjectImport(_catalogueRepository, sharingUID, o);
+            return GetExistingImport(sharingUID) ?? new ObjectImport(_catalogueRepository, sharingUID, o);
         }
-
-        
 
         /// <summary>
         /// Gets all import definitions (ObjectImport) defined in the Catalogue database
@@ -244,15 +305,25 @@ namespace CatalogueLibrary.Data.ImportExport
         }
 
         /// <summary>
-        /// Creates imported objects from a serialized list of <see cref="ShareDefinition"/> - usually loaded from a .so file (See <see cref="Gatherer"/>)
+        /// Creates imported objects from a serialized list of <see cref="ShareDefinition"/> - usually loaded from a .so file (See Sharing.Dependency.Gathering.Gatherer)
         /// </summary>
         /// <param name="sharedObjectsFileText"></param>
         /// <returns></returns>
         public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText, bool deleteExisting = false)
         {
-            var toImport = (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(sharedObjectsFileText, typeof(List<ShareDefinition>), RepositoryLocator);
+            var toImport = GetShareDefinitionList(sharedObjectsFileText);
 
             return ImportSharedObject(toImport);
+        }
+
+        /// <summary>
+        /// Deserializes the json which must be the contents of a .sd file i.e. a ShareDefinitionList
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public List<ShareDefinition> GetShareDefinitionList(string json)
+        {
+            return (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(json, typeof (List<ShareDefinition>), RepositoryLocator);
         }
 
         /// <summary>
@@ -269,7 +340,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
         /// </summary>
         /// <param name="toImport"></param>
-        /// <param name="deleteExisting"></param>
+        /// <param name="deleteExisting">Deletes the object if the object has already been imported previously (not a good idea).</param>
         /// <returns></returns>
         internal IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport, bool deleteExisting)
         {
@@ -297,6 +368,15 @@ namespace CatalogueLibrary.Data.ImportExport
             return created;
         }
 
+        /// <summary>
+        /// When importing a <paramref name="shareDefinition"/> for a child class with a parent, this method will return the ID of parent for the given <paramref name="property"/>
+        /// on the child.  For example if you are importing a <see cref="ShareDefinition"/> for a <see cref="CatalogueItem"/> then the property <see cref="CatalogueItem.Catalogue_ID"/> should 
+        /// have the ID of the locally held <see cref="Catalogue"/> to which it will become a part of.
+        /// </summary>
+        /// <param name="property">The child class property you need to fill e.g. <see cref="CatalogueItem.Catalogue_ID"/></param>
+        /// <param name="relationshipAttribute">The attribute that decorates the <paramref name="property"/> which indicates what type of object the parent is etc</param>
+        /// <param name="shareDefinition">The serialization of the child you are trying to import</param>
+        /// <returns></returns>
         public int? GetLocalReference(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
         {
             if(property.DeclaringType == null)
@@ -313,7 +393,26 @@ namespace CatalogueLibrary.Data.ImportExport
 
             return LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
         }
+
+        /// <summary>
+        /// Updates the user configurable (non ID) properties of the object <pararef name="o"/> to match the <paramref name="shareDefinition"/>
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="shareDefinition"></param>
+        public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
+        {
+            if (shareDefinition.Type != o.GetType())
+                throw new Exception("Share Definition is not for a " + o.GetType());
+
+            //for each property that isn't [NoMappingToDatabase]
+            foreach (var kvp in shareDefinition.GetDictionaryForImport())
+            {
+                var prop = o.GetType().GetProperty(kvp.Key);
+                RepositoryLocator.CatalogueRepository.SetValue(prop,kvp.Value,o);   
+            }
+        }
     }
 
+    /// <inheritdoc cref="ShareManager.LocalReferenceGetter"/>
     public delegate int? LocalReferenceGetterDelegate(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition);
 }

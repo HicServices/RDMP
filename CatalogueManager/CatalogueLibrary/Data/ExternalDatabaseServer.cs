@@ -38,24 +38,36 @@ namespace CatalogueLibrary.Data
         private string _mappedDataPath;
         private readonly SelfCertifyingDataAccessPoint _selfCertifyingDataAccessPoint;
 
+        /// <summary>
+        /// Human readable name for the server e.g. 'My Favourite Logging Database'
+        /// </summary>
         public string Name
         {
             get { return _name; }
             set { SetField(ref  _name, value); }
         }
 
+        /// <summary>
+        /// If the database was created by an RDMP schema (or plugin schema) this will contain the name of the dll which holds the schema e.g. DataQualityEngine.Database and was
+        /// responsible for creating the database.  This determines what roles RDMP lets the database play.
+        /// </summary>
         public string CreatedByAssembly
         {
             get { return _createdByAssembly; }
             set { SetField(ref  _createdByAssembly, value); }
         }
 
+        /// <summary>
+        /// The public network share of the Data path where the physical database files are stored if applicable.  Sharing your database directory on the network is a 
+        /// terrible idea (don't do it).  You can use this to automate detatching and shipping an MDF to your researchers e.g. MsSqlReleaseSource
+        /// </summary>
         public string MappedDataPath
         {
             get { return _mappedDataPath; }
             set { SetField(ref _mappedDataPath, value); }
         }
 
+        /// <inheritdoc/>
         public string Server
         {
             get { return _selfCertifyingDataAccessPoint.Server; }
@@ -69,6 +81,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc/>
         public string Database
         {
             get { return _selfCertifyingDataAccessPoint.Database; }
@@ -82,6 +95,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc/>
         public string Username
         {
             get { return _selfCertifyingDataAccessPoint.Username; }
@@ -95,6 +109,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc/>
         public string Password
         {
             get { return _selfCertifyingDataAccessPoint.Password; }
@@ -108,6 +123,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
+        /// <inheritdoc/>
         public DatabaseType DatabaseType
         {
             get { return _selfCertifyingDataAccessPoint.DatabaseType; }
@@ -134,6 +150,15 @@ namespace CatalogueLibrary.Data
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Name_MaxLength = -1;
 
+        /// <summary>
+        /// Creates a new persistent server reference in RDMP platform database that allows it to connect to a (usually database) server.
+        /// 
+        /// <para>If you are trying to create a database (e.g. a logging database) you should instead use 
+        /// <see cref="MapsDirectlyToDatabaseTable.Versioning.MasterDatabaseScriptExecutor"/></para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
+        /// <param name="databaseAssemblyIfCreatedByOne"></param>
         public ExternalDatabaseServer(ICatalogueRepository repository, string name, Assembly databaseAssemblyIfCreatedByOne = null)
         {
             var parameters = new Dictionary<string, object>
@@ -176,41 +201,24 @@ namespace CatalogueLibrary.Data
             };
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return _selfCertifyingDataAccessPoint.GetQuerySyntaxHelper();
         }
-        
-        /// <summary>
-        /// Returns true if this objects servername and databasename match the paramters, will return false if any of the
-        /// parameters or properties on this object are null.
-        /// </summary>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
-        /// <returns></returns>
-        public bool IsSameDatabase(string server, string database)
-        {
-            if(!string.IsNullOrWhiteSpace(Server) && Server.Equals(server))
-                if (!string.IsNullOrWhiteSpace(Database) && Database.Equals(database))
-                    return true;
-
-            return false;
-        }
-
-        public bool RespondsWithinTime(int timeoutInSeconds,DataAccessContext context, out Exception exception)
-        {
-            return DataAccessPortal.GetInstance().ExpectServer(this, context).RespondsWithinTime(timeoutInSeconds, out exception);
-        }
-        
+        /// <inheritdoc/>
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
         {
             return _selfCertifyingDataAccessPoint.GetCredentialsIfExists(context);
         }
+
+        /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
             return _selfCertifyingDataAccessPoint.GetDecryptedPassword();
@@ -233,6 +241,7 @@ namespace CatalogueLibrary.Data
                 SaveToDatabase();
         }
 
+        /// <inheritdoc/>
         public bool WasCreatedByDatabaseAssembly(Assembly databaseAssembly)
         {
             if (string.IsNullOrWhiteSpace(CreatedByAssembly))
@@ -241,6 +250,7 @@ namespace CatalogueLibrary.Data
             return databaseAssembly.GetName().Name == CreatedByAssembly;
         }
 
+        /// <inheritdoc/>
         public DiscoveredDatabase Discover(DataAccessContext context)
         {
             return DataAccessPortal.GetInstance().ExpectDatabase(this, context);

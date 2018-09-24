@@ -227,8 +227,8 @@ group by
 {8}
 order by 
 {6}
-FOR XML PATH('') 
-)
+FOR XML PATH(''), root('MyString'),type
+).value('/MyString[1]','varchar(max)')
 
 set @Columns = SUBSTRING(@Columns,2,LEN(@Columns))
 
@@ -322,7 +322,7 @@ EXECUTE(@Query)
 
         public string BuildAggregate(List<CustomLine> queryLines, IQueryAxis axisIfAny, bool pivot)
         {
-            if (axisIfAny == null && !pivot)
+      if (axisIfAny == null && !pivot)
                 return string.Join(Environment.NewLine, queryLines);
 
             if (!pivot)

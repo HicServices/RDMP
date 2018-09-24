@@ -6,8 +6,14 @@
     /// </summary>
     public interface ISupplementalJoin
     {
+
+        /// <inheritdoc cref="IJoin.ForeignKey"/>
         ColumnInfo ForeignKey { get; }
+
+        /// <inheritdoc cref="IJoin.PrimaryKey"/>
         ColumnInfo PrimaryKey { get; }
+
+        /// <inheritdoc cref="IJoin.Collation"/>
         string Collation { get; }
         
     }

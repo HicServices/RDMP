@@ -93,7 +93,7 @@ namespace HIC.Logging.PastEvents
         }
 
         /// <summary>
-        /// Returns up to <see cref="MaxChildrenToFetch"/> data load audit objects which describe runs of over arching task <see cref="dataTask"/>
+        /// Returns up to <see cref="MaxChildrenToFetch"/> data load audit objects which describe runs of over arching task <paramref name="dataTask"/>
         /// </summary>
         /// <param name="dataTask"></param>
         /// <param name="lds"></param>

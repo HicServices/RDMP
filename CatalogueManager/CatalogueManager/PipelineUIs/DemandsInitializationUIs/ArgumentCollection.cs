@@ -13,6 +13,7 @@ using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 using ReusableLibraryCode;
 using ReusableUIComponents;
@@ -52,7 +53,8 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="argumentsAreForUnderlyingType"></param>
-        public void Setup(IArgumentHost parent, Type argumentsAreForUnderlyingType)
+        /// <param name="catalogueRepository"></param>
+        public void Setup(IArgumentHost parent, Type argumentsAreForUnderlyingType, ICatalogueRepository catalogueRepository)
         {
             _parent = parent;
             _argumentsAreFor = argumentsAreForUnderlyingType;
@@ -71,46 +73,16 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
                 btnViewSourceCode.Enabled = ViewSourceCodeDialog.GetSourceForFile(_argumentsAreFor.Name + ".cs") != null;
                 btnViewSourceCode.Left = helpIcon1.Right;
 
-                helpIcon1.SetHelpText(_argumentsAreFor.Name, GetDescriptionForTypeIncludingBaseTypes(_argumentsAreFor, true)); 
+                var summary = catalogueRepository.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
+                
+                if(summary != null)
+                    helpIcon1.SetHelpText(_argumentsAreFor.Name, summary);
 
                 RefreshArgumentList();
             }
 
         }
         
-        /// <summary>
-        /// Parses entire class hierarchy looking for [Description("something")] elements which are all agregated together (recursively) and returned
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private string GetDescriptionForTypeIncludingBaseTypes(Type type, bool isRootClass)
-        {
-            var descriptions = (DescriptionAttribute[])type.GetCustomAttributes(typeof(DescriptionAttribute), false);
-
-            string message = "";
-
-            if (descriptions.Length == 0)
-                message = isRootClass?"No description found for Type:" + type.FullName :"";
-            else
-            {
-                message = descriptions.Single().Description.TrimEnd();
-
-                if (!isRootClass)
-                    message = "PARENT CLASS:" + type.Name + Environment.NewLine + Environment.NewLine + message;
-            }
-
-            if (type.BaseType != null)
-            {
-                string baseDescription = GetDescriptionForTypeIncludingBaseTypes(type.BaseType, false);
-                if (message == "")
-                    return baseDescription;
-
-                return message + Environment.NewLine + Environment.NewLine + baseDescription;
-                
-            }
-            return message;
-        }
-
         private void RefreshArgumentList()
         {
             var argumentFactory = new ArgumentFactory();

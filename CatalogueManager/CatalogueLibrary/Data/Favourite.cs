@@ -23,31 +23,45 @@ namespace CatalogueLibrary.Data
         private string _username;
         private DateTime _favouritedDate;
 
+        /// <summary>
+        /// The Type of object that was favourited (e.g. <see cref="Catalogue"/>).  Must be an <see cref="IMapsDirectlyToDatabaseTable"/> object
+        /// </summary>
         public string TypeName
         {
             get { return _typeName; }
             set { SetField(ref _typeName, value); }
         }
 
+        /// <summary>
+        /// The ID of the object favourited
+        /// </summary>
         public int ObjectID
         {
             get { return _objectID; }
             set { SetField(ref _objectID, value); }
         }
 
-        //Tells you which repository the Favourite object is stored in, either the Catalogue or DataExport database
+        /// <summary>
+        /// The platform database which is storing the object favourited (e.g. DataExport or Catalogue)
+        /// </summary>
         public string RepositoryTypeName
         {
             get { return _repositoryTypeName; }
             set { SetField(ref _repositoryTypeName, value); }
         } 
 
+        /// <summary>
+        /// The user that favourited the object
+        /// </summary>
         public string Username
         {
             get { return _username; }
             set { SetField(ref _username , value); }
         }
 
+        /// <summary>
+        /// When the <see cref="Username"/> favourited the object
+        /// </summary>
         public DateTime FavouritedDate
         {
             get { return _favouritedDate; }
@@ -64,6 +78,12 @@ namespace CatalogueLibrary.Data
             FavouritedDate = Convert.ToDateTime(r["FavouritedDate"]);
         }
 
+
+        /// <summary>
+        /// Records that the current Environment.UserName wants to mark the <paramref name="objectToFavourite"/> as one of his favourite objects
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="objectToFavourite"></param>
         public Favourite(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectToFavourite)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -76,11 +96,16 @@ namespace CatalogueLibrary.Data
             });
         }
 
+        /// <summary>
+        /// True if the <paramref name="mapsDirectlyToDatabaseTable"/> is the object that is explicitly referenced by this class instance
+        /// </summary>
+        /// <param name="mapsDirectlyToDatabaseTable"></param>
+        /// <returns></returns>
         public bool IsFavourite(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
         {
             return IsFavourite(mapsDirectlyToDatabaseTable.ID, mapsDirectlyToDatabaseTable.GetType());
         }
-
+        /// <inheritdoc cref="IsFavourite(IMapsDirectlyToDatabaseTable)"/>
         public bool IsFavourite(int id, Type type)
         {
             return ObjectID == id && TypeName.Equals(type.Name);

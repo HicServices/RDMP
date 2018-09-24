@@ -61,7 +61,7 @@ namespace DataLoadEngineTests.Integration
             var factory = new HICDataLoadFactory(lmd, new HICDatabaseConfiguration(DiscoveredDatabaseICanCreateRandomTablesIn.Server),new HICLoadConfigurationFlags(), CatalogueRepository, lm);
             IDataLoadExecution execution = factory.Create(new ThrowImmediatelyDataLoadEventListener());
 
-            var proceedure = new DataLoadProcess(lmd, null, lm, new ThrowImmediatelyDataLoadEventListener(),execution);
+            var proceedure = new DataLoadProcess(RepositoryLocator,lmd, null, lm, new ThrowImmediatelyDataLoadEventListener(),execution);
 
             proceedure.Run(new GracefulCancellationToken(), payload);
 

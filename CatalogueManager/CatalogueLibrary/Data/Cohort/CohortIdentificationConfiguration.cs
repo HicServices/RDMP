@@ -79,7 +79,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// To assist with complex cohort identification queries over multiple datasets (and between servers / server types) you can configure a QueryCachingServer.  
         /// This is an <see cref="ExternalDatabaseServer"/> created by <see cref="CatalogueLibrary.ExternalDatabaseServerPatching.QueryCachingDatabasePatcher"/>. 
         /// Once setup, each <see cref="AggregateConfiguration"/> query in this <see cref="CohortIdentificationConfiguration"/> will be run independently and the resulting 
-        /// patient list commmitted ot the cache server (<see cref="QueryCaching.Aggregation.CachedAggregateConfigurationResultsManager"/>.  
+        /// patient list commmitted ot the cache server (See QueryCaching.Aggregation.CachedAggregateConfigurationResultsManager).
         /// 
         /// <para>This field holds the ID of the currently configured database (if any) which acts as a result cache</para>
         /// </summary>
@@ -356,9 +356,9 @@ namespace CatalogueLibrary.Data.Cohort
         }
 
         /// <summary>
-        /// Creates an adjusted copy of the <see cref="toClone"/> to be used as a cohort identification <see cref="AggregateConfiguration"/>.  This could be 
+        /// Creates an adjusted copy of the <paramref name="toClone"/> to be used as a cohort identification <see cref="AggregateConfiguration"/>.  This could be 
         /// an <see cref="AggregateConfiguration"/> graph or one that is acting as a patient index table / cohort set for another <see cref="CohortIdentificationConfiguration"/>.
-        /// <para>IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from <see cref="resolveMultipleExtractionIdentifiers"/></para>
+        /// <para>IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from <paramref name="resolveMultipleExtractionIdentifiers"/></para>
         /// </summary>
         /// <param name="toClone">The aggregate to import</param>
         /// <param name="resolveMultipleExtractionIdentifiers">What to do if there are multiple <see cref="ExtractionInformation"/>/<see cref="AggregateDimension"/>
@@ -465,7 +465,7 @@ namespace CatalogueLibrary.Data.Cohort
 
         /// <summary>
         /// Creates a new cohort set <see cref="AggregateConfiguration"/> which initially matches any patient appearing in the dataset (<see cref="Catalogue"/>).
-        /// <para>IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from <see cref="resolveMultipleExtractionIdentifiers"/></para>
+        /// <para>IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from <paramref name="resolveMultipleExtractionIdentifiers"/></para>
         /// </summary>
         /// <param name="catalogue">The catalogue to import as a patient identification set (you can import the same Catalogue multiple times e.g. 
         /// 'People ever prescribed morphine' EXCEPT 'People ever prescribed percoset'</param>
@@ -603,8 +603,8 @@ namespace CatalogueLibrary.Data.Cohort
 
 
         /// <summary>
-        /// Returns all unique <see cref="TableInfo"/> required for building all of the <see cref="AggregateConfiguration"/>s in the <see cref="RootFilterContainer_ID"/> or 
-        /// any subcontainers.
+        /// Returns all unique <see cref="TableInfo"/> required for building all of the <see cref="AggregateConfiguration"/>s in the 
+        /// <see cref="AggregateConfiguration.RootFilterContainer_ID"/> or any subcontainers.
         /// </summary>
         /// <returns></returns>
         public TableInfo[] GetDistinctTableInfos()

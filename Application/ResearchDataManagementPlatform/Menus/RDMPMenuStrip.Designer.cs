@@ -40,7 +40,6 @@
             this.configureExternalServersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setTicketingSystemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.governanceManagementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.issuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -160,45 +159,37 @@
             // 
             this.configureExternalServersToolStripMenuItem.Name = "configureExternalServersToolStripMenuItem";
             this.configureExternalServersToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.configureExternalServersToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
+            this.configureExternalServersToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.configureExternalServersToolStripMenuItem.Text = "Default Servers...";
             this.configureExternalServersToolStripMenuItem.Click += new System.EventHandler(this.configureExternalServersToolStripMenuItem_Click);
             // 
             // setTicketingSystemToolStripMenuItem
             // 
             this.setTicketingSystemToolStripMenuItem.Name = "setTicketingSystemToolStripMenuItem";
-            this.setTicketingSystemToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
+            this.setTicketingSystemToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.setTicketingSystemToolStripMenuItem.Text = "Set Ticketing System...";
             this.setTicketingSystemToolStripMenuItem.Click += new System.EventHandler(this.setTicketingSystemToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.governanceManagementToolStripMenuItem,
             this.logViewerToolStripMenuItem,
             this.userSettingsToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
             // 
-            // governanceManagementToolStripMenuItem
-            // 
-            this.governanceManagementToolStripMenuItem.Name = "governanceManagementToolStripMenuItem";
-            this.governanceManagementToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.governanceManagementToolStripMenuItem.Text = "Governance Management...";
-            this.governanceManagementToolStripMenuItem.Click += new System.EventHandler(this.governanceManagementToolStripMenuItem_Click);
-            // 
             // logViewerToolStripMenuItem
             // 
             this.logViewerToolStripMenuItem.Name = "logViewerToolStripMenuItem";
-            this.logViewerToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.logViewerToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.logViewerToolStripMenuItem.Text = "Log Viewer...";
             this.logViewerToolStripMenuItem.Click += new System.EventHandler(this.logViewerToolStripMenuItem_Click);
             // 
             // userSettingsToolStripMenuItem
             // 
             this.userSettingsToolStripMenuItem.Name = "userSettingsToolStripMenuItem";
-            this.userSettingsToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.userSettingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.userSettingsToolStripMenuItem.Text = "User Settings...";
             this.userSettingsToolStripMenuItem.Click += new System.EventHandler(this.userSettingsToolStripMenuItem_Click);
             // 
@@ -415,7 +406,6 @@
         private System.Windows.Forms.ToolStripMenuItem configureExternalServersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setTicketingSystemToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem governanceManagementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logViewerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem issuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateReportToolStripMenuItem;

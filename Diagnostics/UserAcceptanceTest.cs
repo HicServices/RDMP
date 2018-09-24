@@ -20,17 +20,7 @@ namespace Diagnostics
 
         protected UserAcceptanceTest(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-
-
             RepositoryLocator = repositoryLocator;
-            CleanUp();
-        }
-
-        private void CleanUp()
-        {
-            if(RepositoryLocator.DataExportRepository != null)
-                foreach (var extractableDataSet in RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>().Where(e => e.Catalogue_ID == null))
-                    extractableDataSet.DeleteInDatabase();
         }
 
         protected Catalogue FindTestCatalogue(ICheckNotifier notifier)

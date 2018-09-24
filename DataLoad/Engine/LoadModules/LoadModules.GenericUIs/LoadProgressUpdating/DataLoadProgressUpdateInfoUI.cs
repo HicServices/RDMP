@@ -55,11 +55,6 @@ namespace LoadModules.GenericUIs.LoadProgressUpdating
             SetUnderlyingObjectTo((DataLoadProgressUpdateInfo)value,previewIfAvailable);
         }
 
-        public ICustomUIDrivenClass GetGenericFinalStateOfUnderlyingObject()
-        {
-            return GetFinalStateOfUnderlyingObject();
-        }
-
         public void SetUnderlyingObjectTo(DataLoadProgressUpdateInfo value, DataTable previewIfAvailable)
         {
             if (value == null)
@@ -71,7 +66,7 @@ namespace LoadModules.GenericUIs.LoadProgressUpdating
 
         }
 
-        public DataLoadProgressUpdateInfo GetFinalStateOfUnderlyingObject()
+        public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
         {
             var toReturn = new DataLoadProgressUpdateInfo();
             toReturn.ExecuteScalarSQL = QueryEditor.Text;
@@ -158,7 +153,7 @@ namespace LoadModules.GenericUIs.LoadProgressUpdating
 
         private void CheckObject()
         {
-            var obj = GetFinalStateOfUnderlyingObject();
+            var obj = (DataLoadProgressUpdateInfo)GetFinalStateOfUnderlyingObject();
             ragSmiley1.StartChecking(obj);
         }
 

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text.RegularExpressions;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Reports
 {
@@ -14,78 +11,50 @@ namespace CatalogueLibrary.Reports
     /// </summary>
     public class DocumentationReportFormsAndControls: ICheckable
     {
+        private readonly CommentStore _commentStore;
         private readonly Type[] _formsAndControls;
         public Dictionary<Type, string> Summaries = new Dictionary<Type, string>();
 
-        public DocumentationReportFormsAndControls(Type[] formsAndControls)
+        public DocumentationReportFormsAndControls(CommentStore commentStore,Type[] formsAndControls)
         {
+            _commentStore = commentStore;
             _formsAndControls = formsAndControls;
         }
 
         public void Check(ICheckNotifier notifier)
         {
-            const string zipArchive = "SourceCodeForSelfAwareness.zip";
-
-            using (var z = ZipFile.Open(zipArchive,ZipArchiveMode.Read))
+            foreach (Type t in _formsAndControls)
             {
-                foreach (Type t in _formsAndControls)
+                if(t.Name.EndsWith("_Design"))
+                    continue;
+
+                try
                 {
-                    if(t.Name.EndsWith("_Design"))
-                        continue;
-
-                    try
-                    {
-                        //spontaneous objects don't exist in the database.
-                        notifier.OnCheckPerformed(new CheckEventArgs("Found Type " + t.Name, CheckResult.Success,null));
-                    }
-                    catch(Exception)
-                    {
-                        continue;
-                    }
-
-                    //it's an abstract empty design class
-                    if(t.Name.EndsWith("_Design"))
-                        continue;
-                    
-                    string toFind;
-
-                    //if it's a generic
-                    if (t.Name.EndsWith("`1"))
-                        toFind = t.Name.Substring(0, t.Name.Length - "`1".Length) + ".cs"; //trim off the tick 1
-                    else
-                        toFind = t.Name + ".cs";//its just regular
-                    
-                    var entries = z.Entries.Where(e => e.Name.Equals(toFind,StringComparison.CurrentCultureIgnoreCase)).ToArray();
-
-                    if (entries.Length != 1)
-                    {
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs("Found " + entries.Length + " files called " + toFind,
-                                CheckResult.Fail));
-                        continue;
-                    }
-
-                    string classSourceCode = new StreamReader(entries[0].Open()).ReadToEnd();
-
-                    try
-                    {
-                        string definition = DocumentationReportMapsDirectlyToDatabase.GetSummaryFromContent(t, classSourceCode, notifier);
-
-                        //somehow we have 2 copies of this?
-                        if(Summaries.ContainsKey(t))
-                            continue;
-
-                        Summaries.Add(t, StripTags(definition??"Not documented"));
-                    }
-                    catch (Exception e)
-                    {
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs("Failed to get definition for class " + t.FullName, CheckResult.Fail,
-                                e));
-                    }
-
+                    //spontaneous objects don't exist in the database.
+                    notifier.OnCheckPerformed(new CheckEventArgs("Found Type " + t.Name, CheckResult.Success,null));
                 }
+                catch(Exception)
+                {
+                    continue;
+                }
+
+                //it's an abstract empty design class
+                if(t.Name.EndsWith("_Design"))
+                    continue;
+
+                var docs = _commentStore.GetTypeDocumentationIfExists(t);
+
+                if(docs != null)
+                {
+                    if (!Summaries.ContainsKey(t))
+                        Summaries.Add(t, docs);
+                }
+                else
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs("Failed to get definition for class " + t.FullName, CheckResult.Fail));
+
             }
+            
         }
 
         public static string StripTags(string s)

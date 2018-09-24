@@ -64,6 +64,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults
             }
         }
 
+        /// <summary>
+        /// Returns the best alias for <paramref name="keyword"/> or null if there are no known aliases.  This is because some builders allow multiple keys for changing the same underlying
+        /// property.
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private string GetCollisionWithKeyword(string keyword, string value)
         {
             //lets evaluate this alleged keyword!

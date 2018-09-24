@@ -38,7 +38,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         string ScriptTableCreation(DiscoveredTable constraints, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt, DiscoveredTable toCreateTable = null);
         bool IsEmpty(DbConnection connection, DiscoveredTable discoveredTable, DbTransaction transaction);
         void RenameTable(DiscoveredTable discoveredTable, string newName, IManagedConnection connection);
-        void CreatePrimaryKey(DiscoveredTable columns, DiscoveredColumn[] discoverColumns, IManagedConnection connection);
+        void CreatePrimaryKey(DiscoveredTable columns, DiscoveredColumn[] discoverColumns, IManagedConnection connection, int timeout = 0);
         int ExecuteInsertReturningIdentity(DiscoveredTable discoveredTable, DbCommand cmd, IManagedTransaction transaction=null);
     }
 }
