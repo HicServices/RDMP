@@ -87,7 +87,7 @@ namespace DataLoadEngine.LoadExecution
                 postLoad
             });
             
-            var components = new List<DataLoadComponent>
+            var components = new List<IDataLoadComponent>
             {
                 getFiles,
                 adjustStagingAndMigrateToLive,

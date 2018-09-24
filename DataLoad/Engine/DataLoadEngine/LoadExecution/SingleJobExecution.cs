@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution.Components;
@@ -18,10 +14,10 @@ namespace DataLoadEngine.LoadExecution
     /// </summary>
     public class SingleJobExecution : IDataLoadExecution
     {
-        public List<DataLoadComponent> Components { get; set; }
+        public List<IDataLoadComponent> Components { get; set; }
    
 
-        public SingleJobExecution(List<DataLoadComponent> components)
+        public SingleJobExecution(List<IDataLoadComponent> components)
         {
             Components = components;
         }
