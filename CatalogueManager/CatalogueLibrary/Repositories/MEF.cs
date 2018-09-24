@@ -39,7 +39,7 @@ namespace CatalogueLibrary.Repositories
         
         private readonly string _localPath = null;
 
-        public MEF(CatalogueRepository repository)
+        public MEF()
         {
             //try to use the app data folder to download MEF but also evaluate everything in _localPath
             _localPath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath);
