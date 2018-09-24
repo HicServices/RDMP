@@ -18,7 +18,7 @@ namespace DataLoadEngineTests.Integration
         {
             var component = new NotRequiredComponent();
 
-            var pipeline = new SingleJobExecution(new List<DataLoadComponent> {component});
+            var pipeline = new SingleJobExecution(new List<IDataLoadComponent> {component});
 
             var job = MockRepository.GenerateStub<IDataLoadJob>();
             var jobTokenSource = new GracefulCancellationTokenSource();

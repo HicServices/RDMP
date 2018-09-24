@@ -56,44 +56,48 @@ namespace CatalogueLibrary.Data
         {
             BadAssembliesDictionary = new Dictionary<string, Exception>();
 
-            var files = new List<string>();
+            var files = new HashSet<FileInfo>();
 
             foreach (string directory in directories)
             {
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);//empty directory 
 
-                files.AddRange(Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories));
+                foreach(var f in Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories))
+                {
+                    var newOne = new FileInfo(f);
+                    var existing = files.SingleOrDefault(d => d.Name.Equals(newOne.Name));
+                    
+                    if(existing != null)
+                        listener.OnCheckPerformed(new CheckEventArgs("Found 2 copies of " + newOne.Name +".  Loaded will be '" + existing.FullName +"'.  Rejected one will be '" + newOne.FullName +"'",CheckResult.Warning));
+                    else
+                        files.Add(newOne);
+                }
             }
                 
             _catalog = new AggregateCatalog();
             
-            for (int index = 0; index < files.Count; index++)
+            foreach(FileInfo f in files)
             {
-                var file = files[index];
-
-                if (blacklist.Any(r => r.IsMatch(file)))
+                if (blacklist.Any(r => r.IsMatch(f.Name)))
                 {
                     if(listener != null)
-                        listener.OnCheckPerformed(new CheckEventArgs("skipping blacklisted dll " + file, CheckResult.Success));
+                        listener.OnCheckPerformed(new CheckEventArgs("skipping blacklisted dll " + f, CheckResult.Success));
                     continue;
                 }
-
-                int percentage = (int)(((float)(index+1.0)/files.Count)*100.0);
-
 
                 try
                 {
                     //we have already processed this one
-                    if (GoodAssemblies.ContainsKey(file))
+                    if (GoodAssemblies.ContainsKey(f.FullName))
                     {
                         if(listener != null)
-                            listener.OnCheckPerformed(new CheckEventArgs(percentage + "% - File " + file + " already loaded", CheckResult.Warning));
+                            listener.OnCheckPerformed(new CheckEventArgs("File " + f.FullName + " already loaded", CheckResult.Warning));
 
                         continue;
                     }
 
-                    var asmCat = new AssemblyCatalog(file);
+                    var asmCat = new AssemblyCatalog(f.FullName);
 
                     //Force MEF to load the plugin and figure out if there are any exports
                     // good assemblies will not throw the RTLE exception and can be added to the catalog
@@ -101,22 +105,22 @@ namespace CatalogueLibrary.Data
                         _catalog.Catalogs.Add(asmCat);
 
                     //Add the parts to the parts by file dictionary too so if you want to know what exports come from what file you can do so
-                    PartsByFileDictionary.Add(file,asmCat);
+                    PartsByFileDictionary.Add(f.FullName,asmCat);
 
                     //no bombing occurred so must be a good file
-                    GoodAssemblies.Add(file, asmCat.Assembly);
+                    GoodAssemblies.Add(f.FullName, asmCat.Assembly);
 
                     //tell them as we go how far we are through
                     if (listener != null)
-                        listener.OnCheckPerformed(new CheckEventArgs(percentage +"% - successfully loaded Assembly " + file + " into memory", CheckResult.Success));
+                        listener.OnCheckPerformed(new CheckEventArgs("Successfully loaded Assembly " + f.FullName + " into memory", CheckResult.Success));
                 }
                 catch (Exception ex)
                 {
-                    if (!BadAssembliesDictionary.ContainsKey(file))
+                    if (!BadAssembliesDictionary.ContainsKey(f.FullName))
                     {
-                        BadAssembliesDictionary.Add(file, ex);
+                        BadAssembliesDictionary.Add(f.FullName, ex);
                         if(listener != null)
-                            listener.OnCheckPerformed(new CheckEventArgs(percentage + "% - Encountered Bad Assembly " + file + " into memory", CheckResult.Fail, ex));
+                            listener.OnCheckPerformed(new CheckEventArgs("Encountered Bad Assembly " + f.FullName + " into memory", CheckResult.Fail, ex));
                     }
                 }
             }

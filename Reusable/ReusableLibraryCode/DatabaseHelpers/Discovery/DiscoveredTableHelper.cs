@@ -99,16 +99,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             cmd.ExecuteNonQuery();
         }
 
-        public virtual void CreatePrimaryKey(DiscoveredTable table, DiscoveredColumn[] discoverColumns, IManagedConnection connection)
+        public virtual void CreatePrimaryKey(DiscoveredTable table, DiscoveredColumn[] discoverColumns, IManagedConnection connection, int timeout = 0)
         {
-            string sql = string.Format("ALTER TABLE {0} ADD PRIMARY KEY ({1})",
-                     table.GetFullyQualifiedName(),
+            try{
+
+                string sql = string.Format("ALTER TABLE {0} ADD PRIMARY KEY ({1})",
+                    table.GetFullyQualifiedName(),
                     string.Join(",", discoverColumns.Select(c => c.GetRuntimeName()))
                     );
             
-
-            DbCommand cmd = DatabaseCommandHelper.GetCommand(sql,connection.Connection,connection.Transaction);
-            cmd.ExecuteNonQuery();
+                DbCommand cmd = DatabaseCommandHelper.GetCommand(sql,connection.Connection,connection.Transaction);
+                cmd.CommandTimeout = timeout;
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed to create primary key on table " + table + " using columns (" + string.Join(",", discoverColumns.Select(c => c.GetRuntimeName())) + ")", e);
+            }
         }
 
         public virtual int ExecuteInsertReturningIdentity(DiscoveredTable discoveredTable, DbCommand cmd, IManagedTransaction transaction=null)

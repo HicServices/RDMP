@@ -48,7 +48,7 @@ namespace CatalogueLibrary.Data.DataLoad
             typeof(Type),
 
             //IMapsDirectlyToDatabaseTable
-            typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress), 
+            typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress), typeof(LoadMetadata),
             typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(StandardRegex),typeof(CohortIdentificationConfiguration),
             typeof(RemoteRDMP),
             typeof(DataAccessCredentials),

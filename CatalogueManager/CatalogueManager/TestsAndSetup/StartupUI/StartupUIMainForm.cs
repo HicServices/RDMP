@@ -175,10 +175,12 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                 this.Invoke(new MethodInvoker(StartupComplete));
                 return;
             }
+            
+            if (_startup != null && _startup.RepositoryLocator != null && _startup.RepositoryLocator.CatalogueRepository != null)
+                KeywordHelpTextListbox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
 
             if (pbRed.Visible || pbRedDead.Visible)
                 return;
-
             
             Timer t = new Timer();
             t.Interval = 1000;
@@ -186,10 +188,6 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             t.Start();
 
             pbLoadProgress.Value = 1000;
-
-
-            if (_startup != null && _startup.RepositoryLocator != null && _startup.RepositoryLocator.CatalogueRepository != null)
-                KeywordHelpTextListbox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
         }
 
         void t_Tick(object sender, EventArgs e)

@@ -60,7 +60,7 @@ namespace CatalogueLibrary.Repositories
             TableInfoToCredentialsLinker = new TableInfoToCredentialsLinker(this);
             PasswordEncryptionKeyLocation = new PasswordEncryptionKeyLocation(this);
             JoinInfoFinder = new JoinInfoFinder(this);
-            MEF = new MEF(this);
+            MEF = new MEF();
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
         }
