@@ -19,15 +19,27 @@ namespace Sharing.CommandExecution
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly IMapsDirectlyToDatabaseTable[] _toExport;
+        
         public DirectoryInfo TargetDirectoryInfo;
+        public FileInfo TargetFileInfo;
+
         private readonly ShareManager _shareManager;
         private readonly Gatherer _gatherer;
+
+        public bool IsSingleObject { get { return _toExport.Length == 1; } }
+
+        public ExecuteCommandExportObjectsToFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IMapsDirectlyToDatabaseTable toExport, FileInfo targetFileInfo = null):this(repositoryLocator,new []{toExport})
+        {
+            TargetFileInfo = targetFileInfo;
+        }
 
         public ExecuteCommandExportObjectsToFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IMapsDirectlyToDatabaseTable[] toExport, DirectoryInfo targetDirectoryInfo = null)
         {
             _repositoryLocator = repositoryLocator;
             _toExport = toExport;
+            
             TargetDirectoryInfo = targetDirectoryInfo;
+
             _shareManager = new ShareManager(repositoryLocator);
 
             if (toExport == null || !toExport.Any())
@@ -46,6 +58,18 @@ namespace Sharing.CommandExecution
         public override void Execute()
         {
             base.Execute();
+
+            if (TargetFileInfo != null && IsSingleObject)
+            {
+                var d = _gatherer.GatherDependencies(_toExport[0]);
+                
+                var shareDefinitions = d.ToShareDefinitionWithChildren(_shareManager);
+                string serial = JsonConvertExtensions.SerializeObject(shareDefinitions, _repositoryLocator);
+                File.WriteAllText(TargetFileInfo.FullName, serial);
+                
+                return;
+            }
+            
 
             if (TargetDirectoryInfo == null)
                 throw new Exception("No output directory set");
