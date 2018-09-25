@@ -2,29 +2,20 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
-
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using Xceed.Words.NET;
 using DataTable = System.Data.DataTable;
-using Image = System.Drawing.Image;
 
 namespace CatalogueLibrary.Reports
 {
-    public delegate Bitmap[] RequestCatalogueImagesHandler(Catalogue catalogue);
+    public delegate BitmapWithDescription[] RequestCatalogueImagesHandler(Catalogue catalogue);
 
     /// <summary>
     /// Generates a high level summary Microsoft Word DocX file of one or more Catalogues.  This includes the rowcount, distinct patient count, description and descriptions
@@ -153,23 +144,23 @@ namespace CatalogueLibrary.Reports
 
                             if (gotRecordCount)
                             {
-                                InsertHeader(document,"Record Count", 4);
+                                InsertHeader(document,"Record Count", 3);
                                 CreateCountTable(document,recordCount, distinctRecordCount, identifierName);
                             }
                             
                             if (!_skipImages)
                             {
-                                Bitmap[] onRequestCatalogueImages = RequestCatalogueImages(c);
+                                BitmapWithDescription[] onRequestCatalogueImages = RequestCatalogueImages(c);
 
                                 if (onRequestCatalogueImages.Any())
                                 {
-                                    InsertHeader(document,"Aggregates",4);
+                                    InsertHeader(document,"Aggregates",2);
                                     AddImages(document,onRequestCatalogueImages);
                                 }
 
                             }
 
-                            InsertHeader(document,"Columns",4);
+                            InsertHeader(document,"Columns",2);
                             CreateDescriptionsTable(document,c);
 
                             //if this is not the last Catalogue create a new page
@@ -291,10 +282,18 @@ namespace CatalogueLibrary.Reports
 
         }
 
-        private void AddImages(DocX document, Bitmap[] onRequestCatalogueImages)
+        private void AddImages(DocX document, BitmapWithDescription[] onRequestCatalogueImages)
         {
-            foreach (Bitmap image in onRequestCatalogueImages)
-                InsertPicture(document,image);
+            foreach (BitmapWithDescription image in onRequestCatalogueImages)
+            {
+                if(!string.IsNullOrWhiteSpace(image.Header))
+                    InsertHeader(document,image.Header,3);
+
+                if (!string.IsNullOrWhiteSpace(image.Description))
+                    InsertParagraph(document, image.Description);
+
+                InsertPicture(document,image.Bitmap);
+            }
         }
 
         private void CreateDescriptionsTable(DocX document, Catalogue c)

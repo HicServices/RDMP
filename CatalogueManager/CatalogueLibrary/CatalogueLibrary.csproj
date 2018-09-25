@@ -344,6 +344,7 @@
     <Compile Include="QueryBuilding\Options\AggregateBuilderCohortOptions.cs" />
     <Compile Include="QueryBuilding\Options\AggregateBuilderOptionsFactory.cs" />
     <Compile Include="QueryBuilding\Options\IAggregateBuilderOptions.cs" />
+    <Compile Include="Reports\BitmapWithDescription.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />

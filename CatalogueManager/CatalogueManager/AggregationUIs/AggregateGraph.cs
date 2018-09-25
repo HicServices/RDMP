@@ -17,6 +17,7 @@ using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Reports;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -711,14 +712,15 @@ namespace CatalogueManager.AggregationUIs
             _defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
         }
 
-        public IEnumerable<Bitmap> GetImages()
+        public IEnumerable<BitmapWithDescription> GetImages()
         {
             var b = new Bitmap(chart1.Width, chart1.Height);
             chart1.DrawToBitmap(b, new Rectangle(new Point(0, 0), new Size(chart1.Width, chart1.Height)));
-            yield return b;
+            
+            yield return new BitmapWithDescription(b,AggregateConfiguration.Name,AggregateConfiguration.Description);
 
             if (heatmapUI.HasDataTable())
-                yield return heatmapUI.GetImage(800);
+                yield return new BitmapWithDescription(heatmapUI.GetImage(800),null,null);
         }
         
         private void btnSaveImages_Click(object sender, EventArgs e)
