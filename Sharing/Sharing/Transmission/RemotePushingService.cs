@@ -81,7 +81,10 @@ namespace Sharing.Transmission
                                 if (result.IsSuccessStatusCode)
                                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Sending " + toSend1 + " to " + remote1.Name + " completed."));
                                 else
-                                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error sending " + toSend1 + " to " + remote1.Name + ": " + result.ReasonPhrase));
+                                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, 
+                                                                                    "Error sending " + toSend1 + " to " + remote1.Name + ": " + 
+                                                                                    result.ReasonPhrase + " - " + 
+                                                                                    result.Content.ReadAsStringAsync().Result));
                                 lock (done)
                                 {
                                     listener.OnProgress(this, new ProgressEventArgs(remote1.Name, new ProgressMeasurement(++done[remote1.Name], ProgressType.Records, toSendAll.Length), new TimeSpan()));
