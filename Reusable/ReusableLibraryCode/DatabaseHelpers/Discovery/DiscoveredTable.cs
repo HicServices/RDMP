@@ -73,11 +73,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
 
-        public DiscoveredColumn DiscoverColumn(string specificColumnName)
+        public DiscoveredColumn DiscoverColumn(string specificColumnName,IManagedTransaction transaction=null)
         {
             try
             {
-                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName),StringComparison.CurrentCultureIgnoreCase));
+                return DiscoverColumns(transaction).Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName), StringComparison.CurrentCultureIgnoreCase));
             }
             catch (Exception e)
             {

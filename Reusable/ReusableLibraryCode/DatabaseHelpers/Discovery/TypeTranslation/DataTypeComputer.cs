@@ -56,6 +56,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             
         }
 
+        public DataTypeComputer(DatabaseTypeRequest request): this(request.MaxWidthForStrings.HasValue? request.MaxWidthForStrings.Value:-1)
+        {
+            IsPrimedWithBonafideType = true;
+            CurrentEstimate = request.CSharpType;
+            DecimalSize = request.DecimalPlacesBeforeAndAfter;
+        }
         /// <summary>
         /// Creates a new DataTypeComputer adjusted to compensate for all values in all rows of the supplied DataColumn
         /// </summary>

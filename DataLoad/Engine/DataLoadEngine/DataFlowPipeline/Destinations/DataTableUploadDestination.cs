@@ -15,7 +15,9 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Exceptions;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Destinations
@@ -71,6 +73,9 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         private HashSet<string> _primaryKey = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
         private DiscoveredTable discoveredTable;
 
+        //All column values sent to server so far
+        Dictionary<string, DataTypeComputer> _dataTypeDictionary;
+
         public DataTableUploadDestination()
         {
             ExplicitTypes = new List<DatabaseColumnRequest>();
@@ -107,6 +112,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             if (_loggingDatabaseListener != null)
                 listener = new ForkDataLoadEventListener(listener, _loggingDatabaseListener);
 
+            bool createdTable = false;
+
             if (_firstTime)
             {
                 bool tableAlreadyExistsButEmpty = false;
@@ -126,6 +133,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found table " + TargetTableName + " already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
                         else
                             throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
+
+                    _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetDataTypeComputer());
                 }
                 else
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
@@ -135,7 +144,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 //create connection to destination
                if (!tableAlreadyExistsButEmpty)
                {
-                   _database.CreateTable(TargetTableName, toProcess, ExplicitTypes.ToArray(), true);
+                   createdTable = true;
+                   _database.CreateTable(out _dataTypeDictionary, TargetTableName, toProcess, ExplicitTypes.ToArray(), true);
                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Created table " + TargetTableName + " successfully."));
                 }
 
@@ -147,7 +157,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
             try
             {
-                if (AllowResizingColumnsAtUploadTime)
+                if (AllowResizingColumnsAtUploadTime && !createdTable)
                     ResizeColumnsIfRequired(toProcess, listener);
 
                 //push the data
@@ -157,8 +167,6 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                     
                 swTimeSpentWritting.Stop();
                 listener.OnProgress(this, new ProgressEventArgs("Uploading to " + TargetTableName, new ProgressMeasurement(_affectedRows, ProgressType.Records), swTimeSpentWritting.Elapsed));
-
-                
             }
             catch (Exception e)
             {
@@ -184,50 +192,46 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
 
         private void ResizeColumnsIfRequired(DataTable toProcess, IDataLoadEventListener listener)
         {
-
             var tbl = _database.ExpectTable(TargetTableName);
             var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
-
-            Dictionary<string,DataTypeComputer> dataTypeDictionaryCurrent = 
-                tbl.DiscoverColumns(_managedConnection.ManagedTransaction)
-                .ToDictionary(k => k.GetRuntimeName(), typeTranslater.GetDataTypeComputerFor);
-
             
+            //Get the current estimates from the datatype computer
+            Dictionary<string, string> oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => v.Value.GetSqlDBType(typeTranslater));
+
+            //adjust the computer to 
             //work out the max sizes - expensive bit
             foreach (DataRow row in toProcess.Rows)
                 //for each destination column
-                foreach (string col in dataTypeDictionaryCurrent.Keys)
+                foreach (string col in _dataTypeDictionary.Keys)
                     //if it appears in the toProcess DataTable
                     if (toProcess.Columns.Contains(col))
                         //run the datatype computer over it to compute max lengths
-                        dataTypeDictionaryCurrent[col].AdjustToCompensateForValue(row[col]);
+                        _dataTypeDictionary[col].AdjustToCompensateForValue(row[col]);
 
-            foreach (DiscoveredColumn column in tbl.DiscoverColumns(_managedConnection.ManagedTransaction))
+            //see if any have changed
+            foreach (DataColumn column in toProcess.Columns)
             {
                 //get what is required for the current batch and the current type that is configured in the live table
-                var requiredForCurrentBatch = dataTypeDictionaryCurrent[column.GetRuntimeName()].GetTypeRequest();
-                var currentType = typeTranslater.GetDataTypeRequestForSQLDBType(column.DataType.SQLType);
+                string oldSqlType = oldTypes[column.ColumnName];
+                string newSqlType = _dataTypeDictionary[column.ColumnName].GetSqlDBType(typeTranslater);
 
-                //work out the most degraded type of the two (new batches may require less relaxed datatypes than the current allows for after all and we don't want to attempt to alter back
-                //up the priority hierarchy and result in truncating live data!
-                DatabaseTypeRequest newRequirement = DatabaseTypeRequest.Max(currentType, requiredForCurrentBatch);
-
-                //get the sql string for the max type
-                string newSqlTypeRequired = typeTranslater.GetSQLDBTypeForCSharpType(newRequirement);
+                bool changesMade = false;
 
                 //if the SQL data type has degraded e.g. varchar(10) to varchar(50) or datetime to varchar(20)
-                if (newSqlTypeRequired != column.DataType.SQLType)
+                if(oldSqlType != newSqlType)
                 {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + column.DataType.SQLType + "' to '" + newSqlTypeRequired + "'"));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + oldSqlType + "' to '" + newSqlType + "'"));
 
-                    string sql = column.Helper.GetAlterColumnToSql(column, newSqlTypeRequired, column.AllowNulls);
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Executing SQL '" + sql + "'"));
-                    var cmd = tbl.Database.Server.GetCommand(sql, _managedConnection);
-                    cmd.CommandTimeout = AlterTimeout;
-                    cmd.ExecuteNonQuery();
+                    var col = tbl.DiscoverColumn(column.ColumnName,_managedConnection.ManagedTransaction);
+
+                    //try changing the Type to the legit type
+                    col.DataType.AlterTypeTo(newSqlType, _managedConnection.ManagedTransaction, AlterTimeout);
+                    
+                    changesMade = true;
                 }
 
-                _bulkcopy.InvalidateTableSchema();
+                if(changesMade)
+                    _bulkcopy.InvalidateTableSchema();
             }
         }
 

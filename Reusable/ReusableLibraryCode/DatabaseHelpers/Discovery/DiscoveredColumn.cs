@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Remoting.Messaging;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 {
@@ -53,6 +54,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public override string ToString()
         {
             return _name;
+        }
+
+        public DataTypeComputer GetDataTypeComputer()
+        {
+            return Table.GetQuerySyntaxHelper().TypeTranslater.GetDataTypeComputerFor(this);
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.Exceptions;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 
@@ -93,7 +94,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
 
         }
-        public void AlterTypeTo(string newType, IManagedTransaction managedTransaction = null)
+        public void AlterTypeTo(string newType, IManagedTransaction managedTransaction = null,int altertimeout = 500)
         {
             if(Column == null)
                 throw new NotSupportedException("Cannot resize DataType because it does not have a reference to a Column to which it belongs (possibly you are trying to resize a data type associated with a TableValuedFunction Parameter?)");
@@ -103,11 +104,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 string sql = Column.Helper.GetAlterColumnToSql(Column, newType, Column.AllowNulls);
                 try
                 {
-                    DatabaseCommandHelper.GetCommand(sql, connection.Connection, connection.Transaction).ExecuteNonQuery();
+                    var cmd = DatabaseCommandHelper.GetCommand(sql, connection.Connection, connection.Transaction);
+                    cmd.CommandTimeout = altertimeout;
+                    cmd.ExecuteNonQuery();
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Failed to send resize SQL:" + sql, e);
+                    throw new AlterFailedException("Failed to send resize SQL:" + sql, e);
                 }
             }
 

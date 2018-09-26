@@ -301,7 +301,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
 
         [TestCase("varchar(3)", 1.5, "x")]//RDMPDEV-932
-        [TestCase("varchar(27)", "2001-01-01", "x")]
+        [TestCase("varchar(10)", "2001-01-01", "x")]
         public void BatchResizing(string expectedDatatypeInDatabase,object batch1Value,object batch2Value)
         {
             var token = new GracefulCancellationToken();
@@ -402,6 +402,57 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.AreEqual("decimal(5,2)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
         }
 
+        [TestCase(DatabaseType.MYSQLServer,true)]
+        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+        public void BooleanResizingTest(DatabaseType dbType,bool giveNullValuesOnly)
+        {
+            var token = new GracefulCancellationToken();
+            DiscoveredDatabase db = GetCleanedServer(dbType);
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+            var toMemory = new ToMemoryDataLoadEventListener(true);
+
+            DataTableUploadDestination destination = new DataTableUploadDestination();
+            destination.PreInitialize(db, toConsole);
+            destination.AllowResizingColumnsAtUploadTime = true;
+
+            DataTable dt1 = new DataTable();
+            dt1.Columns.Add("TestedCol", typeof(string));
+            dt1.Columns.Add("OtherCol", typeof(string));
+            dt1.Rows.Add(new[] { giveNullValuesOnly?null:"true","1.51" });
+
+            dt1.TableName = "DataTableUploadDestinationTests";
+
+            DataTable dt2 = new DataTable();
+            dt2.Columns.Add("TestedCol", typeof(string));
+            dt2.Columns.Add("OtherCol", typeof(string));
+            
+            dt2.Rows.Add(new[] { "2001-01-01" , "999.99" });
+
+            dt2.TableName = "DataTableUploadDestinationTests";
+
+            destination.ProcessPipelineData(dt1, toConsole, token);
+
+            Assert.AreEqual("bit", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType.SQLType);
+            
+            destination.ProcessPipelineData(dt2, toMemory, token);
+
+            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column ")));
+
+            destination.Dispose(toConsole, null);
+            Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.AreEqual(2, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
+
+            var tt = db.Server.GetQuerySyntaxHelper().TypeTranslater;
+
+            Assert.AreEqual(
+                
+                //if all we got are nulls we should have a DateTime otherwise we had 1/true so the only usable data type is string 
+                giveNullValuesOnly ? typeof (DateTime) : typeof (string),
+
+                tt.GetCSharpTypeForSQLDBType(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType.SQLType));
+        }
 
         private object[] _sourceLists = {
                                             new object[] {"decimal(4,3)",new object[]{"0.001"}, new object[]{0.001}},  //case 1
