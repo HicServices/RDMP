@@ -49,7 +49,24 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                     columns.Add(overriding);
                     customRequests.Remove(overriding);
 
-                    typeDictionary.Add(overriding.ColumnName, new DataTypeComputer(overriding.TypeRequested));
+                    //Type reqeuested 
+                    var request = overriding.TypeRequested;
+
+                    //Type is for an explicit Type e.g. datetime
+                    if(request == null)
+                        if(!string.IsNullOrWhiteSpace(overriding.ExplicitDbType))
+                        {
+                            var tt = database.Server.GetQuerySyntaxHelper().TypeTranslater;
+                        
+                            request = new DatabaseTypeRequest(
+                                tt.GetCSharpTypeForSQLDBType(overriding.ExplicitDbType),
+                                tt.GetLengthIfString(overriding.ExplicitDbType),
+                                tt.GetDigitsBeforeAndAfterDecimalPointIfDecimal(overriding.ExplicitDbType));
+                        }
+                        else
+                            throw new Exception("explicitColumnDefinitions for column " + column + " did not contain either a TypeRequested or ExplicitDbType");
+                    
+                    typeDictionary.Add(overriding.ColumnName, new DataTypeComputer(request));
                 }
                 else
                 {
