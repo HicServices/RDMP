@@ -28,12 +28,12 @@ namespace CatalogueLibrary.Spontaneous
             _id = random.Next(1000000000)*-1;
         }
 
-        public void DeleteInDatabase()
+        public virtual void DeleteInDatabase()
         {
             throw new System.NotSupportedException("Spontaneously Invented Objects cannot be deleted");
         }
 
-        public void SaveToDatabase()
+        public virtual void SaveToDatabase()
         {
             throw new System.NotSupportedException("Spontaneously Invented Objects cannot be saved");
         }
