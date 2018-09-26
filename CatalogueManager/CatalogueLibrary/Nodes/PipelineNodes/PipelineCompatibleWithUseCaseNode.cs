@@ -13,7 +13,7 @@ namespace CatalogueLibrary.Nodes.PipelineNodes
     /// 
     /// <para>It is <see cref="SpontaneousObject"/> only so it appears under Ctrl+F window... not a pattern we want to repeat.</para>
     /// </summary>
-    public class PipelineCompatibleWithUseCaseNode : SpontaneousObject,IMasqueradeAs
+    public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeAs
     {
         public Pipeline Pipeline { get; set; }
         public PipelineUseCase UseCase { get; set; }
@@ -34,6 +34,11 @@ namespace CatalogueLibrary.Nodes.PipelineNodes
         public override string ToString()
         {
             return Pipeline.Name;
+        }
+
+        public override void DeleteInDatabase()
+        {
+            Pipeline.DeleteInDatabase();
         }
 
         #region Equality
