@@ -22,6 +22,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             whitelist.Add("ChoosePlatformDatabases.Designer.cs"); //allowed because it is a suggestion to user about what prefix to use
             whitelist.Add("PluginPackagerProgramOptions.cs"); //allwed because it's a suggestion to the user about command line arguments
             whitelist.Add("DocumentationCrossExaminationTest.cs"); //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
+            whitelist.Add("ResearchDataManagementPlatformOptions.cs"); //allowed because it's an Example
 
 
             whitelist.AddRange(

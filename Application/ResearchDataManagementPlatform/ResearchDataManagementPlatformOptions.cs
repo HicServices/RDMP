@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
 
 namespace ResearchDataManagementPlatform
 {
+    /// <summary>
+    /// Defines the command line arguments of ResearchDataManagementPlatform.exe when run from the command line / shortcut
+    /// </summary>
     public class ResearchDataManagementPlatformOptions
     {
         [Option('c', Required = false, HelpText = @"Connection string to the main Catalogue RDMP database")]

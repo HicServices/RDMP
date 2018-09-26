@@ -8,6 +8,7 @@ using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
@@ -136,6 +137,10 @@ namespace CatalogueManager.Icons.IconProvision
             if (concept is CohortCreationRequest)
                 return GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add);
 
+            //This is special case when asking for icon for the Type, since the node itself is an IMasqueradeAs
+            if (ReferenceEquals(concept, typeof(PipelineCompatibleWithUseCaseNode)))
+                return GetImage(RDMPConcept.Pipeline);
+
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {
                 var bmp = stateBasedIconProvider.GetImageIfSupportedObject(concept);
@@ -158,7 +163,7 @@ namespace CatalogueManager.Icons.IconProvision
 
             if (concept is IMasqueradeAs)
                 return GetImage(((IMasqueradeAs)concept).MasqueradingAs(), kind);
-
+            
             return ImagesCollection[RDMPConcept.NoIconAvailable];
             
         }
