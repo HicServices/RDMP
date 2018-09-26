@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace ReusableCodeTests
 {
     public class ParameterNameExtractionTests
     {
+        [TestCase("a = wok.dbo.fish(@bobby)")]
         [TestCase("[bob]=@bobby")]
         [TestCase("[bob]=   @bobby")]
         [TestCase("[bob]=@bobby OR [bob2]=@bobby")]
