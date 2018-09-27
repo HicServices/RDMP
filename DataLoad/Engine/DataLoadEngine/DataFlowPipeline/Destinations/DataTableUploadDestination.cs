@@ -95,25 +95,17 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSane(toProcess.TableName);
             }
 
-            //handle primary keyness by removing it until Dispose step
-            foreach (var pkCol in toProcess.PrimaryKey.Select(dc => dc.ColumnName))
-                _primaryKey.Add(pkCol);
+            ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
             
-            toProcess.PrimaryKey = new DataColumn[0];
-
-            foreach (var dcr in ExplicitTypes.Where(dcr => dcr.IsPrimaryKey))
-            {
-                dcr.IsPrimaryKey = false;
-                _primaryKey.Add(dcr.ColumnName);
-            }
-
             StartAuditIfExists(TargetTableName);
 
             if (_loggingDatabaseListener != null)
                 listener = new ForkDataLoadEventListener(listener, _loggingDatabaseListener);
 
-            bool createdTable = false;
+            EnsureTableHasDataInIt(toProcess);
 
+            bool createdTable = false;
+            
             if (_firstTime)
             {
                 bool tableAlreadyExistsButEmpty = false;
@@ -138,8 +130,6 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 }
                 else
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
-                
-                EnsureTableHasDataInIt(toProcess);
                 
                 //create connection to destination
                if (!tableAlreadyExistsButEmpty)
@@ -179,6 +169,27 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Clears the primary key status of the DataTable / <see cref="ExplicitTypes"/>.  These are recorded in <see cref="_primaryKey"/> and applied at Dispose time
+        /// in order that primary key in the destination database table does not interfere with ALTER statements (see <see cref="ResizeColumnsIfRequired"/>)
+        /// </summary>
+        /// <param name="toProcess"></param>
+        private void ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(DataTable toProcess)
+        {
+            //handle primary keyness by removing it until Dispose step
+            foreach (var pkCol in toProcess.PrimaryKey.Select(dc => dc.ColumnName))
+                _primaryKey.Add(pkCol);
+
+            toProcess.PrimaryKey = new DataColumn[0];
+
+            //also get rid of any ExplicitTypes primary keys
+            foreach (var dcr in ExplicitTypes.Where(dcr => dcr.IsPrimaryKey))
+            {
+                dcr.IsPrimaryKey = false;
+                _primaryKey.Add(dcr.ColumnName);
+            }
         }
 
         private void EnsureTableHasDataInIt(DataTable toProcess)
@@ -322,7 +333,6 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         {
             if (LoggingServer != null)
             {
-                
                 _loggingDatabaseSettings = DataAccessPortal.GetInstance().ExpectServer(LoggingServer, DataAccessContext.Logging);
                 var logManager = new LogManager(_loggingDatabaseSettings);
                 _dataLoadInfo = (DataLoadInfo) logManager.CreateDataLoadInfo("Internal", GetType().Name, "Loading table " + tableName, "", false);

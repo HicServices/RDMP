@@ -73,7 +73,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -363,6 +362,7 @@
   <ItemGroup>
     <None Include="Checks\Checking.cd" />
     <None Include="DataFlowPipeline\Components\Anonymisation.cd" />
+    <None Include="DataFlowPipeline\Destinations\DataTableUploadDestination.cd" />
     <None Include="DataProvider\ReadingFromCacheInDataLoad.cd" />
     <None Include="LoadExecution\DataLoadEngine.cd" />
     <None Include="Migration\StagingToLiveMigration.cd" />

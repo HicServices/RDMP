@@ -26,7 +26,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
         public Type CurrentEstimate { get; set; }
         
-        private readonly TypeDeciderFactory TypeDeciderFactory = new TypeDeciderFactory();
+        private readonly TypeDeciderFactory _typeDeciders = new TypeDeciderFactory();
         
         private int _stringLength;
 
@@ -132,12 +132,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 if(CurrentEstimate == typeof(string))
                     return;
 
-                var result = TypeDeciderFactory.Dictionary[CurrentEstimate].IsAcceptableAsType(oAsString,DecimalSize);
+                var result = _typeDeciders.Dictionary[CurrentEstimate].IsAcceptableAsType(oAsString, DecimalSize);
                 
                 //if the current estimate compatible
                 if (result)
                 {
-                    _validTypesSeen = TypeDeciderFactory.Dictionary[CurrentEstimate].CompatibilityGroup;
+                    _validTypesSeen = _typeDeciders.Dictionary[CurrentEstimate].CompatibilityGroup;
 
                     if (CurrentEstimate == typeof (DateTime))
                         _stringLength = Math.Max(_stringLength, MinimumLengthRequiredForDateStringRepresentation);
@@ -166,8 +166,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 }
 
                 //if we have a decider for this lets get it to tell us the decimal places (if any)
-                if (TypeDeciderFactory.Dictionary.ContainsKey(o.GetType()))
-                    TypeDeciderFactory.Dictionary[o.GetType()].IsAcceptableAsType(oToString, DecimalSize);
+                if (_typeDeciders.Dictionary.ContainsKey(o.GetType()))
+                    _typeDeciders.Dictionary[o.GetType()].IsAcceptableAsType(oToString, DecimalSize);
             }
         }
 
@@ -191,7 +191,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 else
                 {
                     //if the next decider is in the same group as the previously used ones
-                    if (TypeDeciderFactory.Dictionary[nextEstiamte].CompatibilityGroup == _validTypesSeen)
+                    if (_typeDeciders.Dictionary[nextEstiamte].CompatibilityGroup == _validTypesSeen)
                         CurrentEstimate = nextEstiamte;
                     else
                         CurrentEstimate = typeof (string); //the next Type decider is in an incompatible category so just go directly to string
