@@ -87,7 +87,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -264,6 +263,7 @@
     <Compile Include="Integration\DilutionTests\DilutionCheckTests.cs" />
     <Compile Include="Integration\DilutionTests\DilutionOperationTests.cs" />
     <Compile Include="Integration\DilutionTests\DilutionOperationFactoryTests.cs" />
+    <Compile Include="Integration\DistincterTests.cs" />
     <Compile Include="Integration\ExecutableProcessTaskTests.cs" />
     <Compile Include="Integration\HICPipelineTests.cs" />
     <Compile Include="Integration\ImportFilesDataProviderTests.cs" />

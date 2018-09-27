@@ -168,9 +168,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <summary>
         /// Deletes all EXACT duplicate rows from the table leaving only unique records.  This is method may not be transaction/threadsafe
         /// </summary>
-        public void MakeDistinct()
+        /// <param name="timeout"></param>
+        public void MakeDistinct(int timeout=30)
         {
-            Helper.MakeDistinct(this);
+            Helper.MakeDistinct(this,timeout);
         }
 
 

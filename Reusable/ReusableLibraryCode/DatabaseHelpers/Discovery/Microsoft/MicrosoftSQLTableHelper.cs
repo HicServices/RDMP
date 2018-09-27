@@ -204,7 +204,7 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             return string.Format("exec sp_rename '{0}', '{1}'", oldName, newName);
         }
 
-        public override void MakeDistinct(DiscoveredTable discoveredTable)
+        public override void MakeDistinct(DiscoveredTable discoveredTable, int timeout)
         {
             string sql = 
             @"DELETE f
@@ -224,7 +224,9 @@ where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"'
             using (var con = server.GetConnection())
             {
                 con.Open();
-                server.GetCommand(sqlToExecute, con).ExecuteNonQuery();
+                var cmd = server.GetCommand(sqlToExecute, con);
+                cmd.CommandTimeout = timeout;
+                cmd.ExecuteNonQuery();
             }
         }
 

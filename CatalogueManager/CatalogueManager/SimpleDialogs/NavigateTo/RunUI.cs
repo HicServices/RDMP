@@ -11,6 +11,7 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 
@@ -114,6 +115,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     typeof (IActivateItems).IsAssignableFrom(p.ParameterType) ||
                     typeof(DirectoryInfo).IsAssignableFrom(p.ParameterType) ||
                     typeof(DatabaseEntity).IsAssignableFrom(p.ParameterType) ||
+                    typeof(ICheckable).IsAssignableFrom(p.ParameterType) ||
                     p.HasDefaultValue ||
                     p.ParameterType.IsValueType
                 );
@@ -194,6 +196,9 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 return null;
             }
 
+            if (typeof (ICheckable).IsAssignableFrom(paramType))
+                return PickOne(parameterInfo,paramType,_activator.CoreChildProvider.GetAllSearchables().Keys.OfType<ICheckable>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+
             if (typeof(DatabaseEntity).IsAssignableFrom(paramType))
             {
                 IMapsDirectlyToDatabaseTable[] availableObjects;
@@ -204,19 +209,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 else
                     return null;
 
-                if(!availableObjects.Any())
-                {
-                    MessageBox.Show("There are no '" + paramType.Name + "' objects in your RMDP");
-                    return null;
-                }
-                
-                SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
-                selectDialog.Text = parameterInfo.Name;
 
-                if (selectDialog.ShowDialog() == DialogResult.OK)
-                    return selectDialog.Selected;
-
-                return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
+                return PickOne(parameterInfo,paramType,availableObjects);
             }
 
             if (parameterInfo.HasDefaultValue)
@@ -231,6 +225,23 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             }
 
             return null;
+        }
+
+        private object PickOne(ParameterInfo parameterInfo, Type paramType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        {
+            if (!availableObjects.Any())
+            {
+                MessageBox.Show("There are no '" + paramType.Name + "' objects in your RMDP");
+                return null;
+            }
+
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            selectDialog.Text = parameterInfo.Name;
+
+            if (selectDialog.ShowDialog() == DialogResult.OK)
+                return selectDialog.Selected;
+
+            return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
         }
     }
 }

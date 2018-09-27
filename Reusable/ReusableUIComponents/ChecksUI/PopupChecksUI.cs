@@ -10,6 +10,8 @@ namespace ReusableUIComponents.ChecksUI
     /// </summary>
     public partial class PopupChecksUI : Form,ICheckNotifier
     {
+        public event AllChecksCompleteHandler AllChecksComplete;
+
         public PopupChecksUI(string task, bool showOnlyWhenError)
         {
             InitializeComponent();
@@ -79,6 +81,7 @@ namespace ReusableUIComponents.ChecksUI
         {
             this.Show();
             checksUI1.StartChecking(checkable);
+            checksUI1.AllChecksComplete += AllChecksComplete;
         }
 
         public CheckResult GetWorst()

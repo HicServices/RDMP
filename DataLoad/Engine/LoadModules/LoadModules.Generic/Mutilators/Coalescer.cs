@@ -32,6 +32,9 @@ namespace LoadModules.Generic.Mutilators
         [DemandsInitialization("Pass true to create an index on the primary keys which are joined together (can improve performance)",DefaultValue=false)]
         public bool CreateIndex { get; set; }
 
+        [DemandsInitialization("How long to allow for each command to execute in seconds",DefaultValue=600)]
+        public int Timeout { get; set; }
+
         public void Check(ICheckNotifier notifier)
         {
             if (TableRegexPattern == null)
@@ -98,11 +101,16 @@ namespace LoadModules.Generic.Mutilators
                         if (CreateIndex)
                         {
                             var idxCmd = _dbInfo.Server.GetCommand(string.Format(@"CREATE INDEX IX_PK_{0} ON {0}({1});", tblName,string.Join(",", pks.Select(p => p.GetRuntimeName()))),con);
+                            idxCmd.CommandTimeout = Timeout;
                             idxCmd.ExecuteNonQuery();
                         }
                         
                         foreach (var sql in sqlCommands.Keys.ToArray())
-                            sqlCommands[sql] = _dbInfo.Server.GetCommand(sql, con).ExecuteNonQueryAsync();
+                        {
+                            var cmd = _dbInfo.Server.GetCommand(sql, con);
+                            cmd.CommandTimeout = Timeout;
+                            sqlCommands[sql] = cmd.ExecuteNonQueryAsync();
+                        }
 
                         Task.WaitAll(sqlCommands.Values.ToArray());
                     }
