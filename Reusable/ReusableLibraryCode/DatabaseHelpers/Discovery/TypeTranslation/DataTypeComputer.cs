@@ -17,6 +17,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
     /// </summary>
     public class DataTypeComputer
     {
+
+        /// <summary>
+        /// The minimum amount of characters required to represent date values stored in the database when issuing ALTER statement to convert
+        /// the column to allow strings.
+        /// </summary>
+        public const int MinimumLengthRequiredForDateStringRepresentation = 27;
+
         public Type CurrentEstimate { get; set; }
         
         private readonly TypeDeciderFactory TypeDeciderFactory = new TypeDeciderFactory();
@@ -131,6 +138,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 if (result)
                 {
                     _validTypesSeen = TypeDeciderFactory.Dictionary[CurrentEstimate].CompatibilityGroup;
+
+                    if (CurrentEstimate == typeof (DateTime))
+                        _stringLength = Math.Max(_stringLength, MinimumLengthRequiredForDateStringRepresentation);
+
+
                     return;
                 }
 

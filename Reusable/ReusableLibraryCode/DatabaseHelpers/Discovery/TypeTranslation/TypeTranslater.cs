@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Text.RegularExpressions;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -360,7 +361,7 @@ alter table omgdates alter column dt varchar(100)
 select LEN(dt) from omgdates
              */
 
-            return 27; //e.g. "2018-01-30 13:05:45.1266667"
+            return DataTypeComputer.MinimumLengthRequiredForDateStringRepresentation; //e.g. "2018-01-30 13:05:45.1266667"
         }
 
         protected bool IsTime(string sqlType)
