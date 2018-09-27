@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -11,10 +12,16 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     internal class ExecuteCommandCheck : BasicUICommandExecution,IAtomicCommand
     {
         private readonly ICheckable _checkable;
+        private readonly Action<ICheckable, CheckResult> _reportWorstTo;
 
         public ExecuteCommandCheck(IActivateItems activator, ICheckable checkable): base(activator)
         {
             _checkable = checkable;
+        }
+        public ExecuteCommandCheck(IActivateItems activator, ICheckable checkable,Action<ICheckable,CheckResult> reportWorst): base(activator)
+        {
+            _checkable = checkable;
+            _reportWorstTo = reportWorst;
         }
 
         public override void Execute()
@@ -22,7 +29,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             var popupChecksUI = new PopupChecksUI("Checking " + _checkable, false);
+
+            if(_reportWorstTo != null)
+                popupChecksUI.AllChecksComplete += (s,a)=>_reportWorstTo(_checkable,a.CheckResults.GetWorst());
+
             popupChecksUI.StartChecking(_checkable);
+
         }
 
 
