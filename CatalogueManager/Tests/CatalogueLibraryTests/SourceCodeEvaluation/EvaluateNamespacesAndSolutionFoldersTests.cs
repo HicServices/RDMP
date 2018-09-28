@@ -94,9 +94,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             var propertyChecker = new SuspiciousRelationshipPropertyUse(CatalogueRepository.MEF);
             propertyChecker.FindPropertyMisuse(csFilesFound);
 
-            var weakChecks = new SuspiciousEmptyChecksMethodsOrNotICheckablePlugins();
-            weakChecks.FindProblems(csFilesFound);
-
             var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
             explicitDatabaseNamesChecker.FindProblems(csFilesFound);
 

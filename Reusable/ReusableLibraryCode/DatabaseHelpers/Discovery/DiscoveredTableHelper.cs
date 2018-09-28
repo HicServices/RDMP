@@ -146,21 +146,31 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
             using (var con = server.BeginNewTransactedConnection())
             {
-                var cmdDistinct = server.GetCommand(string.Format("CREATE TABLE {1} AS SELECT distinct * FROM {0}", tableName, tempTable), con);
-                cmdDistinct.CommandTimeout = timeout;
-                cmdDistinct.ExecuteNonQuery();
+                try
+                {
+                    var cmdDistinct = server.GetCommand(string.Format("CREATE TABLE {1} AS SELECT distinct * FROM {0}", tableName, tempTable), con);
+                    cmdDistinct.CommandTimeout = timeout;
+                    cmdDistinct.ExecuteNonQuery();
 
-                var cmdTruncate = server.GetCommand(string.Format("DELETE FROM {0}", tableName), con);
-                cmdTruncate.CommandTimeout = timeout;
-                cmdTruncate.ExecuteNonQuery();
+                    var cmdTruncate = server.GetCommand(string.Format("DELETE FROM {0}", tableName), con);
+                    cmdTruncate.CommandTimeout = timeout;
+                    cmdTruncate.ExecuteNonQuery();
 
-                var cmdBack = server.GetCommand(string.Format("INSERT INTO {0} (SELECT * FROM {1})", tableName, tempTable), con);
-                cmdBack.CommandTimeout = timeout;
-                cmdBack.ExecuteNonQuery();
+                    var cmdBack = server.GetCommand(string.Format("INSERT INTO {0} (SELECT * FROM {1})", tableName, tempTable), con);
+                    cmdBack.CommandTimeout = timeout;
+                    cmdBack.ExecuteNonQuery();
 
-                var cmdDropDistinctTable = server.GetCommand(string.Format("DROP TABLE {0}", tempTable), con);
-                cmdDropDistinctTable.CommandTimeout = timeout;
-                cmdDropDistinctTable.ExecuteNonQuery();
+                    var cmdDropDistinctTable = server.GetCommand(string.Format("DROP TABLE {0}", tempTable), con);
+                    cmdDropDistinctTable.CommandTimeout = timeout;
+                    cmdDropDistinctTable.ExecuteNonQuery();
+
+                    con.ManagedTransaction.CommitAndCloseConnection();
+                }
+                catch (Exception)
+                {
+                    con.ManagedTransaction.AbandonAndCloseConnection();
+                    throw;
+                }
             }
         }
     }

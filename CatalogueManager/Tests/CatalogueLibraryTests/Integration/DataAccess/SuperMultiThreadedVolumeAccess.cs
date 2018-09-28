@@ -49,28 +49,35 @@ namespace CatalogueLibraryTests.Integration.DataAccess
         [TestCase(false)]
         public void SingleThreadedBulkCatalogueCreation(bool useTransactions)
         {
+            IManagedConnection c= null;
+
             if (useTransactions)
-                CatalogueRepository.BeginNewTransactedConnection();
-            
-            //create lots of catalogues
-            for(int i=0;i<30;i++)
+                c = CatalogueRepository.BeginNewTransactedConnection();
+
+            using (c)
             {
-                var cata = new Catalogue(CatalogueRepository, "SuperMultiThreadedTestCatalogue" + Guid.NewGuid());
-                var copy = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
+                //create lots of catalogues
+                for (int i = 0; i < 30; i++)
+                {
+                    var cata = new Catalogue(CatalogueRepository, "SuperMultiThreadedTestCatalogue" + Guid.NewGuid());
+                    var copy = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
 
-                copy.Description = "fish";
-                Assert.IsTrue(copy.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent);
-                
-                copy.SaveToDatabase();
-                Assert.IsTrue(copy.HasLocalChanges().Evaluation == ChangeDescription.NoChanges);
+                    copy.Description = "fish";
+                    Assert.IsTrue(copy.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent);
+
+                    copy.SaveToDatabase();
+                    Assert.IsTrue(copy.HasLocalChanges().Evaluation == ChangeDescription.NoChanges);
+                }
+
+                //now fetch them out of database lots of times
+                for (int i = 0; i < 100; i++)
+                    CatalogueRepository.GetAllCatalogues(true);
+
+                if (useTransactions)
+                    CatalogueRepository.EndTransactedConnection(false);
             }
-
-            //now fetch them out of database lots of times
-            for (int i = 0; i < 100; i++)
-                CatalogueRepository.GetAllCatalogues(true);
-
-            if (useTransactions)
-                CatalogueRepository.EndTransactedConnection(false);
+            
+            
 
         }
 
@@ -87,22 +94,23 @@ namespace CatalogueLibraryTests.Integration.DataAccess
         [TestCase(false)]
         public void SimpleCaseSingleThreaded(bool useTransaction)
         {
-            IManagedConnection con;
+            using (
+                var con = useTransaction
+                    ? RepositoryLocator.CatalogueRepository.BeginNewTransactedConnection()
+                    : RepositoryLocator.CatalogueRepository.GetConnection())
+            {
 
-            if (useTransaction)
-                con = RepositoryLocator.CatalogueRepository.BeginNewTransactedConnection();
-            else
-                con = RepositoryLocator.CatalogueRepository.GetConnection();
+                Assert.AreEqual(ConnectionState.Open, con.Connection.State);
+                Thread.Sleep(1000);
 
-            Assert.AreEqual(ConnectionState.Open,con.Connection.State);
-            Thread.Sleep(1000);
+                if (useTransaction)
+                    RepositoryLocator.CatalogueRepository.EndTransactedConnection(false);
+                else
+                    con.Connection.Close();
 
-            if (useTransaction)
-                RepositoryLocator.CatalogueRepository.EndTransactedConnection(false);
-            else
-                con.Connection.Close();
+                Assert.AreEqual(ConnectionState.Closed, con.Connection.State);
+            }
 
-            Assert.AreEqual(ConnectionState.Closed, con.Connection.State);
 
             
         }

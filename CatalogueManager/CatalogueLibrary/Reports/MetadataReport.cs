@@ -263,23 +263,18 @@ namespace CatalogueLibrary.Reports
         private DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
         {
             //get the contents of the lookup
-            DbConnection con = DataAccessPortal.GetInstance().ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection();
-            con.Open();
-            try
+            using(var con = DataAccessPortal.GetInstance().ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection())
             {
+                con.Open();
+               
                 var cmd = DatabaseCommandHelper.GetCommand("Select * from " + lookupTable.Name, con);
                 var da = DatabaseCommandHelper.GetDataAdapter(cmd);
-                
+
                 var dt = new System.Data.DataTable();
                 da.Fill(dt);
 
                 return dt;
             }
-            finally
-            {
-                con.Close();
-            }
-
         }
 
         private void AddImages(DocX document, BitmapWithDescription[] onRequestCatalogueImages)

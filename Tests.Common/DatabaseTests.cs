@@ -382,7 +382,8 @@ delete from {1}..Project
             if (server == null)
                 Assert.Inconclusive();
 
-            if (!server.Exists())
+            //the microsoft one should exist! others are optional
+            if (!server.Exists() && type != DatabaseType.MicrosoftSQLServer)
                 Assert.Inconclusive();
 
             server.TestConnection();

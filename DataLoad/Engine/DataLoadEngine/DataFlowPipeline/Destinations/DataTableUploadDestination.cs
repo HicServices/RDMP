@@ -125,8 +125,9 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found table " + TargetTableName + " already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
                         else
                             throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
-
-                    _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetDataTypeComputer());
+                    
+                    if (AllowResizingColumnsAtUploadTime)
+                        _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetDataTypeComputer());
                 }
                 else
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
@@ -135,7 +136,12 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                if (!tableAlreadyExistsButEmpty)
                {
                    createdTable = true;
-                   _database.CreateTable(out _dataTypeDictionary, TargetTableName, toProcess, ExplicitTypes.ToArray(), true);
+
+                   if (AllowResizingColumnsAtUploadTime)
+                       _database.CreateTable(out _dataTypeDictionary, TargetTableName, toProcess,ExplicitTypes.ToArray(), true);
+                   else
+                       _database.CreateTable(TargetTableName, toProcess, ExplicitTypes.ToArray(), true);
+
                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Created table " + TargetTableName + " successfully."));
                 }
 

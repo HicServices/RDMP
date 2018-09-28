@@ -30,16 +30,19 @@ namespace AnonymisationTests
         [Test]
         public void CanAccessANODatabase_ViaExternalServerPointer()
         {
-            DbConnection connection = DataAccessPortal.GetInstance().ExpectServer(ANOStore_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection();
+            using (var connection = DataAccessPortal.GetInstance().ExpectServer(ANOStore_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection())
+            {
+                connection.Open();
 
-            connection.Open();
+                DbCommand cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection);
+                var version = new Version(cmd.ExecuteScalar().ToString());
 
-            DbCommand cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection);
-            var version = new Version(cmd.ExecuteScalar().ToString());
+                Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
 
-            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+                connection.Close();
+            }
 
-            connection.Close();
+            
         }
 
         [Test]
@@ -61,16 +64,17 @@ namespace AnonymisationTests
         [Test]
         public void CanAccessIdentifierDumpDatabase_ViaExternalServerPointer()
         {
-            DbConnection connection = DataAccessPortal.GetInstance().ExpectServer(IdentifierDump_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection();
+            using(var connection = DataAccessPortal.GetInstance().ExpectServer(IdentifierDump_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection())
+            {
+                connection.Open();
 
-            connection.Open();
+                DbCommand cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection);
+                var version = new Version(cmd.ExecuteScalar().ToString());
 
-            DbCommand cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection);
-            var version = new Version(cmd.ExecuteScalar().ToString());
+                Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
 
-            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
-
-            connection.Close();
+                connection.Close();
+            }
         }
     }
 }

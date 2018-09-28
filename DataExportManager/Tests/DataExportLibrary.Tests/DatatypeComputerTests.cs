@@ -528,8 +528,8 @@ namespace DataExportLibrary.Tests
         [TestCase("0.01",typeof(decimal),"A",4)]
         [TestCase("1234",typeof(int),"F",4)]
         [TestCase("false",typeof(bool), "F", 5)]
-        [TestCase("2001-01-01",typeof(DateTime), "F", 10)]
-        [TestCase("2001-01-01",typeof(DateTime), "FingersMcNultyFishBones", 23)]
+        [TestCase("2001-01-01",typeof(DateTime), "F", 27)]
+        [TestCase("2001-01-01",typeof(DateTime), "FingersMcNultyFishBonesdlsiea", 29)]
         public void TestDatatypeComputer_FallbackOntoStringLength(string legitType, Type expectedLegitType, string str, int expectedLength)
         {
             DataTypeComputer t = new DataTypeComputer();

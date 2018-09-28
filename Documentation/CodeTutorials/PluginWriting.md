@@ -1021,8 +1021,6 @@ FatalError | All Error messages generated during a given `DataLoadRun` with a fl
 TableLoadRun | A count of the number of records that ended up at a given destination (this might be a database table but could equally be a flat file etc)
 DataSource | A description of all the contributors of data to the `TableLoadRun` (this could be flat files or a block of SQL run on a server or even just a class name!)
  
-Finally there is the table `RowError`, this is an obsolete table for recording problems with specific rows... in practice this table just grew unmanageable and there are better ways to handle row errors than through the central logging database.
-
 This isn't a perfect fit to the `IDataLoadEventListener` interface but it is close enough that we are able to provide an implementation (`HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener`).  
 
 First we needed to get the default logging server declared in the test Catalogue database:

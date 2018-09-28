@@ -27,7 +27,6 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
     {
         private readonly ANOTable _anoTable;
         
-        private readonly SqlConnection _con;
         private readonly IDataLoadEventListener _listener;
 
         //the following stored procedures have to exist in the target database;
@@ -41,8 +40,6 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
             _externalDatabaseServer = anoTable.Server;
 
             _server = DataAccessPortal.GetInstance().ExpectServer(_externalDatabaseServer, DataAccessContext.DataLoad);
-            _con = (SqlConnection)_server.GetConnection();
-            _con.InfoMessage+=_con_InfoMessage;
             
             _anoTable = anoTable;
             _listener = listener;
@@ -121,82 +118,78 @@ namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
 
         private DataTable GetSubstitutionsForANOEquivalents(DataTable table, bool previewOnly)
         {
-            try
+            using(var con = (SqlConnection)_server.GetConnection())
             {
+                con.InfoMessage+=_con_InfoMessage;
+                
                 if (table.Rows.Count == 0)
                     return table;
-
-                _con.InfoMessage += _con_InfoMessage;
-
-                SqlTransaction transaction = null;
-                
-                if (previewOnly)
+                try
                 {
-                    bool mustPush = !_anoTable.IsTablePushed();
-
-                    _con.Open();
-                    transaction = _con.BeginTransaction();//if it is preview only we will use a transaction which we will then rollback
-
-                    if (mustPush)
+                    SqlTransaction transaction = null;
+                
+                    if (previewOnly)
                     {
-                        var cSharpType = 
-                            new DatabaseTypeRequest(table.Columns[0].DataType,
-                                _anoTable.NumberOfIntegersToUseInAnonymousRepresentation
-                            + _anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
+                        bool mustPush = !_anoTable.IsTablePushed();
+
+                        con.Open();
+                        transaction = con.BeginTransaction();//if it is preview only we will use a transaction which we will then rollback
+
+                        if (mustPush)
+                        {
+                            var cSharpType = 
+                                new DatabaseTypeRequest(table.Columns[0].DataType,
+                                    _anoTable.NumberOfIntegersToUseInAnonymousRepresentation
+                                + _anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
                         
-                        //we want to use this syntax
-                        var syntaxHelper = _server.Helper.GetQuerySyntaxHelper();
+                            //we want to use this syntax
+                            var syntaxHelper = _server.Helper.GetQuerySyntaxHelper();
 
-                        //push to the destination server
-                        _anoTable.PushToANOServerAsNewTable(
-                            //turn the csharp type into an SQL type e.g. string 30 becomes varchar(30)
-                            syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(cSharpType),
-                            new ThrowImmediatelyCheckNotifier(), _con, transaction);
+                            //push to the destination server
+                            _anoTable.PushToANOServerAsNewTable(
+                                //turn the csharp type into an SQL type e.g. string 30 becomes varchar(30)
+                                syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(cSharpType),
+                                new ThrowImmediatelyCheckNotifier(), con, transaction);
+                        }
                     }
+
+                    string substituteForANOIdentifiersProc = SubstitutionStoredprocedure;
+                
+                    SqlCommand cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, con);
+                    cmdSubstituteIdentifiers.CommandType = CommandType.StoredProcedure;
+                    cmdSubstituteIdentifiers.CommandTimeout = 500;
+                    cmdSubstituteIdentifiers.Transaction = transaction;
+
+                    cmdSubstituteIdentifiers.Parameters.Add("@batch", SqlDbType.Structured);
+                    cmdSubstituteIdentifiers.Parameters.Add("@tableName", SqlDbType.VarChar, 500);
+                    cmdSubstituteIdentifiers.Parameters.Add("@numberOfIntegersToUseInAnonymousRepresentation", SqlDbType.Int);
+                    cmdSubstituteIdentifiers.Parameters.Add("@numberOfCharactersToUseInAnonymousRepresentation", SqlDbType.Int);
+                    cmdSubstituteIdentifiers.Parameters.Add("@suffix", SqlDbType.VarChar,10);
+
+                    //table valued parameter
+                    cmdSubstituteIdentifiers.Parameters["@batch"].TypeName = "dbo.Batch";
+                    cmdSubstituteIdentifiers.Parameters["@batch"].Value = table;
+
+                    cmdSubstituteIdentifiers.Parameters["@tableName"].Value = _anoTable.TableName;
+                    cmdSubstituteIdentifiers.Parameters["@numberOfIntegersToUseInAnonymousRepresentation"].Value = _anoTable.NumberOfIntegersToUseInAnonymousRepresentation;
+                    cmdSubstituteIdentifiers.Parameters["@numberOfCharactersToUseInAnonymousRepresentation"].Value = _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
+                    cmdSubstituteIdentifiers.Parameters["@suffix"].Value = _anoTable.Suffix;
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmdSubstituteIdentifiers);
+                    DataTable dtToReturn = new DataTable();
+                
+                    da.Fill(dtToReturn);
+
+                    if (previewOnly)
+                        transaction.Rollback();
+                
+
+                    return dtToReturn;
                 }
-
-                string substituteForANOIdentifiersProc = SubstitutionStoredprocedure;
-                
-                SqlCommand cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, _con);
-                cmdSubstituteIdentifiers.CommandType = CommandType.StoredProcedure;
-                cmdSubstituteIdentifiers.CommandTimeout = 500;
-                cmdSubstituteIdentifiers.Transaction = transaction;
-
-                cmdSubstituteIdentifiers.Parameters.Add("@batch", SqlDbType.Structured);
-                cmdSubstituteIdentifiers.Parameters.Add("@tableName", SqlDbType.VarChar, 500);
-                cmdSubstituteIdentifiers.Parameters.Add("@numberOfIntegersToUseInAnonymousRepresentation", SqlDbType.Int);
-                cmdSubstituteIdentifiers.Parameters.Add("@numberOfCharactersToUseInAnonymousRepresentation", SqlDbType.Int);
-                cmdSubstituteIdentifiers.Parameters.Add("@suffix", SqlDbType.VarChar,10);
-
-                //table valued parameter
-                cmdSubstituteIdentifiers.Parameters["@batch"].TypeName = "dbo.Batch";
-                cmdSubstituteIdentifiers.Parameters["@batch"].Value = table;
-
-                cmdSubstituteIdentifiers.Parameters["@tableName"].Value = _anoTable.TableName;
-                cmdSubstituteIdentifiers.Parameters["@numberOfIntegersToUseInAnonymousRepresentation"].Value = _anoTable.NumberOfIntegersToUseInAnonymousRepresentation;
-                cmdSubstituteIdentifiers.Parameters["@numberOfCharactersToUseInAnonymousRepresentation"].Value = _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
-                cmdSubstituteIdentifiers.Parameters["@suffix"].Value = _anoTable.Suffix;
-
-                SqlDataAdapter da = new SqlDataAdapter(cmdSubstituteIdentifiers);
-                DataTable dtToReturn = new DataTable();
-                
-                da.Fill(dtToReturn);
-
-                if (previewOnly)
-                    transaction.Rollback();
-                
-
-                return dtToReturn;
-                                                     
-            }
-            catch (Exception e)
-            {
-                throw new Exception(SubstitutionStoredprocedure + " failed to complete correctly: " + e);
-            }
-            finally
-            {
-
-                _con.Close();
+                catch (Exception e)
+                {
+                    throw new Exception(SubstitutionStoredprocedure + " failed to complete correctly: " + e);
+                }
             }
         }
 

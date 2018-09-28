@@ -53,48 +53,51 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
         private void CreateAdministratorsTable(DocX document)
         {
 
-            SqlConnection con = (SqlConnection) _dbInfo.Server.GetConnection();
-            con.Open();
-            SqlCommand cmdNumberOfAdmins = new SqlCommand("Select count(*) " + adminsFromAndWhere,con);
-
-            int numberOfAdmins = int.Parse(cmdNumberOfAdmins.ExecuteScalar().ToString());
-
-            Table table = InsertTable(document,numberOfAdmins+1, 9);
-
-            var fontSize = 5;
-            
-            int tableLine = 0;
-
-            SetTableCell(table, tableLine, 0, "name", fontSize);
-            SetTableCell(table, tableLine, 1, "sysadmin", fontSize);
-            SetTableCell(table, tableLine, 2, "securityadmin", fontSize);
-            SetTableCell(table, tableLine, 3, "serveradmin", fontSize);
-            SetTableCell(table, tableLine, 4, "setupadmin", fontSize);
-            SetTableCell(table, tableLine, 5, "processadmin", fontSize);
-            SetTableCell(table, tableLine, 6, "diskadmin", fontSize);
-            SetTableCell(table, tableLine, 7, "dbcreator", fontSize);
-            SetTableCell(table, tableLine, 8, "bulkadmin", fontSize);
-            tableLine++;
-
-            SqlCommand cmdAdmins = new SqlCommand("Select * " + adminsFromAndWhere + " ORDER BY name",con);
-            SqlDataReader r = cmdAdmins.ExecuteReader();
-
-            while (r.Read())
+            using (var con = (SqlConnection) _dbInfo.Server.GetConnection())
             {
-                SetTableCell(table, tableLine, 0, r["name"].ToString(), fontSize);
-                SetTableCell(table, tableLine, 1, r["sysadmin"].ToString(), fontSize);
-                SetTableCell(table, tableLine, 2, r["securityadmin"].ToString(), fontSize);
-                SetTableCell(table, tableLine, 3, r["serveradmin"].ToString(), fontSize);
-                SetTableCell(table, tableLine, 4, r["setupadmin"].ToString(), fontSize);
-                SetTableCell(table, tableLine, 5, r["processadmin"].ToString(), fontSize);
-                SetTableCell(table, tableLine, 6, r["diskadmin"].ToString(), fontSize);
-                SetTableCell(table, tableLine, 7, r["dbcreator"].ToString(), fontSize);
-                SetTableCell(table, tableLine, 8, r["bulkadmin"].ToString(), fontSize);
-                tableLine++;
-            }
+                con.Open();
+                SqlCommand cmdNumberOfAdmins = new SqlCommand("Select count(*) " + adminsFromAndWhere, con);
 
-            r.Close();
-            con.Close();
+                int numberOfAdmins = int.Parse(cmdNumberOfAdmins.ExecuteScalar().ToString());
+
+                Table table = InsertTable(document, numberOfAdmins + 1, 9);
+
+                var fontSize = 5;
+
+                int tableLine = 0;
+
+                SetTableCell(table, tableLine, 0, "name", fontSize);
+                SetTableCell(table, tableLine, 1, "sysadmin", fontSize);
+                SetTableCell(table, tableLine, 2, "securityadmin", fontSize);
+                SetTableCell(table, tableLine, 3, "serveradmin", fontSize);
+                SetTableCell(table, tableLine, 4, "setupadmin", fontSize);
+                SetTableCell(table, tableLine, 5, "processadmin", fontSize);
+                SetTableCell(table, tableLine, 6, "diskadmin", fontSize);
+                SetTableCell(table, tableLine, 7, "dbcreator", fontSize);
+                SetTableCell(table, tableLine, 8, "bulkadmin", fontSize);
+                tableLine++;
+
+                SqlCommand cmdAdmins = new SqlCommand("Select * " + adminsFromAndWhere + " ORDER BY name", con);
+                SqlDataReader r = cmdAdmins.ExecuteReader();
+
+                while (r.Read())
+                {
+                    SetTableCell(table, tableLine, 0, r["name"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 1, r["sysadmin"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 2, r["securityadmin"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 3, r["serveradmin"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 4, r["setupadmin"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 5, r["processadmin"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 6, r["diskadmin"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 7, r["dbcreator"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 8, r["bulkadmin"].ToString(), fontSize);
+                    tableLine++;
+                }
+
+                r.Close();
+                con.Close();
+            }
+            
         }
 
         private string adminsFromAndWhere {
@@ -109,40 +112,42 @@ AND sysadmin + securityadmin + serveradmin + setupadmin + processadmin + diskadm
 
         private void CreateDatabaseTable(DocX document, string database)
         {
-            SqlConnection con = (SqlConnection) _dbInfo.Server.GetConnection();
-            con.Open();
-            SqlCommand cmdNumberOfUsers = GetCommandForDatabase(con, database, true);
-
-            int numberOfUsers = int.Parse(cmdNumberOfUsers.ExecuteScalar().ToString());
-            
-            Table table = InsertTable(document,numberOfUsers + 1, 5);
-
-            var fontSize = 5;
-
-            int tableLine = 0;
-
-            SetTableCell(table,tableLine, 0, "DatabaseName",fontSize);
-            SetTableCell(table,tableLine, 1, "UserName",fontSize);
-            SetTableCell(table,tableLine, 2, "Role",fontSize);
-            SetTableCell(table,tableLine, 3, "PermissionType",fontSize);
-            SetTableCell(table, tableLine, 4, "PermissionState", fontSize);
-            tableLine++;
-
-            SqlCommand cmdUsers = GetCommandForDatabase(con, database, false);
-            SqlDataReader r = cmdUsers.ExecuteReader();
-
-            while (r.Read())
+            using (var con = (SqlConnection) _dbInfo.Server.GetConnection())
             {
-                SetTableCell(table,tableLine, 0,r["DatabaseName"].ToString(),fontSize);
-                SetTableCell(table,tableLine, 1,r["DatabaseUserName"].ToString(),fontSize);
-                SetTableCell(table,tableLine, 2,r["Role"].ToString(),fontSize);
-                SetTableCell(table,tableLine, 3,r["PermissionType"].ToString(),fontSize);
-                SetTableCell(table, tableLine, 4, r["PermissionState"].ToString(), fontSize);
-                tableLine++;
-            }
+                con.Open();
+                SqlCommand cmdNumberOfUsers = GetCommandForDatabase(con, database, true);
 
-            r.Close();
-            con.Close();
+                int numberOfUsers = int.Parse(cmdNumberOfUsers.ExecuteScalar().ToString());
+
+                Table table = InsertTable(document, numberOfUsers + 1, 5);
+
+                var fontSize = 5;
+
+                int tableLine = 0;
+
+                SetTableCell(table, tableLine, 0, "DatabaseName", fontSize);
+                SetTableCell(table, tableLine, 1, "UserName", fontSize);
+                SetTableCell(table, tableLine, 2, "Role", fontSize);
+                SetTableCell(table, tableLine, 3, "PermissionType", fontSize);
+                SetTableCell(table, tableLine, 4, "PermissionState", fontSize);
+                tableLine++;
+
+                SqlCommand cmdUsers = GetCommandForDatabase(con, database, false);
+                SqlDataReader r = cmdUsers.ExecuteReader();
+
+                while (r.Read())
+                {
+                    SetTableCell(table, tableLine, 0, r["DatabaseName"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 1, r["DatabaseUserName"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 2, r["Role"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 3, r["PermissionType"].ToString(), fontSize);
+                    SetTableCell(table, tableLine, 4, r["PermissionState"].ToString(), fontSize);
+                    tableLine++;
+                }
+
+                r.Close();
+                con.Close();
+            }
         }
 
         private SqlCommand GetCommandForDatabase(SqlConnection con,string database,bool countOnly)

@@ -33,8 +33,7 @@ namespace ReusableUIComponents
 
             try
             {
-                using (
-                    DbConnection con = DataAccessPortal.GetInstance().ExpectServer(source, DataAccessContext.DataExport).GetConnection())
+                using (DbConnection con = DataAccessPortal.GetInstance().ExpectServer(source, DataAccessContext.DataExport).GetConnection())
                 {
                     con.Open();
 

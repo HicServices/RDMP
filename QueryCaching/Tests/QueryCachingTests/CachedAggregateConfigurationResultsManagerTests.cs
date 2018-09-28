@@ -72,11 +72,7 @@ namespace QueryCachingTests
             Assert.IsNotNull(col);
             Assert.AreEqual("varchar(10)",col.DataType.SQLType);
 
-            using (
-                var con =
-                    DataAccessPortal.GetInstance()
-                        .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing)
-                        .GetConnection())
+            using (var con = DataAccessPortal.GetInstance().ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
             {
                 con.Open();
 
@@ -141,14 +137,9 @@ namespace QueryCachingTests
             
             var dt2 = new DataTable();
 
-            using (
-                var con =
-                    DataAccessPortal.GetInstance()
-                        .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing)
-                        .GetConnection())
+            using (var con = DataAccessPortal.GetInstance().ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
             {
                 con.Open();
-
                 
                 SqlDataAdapter da = new SqlDataAdapter("Select * from " + resultTable.GetFullyQualifiedName(),
                     (SqlConnection) con);

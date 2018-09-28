@@ -61,8 +61,7 @@ namespace PluginPackager
             // on the test server (and requiring a database in order to successfully build isn't particularly nice anyway)
             try
             {
-                DbConnection con = new SqlConnection(uploadTarget.ConnectionString);
-                con.Open();
+                uploadTarget.TestConnection();
             }
             catch (Exception e)
             {
