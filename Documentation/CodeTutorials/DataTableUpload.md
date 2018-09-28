@@ -5,6 +5,8 @@
 2. [Settings](#settings)
 3. [Behaviour](#behaviour)
 4. [Resizing](#resizing)
+4. [Primary Keys](#primary-keys)
+4. [Tests](#tests)
 4. [Class Diagram](#class-diagram)
 
 ## Background
