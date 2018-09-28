@@ -1073,7 +1073,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public void GetTableInfos(out List<TableInfo> normalTables, out List<TableInfo> lookupTables)
         {
-            var tables = GetColumnInfos().Select(c => c.TableInfo).Distinct().ToArray();
+            var tables = GetColumnInfos().GroupBy(c=>c.TableInfo_ID).Select(c => c.First().TableInfo).ToArray();
 
             normalTables = new List<TableInfo>(tables.Where(t=>!t.IsLookupTable()));
             lookupTables = new List<TableInfo>(tables.Where(t=>t.IsLookupTable()));
@@ -1081,7 +1081,10 @@ namespace CatalogueLibrary.Data
 
         private IEnumerable<ColumnInfo> GetColumnInfos()
         {
-            return CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null);
+            if (CatalogueItems.All(ci => ci.IsColumnInfoCached()))
+                return CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null);
+
+            return Repository.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue).Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
         }
 
         /// <inheritdoc/>

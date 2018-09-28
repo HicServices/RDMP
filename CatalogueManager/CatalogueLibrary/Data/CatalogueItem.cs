@@ -223,6 +223,11 @@ namespace CatalogueLibrary.Data
             get { return Repository.GetAllObjectsWithParent<CatalogueItemIssue>(this); }
         }
 
+        public bool IsColumnInfoCached()
+        {
+            return _knownColumnInfo.IsValueCreated;
+        }
+
         #endregion
 
         /// <summary>
