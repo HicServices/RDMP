@@ -69,8 +69,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             if (request.DecimalPlacesBeforeAndAfter != null)
                 DecimalSize = request.DecimalPlacesBeforeAndAfter;
 
-            if (!_typeDeciders.IsSupported(CurrentEstimate))
-                throw new NotSupportedException("We do not have a type decider for type:" + CurrentEstimate);
+            ThrowIfNotSupported(CurrentEstimate);
         }
         /// <summary>
         /// Creates a new DataTypeComputer adjusted to compensate for all values in all rows of the supplied DataColumn
@@ -93,9 +92,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public DataTypeComputer(Type currentEstimatedType, DecimalSize decimalSize, int lengthIfString):this(-1)
         {
             CurrentEstimate = currentEstimatedType;
-
-            if (!_typeDeciders.IsSupported(currentEstimatedType))
-                throw new NotSupportedException("We do not have a type decider for type:" + currentEstimatedType);
+            
+            ThrowIfNotSupported(CurrentEstimate);
 
             if (lengthIfString > 0)
                 _stringLength = lengthIfString;
@@ -246,5 +244,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             //it's not a string or an object, user probably has a type in mind for his DataColumn, let's not change that
             return false;
         }
+
+        private void ThrowIfNotSupported(Type currentEstimate)
+        {
+            if (currentEstimate == typeof(string))
+                return;
+
+            if (!_typeDeciders.IsSupported(CurrentEstimate))
+                throw new NotSupportedException("We do not have a type decider for type:" + CurrentEstimate);
+        }
+
     }
 }
