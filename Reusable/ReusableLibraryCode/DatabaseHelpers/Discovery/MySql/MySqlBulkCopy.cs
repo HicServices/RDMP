@@ -92,11 +92,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             int affected = 0;
             int row = 0;
 
-            var querySyntaxHelper = TargetTable.GetQuerySyntaxHelper();
-
             var running = new List<Task<int>>();
-
-            var parameters = new List<MySqlParameter>();
 
             foreach(DataRow dr in dt.Rows)
             {
@@ -105,16 +101,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 var keys = matchedColumns.Keys.ToArray();
                 for (int col = 0; col < keys.Length; col++)
                 {
-                    var paramName = "@c" + col + "r" + row;
-                    sb.Append(paramName);
+                    DiscoveredColumn key = matchedColumns[keys[col]];
+                    object val = dr[keys[col]];
+
                     
+                    sb.Append(ConstructIndividualValue(key.DataType.SQLType, val));
+
                     //if theres more to come add a comma
                     if(col + 1 < matchedColumns.Keys.Count)
                         sb.Append(",");
-
-                    var p = DatabaseCommandHelper.GetParameter(paramName,querySyntaxHelper, matchedColumns[keys[col]], dr[keys[col]]);
-                    //add a corresponding parameter
-                    parameters.Add((MySqlParameter)p);
                 }
                 
                 sb.AppendLine("),");
@@ -123,12 +118,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 //don't let command get too long
                 if (row%1000 == 0)
                 {
-                    cmd.Parameters.AddRange(parameters.ToArray());
-
                     cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
                     running.Add(cmd.ExecuteNonQueryAsync());
                     
-                    parameters.Clear();
                     cmd.Parameters.Clear();
                     sb.Clear();
                 }
@@ -137,7 +129,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             //send final batch
             if(sb.Length > 0)
             {
-                cmd.Parameters.AddRange(parameters.ToArray());
                 cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
                 affected += cmd.ExecuteNonQuery();
                 
@@ -157,6 +148,67 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                
             return affected;
             
+        }
+
+        private string ConstructIndividualValue(string dataType, object value)
+        {
+            if(value == null || value == DBNull.Value)
+                return "NULL";
+            
+            return ConstructIndividualValue(dataType,  value.ToString());
+        }
+
+        private string ConstructIndividualValue(string dataType, string value)
+        {
+            var type = dataType.ToUpper();
+            type = Regex.Replace(type,"\\(.*\\)", "");
+
+            switch (type.Trim())
+            {
+                //Numbers
+                case "INT":
+                case "TINYINT":
+                case "SMALLINT":
+                case "MEDIUMINT":
+                case "BIGINT":
+                case "FLOAT":
+                case "DOUBLE":
+                case "DECIMAL":
+                    return string.Format("{0}", value);
+                
+                //Text
+                case "CHAR":
+                case "VARCHAR":
+                case "BLOB":
+                case "TEXT":
+                case "TINYBLOB":
+                case "TINYTEXT":
+                case "MEDIUMBLOB":
+                case "MEDIUMTEXT":
+                case "LONGBLOB":
+                case "LONGTEXT":
+                case "ENUM":
+                    return string.Format("'{0}',", MySqlHelper.EscapeString(value));
+                
+                //Dates/times
+                case "DATE":
+                    return String.Format("'{0:yyyy-MM-dd}'", value);
+                case "TIMESTAMP":
+                case "DATETIME":
+                    DateTime date = DateTime.Parse(value);
+                    return String.Format("'{0:yyyy-MM-dd HH:mm:ss}'", date);
+                case "TIME":
+                    return String.Format("'{0:HH:mm:ss}'", value);
+                case "YEAR2":
+                    return String.Format("'{0:yy}'", value);
+                case "YEAR4":
+                    return String.Format("'{0:yyyy}'", value);
+
+                //Unknown
+                default:
+                    // we don't understand the format. to safegaurd the code, just enclose with ''
+                    return string.Format("'{0}'", MySqlHelper.EscapeString(value));
+            }
         }
     }
 }
