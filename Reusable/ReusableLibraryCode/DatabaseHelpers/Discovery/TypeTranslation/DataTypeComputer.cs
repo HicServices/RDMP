@@ -65,9 +65,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
         public DataTypeComputer(DatabaseTypeRequest request): this(request.MaxWidthForStrings.HasValue? request.MaxWidthForStrings.Value:-1)
         {
-            IsPrimedWithBonafideType = true;
             CurrentEstimate = request.CSharpType;
-            DecimalSize = request.DecimalPlacesBeforeAndAfter;
+            if (request.DecimalPlacesBeforeAndAfter != null)
+                DecimalSize = request.DecimalPlacesBeforeAndAfter;
+
+            if (!_typeDeciders.IsSupported(CurrentEstimate))
+                throw new NotSupportedException("We do not have a type decider for type:" + CurrentEstimate);
         }
         /// <summary>
         /// Creates a new DataTypeComputer adjusted to compensate for all values in all rows of the supplied DataColumn
@@ -90,6 +93,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public DataTypeComputer(Type currentEstimatedType, DecimalSize decimalSize, int lengthIfString):this(-1)
         {
             CurrentEstimate = currentEstimatedType;
+
+            if (!_typeDeciders.IsSupported(currentEstimatedType))
+                throw new NotSupportedException("We do not have a type decider for type:" + currentEstimatedType);
 
             if (lengthIfString > 0)
                 _stringLength = lengthIfString;
