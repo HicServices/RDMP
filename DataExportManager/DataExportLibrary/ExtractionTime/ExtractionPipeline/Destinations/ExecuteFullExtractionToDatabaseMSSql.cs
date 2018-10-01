@@ -218,7 +218,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 //transform but it is a good starting point.  We don't want to create a varchar(10) column in the destination if the origin dataset (Catalogue) is a varchar(100)
                 //since it will just confuse the user.  Bear in mind these data types can be degraded later by the destination
                 var columnName = extractionInformation.Alias ?? catItem.ColumnInfo.GetRuntimeName();
-                var addedType = _destination.AddExplicitWriteType(columnName, catItem.ColumnInfo.Data_type, catItem.ColumnInfo);
+                var addedType = _destination.AddExplicitWriteType(columnName, catItem.ColumnInfo.Data_type);
                 addedType.IsPrimaryKey = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
             }
 
