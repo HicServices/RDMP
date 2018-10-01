@@ -83,15 +83,6 @@ namespace ReusableCodeTests
             Assert.AreEqual(3, score.DataType.GetDecimalSize().NumbersAfterDecimalPlace);
 
             Assert.AreEqual(typeof(decimal), syntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(score.DataType.SQLType));
-
-            //drop the database
-            database.ForceDrop();
-
-            //the database shouldn't exist anymore
-            Assert.IsFalse(database.Exists());
-
-            //and neither should the table
-            Assert.IsFalse(tbl.Exists());
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer, "01/01/2007 00:00:00")]
@@ -151,10 +142,6 @@ namespace ReusableCodeTests
             Assert.AreEqual(expectedTime, result.Rows[1][0]);
         }
 
-
-        //[TestCase(DatabaseType.MicrosoftSQLServer, "1:11 PM")] Microsoft doesn't like this time format
-        [TestCase(DatabaseType.MYSQLServer, "1:11 PM")]
-        [TestCase(DatabaseType.Oracle, "1:11 PM")]
         [TestCase(DatabaseType.MicrosoftSQLServer, "13:11:10")]
         [TestCase(DatabaseType.MYSQLServer, "13:11:10")]
         [TestCase(DatabaseType.Oracle, "13:11:10")]

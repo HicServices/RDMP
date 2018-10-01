@@ -17,7 +17,7 @@ namespace LoadModules.Generic.Mutilators
     /// debugging failed RAW batches or running SQL that is intented to resolve PK collisions / data integrity issues where identical 
     /// duplicates make the process slow / difficult.</para>
     /// </summary>
-    class Distincter : IPluginMutilateDataTables
+    public class Distincter : IPluginMutilateDataTables
     {
         private DiscoveredDatabase _dbInfo;
 

@@ -92,8 +92,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             int affected = 0;
             int row = 0;
 
-            var running = new List<Task<int>>();
-
             foreach(DataRow dr in dt.Rows)
             {
                 sb.Append('(');
@@ -109,9 +107,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 if (row%1000 == 0)
                 {
                     cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
-                    running.Add(cmd.ExecuteNonQueryAsync());
-                    
-                    cmd.Parameters.Clear();
+                    affected += cmd.ExecuteNonQuery();
                     sb.Clear();
                 }
             }
@@ -121,21 +117,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             {
                 cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
                 affected += cmd.ExecuteNonQuery();
-                
-                cmd.Parameters.Clear();
                 sb.Clear();
             }
 
-            Task.WaitAll(running.ToArray());
-
-            foreach (var task in running)
-            {
-                if (task.IsFaulted && task.Exception != null)
-                    throw task.Exception;
-
-                affected += task.Result;
-            }
-               
             return affected;
             
         }
