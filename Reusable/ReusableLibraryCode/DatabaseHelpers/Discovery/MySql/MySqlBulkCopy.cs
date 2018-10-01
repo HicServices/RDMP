@@ -97,21 +97,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             foreach(DataRow dr in dt.Rows)
             {
                 sb.Append('(');
-                
-                var keys = matchedColumns.Keys.ToArray();
-                for (int col = 0; col < keys.Length; col++)
-                {
-                    DiscoveredColumn key = matchedColumns[keys[col]];
-                    object val = dr[keys[col]];
 
-                    
-                    sb.Append(ConstructIndividualValue(key.DataType.SQLType, val));
-
-                    //if theres more to come add a comma
-                    if(col + 1 < matchedColumns.Keys.Count)
-                        sb.Append(",");
-                }
+                DataRow dr1 = dr;
                 
+                sb.Append(string.Join(",",matchedColumns.Keys.Select(k => ConstructIndividualValue(matchedColumns[k].DataType.SQLType,dr1[k]))));
+
                 sb.AppendLine("),");
                 row++;
 
@@ -188,7 +178,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 case "LONGBLOB":
                 case "LONGTEXT":
                 case "ENUM":
-                    return string.Format("'{0}',", MySqlHelper.EscapeString(value));
+                    return string.Format("'{0}'", MySqlHelper.EscapeString(value));
                 
                 //Dates/times
                 case "DATE":
