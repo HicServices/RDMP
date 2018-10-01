@@ -155,6 +155,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 
             switch (type.Trim())
             {
+                case "BIT":
+                    return value;
+
                 //Numbers
                 case "INT":
                 case "TINYINT":
