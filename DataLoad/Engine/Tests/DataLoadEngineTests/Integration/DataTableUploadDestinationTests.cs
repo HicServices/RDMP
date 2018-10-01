@@ -340,8 +340,46 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             catch (Exception e)
             {
                 destination.Dispose(toConsole, e);
+                throw;
             }
             
+            Assert.AreEqual(expectedDatatypeInDatabase, db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mycol").DataType.SQLType);
+        }
+
+        [TestCase("varchar(24)", "2", "987styb4ih0r9h4322938476", "tinyint")]
+        public void BatchResizing_WithExplicitWriteTypes(string expectedDatatypeInDatabase, object batch1Value, object batch2Value, string batch1SqlType)
+        {
+            var token = new GracefulCancellationToken();
+            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+
+            DataTableUploadDestination destination = new DataTableUploadDestination();
+            destination.PreInitialize(db, toConsole);
+            destination.AllowResizingColumnsAtUploadTime = true;
+
+            DataTable dt1 = new DataTable();
+            dt1.Columns.Add("mycol");
+            dt1.Rows.Add(new[] { batch1Value });
+
+            dt1.TableName = "DataTableUploadDestinationTests";
+            try
+            {
+                destination.AddExplicitWriteType("mycol", batch1SqlType);
+                destination.ProcessPipelineData(dt1, toConsole, token);
+
+                DataTable dt2 = new DataTable();
+                dt2.Columns.Add("mycol");
+                dt2.Rows.Add(new object[] { batch2Value });
+
+                destination.ProcessPipelineData(dt2, toConsole, token);
+                destination.Dispose(toConsole, null);
+            }
+            catch (Exception e)
+            {
+                destination.Dispose(toConsole, e);
+                throw;
+            }
+
             Assert.AreEqual(expectedDatatypeInDatabase, db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mycol").DataType.SQLType);
         }
 
