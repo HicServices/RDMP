@@ -83,6 +83,16 @@ namespace ReusableCodeTests
             Assert.AreEqual(3, score.DataType.GetDecimalSize().NumbersAfterDecimalPlace);
 
             Assert.AreEqual(typeof(decimal), syntaxHelper.TypeTranslater.GetCSharpTypeForSQLDBType(score.DataType.SQLType));
+            
+            //drop the database
+            database.ForceDrop();
+
+            //the database shouldn't exist anymore
+            Assert.IsFalse(database.Exists());
+
+            //and neither should the table
+            Assert.IsFalse(tbl.Exists());
+
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer, "01/01/2007 00:00:00")]
@@ -177,6 +187,18 @@ namespace ReusableCodeTests
             }
         }
 
+        [Test]
+        public void GetCleanedServerRepeatedCalls()
+        {
+            database = GetCleanedServer(DatabaseType.MicrosoftSQLServer, _dbName, out server, out database);
+
+            //drop the database
+            database.ForceDrop();
+            
+            database = GetCleanedServer(DatabaseType.MicrosoftSQLServer, _dbName, out server, out database);
+
+
+        }
 
         [Test]
         public void MicrosoftHatesDbTypeTime()
