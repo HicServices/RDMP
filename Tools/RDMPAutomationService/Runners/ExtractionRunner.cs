@@ -9,6 +9,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
+using DataExportLibrary.ExtractionTime.Listeners;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
@@ -252,28 +253,6 @@ namespace RDMPAutomationService.Runners
                 return true;
 
             return false;
-        }
-    }
-
-    public class ElevateStateListener : IDataLoadEventListener
-    {
-        private readonly ExtractCommand extractCommand;
-        
-        public ElevateStateListener(ExtractCommand extractCommand)
-        {
-            this.extractCommand = extractCommand;
-        }
-
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            if (e.ProgressEventType == ProgressEventType.Warning)
-                extractCommand.ElevateState(ExtractCommandState.Warning);
-            if (e.ProgressEventType == ProgressEventType.Error)
-                extractCommand.ElevateState(ExtractCommandState.Crashed);
-        }
-
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
         }
     }
 }
