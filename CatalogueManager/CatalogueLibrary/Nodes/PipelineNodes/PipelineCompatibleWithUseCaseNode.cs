@@ -1,10 +1,19 @@
 ﻿using System;
+using System.ComponentModel;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.Spontaneous;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Nodes.PipelineNodes
 {
-    public class PipelineCompatibleWithUseCaseNode:IMasqueradeAs
+    /// <summary>
+    /// This class is a wrapper for a <see cref="Pipeline"/> that has been found to be compatible with a given <see cref="PipelineUseCase"/> (in terms of the source / 
+    /// destination components and flow type etc).
+    /// 
+    /// <para>It is <see cref="SpontaneousObject"/> only so it appears under Ctrl+F window... not a pattern we want to repeat.</para>
+    /// </summary>
+    public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeAs
     {
         public Pipeline Pipeline { get; set; }
         public PipelineUseCase UseCase { get; set; }
@@ -25,6 +34,11 @@ namespace CatalogueLibrary.Nodes.PipelineNodes
         public override string ToString()
         {
             return Pipeline.Name;
+        }
+
+        public override void DeleteInDatabase()
+        {
+            Pipeline.DeleteInDatabase();
         }
 
         #region Equality
@@ -48,6 +62,6 @@ namespace CatalogueLibrary.Nodes.PipelineNodes
                 return (_useCaseType.GetHashCode()*397) ^ Pipeline.GetHashCode();
             }
         }
-    #endregion
+        #endregion
     }
 }

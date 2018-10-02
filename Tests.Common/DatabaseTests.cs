@@ -367,13 +367,13 @@ delete from {1}..Project
             switch (type)
             {
                 case DatabaseType.MicrosoftSQLServer:
-                    server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
+                    server = new DiscoveredServer(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder);
                     break;
                 case DatabaseType.MYSQLServer:
-                    server = _discoveredMySqlServer;
+                    server = _discoveredMySqlServer == null ? null : new DiscoveredServer(_discoveredMySqlServer.Builder);
                     break;
                 case DatabaseType.Oracle:
-                    server = _discoveredOracleServer;
+                    server = _discoveredOracleServer == null ? null : new DiscoveredServer(_discoveredOracleServer.Builder);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type");
@@ -382,7 +382,8 @@ delete from {1}..Project
             if (server == null)
                 Assert.Inconclusive();
 
-            if (!server.Exists())
+            //the microsoft one should exist! others are optional
+            if (!server.Exists() && type != DatabaseType.MicrosoftSQLServer)
                 Assert.Inconclusive();
 
             server.TestConnection();

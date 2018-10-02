@@ -35,42 +35,45 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
             {
                 InsertHeader(document,"Database Access Report:" + Server);
 
-                SqlConnection con = (SqlConnection)_dbInfo.Server.GetConnection();
-                con.Open();
-
-                foreach (string user in UserAccounts())
+                using (var con = (SqlConnection) _dbInfo.Server.GetConnection())
                 {
+                    con.Open();
 
-                    InsertHeader(document,user);
-
-                    SqlCommand cmd = getAdministratorStatus(user, con);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.HasRows)
+                    foreach (string user in UserAccounts())
                     {
-                        InsertHeader(document, "Administrator Status",2);
-                        QueryToWordTable(document,reader, false);
+
+                        InsertHeader(document, user);
+
+                        SqlCommand cmd = getAdministratorStatus(user, con);
+
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            InsertHeader(document, "Administrator Status", 2);
+                            QueryToWordTable(document, reader, false);
+                        }
+
+                        if (!reader.IsClosed)
+                            reader.Close();
+
+                        cmd = getDatabaseAccessStatus(user, con);
+
+                        reader = cmd.ExecuteReader();
+
+                        InsertHeader(document, "Specific Database Access Rights", 2);
+
+                        if (reader.HasRows)
+                            QueryToWordTable(document, reader, true);
+                        else
+                            InsertParagraph(document, "No Specific Database Access Rights");
+
+                        if (!reader.IsClosed)
+                            reader.Close();
                     }
 
-                    if (!reader.IsClosed)
-                        reader.Close();
-
-                    cmd = getDatabaseAccessStatus(user, con);
-
-                    reader = cmd.ExecuteReader();
-
-                    InsertHeader(document,"Specific Database Access Rights",2);
-
-                    if (reader.HasRows)
-                        QueryToWordTable(document,reader, true);
-                    else
-                        InsertParagraph(document,"No Specific Database Access Rights");
-
-                    if (!reader.IsClosed)
-                        reader.Close();
+                    con.Close();
                 }
-
-                con.Close();
+                
 
                 document.Save();
                 ShowFile(f);
@@ -254,31 +257,36 @@ and
         }
 
         
-        private IEnumerable<string> UserAccounts()
+        private string[] UserAccounts()
         {
-            SqlConnection c = (SqlConnection)_dbInfo.Server.GetConnection();
+            List<string> toReturn = new List<string>();
 
-            c.Open();
+            using (var c = (SqlConnection) _dbInfo.Server.GetConnection())
+            {
+                c.Open();
 
-            //get the current users with login rights or database permissions
-            string sql =
-                @"select distinct name from {0}.[dbo].[Logins] where name not like '%##%' and name not like '%NT %' and name not in ('sys','{{All Users}}','dbo','sa','guest','SQLAgentOperatorRole','SQLAgentReaderRole')
+                //get the current users with login rights or database permissions
+                string sql =
+                    @"select distinct name from {0}.[dbo].[Logins] where name not like '%##%' and name not like '%NT %' and name not in ('sys','{{All Users}}','dbo','sa','guest','SQLAgentOperatorRole','SQLAgentReaderRole')
 union
 select distinct DatabaseUserName as name from {0}.[dbo].[DatabasePermissions] where DatabaseUserName not like '%##%' and DatabaseUserName not like '%NT %'  and DatabaseUserName not in ('sys','{{All Users}}','dbo','sa','guest','SQLAgentOperatorRole','SQLAgentReaderRole') 
 ";
-            //and get the expired user accounts / expired permissions too
-            if(!_currentUsersOnly)
-                sql += @"union
+                //and get the expired user accounts / expired permissions too
+                if (!_currentUsersOnly)
+                    sql += @"union
 select distinct name from {0}.[dbo].[Logins_Archive] where name not like '%##%' and name not like '%NT %'  and name not in ('sys','{{All Users}}','dbo','sa','guest','SQLAgentOperatorRole','SQLAgentReaderRole') 
 union
 select distinct DatabaseUserName as name  from {0}.[dbo].[DatabasePermissions_Archive] where DatabaseUserName not like '%##%'  and DatabaseUserName not like '%NT %' and DatabaseUserName not in ('sys','{{All Users}}','dbo','sa','guest','SQLAgentOperatorRole','SQLAgentReaderRole') ";
 
-            SqlCommand cmd = new SqlCommand(
-                string.Format(sql,_dbInfo.GetRuntimeName()), c);
-            SqlDataReader r = cmd.ExecuteReader();
+                SqlCommand cmd = new SqlCommand(
+                    string.Format(sql, _dbInfo.GetRuntimeName()), c);
+                SqlDataReader r = cmd.ExecuteReader();
 
-            while (r.Read())
-                yield return r["name"] as string;
+                while (r.Read())
+                    toReturn.Add(r["name"] as string);
+            }
+
+            return toReturn.ToArray();
         }
     }
 }

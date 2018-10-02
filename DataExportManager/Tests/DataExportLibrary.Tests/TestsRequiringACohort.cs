@@ -141,10 +141,12 @@ GO
                 //{0}
 CohortDatabaseName);
 
-            var con = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.GetConnection();
-            con.Open();
-            UsefulStuff.ExecuteBatchNonQuery(sql, con,timeout: 15);
-            con.Close();
+            using (var con = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.GetConnection())
+            {
+                con.Open();
+                UsefulStuff.ExecuteBatchNonQuery(sql, con, timeout: 15);
+                con.Close();
+            }
         }
 
 

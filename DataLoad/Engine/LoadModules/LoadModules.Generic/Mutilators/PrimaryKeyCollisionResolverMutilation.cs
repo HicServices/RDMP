@@ -61,30 +61,31 @@ namespace LoadModules.Generic.Mutilators
         private void ResolvePrimaryKeyConflicts(IDataLoadEventListener job)
         {
 
-            SqlConnection con = (SqlConnection) _dbInfo.Server.GetConnection();
-            con.Open();
-
-            PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(TargetTable);
-            SqlCommand cmdAreTherePrimaryKeyCollisions = new SqlCommand(resolver.GenerateCollisionDetectionSQL(), con);
-            cmdAreTherePrimaryKeyCollisions.CommandTimeout = 5000;
-
-            //if there are no primary key collisions
-            if (cmdAreTherePrimaryKeyCollisions.ExecuteScalar().ToString().Equals("0"))
+            using (var con = (SqlConnection) _dbInfo.Server.GetConnection())
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No primary key collisions detected"));
-                return;
+                con.Open();
+
+                PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(TargetTable);
+                SqlCommand cmdAreTherePrimaryKeyCollisions = new SqlCommand(resolver.GenerateCollisionDetectionSQL(), con);
+                cmdAreTherePrimaryKeyCollisions.CommandTimeout = 5000;
+
+                //if there are no primary key collisions
+                if (cmdAreTherePrimaryKeyCollisions.ExecuteScalar().ToString().Equals("0"))
+                {
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No primary key collisions detected"));
+                    return;
+                }
+
+                //there are primary key collisions so resolve them
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Primary key collisions detected"));
+
+                SqlCommand cmdResolve = new SqlCommand(resolver.GenerateSQL(), con);
+                cmdResolve.CommandTimeout = 5000;
+                int affectedRows = cmdResolve.ExecuteNonQuery();
+
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Primary key collisions resolved by deleting " + affectedRows + " rows"));
+                con.Close();
             }
-
-            //there are primary key collisions so resolve them
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Primary key collisions detected"));
-
-            SqlCommand cmdResolve = new SqlCommand(resolver.GenerateSQL(), con);
-            cmdResolve.CommandTimeout = 5000;
-            int affectedRows = cmdResolve.ExecuteNonQuery();
-
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Primary key collisions resolved by deleting " + affectedRows + " rows"));
-            con.Close();
-
         }
 
         public void Check(ICheckNotifier notifier)

@@ -33,13 +33,25 @@ namespace ReusableLibraryCode
             {
                 Console.WriteLine("Couldn't rollback transactiton, nevermind");
             }
-            Connection.Close();
+            finally
+            {
+                Connection.Close();
+                Connection.Dispose();
+            }
         }
 
         public void CommitAndCloseConnection()
         {
-            Transaction.Commit();
-            Connection.Close();
+
+            try
+            {
+                Transaction.Commit();
+            }
+            finally
+            {
+                Connection.Close();
+                Connection.Dispose();
+            }
         }
     }
 }

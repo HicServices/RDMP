@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -88,38 +89,43 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
             
             IManagedTransaction transaction = null;
 
-            if(usetransaction)
-            {
-                var con = db.Server.GetConnection();
-                con.Open();
-
-                //drop function - outside of transaction
-                db.Server.GetCommand("drop function MyAwesomeFunction", con).ExecuteNonQuery();
-
-                //now begin transaction
-                var t = con.BeginTransaction();
-                
-                //create it within the scope of the transaction
-                transaction = new ManagedTransaction(con,t);
-                var cmd = db.Server.GetCommand(_function.CreateFunctionSQL.Substring(_function.CreateFunctionSQL.IndexOf("GO") + 3),con);
-                cmd.Transaction = t;
-                cmd.ExecuteNonQuery();
-            }
             
-            Assert.IsTrue(db.DiscoverTableValuedFunctions(transaction).Any(tbv=>tbv.GetRuntimeName().Equals("MyAwesomeFunction")));
-            Assert.IsTrue(db.ExpectTableValuedFunction("MyAwesomeFunction").Exists(transaction));
+            {
+                using (var con = db.Server.GetConnection())
+                {
+                    con.Open();
 
-            var cols = db.ExpectTableValuedFunction("MyAwesomeFunction").DiscoverColumns(transaction);
+                    //drop function - outside of transaction
+                    db.Server.GetCommand("drop function MyAwesomeFunction", con).ExecuteNonQuery();
 
-            Assert.AreEqual(2,cols.Length);
-            Assert.IsTrue(cols[0].GetFullyQualifiedName().Contains("MyAwesomeFunction.[Number]"));
-            Assert.IsTrue(cols[1].GetFullyQualifiedName().Contains("MyAwesomeFunction.[Name]"));
+                    //now begin transaction
+                    DbTransaction t = null;
+                    
+                    if(usetransaction)
+                        t = con.BeginTransaction();
 
-            Assert.AreEqual("int", cols[0].DataType.SQLType);
-            Assert.AreEqual("varchar(50)", cols[1].DataType.SQLType);
+                    //create it within the scope of the transaction
+                    transaction = new ManagedTransaction(con, t);
+                    var cmd = db.Server.GetCommand(_function.CreateFunctionSQL.Substring(_function.CreateFunctionSQL.IndexOf("GO") + 3), con);
+                    cmd.Transaction = t;
+                    cmd.ExecuteNonQuery();
 
-            if(usetransaction)
-                transaction.CommitAndCloseConnection();
+                    Assert.IsTrue(db.DiscoverTableValuedFunctions(transaction).Any(tbv => tbv.GetRuntimeName().Equals("MyAwesomeFunction")));
+                    Assert.IsTrue(db.ExpectTableValuedFunction("MyAwesomeFunction").Exists(transaction));
+
+                    var cols = db.ExpectTableValuedFunction("MyAwesomeFunction").DiscoverColumns(transaction);
+
+                    Assert.AreEqual(2, cols.Length);
+                    Assert.IsTrue(cols[0].GetFullyQualifiedName().Contains("MyAwesomeFunction.[Number]"));
+                    Assert.IsTrue(cols[1].GetFullyQualifiedName().Contains("MyAwesomeFunction.[Name]"));
+
+                    Assert.AreEqual("int", cols[0].DataType.SQLType);
+                    Assert.AreEqual("varchar(50)", cols[1].DataType.SQLType);
+
+                    if (usetransaction)
+                        transaction.CommitAndCloseConnection();
+                }
+            }
         }
 
         [Test]

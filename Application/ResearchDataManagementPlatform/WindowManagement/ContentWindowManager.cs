@@ -202,7 +202,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             var databaseObject = deleteable as DatabaseEntity;
 
-
             //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
             var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
             
@@ -236,9 +235,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
                         databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
                 }
 
-                if(databaseObject == null)
-                    throw new NotSupportedException("IDeletable " + deleteable + " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
-                
+                if (deleteable is IMasqueradeAs)
+                    databaseObject = databaseObject ?? ((IMasqueradeAs)deleteable).MasqueradingAs() as DatabaseEntity;
+
+                if (databaseObject == null)
+                    throw new NotSupportedException("IDeletable " + deleteable +
+                                                    " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
+
                 RefreshBus.Publish(this, new RefreshObjectEventArgs(databaseObject){DeletedObjectDescendancy = CoreChildProvider.GetDescendancyListIfAnyFor(databaseObject)});
 
                 return true;

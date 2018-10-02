@@ -17,9 +17,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
     /// </summary>
     public class DataTypeComputer
     {
+
+        /// <summary>
+        /// The minimum amount of characters required to represent date values stored in the database when issuing ALTER statement to convert
+        /// the column to allow strings.
+        /// </summary>
+        public const int MinimumLengthRequiredForDateStringRepresentation = 27;
+
         public Type CurrentEstimate { get; set; }
         
-        private readonly TypeDeciderFactory TypeDeciderFactory = new TypeDeciderFactory();
+        private readonly TypeDeciderFactory _typeDeciders = new TypeDeciderFactory();
         
         private int _stringLength;
 
@@ -56,6 +63,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             
         }
 
+        public DataTypeComputer(DatabaseTypeRequest request): this(request.MaxWidthForStrings.HasValue? request.MaxWidthForStrings.Value:-1)
+        {
+            CurrentEstimate = request.CSharpType;
+            if (request.DecimalPlacesBeforeAndAfter != null)
+                DecimalSize = request.DecimalPlacesBeforeAndAfter;
+
+            ThrowIfNotSupported(CurrentEstimate);
+        }
         /// <summary>
         /// Creates a new DataTypeComputer adjusted to compensate for all values in all rows of the supplied DataColumn
         /// </summary>
@@ -77,6 +92,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
         public DataTypeComputer(Type currentEstimatedType, DecimalSize decimalSize, int lengthIfString):this(-1)
         {
             CurrentEstimate = currentEstimatedType;
+            
+            ThrowIfNotSupported(CurrentEstimate);
 
             if (lengthIfString > 0)
                 _stringLength = lengthIfString;
@@ -119,12 +136,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 if(CurrentEstimate == typeof(string))
                     return;
 
-                var result = TypeDeciderFactory.Dictionary[CurrentEstimate].IsAcceptableAsType(oAsString,DecimalSize);
+                var result = _typeDeciders.Dictionary[CurrentEstimate].IsAcceptableAsType(oAsString, DecimalSize);
                 
                 //if the current estimate compatible
                 if (result)
                 {
-                    _validTypesSeen = TypeDeciderFactory.Dictionary[CurrentEstimate].CompatibilityGroup;
+                    _validTypesSeen = _typeDeciders.Dictionary[CurrentEstimate].CompatibilityGroup;
+
+                    if (CurrentEstimate == typeof (DateTime))
+                        _stringLength = Math.Max(_stringLength, MinimumLengthRequiredForDateStringRepresentation);
+
+
                     return;
                 }
 
@@ -148,8 +170,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 }
 
                 //if we have a decider for this lets get it to tell us the decimal places (if any)
-                if (TypeDeciderFactory.Dictionary.ContainsKey(o.GetType()))
-                    TypeDeciderFactory.Dictionary[o.GetType()].IsAcceptableAsType(oToString, DecimalSize);
+                if (_typeDeciders.Dictionary.ContainsKey(o.GetType()))
+                    _typeDeciders.Dictionary[o.GetType()].IsAcceptableAsType(oToString, DecimalSize);
             }
         }
 
@@ -173,7 +195,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
                 else
                 {
                     //if the next decider is in the same group as the previously used ones
-                    if (TypeDeciderFactory.Dictionary[nextEstiamte].CompatibilityGroup == _validTypesSeen)
+                    if (_typeDeciders.Dictionary[nextEstiamte].CompatibilityGroup == _validTypesSeen)
                         CurrentEstimate = nextEstiamte;
                     else
                         CurrentEstimate = typeof (string); //the next Type decider is in an incompatible category so just go directly to string
@@ -222,5 +244,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             //it's not a string or an object, user probably has a type in mind for his DataColumn, let's not change that
             return false;
         }
+
+        private void ThrowIfNotSupported(Type currentEstimate)
+        {
+            if (currentEstimate == typeof(string))
+                return;
+
+            if (!_typeDeciders.IsSupported(CurrentEstimate))
+                throw new NotSupportedException("We do not have a type decider for type:" + CurrentEstimate);
+        }
+
     }
 }

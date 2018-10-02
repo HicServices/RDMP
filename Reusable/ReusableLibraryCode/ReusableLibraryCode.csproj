@@ -253,6 +253,7 @@
     <Compile Include="DataAccess\IEncryptedPasswordHost.cs" />
     <Compile Include="DataAccess\IHasQuerySyntaxHelper.cs" />
     <Compile Include="DatabaseCommandHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\Exceptions\AlterFailedException.cs" />
     <Compile Include="DatabaseHelpers\Discovery\ConnectionStringDefaults\ConnectionStringKeywordAccumulator.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DatabaseColumnRequest.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DecimalSize.cs" />
@@ -313,6 +314,7 @@
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QueryComponent.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QuerySyntaxHelperFactory.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\TopXResponse.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\BoolTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DateTimeTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DecideTypesForStrings.cs" />
@@ -323,6 +325,7 @@
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\ITypeTranslater.cs" />
     <Compile Include="DatabaseHelpers\Discovery\MySql\MySqlTypeTranslater.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\IntTypeDecider.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\NeverGuessedTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TimeSpanTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeCompatibilityGroup.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeDeciderFactory.cs" />
@@ -380,7 +383,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DatabaseHelpers\DatabaseAccess.cd" />
-    <None Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeDeciders.cd" />
+    <None Include="DatabaseHelpers\Discovery\TypeTranslation\TypeTranslation.cd" />
     <None Include="packages.config" />
     <None Include="ReusableLibraryCode.snk" />
   </ItemGroup>
@@ -408,6 +411,7 @@
       <LastGenOutput>DatabaseProviderIcons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

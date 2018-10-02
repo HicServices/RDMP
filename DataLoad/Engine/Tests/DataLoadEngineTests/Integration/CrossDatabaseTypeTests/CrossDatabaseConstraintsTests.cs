@@ -86,14 +86,55 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
                 new DatabaseColumnRequest("bob",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey =  true,AllowNulls = false},
                 new DatabaseColumnRequest("frank", new DatabaseTypeRequest(typeof(DateTime),100)){Default = MandatoryScalarFunctions.GetTodaysDate},
                 new DatabaseColumnRequest("peter", new DatabaseTypeRequest(typeof(string),100)){AllowNulls = false},
+
+                new DatabaseColumnRequest("Column0", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column1", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column2", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column3", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column4", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column5", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column6", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column7", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column8", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column9", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+
+                new DatabaseColumnRequest("Column10", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column11", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column12", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column13", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column14", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column15", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column16", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column17", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column18", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column19", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+
+                new DatabaseColumnRequest("Column20", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column21", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column22", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column23", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column24", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column25", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column26", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column27", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column28", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+                new DatabaseColumnRequest("Column29", new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
+
             });
 
             DataTable dt = new DataTable();//note that the column order here is reversed i.e. the DataTable column order doesn't match the database (intended)
             dt.Columns.Add("peter");
             dt.Columns.Add("bob");
+
+            for (int i = 0; i < 30; i++)
+            {
+                dt.Columns.Add("Column" + i);
+            }
             
+
+
             for (int i = 0; i < numberOfRowsPerBatch ; i++)
-                dt.Rows.Add( "no",Guid.NewGuid().ToString());
+                dt.Rows.Add( "no",Guid.NewGuid().ToString(),0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29);
             
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -108,7 +149,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             dt.Rows.Clear();
 
             for (int i = 0; i < numberOfRowsPerBatch; i++)
-                dt.Rows.Add( "no",Guid.NewGuid().ToString());
+                dt.Rows.Add("no", Guid.NewGuid().ToString(), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29);
 
             sw.Restart();
 
@@ -122,7 +163,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 
 
             var result = tbl.GetDataTable();
-            Assert.AreEqual(3, result.Columns.Count);
+            Assert.AreEqual(33, result.Columns.Count);
             Assert.AreEqual(numberOfRowsPerBatch * 2, result.Rows.Count);
             Assert.NotNull(result.Rows[0]["bob"]);
             Assert.NotNull(result.Rows[0]["frank"]);

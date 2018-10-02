@@ -77,6 +77,21 @@ namespace CatalogueManager.Collections
         Dictionary<ICheckable, CheckResult> checkResultsDictionary = new Dictionary<ICheckable, CheckResult>();
         private Thread checkingThread;
 
+        public void RecordWorst(ICheckable o, CheckResult result)
+        {
+            lock (checkResultsDictionary)
+            {
+                if (checkResultsDictionary.ContainsKey(o))
+                    checkResultsDictionary.Remove(o);
+                
+                checkResultsDictionary.Add(o,result);
+
+                if(tlvCatalogues.IndexOf(o) != -1)
+                    tlvCatalogues.RefreshObject(o);
+            }
+
+        }
+
         public void CheckCatalogues()
         {
             if (checkingThread != null && checkingThread.IsAlive)

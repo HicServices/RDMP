@@ -25,6 +25,14 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, bool createEmpty = false)
         {
+            Dictionary<string, DataTypeComputer> whoCares;
+            return CreateTable(out whoCares,database,tableName,dt,explicitColumnDefinitions,foreignKeyPairs,cascadeDelete,createEmpty);
+        }
+
+        public DiscoveredTable CreateTable(out Dictionary<string, DataTypeComputer> typeDictionary, DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, bool createEmpty = false)
+        {
+            typeDictionary = new Dictionary<string, DataTypeComputer>(StringComparer.CurrentCultureIgnoreCase);
+
             List<DatabaseColumnRequest> columns = new List<DatabaseColumnRequest>();
             List<DatabaseColumnRequest> customRequests = explicitColumnDefinitions != null
                 ? explicitColumnDefinitions.ToList()
@@ -33,18 +41,39 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             foreach (DataColumn column in dt.Columns)
             {
                 //do we have an explicit overriding column definition?
-                var overriding = customRequests.SingleOrDefault(c => c.ColumnName.Equals(column.ColumnName,StringComparison.CurrentCultureIgnoreCase));
+                DatabaseColumnRequest overriding = customRequests.SingleOrDefault(c => c.ColumnName.Equals(column.ColumnName,StringComparison.CurrentCultureIgnoreCase));
 
                 //yes
                 if (overriding != null)
                 {
                     columns.Add(overriding);
                     customRequests.Remove(overriding);
+
+                    //Type reqeuested 
+                    var request = overriding.TypeRequested;
+
+                    //Type is for an explicit Type e.g. datetime
+                    if(request == null)
+                        if(!string.IsNullOrWhiteSpace(overriding.ExplicitDbType))
+                        {
+                            var tt = database.Server.GetQuerySyntaxHelper().TypeTranslater;
+                        
+                            request = new DatabaseTypeRequest(
+                                tt.GetCSharpTypeForSQLDBType(overriding.ExplicitDbType),
+                                tt.GetLengthIfString(overriding.ExplicitDbType),
+                                tt.GetDigitsBeforeAndAfterDecimalPointIfDecimal(overriding.ExplicitDbType));
+                        }
+                        else
+                            throw new Exception("explicitColumnDefinitions for column " + column + " did not contain either a TypeRequested or ExplicitDbType");
+                    
+                    typeDictionary.Add(overriding.ColumnName, new DataTypeComputer(request));
                 }
                 else
                 {
                     //no, work out the column definition using a datatype computer
                     DataTypeComputer computer = new DataTypeComputer(column);
+                    typeDictionary.Add(column.ColumnName,computer);
+
                     columns.Add(new DatabaseColumnRequest(column.ColumnName, computer.GetTypeRequest(), column.AllowDBNull) { IsPrimaryKey = dt.PrimaryKey.Contains(column)});
                 }
             }

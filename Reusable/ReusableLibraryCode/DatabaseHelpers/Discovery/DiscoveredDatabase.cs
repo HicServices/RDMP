@@ -123,9 +123,24 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         {
             return Helper.CreateTable(this, tableName, columns, foreignKeyPairs,cascadeDelete);
         }
-        public DiscoveredTable CreateTable(string tableName, DataTable dt,DatabaseColumnRequest[] explicitColumnDefinitions=null, bool createEmpty=false)
+
+        public DiscoveredTable CreateTable(string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty = false)
         {
             return Helper.CreateTable(this, tableName, dt, explicitColumnDefinitions, null, false, createEmpty);
+        }
+
+        /// <summary>
+        /// Creates a table in the database big enough to store the supplied DataTable with appropriate types. 
+        /// </summary>
+        /// <param name="typeDictionary">The computers used to determine column types</param>
+        /// <param name="tableName"></param>
+        /// <param name="dt"></param>
+        /// <param name="explicitColumnDefinitions"></param>
+        /// <param name="createEmpty"></param>
+        /// <returns></returns>
+        public DiscoveredTable CreateTable(out Dictionary<string,DataTypeComputer> typeDictionary,string tableName, DataTable dt,DatabaseColumnRequest[] explicitColumnDefinitions=null, bool createEmpty=false)
+        {
+            return Helper.CreateTable(out typeDictionary,this, tableName, dt, explicitColumnDefinitions, null, false, createEmpty);
         }
 
         public DiscoveredTable CreateTable(string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions,Dictionary<DatabaseColumnRequest,DiscoveredColumn> foreignKeyPairs,bool cascadeDelete, bool createEmpty = false)

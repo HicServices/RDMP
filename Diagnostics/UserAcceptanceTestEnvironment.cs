@@ -119,30 +119,32 @@ namespace Diagnostics
         {
             try
             {
-                SqlConnection con =new SqlConnection(_serverToCreateRawDataOn.ConnectionString);
+                using (SqlConnection con = new SqlConnection(_serverToCreateRawDataOn.ConnectionString))
+                {
+                    //if any of these steps fail, stop the test
+                    if (CheckDatasetFolderPathExists(notifier))
+                        if (SetupConnectionAndDatabase(con, notifier))
+                            if (SetupTestDemographyTable(con, notifier))
+                                if (SetupTestHospitalAdmissionsTable(con, notifier))
+                                    if (ImportTestTableIntoCatalogue(notifier))
+                                        if (CreateDemographyCatalogue(notifier))
+                                            if (SetupAnonymisationServers(notifier))
+                                                if (ConfigureAnANOColumn(notifier))
+                                                    if (SetupLogging(notifier))
+                                                        if (CreateLoadMetadata(notifier))
+                                                            if (CreateHICProjectDirectory(notifier))
+                                                                if (SetupTestLoadProcessAndArgumentsForCSVAttacher(notifier))
+                                                                    if (AddDuplicateResolutionMutilator(notifier))
+                                                                        if (CreateTestCSVFileInForLoading(notifier))
+                                                                            if (SetupPrimaryKeyConflictResolution(notifier))
+                                                                                if (RunPreLoadChecks(notifier))
+                                                                                {
+                                                                                    notifier.OnCheckPerformed(new CheckEventArgs("Setup Complete, Now you should configure Logging for your Catalogue and then launch the DataLoadEngine to test your configuration", CheckResult.Success, null));
+                                                                                    return;
+                                                                                }
+                }
 
-                //if any of these steps fail, stop the test
-                if (CheckDatasetFolderPathExists(notifier))
-                    if(SetupConnectionAndDatabase(con,notifier))
-                        if(SetupTestDemographyTable(con, notifier))
-                            if(SetupTestHospitalAdmissionsTable(con,notifier))
-                                if (ImportTestTableIntoCatalogue(notifier))
-                                    if (CreateDemographyCatalogue(notifier))
-                                        if (SetupAnonymisationServers(notifier))
-                                            if (ConfigureAnANOColumn(notifier))
-                                                if(SetupLogging(notifier))
-                                                    if (CreateLoadMetadata(notifier))
-                                                        if (CreateHICProjectDirectory(notifier))
-                                                            if(SetupTestLoadProcessAndArgumentsForCSVAttacher(notifier))
-                                                                if(AddDuplicateResolutionMutilator(notifier))
-                                                                    if(CreateTestCSVFileInForLoading(notifier))
-                                                                        if(SetupPrimaryKeyConflictResolution(notifier))
-                                                                            if(RunPreLoadChecks(notifier))
-                                                                            {
-                                                                                notifier.OnCheckPerformed(new CheckEventArgs("Setup Complete, Now you should configure Logging for your Catalogue and then launch the DataLoadEngine to test your configuration",CheckResult.Success, null));
-                                                                                return;
-                                                                            }
-
+                
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Setup Abandoned due to stage failure", CheckResult.Fail, null));
             }

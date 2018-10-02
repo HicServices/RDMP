@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -14,11 +15,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandExportObjectsToFileUI : BasicUICommandExecution, IAtomicCommand
     {
+        private readonly IMapsDirectlyToDatabaseTable[] _toExport;
         private readonly ExecuteCommandExportObjectsToFile _cmd;
         public bool ShowInExplorer { get; set; }
 
         public ExecuteCommandExportObjectsToFileUI(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport,DirectoryInfo targetDirectoryInfo = null) : base(activator)
         {
+            _toExport = toExport;
             _cmd = new ExecuteCommandExportObjectsToFile(activator.RepositoryLocator, toExport, targetDirectoryInfo);
 
             if(_cmd.IsImpossible)
@@ -41,18 +44,35 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if (_cmd.TargetDirectoryInfo == null)
+            if (_cmd.IsSingleObject)
             {
-                var fb = new FolderBrowserDialog();
-                if (fb.ShowDialog() == DialogResult.OK)
-                    _cmd.TargetDirectoryInfo = new DirectoryInfo(fb.SelectedPath);
-                else
-                    return;
+                //Extract a single object (to file)
+                if (_cmd.TargetFileInfo == null)
+                {
+                    var sfd = new SaveFileDialog();
+                    sfd.Filter = "Share Definition|*.sd";
+                    sfd.FileName = _toExport.Single() +".sd";
+                    if(sfd.ShowDialog() == DialogResult.OK)
+                        _cmd.TargetFileInfo = new FileInfo(sfd.FileName);
+                    else
+                        return;
+                }
+            }
+            else
+            {
+                if (_cmd.TargetDirectoryInfo == null)
+                {
+                    var fb = new FolderBrowserDialog();
+                    if (fb.ShowDialog() == DialogResult.OK)
+                        _cmd.TargetDirectoryInfo = new DirectoryInfo(fb.SelectedPath);
+                    else
+                        return;
+                }
             }
             
             _cmd.Execute();
 
-            if (ShowInExplorer)
+            if (ShowInExplorer && _cmd.TargetDirectoryInfo != null)
                 UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_cmd.TargetDirectoryInfo);
         }
 

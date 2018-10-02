@@ -21,25 +21,11 @@ namespace HIC.Logging
         }
 
 
-        private SqlConnection con;
         private object oLock = new object();
 
         private FatalErrorLogging()
         {
         }
-
-        private void refreshConnection()
-        {
-            //if it is open then close it
-            if (con != null && con.State == ConnectionState.Open)
-                con.Close();
-
-            con = (SqlConnection) _databaseSettings.GetConnection();
-
-            if (con.State == ConnectionState.Closed)
-                con.Open();
-        }
-
 
         /// <summary>
         /// Get a reference to the singleton RowErrorLogging class instance, If you need to change the database settings used by this class, use DatabaseSettings property
@@ -76,39 +62,40 @@ namespace HIC.Logging
 
             lock (oLock)
             {
-                if (con == null || con.State == ConnectionState.Closed)
-                    refreshConnection();
-            
-                //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
-                string initialErrorStatus = Enum.GetName(typeof (FatalErrorStates), FatalErrorStates.Outstanding);
+                using (var con = _databaseSettings.GetConnection())
+                {
+                    con.Open();
 
-                SqlCommand cmdLookupStatusID = new SqlCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status",con);
-                cmdLookupStatusID.Parameters.Add("@status", SqlDbType.NChar, 20);
-                cmdLookupStatusID.Parameters["@status"].Value = initialErrorStatus;
+                    //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
+                    string initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
-                int statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
+                    SqlCommand cmdLookupStatusID = new SqlCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", (SqlConnection) con);
+                    cmdLookupStatusID.Parameters.Add("@status", SqlDbType.NChar, 20);
+                    cmdLookupStatusID.Parameters["@status"].Value = initialErrorStatus;
 
-                SqlCommand cmdRecordFatalError = new SqlCommand(
-    @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",con);
-                cmdRecordFatalError.Parameters.Add("@time", SqlDbType.DateTime);
-                cmdRecordFatalError.Parameters.Add("@source", SqlDbType.VarChar,50);
-                cmdRecordFatalError.Parameters.Add("@description", SqlDbType.VarChar,-1);
-                cmdRecordFatalError.Parameters.Add("@statusID", SqlDbType.Int);
-                cmdRecordFatalError.Parameters.Add("@dataLoadRunID", SqlDbType.Int);
+                    int statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
-                cmdRecordFatalError.Parameters["@time"].Value = DateTime.Now;
-                cmdRecordFatalError.Parameters["@source"].Value = errorSource;
-                cmdRecordFatalError.Parameters["@description"].Value = errorDescription;
-                cmdRecordFatalError.Parameters["@statusID"].Value = statusID;
-                cmdRecordFatalError.Parameters["@dataLoadRunID"].Value = dataLoadInfo.ID;
+                    SqlCommand cmdRecordFatalError = new SqlCommand(
+        @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);", (SqlConnection)con);
+                    cmdRecordFatalError.Parameters.Add("@time", SqlDbType.DateTime);
+                    cmdRecordFatalError.Parameters.Add("@source", SqlDbType.VarChar, 50);
+                    cmdRecordFatalError.Parameters.Add("@description", SqlDbType.VarChar, -1);
+                    cmdRecordFatalError.Parameters.Add("@statusID", SqlDbType.Int);
+                    cmdRecordFatalError.Parameters.Add("@dataLoadRunID", SqlDbType.Int);
 
-                cmdRecordFatalError.ExecuteNonQuery();
+                    cmdRecordFatalError.Parameters["@time"].Value = DateTime.Now;
+                    cmdRecordFatalError.Parameters["@source"].Value = errorSource;
+                    cmdRecordFatalError.Parameters["@description"].Value = errorDescription;
+                    cmdRecordFatalError.Parameters["@statusID"].Value = statusID;
+                    cmdRecordFatalError.Parameters["@dataLoadRunID"].Value = dataLoadInfo.ID;
 
-                //this might get called multiple times (many errors in rapid succession as the program crashes) but only close the dataLoadInfo once
-                if(!dataLoadInfo.IsClosed)
-                    dataLoadInfo.CloseAndMarkComplete();
+                    cmdRecordFatalError.ExecuteNonQuery();
 
-                con.Close();
+                    //this might get called multiple times (many errors in rapid succession as the program crashes) but only close the dataLoadInfo once
+                    if (!dataLoadInfo.IsClosed)
+                        dataLoadInfo.CloseAndMarkComplete();
+
+                }
             }
         }
     }

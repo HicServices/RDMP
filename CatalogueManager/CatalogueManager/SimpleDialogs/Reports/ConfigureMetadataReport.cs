@@ -85,13 +85,13 @@ namespace CatalogueManager.SimpleDialogs.Reports
             btnStop.Enabled = true;
         }
 
-        public Bitmap[] report_RequestCatalogueImages(Catalogue catalogue)
+        public BitmapWithDescription[] report_RequestCatalogueImages(Catalogue catalogue)
         {
             //cross thread
             if (InvokeRequired)
-                return (Bitmap[])Invoke(new RequestCatalogueImagesHandler(report_RequestCatalogueImages), catalogue);
+                return (BitmapWithDescription[])Invoke(new RequestCatalogueImagesHandler(report_RequestCatalogueImages), catalogue);
 
-            List<Bitmap> toReturn = new List<Bitmap>();
+            var toReturn = new List<BitmapWithDescription>();
                 
             
             aggregateGraph1.Width = (int) report.PageWidthInPixels;
@@ -125,6 +125,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
                     checksUI1.OnCheckPerformed(new CheckEventArgs("Aggregate with ID " + aggregate.ID + " crashed", CheckResult.Fail,aggregateGraph1.Exception));
                     continue;
                 }
+
                 toReturn.AddRange(aggregateGraph1.GetImages());
             }
 

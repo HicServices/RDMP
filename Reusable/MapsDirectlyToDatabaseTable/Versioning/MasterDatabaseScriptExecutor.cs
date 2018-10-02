@@ -355,12 +355,14 @@ INSERT INTO [RoundhousE].[ScriptsRun]
         {
             try
             {
-                SqlConnection con = new SqlConnection(_builder.ConnectionString);
-                con.Open();
-                SqlCommand cmdClear = new SqlCommand("Delete from RoundhousE.Version", con);
-                cmdClear.ExecuteNonQuery();
-                con.Close();
-                notifier.OnCheckPerformed(new CheckEventArgs("successfully deleted old Version number from RoundhousE.Version",CheckResult.Success, null));
+                using (SqlConnection con = new SqlConnection(_builder.ConnectionString))
+                {
+                    con.Open();
+                    SqlCommand cmdClear = new SqlCommand("Delete from RoundhousE.Version", con);
+                    cmdClear.ExecuteNonQuery();
+                    con.Close();
+                    notifier.OnCheckPerformed(new CheckEventArgs("successfully deleted old Version number from RoundhousE.Version", CheckResult.Success, null));
+                }
             }
             catch (Exception e)
             {

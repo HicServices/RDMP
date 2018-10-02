@@ -10,6 +10,7 @@ namespace CatalogueManager.Menus
         public PipelineMenu(RDMPContextMenuStripArgs args, PipelineCompatibleWithUseCaseNode node): base(args,node)
         {
             Add(new ExecuteCommandCreateNewPipeline(_activator, node.UseCase));
+            Add(new ExecuteCommandClonePipeline(_activator, node.Pipeline));
         }
         public PipelineMenu(RDMPContextMenuStripArgs args, StandardPipelineUseCaseNode node): base(args, node)
         {
@@ -18,6 +19,7 @@ namespace CatalogueManager.Menus
         public PipelineMenu(RDMPContextMenuStripArgs args, Pipeline pipeline): base(args, pipeline)
         {
             Add(new ExecuteCommandCreateNewPipeline(_activator, null));
+            Add(new ExecuteCommandClonePipeline(_activator, pipeline));
         }
     }
 }

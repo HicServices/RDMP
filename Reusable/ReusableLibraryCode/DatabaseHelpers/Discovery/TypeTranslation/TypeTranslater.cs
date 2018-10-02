@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
+using ReusableLibraryCode.Extensions;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 {
@@ -152,6 +156,21 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
         public Type GetCSharpTypeForSQLDBType(string sqlType)
         {
+            if (IsBit(sqlType))
+                return typeof(bool);
+
+            if (IsByte(sqlType))
+                return typeof(byte);
+
+            if (IsSmallInt(sqlType))
+                return typeof(short);
+
+            if (IsInt(sqlType))
+                return typeof(int);
+            
+            if (IsLong(sqlType))
+                return typeof(long);
+
             if (IsFloatingPoint(sqlType))
                 return typeof (decimal);
 
@@ -163,22 +182,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
 
             if (IsTime(sqlType))
                 return typeof(TimeSpan);
-
-            if (IsInt(sqlType))
-                return typeof(int);
-
-            if (IsSmallInt(sqlType))
-                return typeof (short);
-
-            if (IsLong(sqlType))
-                return typeof (long);
-
-            if (IsBit(sqlType))
-                return typeof (bool);
-
-            if (IsByte(sqlType))
-                return typeof (byte);
-
+            
             if (IsByteArray(sqlType))
                 return typeof (byte[]);
 
@@ -188,7 +192,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation
             throw new NotSupportedException("Not sure what type of C# datatype to use for SQL type :" + sqlType);
         }
 
-        private bool IsLong(string sqlType)
+        protected virtual bool IsLong(string sqlType)
         {
             return sqlType.ToLower().Contains(GetBigIntDataType().ToLower());
         }
@@ -360,7 +364,7 @@ alter table omgdates alter column dt varchar(100)
 select LEN(dt) from omgdates
              */
 
-            return 27; //e.g. "2018-01-30 13:05:45.1266667"
+            return DataTypeComputer.MinimumLengthRequiredForDateStringRepresentation; //e.g. "2018-01-30 13:05:45.1266667"
         }
 
         protected bool IsTime(string sqlType)
@@ -370,27 +374,31 @@ select LEN(dt) from omgdates
 
         protected virtual bool IsSmallInt(string sqlType)
         {
-            return sqlType.ToLower().Equals("smallint");
+            return sqlType.ToLower().StartsWith("smallint",StringComparison.CurrentCultureIgnoreCase);
         }
 
         protected virtual bool IsByte(string sqlType)
         {
-            return sqlType.ToLower().Equals("tinyint");
+            return sqlType.Contains("tinyint",CompareOptions.IgnoreCase);
         }
 
         protected virtual bool IsByteArray(string sqlType)
         {
             return sqlType.ToLower().Contains("binary");
         }
+        
+        private string[] _bitTypes = new[] {"bit", "bool", "boolean"};
 
         protected virtual bool IsBit(string sqlType)
         {
-            return sqlType.Trim().Equals("bit", StringComparison.CurrentCultureIgnoreCase);
+            return _bitTypes.Any(t=>sqlType.Contains(t,CompareOptions.IgnoreCase));
         }
+        
+        private string[] _intTypes = new[] { "int", "integer" };
 
         protected virtual bool IsInt(string sqlType)
         {
-            return sqlType.Trim().Equals("int",StringComparison.CurrentCultureIgnoreCase) || sqlType.Trim().Equals("bigint",StringComparison.CurrentCultureIgnoreCase);
+            return _intTypes.Any(t => sqlType.Contains(t, CompareOptions.IgnoreCase));
         }
 
         protected virtual bool IsDate(string sqlType)
@@ -406,7 +414,7 @@ select LEN(dt) from omgdates
 
         protected virtual bool IsFloatingPoint(string sqlType)
         {
-            foreach (var s in new[] { "float","decimal","numeric","real" ,"money","smallmoney"})
+            foreach (var s in new[] { "float","decimal","numeric","real" ,"money","smallmoney","double"})
             {
                 if (sqlType.Trim().StartsWith(s, StringComparison.CurrentCultureIgnoreCase))
                     return true;

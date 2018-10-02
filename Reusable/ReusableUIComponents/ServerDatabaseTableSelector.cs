@@ -109,16 +109,18 @@ namespace ReusableUIComponents
             var syntaxHelper = new MicrosoftQuerySyntaxHelper();
             try
             {
-                var con = discoveredDatabase.Server.GetConnection();
-                var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
-                openTask.Wait(_workerRefreshTablesToken.Token);
-                
-                List<DiscoveredTable> result = new List<DiscoveredTable>();
+                using (var con = discoveredDatabase.Server.GetConnection())
+                {
+                    var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
+                    openTask.Wait(_workerRefreshTablesToken.Token);
 
-                result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
-                result.AddRange(databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
+                    List<DiscoveredTable> result = new List<DiscoveredTable>();
 
-                _listTablesAsyncResult = result;
+                    result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
+                    result.AddRange(databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
+
+                    _listTablesAsyncResult = result;
+                }
             }
             catch (OperationCanceledException)//user cancels
             {

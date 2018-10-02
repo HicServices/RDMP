@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 
@@ -18,7 +19,11 @@ namespace CatalogueManager.Menus
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
 
-            Add(new ExecuteCommandCheck(_activator,catalogue));
+            var collection = args.GetTreeParentControlOfType<CatalogueCollectionUI>();
+            
+            Add(collection == null
+                ? new ExecuteCommandCheck(_activator, catalogue)
+                : new ExecuteCommandCheck(_activator, catalogue, collection.RecordWorst));
 
             Items.Add(new ToolStripSeparator());
 

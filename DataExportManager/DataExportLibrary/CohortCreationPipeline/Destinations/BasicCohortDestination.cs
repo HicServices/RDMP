@@ -128,29 +128,37 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
             
             using (var connection = server.BeginNewTransactedConnection())
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Started Transaction"));
-                Request.PushToServer(connection);
+                try
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Started Transaction"));
+                    Request.PushToServer(connection);
 
-                if(Request.NewCohortDefinition.ID == null)
-                    throw new Exception("We pushed the new cohort from the request object to the server (within transaction) but it's ID was not populated");
+                    if(Request.NewCohortDefinition.ID == null)
+                        throw new Exception("We pushed the new cohort from the request object to the server (within transaction) but it's ID was not populated");
 
-                var tbl = server.GetCurrentDatabase().ExpectTable(Request.NewCohortDefinition.LocationOfCohort.TableName);
+                    var tbl = server.GetCurrentDatabase().ExpectTable(Request.NewCohortDefinition.LocationOfCohort.TableName);
 
-                var bulkCopy = tbl.BeginBulkInsert(connection.ManagedTransaction);
+                    using (var bulkCopy = tbl.BeginBulkInsert(connection.ManagedTransaction))
+                    {
+                        var dt = new DataTable();
+                        dt.Columns.Add(_privateIdentifier);
+                        dt.Columns.Add(_releaseIdentifier);
 
-                var dt = new DataTable();
-                dt.Columns.Add(_privateIdentifier);
-                dt.Columns.Add(_releaseIdentifier);
+                        //add the ID as another column 
+                        dt.Columns.Add(_fk);
 
-                //add the ID as another column 
-                dt.Columns.Add(_fk);
+                        foreach (KeyValuePair<object, object> kvp in _cohortDictionary)
+                            dt.Rows.Add(kvp.Key, kvp.Value, Request.NewCohortDefinition.ID);
 
-                foreach (KeyValuePair<object, object> kvp in _cohortDictionary)
-                    dt.Rows.Add(kvp.Key, kvp.Value,Request.NewCohortDefinition.ID);
+                        bulkCopy.Upload(dt);
 
-                bulkCopy.Upload(dt);
-
-                connection.Transaction.Commit();
+                        connection.ManagedTransaction.CommitAndCloseConnection();
+                    }
+                }
+                finally
+                {
+                    connection.ManagedTransaction.AbandonAndCloseConnection();
+                }
             }
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Succesfully uploaded " + _cohortDictionary.Count + " records"));

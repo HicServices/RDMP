@@ -102,9 +102,7 @@ namespace QueryCachingTests
             dim.DeleteInDatabase();
 
 
-            using (
-                var con = DataAccessPortal.GetInstance()
-                    .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
+            using (var con = DataAccessPortal.GetInstance().ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
             {
                 
                 IHasFullyQualifiedNameToo table = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.ExtractableAggregateResults);

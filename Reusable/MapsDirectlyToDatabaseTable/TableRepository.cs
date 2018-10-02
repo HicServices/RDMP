@@ -79,7 +79,7 @@ namespace MapsDirectlyToDatabaseTable
             {
                 using (IManagedConnection managedConnection = GetConnection())
                 {
-                    var cmd = GetUpdateCommandFromStore(oTableWrapperObject.GetType());
+                    var cmd = GetUpdateCommandFromStore(oTableWrapperObject.GetType(), managedConnection);
 
                     PopulateUpdateCommandValuesWithCurrentState(cmd,oTableWrapperObject);
                     
@@ -462,12 +462,10 @@ namespace MapsDirectlyToDatabaseTable
             return toReturn;
         }
 
-        private DbCommand GetUpdateCommandFromStore(Type type)
+        private DbCommand GetUpdateCommandFromStore(Type type, IManagedConnection managedConnection)
         {
-            var ongoingConnection = GetConnection();
-
             if (!_updateCommandStore.ContainsKey(type))
-                _updateCommandStore.Add(type, _connectionStringBuilder, ongoingConnection.Connection, ongoingConnection.Transaction);
+                _updateCommandStore.Add(type, _connectionStringBuilder, managedConnection.Connection, managedConnection.Transaction);
 
             return _updateCommandStore[type];
         }

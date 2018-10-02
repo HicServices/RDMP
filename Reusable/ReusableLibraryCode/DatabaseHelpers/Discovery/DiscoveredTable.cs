@@ -73,11 +73,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
 
-        public DiscoveredColumn DiscoverColumn(string specificColumnName)
+        public DiscoveredColumn DiscoverColumn(string specificColumnName,IManagedTransaction transaction=null)
         {
             try
             {
-                return DiscoverColumns().Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName),StringComparison.CurrentCultureIgnoreCase));
+                return DiscoverColumns(transaction).Single(c => c.GetRuntimeName().Equals(_querySyntaxHelper.GetRuntimeName(specificColumnName), StringComparison.CurrentCultureIgnoreCase));
             }
             catch (Exception e)
             {
@@ -168,9 +168,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <summary>
         /// Deletes all EXACT duplicate rows from the table leaving only unique records.  This is method may not be transaction/threadsafe
         /// </summary>
-        public void MakeDistinct()
+        /// <param name="timeout"></param>
+        public void MakeDistinct(int timeout=30)
         {
-            Helper.MakeDistinct(this);
+            Helper.MakeDistinct(this,timeout);
         }
 
 
@@ -215,11 +216,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <param name="discoverColumns"></param>
         public void CreatePrimaryKey(int timeout, params DiscoveredColumn[] discoverColumns)
         {
-            using (IManagedConnection connection = Database.Server.BeginNewTransactedConnection())
-            {
+            using (var connection = Database.Server.GetManagedConnection())
                 Helper.CreatePrimaryKey(this, discoverColumns, connection, timeout);
-                connection.ManagedTransaction.CommitAndCloseConnection();
-            }
         }
 
 

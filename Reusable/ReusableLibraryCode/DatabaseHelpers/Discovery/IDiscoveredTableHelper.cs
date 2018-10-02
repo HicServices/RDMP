@@ -32,7 +32,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         IBulkCopy BeginBulkInsert(DiscoveredTable discoveredTable, IManagedConnection connection);
         
         void TruncateTable(DiscoveredTable discoveredTable);
-        void MakeDistinct(DiscoveredTable discoveredTable);
+        void MakeDistinct(DiscoveredTable discoveredTable, int timeout);
 
         /// <inheritdoc cref="DiscoveredTable.ScriptTableCreation"/>
         string ScriptTableCreation(DiscoveredTable constraints, bool dropPrimaryKeys, bool dropNullability, bool convertIdentityToInt, DiscoveredTable toCreateTable = null);

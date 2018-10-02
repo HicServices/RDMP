@@ -73,9 +73,7 @@ namespace ReusableCodeTests
             colB = tbl.DiscoverColumn("B");
 
             //Post state should exactly match
-            Assert.IsTrue(colA.AllowNulls);
             Assert.IsFalse(colA.IsPrimaryKey);
-            Assert.IsTrue(colB.AllowNulls);
             Assert.IsFalse(colB.IsPrimaryKey);
         }
     }

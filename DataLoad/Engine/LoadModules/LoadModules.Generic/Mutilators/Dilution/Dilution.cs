@@ -87,13 +87,15 @@ namespace LoadModules.Generic.Mutilators.Dilution
 
         public ExitCodeType Mutilate(IDataLoadEventListener job)
         {
-            var con =_dbInfo.Server.GetConnection();
+            using (var con = _dbInfo.Server.GetConnection())
+            {
+                con.Open();
 
-            con.Open();
+                UsefulStuff.ExecuteBatchNonQuery(GetMutilationSql(), con, timeout: Timeout);
 
-            UsefulStuff.ExecuteBatchNonQuery(GetMutilationSql(), con, timeout: Timeout);
+                con.Close();
+            }
 
-            con.Close();
             return ExitCodeType.Success;
         }
 

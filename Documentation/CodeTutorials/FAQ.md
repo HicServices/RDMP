@@ -1,5 +1,7 @@
 # Frequently Asked Questions
 ## Table of contents
+1. [Can RDMP Load UnTyped Data?](#untyped)
+1. [How does RDMP handle / translate untyped, C# and Database Types](#typetranslation)
 1. [How do I stop some nodes being reordered in RDMPCollectionUIs?](#reorder)
 2. [How do I add new nodes to RDMPCollectionUIs?](#addNewNodes)
 3. [How do platform databases / database objects work?](#databaseObjects)
@@ -9,8 +11,16 @@
 7. [Are there Unit/Integration Tests?](#tests)
 8. [When loading data can I skip some columns?](#skipColumns)
 
+<a name="untyped"></a>
+### Can RDMP Load UnTyped Data?
+Yes, [determining database types from untyped data (e.g. CSV)](./DataTableUpload.md) is a core feature.
+
+<a name="typetranslation"></a>
+### How does RDMP handle / translate untyped, C# and Database Types?
+The [TypeTranslation namespace handles this](./TypeTranslation.md).
+
 <a name="reorder"></a>
-### 1. How do I stop some nodes being reordered in RDMPCollectionUIs?
+### How do I stop some nodes being reordered in RDMPCollectionUIs?
 Sometimes you want to limit which nodes in an `RDMPCollectionUI` are reordered when the user clicks on the column header.  In the below picture we want to allow the user to sort data loads by name but we don't want to reorder the ProcessTask nodes or the steps in them since that would confuse the user as to the execution order.
 
 ![ReOrdering](Images/FAQ/ReOrdering.png) 
@@ -27,19 +37,19 @@ public class ExampleNode : IOrderable
 If you are unsure what Type a given node is you can right click it and select 'What Is This?'.
 
 <a name="addNewNodes"></a>
-### 2. How do I add new nodes to RDMPCollectionUIs?
+### How do I add new nodes to RDMPCollectionUIs?
 This requires a tutorial all of it's own 
 
 https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/CreatingANewCollectionTreeNode.md
 
 
 <a name="databaseObjects"></a>
-### 3. How do platform databases / database objects work?
+### How do platform databases / database objects work?
 
 See `DataStructures.cd` (todo: How about a README.md - Ed)
 
 <a name="databaseDdos"></a>
-### 4. My metadata databases are being hammered by thousands of requests
+### My metadata databases are being hammered by thousands of requests
 The entire RDMP meta data model is stored in platform databases (Catalogue / Data Export etc).  Classes e.g. `Catalogue` are fetched either all at once or by `ID`.  The class Properties can be used to fetch other related objects e.g. `Catalogue.CatalogueItems`.  This usually does not result in a bottleneck but under some conditions deeply nested use of these properties can result in your platform database being hammered with requests.  You can determine whether this is the case by using the PerformanceCounter.  This tool will show every database request issued while it is running including the number of distinct Stack Frames responsible for the query being issued.  Hundreds or even thousands of requests isn't a problem but if you start getting into the tens of thousands for trivial operations you might want to refactor your code.
 
 ![PerformanceCounter](Images/FAQ/PerformanceCounter.png) 
@@ -56,24 +66,24 @@ If you think the problem is more widespread then you can also use the `IInjectKn
 https://github.com/HicServices/RDMP/blob/develop/Reusable/MapsDirectlyToDatabaseTable/Injection/README.md
 
 <a name="dataTypeComputer"></a>
-### 5. How does RDMP handle untyped input (e.g. csv)?
+### How does RDMP handle untyped input (e.g. csv)?
 
 RDMP computes the data types required for untyped input as a `DataTypeRequest` using the `DataTypeComputer` class.  For full details see:
 
 https://github.com/HicServices/RDMP/tree/develop/Reusable/ReusableLibraryCode/DatabaseHelpers/Discovery/TypeTranslation/README.md
 
 <a name="plugins"></a>
-### 6. Does RDMP Support Plugins?
+### Does RDMP Support Plugins?
 Yes, RDMP supports both functional plugins (e.g. new anonymisation components, new load plugins etc) as well as UI plugins (e.g. new operations when you right click a `Catalogue`).
 
 https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/PluginWriting.md
 
 <a name="tests"></a>
-### 7. Are there Unit/Integration Tests?
+### Are there Unit/Integration Tests?
 Yes there are over 1,000 unit and integration tests, this is covered in [Tests](Tests.md)
 
 <a name="skipColumns"></a>
-### 8. When loading data can I skip some columns?
+### When loading data can I skip some columns?
 The data load engine first loads all data to the temporary unconstrained RAW database then migrates it to STAGING and finally merges it with LIVE (See [UserManual.docx](../UserManual.docx) for more info).  It is designed to make it easy to identify common issues such as data providers renaming columns, adding new columns etc.
 
 ![ReOrdering](Images/FAQ/ColumnNameChanged.png)

@@ -26,7 +26,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             var newPipe = new Pipeline(Activator.RepositoryLocator.CatalogueRepository);
             var edit = new ExecuteCommandEditPipelineWithUseCase(Activator, newPipe, _useCase);
             edit.Execute();
-
         }
 
         public Image GetImage(IIconProvider iconProvider)

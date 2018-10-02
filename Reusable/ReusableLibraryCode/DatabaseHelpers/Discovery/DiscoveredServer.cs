@@ -79,20 +79,21 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public void TestConnection(int timeoutInMillis = 3000)
         {
             using (var con = Helper.GetConnection(Builder))
-            { 
-                var openTask = con.OpenAsync(new CancellationTokenSource(timeoutInMillis).Token);
-                try
+            {
+                using (var openTask = con.OpenAsync(new CancellationTokenSource(timeoutInMillis).Token))
                 {
-                    openTask.Wait();
-                }
-                catch (AggregateException e)
-                {
-                    if(openTask.IsCanceled)
-                        throw new TimeoutException(string.Format("Could not connect to server '"+Name+"' after timeout of {0} milliseconds)", timeoutInMillis),e);
+                    try
+                    {
+                        openTask.Wait();
+                    }
+                    catch (AggregateException e)
+                    {
+                        if (openTask.IsCanceled)
+                            throw new TimeoutException(string.Format("Could not connect to server '" + Name + "' after timeout of {0} milliseconds)", timeoutInMillis), e);
 
-                    throw;
+                        throw;
+                    }
                 }
-                    
 
                 con.Close();
             }

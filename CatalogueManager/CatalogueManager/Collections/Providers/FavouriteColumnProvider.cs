@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BrightIdeasSoftware;
+using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
@@ -51,7 +52,7 @@ namespace CatalogueManager.Collections.Providers
         private void OnCellClick(object sender, CellClickEventArgs cellClickEventArgs)
         {
             var col = cellClickEventArgs.Column;
-            var o = cellClickEventArgs.Model as IMapsDirectlyToDatabaseTable;
+            var o = cellClickEventArgs.Model as DatabaseEntity;
 
 
             if (col == _olvFavourite && o != null)
@@ -74,7 +75,7 @@ namespace CatalogueManager.Collections.Providers
 
         private object FavouriteImageGetter(object rowobject)
         {
-            var o = rowobject as IMapsDirectlyToDatabaseTable;
+            var o = rowobject as DatabaseEntity;
 
             if (o != null)
                 return _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow;

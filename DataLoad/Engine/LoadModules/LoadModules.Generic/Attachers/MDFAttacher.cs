@@ -144,27 +144,30 @@ namespace LoadModules.Generic.Attachers
                 ConnectTimeout = 600
             };
 
-            SqlConnection _attachConnection = new SqlConnection(builder.ConnectionString);
-
-            try
+            using (var attachConnection = new SqlConnection(builder.ConnectionString))
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to attach file " + _locations.AttachMdfPath + " as a database to server " + builder.DataSource));
-                _attachConnection.Open();
-            }
-            catch (Exception e)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Could not attach file " + _locations.AttachMdfPath + " to database", e));
                 try
                 {
-                    DeleteFilesIfExist();
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to attach file " + _locations.AttachMdfPath + " as a database to server " + builder.DataSource));
+                    attachConnection.Open();
                 }
-                catch (Exception exception)
+                catch (Exception e)
                 {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "File Deletion (in cleanup phase - post failure) did not succeed either ", exception));
-                }
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Could not attach file " + _locations.AttachMdfPath + " to database", e));
+                    try
+                    {
+                        DeleteFilesIfExist();
+                    }
+                    catch (Exception exception)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "File Deletion (in cleanup phase - post failure) did not succeed either ", exception));
+                    }
 
-                return ExitCodeType.Error;
+                    return ExitCodeType.Error;
+                }
             }
+
+            
 
             return ExitCodeType.Success;
 

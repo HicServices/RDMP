@@ -48,6 +48,8 @@ namespace DataLoadEngineTests.Integration
             var ex = Assert.Throws<Exception>(()=>destination.ProcessPipelineData( dt2, toConsole,token));
 
             Assert.IsTrue(ex.InnerException.Message.Contains("Received an invalid column length from the bcp client for colid 1."));
+
+            destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
         }
 
         //RDMPDEV-653
@@ -142,6 +144,7 @@ namespace DataLoadEngineTests.Integration
                 string expectedErrorMessage = "<<" + errorColumn + ">> which had value <<"+dt1.Rows[0][errorColumn]+">> destination data type was <<varchar(1)>>";
                 Assert.AreEqual(expectedErrorMessage,interestingBit);
 
+                destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
                 tbl.Drop();
             }
         }
@@ -198,6 +201,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
             string expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
             Assert.AreEqual(expectedErrorMessage, interestingBit);
+            
+            destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
 
             if(tbl.Exists())
                 tbl.Drop();
@@ -217,6 +222,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.TableName = "MyEmptyTable";
             var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
+            destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+            
             Assert.AreEqual("DataTable 'MyEmptyTable' had no Columns!", ex.Message);
         }
         [Test]
@@ -233,6 +240,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.Columns.Add("GoTeamGo");
             dt1.TableName = "MyEmptyTable";
             var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
+            
+            destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
 
             Assert.AreEqual("DataTable 'MyEmptyTable' had no Rows!", ex.Message);
         }
@@ -301,7 +310,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
 
         [TestCase("varchar(3)", 1.5, "x")]//RDMPDEV-932
-        [TestCase("varchar(27)", "2001-01-01", "x")]
+        [TestCase("varchar(27)", "2001-01-01", "x")] //see DataTypeComputer.MinimumLengthRequiredForDateStringRepresentation
         public void BatchResizing(string expectedDatatypeInDatabase,object batch1Value,object batch2Value)
         {
             var token = new GracefulCancellationToken();
@@ -317,16 +326,60 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.Rows.Add(new[] {batch1Value});
             
             dt1.TableName = "DataTableUploadDestinationTests";
-
-            destination.ProcessPipelineData(dt1, toConsole, token);
+            try
+            {
+                destination.ProcessPipelineData(dt1, toConsole, token);
             
-            DataTable dt2 = new DataTable();
-            dt2.Columns.Add("mycol");
-            dt2.Rows.Add(new object[] { batch2Value });
+                DataTable dt2 = new DataTable();
+                dt2.Columns.Add("mycol");
+                dt2.Rows.Add(new object[] { batch2Value });
 
-            destination.ProcessPipelineData(dt2, toConsole, token);
+                destination.ProcessPipelineData(dt2, toConsole, token);
+                destination.Dispose(toConsole, null);
+            }
+            catch (Exception e)
+            {
+                destination.Dispose(toConsole, e);
+                throw;
+            }
+            
+            Assert.AreEqual(expectedDatatypeInDatabase, db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mycol").DataType.SQLType);
+        }
 
-            destination.Dispose(toConsole, null);
+        [TestCase("varchar(24)", "2", "987styb4ih0r9h4322938476", "tinyint")]
+        public void BatchResizing_WithExplicitWriteTypes(string expectedDatatypeInDatabase, object batch1Value, object batch2Value, string batch1SqlType)
+        {
+            var token = new GracefulCancellationToken();
+            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+
+            DataTableUploadDestination destination = new DataTableUploadDestination();
+            destination.PreInitialize(db, toConsole);
+            destination.AllowResizingColumnsAtUploadTime = true;
+
+            DataTable dt1 = new DataTable();
+            dt1.Columns.Add("mycol");
+            dt1.Rows.Add(new[] { batch1Value });
+
+            dt1.TableName = "DataTableUploadDestinationTests";
+            try
+            {
+                destination.AddExplicitWriteType("mycol", batch1SqlType);
+                destination.ProcessPipelineData(dt1, toConsole, token);
+
+                DataTable dt2 = new DataTable();
+                dt2.Columns.Add("mycol");
+                dt2.Rows.Add(new object[] { batch2Value });
+
+                destination.ProcessPipelineData(dt2, toConsole, token);
+                destination.Dispose(toConsole, null);
+            }
+            catch (Exception e)
+            {
+                destination.Dispose(toConsole, e);
+                throw;
+            }
+
             Assert.AreEqual(expectedDatatypeInDatabase, db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mycol").DataType.SQLType);
         }
 
@@ -401,7 +454,6 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.AreEqual(7, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
             Assert.AreEqual("decimal(5,2)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
         }
-
 
         private object[] _sourceLists = {
                                             new object[] {"decimal(4,3)",new object[]{"0.001"}, new object[]{0.001}},  //case 1
@@ -560,6 +612,8 @@ CREATE TABLE [dbo].[TestResizing](
                 Assert.AreEqual("varchar(500)", table.DiscoverColumn("StringPk").DataType.SQLType);
                 Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
                 Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
+                
+                con.Close();
             }
         }
 
@@ -739,8 +793,6 @@ CREATE TABLE [dbo].[TestResizing](
                 Assert.IsTrue(numbersRead.Contains(1));
                 Assert.IsTrue(numbersRead.Contains(999));
             }
-            
-            db.ForceDrop();
         }
 
         [TestCase(false)]
@@ -883,5 +935,133 @@ CREATE TABLE [dbo].[TestResizing](
                 tbl.Drop();
             }
         }
+
+        #region Two Batch Tests
+        [TestCase(DatabaseType.MYSQLServer, true)]
+        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+        public void TwoBatch_BooleanResizingTest(DatabaseType dbType, bool giveNullValuesOnly)
+        {
+            var token = new GracefulCancellationToken();
+            DiscoveredDatabase db = GetCleanedServer(dbType);
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+            var toMemory = new ToMemoryDataLoadEventListener(true);
+
+            DataTableUploadDestination destination = new DataTableUploadDestination();
+            destination.PreInitialize(db, toConsole);
+            destination.AllowResizingColumnsAtUploadTime = true;
+
+            DataTable dt1 = new DataTable();
+            dt1.Columns.Add("TestedCol", typeof(string));
+            dt1.Columns.Add("OtherCol", typeof(string));
+            dt1.Rows.Add(new[] { giveNullValuesOnly ? null : "true", "1.51" });
+
+            dt1.TableName = "DataTableUploadDestinationTests";
+
+            DataTable dt2 = new DataTable();
+            dt2.Columns.Add("TestedCol", typeof(string));
+            dt2.Columns.Add("OtherCol", typeof(string));
+
+            dt2.Rows.Add(new[] { "2001-01-01", "999.99" });
+
+            dt2.TableName = "DataTableUploadDestinationTests";
+
+            destination.ProcessPipelineData(dt1, toConsole, token);
+
+            Assert.AreEqual("bit", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType.SQLType);
+
+            destination.ProcessPipelineData(dt2, toMemory, token);
+
+            Assert.IsTrue(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column ")));
+
+            destination.Dispose(toConsole, null);
+            Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.AreEqual(2, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
+
+            var tt = db.Server.GetQuerySyntaxHelper().TypeTranslater;
+
+            Assert.AreEqual(
+
+                //if all we got are nulls we should have a DateTime otherwise we had 1/true so the only usable data type is string 
+                giveNullValuesOnly ? typeof(DateTime) : typeof(string),
+
+                tt.GetCSharpTypeForSQLDBType(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType.SQLType));
+        }
+
+        /// <summary>
+        /// Tests the systems ability to change live table datatypes during bulk insert to accomodate novel data
+        /// 
+        /// <para>This test set passes v1 in the first batch which determines the initial Type of the database table.  Then v2 is passed in the next batch
+        /// which will (in most cases) require an ALTER of the live table to accomodate the wider datatype.</para>
+        /// </summary>
+        /// <param name="dbType">The DBMS to test</param>
+        /// <param name="v1">The row value to send in batch 1</param>
+        /// <param name="v2">The row value to send in batch 2 (after table creation)</param>
+        /// <param name="expectedTypeForBatch1">The Type you expect to be used to store the v1</param>
+        /// <param name="expectedTypeForBatch2">The Type you expect after ALTER to support all values seen up till now (i.e. v1) AND v2</param>
+        [TestCase(DatabaseType.MYSQLServer,null,"235", typeof(bool),typeof(int))]
+        [TestCase(DatabaseType.MYSQLServer, "123", "2001-01-01 12:00:00" ,typeof(int), typeof(string))] //123 cannot be converted to date so it becomes string
+        [TestCase(DatabaseType.MYSQLServer, "2001-01-01", "2001-01-01 12:00:00" ,  typeof(DateTime), typeof(DateTime) )]
+        [TestCase(DatabaseType.MYSQLServer, "2001-01-01", "omg", typeof(DateTime), typeof(string))]
+
+        [TestCase(DatabaseType.MicrosoftSQLServer, null, "235", typeof(bool), typeof(int))]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "123", "2001-01-01 12:00:00", typeof(int), typeof(string))] //123 cannot be converted to date so it becomes string
+        [TestCase(DatabaseType.MicrosoftSQLServer, "2001-01-01", "2001-01-01 12:00:00", typeof(DateTime), typeof(DateTime))]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "2001-01-01", "omg", typeof(DateTime), typeof(string))]
+        public void TwoBatch_MiscellaneousTest(DatabaseType dbType, string v1,string v2,Type expectedTypeForBatch1,Type expectedTypeForBatch2)
+        {
+            var token = new GracefulCancellationToken();
+            DiscoveredDatabase db = GetCleanedServer(dbType);
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+            var toMemory = new ToMemoryDataLoadEventListener(true);
+
+            DataTableUploadDestination destination = new DataTableUploadDestination();
+            destination.PreInitialize(db, toConsole);
+            destination.AllowResizingColumnsAtUploadTime = true;
+
+            DataTable dt1 = new DataTable();
+            dt1.Columns.Add("TestedCol", typeof(string));
+            dt1.Rows.Add(new[] { v1 });
+
+            if (v1 != null && v2 != null)
+                dt1.PrimaryKey = dt1.Columns.Cast<DataColumn>().ToArray();
+
+            dt1.TableName = "DataTableUploadDestinationTests";
+
+            DataTable dt2 = new DataTable();
+            dt2.Columns.Add("TestedCol", typeof(string));
+
+            dt2.Rows.Add(new[] { v2 });
+            dt2.TableName = "DataTableUploadDestinationTests";
+
+            var tt = db.Server.GetQuerySyntaxHelper().TypeTranslater;
+            var tbl = db.ExpectTable("DataTableUploadDestinationTests");
+
+            try
+            {
+                destination.ProcessPipelineData(dt1, toConsole, token);
+                Assert.AreEqual(expectedTypeForBatch1,
+                    tt.GetCSharpTypeForSQLDBType(tbl.DiscoverColumn("TestedCol").DataType.SQLType));
+
+                destination.ProcessPipelineData(dt2, toMemory, token);
+                destination.Dispose(toConsole, null);
+            }
+            catch(Exception ex)
+            {
+                destination.Dispose(toConsole, ex);
+                throw;
+            }
+            
+            Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.AreEqual(2, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
+
+            var colAfter = tbl.DiscoverColumn("TestedCol");
+
+            Assert.AreEqual(v1 != null && v2 != null,colAfter.IsPrimaryKey);
+
+            Assert.AreEqual(expectedTypeForBatch2, tt.GetCSharpTypeForSQLDBType(colAfter.DataType.SQLType));
+        }
+        #endregion
     }
 }
