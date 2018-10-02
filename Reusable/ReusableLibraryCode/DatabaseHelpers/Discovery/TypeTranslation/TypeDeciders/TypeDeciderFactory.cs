@@ -23,6 +23,8 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeci
                 new IntTypeDecider(),
                 new DecimalTypeDecider(),
 
+                new NeverGuessTheseTypeDecider(),
+
                 new TimeSpanTypeDecider(),
                 new DateTimeTypeDecider(),
             };

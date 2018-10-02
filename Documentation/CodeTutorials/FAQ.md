@@ -1,6 +1,7 @@
 # Frequently Asked Questions
 ## Table of contents
 1. [Can RDMP Load UnTyped Data?](#untyped)
+1. [How does RDMP handle / translate untyped, C# and Database Types](#typetranslation)
 1. [How do I stop some nodes being reordered in RDMPCollectionUIs?](#reorder)
 2. [How do I add new nodes to RDMPCollectionUIs?](#addNewNodes)
 3. [How do platform databases / database objects work?](#databaseObjects)
@@ -12,9 +13,11 @@
 
 <a name="untyped"></a>
 ### Can RDMP Load UnTyped Data?
-Yes, determining database types from untyped data (e.g. CSV) is a core feature.
+Yes, [determining database types from untyped data (e.g. CSV)](./DataTableUpload.md) is a core feature.
 
-https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/DataTableUpload.md
+<a name="typetranslation"></a>
+### How does RDMP handle / translate untyped, C# and Database Types?
+The [TypeTranslation namespace handles this](./TypeTranslation.md).
 
 <a name="reorder"></a>
 ### How do I stop some nodes being reordered in RDMPCollectionUIs?

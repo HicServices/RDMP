@@ -314,6 +314,7 @@
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QueryComponent.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\QuerySyntaxHelperFactory.cs" />
     <Compile Include="DatabaseHelpers\Discovery\QuerySyntax\TopXResponse.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\BoolTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DateTimeTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DecideTypesForStrings.cs" />
@@ -324,6 +325,7 @@
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\ITypeTranslater.cs" />
     <Compile Include="DatabaseHelpers\Discovery\MySql\MySqlTypeTranslater.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\IntTypeDecider.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\NeverGuessedTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TimeSpanTypeDecider.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeCompatibilityGroup.cs" />
     <Compile Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeDeciderFactory.cs" />
@@ -409,6 +411,7 @@
       <LastGenOutput>DatabaseProviderIcons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
