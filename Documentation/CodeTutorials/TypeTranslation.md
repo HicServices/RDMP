@@ -10,7 +10,7 @@ RDMP has a comprehensive Type translation layer between C# Types (e.g. `System.S
 ![DataTableUploadDiagram](Images/TypeTranslation/TranslationDiagram.png)
 
 This functionality is vital for consistently achieving:
-- [Loading untyped data](./DataTableUpload) (e.g. CSV)
+- [Loading untyped data](./DataTableUpload.md) (e.g. CSV)
 - Moving data between database provider types (e.g. read all records from an Sql Server table and create a new table in MySql to store the results)
 - Scripting table schema from one dbms and creating it in another
 - Writing cross platform tests without having to worry about specific provider datatypes
