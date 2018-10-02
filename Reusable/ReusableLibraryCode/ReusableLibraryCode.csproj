@@ -381,7 +381,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DatabaseHelpers\DatabaseAccess.cd" />
-    <None Include="DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeDeciders.cd" />
+    <None Include="DatabaseHelpers\Discovery\TypeTranslation\TypeTranslation.cd" />
     <None Include="packages.config" />
     <None Include="ReusableLibraryCode.snk" />
   </ItemGroup>
