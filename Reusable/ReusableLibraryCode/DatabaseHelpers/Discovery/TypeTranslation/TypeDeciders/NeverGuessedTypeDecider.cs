@@ -3,7 +3,7 @@
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders
 {
     /// <summary>
-    /// TypeDecider for types that we should never assign to strings but need to support for CurrentEstimate
+    /// DecideTypesForStrings for types that we should never assign to strings but need to support for CurrentEstimate
     /// </summary>
     class NeverGuessTheseTypeDecider : DecideTypesForStrings
     {
