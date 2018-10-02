@@ -15,6 +15,43 @@ namespace DataExportLibrary.Tests
             _translater = new MicrosoftSQLTypeTranslater();
 
         }
+
+        [Test]
+        public void TestDatatypeComputer_IntToFloat()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue("12");
+            
+            Assert.AreEqual(typeof(int),t.CurrentEstimate);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(2, t.DecimalSize.NumbersBeforeDecimalPlace);
+
+            t.AdjustToCompensateForValue("0.1");
+
+            Assert.AreEqual(typeof(decimal), t.CurrentEstimate);
+            Assert.AreEqual(1, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(2, t.DecimalSize.NumbersBeforeDecimalPlace);
+        }
+
+
+        [Test]
+        public void TestDatatypeComputer_IntToDate()
+        {
+            DataTypeComputer t = new DataTypeComputer();
+            t.AdjustToCompensateForValue("12");
+
+            Assert.AreEqual(typeof(int), t.CurrentEstimate);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(2, t.DecimalSize.NumbersBeforeDecimalPlace);
+            Assert.AreEqual(2, t.Length);
+
+            t.AdjustToCompensateForValue("2001-01-01");
+
+            Assert.AreEqual(typeof(string), t.CurrentEstimate);
+            Assert.AreEqual(null, t.DecimalSize.NumbersAfterDecimalPlace);
+            Assert.AreEqual(10, t.Length);
+        }
+
         [Test]
         public void TestDatatypeComputer_decimal()
         {
@@ -559,53 +596,5 @@ namespace DataExportLibrary.Tests
             t.AdjustToCompensateForValue(randomCrud);
             Assert.AreEqual(typeof(string), t.CurrentEstimate);
         }
-
-
-        [TestCase("bigint")]
-        [TestCase("binary")]
-        [TestCase("bit")]
-        [TestCase("char")]
-        [TestCase("date")]
-        [TestCase("datetime")]
-        [TestCase("datetime2")]
-        [TestCase("datetimeoffset")]
-        [TestCase("decimal")]
-        [TestCase("varbinary(max)")]
-        [TestCase("float")]
-        [TestCase("image")]
-        [TestCase("int")]
-        [TestCase("money")]
-        [TestCase("nchar")]
-        [TestCase("ntext")]
-        [TestCase("numeric")]
-        [TestCase("nvarchar")]
-        [TestCase("real")]
-        [TestCase("rowversion")]
-        [TestCase("smalldatetime")]
-        [TestCase("smallint")]
-        [TestCase("smallmoney")]
-        [TestCase("text")]
-        [TestCase("time")]
-        [TestCase("timestamp")]
-        [TestCase("tinyint")]
-        [TestCase("uniqueidentifier")]
-        [TestCase("varbinary")]
-        [TestCase("varchar")]
-        [TestCase("xml")]
-        public void TestIsKnownType(string sqlType)
-        {
-            var tt = new MicrosoftSQLTypeTranslater();
-            var t = tt.GetCSharpTypeForSQLDBType(sqlType);
-
-            Assert.IsNotNull(t);
-        }
-
-        [TestCase("sql_variant")]
-        public void TestNotSupportedTypes(string sqlType)
-        {
-            var tt = new MicrosoftSQLTypeTranslater();
-            Assert.Throws<NotSupportedException>(() => tt.GetCSharpTypeForSQLDBType(sqlType));
-        }
-
     }
 }

@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Strings of unknown Type ==============&gt; Type C# decisions &lt;==============">
+    <Position X="0.5" Y="0.5" Height="0.813" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Manual Column Creation (either from C# Types or explicit database SQL type string)">
+    <Position X="0.5" Y="2.771" Height="0.846" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Translation layer between C# Types and Database Types">
+    <Position X="0.5" Y="6.25" Height="0.708" Width="2.023" />
+  </Comment>
+  <Comment CommentText="Discovery of columns already existing in the database">
+    <Position X="0.5" Y="9.375" Height="0.562" Width="2.023" />
+  </Comment>
+  <Comment CommentText="All strings are represented with one of the following (or left as System.String).">
+    <Position X="9.25" Y="7.25" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Fallback compatibility between types e.g. when DataTypeComputer sees &quot;1&quot; followed by &quot;1.1&quot;.">
+    <Position X="11.704" Y="3.652" Height="0.918" Width="1.7" />
+  </Comment>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.DataTypeComputer" Collapsed="true">
+    <Position X="2.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>CAABASAARAAgAAAAAAAAAgRAAAAACAgAIAAgAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\DataTypeComputer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_typeDeciders" />
+      <Field Name="DecimalSize" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders.TypeDeciderFactory" Collapsed="true">
+    <Position X="5.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAABEAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeDeciderFactory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="Dictionary" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders.BoolTypeDecider" Collapsed="true">
+    <Position X="9" Y="3.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\BoolTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders.DateTimeTypeDecider" Collapsed="true">
+    <Position X="9" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DateTimeTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders.DecideTypesForStrings" Collapsed="true">
+    <Position X="8.75" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAgAAEAAAAAAAAAAAEBAAAAAAAAAAAAAAgAAAAAAgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DecideTypesForStrings.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders.DecimalTypeDecider" Collapsed="true">
+    <Position X="9" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\DecimalTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders.IntTypeDecider" Collapsed="true">
+    <Position X="9" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\IntTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders.TimeSpanTypeDecider" Collapsed="true">
+    <Position X="9" Y="6.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TimeSpanTypeDecider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeTranslater" Collapsed="true">
+    <Position X="5.25" Y="7.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AkAAECgSEAAsgAgJEAAQIACAADAFADAACgISACCAdgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeTranslater.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft.MicrosoftSQLTypeTranslater" Collapsed="true">
+    <Position X="3" Y="8.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAEAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\Microsoft\MicrosoftSQLTypeTranslater.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.MySqlTypeTranslater" Collapsed="true">
+    <Position X="5.5" Y="8.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\MySql\MySqlTypeTranslater.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle.OracleTypeTranslater" Collapsed="true">
+    <Position X="8" Y="8.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAEAAAAAAIEAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\Oracle\OracleTypeTranslater.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DecimalSize" Collapsed="true">
+    <Position X="5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQBAAAAAAAAAAgACgAIAAAAAAAAAAIAAAAABAAAAEAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\DecimalSize.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntaxHelper" Collapsed="true">
+    <Position X="2.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEIYIIACGIAASAAAgAAAAAAIAAAkA5CAkCAAABFiAZk=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntaxHelper.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="TypeTranslater" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DatabaseColumnRequest">
+    <Position X="2.5" Y="2.75" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAQACAAAAAAgABAKAAAABAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\DatabaseColumnRequest.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="TypeRequested" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.DatabaseTypeRequest">
+    <Position X="6.25" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAABAAAAAAgAEAAAAACAAAAIACAAAAAAAAAiA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\DatabaseTypeRequest.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DecimalPlacesBeforeAndAfter" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredColumn">
+    <Position X="2.75" Y="9.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AARAIAAAAAIAAEAEgBAAQAAAABwAAACAAAAAAAACBAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\DiscoveredColumn.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_querySyntaxHelper" />
+      <Property Name="DataType" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredDataType">
+    <Position X="5.75" Y="9.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAEkAFAAAAAAAAAAIAAAIAACAEAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\DiscoveredDataType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders.IDecideTypesForStrings">
+    <Position X="8.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAgAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\IDecideTypesForStrings.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="CompatibilityGroup" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.ITypeTranslater" Collapsed="true">
+    <Position X="5.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgBEAAAIAAAACAAACAAAAAAAAAABgA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\ITypeTranslater.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.IQuerySyntaxHelper" Collapsed="true">
+    <Position X="2.75" Y="7" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AEIQIIAAEIAACAAAAAAAAAAIAAAkAxCAEAAAAABgAYg=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\QuerySyntax\IQuerySyntaxHelper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders.TypeCompatibilityGroup">
+    <Position X="11.5" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAEAAAA=</HashCode>
+      <FileName>DatabaseHelpers\Discovery\TypeTranslation\TypeDeciders\TypeCompatibilityGroup.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
