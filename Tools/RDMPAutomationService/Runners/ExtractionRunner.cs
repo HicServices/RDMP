@@ -98,7 +98,7 @@ namespace RDMPAutomationService.Runners
             var datasetCommand = runnable as ExtractDatasetCommand;
 
             var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, _dataLoadInfo);
-            var fork = new ForkDataLoadEventListener(logging,listener);
+            var fork = new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand));
 
             if(globalCommand != null)
             {
@@ -252,6 +252,28 @@ namespace RDMPAutomationService.Runners
                 return true;
 
             return false;
+        }
+    }
+
+    public class ElevateStateListener : IDataLoadEventListener
+    {
+        private readonly ExtractCommand extractCommand;
+        
+        public ElevateStateListener(ExtractCommand extractCommand)
+        {
+            this.extractCommand = extractCommand;
+        }
+
+        public void OnNotify(object sender, NotifyEventArgs e)
+        {
+            if (e.ProgressEventType == ProgressEventType.Warning)
+                extractCommand.ElevateState(ExtractCommandState.Warning);
+            if (e.ProgressEventType == ProgressEventType.Error)
+                extractCommand.ElevateState(ExtractCommandState.Crashed);
+        }
+
+        public void OnProgress(object sender, ProgressEventArgs e)
+        {
         }
     }
 }
