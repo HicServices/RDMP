@@ -999,7 +999,7 @@ namespace CatalogueLibrary.Providers
                         _descendancyDictionary.Remove(o);
                     //the new one is marked BetterRouteExists so just throw away the new one
                     else if (list.BetterRouteExists)
-                        return;
+                        continue;
                     //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
                     else if (list.NewBestRoute && !collision.NewBestRoute)
                         _descendancyDictionary.Remove(o);
