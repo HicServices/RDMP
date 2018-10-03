@@ -206,12 +206,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             
             //for every extractable column in the Catalogue
-            foreach (var extractionInformation in datasetCommand.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+            foreach (var extractionInformation in datasetCommand.ColumnsToExtract.OfType<ExtractionInformation>())//.GetAllExtractionInformation(ExtractionCategory.Any))
             {
                 var catItem = extractionInformation.CatalogueItem;
 
                 //if we do not know the data type or the ei is a transform
-                if (catItem == null || catItem.ColumnInfo == null || extractionInformation.IsProperTransform())
+                if (catItem == null || catItem.ColumnInfo == null)
                     continue;
 
                 //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
