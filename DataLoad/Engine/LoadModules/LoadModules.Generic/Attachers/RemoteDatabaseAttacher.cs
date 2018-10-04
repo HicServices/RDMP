@@ -9,6 +9,7 @@ using DataLoadEngine.DataFlowPipeline.Destinations;
 using DataLoadEngine.DataFlowPipeline.Sources;
 using DataLoadEngine.Job;
 using HIC.Logging;
+using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
@@ -23,8 +24,7 @@ namespace LoadModules.Generic.Attachers
     public class RemoteDatabaseAttacher: Attacher, IPluginAttacher
     {
         public RemoteDatabaseAttacher(): base(true)
-        {
-            
+        {   
         }
 
         [DemandsInitialization("The DataSource to connect to in order to read data.", Mandatory=true)]
@@ -40,8 +40,7 @@ namespace LoadModules.Generic.Attachers
         }
 
         public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-        {
-            
+        {   
         }
 
         public override ExitCodeType Attach(IDataLoadJob job)
@@ -56,14 +55,17 @@ namespace LoadModules.Generic.Attachers
             var dbFrom = RemoteSource.Discover(DataAccessContext.DataLoad);
 
             var remoteTables = dbFrom.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
-            var loadables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).Select(t => t.GetRuntimeName()).ToArray();
+            var loadables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).ToArray();
 
-            foreach (var table in loadables)
+            foreach (var tableInfo in loadables)
             {
+                var table = tableInfo.GetRuntimeName();
                 if (!remoteTables.Contains(table))
                     throw new Exception("Loadable table " + table + " was NOT found on the remote DB!");
 
-                sql = "Select * from " + table;
+                var allColumns = tableInfo.ColumnInfos.Where(ci => !ci.GetRuntimeName().StartsWith("hic_"));
+
+                sql = "SELECT " + String.Join(",", allColumns) + " FROM " + table;
 
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to execute SQL:" + Environment.NewLine + sql));
 
