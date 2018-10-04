@@ -55,6 +55,11 @@ namespace DataExportLibrary.Repositories
             
         }
 
+        protected override bool IsCompatibleType(Type type)
+        {
+            return typeof (DatabaseEntity).IsAssignableFrom(type);
+        }
+
         public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
         {
             var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();

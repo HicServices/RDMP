@@ -120,6 +120,11 @@ namespace DataQualityEngine.Data
             return _constructor.ConstructIMapsDirectlyToDatabaseObject(t,this, reader);
         }
 
+        protected override bool IsCompatibleType(Type type)
+        {
+            return typeof(DatabaseEntity).IsAssignableFrom(type);
+        }
+
         public bool HasAnyEvaluations(Catalogue catalogue)
         {
             using (var con = GetConnection())
