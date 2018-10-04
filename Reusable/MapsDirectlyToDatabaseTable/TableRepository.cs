@@ -1009,8 +1009,15 @@ namespace MapsDirectlyToDatabaseTable
                     .Where(
                         t =>
                             typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface &&
-                            !t.Name.Contains("Spontaneous")).ToArray();
+                            !t.Name.Contains("Spontaneous")&&IsCompatibleType(t)).ToArray();
         }
 
+        /// <summary>
+        /// Returns True if the type is one for objects that are held in the database.  Types will come from your repository assembly
+        /// and will include only <see cref="IMapsDirectlyToDatabaseTable"/> Types that are not abstract/interfaces
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected abstract bool IsCompatibleType(Type type);
     }
 }
