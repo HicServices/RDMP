@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
@@ -12,7 +10,6 @@ using DataLoadEngine.Job;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Rhino.Mocks;
 using Tests.Common;
 

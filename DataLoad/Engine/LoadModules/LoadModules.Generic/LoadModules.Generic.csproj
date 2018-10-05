@@ -249,6 +249,7 @@
     <Compile Include="Mutilators\BackupDatabaseMutilation.cs" />
     <Compile Include="Mutilators\Coalescer.cs" />
     <Compile Include="Mutilators\Distincter.cs" />
+    <Compile Include="Mutilators\MatchingTablesMutilator.cs" />
     <Compile Include="Mutilators\PrematureLoadEndCondition.cs" />
     <Compile Include="Mutilators\Dilution\Dilution.cs" />
     <Compile Include="Mutilators\Dilution\DilutionOperationFactory.cs" />
