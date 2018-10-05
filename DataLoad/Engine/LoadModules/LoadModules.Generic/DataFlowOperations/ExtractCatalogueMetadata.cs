@@ -2,7 +2,6 @@
 using System.Data;
 using System.IO;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.ExtractionTime;
@@ -10,7 +9,7 @@ using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Sharing.Dependency.Gathering;
+using Sharing.CommandExecution;
 
 namespace LoadModules.Generic.DataFlowOperations
 {
@@ -40,16 +39,15 @@ namespace LoadModules.Generic.DataFlowOperations
             {
                 var catalogue = extractDatasetCommand.Catalogue;
             
-                var sourceFolder = _request.Configuration.Project.ExtractionDirectory;
+                var sourceFolder = _request.GetExtractionDirectory();
                 if (sourceFolder == null)
                     throw new Exception("Could not find Source Folder. DOes the project have an Extraction Directory defined?");
 
-                var outputFolder = new DirectoryInfo(sourceFolder).CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
+                var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
+                var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, toProcess.TableName + ".sd"));
 
-                var _shareManager = new ShareManager(extractDatasetCommand.RepositoryLocator);
-
-                var _gatherer = new Gatherer(extractDatasetCommand.RepositoryLocator);
-                
+                var cmd = new ExecuteCommandExportObjectsToFile(extractDatasetCommand.RepositoryLocator, catalogue, outputFile);
+                cmd.Execute();
             }
             return toProcess;
         }
