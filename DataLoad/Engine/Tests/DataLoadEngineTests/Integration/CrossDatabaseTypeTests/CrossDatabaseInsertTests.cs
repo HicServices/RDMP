@@ -33,7 +33,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle, 1.5)]
         public void CreateTableAndInsertAValue_ColumnOverload(DatabaseType type, object value)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
             var tbl = db.CreateTable("InsertTable",
                 new []
                 {
@@ -59,7 +59,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle, 1.5)]
         public void CreateTableAndInsertAValue_StringOverload(DatabaseType type, object value)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
             var tbl = db.CreateTable("InsertTable",
                 new[]
                 {
@@ -83,7 +83,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle)]
         public void CreateTableAndInsertAValue_ReturnsIdentity(DatabaseType type)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
             var tbl = db.CreateTable("InsertTable",
                 new[]
                 {

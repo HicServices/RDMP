@@ -19,7 +19,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle)]
         public void BulkInsert_MixedCase(DatabaseType type)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
 
             var tbl = db.CreateTable("Test", new []
             {
@@ -45,7 +45,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle)]
         public void UnmatchedColumnsBulkInsertTest_UsesDefaultValues_Passes(DatabaseType type)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
 
             var tbl = db.CreateTable("Test",new DatabaseColumnRequest[]
             {
@@ -79,7 +79,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         {
             const int numberOfRowsPerBatch = 100010;
 
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
 
             var tbl = db.CreateTable("Test", new DatabaseColumnRequest[]
             {
@@ -176,7 +176,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle)]
         public void NullPrimaryKey_ThrowsException(DatabaseType type)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
 
             var tbl = db.CreateTable("Test", new DatabaseColumnRequest[]
             {
@@ -197,7 +197,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle)]
         public void AutoIncrementPrimaryKey_Passes(DatabaseType type)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
 
             var tbl = db.CreateTable("Test", new DatabaseColumnRequest[]
             {

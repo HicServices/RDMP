@@ -61,7 +61,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         {
             var listener = new ThrowImmediatelyDataLoadEventListener();
             
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
 
             var data = GetTestDataTable();
 
