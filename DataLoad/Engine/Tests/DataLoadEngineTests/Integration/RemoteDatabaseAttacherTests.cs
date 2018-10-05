@@ -9,6 +9,7 @@ using HIC.Logging;
 using LoadModules.Generic.Attachers;
 using NUnit.Framework;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 using Tests.Common;
@@ -24,7 +25,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar)]
         public void TestRemoteDatabaseAttach(DatabaseType dbType,Scenario scenario)
         {
-            var db = GetCleanedServer(dbType);
+            var db = GetCleanedServer(dbType,true);
 
             DataTable dt = new DataTable();
 
@@ -95,12 +96,31 @@ namespace DataLoadEngineTests.Integration
 
             externalServer.DeleteInDatabase();
         }
-
+        
         public enum Scenario
         {
+            /// <summary>
+            /// Tests the ability of the DLE to load RAW columns from a remote database by identifying tables matching
+            /// by name and fetching all columns which are expected to be in RAW.
+            /// </summary>
             AllRawColumns,
+
+            /// <summary>
+            /// Tests the ability of the DLE to load RAW columns from a remote database by identifying tables matching
+            /// by name and fetching all columns using SELECT *.
+            /// </summary>
             AllColumns,
+
+            /// <summary>
+            /// Tests the behaviour of the system when there is a RAW only column which does not appear in the remote
+            /// database when using the <see cref="RemoteDatabaseAttacher.LoadRawColumnsOnly"/> option.
+            /// </summary>
             MissingPreLoadDiscardedColumn,
+
+            /// <summary>
+            /// Tests the behaviour of the system when there is a RAW only column which does not appear in the remote
+            /// database but the mode fetch mode is SELECT *
+            /// </summary>
             MissingPreLoadDiscardedColumnButSelectStar
         }
     }

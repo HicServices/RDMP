@@ -351,19 +351,46 @@ delete from {1}..Project
         
         HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
 
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null)
+        /// <summary>
+        /// Gets an empty database on the test server of the appropriate DBMS
+        /// </summary>
+        /// <param name="type">The DBMS you want a server of (a valid connection string must exist in TestDatabases.txt)</param>
+        /// <param name="dbnName">null for default test database name (recommended unless you are testing moving data from one database to another on the same test server)</param>
+        /// <param name="justDropTablesIfPossible">Determines behaviour when the test database already exists.  False to drop and recreate it. True to just drop tables (faster)</param>
+        /// <returns></returns>
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null, bool justDropTablesIfPossible = false)
         {
             if (dbnName == null)
                 dbnName = DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName();
 
             DiscoveredServer wc1;
             DiscoveredDatabase wc2;
-            var toReturn =  GetCleanedServer(type, dbnName, out wc1, out wc2);
+            var toReturn =  GetCleanedServer(type, dbnName, out wc1, out wc2,justDropTablesIfPossible);
             forCleanup.Add(toReturn);
             return toReturn;
         }
 
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type,string dbnName, out DiscoveredServer server, out DiscoveredDatabase database)
+        /// <summary>
+        /// Gets an empty database on the test server of the appropriate DBMS
+        /// </summary>
+        /// <param name="type">The DBMS you want a server of (a valid connection string must exist in TestDatabases.txt)</param>
+        /// <param name="justDropTablesIfPossible">Determines behaviour when the test database already exists.  False to drop and recreate it. True to just drop tables (faster)</param>
+        /// <returns></returns>
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, bool justDropTablesIfPossible)
+        {
+            return GetCleanedServer(type, null, justDropTablesIfPossible);
+        }
+
+        /// <summary>
+        /// Gets an empty database on the test server of the appropriate DBMS
+        /// </summary>
+        /// <param name="type">The DBMS you want a server of (a valid connection string must exist in TestDatabases.txt)</param>
+        /// <param name="dbnName">null for default test database name (recommended unless you are testing moving data from one database to another on the same test server)</param>
+        /// <param name="server"></param>
+        /// <param name="database"></param>
+        /// <param name="justDropTablesIfPossible">Determines behaviour when the test database already exists.  False to drop and recreate it. True to just drop tables (faster)</param>
+        /// <returns></returns>
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName, out DiscoveredServer server, out DiscoveredDatabase database, bool justDropTablesIfPossible = false)
         {
             switch (type)
             {
@@ -391,7 +418,15 @@ delete from {1}..Project
 
             database = server.ExpectDatabase(dbnName);
 
-            database.Create(true);
+            if (justDropTablesIfPossible && database.Exists())
+            {
+                foreach (var t in database.DiscoverTables(true))
+                    t.Drop();
+                foreach (var t in database.DiscoverTableValuedFunctions())
+                    t.Drop();
+            }
+            else
+                database.Create(true);
 
             server.ChangeDatabase(dbnName);
 
