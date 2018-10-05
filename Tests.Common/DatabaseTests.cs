@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -429,6 +430,46 @@ delete from {1}..Project
 
             return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
         }
+
+        protected void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
+        {
+            if (resultTable.Columns.Count != rowObjects.Length)
+                Assert.Fail("VerifyRowExist failed, resultTable had " + resultTable.Columns.Count + " while you expected " + rowObjects.Length + " columns");
+
+            foreach (DataRow r in resultTable.Rows)
+            {
+                bool matchAll = true;
+                for (int i = 0; i < rowObjects.Length; i++)
+                {
+                    if (!AreBasicallyEquals(rowObjects[i], r[i]))
+                        matchAll = false;
+                }
+
+                //found a row that matches on all params
+                if (matchAll)
+                    return;
+            }
+
+            Assert.Fail("VerifyRowExist failed, did not find expected rowObjects (" + string.Join(",", rowObjects.Select(o => "'" + o + "'")) + ") in the resultTable");
+        }
+
+        protected bool AreBasicallyEquals(object o, object o2)
+        {
+            //if they are legit equals
+            if (Equals(o, o2))
+                return true;
+
+            //if they are null but basically the same
+            var oIsNull = o == null || o == DBNull.Value || o.ToString().Equals("0");
+            var o2IsNull = o2 == null || o2 == DBNull.Value || o2.ToString().Equals("0");
+
+            if (oIsNull || o2IsNull)
+                return oIsNull == o2IsNull;
+
+            //they are not null so tostring them deals with int vs long etc that DbDataAdapters can be a bit flaky on
+            return string.Equals(o.ToString(), o2.ToString());
+        }
+
 
         [Flags]
         public enum TestLowPrivilegePermissions 

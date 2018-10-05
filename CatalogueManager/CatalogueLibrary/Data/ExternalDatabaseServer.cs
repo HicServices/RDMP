@@ -236,6 +236,7 @@ namespace CatalogueLibrary.Data
             Database = discoveredDatabase.GetRuntimeName();
             Username = discoveredDatabase.Server.ExplicitUsernameIfAny;
             Password = discoveredDatabase.Server.ExplicitPasswordIfAny;
+            DatabaseType = discoveredDatabase.Server.DatabaseType;
 
             if(save)
                 SaveToDatabase();
