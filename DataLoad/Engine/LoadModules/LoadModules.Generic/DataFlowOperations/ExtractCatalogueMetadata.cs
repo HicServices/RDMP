@@ -50,6 +50,7 @@ namespace LoadModules.Generic.DataFlowOperations
                 var cmd = new ExecuteCommandExportObjectsToFile(extractDatasetCommand.RepositoryLocator, catalogue, outputFile);
                 cmd.Execute();
                 catalogue.RevertToDatabaseState();
+
             }
             return toProcess;
         }
