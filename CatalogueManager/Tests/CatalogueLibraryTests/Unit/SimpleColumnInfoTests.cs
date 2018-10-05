@@ -20,7 +20,7 @@ namespace CatalogueLibraryTests.Unit
         [TestCase("varchar(max)", int.MaxValue)]
         public void GetColumnLength(string type, int? expectedLength)
         {
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer,true);
             var t = db.CreateTable("MyTable", new[]
             {
                 new DatabaseColumnRequest("MyCol", type)

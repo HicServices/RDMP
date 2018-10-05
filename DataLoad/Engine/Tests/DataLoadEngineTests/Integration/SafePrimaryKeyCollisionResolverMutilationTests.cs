@@ -20,7 +20,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MYSQLServer, false)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_NoDifference_NoRecordsDeleted(DatabaseType dbType,bool bothNull)
         {
-            var db = GetCleanedServer(dbType);
+            var db = GetCleanedServer(dbType, true);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK");
@@ -61,7 +61,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MYSQLServer, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferNull_RecordsDeleted(DatabaseType dbType,bool preferNulls)
         {
-            var db = GetCleanedServer(dbType);
+            var db = GetCleanedServer(dbType, true);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK");
@@ -111,7 +111,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MYSQLServer, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
-            var db = GetCleanedServer(dbType);
+            var db = GetCleanedServer(dbType, true);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK");
@@ -164,7 +164,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MYSQLServer, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_Dates_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
-            var db = GetCleanedServer(dbType);
+            var db = GetCleanedServer(dbType, true);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK");
@@ -215,7 +215,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MYSQLServer, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_ComboKey_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
-            var db = GetCleanedServer(dbType);
+            var db = GetCleanedServer(dbType, true);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK1");

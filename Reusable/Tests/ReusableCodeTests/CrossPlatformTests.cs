@@ -28,7 +28,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MYSQLServer)]
         public void TestTableCreation(DatabaseType type)
         {
-            database = GetCleanedServer(type,_dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             var tbl = database.ExpectTable("CreatedTable");
             
@@ -104,7 +104,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.Oracle, "2007-01-01 00:00:00")]
         public void DateColumnTests_NoTime(DatabaseType type, object input)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type, true);
             var tbl = db.CreateTable("MyTable",new []{new DatabaseColumnRequest("MyDate",new DatabaseTypeRequest(typeof(DateTime)))});
 
             tbl.Insert(new Dictionary<string, object>() { { "MyDate", input } });
@@ -132,7 +132,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.Oracle, "00:00")]
         public void DateColumnTests_TimeOnly_Midnight(DatabaseType type, object input)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type, true);
             var tbl = db.CreateTable("MyTable", new[] { new DatabaseColumnRequest("MyTime", new DatabaseTypeRequest(typeof(TimeSpan))) });
 
             tbl.Insert(new Dictionary<string, object>() { { "MyTime", input } });
@@ -160,7 +160,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.Oracle, "13:11")]
         public void DateColumnTests_TimeOnly_Afternoon(DatabaseType type, object input)
         {
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type, true);
             var tbl = db.CreateTable("MyTable", new[] { new DatabaseColumnRequest("MyTime", new DatabaseTypeRequest(typeof(TimeSpan))) });
 
             tbl.Insert(new Dictionary<string, object>() { { "MyTime", input } });
@@ -221,7 +221,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MYSQLServer, "int", "0")]
         public void TypeConsensusBetweenDataTypeComputerAndDiscoveredTableTest(DatabaseType type, string datatType,string insertValue)
         {
-            database = GetCleanedServer(type,_dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             var tbl = database.ExpectTable("TestTableCreationStrangeTypology");
 
@@ -252,7 +252,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void ForeignKeyCreationTest(DatabaseType type)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             var tblParent = database.CreateTable("Parent", new[]
             {
@@ -319,7 +319,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
         public void ForeignKeyCreationTest_TwoColumns(DatabaseType type, bool cascadeDelete)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             var tblParent = database.CreateTable("Parent", new[]
             {
@@ -397,7 +397,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void CreateMaxVarcharColumns(DatabaseType type)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             var tbl = database.CreateTable("TestDistincting", new[]
             {
@@ -422,7 +422,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void CreateMaxVarcharColumnFromDataTable(DatabaseType type)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
             
             DataTable dt = new DataTable();
             dt.Columns.Add("MassiveColumn");
@@ -448,7 +448,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void CreateDateColumnFromDataTable(DatabaseType type)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("DateColumn");
@@ -466,7 +466,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void AddColumnTest(DatabaseType type)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             //create a single column table with primary key
             var tbl = database.CreateTable("TestDistincting", new[]
@@ -532,7 +532,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.Oracle)]
         public void ChangeDatabaseShouldNotAffectOriginalConnectionString_Test(DatabaseType type)
         {
-            var database1 = GetCleanedServer(type, _dbName, out server, out database);
+            var database1 = GetCleanedServer(type, _dbName, out server, out database, true);
             var stringBefore = database1.Server.Builder.ConnectionString;
 
             var database2 = database1.Server.ExpectDatabase("SomeOtherDb");
@@ -546,7 +546,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestDistincting(DatabaseType type)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             var tbl = database.CreateTable("TestDistincting",new []
             {
@@ -587,7 +587,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestIntDataTypes(DatabaseType type)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             var dt = new DataTable();
             dt.Columns.Add("MyCol"); ;
@@ -628,7 +628,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestFloatDataTypes(DatabaseType type)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             var dt = new DataTable();
             dt.Columns.Add("MyCol");;
@@ -667,7 +667,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer, "_-o-_", ":>0<:")]
         public void HorribleDatabaseAndTableNames(DatabaseType type,string horribleDatabaseName, string horribleTableName)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             database = server.ExpectDatabase(horribleDatabaseName);
             database.Create(true);
@@ -723,7 +723,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.MicrosoftSQLServer, "_-o-_", ":>0<:", "-_")]
         public void HorribleColumnNames(DatabaseType type, string horribleDatabaseName, string horribleTableName,string columnName)
         {
-            database = GetCleanedServer(type, _dbName, out server, out database);
+            database = GetCleanedServer(type, _dbName, out server, out database, true);
 
             database = server.ExpectDatabase(horribleDatabaseName);
             database.Create(true);
@@ -752,7 +752,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.Oracle)]
         public void CreateTable_AutoIncrementColumnTest(DatabaseType type)
         {
-            database = GetCleanedServer(type);
+            database = GetCleanedServer(type, true);
 
             var tbl =  database.CreateTable("MyTable", new[]
             {
@@ -793,7 +793,7 @@ namespace ReusableCodeTests
         [TestCase(DatabaseType.Oracle)]
         public void CreateTable_DefaultTest(DatabaseType type)
         {
-            database = GetCleanedServer(type);
+            database = GetCleanedServer(type, true);
 
             var tbl = database.CreateTable("MyTable", new[]
             {
@@ -831,7 +831,7 @@ namespace ReusableCodeTests
         //[TestCase(DatabaseType.Oracle, "BINARY_CI")] //Requires 12.2+ oracle https://www.experts-exchange.com/questions/29102764/SQL-Statement-to-create-case-insensitive-columns-and-or-tables-in-Oracle.html
         public void CreateTable_CollationTest(DatabaseType type,string collation)
         {
-            database = GetCleanedServer(type);
+            database = GetCleanedServer(type, true);
 
             var tbl = database.CreateTable("MyTable", new[]
             {

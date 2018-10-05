@@ -22,7 +22,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MYSQLServer)]
         public void TestDistincter_Duplicates(DatabaseType type)
         {
-            var db = GetCleanedServer(type, "TestCoalescer");
+            var db = GetCleanedServer(type, "TestCoalescer",true);
 
             int batchCount = 1000;
 
@@ -78,7 +78,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MYSQLServer)]
         public void TestDistincter_NoDuplicates(DatabaseType type)
         {
-            var db = GetCleanedServer(type, "TestCoalescer");
+            var db = GetCleanedServer(type, "TestCoalescer",true);
 
             int batchCount = 1000;
 

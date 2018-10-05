@@ -92,7 +92,7 @@ namespace CohortManagerTests
             for (int i = 0; i < 100000; i++)
                 dt.Rows.Add(i);
 
-            db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            db = GetCleanedServer(DatabaseType.MicrosoftSQLServer,true);
             var tbl = db.CreateTable("CohortCompilerRunnerTestsTable", dt);
 
             var cata = Import(tbl);

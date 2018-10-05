@@ -22,7 +22,7 @@ namespace ReusableCodeTests
             dt.Rows.Add("a2", null, null);
             dt.Rows.Add("a3", null, null);
 
-            var db  = GetCleanedServer(databaseType);
+            var db = GetCleanedServer(databaseType, true);
 
             var tbl = db.CreateTable("Fish", dt);
 
@@ -53,7 +53,7 @@ namespace ReusableCodeTests
             dt.Rows.Add("a2", null, null);
             dt.Rows.Add("a3", "b2", null);
 
-            var db = GetCleanedServer(databaseType);
+            var db = GetCleanedServer(databaseType, true);
 
             var tbl = db.CreateTable("Fish", dt);
 
