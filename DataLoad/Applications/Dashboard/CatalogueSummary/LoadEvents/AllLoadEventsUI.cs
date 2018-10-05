@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using HIC.Logging;
-using HIC.Logging.PastEvents;
 using ReusableUIComponents;
 
 namespace Dashboard.CatalogueSummary.LoadEvents
@@ -21,38 +15,24 @@ namespace Dashboard.CatalogueSummary.LoadEvents
     /// </summary>
     public partial class AllLoadEventsUI : AllLoadEventsUI_Design
     {
-        
         //constructor
         public AllLoadEventsUI()
         {
             InitializeComponent();
 
             liveLoads.IsTestServerInterrogation = false;
-            testLoads.IsTestServerInterrogation = true;
 
             AssociatedCollection = RDMPCollection.DataLoad;
         }
         
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
-            testLoads.ApplyFilter(tbFilter.Text);
             liveLoads.ApplyFilter(tbFilter.Text);
         }
 
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-
-            if (databaseObject.AreLiveAndTestLoggingDifferent())
-            {
-                if (!tabControl1.TabPages.Contains(tabPage2))
-                    tabControl1.TabPages.Add(tabPage2);
-
-                testLoads.SetDatabaseObject(activator, databaseObject);
-            }
-            else
-                tabControl1.TabPages.Remove(tabPage2);
-
             liveLoads.SetDatabaseObject(activator,databaseObject);
             
         }

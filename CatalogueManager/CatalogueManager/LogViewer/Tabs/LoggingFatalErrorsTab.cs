@@ -12,10 +12,5 @@ namespace CatalogueManager.LogViewer.Tabs
         {
             return LoggingTables.FatalError;
         }
-
-        protected override void FetchDataTable()
-        {
-            LoadDataTable(LogManager.GetTable(LoggingTables.FatalError, IDFilter.Run,TopX));
-        }
     }
 }

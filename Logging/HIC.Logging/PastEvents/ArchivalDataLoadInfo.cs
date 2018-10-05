@@ -42,7 +42,6 @@ namespace HIC.Logging.PastEvents
         }
         public string ToShortString()
         {
-
             var s = ToString();
             if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
                 return s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength) + "...";
@@ -50,7 +49,14 @@ namespace HIC.Logging.PastEvents
         }
         public override string ToString()
         {
-            return StartTime + " - " + (EndTime != null ? EndTime.ToString() : "<DidNotFinish>") + " - " + Description;
+            string elapsed = "";
+            if (EndTime != null)
+            {
+                var ts = EndTime.Value.Subtract(StartTime);
+                elapsed = " (" + ts.ToString(@"hh\:mm\:ss")+ ")";
+            }
+
+            return Description + "(ID="+ID +") - " + StartTime + " - " + (EndTime != null ? EndTime.ToString() : "<DidNotFinish>") + elapsed;
         }
 
     

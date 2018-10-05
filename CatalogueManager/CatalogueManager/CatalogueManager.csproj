@@ -992,7 +992,6 @@
     <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.Designer.cs">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LogViewer\LogViewerFilter.cs" />
     <Compile Include="LogViewer\Tabs\LoggingDataSourcesTab.cs">
       <SubType>UserControl</SubType>
     </Compile>

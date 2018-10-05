@@ -331,8 +331,9 @@ namespace CatalogueManager.LogViewer.Tabs
             return LoggingTables.None;
         }
 
-        protected virtual void FetchDataTable()
+        private void FetchDataTable()
         {
+            LoadDataTable(LogManager.GetTable(GetTableEnum(), IDFilter, TopX));
         }
 
         public void SelectRowWithID(int rowIDToSelect)

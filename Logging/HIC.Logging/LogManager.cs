@@ -73,37 +73,15 @@ namespace HIC.Logging
                 return tasks.ToArray();
             }
         }
-        
-        public DataTable GetTable(LoggingTables table, int? parentId, int? topX)
+
+        public DataTable GetTable(LoggingTables table, LogViewerFilter filter, int? topX)
         {
             string prefix = "";
-            string where = "";
+            string where = filter == null ? "": filter.GetWhereSql(table);
 
             if (topX.HasValue)
                 prefix = "TOP " + topX.Value;
-
-            if(parentId.HasValue)
-                switch (table)
-                {
-                    case LoggingTables.DataLoadTask:
-                        break;
-                    case LoggingTables.DataLoadRun:
-                        where = "where dataLoadTaskID=" + parentId.Value;
-                        break;
-
-                     //all these have the parent of dataLoadRun
-                    case LoggingTables.ProgressLog:
-                    case LoggingTables.FatalError:
-                    case LoggingTables.TableLoadRun:
-                        where = "where dataLoadRunID=" + parentId.Value;
-                        break;
-                    case LoggingTables.DataSource:
-                        where = "where tableLoadRunID=" + parentId.Value;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException("table");
-                }
-
+            
             return GetAsTable(string.Format("SELECT {0} * FROM " + table + " {1}", prefix, where));
         }
         

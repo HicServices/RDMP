@@ -28,58 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label3 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.liveLoads = new Dashboard.CatalogueSummary.LoadEvents.LoadEventsTreeView();
-            this.testLoads = new Dashboard.CatalogueSummary.LoadEvents.LoadEventsTreeView();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Alignment = System.Windows.Forms.TabAlignment.Bottom;
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(4, 23);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(798, 629);
-            this.tabControl1.TabIndex = 4;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.liveLoads);
-            this.tabPage1.Location = new System.Drawing.Point(4, 4);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(790, 603);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Live Data Loads";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.testLoads);
-            this.tabPage2.Location = new System.Drawing.Point(4, 4);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(790, 603);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Test Data Loads";
-            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(5, 6);
+            this.label3.Location = new System.Drawing.Point(3, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(64, 13);
             this.label3.TabIndex = 6;
@@ -97,46 +56,41 @@
             // 
             this.liveLoads.Dock = System.Windows.Forms.DockStyle.Fill;
             this.liveLoads.IsTestServerInterrogation = false;
-            this.liveLoads.Location = new System.Drawing.Point(3, 3);
+            this.liveLoads.Location = new System.Drawing.Point(0, 27);
             this.liveLoads.Name = "liveLoads";
-            this.liveLoads.Size = new System.Drawing.Size(784, 597);
-            this.liveLoads.TabIndex = 0;
+            this.liveLoads.Size = new System.Drawing.Size(805, 628);
+            this.liveLoads.TabIndex = 7;
             // 
-            // testLoads
+            // flowLayoutPanel1
             // 
-            this.testLoads.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.testLoads.IsTestServerInterrogation = false;
-            this.testLoads.Location = new System.Drawing.Point(3, 3);
-            this.testLoads.Name = "testLoads";
-            this.testLoads.Size = new System.Drawing.Size(784, 597);
-            this.testLoads.TabIndex = 1;
+            this.flowLayoutPanel1.Controls.Add(this.label3);
+            this.flowLayoutPanel1.Controls.Add(this.tbFilter);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(805, 27);
+            this.flowLayoutPanel1.TabIndex = 8;
             // 
             // AllLoadEventsUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.tbFilter);
+            this.Controls.Add(this.liveLoads);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "AllLoadEventsUI";
             this.Size = new System.Drawing.Size(805, 655);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbFilter;
         private LoadEventsTreeView liveLoads;
-        private LoadEventsTreeView testLoads;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 
 
     }
