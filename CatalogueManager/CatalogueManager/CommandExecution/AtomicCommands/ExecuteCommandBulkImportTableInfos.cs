@@ -66,11 +66,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             bool generateCatalogues = false;
 
-            if(!catalogues.Any())
-                if(MessageBox.Show("You have not imported any Share Definitions for Catalogues, would you like to try to guess Catalogues by Name?","Guess by name",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    catalogues.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues());
-                else if(MessageBox.Show("Would you like to generate new empty Catalogues instead?","Generate New Catalogues",MessageBoxButtons.YesNo)== DialogResult.Yes)
-                    generateCatalogues = true;
+            if (MessageBox.Show("Would you like to try to guess non-matching Catalogues by Name?", "Guess by name", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                catalogues.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues());
+            else if(MessageBox.Show("Would you like to generate empty Catalogues for non-matching tables instead?","Generate New Catalogues", MessageBoxButtons.YesNo)== DialogResult.Yes)
+                generateCatalogues = true;
             
             var married = new Dictionary<CatalogueItem, ColumnInfo>();
 
@@ -130,7 +129,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                     new ForwardEngineerCatalogue(ti, cis).ExecuteForwardEngineering();
             }
 
-            if (married.Any() &&MessageBox.Show("Found " + married.Count + " columns, make them all extractable?", "Make Extractable", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (married.Any() && MessageBox.Show("Found " + married.Count + " columns, make them all extractable?", "Make Extractable", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 foreach (var kvp in married)
                 {
                     //yup thats how we roll, the database is main memory!
