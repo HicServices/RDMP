@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataLoadEngine.Attachers;
@@ -9,11 +12,9 @@ using DataLoadEngine.DataFlowPipeline.Destinations;
 using DataLoadEngine.DataFlowPipeline.Sources;
 using DataLoadEngine.Job;
 using HIC.Logging;
-using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using DataTable = System.Data.DataTable;
 
 namespace LoadModules.Generic.Attachers
 {
@@ -32,6 +33,11 @@ namespace LoadModules.Generic.Attachers
 
         [DemandsInitialization("The length of time in seconds to allow for data to be completely read from the destination before giving up (0 for no timeout)")]
         public int Timeout { get; set; }
+
+        [DemandsInitialization(@"Determines how columns in the remote database are fetched and used to populate RAW tables of the same name.
+True - Fetch only the default columns that appear in RAW (e.g. skip hic_ columns)
+False - Fetch all columns in the remote table.  To use this option you will need ALTER statements in RAW scripts to make table(s) match the remote schema", DefaultValue=true)]
+        public bool LoadRawColumnsOnly { get; set; }
 
         public override void Check(ICheckNotifier notifier)
         {
@@ -54,7 +60,7 @@ namespace LoadModules.Generic.Attachers
 
             var dbFrom = RemoteSource.Discover(DataAccessContext.DataLoad);
 
-            var remoteTables = dbFrom.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
+            var remoteTables = new HashSet<string>(dbFrom.DiscoverTables(true).Select(t => t.GetRuntimeName()),StringComparer.CurrentCultureIgnoreCase);
             var loadables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).ToArray();
 
             foreach (var tableInfo in loadables)
@@ -63,9 +69,15 @@ namespace LoadModules.Generic.Attachers
                 if (!remoteTables.Contains(table))
                     throw new Exception("Loadable table " + table + " was NOT found on the remote DB!");
 
-                var allColumns = tableInfo.ColumnInfos.Where(ci => !ci.GetRuntimeName().StartsWith("hic_"));
-
-                sql = "SELECT " + String.Join(",", allColumns) + " FROM " + table;
+                if(LoadRawColumnsOnly)
+                {
+                    var rawColumns = LoadRawColumnsOnly ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw) : tableInfo.ColumnInfos;
+                    sql = "SELECT " + String.Join(",", rawColumns.Select(c=>c.GetRuntimeName(LoadStage.AdjustRaw))) + " FROM " + table;
+                }
+                else
+                {
+                    sql = "SELECT * FROM " + table;
+                }
 
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to execute SQL:" + Environment.NewLine + sql));
 
