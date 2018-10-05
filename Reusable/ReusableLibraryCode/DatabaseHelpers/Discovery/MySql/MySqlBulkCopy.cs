@@ -13,6 +13,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
     public class MySqlBulkCopy : BulkCopy
     {
+
+        public static int BulkInsertBatchTimeoutInSeconds = 0;
+
         public MySqlBulkCopy(DiscoveredTable targetTable, IManagedConnection connection) : base(targetTable, connection)
         {
             
@@ -84,6 +87,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
             var matchedColumns = GetMapping(dt.Columns.Cast<DataColumn>());
 
             MySqlCommand cmd = new MySqlCommand("", (MySqlConnection)Connection.Connection,(MySqlTransaction) Connection.Transaction);
+
+            if (BulkInsertBatchTimeoutInSeconds != 0)
+                cmd.CommandTimeout = BulkInsertBatchTimeoutInSeconds;
 
             string commandPrefix = string.Format("INSERT INTO {0}({1}) VALUES ", TargetTable.GetFullyQualifiedName(),string.Join(",", matchedColumns.Values.Select(c => "`" + c.GetRuntimeName() + "`")));
 
