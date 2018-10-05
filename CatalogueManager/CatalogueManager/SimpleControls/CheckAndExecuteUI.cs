@@ -222,7 +222,7 @@ namespace CatalogueManager.SimpleControls
                 btnRunChecks.Enabled = true;
                 
                 btnExecute.Enabled = false;
-                executeInAutomationServerUI1.Enabled = false;
+                executeInAutomationServerUI1.SetEnabled(false);
                 btnAbortLoad.Enabled = false;
                 return;
             }
@@ -241,13 +241,13 @@ namespace CatalogueManager.SimpleControls
                 //leave checks enabled and enable execute
                 btnRunChecks.Enabled = true;
                 btnExecute.Enabled = true;
-                executeInAutomationServerUI1.Enabled = true;
+                executeInAutomationServerUI1.SetEnabled(true);
             }
             else
             {
                 //load is underway!
                 btnExecute.Enabled = false;
-                executeInAutomationServerUI1.Enabled = false;
+                executeInAutomationServerUI1.SetEnabled(false);
                 btnRunChecks.Enabled = false;
 
                 //only thing we can do is abort
