@@ -215,6 +215,7 @@
     <Compile Include="DataFlowOperations\Aliases\AliasHandler.cs" />
     <Compile Include="DataFlowOperations\Aliases\AliasResolutionStrategy.cs" />
     <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasTableFetchException.cs" />
+    <Compile Include="DataFlowOperations\ExtractCatalogueMetadata.cs" />
     <Compile Include="DataFlowOperations\ReleaseMetadata.cs" />
     <Compile Include="DataFlowOperations\RowDeleter.cs" />
     <Compile Include="DataFlowOperations\TableVersionNamer.cs" />
