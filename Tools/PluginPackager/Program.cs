@@ -25,6 +25,12 @@ namespace PluginPackager
                 return -58;
             }
 
+            if (f.Extension != ".sln")
+            {
+                Console.WriteLine("SolutionFile must be a .sln file");
+                return -57;
+            }
+
             Packager p = new Packager(f, opts.ZipFileName, opts.SkipSourceCodeCollection,opts.Release);
             p.PackageUpFile(new ThrowImmediatelyCheckNotifier());
 
