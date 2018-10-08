@@ -326,7 +326,7 @@ left join
   run.dataLoadTaskID = task.ID
   where
 {0}
-  order by run.ID desc", whereText, MaxChildrenToFetch)
+  order by run.ID desc", whereText, MaxChildrenToFetch*10)
                     , con);
 
                 if (!string.IsNullOrWhiteSpace(dataTask))

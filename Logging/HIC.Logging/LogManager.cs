@@ -74,7 +74,15 @@ namespace HIC.Logging
             }
         }
 
-        public DataTable GetTable(LoggingTables table, LogViewerFilter filter, int? topX)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="filter"></param>
+        /// <param name="topX"></param>
+        /// <param name="sortDesc">True to sort descending (highest ID first).  False to sort ascending (lowest ID first)</param>
+        /// <returns></returns>
+        public DataTable GetTable(LoggingTables table, LogViewerFilter filter, int? topX, bool sortDesc)
         {
             string prefix = "";
             string where = filter == null ? "": filter.GetWhereSql(table);
@@ -82,7 +90,7 @@ namespace HIC.Logging
             if (topX.HasValue)
                 prefix = "TOP " + topX.Value;
             
-            return GetAsTable(string.Format("SELECT {0} * FROM " + table + " {1}", prefix, where));
+            return GetAsTable(string.Format("SELECT {0} * FROM " + table + " {1} ORDER BY ID " + (sortDesc? "Desc":"Asc"), prefix, where));
         }
         
         private DataTable GetAsTable(string sql)
