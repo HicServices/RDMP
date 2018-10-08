@@ -176,20 +176,19 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
         private void AddParameterToCollection(ParameterFoundAtLevel toAdd,List<ParameterFoundAtLevel> existingParameters)
         {
             //see if parameter if we already have one with the same name
-            if (existingParameters.Any(p => p.Parameter.ParameterName == toAdd.Parameter.ParameterName))
+            var duplicate = existingParameters.FirstOrDefault(p => p.Parameter.ParameterName.Equals(toAdd.Parameter.ParameterName,StringComparison.InvariantCultureIgnoreCase));
+            if (duplicate != null)
             {
-                ParameterFoundAtLevel duplicate = existingParameters.First(p => p.Parameter.ParameterName == toAdd.Parameter.ParameterName);
-                
                 //deal with duplicate paramater naming e.g. @startDate BUT: declared with 2 different types
                 if (
                     !toAdd.Parameter.ParameterSQL.Trim()
-                        .Equals(duplicate.Parameter.ParameterSQL.Trim(), StringComparison.InvariantCultureIgnoreCase))
+                        .Equals(duplicate.Parameter.ParameterSQL.Trim(), StringComparison.CurrentCultureIgnoreCase))
                     //to lower them so that we don't complain about 'AS VARCHAR(50)' vs 'as varchar(50)'
                     ThrowExceptionForParameterPair("Found multiple parameters called " + toAdd.Parameter + " but with differing SQL:" + toAdd.Parameter.ParameterSQL + " vs " + duplicate.Parameter.ParameterSQL, toAdd, duplicate);
 
 
                 //if values differ!
-                if (!string.Equals((duplicate.Parameter.Value ?? "").Trim(),(toAdd.Parameter.Value??"").Trim(),StringComparison.InvariantCultureIgnoreCase))
+                if (!string.Equals((duplicate.Parameter.Value ?? "").Trim(), (toAdd.Parameter.Value ?? "").Trim(), StringComparison.CurrentCultureIgnoreCase))
                 {
                     //if the duplicate (already existing) parameter is of a lower level then it can be discarded because it didn't have a dodgy type mismatch etc (see ThrowIfUnsuitable above)
                     if (duplicate.Level < toAdd.Level)
@@ -264,7 +263,7 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             foreach (ISqlParameter parameterToImport in toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo])
             {
                 //it does not already exist
-                if (!ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(p => p.ParameterName.Equals(parameterToImport.ParameterName)))
+                if (!ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(p => p.ParameterName.Equals(parameterToImport.ParameterName,StringComparison.CurrentCultureIgnoreCase)))
                     ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(parameterToImport); //import it 
                 
                 //Do not handle renaming here because it is likely the user doesn't even know this parameter exists as it is a tableinfo level one i.e. a default they declared when they first imported their table valued fuction (or there is a QueryLevel override anyway)
@@ -278,7 +277,7 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             foreach (ISqlParameter parameterToImport in toImport.GetFinalResolvedParametersList())
             {
                 string toImportParameterName = parameterToImport.ParameterName;
-                var existing = ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].SingleOrDefault(p => p.ParameterName.Equals(toImportParameterName));
+                var existing = ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].SingleOrDefault(p => p.ParameterName.Equals(toImportParameterName, StringComparison.CurrentCultureIgnoreCase));
                 
                 if (existing == null)
                     ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Add(parameterToImport);        //import it to the composite level
@@ -333,7 +332,7 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             string sql1 = first.ParameterSQL ?? "";
             string sql2 = other.ParameterSQL ?? "";
 
-            return sql1.Trim().Equals(sql2.Trim(), StringComparison.InvariantCultureIgnoreCase);
+            return sql1.Trim().Equals(sql2.Trim(), StringComparison.CurrentCultureIgnoreCase);
         }
 
         private bool AreIdentical(ISqlParameter first, ISqlParameter other)
@@ -342,8 +341,8 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             
             string value1 = first.Value ?? "";
             string value2 = other.Value??"";
-            
-            bool sameValue = value1.Trim().Equals(value2.Trim(), StringComparison.InvariantCultureIgnoreCase);
+
+            bool sameValue = value1.Trim().Equals(value2.Trim(), StringComparison.CurrentCultureIgnoreCase);
 
             return sameSql && sameValue;
         }
@@ -357,7 +356,7 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             //while we have parameter called @p_2, @p_3 etc etc keep adding
             while (
                 ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(
-                    p => p.ParameterName.Equals(toImportParameterName + "_" + counter)))
+                    p => p.ParameterName.Equals(toImportParameterName + "_" + counter, StringComparison.CurrentCultureIgnoreCase)))
                 counter++;
 
             //we have now found a unique number
