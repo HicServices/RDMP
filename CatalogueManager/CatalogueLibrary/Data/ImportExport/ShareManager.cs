@@ -399,6 +399,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// </summary>
         /// <param name="o"></param>
         /// <param name="shareDefinition"></param>
+        /// <param name="skipName">True to step over the Name property of <paramref name="o"/> during import (avoids renaming)</param>
         public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition,bool skipName)
         {
             if (shareDefinition.Type != o.GetType())

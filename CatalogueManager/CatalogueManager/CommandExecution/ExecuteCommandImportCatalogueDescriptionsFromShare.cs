@@ -40,11 +40,12 @@ namespace CatalogueManager.CommandExecution
             if(first.Type != typeof(Catalogue))
                 throw new Exception("ShareDefinition was not for a Catalogue");
 
+
             if(_targetCatalogue.Name != (string) first.Properties["Name"])
-                throw new Exception("Catalogue Name is '"+_targetCatalogue.Name + "' but ShareDefinition is for, '" + first.Properties["Name"] +"'");
+                if(MessageBox.Show("Catalogue Name is '"+_targetCatalogue.Name + "' but ShareDefinition is for, '" + first.Properties["Name"] +"'.  Import Anyway?","Import Anyway?",MessageBoxButtons.YesNo) == DialogResult.No)
+                    return;
 
-
-            sm.ImportPropertiesOnly(_targetCatalogue, first,false);
+            sm.ImportPropertiesOnly(_targetCatalogue, first,true);
             _targetCatalogue.SaveToDatabase();
 
             var liveCatalogueItems = _targetCatalogue.CatalogueItems;
@@ -61,7 +62,7 @@ namespace CatalogueManager.CommandExecution
                 if(existingMatch == null)
                     existingMatch = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository,_targetCatalogue,shareName);
 
-                sm.ImportPropertiesOnly(existingMatch,sd,false);
+                sm.ImportPropertiesOnly(existingMatch, sd, true);
                 existingMatch.SaveToDatabase();
             }
 
