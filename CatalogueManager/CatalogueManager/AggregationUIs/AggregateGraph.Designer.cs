@@ -45,7 +45,6 @@ namespace CatalogueManager.AggregationUIs
             this.tpCode = new System.Windows.Forms.TabPage();
             this.tpDataTable = new System.Windows.Forms.TabPage();
             this.btnClearFromCache = new System.Windows.Forms.Button();
-            this.btnPublishToWebsite = new System.Windows.Forms.Button();
             this.lblCannotLoadData = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.tpHeatmap = new System.Windows.Forms.TabPage();
@@ -56,6 +55,7 @@ namespace CatalogueManager.AggregationUIs
             this.btnResendQuery = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.tbTimeout = new System.Windows.Forms.ToolStripTextBox();
+            this.btnCache = new System.Windows.Forms.ToolStripButton();
             this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
@@ -195,7 +195,6 @@ namespace CatalogueManager.AggregationUIs
             // tpDataTable
             // 
             this.tpDataTable.Controls.Add(this.btnClearFromCache);
-            this.tpDataTable.Controls.Add(this.btnPublishToWebsite);
             this.tpDataTable.Controls.Add(this.lblCannotLoadData);
             this.tpDataTable.Controls.Add(this.dataGridView1);
             this.tpDataTable.Location = new System.Drawing.Point(4, 4);
@@ -217,20 +216,6 @@ namespace CatalogueManager.AggregationUIs
             this.btnClearFromCache.UseVisualStyleBackColor = true;
             this.btnClearFromCache.Click += new System.EventHandler(this.btnClearFromCache_Click);
             // 
-            // btnPublishToWebsite
-            // 
-            this.btnPublishToWebsite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnPublishToWebsite.Image = ((System.Drawing.Image)(resources.GetObject("btnPublishToWebsite.Image")));
-            this.btnPublishToWebsite.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnPublishToWebsite.Location = new System.Drawing.Point(6, 417);
-            this.btnPublishToWebsite.Name = "btnPublishToWebsite";
-            this.btnPublishToWebsite.Size = new System.Drawing.Size(110, 50);
-            this.btnPublishToWebsite.TabIndex = 6;
-            this.btnPublishToWebsite.Text = "Publish To Website";
-            this.btnPublishToWebsite.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-            this.btnPublishToWebsite.UseVisualStyleBackColor = true;
-            this.btnPublishToWebsite.Click += new System.EventHandler(this.btnPublishToWebsite_Click);
-            // 
             // lblCannotLoadData
             // 
             this.lblCannotLoadData.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -245,14 +230,12 @@ namespace CatalogueManager.AggregationUIs
             // 
             // dataGridView1
             // 
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(659, 486);
+            this.dataGridView1.Size = new System.Drawing.Size(659, 441);
             this.dataGridView1.TabIndex = 0;
             // 
             // tpHeatmap
@@ -284,7 +267,8 @@ namespace CatalogueManager.AggregationUIs
             this.btnClipboard,
             this.btnResendQuery,
             this.toolStripLabel1,
-            this.tbTimeout});
+            this.tbTimeout,
+            this.btnCache});
             this.toolStrip1.Location = new System.Drawing.Point(0, 22);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(698, 25);
@@ -332,6 +316,16 @@ namespace CatalogueManager.AggregationUIs
             this.tbTimeout.Name = "tbTimeout";
             this.tbTimeout.Size = new System.Drawing.Size(100, 25);
             this.tbTimeout.TextChanged += new System.EventHandler(this.tbTimeout_TextChanged);
+            // 
+            // btnCache
+            // 
+            this.btnCache.Enabled = false;
+            this.btnCache.Image = ((System.Drawing.Image)(resources.GetObject("btnCache.Image")));
+            this.btnCache.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnCache.Name = "btnCache";
+            this.btnCache.Size = new System.Drawing.Size(60, 22);
+            this.btnCache.Text = "Cache";
+            this.btnCache.Click += new System.EventHandler(this.btnCache_Click);
             // 
             // rdmpObjectsRibbonUI1
             // 
@@ -381,7 +375,6 @@ namespace CatalogueManager.AggregationUIs
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Label lblCannotLoadData;
         private System.Windows.Forms.LinkLabel llCancel;
-        private System.Windows.Forms.Button btnPublishToWebsite;
         private System.Windows.Forms.Button btnClearFromCache;
         private System.Windows.Forms.Label lblLoadStage;
         private System.Windows.Forms.TabPage tpHeatmap;
@@ -394,5 +387,6 @@ namespace CatalogueManager.AggregationUIs
         private System.Windows.Forms.ToolStripButton btnResendQuery;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripTextBox tbTimeout;
+        private System.Windows.Forms.ToolStripButton btnCache;
     }
 }

@@ -45,9 +45,9 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             dt.Rows.Add("2002-01-01", "F", "29");
             dt.Rows.Add("2002-01-01", "F", "31");
 
-            dt.Rows.Add("2001-01-01", "E&%a' mp;E", "37");
-            dt.Rows.Add("2002-01-01", "E&%a' mp;E", "41");
-            dt.Rows.Add("2005-01-01", "E&%a' mp;E", "59");  //note there are no records in 2004 it is important for axis tests (axis involves you having to build a calendar table)
+            dt.Rows.Add("2001-01-01", "E&, %a' mp;E", "37");
+            dt.Rows.Add("2002-01-01", "E&, %a' mp;E", "41");
+            dt.Rows.Add("2005-01-01", "E&, %a' mp;E", "59");  //note there are no records in 2004 it is important for axis tests (axis involves you having to build a calendar table)
 
             dt.Rows.Add(null, "G", "47");
             dt.Rows.Add("2001-01-01", "G", "53");
@@ -213,7 +213,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
                 VerifyRowExist(resultTable, "T", 7);
                 VerifyRowExist(resultTable, "F", 2);
-                VerifyRowExist(resultTable, "E&%a' mp;E", 3);
+                VerifyRowExist(resultTable, "E&, %a' mp;E", 3);
                 VerifyRowExist(resultTable, "G", 2);
             }
             finally
@@ -245,10 +245,10 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
                 var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
                 builder.AddColumn(dimension);
                 var resultTable = GetResultForBuilder(builder, tbl);
-
+                
                 VerifyRowExist(resultTable, "T", 139);
                 VerifyRowExist(resultTable, "F", 60);
-                VerifyRowExist(resultTable, "E&%a' mp;E", 137);
+                VerifyRowExist(resultTable, "E&, %a' mp;E", 137);
                 VerifyRowExist(resultTable, "G", 100);
                 Assert.AreEqual(4,resultTable.Rows.Count);
             }
@@ -289,7 +289,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
                 //T is matched on all records so they are summed
                 VerifyRowExist(resultTable, "T", 139);
                 //VerifyRowExist(resultTable, "F", 60); //F does not have any records over 42 and isn't T so shouldnt be matched
-                VerifyRowExist(resultTable, "E&%a' mp;E", 59); //E has 1 records over 42
+                VerifyRowExist(resultTable, "E&, %a' mp;E", 59); //E has 1 records over 42
                 VerifyRowExist(resultTable, "G", 100); //47 + 53
                 Assert.AreEqual(3, resultTable.Rows.Count);
             }
@@ -460,7 +460,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
                 Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
             
                 Assert.AreEqual("T",resultTable.Columns[1].ColumnName);
-                Assert.AreEqual("E&%a' mp;E", resultTable.Columns[2].ColumnName);
+                Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
                 Assert.AreEqual("F", resultTable.Columns[3].ColumnName);
                 Assert.AreEqual("G", resultTable.Columns[4].ColumnName);
 
@@ -517,7 +517,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
                 Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
                 Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
-                Assert.AreEqual("E&%a' mp;E", resultTable.Columns[2].ColumnName);
+                Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
                 Assert.AreEqual("G", resultTable.Columns[3].ColumnName);
 
                 //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
@@ -580,7 +580,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
                 Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
                 Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
-                Assert.AreEqual("E&%a' mp;E", resultTable.Columns[2].ColumnName);
+                Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
 
                 //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
                 VerifyRowExist(resultTable, "2000", null, null); //no records in 2000 but it is important it appears still because that is what the axis says
@@ -644,7 +644,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
                 Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
                 //sort in AggregateTopX is the pivot dimension asc (i.e. order alphabetically)
-                Assert.AreEqual("E&%a' mp;E", resultTable.Columns[1].ColumnName);
+                Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[1].ColumnName);
                 Assert.AreEqual("G", resultTable.Columns[2].ColumnName);
 
                 //E,G (note that only 1 value appears for E because WHERE throws out rest).  Also note the two columns are E and G because that is Top 2 when alphabetically sorted of the pivot values (E,F,G,T) that match the filter (F doesn't)
@@ -709,7 +709,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
                 Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
                 //where logic matches T in spades but HAVING statement throws it out for having more than 4 records total
-                Assert.AreEqual("E&%a' mp;E", resultTable.Columns[1].ColumnName);
+                Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[1].ColumnName);
 
                 //Only E appears because of Top 1 pivot statement
                 VerifyRowExist(resultTable, "2000", null); //all E records are discarded except 59 because that is the WHERE logic

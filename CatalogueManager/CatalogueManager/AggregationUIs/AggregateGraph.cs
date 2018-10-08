@@ -7,24 +7,17 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Reports;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CsvHelper;
-using DataExportLibrary.ExtractionTime.FileOutputFormats;
-using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
@@ -151,7 +144,7 @@ namespace CatalogueManager.AggregationUIs
             pbLoading.Visible = true;
             llCancel.Visible = true;
 
-            btnPublishToWebsite.Enabled = false;
+            btnCache.Enabled = false;
 
             label1.ForeColor = Color.Black;
             label1.Text = GetDescription();
@@ -271,7 +264,7 @@ namespace CatalogueManager.AggregationUIs
                 
                 ShowHeatmapTab(heatmapUI.HasDataTable());
 
-                SetToolbarButtonsEnabled(true);
+                SetToolbarButtonsEnabled(false);
 
             }
             finally
@@ -458,8 +451,19 @@ namespace CatalogueManager.AggregationUIs
                 else
                 {
                     chart1.Series[index].ChartType = SeriesChartType.Column;
-                    chart1.ChartAreas[0].AxisX.Interval = 1;
-                    chart1.ChartAreas[0].AxisX.LabelAutoFitMinFontSize = 8;
+
+
+                    if (_dt.Columns[0].DataType == typeof(decimal) || _dt.Columns[0].DataType == typeof(int))
+                    {
+                        //by year
+                        chart1.ChartAreas[0].AxisX.IntervalAutoMode = IntervalAutoMode.FixedCount;
+                    }
+                    else
+                    {
+                        chart1.ChartAreas[0].AxisX.Interval = 1;
+                        chart1.ChartAreas[0].AxisX.LabelAutoFitMinFontSize = 8;
+                    }
+                    
                 }
 
                 //name series based on column 3 or the aggregate name
@@ -477,13 +481,13 @@ namespace CatalogueManager.AggregationUIs
             lblLoadStage.Visible = false;
 
             //set publish enabledness to the enabledness of 
-            btnPublishToWebsite.Enabled =
+            btnCache.Enabled =
                 _defaults.GetDefaultFor(
                     ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
             btnClearFromCache.Enabled = false;
 
             //Make publish button enabledness be dependant on cache
-            if (btnPublishToWebsite.Enabled)
+            if (btnCache.Enabled)
             {
                 //let them clear if there is a query caching server and the manager has cached results already
                 btnClearFromCache.Enabled =
@@ -491,6 +495,8 @@ namespace CatalogueManager.AggregationUIs
                         .GetLatestResultsTableUnsafe(AggregateConfiguration,
                             AggregateOperation.ExtractableAggregateResults) != null;
             }
+
+            SetToolbarButtonsEnabled(true);
         }
 
         private void ShowHeatmapTab(bool show)
@@ -604,31 +610,6 @@ namespace CatalogueManager.AggregationUIs
         private void llCancel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             AbortLoadGraph();
-        }
-
-        private void btnPublishToWebsite_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                CachedAggregateConfigurationResultsManager cacheManager = GetCacheManager();
-
-                var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text, (DataTable)dataGridView1.DataSource,Timeout);
-                cacheManager.CommitResults(args);
-
-                var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text);
-
-                if(result == null)
-                    throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
-
-                MessageBox.Show("DataTable successfully submitted to:" + result.GetFullyQualifiedName());
-                btnClearFromCache.Enabled = true;
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-            
-
         }
 
         private void btnClearFromCache_Click(object sender, EventArgs e)
@@ -775,6 +756,29 @@ namespace CatalogueManager.AggregationUIs
         public override string GetTabName()
         {
             return "Graph:" + base.GetTabName();
+        }
+
+        private void btnCache_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                CachedAggregateConfigurationResultsManager cacheManager = GetCacheManager();
+
+                var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text, (DataTable)dataGridView1.DataSource,Timeout);
+                cacheManager.CommitResults(args);
+
+                var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text);
+
+                if(result == null)
+                    throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
+
+                MessageBox.Show("DataTable successfully submitted to:" + result.GetFullyQualifiedName());
+                btnClearFromCache.Enabled = true;
+            }
+            catch (Exception exception)
+            {
+                ExceptionViewer.Show(exception);
+            }
         }
     }
 
