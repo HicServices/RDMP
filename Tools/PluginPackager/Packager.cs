@@ -21,6 +21,7 @@ namespace PluginPackager
         private readonly FileInfo _solutionToPackage;
         private readonly string _outputZipFilePath;
         private readonly bool _skipSourceCollection;
+        private readonly bool _release;
 
         private Version _pluginVersionOfCatalogueLibrary;
 
@@ -30,11 +31,12 @@ namespace PluginPackager
 
         readonly List<string> _blacklist = new List<string>();
 
-        public Packager(FileInfo solutionToPackage, string outputZipFilePath, bool skipSourceCollection = false)
+        public Packager(FileInfo solutionToPackage, string outputZipFilePath, bool skipSourceCollection = false, bool release = false)
         {
             _solutionToPackage = solutionToPackage;
             _outputZipFilePath = outputZipFilePath;
             _skipSourceCollection = skipSourceCollection;
+            _release = release;
 
             if (File.Exists(_outputZipFilePath))
                 File.Delete(_outputZipFilePath);
@@ -156,7 +158,7 @@ namespace PluginPackager
 
         private void CollectAssemblies(string projectDir, string assemblyName = null)
         {
-            var projectOutputDir = Path.Combine(projectDir, "bin", "Debug");
+            var projectOutputDir = Path.Combine(projectDir, "bin", _release?"Release":"Debug");
             if (!Directory.Exists(projectOutputDir))
                 throw new InvalidOperationException("The project dir (" + projectOutputDir + ") does not exist, has the project been built? You need to build the project before invoking this packager.");
 

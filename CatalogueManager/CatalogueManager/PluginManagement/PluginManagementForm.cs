@@ -180,8 +180,10 @@ namespace CatalogueManager.PluginManagement
             var f = new FileInfo(file);
             if (f.Extension == ".sln")
             {
+                bool release = MessageBox.Show("Do you want to look for 'Release' directories instead of 'Debug'?" + Environment.NewLine + "Yes - Release" + Environment.NewLine + "No - Debug","Look for Release directories instead?",MessageBoxButtons.YesNo) == DialogResult.Yes;
+
                 var zip = Path.Combine(f.Directory.FullName, Path.GetFileNameWithoutExtension(f.Name) +".zip");
-                Packager packager = new Packager(f,zip);
+                Packager packager = new Packager(f, zip, false,release);
                 packager.PackageUpFile(checksUI1);
                 
                 f = new FileInfo(zip);
