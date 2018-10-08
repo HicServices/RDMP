@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ANOStore;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using Sharing.Dependency.Gathering;
 using Tests.Common;
@@ -137,6 +131,9 @@ namespace CatalogueLibraryTests.ImportTests
         {
             //Setup some objects under Catalogue that we can share
             var cata = new Catalogue(CatalogueRepository, "Cata");
+            cata.Periodicity = Catalogue.CataloguePeriodicity.BiMonthly;
+            cata.SaveToDatabase();
+
             var catalogueItem1 = new CatalogueItem(CatalogueRepository, cata, "Ci1");
             var catalogueItem2 = new CatalogueItem(CatalogueRepository, cata, "Ci2");
 
@@ -159,9 +156,14 @@ namespace CatalogueLibraryTests.ImportTests
             var gObj = g.GatherDependencies(cata);
             Assert.AreEqual(2, gObj.Children.Count); //both cata items
 
+            var lmd = new LoadMetadata(CatalogueRepository);
+            cata.LoadMetadata_ID = lmd.ID;
+            cata.SaveToDatabase();
+
             //get the share definition
             var shareManager = new ShareManager(RepositoryLocator);
             var shareDefinition = gObj.ToShareDefinitionWithChildren(shareManager);
+
 
             if (goViaJson)
             {
@@ -176,7 +178,12 @@ namespace CatalogueLibraryTests.ImportTests
 
             //make a local change
             cata.Name = "fishfish";
+            cata.SubjectNumbers = "123";
+            cata.LoadMetadata_ID = null;
+            cata.Periodicity = Catalogue.CataloguePeriodicity.Unknown;
             cata.SaveToDatabase();
+            
+            lmd.DeleteInDatabase();
 
             //import the saved copy
             shareManager.ImportSharedObject(shareDefinition);
@@ -192,6 +199,19 @@ namespace CatalogueLibraryTests.ImportTests
             foreach (var d in exports)
                 d.DeleteInDatabase();
 
+            //make a local change including Name
+            cata.Name = "fishfish";
+            cata.SaveToDatabase();
+
+            //test importing the Catalogue properties only
+            shareManager.ImportPropertiesOnly(cata,shareDefinition[0],true);
+            
+            //import the defined properties but not name
+            Assert.AreEqual("fishfish",cata.Name);
+            Assert.AreEqual(Catalogue.CataloguePeriodicity.BiMonthly,cata.Periodicity); //reset this though
+            Assert.IsNull(cata.LoadMetadata_ID);
+            cata.SaveToDatabase();
+
             cata.DeleteInDatabase();
 
             //none of these should now exist thanks to cascade deletes
@@ -205,6 +225,8 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.AreEqual("Cata", ((Catalogue) newObjects[0]).Name);
             Assert.AreEqual("Ci1", ((CatalogueItem) newObjects[1]).Name);
             Assert.AreEqual("Ci2", ((CatalogueItem) newObjects[2]).Name);
+
+            
         }
     }
 }

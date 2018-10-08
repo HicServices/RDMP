@@ -44,7 +44,7 @@ namespace CatalogueManager.CommandExecution
                 throw new Exception("Catalogue Name is '"+_targetCatalogue.Name + "' but ShareDefinition is for, '" + first.Properties["Name"] +"'");
 
 
-            sm.ImportPropertiesOnly(_targetCatalogue, first);
+            sm.ImportPropertiesOnly(_targetCatalogue, first,false);
             _targetCatalogue.SaveToDatabase();
 
             var liveCatalogueItems = _targetCatalogue.CatalogueItems;
@@ -61,7 +61,7 @@ namespace CatalogueManager.CommandExecution
                 if(existingMatch == null)
                     existingMatch = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository,_targetCatalogue,shareName);
 
-                sm.ImportPropertiesOnly(existingMatch,sd);
+                sm.ImportPropertiesOnly(existingMatch,sd,false);
                 existingMatch.SaveToDatabase();
             }
 
