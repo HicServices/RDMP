@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
@@ -17,7 +15,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql.Aggregation
             return 
                 string.Format(
             @"
-use mysql;
 
     SET @startDate = {0};
     SET @endDate = {1};
