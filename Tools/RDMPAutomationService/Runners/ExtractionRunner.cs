@@ -9,6 +9,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
+using DataExportLibrary.ExtractionTime.Listeners;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
@@ -98,7 +99,7 @@ namespace RDMPAutomationService.Runners
             var datasetCommand = runnable as ExtractDatasetCommand;
 
             var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, _dataLoadInfo);
-            var fork = new ForkDataLoadEventListener(logging,listener);
+            var fork = new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand));
 
             if(globalCommand != null)
             {
