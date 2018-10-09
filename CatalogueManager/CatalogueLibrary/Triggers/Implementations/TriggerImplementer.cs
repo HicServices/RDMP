@@ -17,7 +17,7 @@ namespace CatalogueLibrary.Triggers.Implementations
         protected readonly DiscoveredServer _server;
         protected readonly DiscoveredTable _table;
         protected readonly DiscoveredTable _archiveTable;
-        protected readonly DiscoveredColumn[] _columns;
+        protected DiscoveredColumn[] _columns;
         protected readonly DiscoveredColumn[] _primaryKeys;
 
         public TriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true)
@@ -64,6 +64,10 @@ namespace CatalogueLibrary.Triggers.Implementations
             //must add validFrom outside of transaction if we want SMO to pick it up
             if (b_mustCreate_validFrom)
                 _table.AddColumn(SpecialFieldNames.ValidFrom, string.Format(" {0} DEFAULT {1}", dateTimeDatatype, nowFunction), true, timeout);
+
+            //if we created columns we need to update _column
+            if (b_mustCreate_dataloadRunId || b_mustCreate_validFrom)
+                _columns = _table.DiscoverColumns();
 
             string sql = WorkOutArchiveTableCreationSQL(); 
             

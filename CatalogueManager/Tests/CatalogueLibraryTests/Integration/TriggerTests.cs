@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Exceptions;
 using CatalogueLibrary.Triggers.Implementations;
-using DataLoadEngine.Checks.Checkers;
 using NUnit.Framework;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Exceptions;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -19,70 +17,80 @@ namespace CatalogueLibraryTests.Integration
     {
         private DiscoveredTable _table;
         private DiscoveredTable _archiveTable;
+        private DiscoveredDatabase _database;
+        
 
-        [SetUp]
-        public void CreateTable()
+        public void CreateTable(DatabaseType dbType)
         {
+            _database = GetCleanedServer(dbType);
+
             RunSQL("CREATE TABLE TriggerTests(name varchar(30) not null,bubbles int)");
 
-            _table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TriggerTests");
-            _archiveTable = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TriggerTests_Archive");
+            _table = _database.ExpectTable("TriggerTests");
+            _archiveTable = _database.ExpectTable("TriggerTests_Archive");
         }
 
-        [Test]
-        public void NoTriggerExists()
+        private ITriggerImplementer GetImplementer()
         {
-            Assert.AreEqual(TriggerStatus.Missing, new MicrosoftSQLTriggerImplementer(_table).GetTriggerStatus());
+            return new TriggerImplementerFactory(_database.Server.DatabaseType).Create(_table);
+        }
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void NoTriggerExists(DatabaseType dbType)
+        {
+            CreateTable(dbType);
+            Assert.AreEqual(TriggerStatus.Missing, GetImplementer().GetTriggerStatus());
         }
 
-        [Test]
-        public void CreateWithNoPks_Complain()
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void CreateWithNoPks_Complain(DatabaseType dbType)
         {
-            var ex = Assert.Throws<TriggerException>(() => new MicrosoftSQLTriggerImplementer(_table).CreateTrigger(new ThrowImmediatelyCheckNotifier()));
+            CreateTable(dbType);
+
+            var ex = Assert.Throws<TriggerException>(() => GetImplementer().CreateTrigger(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("There must be at least 1 primary key", ex.Message);
         }
 
-        [Test]
-        public void CreateWithPks_Valid()
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void CreateWithPks_Valid(DatabaseType dbType)
         {
-            RunSQL("Alter TABLE TriggerTests ADD PRIMARY KEY (name)");
-            var implementer = new MicrosoftSQLTriggerImplementer(_table);
-            implementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
+            CreateTable(dbType);
 
-            Assert.AreEqual(TriggerStatus.Enabled, implementer.GetTriggerStatus());
-            Assert.AreEqual(true, implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+            _table.CreatePrimaryKey(new []{_table.DiscoverColumn("name")});
+            GetImplementer().CreateTrigger(new ThrowImmediatelyCheckNotifier());
+
+            Assert.AreEqual(TriggerStatus.Enabled, GetImplementer().GetTriggerStatus());
+            Assert.AreEqual(true, GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
         }
 
-        [Test]
-        public void AlterTest_InvalidThenRecreateItAndItsValidAgain()
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void AlterTest_InvalidThenRecreateItAndItsValidAgain(DatabaseType dbType)
         {
-            CreateWithPks_Valid();
+            CreateWithPks_Valid(dbType);
 
             RunSQL("ALTER TABLE TriggerTests add fish int");
             RunSQL("ALTER TABLE TriggerTests_Archive add fish int");
 
-            var implementer = new MicrosoftSQLTriggerImplementer(_table);
-
             //still not valid because trigger SQL is missing it in the column list
-            var ex = Assert.Throws<Exception>(() => implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
-            Assert.IsTrue(ex.InnerException.Message.Equals(@"Trigger TriggerTests_OnUpdate is corrupt
-Strings differ at index 915
-EXPECTED:RunID,hic_validFrom,fish,hic_v...
-ACTUAL  :RunID,hic_validFrom,hic_validT...
------------------------------^"));
+            var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+            Assert.IsNotNull(ex.Message);
 
-            
             string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
+            var implementer = GetImplementer();
             implementer.DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
             implementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
 
             Assert.AreEqual(true, implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
         }
 
-        [Test]
-        public void NowTestDataInsertion()
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void NowTestDataInsertion(DatabaseType dbType)
         {
-            AlterTest_InvalidThenRecreateItAndItsValidAgain();
+            AlterTest_InvalidThenRecreateItAndItsValidAgain(dbType);
 
             RunSQL("INSERT INTO TriggerTests (name,bubbles,fish,hic_validFrom) VALUES ('Franky',3,5,'2001-01-02')");
 
@@ -93,21 +101,65 @@ ACTUAL  :RunID,hic_validFrom,hic_validT...
             //archived value is 3
             Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM TriggerTests_Archive where name = 'Franky'"));
 
-            //legacy in 2001-01-01 it didn't exist
-            Assert.IsNull( ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-01') where name = 'Franky'"));
-            //legacy in 2001-01-03 it did exist and was 3
-            Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"));
-            //legacy boundary case?
-            Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"));
+            //Legacy table valued function only works for MicrosoftSQLServer
+            if(dbType == DatabaseType.MicrosoftSQLServer)
+            {
+                //legacy in 2001-01-01 it didn't exist
+                Assert.IsNull( ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-01') where name = 'Franky'"));
+                //legacy in 2001-01-03 it did exist and was 3
+                Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"));
+                //legacy boundary case?
+                Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"));
             
-            //legacy today it is 99
-            Assert.AreEqual(99, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"));
-
+                //legacy today it is 99
+                Assert.AreEqual(99, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"));
+            }
         }
+
+        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void DiffDatabaseDataFetcherTest(DatabaseType dbType)
+        {
+            CreateTable(dbType);
+            
+            _table.CreatePrimaryKey(_table.DiscoverColumn("name"));
+            
+            GetImplementer().CreateTrigger(new ThrowImmediatelyCheckNotifier());
+            
+            RunSQL("INSERT INTO TriggerTests (name,bubbles,hic_validFrom,hic_dataLoadRunID) VALUES ('Franky',3,'2001-01-02',7)");
+
+            Thread.Sleep(500);
+            RunSQL("UPDATE TriggerTests SET bubbles=1");
+
+            Thread.Sleep(500);
+            RunSQL("UPDATE TriggerTests SET bubbles=2");
+
+            Thread.Sleep(500);
+            RunSQL("UPDATE TriggerTests SET bubbles=3");
+
+            Thread.Sleep(500);
+            RunSQL("UPDATE TriggerTests SET bubbles=4");
+
+            Assert.AreEqual(1,_table.GetRowCount());
+
+            TableInfo ti;
+            ColumnInfo[] cols;
+            Import(_table,out ti,out cols);
+            DiffDatabaseDataFetcher fetcher = new DiffDatabaseDataFetcher(1,ti,7,100);
+            
+            fetcher.FetchData(new AcceptAllCheckNotifier());
+            Assert.AreEqual(4,fetcher.Updates_New.Rows[0]["bubbles"]);
+            Assert.AreEqual(3, fetcher.Updates_Replaced.Rows[0]["bubbles"]);
+
+            Assert.AreEqual(1,fetcher.Updates_New.Rows.Count);
+            Assert.AreEqual(1, fetcher.Updates_Replaced.Rows.Count);
+        }
+
 
         [Test]
         public void IdentityTest()
         {
+            CreateTable(DatabaseType.MicrosoftSQLServer);
             
             RunSQL("Alter TABLE TriggerTests ADD myident int identity(1,1) PRIMARY KEY");
 
@@ -119,7 +171,7 @@ ACTUAL  :RunID,hic_validFrom,hic_validT...
 
         private object ExecuteScalar(string sql)
         {
-            var svr = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var svr = _database.Server;
             using (var con = svr.GetConnection())
             {
                 con.Open();
@@ -129,19 +181,24 @@ ACTUAL  :RunID,hic_validFrom,hic_validT...
 
         private void RunSQL(string sql)
         {
-            var svr = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
-            using (var con = svr.GetConnection())
+            if (_database == null)
+                throw new Exception("You must call CreateTable first");
+
+            using (var con = _database.Server.GetConnection())
             {
                 con.Open();
-                svr.GetCommand(sql, con).ExecuteNonQuery();
+                _database.Server.GetCommand(sql, con).ExecuteNonQuery();
             }
         }
+
+        
 
         [TearDown]
         public void DropTable()
         {
             string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
-            new MicrosoftSQLTriggerImplementer(_table).DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
+
+            GetImplementer().DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
 
             if(_archiveTable.Exists())
                 _archiveTable.Drop();
