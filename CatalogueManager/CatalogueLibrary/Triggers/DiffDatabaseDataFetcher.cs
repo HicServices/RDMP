@@ -141,7 +141,7 @@ select 1 from {0} where {1} {2} < {3}
             string tableName = _tableInfo.Name;
             string archiveTableName = sytnaxHelper.EnsureFullyQualified(database.GetRuntimeName(),null, _tableInfo.GetRuntimeName() + "_Archive");
 
-            var whereStatement = string.Join("AND",_pks.Select(pk=>string.Format("{0}.{1} = {2}.{1} ", tableName, pk.GetRuntimeName(),archiveTableName)));
+            var whereStatement = string.Join(" AND ",_pks.Select(pk=>string.Format("{0}.{1} = {2}.{1} ", tableName, pk.GetRuntimeName(),archiveTableName)));
             
             //hold onto your hats ladies and gentlemen, we start by selecting every column twice with a cross apply:
             //once from the main table e.g. Col1,Col2,Col3
@@ -185,7 +185,7 @@ FROM
 Join
 {2} Archive on " + whereStatement.Replace(archiveTableName, "Archive") + @"
  AND
- Archive.hic_validFrom = (select max(" + SpecialFieldNames.ValidFrom + @") from {2} s where Archive.name = s.name)
+ Archive.hic_validFrom = (select max(" + SpecialFieldNames.ValidFrom + @") from {2} s where " + whereStatement.Replace(archiveTableName, "Archive").Replace(tableName,"s") + @")
  where
   {1}.{4} = {5}
 
