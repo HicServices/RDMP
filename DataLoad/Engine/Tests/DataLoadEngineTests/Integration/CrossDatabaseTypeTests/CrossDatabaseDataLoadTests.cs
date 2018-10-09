@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
@@ -52,7 +53,9 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             ForeignKeyOrphans,
             DodgyCollation,
             AllPrimaryKeys,
-            WithNonPrimaryKeyIdentityColumn
+            WithNonPrimaryKeyIdentityColumn,
+            
+            WithDiffColumnIgnoreRegex //tests ability of the system to skip a given column when doing the DLE diff section
         }
 
         [TestCase(DatabaseType.Oracle,TestCase.Normal)]
@@ -66,6 +69,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.MYSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.AllPrimaryKeys)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.WithDiffColumnIgnoreRegex)]
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
             var defaults = new ServerDefaults(CatalogueRepository);
@@ -158,9 +162,15 @@ MrMurder,2001-01-01,Yella");
                 SetupLowPrivilegeUserRightsFor(ti, TestLowPrivilegePermissions.Reader|TestLowPrivilegePermissions.Writer);
                 SetupLowPrivilegeUserRightsFor(db.Server.ExpectDatabase("DLE_STAGING"),TestLowPrivilegePermissions.All);
             }
+
+            var dbConfig = new HICDatabaseConfiguration(lmd);
+
+            if (testCase == TestCase.WithDiffColumnIgnoreRegex)
+                dbConfig.UpdateButDoNotDiff = new Regex("^FavouriteColour"); //do not diff FavouriteColour
+
             var loadFactory = new HICDataLoadFactory(
                 lmd,
-                new HICDatabaseConfiguration(lmd),
+                dbConfig,
                 new HICLoadConfigurationFlags(),
                 CatalogueRepository,
                 logManager
@@ -176,9 +186,19 @@ MrMurder,2001-01-01,Yella");
 
                 Assert.AreEqual(ExitCodeType.Success,exitCode);
 
-                if(testCase == TestCase.AllPrimaryKeys)
+                if (testCase == TestCase.AllPrimaryKeys)
                 {
                     Assert.AreEqual(4, tbl.GetRowCount()); //Bob, Frank, Frank (with also pk Neon) & MrMurder
+                    Assert.Pass();
+                }
+                if (testCase == TestCase.WithDiffColumnIgnoreRegex)
+                {
+                    Assert.AreEqual(3, tbl.GetRowCount()); //Bob, Frank (original since the diff was skipped), & MrMurder
+
+                    //frank should be updated to like Neon instead of Orange
+                    Assert.AreEqual(3, tbl.GetRowCount());
+                    var frankOld =  tbl.GetDataTable().Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
+                    Assert.AreEqual("Orange", frankOld["FavouriteColour"]);
                     Assert.Pass();
                 }
 

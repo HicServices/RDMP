@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CatalogueLibrary.Triggers;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
@@ -14,6 +15,14 @@ namespace DataLoadEngine.Migration
     /// </summary>
     public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
     {
+        private readonly Regex _updateButDoNotDiffNormal = new Regex("^hic_", RegexOptions.IgnoreCase);
+        private readonly Regex _updateButDoNotDiffExtended;
+
+        public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null)
+        {
+            _updateButDoNotDiffExtended = updateButDoNotDiff;
+        }
+
         public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
         {
             if (!destinationFields.Any(f => f.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID, StringComparison.CurrentCultureIgnoreCase)))
@@ -26,7 +35,10 @@ namespace DataLoadEngine.Migration
         public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
         {
             //it is a hic internal field but not one of the overwritten, standard ones
-            if (field.GetRuntimeName().StartsWith("hic_",StringComparison.CurrentCultureIgnoreCase))
+            if (_updateButDoNotDiffNormal.IsMatch(field.GetRuntimeName()) 
+                || 
+                IsSupplementalMatch(field))
+            
                 fieldsToUpdate.Add(field);
             else
             {
@@ -34,6 +46,20 @@ namespace DataLoadEngine.Migration
                 fieldsToDiff.Add(field);
                 fieldsToUpdate.Add(field);
             }
+        }
+
+        private bool IsSupplementalMatch(DiscoveredColumn field)
+        {
+            if(_updateButDoNotDiffExtended == null)
+                return false;
+
+            //its a supplemental ignore e.g. MessageGuid
+            bool match = _updateButDoNotDiffExtended.IsMatch(field.GetRuntimeName());
+
+            if(match && field.IsPrimaryKey)
+                throw new NotSupportedException("UpdateButDoNotDiff Pattern " + _updateButDoNotDiffExtended + " matched Primary Key column '" + field.GetRuntimeName() + "' this is not permitted");
+
+            return match;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
@@ -29,6 +30,14 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
         {
             get { return DeployInfo.DatabaseNamer; }
         }
+
+        /// <summary>
+        /// Optional Regex for fields which will be ignored at migration time between STAGING and LIVE (e.g. hic_ columns).  This prevents incidental fields like
+        /// valid from, data load run id etc from resulting in live table UPDATEs.
+        /// 
+        /// <para>hic_ columns will always be ignored regardless of this setting</para>
+        /// </summary>
+        public Regex UpdateButDoNotDiff { get; set; }
 
         /// <summary>
         /// Preferred Constructor, creates RAW, STAGING, LIVE connection strings based on the data access points in the LoadMetadata, also respects the ServerDefaults for RAW override (if any)
