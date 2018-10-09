@@ -13,6 +13,11 @@ using Sharing.CommandExecution;
 
 namespace LoadModules.Generic.DataFlowOperations
 {
+    /// <summary>
+    /// Extraction component that will generate share definition files for the catalogues involved in the extraction.
+    /// 
+    /// <para>The Metadata Naming Pattern will also override the table name in the DataTable flow object.</para>
+    /// </summary>
     public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>
     {
         private IExtractCommand _request;
@@ -26,7 +31,7 @@ namespace LoadModules.Generic.DataFlowOperations
 
          You must have either $a or $d
          THIS WILL OVERRIDE THE TableNamingPattern at the destination!
-         ", Mandatory = true, DefaultValue = "$c_$d")]
+         ", Mandatory = true, DefaultValue = "$d")]
         public string MetadataNamingPattern { get; set; }
         
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
