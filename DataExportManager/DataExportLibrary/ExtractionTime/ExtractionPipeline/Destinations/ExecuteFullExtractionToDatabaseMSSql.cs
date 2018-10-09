@@ -90,6 +90,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            _request.ElevateState(ExtractCommandState.WritingToFile);
             _toProcess = toProcess;
 
             _destinationDatabase = GetDestinationDatabase(listener);
@@ -299,7 +300,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         {
             if(_destination != null)
             {
-                _destination.Dispose(listener,pipelineFailureExceptionIfAny);
+                _destination.Dispose(listener, pipelineFailureExceptionIfAny);
 
                 //if the extraction failed, the table didn't exist in the destination (i.e. the table was created during the extraction) and we are to DropTableIfLoadFails
                 if (pipelineFailureExceptionIfAny != null && _tableDidNotExistAtStartOfLoad && DropTableIfLoadFails)
@@ -317,7 +318,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     }
                 }
             }
-            
+
             if (TableLoadInfo != null)
                 TableLoadInfo.CloseAndArchive();
             // also close off the cumulative extraction result
