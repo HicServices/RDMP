@@ -1,87 +1,36 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
-using NuDoq;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
 {
+    /// <summary>
+    /// Inserts rows into MySql table using extended INSERT commands.  'LOAD DATA IN FILE' is not used because it doesn't respect table constraints, can be disabled
+    /// on the server and generally can go wrong in a large number of ways.
+    /// </summary>
     public class MySqlBulkCopy : BulkCopy
     {
 
         public static int BulkInsertBatchTimeoutInSeconds = 0;
+
+        /// <summary>
+        /// The number of rows to send in each INSERT statement to the server
+        /// 
+        /// <para>Inserting into MySql without using 'LOAD DATA IN FILE' means using extended INSERT.  This takes the form INSERT INTO Tbl(a,b,c) Values (1,2,3),(4,5,6),(7,8,9) etc.
+        /// If you send too many rows at once then MySql complains due to network packet size (See https://dev.mysql.com/doc/refman/5.5/en/packet-too-large.html).
+        /// </para>
+        /// 
+        /// </summary>
+        public static int BulkInsertRowsPerNetworkPacket = 500;
 
         public MySqlBulkCopy(DiscoveredTable targetTable, IManagedConnection connection) : base(targetTable, connection)
         {
             
         }
 
-        /* //Old method that used LOAD DATA IN FILE LOCAL (MySqlBulkLoader).  This requires local infile to be enabled on the server (and is generally a pain) : https://dev.mysql.com/doc/refman/5.7/en/load-data-local.html
-        public override int Upload(DataTable dt)
-        {
-            //for all columns not appearing in the DataTable provided
-            DiscoveredColumn[] unmatchedColumns;
-
-            var matchedColumns = GetMapping(dt.Columns.Cast<DataColumn>(), out unmatchedColumns);
-            
-            var unmatchedPks = unmatchedColumns.Where(c => c.IsPrimaryKey).ToArray();
-
-            if (unmatchedPks.Any())
-            {
-                if (!unmatchedPks.All(pk=>pk.IsAutoIncrement))
-                    throw new Exception("Primary key columns " + string.Join(",", unmatchedPks.Select(c => c.GetRuntimeName())) + " did not appear in the DataTable and are not IsAutoIncrement");
-            }
-            else
-            {
-                //MySqlBulkLoader does upsert and ignore but no Throw option, so we have to enforce primary keys in memory instead
-                if (dt.PrimaryKey.Length == 0)
-                    dt.PrimaryKey = matchedColumns.Where(kvp => kvp.Value.IsPrimaryKey).Select(kvp=>kvp.Key).ToArray();
-            }
-
-            //make the column names in the data table match the destination columns in case etc
-            foreach (KeyValuePair<DataColumn, DiscoveredColumn> kvp in matchedColumns)
-                if (!kvp.Key.ColumnName.Equals(kvp.Value.GetRuntimeName()))
-                    kvp.Key.ColumnName = kvp.Value.GetRuntimeName();
-
-            var loader = new MySqlBulkLoader((MySqlConnection)Connection.Connection);
-            loader.TableName = "`" + TargetTable.GetRuntimeName() +"`";
-            
-            var tempFile = Path.GetTempFileName();
-            loader.FieldTerminator = ",";
-            loader.LineTerminator = "\r\n";
-            loader.FieldQuotationCharacter = '"';
-
-            loader.Expressions.Clear();
-            loader.Columns.Clear();
-
-            //use the system default
-            foreach (var column in unmatchedColumns)
-                loader.Expressions.Add(column + " = DEFAULT");
-            
-            loader.Columns.AddRange(dt.Columns.Cast<DataColumn>().Select(c=>"`"+c.ColumnName+"`"));
-
-            var sw = new StreamWriter(tempFile);
-            Rfc4180Writer.WriteDataTable(dt,sw,false, new MySqlQuerySyntaxHelper());
-            sw.Flush();
-            sw.Close();
-
-            loader.FileName = tempFile;
-            loader.Timeout = Timeout;
-            try
-            {
-                return loader.Load();
-            }
-            finally
-            {
-                File.Delete(tempFile);
-            }
-        }
-        */
         public override int Upload(DataTable dt)
         {
             var matchedColumns = GetMapping(dt.Columns.Cast<DataColumn>());
@@ -110,7 +59,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.MySql
                 row++;
 
                 //don't let command get too long
-                if (row%1000 == 0)
+                if (row % BulkInsertRowsPerNetworkPacket == 0)
                 {
                     cmd.CommandText = commandPrefix + sb.ToString().TrimEnd(',', '\r', '\n');
                     affected += cmd.ExecuteNonQuery();
