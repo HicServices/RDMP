@@ -125,7 +125,7 @@ namespace DataExportLibrary.Checks
                         if (server.GetQuerySyntaxHelper().IsTimeout(e))
                             notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s", CheckResult.Warning,e));
                         else
-                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));
+                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Warning, e)); //has to be warning because some sources can fix this problem e.g. ExecuteCrossServerDatasetExtractionSource
                     }
                 }
             }
