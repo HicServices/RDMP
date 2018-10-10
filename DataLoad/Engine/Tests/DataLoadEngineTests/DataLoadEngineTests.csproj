@@ -289,6 +289,7 @@
     <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestDataSetup.cs" />
     <Compile Include="Integration\SetupDatasetTest.cs" />
     <Compile Include="Integration\TableInfoJoiningQueryBuilderTests.cs" />
+    <Compile Include="Integration\TableVarcharMaxerTests.cs" />
     <Compile Include="Integration\TestDataWriter.cs" />
     <Compile Include="Integration\ToMemoryDataLoadJob.cs" />
     <Compile Include="Integration\WebFileDownloaderTests.cs" />

@@ -23,7 +23,7 @@ namespace LoadModules.Generic.Mutilators
         [DemandsInitialization("How long to allow for each command to execute in seconds", DefaultValue = 600)]
         public int Timeout { get; set; }
 
-        private DiscoveredDatabase _dbInfo;
+        protected DiscoveredDatabase DbInfo;
         private LoadStage _loadStage;
 
         protected MatchingTablesMutilator(params LoadStage[] allowedStages)
@@ -42,7 +42,7 @@ namespace LoadModules.Generic.Mutilators
                 throw new NotSupportedException("Mutilation " + GetType() + " is not allowed at stage " + loadStage);
 
             _loadStage = loadStage;
-            _dbInfo = dbInfo;
+            DbInfo = dbInfo;
         }
 
         public ExitCodeType Mutilate(IDataLoadEventListener job)
@@ -54,7 +54,7 @@ namespace LoadModules.Generic.Mutilators
             foreach (var tableInfo in j.RegularTablesToLoad)
                 if (TableRegexPattern.IsMatch(tableInfo.GetRuntimeName()))
                 {
-                    var tbl = _dbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage));
+                    var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage));
                     
                     if(!tbl.Exists())
                         job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Expected table "+ tbl + " did not exist in RAW"));
