@@ -41,7 +41,7 @@ namespace RDMPAutomationService.Runners
 
             Semaphore semaphore = null;
             if (_options.MaxConcurrentExtractions != null)
-                semaphore = new Semaphore(0, _options.MaxConcurrentExtractions.Value);
+                semaphore = new Semaphore(_options.MaxConcurrentExtractions.Value, _options.MaxConcurrentExtractions.Value);
 
             Initialize();
             
