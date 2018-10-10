@@ -72,11 +72,11 @@ namespace DataExportLibrary.ExtractionTime
                 var cohortCollation = privateIdentifierFieldDiscovered.Collation;
                 var otherTableCollation = OriginalDatasetColumn.ColumnInfo.Collation;
 
-                //if the other column has a collation and it is different than this one
-                if (!string.IsNullOrWhiteSpace(otherTableCollation) && !string.Equals(cohortCollation, otherTableCollation))
-                {
-                    collateStatement = " collate " + cohortCollation;
-                }
+
+                //only collate if the server types match and if the collations differ
+                if(privateIdentifierFieldDiscovered.Table.Database.Server.DatabaseType == OriginalDatasetColumn.ColumnInfo.TableInfo.DatabaseType)
+                    if (!string.IsNullOrWhiteSpace(otherTableCollation) && !string.Equals(cohortCollation, otherTableCollation))
+                        collateStatement = " collate " + cohortCollation;
             }
 
 
