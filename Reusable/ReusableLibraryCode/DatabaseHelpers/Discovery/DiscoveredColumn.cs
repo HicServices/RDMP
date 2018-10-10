@@ -11,7 +11,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     public class DiscoveredColumn : IHasFullyQualifiedNameToo,ISupplementalColumnInformation
     {
         public IDiscoveredColumnHelper Helper;
-        internal readonly DiscoveredTable Table;
+        public DiscoveredTable Table { get; private set; }
 
         public bool AllowNulls { get; private set; }
         private readonly string _name;

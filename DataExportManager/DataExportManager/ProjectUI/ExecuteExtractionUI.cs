@@ -207,8 +207,7 @@ namespace DataExportManager.ProjectUI
             return new ExtractionOptions() { 
                 Command = activityRequested,
                 ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
-                
-
+                MaxConcurrentExtractions = 3,
                 Datasets = _datasets.All(tlvDatasets.IsChecked)?new int[0]:_datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray(),
                 ExtractionConfiguration = _extractionConfiguration.ID,
                 Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 :_pipelineSelectionUI1.Pipeline.ID

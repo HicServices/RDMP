@@ -104,8 +104,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             if (_destination == null)
                 _destination = PrepareDestination(listener, toProcess);
 
-            //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it)
-            TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", _toProcess.TableName, new[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
+            if (TableLoadInfo == null)
+                TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", _toProcess.TableName, new[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
+
+            if (TableLoadInfo.IsClosed) // Maybe it was open and it creashed?
+                throw new Exception("TableLoadInfo was closed so could not write number of rows (" + toProcess.Rows.Count + ") to audit object - most likely the extraction crashed?");
 
             if (_request is ExtractDatasetCommand && !haveExtractedBundledContent)
                 WriteBundleContents(((ExtractDatasetCommand) _request).DatasetBundle, listener, cancellationToken);

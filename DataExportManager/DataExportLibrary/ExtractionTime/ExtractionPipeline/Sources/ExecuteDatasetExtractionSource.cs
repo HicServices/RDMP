@@ -56,6 +56,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         [DemandsInitialization("Batch size, number of records to read from source before releasing it into the extraction pipeline", DefaultValue = 10000, Mandatory = true)]
         public int BatchSize { get; set; }
+
+        [DemandsInitialization("In seconds. Overrides the global timeout for SQL query execution. Use 0 for infinite timeout.", DefaultValue = 50000, Mandatory = true)]
+        public int ExecutionTimeout { get; set; }
         
         /// <summary>
         /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
@@ -156,8 +159,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                    throw new Exception("Cannot extract " + Request.DatasetBundle.DataSet + " because DisableExtraction is set to true");
 
                 _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
-                    "ExecuteDatasetExtraction " + Request.DatasetBundle.DataSet,
-                    _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false).Builder, 50000);
+                                                                "ExecuteDatasetExtraction " + Request.DatasetBundle.DataSet,
+                                                                _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false).Builder, 
+                                                                ExecutionTimeout);
 
                 _hostedSource.AllowEmptyResultSets = AllowEmptyExtractions;
                 _hostedSource.BatchSize = BatchSize;

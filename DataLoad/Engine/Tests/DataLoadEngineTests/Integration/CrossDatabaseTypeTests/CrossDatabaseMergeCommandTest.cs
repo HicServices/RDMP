@@ -4,18 +4,17 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Triggers.Implementations;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration;
 using HIC.Logging;
-using HIC.Logging.PastEvents;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
@@ -65,18 +64,21 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             
 
             //import the to table as a TableInfo
-            var importer = new TableInfoImporter(CatalogueRepository, to);
             TableInfo ti;
             ColumnInfo[] cis;
-            importer.DoImport(out ti, out cis);
+            var cata = Import(to,out ti,out cis);
 
             //put the backup trigger on the live table (this will also create the needed hic_ columns etc)
             var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(to);
             triggerImplementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
 
             var configuration = new MigrationConfiguration(dbFrom, LoadBubble.Staging, LoadBubble.Live,new FixedStagingDatabaseNamer(to.Database.GetRuntimeName(),from.Database.GetRuntimeName()));
-            
-            var migrationHost = new MigrationHost(dbFrom, dbTo, configuration);
+
+            var lmd = new LoadMetadata(CatalogueRepository);
+            cata.LoadMetadata_ID = lmd.ID;
+            cata.SaveToDatabase();
+
+            var migrationHost = new MigrationHost(dbFrom, dbTo, configuration, new HICDatabaseConfiguration(lmd));
 
             //set up a logging task
             var logServer = new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);

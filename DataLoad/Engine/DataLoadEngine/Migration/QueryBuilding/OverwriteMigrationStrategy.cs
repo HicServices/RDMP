@@ -108,6 +108,14 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                     return;
                 }
 
+                var toDiff = columnsToMigrate.FieldsToDiff.Where(c => !c.IsPrimaryKey).ToArray();
+
+                if (!toDiff.Any())
+                {
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Table " + columnsToMigrate.DestinationTable + " is entirely composed of PrimaryKey columns or hic_ columns/ other non DIFF columns that will not result in an UPDATE will NOT take place"));
+                    return;
+                }
+
                 //t1.Name = t2.Name, t1.Age=T2.Age etc
                 sqlLines.Add(new CustomLine(string.Join(",",toSet), QueryComponent.SET));
                 
@@ -115,7 +123,7 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                 sqlLines.Add(new CustomLine(string.Format("t1.{0}={1}", SpecialFieldNames.DataLoadRunID,dataLoadInfoID),QueryComponent.SET));
 
                 //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
-                sqlLines.Add(new CustomLine(string.Join(" OR ",columnsToMigrate.FieldsToDiff.Where(c=>!c.IsPrimaryKey).Select(GetORLine)), QueryComponent.WHERE));
+                sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(GetORLine)), QueryComponent.WHERE));
                 
                 //the join
                 sqlLines.AddRange(columnsToMigrate.PrimaryKeys.Select(p => new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()), QueryComponent.JoinInfoJoin)));
