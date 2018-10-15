@@ -7,10 +7,12 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Checks;
+using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution;
@@ -24,6 +26,7 @@ using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
+using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
@@ -55,11 +58,14 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             AllPrimaryKeys,
             WithNonPrimaryKeyIdentityColumn,
             
+            WithCustomTableNamer,
+
             WithDiffColumnIgnoreRegex //tests ability of the system to skip a given column when doing the DLE diff section
         }
 
         [TestCase(DatabaseType.Oracle,TestCase.Normal)]
         [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithCustomTableNamer)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
@@ -67,6 +73,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
         //[TestCase(DatabaseType.MYSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)] //Not supported by MySql:Incorrect table definition; there can be only one auto column and it must be defined as a key
         [TestCase(DatabaseType.MYSQLServer, TestCase.DodgyCollation)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.WithCustomTableNamer)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.AllPrimaryKeys)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.WithDiffColumnIgnoreRegex)]
@@ -163,11 +170,15 @@ MrMurder,2001-01-01,Yella");
                 SetupLowPrivilegeUserRightsFor(db.Server.ExpectDatabase("DLE_STAGING"),TestLowPrivilegePermissions.All);
             }
 
-            var dbConfig = new HICDatabaseConfiguration(lmd);
+            var dbConfig = new HICDatabaseConfiguration(lmd,testCase == TestCase.WithCustomTableNamer? new CustomINameDatabasesAndTablesDuringLoads():null);
+
+            if(testCase == TestCase.WithCustomTableNamer)
+                new PreExecutionChecker(lmd, dbConfig).Check(new AcceptAllCheckNotifier()); //handles staging database creation etc
 
             if (testCase == TestCase.WithDiffColumnIgnoreRegex)
                 dbConfig.UpdateButDoNotDiff = new Regex("^FavouriteColour"); //do not diff FavouriteColour
 
+            
             var loadFactory = new HICDataLoadFactory(
                 lmd,
                 dbConfig,
@@ -237,6 +248,13 @@ MrMurder,2001-01-01,Yella");
 
                 foreach (LoadMetadata l in RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
                     l.DeleteInDatabase();
+            }
+
+            if(testCase == TestCase.WithCustomTableNamer)
+            {
+                var db2 = db.Server.ExpectDatabase("BB_STAGING");
+                if(db.Exists())
+                    db2.ForceDrop();
             }
         }
 
@@ -445,6 +463,35 @@ MrMurder,2001-01-01,Yella");
             cata.SaveToDatabase();
 
             return ti;
+        }
+    }
+
+    public class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
+    {
+        public string GetDatabaseName(string rootDatabaseName, LoadBubble convention)
+        {
+            //RAW is AA, Staging is BB
+            switch (convention)
+            {
+                case LoadBubble.Raw:
+                    return "AA_RAW";
+                case LoadBubble.Staging:
+                    return "BB_STAGING";
+                case LoadBubble.Live:
+                case LoadBubble.Archive:
+                    return rootDatabaseName;
+                default:
+                    throw new ArgumentOutOfRangeException("convention");
+            }
+        }
+
+        public string GetName(string tableName, LoadBubble convention)
+        {
+            //all tables get called CC
+            if (convention < LoadBubble.Live)
+                return "CC";
+
+            return tableName;
         }
     }
 }
