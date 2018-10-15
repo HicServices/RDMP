@@ -54,7 +54,7 @@ namespace LoadModules.Generic.Mutilators
             foreach (var tableInfo in j.RegularTablesToLoad)
                 if (TableRegexPattern.IsMatch(tableInfo.GetRuntimeName()))
                 {
-                    var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage));
+                    var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage,j.Configuration.DatabaseNamer));
                     
                     if(!tbl.Exists())
                         job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Expected table "+ tbl + " did not exist in RAW"));
@@ -67,8 +67,6 @@ namespace LoadModules.Generic.Mutilators
                         sw.Stop();
                         job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, GetType() + " mutilation on table " + tbl + " completed after " + sw.ElapsedMilliseconds + " ms"));
                     }
-
-                    
                 }
 
             return ExitCodeType.Success;

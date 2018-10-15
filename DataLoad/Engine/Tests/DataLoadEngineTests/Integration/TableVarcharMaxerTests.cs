@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
@@ -47,6 +48,7 @@ namespace DataLoadEngineTests.Integration
             var job = MockRepository.GenerateMock<IDataLoadJob>();
 
             job.Stub(x => x.RegularTablesToLoad).Return(new List<TableInfo>(){ti});
+            job.Expect(p => p.Configuration).Return(new HICDatabaseConfiguration(db.Server));
 
             maxer.Mutilate(job);
 

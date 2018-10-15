@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
@@ -17,10 +19,11 @@ namespace DataLoadEngineTests.Integration
 {
     public class CoalescerTests:DatabaseTests
     {
-        [Test]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
-        public void TestCoalescer_RampantNullness(DatabaseType type)
+        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+        [TestCase(DatabaseType.MYSQLServer,true)]
+        [TestCase(DatabaseType.MYSQLServer, false)]
+        public void TestCoalescer_RampantNullness(DatabaseType type,bool useCustomNamer)
         {
             var db = GetCleanedServer(type, "TestCoalescer");
 
@@ -83,6 +86,19 @@ namespace DataLoadEngineTests.Integration
             pk.IsPrimaryKey = true;
             pk.SaveToDatabase();
 
+            INameDatabasesAndTablesDuringLoads namer = null;
+
+            if (useCustomNamer)
+            {
+                tbl.Rename("AAAA");
+
+                namer = MockRepository.GenerateMock<INameDatabasesAndTablesDuringLoads>();
+                namer.Stub(x => x.GetName("", LoadBubble.Live)).IgnoreArguments().Return("AAAA");
+                namer.Stub(x => x.GetDatabaseName("", LoadBubble.Live)).IgnoreArguments().Return(db.GetRuntimeName());
+            }
+            
+            HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server,namer);
+            
             var coalescer = new Coalescer();
             coalescer.TableRegexPattern = new Regex(".*");
             coalescer.CreateIndex = true;
@@ -90,7 +106,8 @@ namespace DataLoadEngineTests.Integration
 
             var job = MockRepository.GenerateMock<IDataLoadJob>();
             job.Expect(p=>p.RegularTablesToLoad).Return(new List<TableInfo>(new []{tableInfo}));
-            
+            job.Stub(x => x.Configuration).Return(configuration);
+
             coalescer.Mutilate(job);
 
             var dt2 = tbl.GetDataTable();

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
@@ -63,6 +64,7 @@ namespace DataLoadEngineTests.Integration
 
             var job = MockRepository.GenerateMock<IDataLoadJob>();
             job.Expect(p => p.RegularTablesToLoad).Return(new List<TableInfo>(new[] { tableInfo }));
+            job.Expect(p => p.Configuration).Return(new HICDatabaseConfiguration(db.Server));
 
             distincter.Mutilate(job);
 
@@ -119,6 +121,7 @@ namespace DataLoadEngineTests.Integration
 
             var job = MockRepository.GenerateMock<IDataLoadJob>();
             job.Expect(p => p.RegularTablesToLoad).Return(new List<TableInfo>(new[] { tableInfo }));
+            job.Expect(p => p.Configuration).Return(new HICDatabaseConfiguration(db.Server));
 
             distincter.Mutilate(job);
 
