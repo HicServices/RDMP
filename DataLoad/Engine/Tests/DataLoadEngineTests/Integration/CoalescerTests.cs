@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using DataLoadEngineTests.Integration.Mocks;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -91,10 +92,7 @@ namespace DataLoadEngineTests.Integration
             if (useCustomNamer)
             {
                 tbl.Rename("AAAA");
-
-                namer = MockRepository.GenerateMock<INameDatabasesAndTablesDuringLoads>();
-                namer.Stub(x => x.GetName("", LoadBubble.Live)).IgnoreArguments().Return("AAAA");
-                namer.Stub(x => x.GetDatabaseName("", LoadBubble.Live)).IgnoreArguments().Return(db.GetRuntimeName());
+                namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
             }
             
             HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server,namer);
@@ -104,10 +102,8 @@ namespace DataLoadEngineTests.Integration
             coalescer.CreateIndex = true;
             coalescer.Initialize(db,LoadStage.AdjustRaw);
 
-            var job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Expect(p=>p.RegularTablesToLoad).Return(new List<TableInfo>(new []{tableInfo}));
-            job.Stub(x => x.Configuration).Return(configuration);
 
+            var job = new ThrowImmediatelyDataLoadJob(configuration, tableInfo);
             coalescer.Mutilate(job);
 
             var dt2 = tbl.GetDataTable();

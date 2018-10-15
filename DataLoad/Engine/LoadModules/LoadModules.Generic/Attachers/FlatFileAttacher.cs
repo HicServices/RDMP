@@ -46,7 +46,7 @@ namespace LoadModules.Generic.Attachers
         public override ExitCodeType Attach(IDataLoadJob job)
         {
             if (string.IsNullOrWhiteSpace(TableName) && TableToLoad != null)
-                TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw);
+                TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw,job.Configuration.DatabaseNamer);
 
             if(TableName != null)
                 TableName = TableName.Trim();

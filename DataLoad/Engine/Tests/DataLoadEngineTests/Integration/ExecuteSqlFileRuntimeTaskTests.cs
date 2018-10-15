@@ -10,6 +10,7 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
+using DataLoadEngineTests.Integration.Mocks;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -131,9 +132,7 @@ namespace DataLoadEngineTests.Integration
             job.Stub(x => x.LookupTablesToLoad).Return(new List<TableInfo>());
 
             //create a namer that tells the user 
-            var namer = MockRepository.GenerateMock<INameDatabasesAndTablesDuringLoads>();
-            namer.Stub(x => x.GetName("", LoadBubble.Live)).IgnoreArguments().Return(tableName);
-            namer.Stub(x => x.GetDatabaseName("", LoadBubble.Live)).IgnoreArguments().Return(db.GetRuntimeName());
+            var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);
             
             HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server,namer);
             job.Stub(x => x.Configuration).Return(configuration);
