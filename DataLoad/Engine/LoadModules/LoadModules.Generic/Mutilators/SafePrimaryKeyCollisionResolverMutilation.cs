@@ -2,6 +2,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using DataLoadEngine.Job;
 using DataLoadEngine.Mutilators;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -95,7 +96,9 @@ False - Delete the larger value")]
 
         public ExitCodeType Mutilate(IDataLoadEventListener job)
         {
-            var tbl = _database.ExpectTable(ColumnToResolveOn.TableInfo.GetRuntimeName(_loadStage));
+            var namer = ((IDataLoadJob) job).Configuration.DatabaseNamer;
+
+            var tbl = _database.ExpectTable(ColumnToResolveOn.TableInfo.GetRuntimeName(_loadStage,namer));
             var  pks = ColumnToResolveOn.TableInfo.ColumnInfos.Where(ci => ci.IsPrimaryKey).ToArray();
             
             DeleteRows(tbl,pks,job);
