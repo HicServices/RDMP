@@ -181,7 +181,7 @@ MrMurder,2001-01-01,Yella");
                 var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
             
                 var exitCode = exe.Run(
-                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener()),
+                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener(),dbConfig),
                     new GracefulCancellationToken());
 
                 Assert.AreEqual(ExitCodeType.Success,exitCode);
@@ -321,9 +321,11 @@ MrMurder,2001-01-01,Yella");
             var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
             checker.Check(new AcceptAllCheckNotifier());
 
+            var config = new HICDatabaseConfiguration(lmd);
+
             var loadFactory = new HICDataLoadFactory(
                 lmd,
-                new HICDatabaseConfiguration(lmd),
+                config,
                 new HICLoadConfigurationFlags(),
                 CatalogueRepository,
                 logManager
@@ -333,7 +335,7 @@ MrMurder,2001-01-01,Yella");
                 var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
 
                 var exitCode = exe.Run(
-                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory, new ThrowImmediatelyDataLoadEventListener()),
+                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory, new ThrowImmediatelyDataLoadEventListener(),config),
                     new GracefulCancellationToken());
 
                 Assert.AreEqual(ExitCodeType.Success, exitCode);

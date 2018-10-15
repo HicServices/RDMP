@@ -3,6 +3,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
 using HIC.Logging;
 using ReusableLibraryCode.Progress;
@@ -45,6 +46,8 @@ namespace DataLoadEngine.Job
         public void CloseLogging()
         {
         }
+
+        public HICDatabaseConfiguration Configuration { get; private set; }
 
         public object Payload { get; set; }
 
