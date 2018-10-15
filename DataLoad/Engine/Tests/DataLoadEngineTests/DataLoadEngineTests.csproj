@@ -265,6 +265,7 @@
     <Compile Include="Integration\DilutionTests\DilutionOperationFactoryTests.cs" />
     <Compile Include="Integration\DistincterTests.cs" />
     <Compile Include="Integration\ExecutableProcessTaskTests.cs" />
+    <Compile Include="Integration\ExecuteSqlFileRuntimeTaskTests.cs" />
     <Compile Include="Integration\HICPipelineTests.cs" />
     <Compile Include="Integration\ImportFilesDataProviderTests.cs" />
     <Compile Include="Integration\JobDateGenerationStrategyFactoryTestsIntegration.cs" />
