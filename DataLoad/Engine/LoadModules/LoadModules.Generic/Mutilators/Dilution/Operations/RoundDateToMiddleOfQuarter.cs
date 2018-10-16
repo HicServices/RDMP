@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
 using LoadModules.Generic.Mutilators.Dilution.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
@@ -33,7 +34,7 @@ namespace LoadModules.Generic.Mutilators.Dilution.Operations
                     ColumnToDilute.SqlDataType, CheckResult.Fail, null));
         }
         
-        public override string GetMutilationSql()
+        public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
         {
             return String.Format(@"IF OBJECT_ID('dbo.RoundDateToMiddleOfQuarter') IS NOT NULL
   DROP FUNCTION RoundDateToMiddleOfQuarter
@@ -68,7 +69,7 @@ GO
 
 UPDATE {0} SET {1}=dbo.RoundDateToMiddleOfQuarter({1})
 GO",
-   ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging), ColumnToDilute.GetRuntimeName());
+   ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging, namer), ColumnToDilute.GetRuntimeName());
         }
     }
 }

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using DataLoadEngine.Job;
 using DataLoadEngine.Mutilators;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -44,7 +45,7 @@ namespace LoadModules.Generic.Mutilators
                 throw new Exception(typeof(BackupDatabaseMutilation).Name + " can only be done in AdjustStaging or PostLoad (this minimises redundant backups that would otherwise be created while you attempt to fix RAW / constraint related load errors)");
         }
 
-        public ExitCodeType Mutilate(IDataLoadEventListener job)
+        public ExitCodeType Mutilate(IDataLoadJob job)
         {
             var db = DataAccessPortal.GetInstance().ExpectDatabase(DatabaseToBackup, DataAccessContext.DataLoad);
             db.CreateBackup("DataLoadEngineBackup");

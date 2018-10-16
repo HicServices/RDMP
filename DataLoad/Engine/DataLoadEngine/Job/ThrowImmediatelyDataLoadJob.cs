@@ -7,6 +7,7 @@ using CatalogueLibrary.Repositories;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
 using HIC.Logging;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job
@@ -21,6 +22,12 @@ namespace DataLoadEngine.Job
         public ThrowImmediatelyDataLoadJob()
         {
             _listener = new ThrowImmediatelyDataLoadEventListener();
+        }
+
+        public ThrowImmediatelyDataLoadJob(DiscoveredServer liveServer)
+        {
+            _listener = new ThrowImmediatelyDataLoadEventListener();
+            Configuration = new HICDatabaseConfiguration(liveServer);
         }
 
         public ThrowImmediatelyDataLoadJob(IDataLoadEventListener listener)

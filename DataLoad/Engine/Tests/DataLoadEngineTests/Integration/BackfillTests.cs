@@ -11,6 +11,7 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
+using DataLoadEngine.Job;
 using LoadModules.Generic.Mutilators;
 using DataLoadEngine.Mutilators;
 using NUnit.Framework;
@@ -180,7 +181,6 @@ namespace DataLoadEngineTests.Integration
 
         private void Mutilate(string timeColumnName)
         {
-            var listener = new ThrowImmediatelyDataLoadEventListener();
             var mutilator = new StagingBackfillMutilator
             {
                 TimePeriodicityField = CatalogueRepository.GetAllObjectsWhere<ColumnInfo>("WHERE Name=@Name", new Dictionary<string, object>
@@ -193,7 +193,7 @@ namespace DataLoadEngineTests.Integration
 
             mutilator.Initialize(staging, LoadStage.AdjustStaging);
             mutilator.Check(new ThrowImmediatelyCheckNotifier());
-            mutilator.Mutilate(listener);
+            mutilator.Mutilate(new ThrowImmediatelyDataLoadJob(DiscoveredDatabaseICanCreateRandomTablesIn.Server));
         }
 
         [Test]
@@ -1029,7 +1029,6 @@ namespace DataLoadEngineTests.Integration
             #endregion
 
             // databases are now represent state after push to staging and before migration
-            var listener = new ThrowImmediatelyDataLoadEventListener();
             var mutilator = new StagingBackfillMutilator
             {
                 TimePeriodicityField = CatalogueRepository.GetAllObjectsWhere<ColumnInfo>("WHERE Name=@Name", new Dictionary<string, object>
@@ -1042,7 +1041,7 @@ namespace DataLoadEngineTests.Integration
 
             mutilator.Initialize(staging, LoadStage.AdjustStaging);
             mutilator.Check(new ThrowImmediatelyCheckNotifier());
-            mutilator.Mutilate(listener);
+            mutilator.Mutilate(new ThrowImmediatelyDataLoadJob());
 
             #region Assert
             // check that staging contains the correct data

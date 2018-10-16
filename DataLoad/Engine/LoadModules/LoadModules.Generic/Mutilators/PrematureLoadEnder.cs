@@ -47,7 +47,7 @@ namespace LoadModules.Generic.Mutilators
             _databaseInfo = dbInfo;
         }
 
-        public ExitCodeType Mutilate(IDataLoadEventListener job)
+        public ExitCodeType Mutilate(IDataLoadJob job)
         {
             if (ConditionsToTerminateUnder == PrematureLoadEndCondition.Always)
             {

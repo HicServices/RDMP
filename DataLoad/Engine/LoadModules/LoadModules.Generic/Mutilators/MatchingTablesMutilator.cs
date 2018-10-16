@@ -45,13 +45,11 @@ namespace LoadModules.Generic.Mutilators
             DbInfo = dbInfo;
         }
 
-        public ExitCodeType Mutilate(IDataLoadEventListener job)
+        public ExitCodeType Mutilate(IDataLoadJob job)
         {
-            var j = (IDataLoadJob) job;
-
             TableRegexPattern = new Regex(TableRegexPattern.ToString(),RegexOptions.IgnoreCase);
-            
-            foreach (var tableInfo in j.RegularTablesToLoad)
+
+            foreach (var tableInfo in job.RegularTablesToLoad)
                 if (TableRegexPattern.IsMatch(tableInfo.GetRuntimeName()))
                 {
                     var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage,j.Configuration.DatabaseNamer));

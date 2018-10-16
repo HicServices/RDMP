@@ -1,5 +1,6 @@
 ﻿using System;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
@@ -15,7 +16,7 @@ namespace LoadModules.Generic.Mutilators.Dilution.Operations
         {
         }
 
-        public override string GetMutilationSql()
+        public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
         {
             
             return 
@@ -32,7 +33,7 @@ String.Format(
 
   EXEC sp_rename '{0}.{1}_bit', '{1}' , 'COLUMN'
   GO
-", ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging), ColumnToDilute.GetRuntimeName());
+", ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging, namer), ColumnToDilute.GetRuntimeName());
         }
     }
 }

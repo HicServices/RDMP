@@ -94,11 +94,9 @@ False - Delete the larger value")]
             _loadStage = loadStage;
         }
 
-        public ExitCodeType Mutilate(IDataLoadEventListener job)
+        public ExitCodeType Mutilate(IDataLoadJob job)
         {
-            var namer = ((IDataLoadJob) job).Configuration.DatabaseNamer;
-
-            var tbl = _database.ExpectTable(ColumnToResolveOn.TableInfo.GetRuntimeName(_loadStage,namer));
+            var tbl = _database.ExpectTable(ColumnToResolveOn.TableInfo.GetRuntimeName(_loadStage,job.Configuration.DatabaseNamer));
             var  pks = ColumnToResolveOn.TableInfo.ColumnInfos.Where(ci => ci.IsPrimaryKey).ToArray();
             
             DeleteRows(tbl,pks,job);
