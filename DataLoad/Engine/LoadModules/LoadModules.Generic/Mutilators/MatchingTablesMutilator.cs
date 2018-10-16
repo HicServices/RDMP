@@ -52,7 +52,7 @@ namespace LoadModules.Generic.Mutilators
             foreach (var tableInfo in job.RegularTablesToLoad)
                 if (TableRegexPattern.IsMatch(tableInfo.GetRuntimeName()))
                 {
-                    var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage,j.Configuration.DatabaseNamer));
+                    var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage,job.Configuration.DatabaseNamer));
                     
                     if(!tbl.Exists())
                         job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Expected table "+ tbl + " did not exist in RAW"));
