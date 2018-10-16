@@ -422,28 +422,31 @@ namespace MapsDirectlyToDatabaseTable
         }
 
         
-        public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
-            where T : IMapsDirectlyToDatabaseTable
+        public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
-            string typename = typeof(T).Name;
+            return GetAllObjects(typeof (T), whereSQL, parameters).Cast<T>().ToArray();
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t, string whereSQL, Dictionary<string, object> parameters = null)
+        {
+            string typename = t.Name;
 
             // if there is whereSQL make sure it is a legit SQL where
             if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
                 throw new ArgumentException("whereSQL did not start with the word 'WHERE', it was:" + whereSQL);
 
-            var toReturn = new List<T>();
+            var toReturn = new List<IMapsDirectlyToDatabaseTable>();
             using (var opener = GetConnection())
             {
                 var selectCommand = PrepareCommand("SELECT * FROM " + typename + " " + whereSQL, parameters, opener.Connection, opener.Transaction);
 
                 using (DbDataReader r = selectCommand.ExecuteReader())
                     while (r.Read())
-                        toReturn.Add(ConstructEntity<T>(r));
+                        toReturn.Add(ConstructEntity(t,r));
             }
 
             return toReturn.ToArray();
         }
-
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
         {
             string typename = t.Name;
@@ -494,12 +497,17 @@ namespace MapsDirectlyToDatabaseTable
 
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
         {
+            return GetAllObjectsInIDList(typeof (T), ids).Cast<T>();
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids)
+        {
             string inList = string.Join(",", ids);
 
             if (string.IsNullOrWhiteSpace(inList))
-                return Enumerable.Empty<T>();
+                return Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
 
-            return GetAllObjects<T>(" WHERE ID in (" + inList + ")");
+            return GetAllObjects(elementType," WHERE ID in (" + inList + ")");
         }
 
         /// <inheritdoc/>
