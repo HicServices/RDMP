@@ -118,30 +118,11 @@ namespace DataLoadEngine.Checks.Checkers
                 if (!columnNames.Any())
                     _notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableInfo.GetRuntimeName() + "' has no ColumnInfos", CheckResult.Fail, null));
 
-
-                if(deploymentStage == LoadBubble.Live)
-                {
-                
-                    TableInfoSynchronizer sync = new TableInfoSynchronizer(tableInfo);
-                    bool isSynched = sync.Synchronize(_notifier);
+                string tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
+                var table = dbInfo.ExpectTable(tableName);
                     
-                
-                    if(isSynched)
-                        _notifier.OnCheckPerformed(new CheckEventArgs("Live table  " + tableInfo.GetRuntimeName() + " is synchronized with the Catalogue TableInfos", CheckResult.Success, null));
-                    else
-                        _notifier.OnCheckPerformed(new CheckEventArgs("Live table  " + tableInfo.GetRuntimeName() + " is not synchronized with the Catalogue TableInfos", CheckResult.Fail, null));
-                    
-                }
-                else
-                {
-                    string tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
-                    var table = dbInfo.ExpectTable(tableName);
-                    
-                    if(!table.Exists())
-                        throw new Exception("PreExecutionChecker spotted that table does not exist:" + table + " it was about to check whether the TableInfo matched the columns or not");
-                }
-
-                
+                if(!table.Exists())
+                    throw new Exception("PreExecutionChecker spotted that table does not exist:" + table + " it was about to check whether the TableInfo matched the columns or not");
             }
         }
 
