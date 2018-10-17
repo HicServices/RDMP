@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.Job.Scheduling;
 using HIC.Logging;
@@ -29,7 +30,7 @@ namespace DataLoadEngineTests.Integration
             var lmd = MockRepository.GenerateMock<ILoadMetadata>();
             lmd.Expect(m => m.GetAllCatalogues()).Return(new[] { cata });
 
-            _job = new ScheduledDataLoadJob(null,"fish", MockRepository.GenerateMock<ILogManager>(), lmd, null, new ThrowImmediatelyDataLoadJob());
+            _job = new ScheduledDataLoadJob(null,"fish", MockRepository.GenerateMock<ILogManager>(), lmd, null, new ThrowImmediatelyDataLoadJob(),null);
         }
         #endregion
 

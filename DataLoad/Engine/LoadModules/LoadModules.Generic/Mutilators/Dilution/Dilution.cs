@@ -4,6 +4,8 @@ using ANOStore.ANOEngineering;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
+using DataLoadEngine.Job;
 using DataLoadEngine.Mutilators;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -85,13 +87,15 @@ namespace LoadModules.Generic.Mutilators.Dilution
             _loadStage = loadStage;
         }
 
-        public ExitCodeType Mutilate(IDataLoadEventListener job)
+        public ExitCodeType Mutilate(IDataLoadJob job)
         {
+            var namer = job.Configuration.DatabaseNamer;
+
             using (var con = _dbInfo.Server.GetConnection())
             {
                 con.Open();
 
-                UsefulStuff.ExecuteBatchNonQuery(GetMutilationSql(), con, timeout: Timeout);
+                UsefulStuff.ExecuteBatchNonQuery(GetMutilationSql(namer), con, timeout: Timeout);
 
                 con.Close();
             }
@@ -99,10 +103,10 @@ namespace LoadModules.Generic.Mutilators.Dilution
             return ExitCodeType.Success;
         }
 
-        private string GetMutilationSql()
+        private string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
         {
             var factory = new DilutionOperationFactory(ColumnToDilute);
-            return factory.Create(Operation).GetMutilationSql();
+            return factory.Create(Operation).GetMutilationSql(namer);
         }
 
     }

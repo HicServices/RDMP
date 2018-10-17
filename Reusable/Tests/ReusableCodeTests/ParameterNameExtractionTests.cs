@@ -8,6 +8,11 @@ namespace ReusableCodeTests
     {
         [TestCase("a = wok.dbo.fish(@bobby)")]
         [TestCase("[bob]=@bobby")]
+        [TestCase("[bob]=1+@bobby")]
+        [TestCase("[bob]=1-@bobby")]
+        [TestCase("[bob]=1*@bobby")]
+        [TestCase("[bob]=1/@bobby")]
+        [TestCase(@"[bob]=1\@bobby")]
         [TestCase("[bob]=   @bobby")]
         [TestCase("[bob]=@bobby OR [bob2]=@bobby")]
         [TestCase("[bob]=@bobby OR [bob2]=@BObby")]
@@ -19,6 +24,7 @@ namespace ReusableCodeTests
 
         [TestCase("[bob]='@bobby'")]
         [TestCase("[bob]='myfriend@bobby.ac.uk'")]
+        [TestCase("[bob]='myfriend123@bobby.ac.uk'")]
         [TestCase("[bob]=   ':bobby'")]
         public void TestExtractionOfParmaetersFromSQL_NoneOne(string sql)
         {

@@ -3,6 +3,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job.Scheduling;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
@@ -21,8 +22,8 @@ namespace DataLoadEngine.LoadProcess.Scheduling
     public class IterativeScheduledDataLoadProcess : ScheduledDataLoadProcess
     {
         // todo: refactor to cut down on ctor params
-        public IterativeScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution, JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory, ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad, ILogManager logManager, IDataLoadEventListener dataLoadEventsreceiver)
-            : base(repositoryLocator,loadMetadata, preExecutionChecker, loadExecution, jobDateGenerationStrategyFactory, loadProgressSelectionStrategy, overrideNumberOfDaysToLoad, logManager, dataLoadEventsreceiver)
+        public IterativeScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution, JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory, ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad, ILogManager logManager, IDataLoadEventListener dataLoadEventsreceiver,HICDatabaseConfiguration configuration)
+            : base(repositoryLocator,loadMetadata, preExecutionChecker, loadExecution, jobDateGenerationStrategyFactory, loadProgressSelectionStrategy, overrideNumberOfDaysToLoad, logManager, dataLoadEventsreceiver,configuration)
         {
             
         }

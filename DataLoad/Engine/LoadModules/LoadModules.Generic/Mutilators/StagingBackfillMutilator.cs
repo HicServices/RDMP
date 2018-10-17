@@ -8,6 +8,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.Job;
 using DataLoadEngine.Migration.QueryBuilding;
 using LoadModules.Generic.Mutilators.QueryBuilders;
 using DataLoadEngine.Migration;
@@ -49,7 +50,7 @@ namespace LoadModules.Generic.Mutilators
         //[DemandsInitialization("The class name of the ITableNamingScheme used for this load. This should really come from the load itself, as we don't want a different class from the rest of the load process being chosen here but that will require some design changes.")]
         public INameDatabasesAndTablesDuringLoads TableNamingScheme { get; set; }
 
-        public ExitCodeType Mutilate(IDataLoadEventListener listener)
+        public ExitCodeType Mutilate(IDataLoadJob listener)
         {
             if (TimePeriodicityField == null)
                 throw new InvalidOperationException("TimePeriodicityField has not been set.");

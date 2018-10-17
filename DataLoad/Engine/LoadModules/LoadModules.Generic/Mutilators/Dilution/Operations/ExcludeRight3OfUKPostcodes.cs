@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
@@ -28,7 +29,7 @@ namespace LoadModules.Generic.Mutilators.Dilution.Operations
                 notifier.OnCheckPerformed(new CheckEventArgs("IPreLoadDiscardedColumn " + ColumnToDilute + " is of datatype " + ColumnToDilute.SqlDataType + " which is incompatible with this dilution operation (it must be char/varchar)", CheckResult.Fail));
         }
         
-        public override string GetMutilationSql()
+        public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
         {
             return 
 
@@ -98,7 +99,7 @@ END
 GO
 
 UPDATE {0} SET {1}=dbo.Left4OfPostcodes({1})
-GO", ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging), ColumnToDilute.GetRuntimeName());
+GO", ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging, namer), ColumnToDilute.GetRuntimeName());
         }
     }
 }

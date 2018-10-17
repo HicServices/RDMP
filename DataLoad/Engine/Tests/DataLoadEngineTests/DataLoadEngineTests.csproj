@@ -265,10 +265,12 @@
     <Compile Include="Integration\DilutionTests\DilutionOperationFactoryTests.cs" />
     <Compile Include="Integration\DistincterTests.cs" />
     <Compile Include="Integration\ExecutableProcessTaskTests.cs" />
+    <Compile Include="Integration\ExecuteSqlFileRuntimeTaskTests.cs" />
     <Compile Include="Integration\HICPipelineTests.cs" />
     <Compile Include="Integration\ImportFilesDataProviderTests.cs" />
     <Compile Include="Integration\JobDateGenerationStrategyFactoryTestsIntegration.cs" />
     <Compile Include="Integration\KVPAttacherTest.cs" />
+    <Compile Include="Integration\Mocks\RdmpMockFactory.cs" />
     <Compile Include="Integration\PayloadTest.cs" />
     <Compile Include="Integration\PipelineTests\Components\AliasHandlerTests.cs" />
     <Compile Include="Integration\PipelineTests\Components\RemoveDuplicatesTests.cs" />
@@ -289,6 +291,7 @@
     <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestDataSetup.cs" />
     <Compile Include="Integration\SetupDatasetTest.cs" />
     <Compile Include="Integration\TableInfoJoiningQueryBuilderTests.cs" />
+    <Compile Include="Integration\TableVarcharMaxerTests.cs" />
     <Compile Include="Integration\TestDataWriter.cs" />
     <Compile Include="Integration\ToMemoryDataLoadJob.cs" />
     <Compile Include="Integration\WebFileDownloaderTests.cs" />

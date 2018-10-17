@@ -56,12 +56,12 @@ namespace DataLoadEngineTests.Integration
             pt.Path = typeof (TestPayloadAttacher).FullName;
             pt.ProcessTaskType = ProcessTaskType.Attacher;
             pt.SaveToDatabase();
-            
-            
-            var factory = new HICDataLoadFactory(lmd, new HICDatabaseConfiguration(DiscoveredDatabaseICanCreateRandomTablesIn.Server),new HICLoadConfigurationFlags(), CatalogueRepository, lm);
+
+            var config = new HICDatabaseConfiguration(DiscoveredDatabaseICanCreateRandomTablesIn.Server);
+            var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
             IDataLoadExecution execution = factory.Create(new ThrowImmediatelyDataLoadEventListener());
 
-            var proceedure = new DataLoadProcess(RepositoryLocator,lmd, null, lm, new ThrowImmediatelyDataLoadEventListener(),execution);
+            var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm, new ThrowImmediatelyDataLoadEventListener(), execution, config);
 
             proceedure.Run(new GracefulCancellationToken(), payload);
 

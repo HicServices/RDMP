@@ -3,11 +3,15 @@ using System.Data;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
+using DataLoadEngine.Job;
+using DataLoadEngineTests.Integration.Mocks;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
+using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -51,7 +55,7 @@ namespace DataLoadEngineTests.Integration
             mutilation.PreferNulls = false;
             
             mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadEventListener());
+            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
             Assert.AreEqual(4,tbl.GetRowCount());
         }
@@ -92,7 +96,7 @@ namespace DataLoadEngineTests.Integration
             mutilation.PreferNulls = preferNulls;
 
             mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadEventListener());
+            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
             Assert.AreEqual(3, tbl.GetRowCount());
             var result = tbl.GetDataTable();
@@ -102,6 +106,55 @@ namespace DataLoadEngineTests.Integration
 
             //if you prefer nulls you should have this one
             Assert.AreEqual(preferNulls ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+        }
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void SafePrimaryKeyCollisionResolverMutilationTests_WithDatabaseNamer_RecordsDeleted(DatabaseType dbType)
+        {
+            var db = GetCleanedServer(dbType, true);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("PK");
+            dt.Columns.Add("ResolveOn");
+            dt.Columns.Add("AnotherCol");
+
+            dt.Rows.Add(1, null, "cat");
+            dt.Rows.Add(1, "fish", "flop");
+            dt.Rows.Add(2, "fish", "flop");
+            dt.Rows.Add(3, "dave", "franl");
+
+            var tbl = db.CreateTable("MyTable", dt);
+
+            TableInfo ti;
+            ColumnInfo[] cis;
+            Import(tbl, out ti, out cis);
+
+            tbl.Rename("AAAA");
+            var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db,"AAAA");
+
+            var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
+            pk.IsPrimaryKey = true;
+            pk.SaveToDatabase();
+
+            var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
+
+            var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
+            mutilation.ColumnToResolveOn = resolveOn;
+
+            mutilation.PreferLargerValues = true;
+            mutilation.PreferNulls = true;
+
+            mutilation.Initialize(db, LoadStage.AdjustRaw);
+            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server,namer), ti));
+
+            Assert.AreEqual(3, tbl.GetRowCount());
+            var result = tbl.GetDataTable();
+
+            //if you prefer nulls you shouldn't want this one
+            Assert.AreEqual( 0 , result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"));
+
+            //if you prefer nulls you should have this one
+            Assert.AreEqual(1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
         }
 
 
@@ -143,7 +196,7 @@ namespace DataLoadEngineTests.Integration
             mutilation.PreferNulls = false; 
 
             mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadEventListener());
+            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
             Assert.AreEqual(3, tbl.GetRowCount());
             var result = tbl.GetDataTable();
@@ -196,7 +249,7 @@ namespace DataLoadEngineTests.Integration
             mutilation.PreferNulls = false;
 
             mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadEventListener());
+            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
             Assert.AreEqual(3, tbl.GetRowCount());
             var result = tbl.GetDataTable();
@@ -258,7 +311,7 @@ namespace DataLoadEngineTests.Integration
             mutilation.PreferNulls = false;
 
             mutilation.Initialize(db, LoadStage.AdjustRaw);
-            mutilation.Mutilate(new ThrowImmediatelyDataLoadEventListener());
+            mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
             Assert.AreEqual(7, tbl.GetRowCount());
             var result = tbl.GetDataTable();

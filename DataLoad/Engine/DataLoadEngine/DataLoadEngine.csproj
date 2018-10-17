@@ -256,6 +256,7 @@
     <Compile Include="LoadExecution\Components\Runtime\IMEFRuntimeTask.cs" />
     <Compile Include="LoadExecution\Components\Runtime\MandatoryPropertyChecker.cs" />
     <Compile Include="LoadExecution\Components\Runtime\MutilateDataTablesRuntimeTask.cs" />
+    <Compile Include="LoadExecution\Components\Runtime\ExecuteSqlFileRuntimeTaskException.cs" />
     <Compile Include="LoadExecution\Delegates\ExecutionStoppedHandler.cs" />
     <Compile Include="LoadExecution\Delegates\JobFinishedHandler.cs" />
     <Compile Include="LoadExecution\HICDataLoadFactory.cs" />

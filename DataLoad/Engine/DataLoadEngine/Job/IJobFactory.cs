@@ -1,4 +1,5 @@
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job
@@ -8,6 +9,6 @@ namespace DataLoadEngine.Job
     /// </summary>
     public interface IJobFactory
     {
-        IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener);
+        IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration);
     }
 }

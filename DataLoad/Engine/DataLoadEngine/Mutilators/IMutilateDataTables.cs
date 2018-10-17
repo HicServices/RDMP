@@ -1,5 +1,6 @@
 ﻿using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
+using DataLoadEngine.Job;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -20,6 +21,6 @@ namespace DataLoadEngine.Mutilators
         /// <param name="dbInfo"></param>
         /// <param name="loadStage"></param>
         void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage);
-        ExitCodeType Mutilate(IDataLoadEventListener job);
+        ExitCodeType Mutilate(IDataLoadJob job);
     }
 }

@@ -43,6 +43,7 @@
             this.btnSingleCatalogue = new System.Windows.Forms.ToolStripButton();
             this.btnShowLabels = new System.Windows.Forms.ToolStripButton();
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
+            this.btnViewDataTable = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.gbWhatThisIs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
@@ -88,6 +89,7 @@
             this.gbWhatThisIs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbWhatThisIs.Controls.Add(this.btnViewDataTable);
             this.gbWhatThisIs.Controls.Add(this.pbLoading);
             this.gbWhatThisIs.Controls.Add(this.lblNoIssues);
             this.gbWhatThisIs.Controls.Add(this.chart1);
@@ -190,6 +192,17 @@
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // btnViewDataTable
+            // 
+            this.btnViewDataTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnViewDataTable.Image = ((System.Drawing.Image)(resources.GetObject("btnViewDataTable.Image")));
+            this.btnViewDataTable.Location = new System.Drawing.Point(360, 193);
+            this.btnViewDataTable.Name = "btnViewDataTable";
+            this.btnViewDataTable.Size = new System.Drawing.Size(27, 23);
+            this.btnViewDataTable.TabIndex = 4;
+            this.btnViewDataTable.UseVisualStyleBackColor = true;
+            this.btnViewDataTable.Click += new System.EventHandler(this.btnViewDataTable_Click);
+            // 
             // GoodBadCataloguePieChart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -222,5 +235,6 @@
         private System.Windows.Forms.ToolStripButton btnRefresh;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripButton btnShowLabels;
+        private System.Windows.Forms.Button btnViewDataTable;
     }
 }

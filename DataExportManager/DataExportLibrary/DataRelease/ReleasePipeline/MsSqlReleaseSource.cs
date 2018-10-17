@@ -84,6 +84,10 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             var tables = new List<string>();
             foreach (var cumulativeResult in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.CumulativeExtractionResults))
             {
+                if (cumulativeResult.DestinationDescription.Split('|').Length != 3)
+                    throw new Exception("The extraction did not generate a description that can be parsed. " +
+                                        "Have you extracted to a mix of CSVs and DB tables?");
+
                 string candidate = cumulativeResult.DestinationDescription.Split('|')[0] + "|" +
                                    cumulativeResult.DestinationDescription.Split('|')[1];
 
@@ -100,6 +104,10 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                                                                    .Where(x => x.GetExtractedType() == typeof(SupportingSQLTable) || 
                                                                                x.GetExtractedType() == typeof(TableInfo)))
                 {
+                    if (supplementalResult.DestinationDescription.Split('|').Length != 3)
+                        throw new Exception("The extraction did not generate a description that can be parsed. " +
+                                            "Have you extracted to a mix of CSVs and DB tables?");
+
                     candidate = supplementalResult.DestinationDescription.Split('|')[0] + "|" +
                                 supplementalResult.DestinationDescription.Split('|')[1];
 
@@ -115,6 +123,10 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                                                                               .Where(x => x.GetExtractedType() == typeof(SupportingSQLTable) ||
                                                                                           x.GetExtractedType() == typeof(TableInfo)))
             {
+                if (globalResult.DestinationDescription.Split('|').Length != 3)
+                    throw new Exception("The extraction did not generate a description that can be parsed. " +
+                                        "Have you extracted the Globals to CSVs rather than DB tables?");
+
                 string candidate = globalResult.DestinationDescription.Split('|')[0] + "|" +
                                    globalResult.DestinationDescription.Split('|')[1];
 

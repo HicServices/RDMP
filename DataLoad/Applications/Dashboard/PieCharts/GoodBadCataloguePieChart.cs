@@ -15,6 +15,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
+using ReusableUIComponents.SingleControlForms;
 
 namespace Dashboard.PieCharts
 {
@@ -86,9 +87,8 @@ namespace Dashboard.PieCharts
                     ExtractionInformation[] allExtractionInformation;
                     if (!_collection.IsSingleCatalogueMode)
                     {
-                        var cataRepo = _activator.RepositoryLocator.CatalogueRepository;
                         //get the active (non depricated etc) Catalogues
-                        var activeCatalogues = cataRepo.GetAllCatalogues().Where(c => !c.IsColdStorageDataset && !c.IsInternalDataset && !c.IsDeprecated).ToArray();
+                        var activeCatalogues = _activator.CoreChildProvider.AllCatalogues.Where(ShouldHaveDescription).ToArray();
                         
                         //if there are some
                         if(activeCatalogues.Any())
@@ -118,7 +118,7 @@ namespace Dashboard.PieCharts
 
                     int countPopulated = 0;
                     int countNotPopulated = 0;
-
+                    
                     foreach (ExtractionInformation information in allExtractionInformation)
                         if (string.IsNullOrWhiteSpace(information.CatalogueItem.Description))
                             countNotPopulated++;
@@ -159,6 +159,11 @@ namespace Dashboard.PieCharts
 
             t.Start();
           
+        }
+
+        public bool ShouldHaveDescription(Catalogue c)
+        {
+            return !c.IsColdStorageDataset && !c.IsInternalDataset && !c.IsDeprecated && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository);
         }
 
         private void PopulateAsIssueChartAsync()
@@ -347,6 +352,28 @@ namespace Dashboard.PieCharts
 
             chart1.Series[0]["PieLabelStyle"] = _collection.ShowLabels ? "Inside" : "Disabled";
             SaveCollectionChanges();
+        }
+
+        private void btnViewDataTable_Click(object sender, EventArgs e)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Catalogue");
+            dt.Columns.Add("Count Missing Descriptions");
+            dt.Columns.Add("Missing List");
+            
+            foreach (IGrouping<Catalogue, ExtractionInformation> g in _activator.CoreChildProvider.AllExtractionInformations.GroupBy(ei=>ei.CatalogueItem.Catalogue))
+            {
+                if (!ShouldHaveDescription(g.Key))
+                    continue;
+                
+                var missing = g.Where(ei => string.IsNullOrWhiteSpace(ei.CatalogueItem.Description)).ToArray();
+                dt.Rows.Add(g.Key.Name, missing.Count(), string.Join(",",missing.Select(m=>m.CatalogueItem.Name)));
+            }
+
+            DataTableViewer dtv = new DataTableViewer(dt,"Catalogue Items Missing Descriptions");
+
+            var form = new SingleControlForm(dtv, true);
+            form.Show();
         }
     }
 

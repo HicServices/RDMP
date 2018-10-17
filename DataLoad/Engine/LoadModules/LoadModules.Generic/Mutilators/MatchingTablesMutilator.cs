@@ -17,13 +17,16 @@ namespace LoadModules.Generic.Mutilators
     {
         private readonly LoadStage[] _allowedStages;
 
-        [DemandsInitialization("All tables in RAW matching this pattern which have a TableInfo defined in the load will be affected by this mutilation", Mandatory = true, DefaultValue = ".*")]
+        [DemandsInitialization("All tables matching this pattern which have a TableInfo defined in the load will be affected by this mutilation", DefaultValue = ".*")]
         public Regex TableRegexPattern { get; set; }
+
+        [DemandsInitialization("Overrides TableRegexPattern.  If this is set then the tables chosen will be mutilated instead")]
+        public TableInfo[] OnlyTables { get; set; }
 
         [DemandsInitialization("How long to allow for each command to execute in seconds", DefaultValue = 600)]
         public int Timeout { get; set; }
 
-        private DiscoveredDatabase _dbInfo;
+        protected DiscoveredDatabase DbInfo;
         private LoadStage _loadStage;
 
         protected MatchingTablesMutilator(params LoadStage[] allowedStages)
@@ -42,44 +45,53 @@ namespace LoadModules.Generic.Mutilators
                 throw new NotSupportedException("Mutilation " + GetType() + " is not allowed at stage " + loadStage);
 
             _loadStage = loadStage;
-            _dbInfo = dbInfo;
+            DbInfo = dbInfo;
         }
 
-        public ExitCodeType Mutilate(IDataLoadEventListener job)
+        public ExitCodeType Mutilate(IDataLoadJob job)
         {
-            var j = (IDataLoadJob) job;
+            if(TableRegexPattern != null)
+                TableRegexPattern = new Regex(TableRegexPattern.ToString(),RegexOptions.IgnoreCase);
 
-            TableRegexPattern = new Regex(TableRegexPattern.ToString(),RegexOptions.IgnoreCase);
-            
-            foreach (var tableInfo in j.RegularTablesToLoad)
-                if (TableRegexPattern.IsMatch(tableInfo.GetRuntimeName()))
+            foreach (var tableInfo in job.RegularTablesToLoad)
+                if (OnlyTables != null && OnlyTables.Any())
                 {
-                    var tbl = _dbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage));
-                    
-                    if(!tbl.Exists())
-                        job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Expected table "+ tbl + " did not exist in RAW"));
-                    else
-                    {
-                        job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to run " + GetType() + " mutilation on table " + tbl));
-                        Stopwatch sw = new Stopwatch();
-                        sw.Start();
-                        MutilateTable(job, tableInfo, tbl);    
-                        sw.Stop();
-                        job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, GetType() + " mutilation on table " + tbl + " completed after " + sw.ElapsedMilliseconds + " ms"));
-                    }
-
-                    
+                    if (OnlyTables.Contains(tableInfo))
+                        FireMutilate(tableInfo,job);
                 }
-
+                else
+                if (TableRegexPattern == null)
+                    throw new Exception("You must specify either TableRegexPattern or OnlyTables");
+                  else
+                    if( TableRegexPattern.IsMatch(tableInfo.GetRuntimeName()))
+                        FireMutilate(tableInfo, job);
+            
             return ExitCodeType.Success;
+        }
+
+        private void FireMutilate(TableInfo tableInfo, IDataLoadJob job)
+        {
+            var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage, job.Configuration.DatabaseNamer));
+
+            if (!tbl.Exists())
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Expected table " + tbl + " did not exist in RAW"));
+            else
+            {
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run " + GetType() + " mutilation on table " + tbl));
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                MutilateTable(job, tableInfo, tbl);
+                sw.Stop();
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, GetType() + " mutilation on table " + tbl + " completed after " + sw.ElapsedMilliseconds + " ms"));
+            }
         }
 
         protected abstract void MutilateTable(IDataLoadEventListener job, TableInfo tableInfo, DiscoveredTable table);
 
         public virtual void Check(ICheckNotifier notifier)
         {
-            if (TableRegexPattern == null)
-                notifier.OnCheckPerformed(new CheckEventArgs("You must specify a regex pattern for identifying tables in RAW which need to be processed", CheckResult.Fail));
+            if (TableRegexPattern == null && (OnlyTables == null || OnlyTables.Length == 0))
+                notifier.OnCheckPerformed(new CheckEventArgs("You must specify either a regex pattern (TableRegexPattern) or set OnlyTables for identifying tables which need to be processed", CheckResult.Fail));
         }
 
     }

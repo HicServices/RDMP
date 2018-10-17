@@ -481,7 +481,7 @@ select 0", con.Connection, con.Transaction);
 
         private ColumnInfo[] FetchColumnInfos()
         {
-            return Repository.GetAllObjectsWithParent<ColumnInfo>(this);
+            return Repository.GetAllObjectsWithParent<ColumnInfo,TableInfo>(this);
         }
 
         /// <summary>

@@ -195,6 +195,23 @@ namespace CatalogueLibrary.Data.DataLoad
             if(typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
                 return Repository.GetObjectByID(type, Convert.ToInt32(Value));
 
+            if (typeof (Array).IsAssignableFrom(type))
+            {
+                var elementType = type.GetElementType();
+                int[] ids = Value.Split(',').Select(int.Parse).ToArray();
+
+                if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(elementType))
+                {
+                    var genericArray = Repository.GetAllObjectsInIDList(elementType, ids).ToArray();
+                    var typedArray = Array.CreateInstance(elementType,genericArray.Length);
+
+                    for (int i = 0; i < genericArray.Length; i++)
+                        typedArray.SetValue(genericArray[i], i);
+
+                    return typedArray;
+                }
+            }
+
             if (Type.Equals(typeof (EncryptedString).ToString()))
                 return new EncryptedString((CatalogueRepository) Repository) {Value = Value};
             
@@ -263,6 +280,22 @@ namespace CatalogueLibrary.Data.DataLoad
                 //return the type
                 if (knownType.ToString().Equals(Type))
                     return knownType;
+            }
+
+            Regex arrayType = new Regex(@"(.*)\[]");
+            var arrayMatch = arrayType.Match(Type);
+
+            if (arrayMatch.Success)
+            {
+                string elementTypeAsString = arrayMatch.Groups[1].Value;
+
+                //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
+                var elementType = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(elementTypeAsString);
+                
+                if (elementType == null)
+                    throw new Exception("Could not figure out what SystemType to use for elementType = '" + elementTypeAsString + "' of Type '" + Type + "'");
+
+                return Array.CreateInstance(elementType, 0).GetType();
             }
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
@@ -344,6 +377,18 @@ namespace CatalogueLibrary.Data.DataLoad
             if (type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 type = Nullable.GetUnderlyingType(type);
 
+            //if it's an array
+            if (type != null && typeof (Array).IsAssignableFrom(type))
+            {
+                var arr = (Array) o;
+                if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType()))
+                    Value = string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID));
+                else
+                    throw new NotSupportedException("DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was " + type);
+                
+                return;
+            }
+            
             //if we already have a known type set on us
             if (!String.IsNullOrWhiteSpace(Type))
             {
