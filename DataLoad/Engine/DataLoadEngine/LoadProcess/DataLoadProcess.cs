@@ -7,6 +7,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution;
@@ -39,15 +40,17 @@ namespace DataLoadEngine.LoadProcess
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         protected readonly ILoadMetadata LoadMetadata;
         protected readonly IDataLoadEventListener DataLoadEventListener;
+        private readonly HICDatabaseConfiguration _configuration;
         protected readonly ILogManager LogManager;
 
         private readonly ICheckable _preExecutionChecker;
         
-        public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener, IDataLoadExecution loadExecution)
+        public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener, IDataLoadExecution loadExecution,HICDatabaseConfiguration configuration)
         {
             _repositoryLocator = repositoryLocator;
             LoadMetadata = loadMetadata;
             DataLoadEventListener = dataLoadEventListener;
+            _configuration = configuration;
             LoadExecution = loadExecution;
             _preExecutionChecker = preExecutionChecker;
             LogManager = logManager;
@@ -61,7 +64,7 @@ namespace DataLoadEngine.LoadProcess
             PerformPreExecutionChecks();
 
             // create job
-            var job = JobProvider.Create(_repositoryLocator,DataLoadEventListener);
+            var job = JobProvider.Create(_repositoryLocator,DataLoadEventListener,_configuration);
 
             // if job is null, there are no more jobs to submit
             if (job == null)

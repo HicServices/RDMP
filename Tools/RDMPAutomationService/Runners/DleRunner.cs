@@ -76,12 +76,12 @@ namespace RDMPAutomationService.Runners
                         var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress);
                     
                         dataLoadProcess = _options.Iterative
-                            ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(locator,loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener) :
-                                new SingleJobScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener);
+                            ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener, databaseConfiguration) :
+                                new SingleJobScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener, databaseConfiguration);
                     }
                     else
                         //OnDemand
-                        dataLoadProcess = new DataLoadProcess(locator, loadMetadata, checkable, logManager, listener, execution);
+                        dataLoadProcess = new DataLoadProcess(locator, loadMetadata, checkable, logManager, listener, execution, databaseConfiguration);
 
                     var exitCode = dataLoadProcess.Run(token);
             

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode;
@@ -71,6 +72,16 @@ namespace MapsDirectlyToDatabaseTable
                         ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2 : IMapsDirectlyToDatabaseTable
+        {
+            var toReturn = GetAllObjectsWithParent<T>(parent);
+            foreach (T v in toReturn)
+                v.InjectKnown(parent);
+
+            return toReturn;
         }
 
         public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
@@ -422,28 +433,31 @@ namespace MapsDirectlyToDatabaseTable
         }
 
         
-        public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
-            where T : IMapsDirectlyToDatabaseTable
+        public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
-            string typename = typeof(T).Name;
+            return GetAllObjects(typeof (T), whereSQL, parameters).Cast<T>().ToArray();
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t, string whereSQL, Dictionary<string, object> parameters = null)
+        {
+            string typename = t.Name;
 
             // if there is whereSQL make sure it is a legit SQL where
             if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
                 throw new ArgumentException("whereSQL did not start with the word 'WHERE', it was:" + whereSQL);
 
-            var toReturn = new List<T>();
+            var toReturn = new List<IMapsDirectlyToDatabaseTable>();
             using (var opener = GetConnection())
             {
                 var selectCommand = PrepareCommand("SELECT * FROM " + typename + " " + whereSQL, parameters, opener.Connection, opener.Transaction);
 
                 using (DbDataReader r = selectCommand.ExecuteReader())
                     while (r.Read())
-                        toReturn.Add(ConstructEntity<T>(r));
+                        toReturn.Add(ConstructEntity(t,r));
             }
 
             return toReturn.ToArray();
         }
-
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
         {
             string typename = t.Name;
@@ -494,12 +508,17 @@ namespace MapsDirectlyToDatabaseTable
 
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
         {
+            return GetAllObjectsInIDList(typeof (T), ids).Cast<T>();
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids)
+        {
             string inList = string.Join(",", ids);
 
             if (string.IsNullOrWhiteSpace(inList))
-                return Enumerable.Empty<T>();
+                return Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
 
-            return GetAllObjects<T>(" WHERE ID in (" + inList + ")");
+            return GetAllObjects(elementType," WHERE ID in (" + inList + ")");
         }
 
         /// <inheritdoc/>
@@ -1009,8 +1028,15 @@ namespace MapsDirectlyToDatabaseTable
                     .Where(
                         t =>
                             typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface &&
-                            !t.Name.Contains("Spontaneous")).ToArray();
+                            !t.Name.Contains("Spontaneous")&&IsCompatibleType(t)).ToArray();
         }
 
+        /// <summary>
+        /// Returns True if the type is one for objects that are held in the database.  Types will come from your repository assembly
+        /// and will include only <see cref="IMapsDirectlyToDatabaseTable"/> Types that are not abstract/interfaces
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected abstract bool IsCompatibleType(Type type);
     }
 }

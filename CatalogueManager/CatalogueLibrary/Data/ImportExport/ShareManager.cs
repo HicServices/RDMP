@@ -399,15 +399,26 @@ namespace CatalogueLibrary.Data.ImportExport
         /// </summary>
         /// <param name="o"></param>
         /// <param name="shareDefinition"></param>
-        public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
+        /// <param name="skipName">True to step over the Name property of <paramref name="o"/> during import (avoids renaming)</param>
+        public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition,bool skipName)
         {
             if (shareDefinition.Type != o.GetType())
                 throw new Exception("Share Definition is not for a " + o.GetType());
 
+            AttributePropertyFinder<RelationshipAttribute> relationshipPropertyFinder = new AttributePropertyFinder<RelationshipAttribute>(o);
+
             //for each property that isn't [NoMappingToDatabase]
             foreach (var kvp in shareDefinition.GetDictionaryForImport())
             {
+                if(kvp.Key == "Name" && skipName)
+                    continue;
+
                 var prop = o.GetType().GetProperty(kvp.Key);
+
+                //If the property is a relationship e.g. _ID skip it
+                if(relationshipPropertyFinder.GetAttribute(prop) != null)
+                    continue;
+                
                 RepositoryLocator.CatalogueRepository.SetValue(prop,kvp.Value,o);   
             }
         }

@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
 using HIC.Logging;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job
@@ -21,11 +24,22 @@ namespace DataLoadEngine.Job
             _listener = new ThrowImmediatelyDataLoadEventListener();
         }
 
+        public ThrowImmediatelyDataLoadJob(DiscoveredServer liveServer)
+        {
+            _listener = new ThrowImmediatelyDataLoadEventListener();
+            Configuration = new HICDatabaseConfiguration(liveServer);
+        }
+
         public ThrowImmediatelyDataLoadJob(IDataLoadEventListener listener)
         {
             _listener = listener;
         }
-
+        public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params TableInfo[] regularTablesToLoad)
+        {
+            _listener = new ThrowImmediatelyDataLoadEventListener();
+            RegularTablesToLoad = new List<TableInfo>(regularTablesToLoad);
+            Configuration = configuration;
+        }
 
         public string Description { get; private set; }
         public IDataLoadInfo DataLoadInfo { get; set; }
@@ -45,6 +59,8 @@ namespace DataLoadEngine.Job
         public void CloseLogging()
         {
         }
+
+        public HICDatabaseConfiguration Configuration { get; private set; }
 
         public object Payload { get; set; }
 

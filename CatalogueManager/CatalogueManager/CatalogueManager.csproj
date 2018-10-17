@@ -493,6 +493,12 @@
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.Designer.cs">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
     </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.Designer.cs">
+      <DependentUpon>ArgumentValueArrayUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -992,7 +998,6 @@
     <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.Designer.cs">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LogViewer\LogViewerFilter.cs" />
     <Compile Include="LogViewer\Tabs\LoggingDataSourcesTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1718,6 +1723,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.resx">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.resx">
+      <DependentUpon>ArgumentValueArrayUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.resx">
       <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>

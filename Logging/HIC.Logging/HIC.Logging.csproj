@@ -169,6 +169,7 @@
     <Compile Include="LoggingDatabaseChecker.cs" />
     <Compile Include="LoggingTables.cs" />
     <Compile Include="LogManager.cs" />
+    <Compile Include="LogViewerFilter.cs" />
     <Compile Include="PastEvents\ArchivalDataSource.cs" />
     <Compile Include="PastEvents\ArchivalFatalError.cs" />
     <Compile Include="PastEvents\ArchivalTableLoadInfo.cs" />

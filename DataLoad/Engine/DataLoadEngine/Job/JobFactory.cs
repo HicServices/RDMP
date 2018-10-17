@@ -1,6 +1,7 @@
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DataProvider;
 using HIC.Logging;
 using ReusableLibraryCode.Progress;
@@ -21,11 +22,11 @@ namespace DataLoadEngine.Job
             _logManager = logManager;
         }
 
-        public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener)
+        public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
         {
             var description = _loadMetadata.Name;
             var hicProjectDirectory = new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles, false);
-            return new DataLoadJob(repositoryLocator,description, _logManager, _loadMetadata, hicProjectDirectory, listener);
+            return new DataLoadJob(repositoryLocator,description, _logManager, _loadMetadata, hicProjectDirectory, listener,configuration);
         }
     }
 }

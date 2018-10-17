@@ -25,6 +25,9 @@ namespace PluginPackager
         [Option('d', "Catalogue Database", HelpText = "Sets the catalogue database to upload the zip file to (only used if Server is also specified).")]
         public string Database { get; set; }
 
+        [Option('r', "Release", HelpText = "Package the 'Release' folder instead of 'Debug'")]
+        public bool Release { get; set; }
+
 
         [Usage]
         public static IEnumerable<Example> Examples
@@ -35,7 +38,7 @@ namespace PluginPackager
                     new Example("Normal Scenario", new PluginPackagerProgramOptions { SolutionFile = @"c:\MyPlugins\MyPlugin\CoolPlugin.sln", ZipFileName = "CoolPlugin.zip" });
 
                 yield return
-                    new Example("No source code", new PluginPackagerProgramOptions { SolutionFile = @"c:\MyPlugins\MyPlugin\CoolPlugin.sln", ZipFileName = "CoolPlugin.zip" , SkipSourceCodeCollection =  true});
+                    new Example("No source code, Release mode", new PluginPackagerProgramOptions { SolutionFile = @"c:\MyPlugins\MyPlugin\CoolPlugin.sln", ZipFileName = "CoolPlugin.zip" , SkipSourceCodeCollection =  true});
                 yield return
                     new Example("Commit zip to RDMP database", new PluginPackagerProgramOptions
                     {
@@ -43,7 +46,8 @@ namespace PluginPackager
                         ZipFileName = "CoolPlugin.zip", 
                         SkipSourceCodeCollection = true,
                         Server = @"localhost\sqlexpress",
-                        Database = "RDMP_Catalogue"
+                        Database = "RDMP_Catalogue",
+                        Release = true
                     });
                     
 

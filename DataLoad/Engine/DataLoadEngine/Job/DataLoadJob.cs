@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess;
@@ -37,16 +38,20 @@ namespace DataLoadEngine.Job
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
         private Stack<IDisposeAfterDataLoad> _disposalStack = new Stack<IDisposeAfterDataLoad>();
+        
+        public HICDatabaseConfiguration Configuration { get; set; }
+        public object Payload { get; set; }
 
 
         private string _loggingTask;
 
-        public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator,string description, ILogManager logManager, ILoadMetadata loadMetadata, IHICProjectDirectory hicProjectDirectory, IDataLoadEventListener listener)
+        public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator,string description, ILogManager logManager, ILoadMetadata loadMetadata, IHICProjectDirectory hicProjectDirectory, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
         {
             _logManager = logManager;
             RepositoryLocator = repositoryLocator;
             LoadMetadata = loadMetadata;
             HICProjectDirectory = hicProjectDirectory;
+            Configuration = configuration;
             _listener = listener;
             Description = description;
 
@@ -114,8 +119,6 @@ namespace DataLoadEngine.Job
             if (DataLoadInfo != null)
                 DataLoadInfo.CloseAndMarkComplete();
         }
-
-        public object Payload { get; set; }
 
         public void LogInformation(string senderName, string message)
         {

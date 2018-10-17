@@ -14,10 +14,5 @@ namespace CatalogueManager.LogViewer.Tabs
         {
             return LoggingTables.DataSource;
         }
-
-        protected override void FetchDataTable()
-        {
-            LoadDataTable(LogManager.GetTable(LoggingTables.DataSource, IDFilter.Table, TopX));
-        }
     }
 }

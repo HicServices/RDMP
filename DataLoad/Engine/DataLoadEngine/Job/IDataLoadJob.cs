@@ -4,6 +4,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
 using DataLoadEngine.LoadExecution.Components;
 using HIC.Logging;
@@ -37,7 +38,7 @@ namespace DataLoadEngine.Job
         void StartLogging();
         void CloseLogging();
 
-        
+        HICDatabaseConfiguration Configuration { get; }
         
         /// <summary>
         /// Orders the job to create the tables it requires in the given stage (e.g. RAW/STAGING), the job will also take ownership of the cloner for the purposes

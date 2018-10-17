@@ -1280,7 +1280,7 @@ namespace CatalogueLibrary.Data
         public void ClearAllInjections()
         {
             _extractabilityStatus = null;
-            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem>(this));
+            _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem,Catalogue>(this));
         }
 
         /// <inheritdoc/>

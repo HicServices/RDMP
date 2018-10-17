@@ -353,6 +353,10 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
                             expectedSQL, result);
                 }
             }
+            catch (ExpectedIdenticalStringsException)
+            {
+                throw;
+            }
             catch (IrreconcilableColumnDifferencesInArchiveException)
             {
                 throw;

@@ -73,38 +73,24 @@ namespace HIC.Logging
                 return tasks.ToArray();
             }
         }
-        
-        public DataTable GetTable(LoggingTables table, int? parentId, int? topX)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="filter"></param>
+        /// <param name="topX"></param>
+        /// <param name="sortDesc">True to sort descending (highest ID first).  False to sort ascending (lowest ID first)</param>
+        /// <returns></returns>
+        public DataTable GetTable(LoggingTables table, LogViewerFilter filter, int? topX, bool sortDesc)
         {
             string prefix = "";
-            string where = "";
+            string where = filter == null ? "": filter.GetWhereSql(table);
 
             if (topX.HasValue)
                 prefix = "TOP " + topX.Value;
-
-            if(parentId.HasValue)
-                switch (table)
-                {
-                    case LoggingTables.DataLoadTask:
-                        break;
-                    case LoggingTables.DataLoadRun:
-                        where = "where dataLoadTaskID=" + parentId.Value;
-                        break;
-
-                     //all these have the parent of dataLoadRun
-                    case LoggingTables.ProgressLog:
-                    case LoggingTables.FatalError:
-                    case LoggingTables.TableLoadRun:
-                        where = "where dataLoadRunID=" + parentId.Value;
-                        break;
-                    case LoggingTables.DataSource:
-                        where = "where tableLoadRunID=" + parentId.Value;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException("table");
-                }
-
-            return GetAsTable(string.Format("SELECT {0} * FROM " + table + " {1}", prefix, where));
+            
+            return GetAsTable(string.Format("SELECT {0} * FROM " + table + " {1} ORDER BY ID " + (sortDesc? "Desc":"Asc"), prefix, where));
         }
         
         private DataTable GetAsTable(string sql)

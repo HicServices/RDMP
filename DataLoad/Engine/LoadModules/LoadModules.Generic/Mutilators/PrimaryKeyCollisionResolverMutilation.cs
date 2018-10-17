@@ -51,7 +51,7 @@ namespace LoadModules.Generic.Mutilators
             _dbInfo = dbInfo;
         }
 
-        public ExitCodeType Mutilate(IDataLoadEventListener job)
+        public ExitCodeType Mutilate(IDataLoadJob job)
         {
             ResolvePrimaryKeyConflicts(job);
             return ExitCodeType.Success;

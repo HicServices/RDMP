@@ -1,4 +1,5 @@
 ﻿using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
@@ -11,7 +12,7 @@ namespace ANOStore.ANOEngineering
     public interface IDilutionOperation:ICheckable
     {
         IPreLoadDiscardedColumn ColumnToDilute { set; }
-        string GetMutilationSql();
+        string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer);
         DatabaseTypeRequest ExpectedDestinationType { get; }
     }
 }

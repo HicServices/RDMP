@@ -4,6 +4,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using HIC.Logging;
 using ReusableLibraryCode.Progress;
 
@@ -18,8 +19,8 @@ namespace DataLoadEngine.Job.Scheduling
         public ILoadProgress LoadProgress { get; set; }
         public List<DateTime> DatesToRetrieve { get; set; }
         
-        public ScheduledDataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, IHICProjectDirectory hicProjectDirectory, IDataLoadEventListener listener)
-            : base(repositoryLocator,description, logManager, loadMetadata, hicProjectDirectory, listener)
+        public ScheduledDataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, IHICProjectDirectory hicProjectDirectory, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+            : base(repositoryLocator,description, logManager, loadMetadata, hicProjectDirectory, listener,configuration)
         {
         }
     }

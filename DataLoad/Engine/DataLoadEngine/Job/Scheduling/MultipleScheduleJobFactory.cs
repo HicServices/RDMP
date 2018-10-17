@@ -4,6 +4,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DataProvider;
 using HIC.Logging;
 using ReusableLibraryCode.Progress;
@@ -41,7 +42,7 @@ namespace DataLoadEngine.Job.Scheduling
             return _scheduleList.Any(loadProgress => _availableSchedules[loadProgress].GetTotalNumberOfJobs(OverrideNumberOfDaysToLoad??loadProgress.DefaultNumberOfDaysToLoadEachTime, false) > 0);
         }
 
-        public override IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener)
+        public override IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
         {
             ScheduledDataLoadJob job;
             var loadProgress = _scheduleList[_lastScheduleId];
@@ -50,7 +51,7 @@ namespace DataLoadEngine.Job.Scheduling
                 return null;
 
             var hicProjectDirectory = new HICProjectDirectory(LoadMetadata.LocationOfFlatFiles, false);
-            job = new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, hicProjectDirectory, listener);
+            job = new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, hicProjectDirectory, listener,configuration);
             
             job.LoadProgress = loadProgress;
             job.DatesToRetrieve = datesToRetrieve;

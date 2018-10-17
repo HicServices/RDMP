@@ -22,12 +22,21 @@ namespace RDMPAutomationService.Options.Abstracts
 
         [Option( Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
         public string DataExportDatabaseName { get; set; }
+        
+        [Option(Required = false, HelpText = "Full connection string to the Catalogue database, this overrides CatalogueDatabaseName and allows custom ports, username/password etc")]
+        public string CatalogueConnectionString { get; set; }
 
+        [Option(Required = false, HelpText = "Full connection string to the DataExport database, this overrides DataExportDatabaseName and allows custom ports, username/password etc")]
+        public string DataExportConnectionString { get; set; }
+        
         [Value(0, HelpText = @"Command to run on the engine: 'run' or 'check' ", Required = true)]
         public CommandLineActivity Command { get; set; }
 
         [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
         public bool FailOnWarnings { get; set; }
+        
+        protected const string ExampleCatalogueConnectionString = "Server=myServer;Database=RDMP_Catalogue;User Id=myUsername;Password=myPassword;";
+        protected const string ExampleDataExportConnectionString = "Server=myServer;Database=RDMP_DataExport;User Id=myUsername;Password=myPassword;";
 
         public void LoadFromAppConfig()
         {
@@ -51,12 +60,22 @@ namespace RDMPAutomationService.Options.Abstracts
         {
             if(_repositoryLocator == null)
             {
-                var c = new SqlConnectionStringBuilder();
-                c.DataSource = ServerName;
-                c.IntegratedSecurity = true;
-                c.InitialCatalog = CatalogueDatabaseName;
+                SqlConnectionStringBuilder c;
+
+                if (CatalogueConnectionString != null)
+                    c = new SqlConnectionStringBuilder(CatalogueConnectionString);
+                else
+                {
+                    c = new SqlConnectionStringBuilder();
+                    c.DataSource = ServerName;
+                    c.IntegratedSecurity = true;
+                    c.InitialCatalog = CatalogueDatabaseName;
+                }
 
                 SqlConnectionStringBuilder d = null;
+                if(DataExportConnectionString != null)
+                    d = new SqlConnectionStringBuilder(DataExportConnectionString);
+                else
                 if (DataExportDatabaseName != null)
                 {
                     d = new SqlConnectionStringBuilder();

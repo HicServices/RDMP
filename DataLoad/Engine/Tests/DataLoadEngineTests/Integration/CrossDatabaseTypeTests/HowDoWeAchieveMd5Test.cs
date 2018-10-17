@@ -17,7 +17,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             dt.Columns.Add("F");
             dt.Rows.Add(new[] {"Fish"});
 
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
             var tbl = db.CreateTable("MD5Test", dt);
 
             var col = tbl.DiscoverColumn("F");
@@ -49,7 +49,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             dt.Columns.Add("F");
             dt.Rows.Add(new[] { "2001-01-01" });
 
-            var db = GetCleanedServer(type);
+            var db = GetCleanedServer(type,true);
             var tbl = db.CreateTable("MD5Test", dt);
 
             var col = tbl.DiscoverColumn("F");

@@ -2,19 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.Job;
-using DataLoadEngine.Mutilators;
-using Microsoft.Office.Interop.Excel;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Update;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Mutilators
@@ -24,116 +16,80 @@ namespace LoadModules.Generic.Mutilators
     /// are the same).  Or to put it simpler, resolves primary key collisions by making records less null.  This can only be applied in the Adjust RAW stage of a data load.
     /// This creates deviation from ground truth of the data you are loading and reducing nullness might not always be correct according to your data.
     /// </summary>
-    public class Coalescer : IPluginMutilateDataTables
+    public class Coalescer : MatchingTablesMutilator
     {
-        [DemandsInitialization("All tables in RAW matching this pattern which have a TableInfo defined in the load will be affected by this mutilation",Mandatory = true,DefaultValue = ".*")]
-        public Regex TableRegexPattern { get; set; }
-
         [DemandsInitialization("Pass true to create an index on the primary keys which are joined together (can improve performance)",DefaultValue=false)]
         public bool CreateIndex { get; set; }
 
-        [DemandsInitialization("How long to allow for each command to execute in seconds",DefaultValue=600)]
-        public int Timeout { get; set; }
-
-        public void Check(ICheckNotifier notifier)
+        public Coalescer():base(LoadStage.AdjustRaw)
         {
-            if (TableRegexPattern == null)
-                notifier.OnCheckPerformed(new CheckEventArgs("You must specify a regex pattern for identifying tables in RAW which need to be processed",CheckResult.Fail));
+            
         }
-
-        public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
+        
+        protected override void MutilateTable(IDataLoadEventListener job, TableInfo tableInfo, DiscoveredTable table)
         {
-        }
+            var server = table.Database.Server;
 
-        private DiscoveredDatabase _dbInfo;
-        public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
-        {
-            if (loadStage != LoadStage.AdjustRaw)
-                throw new Exception("Coalescer can only be used in a RAW environment, current load stage is:" + loadStage);
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Coalese on table " + table));
 
-            _dbInfo = dbInfo;
-        }
+            var allCols = table.DiscoverColumns();
 
-        public ExitCodeType Mutilate(IDataLoadEventListener job)
-        {
-            var j = (IDataLoadJob) job;
-            foreach (var tableInfo in j.RegularTablesToLoad)
+            var pkColumnInfos = tableInfo.ColumnInfos.Where(c => c.IsPrimaryKey).Select(c => c.GetRuntimeName()).ToArray();
+            var nonPks = allCols.Where(c => !pkColumnInfos.Contains(c.GetRuntimeName())).ToArray();
+            var pks = allCols.Except(nonPks).ToArray();
+
+            if (!pkColumnInfos.Any())
+                throw new Exception("Table '" + tableInfo + "' has no IsPrimaryKey columns");
+
+            if (allCols.Length == pkColumnInfos.Length)
             {
-
-                var tbl = _dbInfo.ExpectTable(tableInfo.GetRuntimeName());
-                var tblName = tbl.GetRuntimeName();
-
-                if (tbl.Exists() && TableRegexPattern.IsMatch(tblName))
-                {
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"About to run Coalese on table " + tbl));
-
-                    var allCols = tbl.DiscoverColumns();
-                    
-                    var pkColumnInfos = tableInfo.ColumnInfos.Where(c => c.IsPrimaryKey).Select(c => c.GetRuntimeName()).ToArray();
-                    var nonPks = allCols.Where(c => !pkColumnInfos.Contains(c.GetRuntimeName())).ToArray();
-                    var pks = allCols.Except(nonPks).ToArray();
-
-
-                    if (!pkColumnInfos.Any())
-                        throw new Exception("Table '" + tableInfo +"' has no IsPrimaryKey columns");
-
-                    if (allCols.Length == pkColumnInfos.Length)
-                    {
-                        job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Skipping Coalesce on table "+ tbl + " because it has no non primary key columns"));
-                        continue;
-                    }
-
-                    //Get an update command for each non primary key column
-                    Dictionary<string,Task<int>> sqlCommands = new Dictionary<string, Task<int>>();
-
-                    foreach (DiscoveredColumn nonPk in nonPks)
-                        sqlCommands.Add(GetCommand(tbl,pks, nonPk), null);
-
-                    Stopwatch sw = new Stopwatch();
-                    sw.Start();
-
-                    _dbInfo.Server.EnableAsync();
-
-                    using (var con = _dbInfo.Server.GetConnection())
-                    {
-                        con.Open();
-
-                        if (CreateIndex)
-                        {
-                            var idxCmd = _dbInfo.Server.GetCommand(string.Format(@"CREATE INDEX IX_PK_{0} ON {0}({1});", tblName,string.Join(",", pks.Select(p => p.GetRuntimeName()))),con);
-                            idxCmd.CommandTimeout = Timeout;
-                            idxCmd.ExecuteNonQuery();
-                        }
-                        
-                        foreach (var sql in sqlCommands.Keys.ToArray())
-                        {
-                            var cmd = _dbInfo.Server.GetCommand(sql, con);
-                            cmd.CommandTimeout = Timeout;
-                            sqlCommands[sql] = cmd.ExecuteNonQueryAsync();
-                        }
-
-                        Task.WaitAll(sqlCommands.Values.ToArray());
-                    }
-
-                    int affectedRows = sqlCommands.Values.Sum(t => t.Result);
-
-                    sw.Stop();
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Coalesce on table '" + tbl + "' completed after " + sw.ElapsedMilliseconds.ToString("N0") + " ms (" + affectedRows + " rows affected)"));
-                }
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Skipping Coalesce on table " + table + " because it has no non primary key columns"));
+                return;
             }
 
-            return ExitCodeType.Success;
+            //Get an update command for each non primary key column
+            Dictionary<string, Task<int>> sqlCommands = new Dictionary<string, Task<int>>();
+
+            foreach (DiscoveredColumn nonPk in nonPks)
+                sqlCommands.Add(GetCommand(table, pks, nonPk), null);
+            
+            server.EnableAsync();
+
+            using (var con = table.Database.Server.GetConnection())
+            {
+                con.Open();
+
+                if (CreateIndex)
+                {
+                    var idxCmd = server.GetCommand(string.Format(@"CREATE INDEX IX_PK_{0} ON {0}({1});", table.GetRuntimeName(), string.Join(",", pks.Select(p => p.GetRuntimeName()))), con);
+                    idxCmd.CommandTimeout = Timeout;
+                    idxCmd.ExecuteNonQuery();
+                }
+
+                foreach (var sql in sqlCommands.Keys.ToArray())
+                {
+                    var cmd = server.GetCommand(sql, con);
+                    cmd.CommandTimeout = Timeout;
+                    sqlCommands[sql] = cmd.ExecuteNonQueryAsync();
+                }
+
+                Task.WaitAll(sqlCommands.Values.ToArray());
+            }
+
+            int affectedRows = sqlCommands.Values.Sum(t => t.Result);
+
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Coalesce on table '" + table + "' completed (" + affectedRows + " rows affected)"));
+            
         }
 
         private string GetCommand(DiscoveredTable table, DiscoveredColumn[] pks, DiscoveredColumn nonPk)
         {
-
             List<CustomLine> sqlLines = new List<CustomLine>();
             sqlLines.Add(new CustomLine(string.Format("(t1.{0} is null AND t2.{0} is not null)", nonPk.GetRuntimeName()), QueryComponent.WHERE));
             sqlLines.Add(new CustomLine(string.Format("t1.{0} = COALESCE(t1.{0},t2.{0})", nonPk.GetRuntimeName()),QueryComponent.SET));
             sqlLines.AddRange(pks.Select(p=>new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()),QueryComponent.JoinInfoJoin)));
 
-            var updateHelper = _dbInfo.Server.GetQuerySyntaxHelper().UpdateHelper;
+            var updateHelper = table.Database.Server.GetQuerySyntaxHelper().UpdateHelper;
 
             return updateHelper.BuildUpdate(
                 table,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace MapsDirectlyToDatabaseTable
@@ -54,6 +55,17 @@ namespace MapsDirectlyToDatabaseTable
         /// <param name="parent"></param>
         /// <returns></returns>
         T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable;
+
+        /// <summary>
+        /// Returns child objects of type T which belong to parent and injects the child with the known parent <see cref="IInjectKnown"/>.  If the repository does not
+        /// think the parent type and T types are  related you should throw an Exception
+        ///  
+        /// </summary>
+        /// <typeparam name="T">Type of the child</typeparam>
+        /// <typeparam name="T2">Type of the parent</typeparam>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        T[] GetAllObjectsWithParent<T,T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2:IMapsDirectlyToDatabaseTable;
 
         void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject);
         void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject);
@@ -114,8 +126,10 @@ namespace MapsDirectlyToDatabaseTable
 
 
         IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable;
+        IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids);
 
         void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,object propertyValue);
+
 
         
     }

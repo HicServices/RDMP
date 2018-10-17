@@ -180,7 +180,7 @@ namespace DataLoadEngineTests.Integration
             var loadMetadata = MockRepository.GenerateStub<ILoadMetadata>();
             loadMetadata.Stub(lm => lm.GetAllCatalogues()).Return(new[] { catalogue });
 
-            var j =  new ScheduledDataLoadJob(RepositoryLocator,"Test job", logManager, loadMetadata, hicProjectDirectory, new ThrowImmediatelyDataLoadEventListener());
+            var j =  new ScheduledDataLoadJob(RepositoryLocator,"Test job", logManager, loadMetadata, hicProjectDirectory, new ThrowImmediatelyDataLoadEventListener(),null);
             j.LoadProgress = _lpMock;
             return j;
         }

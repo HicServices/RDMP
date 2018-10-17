@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Data.SqlClient;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.EntityNaming;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using DataLoadEngineTests.Integration.Mocks;
 using LoadModules.Generic.Attachers;
 using NUnit.Framework;
+using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
-using Rhino.Mocks.Constraints;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -20,6 +22,7 @@ namespace DataLoadEngineTests.Integration
         private HICProjectDirectory hicProjectDirectory;
         DirectoryInfo parentDir;
         private DiscoveredDatabase _database;
+        private DiscoveredTable _table;
 
         [SetUp]
         public void CreateTestDatabase()
@@ -33,20 +36,18 @@ namespace DataLoadEngineTests.Integration
 
             hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
             
-            var database = TestDatabaseNames.GetConsistentName("FlatFileAttacher");
-
             // create a separate builder for setting an initial catalog on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
-
-            _database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(database);
-            _database.Create(true);
-
+            _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer,true);
+            
             using (var con = _database.Server.GetConnection())
             {
                 con.Open();
                 
-                var cmdCreateTable = _database.Server.GetCommand("CREATE Table "+database+"..Bob([name] [varchar](500),[name2] [varchar](500))" ,con);
+                var cmdCreateTable = _database.Server.GetCommand("CREATE Table "+_database.GetRuntimeName()+"..Bob([name] [varchar](500),[name2] [varchar](500))" ,con);
                 cmdCreateTable.ExecuteNonQuery();
             }
+
+            _table = _database.ExpectTable("Bob");
 
         }
 
@@ -177,12 +178,69 @@ namespace DataLoadEngineTests.Integration
 
 
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestTableInfo(bool usenamer)
+        {
+            string filename = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob.csv");
+            var sw = new StreamWriter(filename);
+
+            sw.WriteLine("name,name2");
+            sw.WriteLine("Bob,Munchousain");
+            sw.WriteLine("Franky,Hollyw9ood");
+
+            sw.Flush();
+            sw.Close();
+            sw.Dispose();
+
+            TableInfo ti;
+            ColumnInfo[] cols;
+            Import(_table, out ti, out cols);
+
+            var attacher = new AnySeparatorFileAttacher();
+            attacher.Initialize(hicProjectDirectory, _database);
+            attacher.Separator = ",";
+            attacher.FilePattern = "bob*";
+            attacher.TableToLoad = ti;
+
+            INameDatabasesAndTablesDuringLoads namer = null;
+
+            if (usenamer)
+            {
+                _table.Rename("AAA");
+                namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(_database, "AAA");
+            }
+
+            var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, namer), ti);
+
+            var exitCode = attacher.Attach(job);
+            Assert.AreEqual(ExitCodeType.Success, exitCode);
+            
+            using (var con = _database.Server.GetConnection())
+            {
+
+                con.Open();
+                var r = _database.Server.GetCommand("Select name,name2 from " + _table.GetRuntimeName(), con).ExecuteReader();
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Bob", r["name"]);
+                Assert.AreEqual("Munchousain", r["name2"]);
+
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Franky", r["name"]);
+                Assert.AreEqual("Hollyw9ood", r["name2"]);
+            }
+
+            attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+
+            File.Delete(filename);
+
+        }
         
         [TearDown]
         public void TearDown()
         {
             parentDir.Delete(true);
-            _database.ForceDrop();
         }
     }
 }

@@ -242,16 +242,17 @@ DECLARE @len INT
 set @pos = 0
 set @len = 0
 
-WHILE CHARINDEX(',', @Columns +',', @pos+1)>0
+WHILE CHARINDEX('],', @Columns +',', @pos+1)>0
 BEGIN
-    set @len = CHARINDEX(',', @Columns +',', @pos+1) - @pos
-    set @value = SUBSTRING(@Columns +',', @pos, @len)
+    set @len = CHARINDEX('],[', @Columns +'],[', @pos+1) - @pos
+    set @value = SUBSTRING(@Columns, @pos+1, @len)
         
     --We are constructing a version that turns: '[fish],[lama]' into 'ISNULL([fish],0) as [fish], ISNULL([lama],0) as [lama]'
-	SET @FinalSelectList = @FinalSelectList + ', ISNULL(' + @value  + ',0) as ' + @value 
+    SET @FinalSelectList = @FinalSelectList + ', ISNULL(' + @value  + ',0) as ' + @value
 
-    set @pos = CHARINDEX(',', @Columns +',', @pos+@len) +1
+    set @pos = CHARINDEX('],[', @Columns +'],[', @pos+@len) +1
 END
+
 ",
                                                   //select SQL and parameter declarations
                                                   string.Join(Environment.NewLine, lines.Where(l => l.LocationToInsert < QueryComponent.SELECT)),

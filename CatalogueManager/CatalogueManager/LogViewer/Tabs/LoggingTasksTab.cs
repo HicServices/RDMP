@@ -20,10 +20,5 @@ namespace CatalogueManager.LogViewer.Tabs
         {
             return LoggingTables.DataLoadTask;
         }
-
-        protected override void FetchDataTable()
-        {
-            LoadDataTable(LogManager.GetTable(LoggingTables.DataLoadTask,null,TopX));
-        }
     }
 }

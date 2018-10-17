@@ -81,14 +81,18 @@ namespace CatalogueManager.SimpleControls
             if(_activator == null)
                 return;
 
-            if (string.IsNullOrWhiteSpace(options.ServerName))
-                options.ServerName = _activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.Name;
+            if (string.IsNullOrWhiteSpace(options.CatalogueConnectionString))
+                options.CatalogueConnectionString = _activator.RepositoryLocator.CatalogueRepository.ConnectionStringBuilder.ConnectionString;
 
-            if (string.IsNullOrWhiteSpace(options.CatalogueDatabaseName))
-                options.CatalogueDatabaseName = _activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+            if (string.IsNullOrWhiteSpace(options.DataExportConnectionString))
+                options.CatalogueDatabaseName = _activator.RepositoryLocator.DataExportRepository.ConnectionStringBuilder.ConnectionString;
+        }
 
-            if (string.IsNullOrWhiteSpace(options.DataExportDatabaseName))
-                options.DataExportDatabaseName = _activator.RepositoryLocator.DataExportRepository.DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+        public void SetEnabled(bool e)
+        {
+            //always enabled
+            btnCopyCommandToClipboard.Enabled = true;
+            btnExecuteDetatched.Enabled = e;
         }
     }
 }

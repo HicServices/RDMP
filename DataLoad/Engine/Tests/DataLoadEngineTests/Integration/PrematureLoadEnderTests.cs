@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
+using DataLoadEngine.Job;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -20,7 +21,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestEndLoadBecause_NoTables(DatabaseType type)
         {
-            var database = GetCleanedServer(type);
+            var database = GetCleanedServer(type,true);
             
             Assert.AreEqual(0,database.DiscoverTables(false).Length);
 
@@ -30,14 +31,14 @@ namespace DataLoadEngineTests.Integration
             
             ender.Initialize(database,LoadStage.AdjustRaw);
 
-            Assert.AreEqual(ExitCodeType.OperationNotRequired ,ender.Mutilate(new ThrowImmediatelyDataLoadEventListener()));
+            Assert.AreEqual(ExitCodeType.OperationNotRequired ,ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
         }
 
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestEndLoadBecause_NoRows(DatabaseType type)
         {
-            var database = GetCleanedServer(type);
+            var database = GetCleanedServer(type, true);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Fish");
@@ -49,14 +50,14 @@ namespace DataLoadEngineTests.Integration
 
             ender.Initialize(database, LoadStage.AdjustRaw);
 
-            Assert.AreEqual(ExitCodeType.OperationNotRequired, ender.Mutilate(new ThrowImmediatelyDataLoadEventListener()));
+            Assert.AreEqual(ExitCodeType.OperationNotRequired, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
         }
 
         [TestCase(DatabaseType.MYSQLServer)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestNoEnd_BecauseRows(DatabaseType type)
         {
-            var database = GetCleanedServer(type);
+            var database = GetCleanedServer(type, true);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Fish");
@@ -69,7 +70,7 @@ namespace DataLoadEngineTests.Integration
 
             ender.Initialize(database, LoadStage.AdjustRaw);
 
-            Assert.AreEqual(ExitCodeType.Success, ender.Mutilate(new ThrowImmediatelyDataLoadEventListener()));
+            Assert.AreEqual(ExitCodeType.Success, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
         }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataLoadEngine.Attachers;
@@ -12,7 +15,6 @@ using HIC.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using DataTable = System.Data.DataTable;
 
 namespace LoadModules.Generic.Attachers
 {
@@ -23,8 +25,7 @@ namespace LoadModules.Generic.Attachers
     public class RemoteDatabaseAttacher: Attacher, IPluginAttacher
     {
         public RemoteDatabaseAttacher(): base(true)
-        {
-            
+        {   
         }
 
         [DemandsInitialization("The DataSource to connect to in order to read data.", Mandatory=true)]
@@ -33,6 +34,11 @@ namespace LoadModules.Generic.Attachers
         [DemandsInitialization("The length of time in seconds to allow for data to be completely read from the destination before giving up (0 for no timeout)")]
         public int Timeout { get; set; }
 
+        [DemandsInitialization(@"Determines how columns in the remote database are fetched and used to populate RAW tables of the same name.
+True - Fetch only the default columns that appear in RAW (e.g. skip hic_ columns)
+False - Fetch all columns in the remote table.  To use this option you will need ALTER statements in RAW scripts to make table(s) match the remote schema", DefaultValue=true)]
+        public bool LoadRawColumnsOnly { get; set; }
+
         public override void Check(ICheckNotifier notifier)
         {
             if (!RemoteSource.Discover(DataAccessContext.DataLoad).Exists())
@@ -40,8 +46,7 @@ namespace LoadModules.Generic.Attachers
         }
 
         public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-        {
-            
+        {   
         }
 
         public override ExitCodeType Attach(IDataLoadJob job)
@@ -55,15 +60,24 @@ namespace LoadModules.Generic.Attachers
 
             var dbFrom = RemoteSource.Discover(DataAccessContext.DataLoad);
 
-            var remoteTables = dbFrom.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
-            var loadables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).Select(t => t.GetRuntimeName()).ToArray();
+            var remoteTables = new HashSet<string>(dbFrom.DiscoverTables(true).Select(t => t.GetRuntimeName()),StringComparer.CurrentCultureIgnoreCase);
+            var loadables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).ToArray();
 
-            foreach (var table in loadables)
+            foreach (var tableInfo in loadables)
             {
+                var table = tableInfo.GetRuntimeName();
                 if (!remoteTables.Contains(table))
                     throw new Exception("Loadable table " + table + " was NOT found on the remote DB!");
 
-                sql = "Select * from " + table;
+                if(LoadRawColumnsOnly)
+                {
+                    var rawColumns = LoadRawColumnsOnly ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw) : tableInfo.ColumnInfos;
+                    sql = "SELECT " + String.Join(",", rawColumns.Select(c=>c.GetRuntimeName(LoadStage.AdjustRaw))) + " FROM " + table;
+                }
+                else
+                {
+                    sql = "SELECT * FROM " + table;
+                }
 
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to execute SQL:" + Environment.NewLine + sql));
 

@@ -287,7 +287,12 @@ namespace CatalogueLibrary.Repositories
         {
             return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
         }
-        
+
+        protected override bool IsCompatibleType(Type type)
+        {
+            return typeof (DatabaseEntity).IsAssignableFrom(type);
+        }
+
         public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
         {
             var servers = GetAllObjects<ExternalDatabaseServer>();

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection.Emit;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using NUnit.Framework;
@@ -34,6 +35,26 @@ namespace CatalogueLibraryTests.Unit
             Assert.AreEqual(1, final.Length);
             Assert.AreEqual(overridingParameter, final[0]);
         }
+        
+        [Test]
+        public void FindOverridenParameters_CaseSensitivityTest()
+        {
+            var baseParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here", new MicrosoftQuerySyntaxHelper());
+            var overridingParameter = new ConstantParameter("DECLARE @Fish as int", "3", "overriding value", new MicrosoftQuerySyntaxHelper());
+
+            var pm = new ParameterManager();
+            pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(baseParameter);
+            pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(overridingParameter);
+
+            var parameters = pm.GetFinalResolvedParametersList().ToArray();
+
+            Assert.AreEqual(1,parameters.Count());
+            
+            var final = parameters.Single();
+            Assert.AreEqual("@Fish",final.ParameterName);
+            Assert.AreEqual("3", final.Value);
+        }
+
         [Test]
         public void FindOverridenParameters_TwoTest()
         {

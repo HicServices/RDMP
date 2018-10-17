@@ -697,7 +697,7 @@ CREATE TABLE [dbo].[TestResizing](
         {
             var token = new GracefulCancellationToken();
             
-            var db = GetCleanedServer(DatabaseType.MYSQLServer);
+            var db = GetCleanedServer(DatabaseType.MYSQLServer,true);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
@@ -748,8 +748,8 @@ CREATE TABLE [dbo].[TestResizing](
         public void MySqlTest_Resize()
         {
             var token = new GracefulCancellationToken();
-            
-            var db = GetCleanedServer(DatabaseType.MYSQLServer);
+
+            var db = GetCleanedServer(DatabaseType.MYSQLServer, true);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
@@ -847,7 +847,7 @@ CREATE TABLE [dbo].[TestResizing](
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void DataTableUploadDestinationTests_PrimaryKeyDataTableWithAlterSizeLater(DatabaseType dbtype)
         {
-            var db = GetCleanedServer(dbtype);
+            var db = GetCleanedServer(dbtype, true);
 
             var destination = new DataTableUploadDestination();
             
@@ -944,7 +944,7 @@ CREATE TABLE [dbo].[TestResizing](
         public void TwoBatch_BooleanResizingTest(DatabaseType dbType, bool giveNullValuesOnly)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = GetCleanedServer(dbType);
+            DiscoveredDatabase db = GetCleanedServer(dbType, true);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
 
@@ -1012,7 +1012,7 @@ CREATE TABLE [dbo].[TestResizing](
         public void TwoBatch_MiscellaneousTest(DatabaseType dbType, string v1,string v2,Type expectedTypeForBatch1,Type expectedTypeForBatch2)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = GetCleanedServer(dbType);
+            DiscoveredDatabase db = GetCleanedServer(dbType, true);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
 

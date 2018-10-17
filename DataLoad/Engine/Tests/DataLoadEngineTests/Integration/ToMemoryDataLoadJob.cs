@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
 using DataLoadEngine.Job;
 using HIC.Logging;
@@ -36,6 +37,8 @@ namespace DataLoadEngineTests.Integration
         public void CloseLogging()
         {
         }
+
+        public HICDatabaseConfiguration Configuration { get; private set; }
 
         public object Payload { get; set; }
 

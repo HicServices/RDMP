@@ -50,7 +50,8 @@ namespace CatalogueManager.AutoComplete
 
             var snip = new SubstringAutocompleteItem(runtimeName);
             snip.MenuText = runtimeName;
-            snip.Text = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(databaseName, null, tableInfo.GetRuntimeName(), runtimeName);
+            
+            snip.Text = columnInfo.Name;
             snip.Tag = columnInfo;
             snip.ImageIndex = GetIndexFor(columnInfo, RDMPConcept.ColumnInfo.ToString());
             

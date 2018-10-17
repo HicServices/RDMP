@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Checks;
+using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution;
@@ -23,6 +26,7 @@ using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
+using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
@@ -52,11 +56,16 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             ForeignKeyOrphans,
             DodgyCollation,
             AllPrimaryKeys,
-            WithNonPrimaryKeyIdentityColumn
+            WithNonPrimaryKeyIdentityColumn,
+            
+            WithCustomTableNamer,
+
+            WithDiffColumnIgnoreRegex //tests ability of the system to skip a given column when doing the DLE diff section
         }
 
         [TestCase(DatabaseType.Oracle,TestCase.Normal)]
         [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithCustomTableNamer)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
@@ -64,8 +73,10 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
         //[TestCase(DatabaseType.MYSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)] //Not supported by MySql:Incorrect table definition; there can be only one auto column and it must be defined as a key
         [TestCase(DatabaseType.MYSQLServer, TestCase.DodgyCollation)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.WithCustomTableNamer)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MYSQLServer, TestCase.AllPrimaryKeys)]
+        [TestCase(DatabaseType.MYSQLServer, TestCase.WithDiffColumnIgnoreRegex)]
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
             var defaults = new ServerDefaults(CatalogueRepository);
@@ -158,9 +169,19 @@ MrMurder,2001-01-01,Yella");
                 SetupLowPrivilegeUserRightsFor(ti, TestLowPrivilegePermissions.Reader|TestLowPrivilegePermissions.Writer);
                 SetupLowPrivilegeUserRightsFor(db.Server.ExpectDatabase("DLE_STAGING"),TestLowPrivilegePermissions.All);
             }
+
+            var dbConfig = new HICDatabaseConfiguration(lmd,testCase == TestCase.WithCustomTableNamer? new CustomINameDatabasesAndTablesDuringLoads():null);
+
+            if(testCase == TestCase.WithCustomTableNamer)
+                new PreExecutionChecker(lmd, dbConfig).Check(new AcceptAllCheckNotifier()); //handles staging database creation etc
+
+            if (testCase == TestCase.WithDiffColumnIgnoreRegex)
+                dbConfig.UpdateButDoNotDiff = new Regex("^FavouriteColour"); //do not diff FavouriteColour
+
+            
             var loadFactory = new HICDataLoadFactory(
                 lmd,
-                new HICDatabaseConfiguration(lmd),
+                dbConfig,
                 new HICLoadConfigurationFlags(),
                 CatalogueRepository,
                 logManager
@@ -171,14 +192,24 @@ MrMurder,2001-01-01,Yella");
                 var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
             
                 var exitCode = exe.Run(
-                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener()),
+                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener(),dbConfig),
                     new GracefulCancellationToken());
 
                 Assert.AreEqual(ExitCodeType.Success,exitCode);
 
-                if(testCase == TestCase.AllPrimaryKeys)
+                if (testCase == TestCase.AllPrimaryKeys)
                 {
                     Assert.AreEqual(4, tbl.GetRowCount()); //Bob, Frank, Frank (with also pk Neon) & MrMurder
+                    Assert.Pass();
+                }
+                if (testCase == TestCase.WithDiffColumnIgnoreRegex)
+                {
+                    Assert.AreEqual(3, tbl.GetRowCount()); //Bob, Frank (original since the diff was skipped), & MrMurder
+
+                    //frank should be updated to like Neon instead of Orange
+                    Assert.AreEqual(3, tbl.GetRowCount());
+                    var frankOld =  tbl.GetDataTable().Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
+                    Assert.AreEqual("Orange", frankOld["FavouriteColour"]);
                     Assert.Pass();
                 }
 
@@ -217,6 +248,13 @@ MrMurder,2001-01-01,Yella");
 
                 foreach (LoadMetadata l in RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
                     l.DeleteInDatabase();
+            }
+
+            if(testCase == TestCase.WithCustomTableNamer)
+            {
+                var db2 = db.Server.ExpectDatabase("BB_STAGING");
+                if(db.Exists())
+                    db2.ForceDrop();
             }
         }
 
@@ -301,9 +339,11 @@ MrMurder,2001-01-01,Yella");
             var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
             checker.Check(new AcceptAllCheckNotifier());
 
+            var config = new HICDatabaseConfiguration(lmd);
+
             var loadFactory = new HICDataLoadFactory(
                 lmd,
-                new HICDatabaseConfiguration(lmd),
+                config,
                 new HICLoadConfigurationFlags(),
                 CatalogueRepository,
                 logManager
@@ -313,7 +353,7 @@ MrMurder,2001-01-01,Yella");
                 var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
 
                 var exitCode = exe.Run(
-                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory, new ThrowImmediatelyDataLoadEventListener()),
+                    new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory, new ThrowImmediatelyDataLoadEventListener(),config),
                     new GracefulCancellationToken());
 
                 Assert.AreEqual(ExitCodeType.Success, exitCode);
@@ -423,6 +463,35 @@ MrMurder,2001-01-01,Yella");
             cata.SaveToDatabase();
 
             return ti;
+        }
+    }
+
+    public class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
+    {
+        public string GetDatabaseName(string rootDatabaseName, LoadBubble convention)
+        {
+            //RAW is AA, Staging is BB
+            switch (convention)
+            {
+                case LoadBubble.Raw:
+                    return "AA_RAW";
+                case LoadBubble.Staging:
+                    return "BB_STAGING";
+                case LoadBubble.Live:
+                case LoadBubble.Archive:
+                    return rootDatabaseName;
+                default:
+                    throw new ArgumentOutOfRangeException("convention");
+            }
+        }
+
+        public string GetName(string tableName, LoadBubble convention)
+        {
+            //all tables get called CC
+            if (convention < LoadBubble.Live)
+                return "CC";
+
+            return tableName;
         }
     }
 }

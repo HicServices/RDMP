@@ -71,7 +71,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -252,6 +251,7 @@
     <Compile Include="DataRelease\Potential\MsSqlExtractionReleasePotential.cs" />
     <Compile Include="DataRelease\ReleasePipeline\FlatFileReleaseSource.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecutePkSynthesizerDatasetExtractionSource.cs" />
+    <Compile Include="ExtractionTime\Listeners\ElevateStateListener.cs" />
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />

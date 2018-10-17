@@ -1,17 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadProcess;
 using DataLoadEngine.Migration.QueryBuilding;
-using HIC.Logging;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
@@ -26,13 +18,15 @@ namespace DataLoadEngine.Migration
         private readonly DiscoveredDatabase _sourceDbInfo;
         private readonly DiscoveredDatabase _destinationDbInfo;
         private readonly MigrationConfiguration _migrationConfig;
+        private readonly HICDatabaseConfiguration _databaseConfiguration;
         private OverwriteMigrationStrategy _migrationStrategy;
 
-        public MigrationHost(DiscoveredDatabase sourceDbInfo, DiscoveredDatabase destinationDbInfo, MigrationConfiguration migrationConfig)
+        public MigrationHost(DiscoveredDatabase sourceDbInfo, DiscoveredDatabase destinationDbInfo, MigrationConfiguration migrationConfig, HICDatabaseConfiguration databaseConfiguration)
         {
             _sourceDbInfo = sourceDbInfo;
             _destinationDbInfo = destinationDbInfo;
             _migrationConfig = migrationConfig;
+            _databaseConfiguration = databaseConfiguration;
         }
 
         public void Migrate(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -50,7 +44,7 @@ namespace DataLoadEngine.Migration
                         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Migrate table "+ name +" from STAGING to " + _destinationDbInfo.GetRuntimeName() + ": " + inserts + " inserts, " + updates + " updates"));
 
                     //migrate all tables (both lookups and live tables in the same way)
-                    var dataColsToMigrate = _migrationConfig.CreateMigrationColumnSetFromTableInfos(job.RegularTablesToLoad, job.LookupTablesToLoad, new StagingToLiveMigrationFieldProcessor());
+                    var dataColsToMigrate = _migrationConfig.CreateMigrationColumnSetFromTableInfos(job.RegularTablesToLoad, job.LookupTablesToLoad, new StagingToLiveMigrationFieldProcessor(_databaseConfiguration.UpdateButDoNotDiff));
 
                     // Migrate the data columns
                     _migrationStrategy.Execute(job,dataColsToMigrate, job.DataLoadInfo, cancellationToken);

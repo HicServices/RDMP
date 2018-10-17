@@ -215,6 +215,7 @@
     <Compile Include="DataFlowOperations\Aliases\AliasHandler.cs" />
     <Compile Include="DataFlowOperations\Aliases\AliasResolutionStrategy.cs" />
     <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasTableFetchException.cs" />
+    <Compile Include="DataFlowOperations\ExtractCatalogueMetadata.cs" />
     <Compile Include="DataFlowOperations\ReleaseMetadata.cs" />
     <Compile Include="DataFlowOperations\RowDeleter.cs" />
     <Compile Include="DataFlowOperations\TableVersionNamer.cs" />
@@ -248,6 +249,7 @@
     <Compile Include="Mutilators\BackupDatabaseMutilation.cs" />
     <Compile Include="Mutilators\Coalescer.cs" />
     <Compile Include="Mutilators\Distincter.cs" />
+    <Compile Include="Mutilators\MatchingTablesMutilator.cs" />
     <Compile Include="Mutilators\PrematureLoadEndCondition.cs" />
     <Compile Include="Mutilators\Dilution\Dilution.cs" />
     <Compile Include="Mutilators\Dilution\DilutionOperationFactory.cs" />

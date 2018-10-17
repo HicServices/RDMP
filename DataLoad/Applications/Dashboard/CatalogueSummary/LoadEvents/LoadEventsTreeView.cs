@@ -84,7 +84,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         {
             var adi = rowObject as ArchivalDataLoadInfo;
             if (adi != null)
-                return adi.Description;
+                return adi.ToString();
 
             var cat = rowObject as LoadEventsTreeView_Category;
             if (cat != null)
@@ -382,11 +382,16 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         private void treeView1_ItemActivate(object sender, EventArgs e)
         {
             var o = treeView1.SelectedObject;
+            var dli = o as ArchivalDataLoadInfo;
+            var cat = o as LoadEventsTreeView_Category;
 
-            if(o == null)
+            if (o == null)
                 return;
-
-            WideMessageBox.Show(o.ToString());
+            
+            if(dli != null)
+                new ExecuteCommandViewLoggedData(_activator,LoggingTables.DataLoadRun,new LogViewerFilter(){Run = dli.ID}).Execute();
+            else if (cat != null)
+                new ExecuteCommandViewLoggedData(_activator, cat.AssociatedTable, new LogViewerFilter() { Run = cat.RunId}).Execute();
         }
 
         private void treeView1_KeyUp(object sender, KeyEventArgs e)

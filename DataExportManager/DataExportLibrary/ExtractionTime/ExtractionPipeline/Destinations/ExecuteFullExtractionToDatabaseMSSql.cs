@@ -83,20 +83,32 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         private bool haveExtractedBundledContent = false;
 
         private bool _tableDidNotExistAtStartOfLoad;
-        private string _cachedGetTableNameAnswer;
         private IExtractCommand _request;
         private IProject _project;
+        private bool _isTableAlreadyNamed;
+        private DataTable _toProcess;
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            _request.ElevateState(ExtractCommandState.WritingToFile);
+            _toProcess = toProcess;
+
+            _destinationDatabase = GetDestinationDatabase(listener);
+
+            //give the data table the correct name
+            if (toProcess.ExtendedProperties.ContainsKey("ProperlyNamed") && toProcess.ExtendedProperties["ProperlyNamed"].Equals(true))
+                _isTableAlreadyNamed = true;
+
+            _toProcess.TableName = GetTableName();
+
             if (_destination == null)
                 _destination = PrepareDestination(listener, toProcess);
 
-            //give the data table the correct name
-            toProcess.TableName = GetTableName();
+            if (TableLoadInfo == null)
+                TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", _toProcess.TableName, new[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
 
-            //Record that we are loading the table (the drop refers to 'rollback advice' in the audit log - don't worry about it)
-            TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", GetTableName(), new[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
+            if (TableLoadInfo.IsClosed) // Maybe it was open and it creashed?
+                throw new Exception("TableLoadInfo was closed so could not write number of rows (" + toProcess.Rows.Count + ") to audit object - most likely the extraction crashed?");
 
             if (_request is ExtractDatasetCommand && !haveExtractedBundledContent)
                 WriteBundleContents(((ExtractDatasetCommand) _request).DatasetBundle, listener, cancellationToken);
@@ -157,8 +169,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             if (TargetDatabaseServer == null)
                 throw new Exception("TargetDatabaseServer (the place you want to extract the project data to) property has not been set!");
 
-            _destinationDatabase = GetDestinationDatabase(listener);
-
             try
             {
                 if (!_destinationDatabase.Exists())
@@ -166,8 +176,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
                 if (_request is ExtractGlobalsCommand)
                     return null;
-                
-                var tblName = GetTableName();
+
+                var tblName = _toProcess.TableName;
 
                 //See if table already exists on the server (likely to cause problems including duplication, schema changes in configuration etc)
                 if (_destinationDatabase.ExpectTable(tblName).Exists())
@@ -232,10 +242,21 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 addedType.AllowNulls = !isPk;
             }
         }
-        
-        public string GetTableName(string suffix = null)
+
+        private string GetTableName(string suffix = null)
         {
-            string tblName = TableNamingPattern;
+            string tblName;
+            if (_isTableAlreadyNamed)
+            {
+                tblName = SanitizeNameForDatabase(_toProcess.TableName);
+
+                if (!String.IsNullOrWhiteSpace(suffix))
+                    tblName += "_" + suffix;
+
+                return tblName;
+            }
+
+            tblName = TableNamingPattern;
             var project = _request.Configuration.Project;
             
             tblName = tblName.Replace("$p", project.Name);
@@ -254,33 +275,39 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 tblName = tblName.Replace("$a", "G");
             }
 
+            var cachedGetTableNameAnswer = SanitizeNameForDatabase(tblName);
+            if (!String.IsNullOrWhiteSpace(suffix))
+                cachedGetTableNameAnswer += "_" + suffix;
+
+            return cachedGetTableNameAnswer;
+        }
+
+        private string SanitizeNameForDatabase(string tblName)
+        {
             if (_destinationDatabase == null)
                 throw new Exception("Cannot pick a TableName until we know what type of server it is going to, _server is null");
 
             //otherwise, fetch and cache answer
-            _cachedGetTableNameAnswer = _destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(tblName);
+            string cachedGetTableNameAnswer = _destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(tblName);
 
-            if(string.IsNullOrWhiteSpace(_cachedGetTableNameAnswer) )
-                throw new Exception("TableNamingPattern '" + TableNamingPattern + "' resulted in an empty string for request '" +_request +"'");
+            if (String.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
+                throw new Exception("TableNamingPattern '" + TableNamingPattern + "' resulted in an empty string for request '" + _request + "'");
 
-            if (!String.IsNullOrWhiteSpace(suffix))
-                _cachedGetTableNameAnswer += "_" + suffix;
-
-            return _cachedGetTableNameAnswer;
+            return cachedGetTableNameAnswer;
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             if(_destination != null)
             {
-                _destination.Dispose(listener,pipelineFailureExceptionIfAny);
+                _destination.Dispose(listener, pipelineFailureExceptionIfAny);
 
                 //if the extraction failed, the table didn't exist in the destination (i.e. the table was created during the extraction) and we are to DropTableIfLoadFails
                 if (pipelineFailureExceptionIfAny != null && _tableDidNotExistAtStartOfLoad && DropTableIfLoadFails)
                 {
                     if(_destinationDatabase != null)
                     {
-                        var tbl = _destinationDatabase.ExpectTable(GetTableName());
+                        var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
                         
                         if(tbl.Exists())
                         {
@@ -291,7 +318,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                     }
                 }
             }
-            
+
             if (TableLoadInfo != null)
                 TableLoadInfo.CloseAndArchive();
             // also close off the cumulative extraction result
@@ -333,7 +360,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private string GetDestinationDescription(string suffix = "")
         {
-            var tblName = GetTableName(suffix);
+            var tblName = _toProcess.TableName;
             var dbName = GetDatabaseName();
             return TargetDatabaseServer.ID + "|" + dbName + "|" + tblName;
         }

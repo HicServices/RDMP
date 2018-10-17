@@ -20,58 +20,65 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             var catalogueRepository = (CatalogueRepository)argument.Repository;
             try
             {
-                //if it is a bool
-                if (typeof (IPipeline).IsAssignableFrom(argumentType))
-                    toReturn = new ArgumentValuePipelineUI(catalogueRepository,parent, argumentType);
-                else if (typeof (bool) == argumentType)
-                    toReturn = new ArgumentValueBoolUI();
-                else if (required.Demand.DemandType == DemandType.SQL) //if it is SQL
-                {
-                    if (typeof (string) != argumentType)
-                        throw new NotSupportedException(
-                            "Demanded type (of DemandsInitialization) was DemandType.SQL but the ProcessTaskArgument Property was of type " +
-                            argumentType + " (Expected String)");
+                //if it's an array
+                if (typeof (Array).IsAssignableFrom(argumentType))
+                    toReturn = new ArgumentValueArrayUI(catalogueRepository);
+                else
+                    //if it's a pipeline
+                    if (typeof (IPipeline).IsAssignableFrom(argumentType))
+                        toReturn = new ArgumentValuePipelineUI(catalogueRepository, parent, argumentType);
+                    else if (typeof (bool) == argumentType)
+                        toReturn = new ArgumentValueBoolUI();
+                    else if (required.Demand.DemandType == DemandType.SQL) //if it is SQL
+                    {
+                        if (typeof (string) != argumentType)
+                            throw new NotSupportedException(
+                                "Demanded type (of DemandsInitialization) was DemandType.SQL but the ProcessTaskArgument Property was of type " +
+                                argumentType + " (Expected String)");
 
-                    toReturn = new ArgumentValueSqlUI();
-                }
-                else if (typeof (ICustomUIDrivenClass).IsAssignableFrom(argumentType))
-                {
-                    toReturn = new ArgumentValueCustomUIDrivenClassUI();
-                }
-                else if (argumentType == typeof (Type))
-                {
-                    //Handle case where Demand is for the user to pick a Type (derived from a given parent Type/Interface).  Use case for this is when you want them to pick e.g. a IDilutionOperation where these are a list of classes corrupt data to greater or lesser degree and can be plugin Types but all share the same parent interface IDilutionOperation
+                        toReturn = new ArgumentValueSqlUI();
+                    }
+                    else if (typeof (ICustomUIDrivenClass).IsAssignableFrom(argumentType))
+                    {
+                        toReturn = new ArgumentValueCustomUIDrivenClassUI();
+                    }
+                    else if (argumentType == typeof (Type))
+                    {
+                        //Handle case where Demand is for the user to pick a Type (derived from a given parent Type/Interface).  Use case for this is when you want them to pick e.g. a IDilutionOperation where these are a list of classes corrupt data to greater or lesser degree and can be plugin Types but all share the same parent interface IDilutionOperation
 
-                    //There must be a shared parent Type for the user to  pick from
-                    if (required.Demand.TypeOf == null)
-                        throw new NotSupportedException("Property " + argument.Name + " has Property Type '" +
-                                                        argumentType +
-                                                        "' but does not have a TypeOf specified (e.g. [DemandsInitialization(\"some desc\",DemandType.Unspecified,null,typeof(IDilutionOperation))]).  Without the typeof(X) we do not know what Types to advertise as selectable to the user");
+                        //There must be a shared parent Type for the user to  pick from
+                        if (required.Demand.TypeOf == null)
+                            throw new NotSupportedException("Property " + argument.Name + " has Property Type '" +
+                                                            argumentType +
+                                                            "' but does not have a TypeOf specified (e.g. [DemandsInitialization(\"some desc\",DemandType.Unspecified,null,typeof(IDilutionOperation))]).  Without the typeof(X) we do not know what Types to advertise as selectable to the user");
 
-                    toReturn =
-                        new ArgumentValueComboBoxUI(
-                            catalogueRepository.MEF.GetAllTypes()
-                                .Where(t => required.Demand.TypeOf.IsAssignableFrom(t))
-                                .ToArray());
-                }
-                else if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
-                {
-                    toReturn = HandleCreateForIMapsDirectlyToDatabaseTable(argument,catalogueRepository, parent, argumentType,
-                        true);
-                }
-                else if (typeof (Enum).IsAssignableFrom(argument.GetSystemType()))
-                {
-                    toReturn =
-                        new ArgumentValueComboBoxUI(Enum.GetValues(argument.GetSystemType()).Cast<object>().ToArray());
-                }
-                else if (typeof (CatalogueRepository).IsAssignableFrom(argumentType))
-                {
-                    toReturn = new ArgumentValueLabelUI("<this value cannot be set manually>");
-                }
-                else //type is simple
-                {
-                    toReturn = new ArgumentValueTextUI(isPassword: typeof(IEncryptedString).IsAssignableFrom(argumentType));
-                }
+                        toReturn =
+                            new ArgumentValueComboBoxUI(
+                                catalogueRepository.MEF.GetAllTypes()
+                                    .Where(t => required.Demand.TypeOf.IsAssignableFrom(t))
+                                    .ToArray());
+                    }
+                    else if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
+                    {
+                        toReturn = HandleCreateForIMapsDirectlyToDatabaseTable(argument, catalogueRepository, parent,
+                            argumentType,
+                            true);
+                    }
+                    else if (typeof (Enum).IsAssignableFrom(argument.GetSystemType()))
+                    {
+                        toReturn =
+                            new ArgumentValueComboBoxUI(
+                                Enum.GetValues(argument.GetSystemType()).Cast<object>().ToArray());
+                    }
+                    else if (typeof (CatalogueRepository).IsAssignableFrom(argumentType))
+                    {
+                        toReturn = new ArgumentValueLabelUI("<this value cannot be set manually>");
+                    }
+                    else //type is simple
+                    {
+                        toReturn =
+                            new ArgumentValueTextUI(isPassword: typeof (IEncryptedString).IsAssignableFrom(argumentType));
+                    }
             }
             catch (Exception e)
             {

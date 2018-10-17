@@ -1,14 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.EntityNaming;
+using DataLoadEngine.DatabaseManagement.EntityNaming;
+using DataLoadEngine.Job;
+using DataLoadEngineTests.Integration.Mocks;
+using LoadModules.Generic.Mutilators.Dilution;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
 using NUnit.Framework;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Checks;
 using Rhino.Mocks;
 using Tests.Common;
 
@@ -34,7 +36,7 @@ namespace DataLoadEngineTests.Integration.DilutionTests
 
             var o = new RoundDateToMiddleOfQuarter();
             o.ColumnToDilute = col;
-            var sql = o.GetMutilationSql();
+            var sql = o.GetMutilationSql(null);
 
             var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
             using (var con = server.BeginNewTransactedConnection())
@@ -63,6 +65,7 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
 
             tbl.VerifyAllExpectations();
         }
+
 
         [TestCase("DD3 9TA", "DD3")]
         [TestCase("DD03 9TA", "DD03")]
@@ -93,7 +96,7 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
 
             var o = new ExcludeRight3OfUKPostcodes();
             o.ColumnToDilute = col;
-            var sql = o.GetMutilationSql();
+            var sql = o.GetMutilationSql(null);
 
             var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
             using (var con = server.BeginNewTransactedConnection())
@@ -143,7 +146,7 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
 
             var o = new CrushToBitFlag();
             o.ColumnToDilute = col;
-            var sql = o.GetMutilationSql();
+            var sql = o.GetMutilationSql(null);
 
             var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
             using (var con = server.BeginNewTransactedConnection())
@@ -168,6 +171,43 @@ INSERT INTO DiluteToBitFlagTests VALUES (" + insert + ")", con).ExecuteNonQuery(
             }
 
             tbl.VerifyAllExpectations();
+        }
+        
+        [Test]
+        public void Dilution_WithNamer_Test()
+        {
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Bob");
+            dt.Rows.Add(new[] {"Fish"});
+
+            var tbl = db.CreateTable("DilutionNamerTest", dt);
+
+            TableInfo ti;
+            ColumnInfo[] cols;
+            Import(tbl,out ti,out cols);
+
+            tbl.Rename("AAAA");
+            var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
+
+            var discarded = new PreLoadDiscardedColumn(CatalogueRepository, ti, "Bob");
+            discarded.SqlDataType = "varchar(10)";
+            discarded.Destination = DiscardedColumnDestination.Dilute;
+            discarded.SaveToDatabase();
+
+
+            var dilution = new Dilution();
+
+            dilution.ColumnToDilute = discarded;
+            dilution.Operation = typeof (CrushToBitFlag);
+
+            dilution.Initialize(db,LoadStage.AdjustStaging);
+            dilution.Check(new ThrowImmediatelyCheckNotifier());
+
+            var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server,namer),ti);
+            
+            dilution.Mutilate(job);
         }
     }
 }

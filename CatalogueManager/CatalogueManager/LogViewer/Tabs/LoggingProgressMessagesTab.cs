@@ -13,9 +13,5 @@ namespace CatalogueManager.LogViewer.Tabs
             return LoggingTables.ProgressLog;
         }
 
-        protected override void FetchDataTable()
-        {
-            LoadDataTable(LogManager.GetTable(LoggingTables.ProgressLog,IDFilter.Run,TopX));
-        }
     }
 }
