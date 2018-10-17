@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode;
@@ -71,6 +72,16 @@ namespace MapsDirectlyToDatabaseTable
                         ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2 : IMapsDirectlyToDatabaseTable
+        {
+            var toReturn = GetAllObjectsWithParent<T>(parent);
+            foreach (T v in toReturn)
+                v.InjectKnown(parent);
+
+            return toReturn;
         }
 
         public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
