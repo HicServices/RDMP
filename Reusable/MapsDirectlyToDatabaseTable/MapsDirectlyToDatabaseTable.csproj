@@ -154,6 +154,7 @@
     <Compile Include="ObjectDeletedException.cs" />
     <Compile Include="Attributes\RelationshipAttribute.cs" />
     <Compile Include="Attributes\SqlAttribute.cs" />
+    <Compile Include="SqlDependencyTableMonitor.cs" />
     <Compile Include="TableRepository.cs" />
     <Compile Include="IObscureDependencyFinder.cs" />
     <Compile Include="Revertable\ChangeDescription.cs" />

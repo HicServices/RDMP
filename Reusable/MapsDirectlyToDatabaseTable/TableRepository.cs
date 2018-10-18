@@ -405,6 +405,16 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
+        readonly SqlDependencyTableMonitor _cacheMonitor = new SqlDependencyTableMonitor();
+
+        public T[] GetAllObjectsCached<T>() where T : IMapsDirectlyToDatabaseTable
+        {
+            if (_cacheMonitor.HasValidCache<T>())
+                return _cacheMonitor.GetCached<T>();
+            
+            return _cacheMonitor.RegisterTableMonitor(this, ConstructEntity<T>);
+        }
+
         public T[] GetAllObjects<T>( string whereSQL = null) where T:IMapsDirectlyToDatabaseTable
         {
             string typename = typeof (T).Name;

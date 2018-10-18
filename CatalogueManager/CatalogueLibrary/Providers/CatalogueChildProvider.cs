@@ -157,7 +157,7 @@ namespace CatalogueLibrary.Providers
             AllANOTablesNode = new AllANOTablesNode();
             AddChildren(AllANOTablesNode);
             
-            AllCatalogues = repository.GetAllObjects<Catalogue>();
+            AllCatalogues = repository.GetAllObjectsCached<Catalogue>();
             AllCatalogueDictionary = AllCatalogues.ToDictionary(i => i.ID, o => o);
 
             AllLoadMetadatas = repository.GetAllObjects<LoadMetadata>();
