@@ -128,6 +128,7 @@ namespace CatalogueLibrary.Providers
         public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
 
         protected Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary;
+        protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem;
 
         private readonly CatalogueFilterHierarchy _filterChildProvider;
 
@@ -210,6 +211,7 @@ namespace CatalogueLibrary.Providers
             }
 
             AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(repository).ToDictionary(i => i.ID, o => o);
+            _extractionInformationsByCatalogueItem = AllExtractionInformationsDictionary.Values.ToDictionary(k=>k.CatalogueItem_ID,v=>v);
 
             //Inject known CatalogueItems into ExtractionInformations
             foreach (ExtractionInformation ei in AllExtractionInformationsDictionary.Values)
@@ -754,13 +756,12 @@ namespace CatalogueLibrary.Providers
         {
             List<object> childObjects = new List<object>();
 
-            var extractionInformation = AllExtractionInformations.SingleOrDefault(ei => ei.CatalogueItem_ID == ci.ID);
-
-            if (extractionInformation != null)
+            if(_extractionInformationsByCatalogueItem.ContainsKey(ci.ID))
             {
-                ci.InjectKnown(extractionInformation);
-                childObjects.Add(extractionInformation);
-                AddChildren(extractionInformation,descendancy.Add(extractionInformation));
+                var ei = _extractionInformationsByCatalogueItem[ci.ID];
+                ci.InjectKnown(ei);
+                childObjects.Add(ei);
+                AddChildren(ei, descendancy.Add(ei));
             }
 
             if (ci.ColumnInfo_ID.HasValue)
