@@ -126,6 +126,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             dialog.ShowDialog();
 
+            if (dialog.DialogResult != DialogResult.OK)
+                return null;
+
             return dialog.SelectedTable;
         }
 
@@ -134,6 +137,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription, false, false);
 
             dialog.ShowDialog();
+            
+            if (dialog.DialogResult != DialogResult.OK)
+                return null;
 
             return dialog.SelectedDatabase;
         }
