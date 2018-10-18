@@ -32,11 +32,11 @@ namespace ResearchDataManagementPlatform
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RDMPMainForm));
-            this._rdmpTopMenuStrip1 = new RDMPTopMenuStrip();
+            this._rdmpTopMenuStrip1 = new ResearchDataManagementPlatform.Menus.RDMPTopMenuStrip();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.SuspendLayout();
             // 
-            // rdmpMenuStrip1
+            // _rdmpTopMenuStrip1
             // 
             this._rdmpTopMenuStrip1.Dock = System.Windows.Forms.DockStyle.Top;
             this._rdmpTopMenuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -64,6 +64,7 @@ namespace ResearchDataManagementPlatform
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RDMPMainForm";
             this.Text = "RDMPMainForm";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RDMPMainForm_FormClosed);
             this.Load += new System.EventHandler(this.RDMPMainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

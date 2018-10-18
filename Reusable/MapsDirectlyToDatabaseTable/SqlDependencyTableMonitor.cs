@@ -11,7 +11,8 @@ namespace MapsDirectlyToDatabaseTable
     /// </summary>
     public class SqlDependencyTableMonitor
     {
-        private static bool _started = false;
+        static object oSubscriptionsLock = new object();
+        static HashSet<string> _subscriptions = new HashSet<string>();
 
         private readonly Dictionary<Type,SqlDependency> _registeredDependencies = new Dictionary<Type, SqlDependency>();
         private readonly Dictionary<Type,object>  _cachedAnswers = new Dictionary<Type, object>();
@@ -23,11 +24,15 @@ namespace MapsDirectlyToDatabaseTable
 
         public T[] RegisterTableMonitor<T>(TableRepository repository, Func<SqlDataReader,T> func)
         {
-            if (!_started)
+            lock (oSubscriptionsLock)
             {
-                SqlDependency.Start(repository.ConnectionString);
-                _started = true;
+                if (!_subscriptions.Contains(repository.ConnectionString))
+                {
+                    SqlDependency.Start(repository.ConnectionString);
+                    _subscriptions.Add(repository.ConnectionString);
+                }
             }
+            
             var t = typeof (T);
             List<T> toReturn = new List<T>();
             
@@ -65,6 +70,13 @@ namespace MapsDirectlyToDatabaseTable
         public T[] GetCached<T>()
         {
             return (T[])_cachedAnswers[typeof(T)];
+        }
+
+        public static void Stop()
+        {
+            lock (oSubscriptionsLock)
+                foreach (var subscription in _subscriptions)
+                    SqlDependency.Stop(subscription);
         }
     }
 }

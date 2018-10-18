@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using MapsDirectlyToDatabaseTable;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
@@ -124,6 +125,11 @@ namespace ResearchDataManagementPlatform
             }
 
             return null;
+        }
+
+        private void RDMPMainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            SqlDependencyTableMonitor.Stop();
         }
 
     }
