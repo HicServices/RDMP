@@ -18,6 +18,7 @@ namespace ReusableUIComponents.Settings
             cbShowHomeOnStartup.Checked = UserSettings.ShowHomeOnStartup;
             cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
             cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
+            cbUseCaching.Checked = UserSettings.UseCaching;
         }
 
         private void cb_CheckedChanged(object sender, EventArgs e)
