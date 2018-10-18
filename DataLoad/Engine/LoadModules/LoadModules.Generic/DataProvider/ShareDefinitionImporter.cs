@@ -11,7 +11,10 @@ using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataProvider
 {
-    class ShareDefinitionImporter: IPluginDataProvider
+    /// <summary>
+    /// Data Provider Process Task for DLE which will look for *.sd files and import them into RDMP
+    /// </summary>
+    public class ShareDefinitionImporter: IPluginDataProvider
     {
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
         {
