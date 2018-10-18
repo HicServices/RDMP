@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
 namespace DataExportLibrary.Data.Hierarchy
@@ -24,9 +26,11 @@ namespace DataExportLibrary.Data.Hierarchy
 
         public DataExportFilterHierarchy(IDataExportRepository repository)
         {
-            AllContainers = repository.GetAllObjects<FilterContainer>().ToDictionary(o=>o.ID,o=>o);
-            _allFilters = repository.GetAllObjects<DeployedExtractionFilter>();
-            _allParameters = repository.GetAllObjects<DeployedExtractionFilterParameter>();
+            var repo = (TableRepository) repository;
+
+            AllContainers = GetAllObjects<FilterContainer>(repo).ToDictionary(o => o.ID, o => o);
+            _allFilters = GetAllObjects<DeployedExtractionFilter>(repo);
+            _allParameters = GetAllObjects<DeployedExtractionFilterParameter>(repo);
             
             var server = repository.DiscoveredServer;
             using (var con = repository.GetConnection())
@@ -48,6 +52,12 @@ namespace DataExportLibrary.Data.Hierarchy
                 r.Close();
             }
         }
+
+        private T[] GetAllObjects<T>(TableRepository repository)where T:IMapsDirectlyToDatabaseTable
+        {
+            return CatalogueChildProvider.UseCaching ? repository.GetAllObjectsCached<T>():repository.GetAllObjects<T>();
+        }
+
         public IEnumerable<DeployedExtractionFilter> GetFilters(FilterContainer filterContainer)
         {
             return _allFilters.Where(f => f.FilterContainer_ID == filterContainer.ID);

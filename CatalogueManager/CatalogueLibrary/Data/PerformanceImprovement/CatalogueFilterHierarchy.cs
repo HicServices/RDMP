@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.PerformanceImprovement
 {
@@ -32,15 +34,14 @@ namespace CatalogueLibrary.Data.PerformanceImprovement
 
         public CatalogueFilterHierarchy(CatalogueRepository repository)
         {
+            AllAggregateContainers = GetAllObjects<AggregateFilterContainer>(repository).ToDictionary(o=>o.ID,o2=>o2);
+            _allAggregateFilters = GetAllObjects<AggregateFilter>(repository);
+            _allAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(repository);
 
-            AllAggregateContainers = repository.GetAllObjects<AggregateFilterContainer>().ToDictionary(o=>o.ID,o2=>o2);
-            _allAggregateFilters = repository.GetAllObjects<AggregateFilter>();
-            _allAggregateFilterParameters = repository.GetAllObjects<AggregateFilterParameter>();
-
-            _allCatalogueFilters = repository.GetAllObjects<ExtractionFilter>();
-            _allCatalogueParameters = repository.GetAllObjects<ExtractionFilterParameter>();
-            _allCatalogueValueSets = repository.GetAllObjects<ExtractionFilterParameterSet>();
-            _allCatalogueValueSetValues = repository.GetAllObjects<ExtractionFilterParameterSetValue>();
+            _allCatalogueFilters = GetAllObjects<ExtractionFilter>(repository);
+            _allCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
+            _allCatalogueValueSets = GetAllObjects<ExtractionFilterParameterSet>(repository);
+            _allCatalogueValueSetValues = GetAllObjects<ExtractionFilterParameterSetValue>(repository);
             
             var server = repository.DiscoveredServer;
             using (var con = repository.GetConnection())
@@ -59,6 +60,11 @@ namespace CatalogueLibrary.Data.PerformanceImprovement
                 }
                 r.Close();
             }
+        }
+
+        private T[] GetAllObjects<T>(CatalogueRepository repository) where T: IMapsDirectlyToDatabaseTable
+        {
+            return CatalogueChildProvider.UseCaching ? repository.GetAllObjectsCached<T>() : repository.GetAllObjects<T>();
         }
 
         //Aggregates

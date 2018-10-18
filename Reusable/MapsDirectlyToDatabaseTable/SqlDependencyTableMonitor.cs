@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using ReusableLibraryCode;
 
 namespace MapsDirectlyToDatabaseTable
 {
@@ -29,14 +30,12 @@ namespace MapsDirectlyToDatabaseTable
             }
             var t = typeof (T);
             List<T> toReturn = new List<T>();
-
-            using (var con = (SqlConnection)repository.DiscoveredServer.GetConnection())
+            
+            using (var con = repository.GetConnection())
             {
-                con.Open();
+                string columns = string.Join(",", TableRepository.GetPropertyInfos(t).Select(p =>"["+ p.Name+"]"));
 
-                string columns = string.Join(",", TableRepository.GetPropertyInfos(t).Select(p => p.Name));
-
-                using (var cmd = new SqlCommand("SELECT " + columns + " FROM dbo." + t.Name, con))
+                using (var cmd = (SqlCommand)DatabaseCommandHelper.GetCommand("SELECT " + columns + " FROM dbo." + t.Name, con.Connection,con.Transaction))
                 {
                     SqlDependency dependency = new SqlDependency(cmd);
                     
