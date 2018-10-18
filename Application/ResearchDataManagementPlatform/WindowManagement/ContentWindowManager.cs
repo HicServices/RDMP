@@ -42,6 +42,7 @@ using CatalogueManager.Copying;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dependencies.Models;
@@ -143,7 +144,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private void UpdateChildProviders()
         {
-            CatalogueChildProvider.UseCaching = true;
+            CatalogueChildProvider.UseCaching = UserSettings.UseCaching;
 
             //prefer a linked repository with both
             if(RepositoryLocator.DataExportRepository != null)

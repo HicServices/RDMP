@@ -32,6 +32,9 @@ namespace ReusableUIComponents.Settings
 
             if(cb == cbConfirmExit)
                 UserSettings.ConfirmApplicationExiting = cb.Checked;
+
+            if (cb == cbUseCaching)
+                UserSettings.UseCaching = cb.Checked;
         }
     }
 }

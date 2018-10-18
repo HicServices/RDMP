@@ -1151,7 +1151,7 @@ namespace CatalogueLibrary.Providers
 
         protected T[] GetAllObjects<T>(TableRepository repository) where T : IMapsDirectlyToDatabaseTable
         {
-            return UseCaching ? repository.GetAllObjectsCached<T>() : GetAllObjects<T>(repository);
+            return UseCaching ? repository.GetAllObjectsCached<T>() : repository.GetAllObjects<T>();
         }
 
 
