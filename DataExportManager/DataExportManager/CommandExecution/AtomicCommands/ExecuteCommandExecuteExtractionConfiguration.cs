@@ -75,7 +75,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             base.Execute();
             var ui = Activator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(_extractionConfiguration);
 
-            ui.TickAllFor(_selectedDataSet);
+            if (_selectedDataSet != null)
+                ui.TickAllFor(_selectedDataSet);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace CatalogueManager.Menus
             
             RepositoryLocator = _activator.RepositoryLocator;
 
-            if(o != null)
+            if(o != null && !(o is RDMPCollection))
                 ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o));
         }
 

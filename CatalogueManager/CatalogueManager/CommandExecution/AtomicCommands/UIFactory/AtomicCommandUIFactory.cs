@@ -5,10 +5,13 @@ using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
+using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Menus;
 using CatalogueManager.Menus.MenuItems;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -43,13 +46,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
             return new AtomicCommandWithTargetUI<T>(_iconProvider, command, selection, propertySelector);
         }
 
-        public ContextMenuStrip CreateMenu(params IAtomicCommand[] commands)
+        public RDMPContextMenuStrip CreateMenu(IActivateItems activator,TreeListView tree, RDMPCollection collection, params IAtomicCommand[] commands)
         {
-            var toReturn = new ContextMenuStrip();
+            var toReturn = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(activator,tree,collection),collection);
             
             foreach (IAtomicCommand command in commands)
                 toReturn.Items.Add(CreateMenuItem(command));
-            
+
             return toReturn;
         }
     }
