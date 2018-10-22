@@ -499,6 +499,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private void cbExtractable_CheckedChanged(object sender, EventArgs e)
         {
+            if (isRefreshing)
+                return;
+
             _aggregate.IsExtractable = cbExtractable.Checked;
             _aggregate.SaveToDatabase();
             _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
