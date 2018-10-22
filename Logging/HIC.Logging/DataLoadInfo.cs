@@ -281,5 +281,89 @@ SELECT SCOPE_IDENTITY();", con);
                 TableLoads.Add(tableLoadInfo.ID, tableLoadInfo);
             }
         }
+
+        public enum FatalErrorStates
+        {
+            Outstanding = 1,
+            Resolved = 2,
+            Blocked = 3
+        }
+
+        /// <summary>
+        /// Terminates the current DataLoadInfo and records that it resulted in a fatal error
+        /// </summary>
+        /// <param name="errorSource">The component that generated the failure(in SSIS try System::SourceName)</param>
+        /// <param name="errorDescription">A description of the error (in SSIS try System::ErrorDescription)</param>
+        public void LogFatalError(string errorSource, string errorDescription)
+        {
+            using (var con = DatabaseSettings.GetConnection())
+            {
+                con.Open();
+
+                //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
+                string initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
+
+                SqlCommand cmdLookupStatusID = new SqlCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", (SqlConnection)con);
+                cmdLookupStatusID.Parameters.Add("@status", SqlDbType.NChar, 20);
+                cmdLookupStatusID.Parameters["@status"].Value = initialErrorStatus;
+
+                int statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
+
+                SqlCommand cmdRecordFatalError = new SqlCommand(
+    @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);", (SqlConnection)con);
+                cmdRecordFatalError.Parameters.Add("@time", SqlDbType.DateTime);
+                cmdRecordFatalError.Parameters.Add("@source", SqlDbType.VarChar, 50);
+                cmdRecordFatalError.Parameters.Add("@description", SqlDbType.VarChar, -1);
+                cmdRecordFatalError.Parameters.Add("@statusID", SqlDbType.Int);
+                cmdRecordFatalError.Parameters.Add("@dataLoadRunID", SqlDbType.Int);
+
+                cmdRecordFatalError.Parameters["@time"].Value = DateTime.Now;
+                cmdRecordFatalError.Parameters["@source"].Value = errorSource;
+                cmdRecordFatalError.Parameters["@description"].Value = errorDescription;
+                cmdRecordFatalError.Parameters["@statusID"].Value = statusID;
+                cmdRecordFatalError.Parameters["@dataLoadRunID"].Value = ID;
+
+                cmdRecordFatalError.ExecuteNonQuery();
+
+                //this might get called multiple times (many errors in rapid succession as the program crashes) but only close the dataLoadInfo once
+                if (!IsClosed)
+                    CloseAndMarkComplete();
+
+            }
+        }
+
+        public enum ProgressEventType
+        {
+            OnInformation,
+            OnProgress,
+            OnQueryCancel,
+            OnTaskFailed,
+            OnWarning
+        }
+
+        public void LogProgress(ProgressEventType pevent, string Source, string Description)
+        {
+            using (var con = (SqlConnection)DatabaseSettings.GetConnection())
+                using (var cmdRecordProgress = new SqlCommand("INSERT INTO ProgressLog " +
+                                                                "(dataLoadRunID,eventType,source,description,time) " +
+                                                                "VALUES (@dataLoadRunID,@eventType,@source,@description,@time);", con))
+                {
+                    con.Open();
+
+                    cmdRecordProgress.Parameters.Add("@dataLoadRunID", SqlDbType.Int);
+                    cmdRecordProgress.Parameters.Add("@eventType", SqlDbType.VarChar, 50);
+                    cmdRecordProgress.Parameters.Add("@source", SqlDbType.VarChar, 100);
+                    cmdRecordProgress.Parameters.Add("@description", SqlDbType.VarChar, 8000);
+                    cmdRecordProgress.Parameters.Add("@time", SqlDbType.DateTime);
+
+                    cmdRecordProgress.Parameters["@dataLoadRunID"].Value = ID;
+                    cmdRecordProgress.Parameters["@eventType"].Value = pevent.ToString();
+                    cmdRecordProgress.Parameters["@source"].Value = Source;
+                    cmdRecordProgress.Parameters["@description"].Value = Description;
+                    cmdRecordProgress.Parameters["@time"].Value = DateTime.Now;
+
+                    cmdRecordProgress.ExecuteNonQuery();
+                }
+        }
     }
 }
