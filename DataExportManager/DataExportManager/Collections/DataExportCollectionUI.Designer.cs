@@ -76,6 +76,7 @@ namespace DataExportManager.Collections
             // olvCohortSource
             // 
             this.olvCohortSource.IsVisible = false;
+            this.olvCohortSource.Text = "CohortSource";
             // 
             // DataExportCollectionUI
             // 

@@ -520,9 +520,6 @@ namespace CatalogueManager.Collections
                 //if we have the object
                 if (Tree.IndexOf(o) != -1)
                 {
-                    //remove it
-                    Tree.RemoveObject(o);
-
                     //we don't have the object but do we have something in it's descendancy?
                     if (knownDescendancy != null)
                     {
@@ -531,9 +528,10 @@ namespace CatalogueManager.Collections
                         if (lastParent != null)
                             Tree.RefreshObject(lastParent); //refresh parent
                     }
-                    else 
-                        if(exists)
-                            Tree.AddObject(o);
+                    else
+                        if (!exists)
+                            //remove it
+                            Tree.RemoveObject(o);
                 }
         }
 
