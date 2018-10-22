@@ -11,7 +11,7 @@ namespace HIC.Logging
     /// Root object for an ongoing logged activity e.g. 'Loading Biochemistry'.  Includes the package name (exe or class name that is primarily responsible
     /// for the activity), start time, description etc.  You must call CloseAndMarkComplete once your activity is completed (whether it has failed or suceeded).
     /// 
-    /// <para>You should maintain a reference to DataLoadInfo in order to create logs of Progress (ProgressLogging) / Errors (FatalErrorLogging) / and table load audits
+    /// <para>You should maintain a reference to DataLoadInfo in order to create logs of Progress / Errors / and table load audits
     /// (TableLoadInfo) (create these via the LogManager).  The ID property can be used if you want to reference this audit record e.g. when loading a live table
     /// you can store the ID of the load batch it appeared in. </para>
     /// </summary>
