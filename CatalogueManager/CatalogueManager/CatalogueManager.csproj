@@ -397,6 +397,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFileUI.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueItemDescription.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportShareDefinitionList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueItemExtractable.cs" />
@@ -1220,12 +1221,6 @@
     <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.Designer.cs">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ImportCloneOfCatalogueItem.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\ImportCloneOfCatalogueItem.Designer.cs">
-      <DependentUpon>ImportCloneOfCatalogueItem.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainFormUITabs\CatalogueItemTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1973,9 +1968,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.resx">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ImportCloneOfCatalogueItem.resx">
-      <DependentUpon>ImportCloneOfCatalogueItem.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\CatalogueItemTab.resx">
       <DependentUpon>CatalogueItemTab.cs</DependentUpon>

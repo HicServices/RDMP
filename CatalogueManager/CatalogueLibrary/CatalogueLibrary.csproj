@@ -390,7 +390,6 @@
     <Compile Include="Reports\Exceptions\SourceCodeNotFoundException.cs" />
     <Compile Include="Repositories\Construction\Exceptions\ObjectLacksCompatibleConstructorException.cs" />
     <Compile Include="Repositories\Construction\ObjectConstructor.cs" />
-    <Compile Include="Repositories\FriendlyNamedCatalogueItem.cs" />
     <Compile Include="Repositories\ICatalogueRepository.cs" />
     <Compile Include="Repositories\ICatalogueRepositoryServiceLocator.cs" />
     <Compile Include="Repositories\IDataExportRepository.cs" />
