@@ -20,7 +20,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
             _activator = activator;
             _tab = tab;
             Items.Add("Close Tab", null, (s, e) => tab.Close());
-            Items.Add("Close All Tabs", null, (s, e) => windowTracker.CloseAllWindows());
+            Items.Add("Close All Tabs", null, (s, e) => windowTracker.CloseAllWindows(tab));
             Items.Add("Close All But This", null, (s, e) => windowTracker.CloseAllButThis(tab));
 
             Items.Add("Show", null, (s, e) => tab.HandleUserRequestingEmphasis(activator));

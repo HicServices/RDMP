@@ -73,15 +73,24 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
         /// <summary>
         /// Closes all Tracked windows 
         /// </summary>
-        public void CloseAllWindows()
+        /// <param name="tab"></param>
+        public void CloseAllWindows(RDMPSingleControlTab tab)
         {
-            foreach (var trackedWindow in _trackedWindows.ToArray())
-                trackedWindow.Close();
+            if(tab != null)
+            {
+                CloseAllButThis(tab);
+                tab.Close();
+            }
+            else
+            {
+                foreach (var trackedWindow in _trackedWindows.ToArray())
+                    trackedWindow.Close();
 
-            foreach (var adhoc in _trackedAdhocWindows.ToArray())
-                adhoc.Close();
+                foreach (var adhoc in _trackedAdhocWindows.ToArray())
+                    adhoc.Close();
+            }
         }
-
+        
         /// <summary>
         /// Closes all Tracked windows except the specified tab
         /// </summary>
@@ -90,11 +99,18 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
             var trackedWindowsToClose = _trackedWindows.ToArray().Where(t => t != content);
 
             foreach (var trackedWindow in trackedWindowsToClose)
-                trackedWindow.Close();
-            
+                CloseWindowIfInSameScope(trackedWindow, content);
+
             foreach (var adhoc in _trackedAdhocWindows.ToArray().Where(t => t != content))
-                adhoc.Close();
+                CloseWindowIfInSameScope(adhoc, content);
         }
 
+        private void CloseWindowIfInSameScope(DockContent toClose, DockContent tabInSameScopeOrNull)
+        {
+            var parent = tabInSameScopeOrNull == null ? null : tabInSameScopeOrNull.Parent;
+
+            if (toClose != null && (parent == null || toClose.Parent == parent))
+                toClose.Close();
+        }
     }
 }
