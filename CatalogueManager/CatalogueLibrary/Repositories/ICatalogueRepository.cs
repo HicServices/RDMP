@@ -61,12 +61,10 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <param name="insertCommand"></param>
         /// <param name="oTableWrapperObject"></param>
-        /// <param name="insertIdentity">Pass true to also add and populate the ID part of the insert command (including the IDENTITY_INSERT command that allows INSERT of identity columns) </param>
-        void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand, IMapsDirectlyToDatabaseTable oTableWrapperObject, bool insertIdentity);
+        void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand, IMapsDirectlyToDatabaseTable oTableWrapperObject);
 
         T CloneObjectInTable<T>(T oToClone, TableRepository destinationRepository) where T : IMapsDirectlyToDatabaseTable;
-        T CloneObjectInTable<T>(T oToClone, TableRepository sourceRepository, TableRepository destinationRepository) where T:IMapsDirectlyToDatabaseTable;
-
+        
         T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
             where T : IMapsDirectlyToDatabaseTable;
         

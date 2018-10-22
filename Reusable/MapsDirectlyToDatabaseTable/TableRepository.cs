@@ -189,15 +189,10 @@ namespace MapsDirectlyToDatabaseTable
         /// </summary>
         /// <param name="insertCommand"></param>
         /// <param name="oTableWrapperObject"></param>
-        /// <param name="insertIdentity">Pass true to also add and populate the ID part of the insert command (including the IDENTITY_INSERT command that allows INSERT of identity columns) </param>
-        public void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand, IMapsDirectlyToDatabaseTable oTableWrapperObject, bool insertIdentity)
+        public void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand, IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             lock (_oLockUpdateCommands)
             {
-
-                if (insertIdentity)
-                    AddIdentityInsertInto(insertCommand,oTableWrapperObject);
-
                 foreach (DbParameter parameter in insertCommand.Parameters)
                 {
                     Type t = oTableWrapperObject.GetType();
@@ -215,66 +210,10 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
-        private void AddIdentityInsertInto(DbCommand insertCommand , IMapsDirectlyToDatabaseTable oTableWrapperObject)
-        {
-            string sql = insertCommand.CommandText;
-
-            string tableName = oTableWrapperObject.GetType().Name;
-
-            if (oTableWrapperObject.GetType().GetProperty("ID") == null)
-                throw new ArgumentException("insertIdentity was set to true but object of type:" +
-                                            oTableWrapperObject.GetType().Name + " did not have an ID property");
-
-            string wrappedTableName;
-            
-            if (insertCommand is SqlCommand)
-                wrappedTableName = "[" + tableName + "]";
-                else
-                    throw new NotSupportedException("InsertCommand was of type " + insertCommand.GetType() + " expect either an SqlCommand");
-            
-            if (sql.IndexOf(wrappedTableName) == -1)
-                throw new Exception("Could not find table " + wrappedTableName + " in command " + insertCommand.CommandText);
-
-            if(insertCommand is SqlCommand)
-                sql = "SET IDENTITY_INSERT [" + tableName + "] ON; " + sql;
-
-            //add ID to the Table(Col1,Col2,Col3 bit
-            sql = sql.Insert(sql.IndexOf("(") + 1, "ID,");
-
-            //add @ID to the beginning of the parameter list
-            sql = sql.Insert(sql.LastIndexOf("(") + 1, "@ID,");
-
-            insertCommand.CommandText = sql;
-
-            insertCommand.Parameters.Add(DatabaseCommandHelper.GetParameter("@ID", insertCommand));
-        }
-
-        public bool CloneObjectInTableIfDoesntExist<T>(T oToClone, TableRepository destinationRepository) where T : IMapsDirectlyToDatabaseTable
-        {
-            using (var destination = destinationRepository.GetConnection())
-            {
-                var cmdSeeIfInDestinationAlready =  DatabaseCommandHelper.GetCommand("SELECT count(*) FROM [" + oToClone.GetType().Name + "] WHERE ID=" + oToClone.ID, destination.Connection, destination.Transaction);
-                var oResult = cmdSeeIfInDestinationAlready.ExecuteScalar();
-                if (int.Parse(oResult.ToString()) > 0)
-                    return false;
-            }
-
-            CloneObjectInTable(oToClone, (TableRepository)oToClone.Repository, destinationRepository);
-
-            return true;
-        }
-
-
         public T CloneObjectInTable<T>(T oToClone) where T:IMapsDirectlyToDatabaseTable
         {
             var repository = (TableRepository) oToClone.Repository;
-            return CloneObjectInTable(oToClone, repository, repository);
-        }
-
-        public T CloneObjectInTable<T>(T oToClone, TableRepository destinationRepository) where T : IMapsDirectlyToDatabaseTable
-        {
-            var repository = (TableRepository)oToClone.Repository;
-            return CloneObjectInTable(oToClone, repository, destinationRepository);
+            return CloneObjectInTable(oToClone, repository);
         }
 
         public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable
@@ -300,44 +239,32 @@ namespace MapsDirectlyToDatabaseTable
             return exists;
         }
 
-        public T CloneObjectInTable<T>(T oToClone, TableRepository sourceRepository, TableRepository destinationRepository) where T:IMapsDirectlyToDatabaseTable
+        public T CloneObjectInTable<T>(T oToClone, TableRepository sourceRepository) where T:IMapsDirectlyToDatabaseTable
         {
             //first of all run a select on the table so that we can get all the columns in the underlying table
-            using (var source = sourceRepository.GetConnection())
+            using (var con = sourceRepository.GetConnection())
             {
-                using (var destination = destinationRepository.GetConnection())
-                {
-                    var cmd =  DatabaseCommandHelper.GetCommand("SELECT * FROM [" + oToClone.GetType().Name + "] WHERE ID=" + oToClone.ID, source.Connection, source.Transaction);
+                var cmd = DatabaseCommandHelper.GetCommand("SELECT * FROM [" + oToClone.GetType().Name + "] WHERE ID=" + oToClone.ID, con.Connection, con.Transaction);
 
-                    //adapter and builder are used to generate an INSERT command compatible with the SELECT (i.e. all fields).  Note that this does not generate for the
-                    //identity column ID.  We know there is an identity and that it is called ID because that is one of the requirements of the IMapsDirectlyToDatabaseTable 
-                    //pattern
+                //adapter and builder are used to generate an INSERT command compatible with the SELECT (i.e. all fields).  Note that this does not generate for the
+                //identity column ID.  We know there is an identity and that it is called ID because that is one of the requirements of the IMapsDirectlyToDatabaseTable 
+                //pattern
 
-                    DbCommand cloneCommand = DatabaseCommandHelper.GetInsertCommand(cmd);
-                    cloneCommand.Connection = destination.Connection;
-
-
-                    //if cloning into the same database
-                    if (source.Connection.Equals(destination.Connection))
-                        PopulateInsertCommandValuesWithCurrentState(cloneCommand, oToClone, false); //give the new clone a new ID
-                    else
-                    {
-                        PopulateInsertCommandValuesWithCurrentState(cloneCommand, oToClone, true); //otherwise we are inserting into a different database so give it the SAME ID
-                        cloneCommand.Connection = destination.Connection;
-                        cloneCommand.Transaction = destination.Transaction;
-                    }
-
-                    if (cloneCommand is SqlCommand)
-                        cloneCommand.CommandText += ";SELECT @@IDENTITY";
+                DbCommand cloneCommand = DatabaseCommandHelper.GetInsertCommand(cmd);
+                cloneCommand.Connection = con.Connection;
+                
+                //if cloning into the same database
+                PopulateInsertCommandValuesWithCurrentState(cloneCommand, oToClone); //give the new clone a new ID
+                
+                cloneCommand.CommandText += ";SELECT @@IDENTITY";
                     
-                    try
-                    {
-                        return GetObjectByID<T>(int.Parse(cloneCommand.ExecuteScalar().ToString()));
-                    }
-                    catch (SqlException e)
-                    {
-                        throw new Exception("Error cloning " + oToClone + " (object of type " + oToClone.GetType().Name + " with ID=" + oToClone.ID + ")", e);
-                    }
+                try
+                {
+                    return GetObjectByID<T>(int.Parse(cloneCommand.ExecuteScalar().ToString()));
+                }
+                catch (SqlException e)
+                {
+                    throw new Exception("Error cloning " + oToClone + " (object of type " + oToClone.GetType().Name + " with ID=" + oToClone.ID + ")", e);
                 }
             }
         }
@@ -759,7 +686,7 @@ namespace MapsDirectlyToDatabaseTable
         private static string CreateInsertStatement<T>(Dictionary<string, object> parameters) where T : IMapsDirectlyToDatabaseTable
         {
             var query = @"INSERT INTO " + typeof (T).Name;
-            if (parameters != null)
+            if (parameters != null && parameters.Any())
             {
                 if (parameters.Any(kvp => kvp.Key.StartsWith("@")))
                     throw new InvalidOperationException(
@@ -769,6 +696,9 @@ namespace MapsDirectlyToDatabaseTable
                 var parameterString = string.Join(", ", parameters.Select(kvp => "@" + kvp.Key));
                 query += "(" + columnString + ") VALUES (" + parameterString + ")";
             }
+            else
+                query += " DEFAULT VALUES";
+            
             return query;
         }
 
