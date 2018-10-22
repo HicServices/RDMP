@@ -525,8 +525,17 @@ namespace CatalogueManager.Collections
                     {
                         var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
 
+                        //does tree have parent?
                         if (lastParent != null)
                             Tree.RefreshObject(lastParent); //refresh parent
+                        else
+                            //Tree has object but not parent, bad times, maybe BetterRouteExists? Refresh the object if it exists
+                            if (!exists)
+                                //remove it
+                                Tree.RemoveObject(o);
+                            else
+                                Tree.RefreshObject(o);
+                            
                     }
                     else
                         if (!exists)
