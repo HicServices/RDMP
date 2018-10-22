@@ -4,6 +4,7 @@ using System.Data;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using HIC.Logging;
 using LoadModules.Generic.Attachers;
@@ -23,7 +24,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns)]
         [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn)]
         [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar)]
-        public void TestRemoteDatabaseAttach(DatabaseType dbType,Scenario scenario)
+        public void TestRemoteDatabaseAttach(DatabaseType dbType, Scenario scenario)
         {
             var db = GetCleanedServer(dbType,true);
 
@@ -72,7 +73,7 @@ namespace DataLoadEngineTests.Integration
                 case Scenario.AllColumns:
                     break;
                 case Scenario.MissingPreLoadDiscardedColumn:
-                    var ex = Assert.Throws<Exception>(() => attacher.Attach(job));
+                    var ex = Assert.Throws<Exception>(() => attacher.Attach(job, new GracefulCancellationToken()));
 
                     Assert.AreEqual("Invalid column name 'MyMissingCol'.", (ex.InnerException.InnerException).InnerException.Message);
                     return;
@@ -81,7 +82,7 @@ namespace DataLoadEngineTests.Integration
                 default:
                     throw new ArgumentOutOfRangeException("scenario");
             }
-            attacher.Attach(job);
+            attacher.Attach(job, new GracefulCancellationToken());
 
             Assert.AreEqual(2,tbl.GetRowCount());
 

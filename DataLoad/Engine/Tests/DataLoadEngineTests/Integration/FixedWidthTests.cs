@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
@@ -184,7 +185,7 @@ namespace DataLoadEngineTests.Integration
                 {
                         //Success Case
                     case FixedWidthTestCase.CompatibleHeaders:
-                        attacher.Attach(new ThrowImmediatelyDataLoadJob());
+                        attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
                         Assert.AreEqual(2, table.GetRowCount());
                         return;//Return
 
@@ -193,12 +194,12 @@ namespace DataLoadEngineTests.Integration
                     case FixedWidthTestCase.MisnamedHeaders:
                         errorRegex = new Regex(
                             @"Format file \(.*Format.csv\) indicated there would be a header called 'chickenDippers' but the column did not appear in the RAW database table \(Columns in RAW were myNumber\)");
-                        ex = Assert.Throws<Exception>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob()));
+                        ex = Assert.Throws<Exception>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
                         break;
                     case FixedWidthTestCase.InsufficientLengthOfCharactersInFileToLoad:
                         errorRegex = new Regex(
                             @"Error on line 2 of file file.txt, the format file \(.*Format.csv\) specified that a column myNumber would be found between character positions 1 and 5 but the current line is only 2 characters long");
-                        ex = Assert.Throws<FlatFileLoadException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob()));
+                        ex = Assert.Throws<FlatFileLoadException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException("testCase");

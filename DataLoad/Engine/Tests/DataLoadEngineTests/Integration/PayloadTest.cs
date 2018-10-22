@@ -75,9 +75,9 @@ namespace DataLoadEngineTests.Integration
             {
             }
 
-            public override ExitCodeType Attach(IDataLoadJob job)
+            public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
             {
-                base.Attach(job);
+                base.Attach(job, cancellationToken);
 
                 job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found Payload:" + job.Payload));
                 PayloadTest.Success = ReferenceEquals(payload, job.Payload);

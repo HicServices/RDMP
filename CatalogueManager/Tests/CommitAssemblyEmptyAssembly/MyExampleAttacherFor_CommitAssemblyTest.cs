@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
@@ -21,7 +22,7 @@ namespace CommitAssemblyEmptyAssembly
             throw new NotImplementedException();
         }
 
-        public ExitCodeType Attach(IDataLoadJob job)
+        public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             throw new NotImplementedException();
             

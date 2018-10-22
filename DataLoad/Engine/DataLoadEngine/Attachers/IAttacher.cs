@@ -1,5 +1,6 @@
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -13,7 +14,7 @@ namespace DataLoadEngine.Attachers
     /// </summary>
     public interface IAttacher: IDisposeAfterDataLoad, ICheckable
     {
-        ExitCodeType Attach(IDataLoadJob job);
+        ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
         void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo);
         
         IHICProjectDirectory HICProjectDirectory { get; set; }

@@ -54,7 +54,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
 
             try
             {
-                return Attacher.Attach(job);
+                return Attacher.Attach(job, cancellationToken);
             }
             catch (Exception e)
             {

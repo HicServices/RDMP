@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
@@ -34,7 +35,7 @@ namespace DataLoadEngineTests.Unit
             {
                 var attacher = new MDFAttacher();
                 attacher.Initialize(hicProjectDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
-                Assert.Throws<FileNotFoundException>(()=>attacher.Attach(null));
+                Assert.Throws<FileNotFoundException>(() => attacher.Attach(null, new GracefulCancellationToken()));
             }
             finally
             {
@@ -161,7 +162,7 @@ namespace DataLoadEngineTests.Unit
        
         public class MyClass:IAttacher,ICheckable
         {
-            public ExitCodeType Attach(IDataLoadJob job)
+            public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
             {
                 throw new NotImplementedException();
             }
