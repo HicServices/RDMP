@@ -25,6 +25,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
 
             Items.Add("Show", null, (s, e) => tab.HandleUserRequestingEmphasis(activator));
             Items.Add("Refresh", FamFamFamIcons.arrow_refresh, (s, e) => _tab.HandleUserRequestingTabRefresh(_activator));
+
+            var help = new ToolStripMenuItem("Help", FamFamFamIcons.help, (s, e) => _tab.ShowHelp(_activator));
+            help.ShortcutKeys = Keys.F1;
+            Items.Add(help);
         }
     }
 }
