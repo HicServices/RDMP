@@ -19,14 +19,15 @@ namespace DataExportLibrary.Tests
     public class ProjectChecksTestsSimple:DatabaseTests
     {
         [Test]
-        [ExpectedException(ExpectedMessage = "Project does not have any ExtractionConfigurations yet")]
         public void Project_NoConfigurations()
         {
             Project p = new Project(DataExportRepository, "Fish");
 
             try
             {
-                new ProjectChecker(RepositoryLocator,p).Check(new ThrowImmediatelyCheckNotifier());
+                var ex = Assert.Throws<Exception>(()=>new ProjectChecker(RepositoryLocator,p).Check(new ThrowImmediatelyCheckNotifier()));
+                Assert.AreEqual("Project does not have any ExtractionConfigurations yet",ex.Message);
+
             }
             finally
             {
@@ -35,38 +36,39 @@ namespace DataExportLibrary.Tests
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Project does not have an ExtractionDirectory")]
         public void Project_NoDirectory()
         {
             ExtractionConfiguration config;
             Project p = GetProjectWithConfig(out config);
-            RunTestWithCleanup(p, config);
+            var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
+            Assert.AreEqual("Project does not have an ExtractionDirectory", ex.Message);
+            
         }
 
         [Test]
         [TestCase(@"C:\asdlfasdjlfhasjldhfljh")]
         [TestCase(@"\\MyMakeyUpeyServer\Where")]
         [TestCase(@"Z:\WizardOfOz")]
-        [ExpectedException(ExpectedMessage = @"Project ExtractionDirectory .* Does Not Exist",MatchType = MessageMatch.Regex)]
         public void Project_NonExistentDirectory(string dir)
         {
             ExtractionConfiguration config;
             Project p = GetProjectWithConfig(out config);
            
             p.ExtractionDirectory = dir;
-            RunTestWithCleanup(p, config);
+            var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
+            StringAssert.Contains(@"Project ExtractionDirectory .* Does Not Exist",ex.Message);
 
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = @"Project ExtractionDirectory ('C:\|||') is not a valid directory name ")]
         public void Project_DodgyCharactersInExtractionDirectoryName()
         {
             ExtractionConfiguration config;
             Project p = GetProjectWithConfig(out config);
             p.ExtractionDirectory = @"C:\|||";
 
-            RunTestWithCleanup(p,config);
+            var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
+            Assert.AreEqual(@"Project ExtractionDirectory ('C:\|||') is not a valid directory name ", ex.Message);
         }
 
         [Test]
@@ -153,14 +155,14 @@ namespace DataExportLibrary.Tests
 
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Project does not have a Project Number, this is a number which is meaningful to you (as opposed to ID which is the ",MatchType = MessageMatch.Contains)]
         public void Configuration_NoProjectNumber()
         {
             DirectoryInfo dir;
             ExtractionConfiguration config;
             var p = GetProjectWithConfigDirectory(out config, out dir);
             p.ProjectNumber = null;
-            RunTestWithCleanup(p, config);
+            var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
+            StringAssert.Contains("Project does not have a Project Number, this is a number which is meaningful to you (as opposed to ID which is the ",ex.Message);
         }
 
         private void RunTestWithCleanup(Project p,ExtractionConfiguration config, ICheckNotifier notifier = null)

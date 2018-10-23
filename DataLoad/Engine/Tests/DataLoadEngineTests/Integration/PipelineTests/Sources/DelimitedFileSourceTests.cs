@@ -33,20 +33,20 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "_fileToLoad was not set",MatchType=MessageMatch.Contains)]
         public void FileToLoadNotSet_Throws()
         {
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
-            DataTable chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            var ex = Assert.Throws<Exception>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+            StringAssert.Contains("_fileToLoad was not set",ex.Message);
         }
         [Test]
-        [ExpectedException(ExpectedMessage = "Separator has not been set", MatchType = MessageMatch.Contains)]
         public void SeparatorNotSet_Throws()
         {
             FileInfo testFile = CreateTestFile();
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(testFile),new ThrowImmediatelyDataLoadEventListener() );
-            source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            var ex = Assert.Throws<Exception>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+            StringAssert.Contains("Separator has not been set", ex.Message);
         }
         [Test]
         public void LoadCSVWithCorrectDatatypes_ForceHeadersWhitespace()

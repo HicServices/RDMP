@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace HIC.Common.Validation.Tests.Constraints.Primary
 {
-    [TestFixture]
+    
     class BoundsValidationDateTest
     {
         private Dictionary<string, object> _d;
@@ -311,24 +311,22 @@ namespace HIC.Common.Validation.Tests.Constraints.Primary
         #region Fluent API experiment
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void f_invalid_target_field_evokes_exception()
         {
             var v = new Validator();
             v.EnsureThatValue("INVALID").OccursAfter("dob");
 
-            v.Validate(TestConstants.AdmissionDateOccursAfterDob);
+            Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.AdmissionDateOccursAfterDob));
         }
 
         [Test]
         [Ignore("Thomas, can you fix please?")]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void f_invalid_comparator_field_evokes_exception()
         {
             var v = new Validator();
             v.EnsureThatValue("admission_date").OccursAfter("INVALID");
 
-            v.Validate(TestConstants.AdmissionDateOccursAfterDob);
+            Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.AdmissionDateOccursAfterDob));
         }
 
         [Test]

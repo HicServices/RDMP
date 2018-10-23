@@ -46,7 +46,6 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)", MatchType = MessageMatch.Contains)]
         public void TestCreatingGovernance_CannotHaveSameNames()
         {
             var gov1 = GetGov();
@@ -56,11 +55,11 @@ namespace CatalogueLibraryTests.Integration
             gov1.SaveToDatabase();
 
             gov2.Name = "HiDuplicate";
-            gov2.SaveToDatabase();
+            var ex = Assert.Throws<Exception>(gov2.SaveToDatabase);
+            Assert.AreEqual("Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)",ex.Message);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "GovernancePeriod TestExpiryBeforeStarting expires before it begins!")]
         public void Checkability_ExpiresBeforeStarts()
         {
             var gov = GetGov();
@@ -70,18 +69,19 @@ namespace CatalogueLibraryTests.Integration
             gov.Check(new ThrowImmediatelyCheckNotifier());
 
             gov.EndDate = DateTime.MinValue;
-            gov.Check(new ThrowImmediatelyCheckNotifier());//no longer valid - notice there is no SaveToDatabase because we can shouldnt be going back to db anyway
+            var ex = Assert.Throws<Exception>(()=>gov.Check(new ThrowImmediatelyCheckNotifier()));//no longer valid - notice there is no SaveToDatabase because we can shouldnt be going back to db anyway
+            Assert.AreEqual("GovernancePeriod TestExpiryBeforeStarting expires before it begins!", ex.Message);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "There is no end date for GovernancePeriod NeverExpires")]
         public void Checkability_NoExpiryDateWarning()
         {
             var gov = GetGov();
             gov.Name = "NeverExpires";
 
             //valid to start with 
-            gov.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
+            var ex = Assert.Throws<Exception>(()=>gov.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true}));
+            Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex.Message);
 
         }
 
@@ -111,7 +111,6 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Cannot insert duplicate key in object 'dbo.GovernancePeriod_Catalogue'",MatchType = MessageMatch.Contains)]
         public void GovernsSameCatalogueTwice()
         {
             Catalogue c = new Catalogue(CatalogueRepository, "GovernedCatalogue");
@@ -120,7 +119,8 @@ namespace CatalogueLibraryTests.Integration
             Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);//should be no governanced catalogues for this governancer yet
 
             gov.CreateGovernanceRelationshipTo(c);
-            gov.CreateGovernanceRelationshipTo(c);
+            var ex = Assert.Throws<Exception>(()=>gov.CreateGovernanceRelationshipTo(c));
+            Assert.AreEqual("Cannot insert duplicate key in object 'dbo.GovernancePeriod_Catalogue'",ex.Message);
             
         }
 

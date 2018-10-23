@@ -169,7 +169,7 @@ namespace DataExportLibrary.Tests.Cohort
 
             var externalData = cohort.GetExternalData();
             Assert.AreEqual(10,externalData.ExternalProjectNumber);
-            Assert.IsNotNullOrEmpty( externalData.ExternalDescription);
+            Assert.IsFalse(string.IsNullOrEmpty(externalData.ExternalDescription));
 
 
             Assert.AreEqual(DateTime.Now.Year, externalData.ExternalCohortCreationDate.Value.Year);
@@ -192,7 +192,7 @@ namespace DataExportLibrary.Tests.Cohort
 
             Assert.AreEqual(101243, cohortTable.Rows[0][helper.GetRuntimeName(ect.PrivateIdentifierField)]);
             var aguid = cohortTable.Rows[0][helper.GetRuntimeName(ect.ReleaseIdentifierField)].ToString();
-            Assert.IsNotNullOrEmpty(aguid); //should be a guid
+            Assert.IsFalse(string.IsNullOrWhiteSpace(aguid)); //should be a guid
 
             //test reversing the anonymisation of something
             var dtAno = new DataTable();

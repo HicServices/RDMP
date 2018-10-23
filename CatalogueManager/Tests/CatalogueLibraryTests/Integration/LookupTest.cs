@@ -16,7 +16,6 @@ namespace CatalogueLibraryTests.Integration
     {
 
         [Test]
-        [ExpectedException]
         public void CreateLookup_linkWithSelfThrowsException()
         {
 
@@ -32,7 +31,7 @@ namespace CatalogueLibraryTests.Integration
                 child2 = new ColumnInfo(CatalogueRepository, "unit_test_CreateLookup", "int", parent);
                 child3 = new ColumnInfo(CatalogueRepository, "unit_test_CreateLookup", "int", parent);
 
-                new Lookup(CatalogueRepository, child, child2, child3, ExtractionJoinType.Left, null);
+                Assert.Throws<Exception>(()=>new Lookup(CatalogueRepository, child, child2, child3, ExtractionJoinType.Left, null));
             }
             finally 
             {

@@ -119,7 +119,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
 
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void FinalTearDown()
         {
             //clear anostore default
@@ -137,13 +137,14 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = @"Could not perform transformation because column \[(.*)\]\.\.\[.*\]\.\[Condition1\] is not droppable", MatchType = MessageMatch.Regex)]
         public void ConvertPrimaryKeyColumn()
         {
             //The table we created above should have a column called Condition2 in it, we will migrate this data to ANO land
             ColumnInfo condition = _columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1"));
             ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable,DataAccessPortal.GetInstance());
-            converter.ConvertFullColumnInfo((s) => true, new ThrowImmediatelyCheckNotifier()); //say  yes to everything it proposes 
+            var ex = Assert.Throws<Exception>(()=>converter.ConvertFullColumnInfo((s) => true, new ThrowImmediatelyCheckNotifier())); //say  yes to everything it proposes 
+
+            StringAssert.IsMatch(@"Could not perform transformation because column \[(.*)\]\.\.\[.*\]\.\[Condition1\] is not droppable",ex.Message);
         }
 
 

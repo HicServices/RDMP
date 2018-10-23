@@ -50,7 +50,7 @@ namespace CatalogueLibraryTests.Integration
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         protected void TearDown()
         {
             _directoryHelper.TearDown();
@@ -113,7 +113,6 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Dita Extraction requires that each catalogue have a unique Acronym, the catalogue UnitTestCatalogue is missing an Acronym")]
         public void CreateCatalogueWithNoAcronym_CrashesDITAExtractor()
         {
             var testDir = _directoryHelper.Directory;
@@ -128,7 +127,9 @@ namespace CatalogueLibraryTests.Integration
                 try
                 {
                     DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
-                    extractor.Extract();
+                    var ex = Assert.Throws<Exception>(extractor.Extract);
+                    Assert.AreEqual("Dita Extraction requires that each catalogue have a unique Acronym, the catalogue UnitTestCatalogue is missing an Acronym",ex.Message);
+
                 }
                 finally
                 {

@@ -43,30 +43,29 @@ namespace CohortManagerTests
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Cannot clone filter called 'folk' because:There is no description")]
         public void NotPopulated_Description()
         {
-            new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null);
+            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null));
+            Assert.AreEqual("Cannot clone filter called 'folk' because:There is no description",ex.Message);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Cannot clone filter called 'folk' because:Description is not long enough (minimum length is 20 characters)")]
         public void NotPopulated_DescriptionTooShort()
         {
             _filter.Description = "fish";
-            new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null);
+            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null));
+            Assert.AreEqual("Cannot clone filter called 'folk' because:Description is not long enough (minimum length is 20 characters)",ex.Message);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Cannot clone filter called 'folk' because:WhereSQL is not populated")]
         public void NotPopulated_WhereSQLNotSet()
         {
             _filter.Description = "fish swim in the sea and make people happy to be";
-            new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null);
+            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null));
+            Assert.AreEqual("Cannot clone filter called 'folk' because:WhereSQL is not populated",ex.Message);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Cannot clone filter called 'folk' because:Parameter '@coconutCount' was rejected :There is no description comment")]
         public void NotPopulated_ParameterNotCreated()
         {
             _filter.Description = "fish swim in the sea and make people happy to be";
@@ -74,12 +73,12 @@ namespace CohortManagerTests
             _filter.SaveToDatabase();
             new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(_filter, null);
 
-            new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null);
+            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null));
+            Assert.AreEqual("Cannot clone filter called 'folk' because:Parameter '@coconutCount' was rejected :There is no description comment",ex.Message);
         }
 
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Cannot clone filter called 'folk' because:Parameter '@coconutCount' was rejected :There is no value/default value listed")]
         public void NotPopulated_ParameterNotSet()
         {
             _filter.Description = "fish swim in the sea and make people happy to be";
@@ -91,7 +90,9 @@ namespace CohortManagerTests
             parameter.Value = null;//clear it's value
             parameter.SaveToDatabase();
 
-            new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation),null).ImportFilter(_filter,null);
+            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation),null).ImportFilter(_filter,null));
+            Assert.AreEqual("Cannot clone filter called 'folk' because:Parameter '@coconutCount' was rejected :There is no value/default value listed",ex.Message);
+
         }
 
         [Test]
@@ -143,11 +144,11 @@ namespace CohortManagerTests
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage= "Cannot set OverrideFiltersByUsingParentAggregateConfigurationInstead_ID because this AggregateConfiguration already has a filter container set (if you were to be a shortcut and also have a filter tree set it would be very confusing)")]
         public void ShortcutFilters_AlreadyHasFilter()
         {
             Assert.IsNotNull(aggregate1.RootFilterContainer_ID);
-            aggregate1.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = -500;//not ok
+            var ex = Assert.Throws<Exception>(()=>aggregate1.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = -500);//not ok
+            Assert.AreEqual("Cannot set OverrideFiltersByUsingParentAggregateConfigurationInstead_ID because this AggregateConfiguration already has a filter container set (if you were to be a shortcut and also have a filter tree set it would be very confusing)",ex.Message);
         }
         [Test]
         public void ShortcutFilters_AlreadyHasFilter_ButSettingItToNull()
@@ -159,13 +160,13 @@ namespace CohortManagerTests
 
 
         [Test]
-        [ExpectedException(ExpectedMessage = "This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (It's OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is -19) which means it cannot be assigned it's own RootFilterContainerID")]
         public void ShortcutFilters_DoesNotHaveFilter_SetOne()
         {
             aggregate1.RootFilterContainer_ID = null;
             Assert.DoesNotThrow(() => { aggregate1.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = null; }); // is ok
             Assert.DoesNotThrow(() => { aggregate1.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = -19; }); // is ok
-            aggregate1.RootFilterContainer_ID = 123;
+            var ex = Assert.Throws<NotSupportedException>(()=>aggregate1.RootFilterContainer_ID = 123);
+            Assert.AreEqual("This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (It's OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is -19) which means it cannot be assigned it's own RootFilterContainerID",ex.Message);
         }
 
         [Test]

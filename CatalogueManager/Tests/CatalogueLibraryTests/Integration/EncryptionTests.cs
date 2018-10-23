@@ -197,14 +197,14 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "The free text Value supplied to this class was too long to be encrypted (Length of string was 38)")]
         public void PasswordTooLong()
         {
             string password = "a";
             for(int i = 0;i<200;i++)
             {
                 password += "a";
-                TestFreakyPasswordValues(password);
+                var ex = Assert.Throws<Exception>(()=>TestFreakyPasswordValues(password));
+                Assert.AreEqual("The free text Value supplied to this class was too long to be encrypted (Length of string was 38)",ex.Message);
             }
         }
         

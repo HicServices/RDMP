@@ -9,10 +9,10 @@ using Tests.Common;
 
 namespace HIC.Logging.Tests.Integration
 {
-    [TestFixture]
+    
     class FatalErrorLoggingTest : DatabaseTests
     {
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             using (var conn = new SqlConnection(UnitTestLoggingConnectionString.ConnectionString))

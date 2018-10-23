@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary;
@@ -69,13 +70,13 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         [TestCase(null,ProcessTaskType.SQLFile)]
         [TestCase("",ProcessTaskType.SQLFile)]
         [TestCase("     ",ProcessTaskType.SQLFile)]
-        [ExpectedException(ExpectedMessage = "does not have a path specified",MatchType = MessageMatch.Contains)]
         public void EmptyFilePath(string path, ProcessTaskType typeThatRequiresFiles)
         {
             _task.ProcessTaskType = typeThatRequiresFiles;
             _task.Path = path;
             _task.SaveToDatabase();
-            _checker.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier()));
+            StringAssert.Contains("does not have a path specified",ex.Message);
         }
 
         [Test]
@@ -84,14 +85,14 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         [TestCase("     ", ProcessTaskType.MutilateDataTable, LoadStage.AdjustRaw)]
         [TestCase(null, ProcessTaskType.Attacher, LoadStage.Mounting)]
         [TestCase(null, ProcessTaskType.DataProvider, LoadStage.GetFiles)]
-        [ExpectedException(MatchType = MessageMatch.Regex, ExpectedMessage = "Path is blank for ProcessTask 'New Process.*' - it should be a class name of type")]
         public void EmptyClassPath(string path, ProcessTaskType typeThatRequiresMEF, LoadStage stage)
         {
             _task.ProcessTaskType = typeThatRequiresMEF;
             _task.Path = path;
             _task.LoadStage = stage;
             _task.SaveToDatabase();
-            _checker.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier()));
+            StringAssert.Contains("Path is blank for ProcessTask 'New Process.*' - it should be a class name of type",ex.Message);
         }
 
         [Test]
@@ -198,13 +199,13 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         [TestCase("bob.exe")]
         [TestCase(@"""C:\ProgramFiles\My Software With Spaces\bob.exe""")]
         [TestCase(@"""C:\ProgramFiles\My Software With Spaces\bob.exe"" arg1 arg2 -f ""c:\my folder\arg3.exe""")]
-        [ExpectedException(ExpectedMessage = "bob.exe which does not exist at this time.",MatchType = MessageMatch.Contains)]
         public void ImaginaryFile(string path)
         {
             _task.ProcessTaskType = ProcessTaskType.Executable;
             _task.Path = path;
             _task.SaveToDatabase();
-            _checker.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning=true});
+            var ex = Assert.Throws<Exception>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning=true}));
+            StringAssert.Contains("bob.exe which does not exist at this time.",ex.Message);
         }
 
     }

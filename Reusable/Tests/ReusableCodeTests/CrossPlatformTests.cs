@@ -845,7 +845,7 @@ namespace ReusableCodeTests
             Assert.AreEqual(collation, tbl.DiscoverColumn("Name").Collation);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             if(database != null && database.Exists())

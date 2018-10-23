@@ -15,12 +15,13 @@ using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
 {
+    [TestFixture]
     public class CommitAssemblyTest : DatabaseTests
     {
         byte[] _testDllBytes;
         FileInfo _testDll;
         
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         protected override void SetUp()
         {
             Console.WriteLine( "Assembly is:"+ typeof (CommitAssemblyEmptyAssembly.MyExampleAttacherFor_CommitAssemblyTest).Assembly);
@@ -77,7 +78,7 @@ namespace CatalogueLibraryTests.Integration
             plugin.DeleteInDatabase();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         protected void TearDown()
         {
             //make sure it exists in the bin directory so that repeat runs of this test work

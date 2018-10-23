@@ -259,10 +259,14 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
       <Private>True</Private>
@@ -1375,6 +1379,7 @@
     </Compile>
     <None Include="ExtractionUIs\FilterUIs\ParameterUIs\Parameters.cd" />
     <None Include="LogViewer\LoggingUI.cd" />
+    <None Include="packages.config" />
     <None Include="PipelineUIs\Pipelines\Pipelines.cd" />
     <None Include="SimpleControls\CheckAndExecuteUI.cd" />
     <None Include="TestsAndSetup\StartupUI\YellowFace.png" />
@@ -2052,7 +2057,6 @@
       <DependentUpon>ValidationSetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="CatalogueManager_TemporaryKey.pfx" />
-    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="verisign_key.pfx" />
   </ItemGroup>

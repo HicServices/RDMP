@@ -23,7 +23,7 @@ namespace DataLoadEngineTests.Integration
         private DirectoryInfo _parentDir;
         bool officeInstalled = false;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
             officeInstalled = OfficeVersionFinder.GetVersion(OfficeVersionFinder.OfficeComponent.Excel) != null;
@@ -33,7 +33,7 @@ namespace DataLoadEngineTests.Integration
             _dirsToCleanUp.Push(_parentDir);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             while (_dirsToCleanUp.Any())

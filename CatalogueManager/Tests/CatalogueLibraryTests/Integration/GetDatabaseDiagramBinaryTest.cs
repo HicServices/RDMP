@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
 {
-    [TestFixture]
+    
     public class GetDatabaseDiagramBinaryTest:DatabaseTests
     {
         [Test]

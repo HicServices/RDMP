@@ -51,7 +51,6 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         }
 
         [Test]
-        [ExpectedException(MatchType = MessageMatch.Contains, ExpectedMessage = "The following expected types were not passed to PreInitialize:TableInfo")]
         public void TestPipelineContextInitialization_UnexpectedType()
         {
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
@@ -62,13 +61,13 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var ci = new ColumnInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "ColumnInfo", "Type", ti);
             ci.Name = "ColumnInfo"; // because we passed a stubbed repository, the name won't be set
 
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ci);
+            var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ci));
+            StringAssert.Contains("The following expected types were not passed to PreInitialize:TableInfo",ex.Message);
 
             Assert.AreEqual(component.PreInitToThis, ti);
         }
 
         [Test]
-        [ExpectedException(MatchType = MessageMatch.Contains, ExpectedMessage = "Type TableInfo is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) ")]
         public void TestPipelineContextInitialization_ForbiddenType()
         {
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
@@ -76,7 +75,8 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
             var component = new TestObject_RequiresTableInfo();
             var ti = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "Foo");
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti);
+            var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti));
+            StringAssert.Contains("Type TableInfo is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) ",ex.Message);
 
             Assert.AreEqual(component.PreInitToThis, ti);
         }

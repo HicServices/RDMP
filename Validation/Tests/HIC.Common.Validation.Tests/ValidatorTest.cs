@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace HIC.Common.Validation.Tests
 {
 
-    [TestFixture]
+    
     public class ValidatorTest
     {
         readonly ChiDomainObject _domainObjectWithValidChi = new ChiDomainObject(TestConstants._VALID_CHI);
@@ -53,13 +53,12 @@ namespace HIC.Common.Validation.Tests
         }
         
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void AddItemValidator_DuplicateCalls_ThrowsException()
         {
             var validator = new Validator();
             validator.AddItemValidator(new ItemValidator(), "foo", typeof(string));
 
-            validator.AddItemValidator(new ItemValidator(), "foo", typeof(string));
+            Assert.Throws <ArgumentException>(()=>validator.AddItemValidator(new ItemValidator(), "foo", typeof(string)));
         }
 
         [Test]

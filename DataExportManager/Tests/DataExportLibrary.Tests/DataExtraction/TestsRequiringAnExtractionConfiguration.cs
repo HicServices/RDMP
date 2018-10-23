@@ -29,6 +29,7 @@ using Tests.Common;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {
+    [TestFixture]
     public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     {
         protected Catalogue _catalogue;
@@ -46,7 +47,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         protected SelectedDataSets _selectedDataSet;
         protected ColumnInfo[] _columnInfos;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         protected override void SetUp()
         {
             base.SetUp();
@@ -64,7 +65,7 @@ namespace DataExportLibrary.Tests.DataExtraction
                 new ExtractionDirectory(@"C:\temp\", _configuration));
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             RunBlitzDatabases(RepositoryLocator);

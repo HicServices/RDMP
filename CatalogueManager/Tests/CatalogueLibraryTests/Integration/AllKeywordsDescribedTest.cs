@@ -13,10 +13,11 @@ using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
 {
+    [TestFixture]
     public class AllKeywordsDescribedTest :DatabaseTests
     {
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetupCommentStore()
         {
 
@@ -131,7 +132,7 @@ and so.name <> 'sysdiagrams'", con).ExecuteReader();
                     yield return (string)r["name"];
             }
         }
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void unsetHelpDispel()
         {
             CatalogueRepository.SuppressHelpLoading = true;

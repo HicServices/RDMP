@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace HIC.Common.Validation.Tests
 {
-    [TestFixture]
+    
     class PredictionValidationTest
     {
 
@@ -16,52 +16,45 @@ namespace HIC.Common.Validation.Tests
 
         [TestCase("UNKNOWN")]
         [TestCase("Gender")]
-        [ExpectedException(typeof(MissingFieldException))] 
         public void Validate_NullTargetField_GeneratesException(string targetField)
         {
             var prediction = new Prediction(new ChiSexPredictor(), targetField);
             var v = CreateInitialisedValidator(prediction);
 
-            v.Validate(TestConstants.ValidChiAndInconsistentSex);
+            Assert.Throws<MissingFieldException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Validate_NullRule_GeneratesException()
         {
-            var prediction = new Prediction(null, "gender");
-            var v = CreateInitialisedValidator(prediction);
-
-            v.Validate(TestConstants.ValidChiAndInconsistentSex);
+            var ex = Assert.Throws<ArgumentException>(()=>new Prediction(null, "gender"));
+            Assert.AreEqual("You must specify a PredictionRule to follow",ex.Message);
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void Validate_Uninitialized_GeneratesException()
         {
             var prediction = new Prediction();
             var v = CreateInitialisedValidator(prediction);
-            v.Validate(TestConstants.ValidChiAndInconsistentSex);
+            Assert.Throws <InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void Validate_UninitializedTarget_GeneratesException()
         {
             var prediction = new Prediction();
             prediction.Rule = new ChiSexPredictor();
             var v = CreateInitialisedValidator(prediction);
-            v.Validate(TestConstants.ValidChiAndInconsistentSex);
+            Assert.Throws <InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void Validate_UninitializedRule_GeneratesException()
         {
             var prediction = new Prediction();
             prediction.TargetColumn = "chi";
             var v = CreateInitialisedValidator(prediction);
-            v.Validate(TestConstants.ValidChiAndInconsistentSex);
+            Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
         }
         #endregion
 

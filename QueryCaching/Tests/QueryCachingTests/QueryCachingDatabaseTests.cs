@@ -20,7 +20,7 @@ namespace QueryCachingTests
         public DiscoveredDatabase DiscoveredQueryCachingDatabase { get; set; }
         public ExternalDatabaseServer QueryCachingDatabaseServer;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             DiscoveredQueryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(QueryCachingDatabaseName);
@@ -35,7 +35,7 @@ namespace QueryCachingTests
             QueryCachingDatabaseServer.SetProperties(DiscoveredQueryCachingDatabase);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void Destroy()
         {
             QueryCachingDatabaseServer.DeleteInDatabase();
