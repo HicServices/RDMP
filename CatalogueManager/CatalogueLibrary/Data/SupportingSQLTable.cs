@@ -176,9 +176,8 @@ namespace CatalogueLibrary.Data
         {
             if (ExternalDatabaseServer_ID == null)
                 throw new NotSupportedException("No external database server has been selected for SupportingSQL table called :" + ToString() + " (ID=" + ID + ").  The SupportingSQLTable currently belongs to Catalogue " + Catalogue.Name);
-            
-            //do not require an explicit database
-            return DataAccessPortal.GetInstance().ExpectServer(ExternalDatabaseServer, DataAccessContext.DataExport, false);
+
+            return ExternalDatabaseServer.Discover(DataAccessContext.DataExport).Server;
         }
     }
 
