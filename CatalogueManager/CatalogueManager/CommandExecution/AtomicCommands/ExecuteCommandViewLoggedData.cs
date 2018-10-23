@@ -16,8 +16,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     public class ExecuteCommandViewLoggedData : BasicUICommandExecution,IAtomicCommand
     {
         private readonly LoggingTables _target;
-        private readonly LogViewerFilter _filter;
-        private ExternalDatabaseServer[] _loggingServers;
+        protected readonly LogViewerFilter _filter;
+        protected ExternalDatabaseServer[] _loggingServers;
 
         public ExecuteCommandViewLoggedData(IActivateItems activator,LoggingTables target = LoggingTables.DataLoadTask, LogViewerFilter filter = null) : base(activator)
         {

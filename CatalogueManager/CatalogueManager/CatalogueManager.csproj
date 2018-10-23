@@ -466,6 +466,7 @@
     </Compile>
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureDefaultServers.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportCsv.cs" />
     <Compile Include="MainFormUITabs\ConnectionStringKeywordUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

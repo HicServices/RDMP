@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using HIC.Logging;
@@ -21,6 +21,8 @@ namespace CatalogueManager.LogViewer.Tabs
             yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.ProgressLog, new LogViewerFilter { Run = taskId });
             yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.FatalError, new LogViewerFilter { Run = taskId });
             yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.TableLoadRun, new LogViewerFilter { Run = taskId });
+
+            yield return new ExecuteCommandExportCsv(_activator, new LogViewerFilter { Run = taskId });
         }
 
         protected override LoggingTables GetTableEnum()

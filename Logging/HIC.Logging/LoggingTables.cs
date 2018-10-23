@@ -12,6 +12,6 @@ namespace HIC.Logging
         FatalError,
         TableLoadRun,
         DataSource,
-        
+        ExportToCsv
     }
 }
