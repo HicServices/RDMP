@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -58,10 +52,10 @@ namespace CatalogueManager.FindAndReplace
             olvProperty.AspectGetter += PropertyAspectGetter;
             olvValue.AspectGetter += ValueAspectGetter;
             
-            tlvAllObjects.AlwaysGroupByColumn = olvProperty;
+            olvAllObjects.AlwaysGroupByColumn = olvProperty;
 
             //allow editing
-            tlvAllObjects.CellEditFinished += tlvAllObjects_CellEditFinished;
+            olvAllObjects.CellEditFinished += OlvAllObjectsCellEditFinished;
 
             //Create all the nodes up front
             foreach (IMapsDirectlyToDatabaseTable o in _allObjects.Where(_adjustableLocationPropertyFinder.ObjectContainsProperty))
@@ -72,7 +66,7 @@ namespace CatalogueManager.FindAndReplace
                 foreach (PropertyInfo propertyInfo in _sqlPropertyFinder.GetProperties(o))
                     _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
-            tlvAllObjects.AddObjects(_locationNodes);
+            olvAllObjects.AddObjects(_locationNodes);
         }
 
         private void GetAllObjects(IActivateItems activator)
@@ -98,7 +92,7 @@ namespace CatalogueManager.FindAndReplace
                 _allObjects.Add(o);
         }
 
-        void tlvAllObjects_CellEditFinished(object sender, CellEditEventArgs e)
+        void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
         {
             if( e == null || e.RowObject == null)
                 return;
@@ -132,20 +126,18 @@ namespace CatalogueManager.FindAndReplace
 
             if(cb.Checked)
             {
-                tlvAllObjects.ClearObjects();
+                olvAllObjects.ClearObjects();
+                olvAllObjects.SuspendLayout();
 
                 if (sender == rbLocationsAttribute)
-                    tlvAllObjects.AddObjects(_locationNodes);
+                    olvAllObjects.AddObjects(_locationNodes);
                 else
-                    tlvAllObjects.AddObjects(_sqlNodes);
+                    olvAllObjects.AddObjects(_sqlNodes);
+
+                olvAllObjects.ResumeLayout();
             }
         }
-
-        private void tbFind_TextChanged(object sender, EventArgs e)
-        {
-            tlvAllObjects.ModelFilter = new TextMatchFilter(tlvAllObjects,tbFind.Text);
-        }
-
+        
         private void btnReplaceAll_Click(object sender, EventArgs e)
         {
             if (
@@ -153,9 +145,9 @@ namespace CatalogueManager.FindAndReplace
                     "Are you sure you want to do a system wide find and replace? This operation cannot be undone",
                     "Are you sure", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                foreach (FindAndReplaceNode node in tlvAllObjects.FilteredObjects)
+                foreach (FindAndReplaceNode node in olvAllObjects.FilteredObjects)
                 {
-                    node.FindAndReplace(tbFind.Text, tbReplace.Text);
+                    node.FindAndReplace(tbFind.Text, tbReplace.Text,!cbMatchCase.Checked);
 
                 }
             }
@@ -163,7 +155,7 @@ namespace CatalogueManager.FindAndReplace
 
         private void tlvAllObjects_ItemActivate(object sender, EventArgs e)
         {
-            var node = tlvAllObjects.SelectedObject as FindAndReplaceNode;
+            var node = olvAllObjects.SelectedObject as FindAndReplaceNode;
 
             if (node != null)
             {
@@ -171,6 +163,24 @@ namespace CatalogueManager.FindAndReplace
                 if(!cmd.IsImpossible)
                     cmd.Execute();
             }
+        }
+
+        private TextMatchFilter _textMatchFilter;
+        private void btnFind_Click(object sender, EventArgs e)
+        {
+            var all = olvAllObjects.ModelFilter as CompositeAllFilter;
+
+            if(all == null)
+                olvAllObjects.ModelFilter = all = new CompositeAllFilter(new List<IModelFilter>());
+            
+            if (_textMatchFilter != null && all.Filters.Contains(_textMatchFilter))
+                all.Filters.Remove(_textMatchFilter);
+
+            _textMatchFilter = new TextMatchFilter(olvAllObjects, tbFind.Text, cbMatchCase.Checked ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase);
+
+            all.Filters.Add(_textMatchFilter);
+
+            olvAllObjects.ModelFilter = all;
         }
     }
 }
