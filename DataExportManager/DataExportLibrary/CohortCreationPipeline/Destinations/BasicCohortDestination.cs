@@ -155,6 +155,11 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                         connection.ManagedTransaction.CommitAndCloseConnection();
                     }
                 }
+                catch (Exception e)
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
+                    throw;
+                }
                 finally
                 {
                     connection.ManagedTransaction.AbandonAndCloseConnection();
