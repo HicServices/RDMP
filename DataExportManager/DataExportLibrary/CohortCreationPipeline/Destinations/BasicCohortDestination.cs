@@ -151,13 +151,14 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                             dt.Rows.Add(kvp.Key, kvp.Value, Request.NewCohortDefinition.ID);
 
                         bulkCopy.Upload(dt);
-
-                        connection.ManagedTransaction.CommitAndCloseConnection();
                     }
+
+                    connection.ManagedTransaction.CommitAndCloseConnection();
                 }
-                finally
+                catch(Exception)
                 {
                     connection.ManagedTransaction.AbandonAndCloseConnection();
+                    throw;
                 }
             }
 
