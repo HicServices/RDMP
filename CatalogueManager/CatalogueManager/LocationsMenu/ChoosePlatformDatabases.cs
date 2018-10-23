@@ -11,6 +11,7 @@ using CatalogueManager.Tutorials;
 using DatabaseCreation;
 using Diagnostics;
 using RDMPStartup;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Settings;
@@ -38,15 +39,12 @@ namespace CatalogueManager.LocationsMenu
     /// <para>IMPORTANT: if you configure your connection string wrongly it might take up to 30s for windows to timeout the network connection (e.g. if you specify the wrong server name). This is
     /// similar to if you type in a dodgy server name in Microsoft Windows Explorer.</para>
     /// </summary>
-    public partial class ChoosePlatformDatabases : Form, IHelpWorkflowUser
+    public partial class ChoosePlatformDatabases : Form
     {
         private readonly IActivateItems _activatorIfAny;
-        public HelpWorkflow HelpWorkflow { get; private set; }
-
-        private HelpStage _lookAtChecksToSeeWhyItAllFailed;
         private UserSettingsRepositoryFinder _repositoryLocator;
 
-        public ChoosePlatformDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICommandExecution command)
+        public ChoosePlatformDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = (UserSettingsRepositoryFinder)repositoryLocator;
             
@@ -55,36 +53,59 @@ namespace CatalogueManager.LocationsMenu
             new RecentHistoryOfControls(tbCatalogueConnectionString, new Guid("75e6b0a3-03f2-49fc-9446-ebc1dae9f123"));
             new RecentHistoryOfControls(tbDataExportManagerConnectionString, new Guid("9ce952d8-d629-454a-ab9b-a1af97548be6"));
 
-            gbSqlServer.Enabled = true;
-
-            BuildHelpWorkflow(command);
+            SetState(State.PickNewOrExisting);
         }
 
-        private void BuildHelpWorkflow(ICommandExecution command)
+        private void SetState(State newState)
         {
-            var tracker = new TutorialTracker(_activatorIfAny);
+            switch (newState)
+            {
+                case State.PickNewOrExisting:
+                    pChooseOption.Dock = DockStyle.Top;
+                    
+                    pResults.Visible = false;
+                    gbCreateNew.Visible = false;
+                    gbUseExisting.Visible = false;
 
-            HelpWorkflow = new HelpWorkflow(this, command, tracker);
-            
-            //////Normal work flow
-            var root = new HelpStage(
-                pCreateAllPlatformDatabases,"If this is your first you will need to create the RDMP Platform Databases.  Enter your server name and a prefix for the databases here.",
-                new HelpStage(checksUI1,"Watch the progress of creating the databases here"),
-                new HelpStage(btnSaveAndClose,"Click To Restart Application"));
+                    pChooseOption.Visible = true;
+                    pChooseOption.BringToFront();
+                    break;
+                case State.CreateNew:
 
-            //alternate option
-            var setCataStage = new HelpStage(
-                pReferenceACatalogue, "Enter the connection string to your Catalogue database and click Check",
-                new HelpStage(pReferenceADataExport,"Now enter the connection string to your Data Export database and click Check"),
-                new HelpStage(btnSaveAndClose,"Now Save And Close the changes to restart the application")
-                );
-            
-            root.SetOption("I Already Have RDMP Platform Databases",setCataStage);
+                    pResults.Dock = DockStyle.Fill;
+                    gbCreateNew.Dock = DockStyle.Top;
+                    
+                    
+                    pResults.Visible = true;
+                    pChooseOption.Visible = false;
+                    gbUseExisting.Visible = false;
 
-            HelpWorkflow.RootStage = root;
+                    gbCreateNew.Visible = true;
+                    pResults.BringToFront();
 
-            _lookAtChecksToSeeWhyItAllFailed = new HelpStage(checksUI1,
-                "Something went wrong with the operation, double click the red lines to see what went wrong.  Then close this help dialog.");
+                    
+                    break;
+                case State.ConnectToExisting:
+                    pResults.Dock = DockStyle.Fill;
+                    gbUseExisting.Dock = DockStyle.Top;
+                    
+                    pChooseOption.Visible = false;
+                    gbCreateNew.Visible = false;
+
+                    pResults.Visible = true;
+                    gbUseExisting.Visible = true;
+                    pResults.BringToFront();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("newState");
+            }
+        }
+
+        private enum State
+        {
+            PickNewOrExisting,
+            CreateNew,
+            ConnectToExisting
         }
 
         protected override void OnLoad(EventArgs e)
@@ -99,8 +120,6 @@ namespace CatalogueManager.LocationsMenu
                 tbDataExportManagerConnectionString.Text = _repositoryLocator.DataExportRepository.ConnectionString;
             
             base.OnLoad(e);
-
-            HelpWorkflow.Start();
         }
 
         private bool SaveConnectionStrings()
@@ -152,38 +171,7 @@ namespace CatalogueManager.LocationsMenu
                 }
             }
         }
-
-        private void btnCreateNewCatalogue_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                CreatePlatformDatabase dialog = new CreatePlatformDatabase(typeof(Class1).Assembly);
-                dialog.ShowDialog();
-                if (dialog.DatabaseConnectionString != null)
-                    tbCatalogueConnectionString.Text = dialog.DatabaseConnectionString;
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-        }
         
-        private void btnCreateNewDataExportManagerDatabase_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                CreatePlatformDatabase dialog = new CreatePlatformDatabase(typeof(DataExportLibrary.Database.Class1).Assembly);
-                dialog.ShowDialog();
-
-                if (dialog.DatabaseConnectionString != null)
-                    tbDataExportManagerConnectionString.Text = dialog.DatabaseConnectionString;
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-        }
-
         private MissingFieldsChecker CreateMissingFieldsChecker(MissingFieldsChecker.ThingToCheck thingToCheck)
         {
             return new MissingFieldsChecker(thingToCheck, _repositoryLocator.CatalogueRepository, _repositoryLocator.DataExportRepository);
@@ -260,17 +248,11 @@ namespace CatalogueManager.LocationsMenu
             catch (Exception exception)
             {
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Checking of " + repositoryToCheck + " Database failed", CheckResult.Fail,exception));
-                HelpWorkflow.ShowStage(_lookAtChecksToSeeWhyItAllFailed);
             }
         }
 
         private void ShowNextStageOnChecksComplete(object sender, AllChecksCompleteHandlerArgs args)
         {
-            if (args.CheckResults.GetWorst() == CheckResult.Fail)
-                HelpWorkflow.ShowStage(_lookAtChecksToSeeWhyItAllFailed);
-            else
-                HelpWorkflow.ShowNextStageOrClose();
-
             ((ChecksUI) sender).AllChecksComplete -= ShowNextStageOnChecksComplete;
         }
 
@@ -280,7 +262,6 @@ namespace CatalogueManager.LocationsMenu
             try
             {
                 Cursor = Cursors.WaitCursor;
-                HelpWorkflow.ShowNextStageOrClose();
 
                 Console.SetOut(new StringWriter(sb));
 
@@ -317,23 +298,21 @@ namespace CatalogueManager.LocationsMenu
                     checksUI1.OnCheckPerformed(new CheckEventArgs(result, CheckResult.Success));
                 }
 
-                HelpWorkflow.ShowNextStageOrClose();
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Finished Creating Platform Databases", CheckResult.Success));
 
                 var cata = DatabaseCreationProgram.GetBuilder(tbSuiteServer.Text, tbDatabasePrefix.Text,
                     DatabaseCreationProgram.DefaultCatalogueDatabaseName);
                 var export = DatabaseCreationProgram.GetBuilder(tbSuiteServer.Text, tbDatabasePrefix.Text,
                     DatabaseCreationProgram.DefaultDataExportDatabaseName);
-
-                tbCatalogueConnectionString.Text = cata.ConnectionString;
-                tbDataExportManagerConnectionString.Text = export.ConnectionString;
-
+                
+                UserSettings.CatalogueConnectionString = cata.ConnectionString;
+                UserSettings.DataExportConnectionString = export.ConnectionString;
+                RestartApplication();
 
             }
             catch (Exception exception)
             {
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Database creation failed, check exception for details",CheckResult.Fail, exception));
-                HelpWorkflow.ShowStage(_lookAtChecksToSeeWhyItAllFailed);
             }
             finally
             {
@@ -347,6 +326,35 @@ namespace CatalogueManager.LocationsMenu
             Application.Restart();
         }
 
-        
+        private void btnCreateNew_Click(object sender, EventArgs e)
+        {
+            SetState(State.CreateNew);
+        }
+
+        private void btnUseExisting_Click(object sender, EventArgs e)
+        {
+            SetState(State.ConnectToExisting);
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            SetState(State.PickNewOrExisting);
+        }
+
+        private void btnBrowseForCatalogue_Click(object sender, EventArgs e)
+        {
+            var dialog = new ServerDatabaseTableSelectorDialog("Catalogue Database",false,false);
+            dialog.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
+            if (dialog.ShowDialog() == DialogResult.OK)
+                tbCatalogueConnectionString.Text = dialog.SelectedDatabase.Server.Builder.ConnectionString;
+        }
+
+        private void btnBrowseForDataExport_Click(object sender, EventArgs e)
+        {
+            var dialog = new ServerDatabaseTableSelectorDialog("Data Export Database", false, false);
+            dialog.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
+            if (dialog.ShowDialog() == DialogResult.OK)
+                tbDataExportManagerConnectionString.Text = dialog.SelectedDatabase.Server.Builder.ConnectionString;
+        }
     }
 }

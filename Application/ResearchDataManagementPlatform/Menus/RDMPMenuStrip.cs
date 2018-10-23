@@ -82,17 +82,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             InitializeComponent();
         }
-
-        private void changeCatalogueToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LaunchDatabaseSettingsChangeDialog();
-        }
-
-        private void LaunchDatabaseSettingsChangeDialog()
-        {
-            new ExecuteCommandChoosePlatformDatabase(RepositoryLocator).Execute();
-        }
-
+        
         private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ExecuteCommandConfigureDefaultServers(_activator).Execute();

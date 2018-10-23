@@ -85,6 +85,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
             //create a copy so as not to corrupt the original
             var b = new SqlConnectionStringBuilder(builder.ConnectionString);
             b.InitialCatalog = "master";
+            b.ConnectTimeout = 5;
 
             using (var con = new SqlConnection(b.ConnectionString))
             {
