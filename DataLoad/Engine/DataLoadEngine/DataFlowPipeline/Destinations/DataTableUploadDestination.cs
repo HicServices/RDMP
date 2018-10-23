@@ -169,7 +169,7 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                 _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
 
                 if (LoggingServer != null)
-                    FatalErrorLogging.GetInstance().LogFatalError(_dataLoadInfo, GetType().Name, ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
+                    _dataLoadInfo.LogFatalError(GetType().Name, ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
                 throw new Exception("Failed to write rows (in transaction) to table " + TargetTableName, e);
             }

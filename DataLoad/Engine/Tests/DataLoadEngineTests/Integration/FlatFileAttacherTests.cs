@@ -5,6 +5,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngineTests.Integration.Mocks;
@@ -94,7 +95,7 @@ namespace DataLoadEngineTests.Integration
 
             try
             {
-                attacher.Attach(new ThrowImmediatelyDataLoadJob());
+                attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
                 if(separator == "|")
                     Assert.Fail("Expected it to crash because of giving it the wrong separator");
             }
@@ -155,7 +156,7 @@ namespace DataLoadEngineTests.Integration
             attacher.TableName = "Bob";
             attacher.ForceHeaders = "name\tname2";
 
-            var exitCode = attacher.Attach(new ThrowImmediatelyDataLoadJob());
+            var exitCode = attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
             Assert.AreEqual(ExitCodeType.Success,exitCode);
 
             using (var con = _database.Server.GetConnection())
@@ -214,7 +215,7 @@ namespace DataLoadEngineTests.Integration
 
             var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, namer), ti);
 
-            var exitCode = attacher.Attach(job);
+            var exitCode = attacher.Attach(job, new GracefulCancellationToken());
             Assert.AreEqual(ExitCodeType.Success, exitCode);
             
             using (var con = _database.Server.GetConnection())

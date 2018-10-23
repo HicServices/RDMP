@@ -49,9 +49,9 @@ False - Fetch all columns in the remote table.  To use this option you will need
         {   
         }
 
-        public override ExitCodeType Attach(IDataLoadJob job)
+        public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            base.Attach(job);
+            base.Attach(job,cancellationToken);
 
             if (job == null)
                 throw new Exception("Job is Null, we require to know the job to build a DataFlowPipeline");

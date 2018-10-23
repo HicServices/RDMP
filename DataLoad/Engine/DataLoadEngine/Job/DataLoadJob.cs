@@ -96,7 +96,7 @@ namespace DataLoadEngine.Job
                 throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
             if (!DataLoadInfo.IsClosed)
-                _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnProgress, senderName, message);
+                DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnProgress, senderName, message);
         }
 
         public void LogError(string message, Exception exception)
@@ -105,7 +105,7 @@ namespace DataLoadEngine.Job
             if (DataLoadInfo == null)
                 CreateDataLoadInfo();
 
-            _logManager.LogFatalError(DataLoadInfo, typeof(DataLoadProcess).Name, message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception,true));
+            DataLoadInfo.LogFatalError(typeof(DataLoadProcess).Name, message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
             DataLoadInfo.CloseAndMarkComplete();
         }
 
@@ -126,7 +126,7 @@ namespace DataLoadEngine.Job
                 throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
             if(!DataLoadInfo.IsClosed)
-                _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnInformation, senderName, message);
+                DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnInformation, senderName, message);
         }
 
         public void LogWarning(string senderName, string message)
@@ -135,7 +135,7 @@ namespace DataLoadEngine.Job
                 throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
             if (!DataLoadInfo.IsClosed)
-                _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnWarning, senderName, message);
+                DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnWarning, senderName, message);
         }
 
         public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
@@ -163,14 +163,14 @@ namespace DataLoadEngine.Job
                     case ProgressEventType.Debug:
                         break;
                     case ProgressEventType.Information:
-                        _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnInformation, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : ""));
+                        DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : ""));
                         break;
                     case ProgressEventType.Warning:
-                        _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnWarning, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true) : ""));
+                        DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true) : ""));
                         break;
                     case ProgressEventType.Error:
-                        _logManager.LogProgress(DataLoadInfo, ProgressLogging.ProgressEventType.OnTaskFailed, sender.GetType().Name, e.Message);
-                        _logManager.LogFatalError(DataLoadInfo, sender.GetType().Name, e.Exception != null ? ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true) : e.Message);
+                        DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnTaskFailed, sender.GetType().Name, e.Message);
+                        DataLoadInfo.LogFatalError(sender.GetType().Name, e.Exception != null ? ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : e.Message);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

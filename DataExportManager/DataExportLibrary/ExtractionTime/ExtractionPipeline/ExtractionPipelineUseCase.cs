@@ -82,8 +82,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
                 catch (Exception e)
                 {
                     ExtractCommand.ElevateState(ExtractCommandState.Crashed);
-                    FatalErrorLogging.GetInstance()
-                                     .LogFatalError(_dataLoadInfo, "Execute extraction pipeline", ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
+                    _dataLoadInfo.LogFatalError("Execute extraction pipeline", ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
                     if (ExtractCommand is ExtractDatasetCommand)
                     {
@@ -112,9 +111,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
 
                 if (Source.WasCancelled)
                 {
-                    FatalErrorLogging.GetInstance()
-                        .LogFatalError(Destination.TableLoadInfo.DataLoadInfoParent, this.GetType().Name,
-                            "User Cancelled Extraction");
+                    Destination.TableLoadInfo.DataLoadInfoParent.LogFatalError(this.GetType().Name,"User Cancelled Extraction");
                     ExtractCommand.ElevateState(ExtractCommandState.UserAborted);
 
                     if (ExtractCommand is ExtractDatasetCommand)

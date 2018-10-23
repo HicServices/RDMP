@@ -32,14 +32,6 @@ namespace CatalogueLibrary.Repositories
         int? GetOrderIfExistsFor(AggregateConfiguration configuration);
 
         /// <summary>
-        /// Returns Catalogue1.CatalogueItem1, Catalogue1.CatalogueItem2 etc, a CatalogueItem does not know the name of it's parent so 
-        /// for performance reasons this is a big saver it means we only have database query instead of having to construct and dereference
-        /// every CatalogueItem and Every Catalogue in the database.
-        /// </summary>
-        /// <returns></returns>
-        List<FriendlyNamedCatalogueItem> GetFullNameOfAllCatalogueItems();
-
-        /// <summary>
         /// Returns a new <see cref="HIC.Logging.LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>
         /// </summary>
         /// <returns></returns>

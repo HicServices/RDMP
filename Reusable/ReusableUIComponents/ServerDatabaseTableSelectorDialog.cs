@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace ReusableUIComponents
@@ -26,6 +27,12 @@ namespace ReusableUIComponents
         void serverDatabaseTableSelector1_SelectionChanged()
         {
             var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+
+            if (db != null && !db.Server.Exists())
+            {
+                btnCreate.Enabled = false;
+                return;
+            }
 
             //novel db name
             btnCreate.Enabled = db != null && !db.Exists();
@@ -68,6 +75,11 @@ namespace ReusableUIComponents
                 MessageBox.Show("Database Created");
             }
 
+        }
+
+        public void LockDatabaseType(DatabaseType databaseType)
+        {
+            serverDatabaseTableSelector1.LockDatabaseType(databaseType);
         }
     }
 }

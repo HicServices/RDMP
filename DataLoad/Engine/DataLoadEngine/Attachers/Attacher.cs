@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -20,7 +21,7 @@ namespace DataLoadEngine.Attachers
     {
         protected DiscoveredDatabase _dbInfo;
         
-        public virtual ExitCodeType Attach(IDataLoadJob job)
+        public virtual ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             return ExitCodeType.Success;
         }

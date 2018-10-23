@@ -92,7 +92,8 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                 if (eventArgs.Status == RDMPPlatformDatabaseStatus.Broken ||
                     eventArgs.Status == RDMPPlatformDatabaseStatus.Unreachable)
                 {
-                    llChoosePlatformDatabases.Visible = true;
+                    btnSetupPlatformDatabases.Visible = true;
+                    pbLoadProgress.Visible = false;
                     pbWhereIsDatabase.Visible = true;
                     this.Icon = _red;
                 }
@@ -271,7 +272,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             pbRed.Visible = false;
             pbYellow.Visible = false;
             llException.Visible = false;
-            llChoosePlatformDatabases.Visible = false;
+            btnSetupPlatformDatabases.Visible = false;
 
             if (_startup.RepositoryLocator is UserSettingsRepositoryFinder)
                 repositoryFinderUI1.SetRepositoryFinder((UserSettingsRepositoryFinder)_startup.RepositoryLocator);
@@ -457,8 +458,8 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                         Process.GetCurrentProcess().Kill();
                 }
         }
-
-        private void llChoosePlatformDatabases_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        
+        private void btnSetupPlatformDatabases_Click(object sender, EventArgs e)
         {
             var cmd = new ExecuteCommandChoosePlatformDatabase(new UserSettingsRepositoryFinder());
             cmd.Execute();

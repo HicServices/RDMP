@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Attachers;
@@ -131,7 +132,7 @@ namespace DataLoadEngineTests.Integration
                 
                 attacher.Initialize(projectDir,DiscoveredDatabaseICanCreateRandomTablesIn);
 
-                attacher.Attach(new ThrowImmediatelyDataLoadJob());
+                attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
                 //test file contains 291 values belonging to 3 different people
                 int expectedRows = 291;

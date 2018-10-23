@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Exceptions;
@@ -43,7 +44,7 @@ namespace LoadModules.Generic.Attachers
             
         }
 
-        public override ExitCodeType Attach(IDataLoadJob job)
+        public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(TableName) && TableToLoad != null)
                 TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw,job.Configuration.DatabaseNamer);
@@ -51,7 +52,7 @@ namespace LoadModules.Generic.Attachers
             if(TableName != null)
                 TableName = TableName.Trim();
 
-            var baseResult = base.Attach(job);
+            var baseResult = base.Attach(job,cancellationToken);
 
             if (baseResult != ExitCodeType.Success)
                 throw new Exception("Base class for "+this.GetType().FullName+" failed to return ExitCodeType.Success");

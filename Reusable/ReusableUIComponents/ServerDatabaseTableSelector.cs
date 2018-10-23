@@ -22,7 +22,7 @@ namespace ReusableUIComponents
     public partial class ServerDatabaseTableSelector : UserControl
     {
         private bool _allowTableValuedFunctionSelection;
-
+        private bool _isDatabaseTypeLocked = false;
         public string Server
         {
             get { return cbxServer.Text; }
@@ -355,7 +355,7 @@ namespace ReusableUIComponents
 
             cbxServer.Enabled = !isLoading;
             cbxDatabase.Enabled = !isLoading;
-            ddDatabaseType.Enabled = !isLoading;
+            ddDatabaseType.Enabled = !isLoading && !_isDatabaseTypeLocked;
             btnRefreshDatabases.Enabled = !isLoading;
             btnRefreshTables.Enabled = !isLoading;
 
@@ -442,6 +442,13 @@ namespace ReusableUIComponents
         {
             if (SelectionChanged != null)
                 SelectionChanged();
+        }
+
+        public void LockDatabaseType(DatabaseType databaseType)
+        {
+            ddDatabaseType.SelectedItem = databaseType;
+            ddDatabaseType.Enabled = false;
+            _isDatabaseTypeLocked = true;
         }
     }
 }
