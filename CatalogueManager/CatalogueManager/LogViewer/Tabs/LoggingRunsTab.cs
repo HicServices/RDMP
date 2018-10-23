@@ -22,7 +22,7 @@ namespace CatalogueManager.LogViewer.Tabs
             yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.FatalError, new LogViewerFilter { Run = taskId });
             yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.TableLoadRun, new LogViewerFilter { Run = taskId });
 
-            yield return new ExecuteCommandExportCsv(_activator, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandExportLoggedDataToCsv(_activator, new LogViewerFilter { Run = taskId });
         }
 
         protected override LoggingTables GetTableEnum()

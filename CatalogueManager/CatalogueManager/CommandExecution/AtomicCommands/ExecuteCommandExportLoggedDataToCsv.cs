@@ -12,10 +12,15 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandExportCsv : ExecuteCommandViewLoggedData
+    public class ExecuteCommandExportLoggedDataToCsv : ExecuteCommandViewLoggedData
     {
-        public ExecuteCommandExportCsv(IActivateItems activator, LogViewerFilter filter) : base(activator, LoggingTables.ExportToCsv, filter)
+        public ExecuteCommandExportLoggedDataToCsv(IActivateItems activator, LogViewerFilter filter) : base(activator, LoggingTables.None, filter)
         {
+        }
+
+        public override string GetCommandName()
+        {
+            return "Export to CSV";
         }
 
         public override void Execute()
