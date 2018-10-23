@@ -22,7 +22,7 @@ namespace CatalogueLibraryTests.Integration
         {
 
             CatalogueRepository.SuppressHelpLoading = false;
-            CatalogueRepository.LoadHelp();
+            CatalogueRepository.LoadHelp(TestContext.CurrentContext.WorkDirectory);
             CatalogueRepository.SuppressHelpLoading = true;
 
         }

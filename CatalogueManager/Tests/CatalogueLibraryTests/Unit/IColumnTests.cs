@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using CatalogueLibrary.Checks;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
@@ -104,7 +105,7 @@ namespace CatalogueLibraryTests.Unit
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "bob smith";
-            var ex = Assert.Throws<Exception>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"",ex.Message);
 
         }
@@ -114,8 +115,8 @@ namespace CatalogueLibraryTests.Unit
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "`bob";
-            
-            var ex = Assert.Throws<Exception>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
+
+            var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("Invalid characters found in Alias \"`bob\"",ex.Message);
            
         }
@@ -124,7 +125,7 @@ namespace CatalogueLibraryTests.Unit
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "bob]";
-            var ex = Assert.Throws<Exception>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("Invalid characters found in Alias \"bob]\"",ex.Message);
             
         }
@@ -136,7 +137,7 @@ namespace CatalogueLibraryTests.Unit
             TestColumn tc = new TestColumn();
             tc.Alias = "bob";
             tc.SelectSQL = "GetSomething('here'";
-            var ex = Assert.Throws<Exception>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'",ex.Message);
         }
     }

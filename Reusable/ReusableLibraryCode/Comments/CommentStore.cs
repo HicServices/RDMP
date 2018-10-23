@@ -25,10 +25,11 @@ namespace ReusableLibraryCode.Comments
             "ObjectListView.xml",
             "QuickGraph.xml",
             "Renci.SshNet.xml",
-            "ScintillaNET.xml"
+            "ScintillaNET.xml",
+            "nunit.framework.xml"
         };
-
-        public void ReadComments()
+        
+        public void ReadComments(params string[] directoriesToLookInForComments)
         {
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -42,12 +43,17 @@ namespace ReusableLibraryCode.Comments
                 if (xmlFile.StartsWith("System") || _ignoreHelpFor.Contains(xmlFile))
                     continue;
 
-                if(File.Exists(xmlFile))
+                foreach (string d in directoriesToLookInForComments)
                 {
-                    var doc = DocReader.Read(assembly,xmlFile);
-                    doc.Accept(new CommentsVisitor(this));
+                    var f = Path.Combine(d, xmlFile);
+                    if (File.Exists(f))
+                    {
+                        var doc = DocReader.Read(assembly, f);
+                        doc.Accept(new CommentsVisitor(this));
 
+                    }
                 }
+                
             }
         }
 

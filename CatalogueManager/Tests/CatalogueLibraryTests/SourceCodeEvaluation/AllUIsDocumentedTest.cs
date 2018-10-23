@@ -31,7 +31,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         public void AllUIControlsDocumented()
         {
             CatalogueRepository.SuppressHelpLoading = false;
-            CatalogueRepository.LoadHelp();
+            CatalogueRepository.LoadHelp(TestContext.CurrentContext.WorkDirectory);
             CatalogueRepository.SuppressHelpLoading = true;
 
 

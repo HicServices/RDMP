@@ -261,7 +261,7 @@ namespace CatalogueLibraryTests.Integration
                 tableInfo1.SaveToDatabase();
                 tableInfo2.SaveToDatabase();
 
-                var ex = Assert.Throws<Exception>(creds.DeleteInDatabase);//the bit that fails (because tables are there)
+                var ex = Assert.Throws<CredentialsInUseException>(creds.DeleteInDatabase);//the bit that fails (because tables are there)
                 Assert.AreEqual("Cannot delete credentials bob because it is in use by one or more TableInfo objects(Dependency1,Dependency2)",ex.Message);
             }
             finally

@@ -367,7 +367,7 @@ namespace CatalogueLibraryTests.Integration
             var c = new Catalogue(CatalogueRepository, "bob");
             try
             {
-                var ex = Assert.Throws<Exception>(()=>c.Folder.Path = "fish");
+                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = "fish");
                 Assert.AreEqual(@"All catalogue paths must start with \ but Catalogue bob had an attempt to set it's folder to :fish",ex.Message);
             }
             finally
@@ -382,7 +382,7 @@ namespace CatalogueLibraryTests.Integration
             var c = new Catalogue(CatalogueRepository, "bob");
             try
             {
-                var ex = Assert.Throws<Exception>(()=>c.Folder.Path = null);
+                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = null);
                 Assert.AreEqual(@"An attempt was made to set Catalogue bob Folder to null, every Catalogue must have a folder, set it to \ if you want the root",ex.Message);
             }
             finally
@@ -398,7 +398,7 @@ namespace CatalogueLibraryTests.Integration
             try
             {
                 //notice the @ symbol that makes the double slashes actual double slashes - common error we might make and what this test is designed to prevent
-                var ex = Assert.Throws<Exception>(()=>c.Folder.Path = @"\\bob\\");
+                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = @"\\bob\\");
                 Assert.AreEqual(@"Catalogue paths cannot contain double slashes '\\', Catalogue bob had an attempt to set it's folder to :\\bob\\",ex.Message);
             }
             finally

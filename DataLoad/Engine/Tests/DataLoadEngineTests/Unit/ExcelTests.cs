@@ -40,8 +40,8 @@ namespace DataLoadEngineTests.Unit
             
             officeInstalled = OfficeVersionFinder.GetVersion(OfficeVersionFinder.OfficeComponent.Excel) != null;
 
-            _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile));
-            _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile));
+            _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile,TestContext.CurrentContext.WorkDirectory));
+            _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile, TestContext.CurrentContext.WorkDirectory));
         }
 
 
@@ -182,7 +182,7 @@ namespace DataLoadEngineTests.Unit
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            var fi = new FileInfo(@".\Resources\BlankLineBook.xlsx");
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@".\Resources\BlankLineBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
@@ -206,7 +206,8 @@ namespace DataLoadEngineTests.Unit
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            var fi = new FileInfo(@".\Resources\BlankBook.xlsx");
+            
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@"Resources\BlankBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());

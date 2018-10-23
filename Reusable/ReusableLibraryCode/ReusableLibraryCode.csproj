@@ -390,7 +390,6 @@
     <Compile Include="VisualStudioSolutionFileProcessing\VisualStudioSolutionFolder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="DatabaseHelpers\DatabaseAccess.cd" />
     <None Include="DatabaseHelpers\Discovery\TypeTranslation\TypeTranslation.cd" />
     <None Include="packages.config" />

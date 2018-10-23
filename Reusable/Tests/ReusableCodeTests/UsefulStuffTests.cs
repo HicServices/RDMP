@@ -98,7 +98,7 @@ namespace ReusableCodeTests
             dt.Rows.Add(1.5f);
 
             SqlBulkCopy copy = new SqlBulkCopy(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString);
-            var ex = Assert.Throws<Exception>(()=>UsefulStuff.BulkInsertWithBetterErrorMessages(copy, dt, DiscoveredServerICanCreateRandomDatabasesAndTablesOn));
+            var ex = Assert.Throws<NotSupportedException>(()=>UsefulStuff.BulkInsertWithBetterErrorMessages(copy, dt, DiscoveredServerICanCreateRandomDatabasesAndTablesOn));
             StringAssert.Contains("Found float value 1.5 in data table, SQLServer does not support floats in bulk insert",ex.Message);
         }
     }

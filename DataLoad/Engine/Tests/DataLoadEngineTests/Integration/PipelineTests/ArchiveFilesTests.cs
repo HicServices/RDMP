@@ -83,7 +83,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
         public void CreateArchiveWithNoFiles_ShouldThrow()
         {
             var directoryHelper = new TestDirectoryHelper(GetType());
-            directoryHelper.SetUp(Path.GetTempPath());
+            directoryHelper.SetUp();
             
             var testDir = directoryHelper.Directory.CreateSubdirectory("CreateArchiveWithNoFiles_ShouldThrow");
             
