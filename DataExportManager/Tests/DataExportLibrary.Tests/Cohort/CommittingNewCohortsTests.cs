@@ -17,12 +17,14 @@ namespace DataExportLibrary.Tests.Cohort
 {
     public class CommittingNewCohortsTests : TestsRequiringACohort
     {
-        private string filename = "CommittingNewCohorts.csv";
+        private string filename;
         private string projName = "MyProj";
 
         [SetUp]
         public void GenerateFileToLoad()
         {
+            filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "CommittingNewCohorts.csv");
+
             StreamWriter sw = new StreamWriter(filename);    
             sw.WriteLine("PrivateID,ReleaseID,SomeHeader");
             sw.WriteLine("Priv_1111,Pub_1111,Smile buddy");

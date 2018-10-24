@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
@@ -21,16 +22,17 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         private LoadMetadata _lmd;
         private ProcessTask _task;
         private ProcessTaskChecks _checker;
+        private DirectoryInfo _dir;
 
         [SetUp]
         public void CreateTask()
         {
             _lmd = new LoadMetadata(CatalogueRepository);
 
-            var dir = new DirectoryInfo("ProcessTaskCheckingTests");
-            dir.Create();
+            _dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"ProcessTaskCheckingTests"));
+            _dir.Create();
 
-            var hicdir = HICProjectDirectory.CreateDirectoryStructure(dir, "ProjDir", true);
+            var hicdir = HICProjectDirectory.CreateDirectoryStructure(_dir, "ProjDir", true);
             _lmd.LocationOfFlatFiles = hicdir.RootPath.FullName;
             _lmd.SaveToDatabase();
 
@@ -59,7 +61,7 @@ namespace DataLoadEngineTests.Integration.CheckingTests
             
             _lmd.DeleteInDatabase();
             
-            new DirectoryInfo("ProcessTaskCheckingTests").Delete(true);
+            _dir.Delete(true);
         }
 
 
@@ -91,8 +93,8 @@ namespace DataLoadEngineTests.Integration.CheckingTests
             _task.Path = path;
             _task.LoadStage = stage;
             _task.SaveToDatabase();
-            var ex = Assert.Throws<Exception>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier()));
-            StringAssert.Contains("Path is blank for ProcessTask 'New Process.*' - it should be a class name of type",ex.Message);
+            var ex = Assert.Throws<ArgumentException>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.IsTrue(Regex.IsMatch(ex.Message,"Path is blank for ProcessTask 'New Process.*' - it should be a class name of type"));
         }
 
         [Test]

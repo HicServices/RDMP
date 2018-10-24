@@ -455,7 +455,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.AreEqual("decimal(5,2)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
         }
 
-        private object[] _sourceLists = {
+        private static object[] _sourceLists = {
                                             new object[] {"decimal(4,3)",new object[]{"0.001"}, new object[]{0.001}},  //case 1
                                             new object[] {"decimal(6,3)",new object[]{"19","0.001","123.001",32.0f}, new object[]{19,0.001,123.001,32.0f}},  //case 2
 

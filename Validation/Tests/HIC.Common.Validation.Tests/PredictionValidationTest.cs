@@ -28,7 +28,7 @@ namespace HIC.Common.Validation.Tests
         public void Validate_NullRule_GeneratesException()
         {
             var ex = Assert.Throws<ArgumentException>(()=>new Prediction(null, "gender"));
-            Assert.AreEqual("You must specify a PredictionRule to follow",ex.Message);
+            StringAssert.Contains("You must specify a PredictionRule to follow",ex.Message);
         }
 
         [Test]
