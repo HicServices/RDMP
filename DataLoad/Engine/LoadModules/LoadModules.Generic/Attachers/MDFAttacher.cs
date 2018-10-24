@@ -51,8 +51,6 @@ namespace LoadModules.Generic.Attachers
 
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            base.Attach(job,cancellationToken);
-
             //The location of .mdf files from the perspective of the database server
             var databaseDirectory = FindDefaultSQLServerDatabaseDirectory();
             _locations = new MdfFileAttachLocations(HICProjectDirectory.ForLoading, databaseDirectory, OverrideMDFFileCopyDestination);

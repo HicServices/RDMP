@@ -276,8 +276,6 @@ namespace LoadModules.Generic.Attachers
         }
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            base.Attach(job, cancellationToken);
-
             if (job == null)
                 throw new Exception("Job is Null, we require to know the job to build a DataFlowPipeline");
       
