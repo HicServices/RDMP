@@ -63,8 +63,6 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
             var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ci));
             StringAssert.Contains("The following expected types were not passed to PreInitialize:TableInfo",ex.Message);
-
-            Assert.AreEqual(component.PreInitToThis, ti);
         }
 
         [Test]

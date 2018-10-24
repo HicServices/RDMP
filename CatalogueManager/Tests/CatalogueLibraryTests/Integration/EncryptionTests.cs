@@ -204,7 +204,7 @@ namespace CatalogueLibraryTests.Integration
                 password += "a";
 
             var ex = Assert.Throws<InvalidOperationException>(() => TestFreakyPasswordValues(password));
-            Assert.AreEqual("The free text Value supplied to this class was too long to be encrypted (Length of string was 38)", ex.Message);
+            Assert.AreEqual("The free text Value supplied to this class was too long to be encrypted (Length of string was 201)", ex.Message);
         }
         
     }

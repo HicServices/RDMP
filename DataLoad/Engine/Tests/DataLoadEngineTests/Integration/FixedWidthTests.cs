@@ -137,7 +137,9 @@ namespace DataLoadEngineTests.Integration
             if (testCase == FixedWidthTestCase.MisnamedHeaders)
                 flatFileColumn = "chickenDippers";
 
-            File.WriteAllText("Format.csv",@"From,To,Field,Size,DateFormat
+            FileInfo formatFile = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Format.csv"));
+
+            File.WriteAllText(formatFile.FullName, @"From,To,Field,Size,DateFormat
 1,5," + flatFileColumn + ",5");
 
 
@@ -163,7 +165,7 @@ namespace DataLoadEngineTests.Integration
 
             var attacher = new FixedWidthAttacher();
             attacher.Initialize(hicProjectDirectory, db);
-            attacher.PathToFormatFile = new FileInfo(@"Format.csv");
+            attacher.PathToFormatFile = formatFile;
             attacher.TableName = "TestHeaderMatching_Compatible";
             attacher.FilePattern = "*.txt";
 

@@ -15,10 +15,13 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 {
     public class DelimitedFileSourceTests
     {
-        private const string filename = "DelimitedFileSourceTests.txt";
+        private string filename;
 
+        
         private FileInfo CreateTestFile()
         {
+            filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "DelimitedFileSourceTests.txt");
+
             if(File.Exists(filename))
                 File.Delete(filename);
 

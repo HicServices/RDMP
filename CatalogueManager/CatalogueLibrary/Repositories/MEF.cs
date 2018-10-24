@@ -381,6 +381,9 @@ namespace CatalogueLibrary.Repositories
                     //could be basic type
                     foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
                     {
+                        if(asm.FullName.Contains("nunit.engine"))
+                            continue;
+
                         try
                         {
                             foreach (Type type in asm.GetTypes())

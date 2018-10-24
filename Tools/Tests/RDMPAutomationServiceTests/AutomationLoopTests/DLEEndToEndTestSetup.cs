@@ -42,7 +42,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
         public void SetUp(int timeoutInMilliseconds,out LoadMetadata lmd)
         {
-            var rootFolder = new DirectoryInfo(".");
+            var rootFolder = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);;
             _testFolder = rootFolder.CreateSubdirectory("TestTheTestDatasetSetup");
             var datasetFolder = _testFolder.CreateSubdirectory("TestDataset");
             

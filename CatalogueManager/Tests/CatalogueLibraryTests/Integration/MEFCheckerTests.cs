@@ -47,8 +47,6 @@ namespace CatalogueLibraryTests.Integration
             MEFChecker m = new MEFChecker(CatalogueRepository.MEF, "CatalogueLibrary.UncleSam", s => Assert.Fail());
             var ex = Assert.Throws<Exception>(()=>m.Check(new ThrowImmediatelyCheckNotifier()));
             StringAssert.Contains("Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name",ex.Message);
-
-
         }
 
         [Test]
@@ -61,13 +59,13 @@ namespace CatalogueLibraryTests.Integration
             
             badDir.Create();
 
-            var dllToCopy = new FileInfo("LoadModules.Generic.dll");
+            var dllToCopy = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"LoadModules.Generic.dll"));
 
             File.Copy(dllToCopy.FullName, Path.Combine(badDir.FullName,"LoadModules.Generic.dll"));
 
             var tomem = new ToMemoryCheckNotifier();
 
-            new SafeDirectoryCatalog(tomem, Environment.CurrentDirectory);
+            new SafeDirectoryCatalog(tomem, TestContext.CurrentContext.WorkDirectory);
             var warnings  = tomem.Messages.Where(m => m.Result == CheckResult.Warning).ToArray();
 
             Assert.GreaterOrEqual(warnings.Count(m => m.Message.StartsWith("Found 2 copies of")), 1);
