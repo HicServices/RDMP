@@ -326,7 +326,6 @@
     <Compile Include="Integration\DitaExtractorTests.cs" />
     <Compile Include="Integration\ExtractionInformationTests.cs" />
     <Compile Include="Unit\IColumnTests.cs" />
-    <Compile Include="Integration\CommitAssemblyTest.cs" />
     <Compile Include="Integration\LinkerTests.cs" />
     <Compile Include="Integration\LoadMetadataTests.cs" />
     <Compile Include="Integration\LoadProgressTest.cs" />
@@ -432,10 +431,6 @@
     <ProjectReference Include="..\..\CatalogueManager\CatalogueManager.csproj">
       <Project>{fdf08240-2afc-48a4-8f48-37cc7ea3000b}</Project>
       <Name>CatalogueManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CommitAssemblyEmptyAssembly\CommitAssemblyEmptyAssembly.csproj">
-      <Project>{daaafd70-ac8d-4fbf-93bc-5f72cb766dc2}</Project>
-      <Name>CommitAssemblyEmptyAssembly</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
