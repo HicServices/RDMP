@@ -28,7 +28,7 @@ namespace DataLoadEngineTests.Integration
         {
             officeInstalled = OfficeVersionFinder.GetVersion(OfficeVersionFinder.OfficeComponent.Excel) != null;
 
-            var testDir = new DirectoryInfo(".");
+            var testDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             _parentDir = testDir.CreateSubdirectory("ExcelConversionTest");
             _dirsToCleanUp.Push(_parentDir);
         }

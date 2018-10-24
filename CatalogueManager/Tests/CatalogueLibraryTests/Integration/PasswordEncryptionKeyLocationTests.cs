@@ -66,7 +66,7 @@ namespace CatalogueLibraryTests.Integration
             Console.WriteLine("Decrypted (stock) is:" + encrypter.GetDecryptedValue());
 
             var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-            keyLocation.CreateNewKeyFile("my.key");
+            keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.WorkDirectory, "my.key"));
             var p = keyLocation.OpenKeyFile();
 
             SimpleStringValueEncryption s = new SimpleStringValueEncryption(CatalogueRepository);

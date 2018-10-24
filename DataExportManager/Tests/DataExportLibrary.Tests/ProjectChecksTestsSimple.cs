@@ -56,7 +56,7 @@ namespace DataExportLibrary.Tests
            
             p.ExtractionDirectory = dir;
             var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
-            StringAssert.Contains(@"Project ExtractionDirectory .* Does Not Exist",ex.Message);
+            Assert.IsTrue(Regex.IsMatch(ex.Message,@"Project ExtractionDirectory .* Does Not Exist"));
 
         }
 

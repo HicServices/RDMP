@@ -54,7 +54,7 @@ namespace CatalogueLibraryTests.Integration
         [Test]
         public void FileDuplication()
         {
-            var badDir = new DirectoryInfo("Bad");
+            var badDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Bad"));
 
             if(badDir.Exists)
                 badDir.Delete(true);

@@ -127,7 +127,7 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         public void MEFCompatibleType_NoArgs()
         {
 
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo("."), "DelMeProjDir", true);
+            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "DelMeProjDir", true);
             try
             {
                 _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;

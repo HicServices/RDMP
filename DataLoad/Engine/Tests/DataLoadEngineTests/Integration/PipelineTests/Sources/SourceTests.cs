@@ -77,8 +77,6 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var ti = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "Foo");
             var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti));
             StringAssert.Contains("Type TableInfo is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) ",ex.Message);
-
-            Assert.AreEqual(component.PreInitToThis, ti);
         }
 
         [Test]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,8 +56,8 @@ namespace CatalogueLibraryTests.Integration
             gov1.SaveToDatabase();
 
             gov2.Name = "HiDuplicate";
-            var ex = Assert.Throws<Exception>(gov2.SaveToDatabase);
-            Assert.AreEqual("Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)",ex.Message);
+            var ex = Assert.Throws<SqlException>(gov2.SaveToDatabase);
+            StringAssert.StartsWith("Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)",ex.Message);
         }
 
         [Test]
@@ -119,8 +120,8 @@ namespace CatalogueLibraryTests.Integration
             Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);//should be no governanced catalogues for this governancer yet
 
             gov.CreateGovernanceRelationshipTo(c);
-            var ex = Assert.Throws<Exception>(()=>gov.CreateGovernanceRelationshipTo(c));
-            Assert.AreEqual("Cannot insert duplicate key in object 'dbo.GovernancePeriod_Catalogue'",ex.Message);
+            var ex = Assert.Throws<SqlException>(()=>gov.CreateGovernanceRelationshipTo(c));
+            StringAssert.Contains("Cannot insert duplicate key in object 'dbo.GovernancePeriod_Catalogue'",ex.Message);
             
         }
 

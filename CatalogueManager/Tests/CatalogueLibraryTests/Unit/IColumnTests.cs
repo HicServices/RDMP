@@ -80,7 +80,7 @@ namespace CatalogueLibraryTests.Unit
             TestColumn tc = new TestColumn();
 
             tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])";
-            var ex = Assert.Throws<Exception>(()=> tc.GetRuntimeName());
+            var ex = Assert.Throws<SyntaxErrorException>(()=> tc.GetRuntimeName());
             Assert.AreEqual(@"The IExtractableColumn.SelectSQL value ""MangleQuery([mydb]..[myExcitingField])"" looks like a ScalarValuedFunction but it is missing an Alias.  Add an Alias so that it has a runtime name.",ex.Message);
         }
 

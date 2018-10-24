@@ -27,7 +27,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestNoMDFFileFoundException()
         {
-            var workingDir = new DirectoryInfo(".");
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var testDir = workingDir.CreateSubdirectory("MDFAttacherTests");
             var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(testDir, "TestNoMDFFileFoundException",true);
 
@@ -53,17 +53,20 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestLocations_NoNetworkPath()
         {
+            var mdf = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile.mdf");
+            var ldf = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile_log.ldf");
+
             try
             {
-                File.WriteAllText("MyFile.mdf", "fish");
-                File.WriteAllText("MyFile_log.ldf", "fish");
+                File.WriteAllText(mdf, "fish");
+                File.WriteAllText(ldf, "fish");
 
                 string serverDatabasePath = @"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\";
                 var locations = new MdfFileAttachLocations(new DirectoryInfo("."), serverDatabasePath, null);
                 
 
-                Assert.AreEqual(new FileInfo("MyFile.mdf").FullName, locations.OriginLocationMdf);
-                Assert.AreEqual(new FileInfo("MyFile_log.ldf").FullName, locations.OriginLocationLdf);
+                Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
+                Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
                 
                 Assert.AreEqual(@"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\MyFile_log.ldf", locations.CopyToLdf);
                 Assert.AreEqual(@"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\MyFile.mdf", locations.CopyToMdf);
@@ -72,8 +75,8 @@ namespace DataLoadEngineTests.Unit
             }
             finally
             {
-                File.Delete("MyFile.mdb");
-                File.Delete("MyFile_log.ldf");    
+                File.Delete(mdf);
+                File.Delete(ldf);
             }
         }
 
@@ -136,17 +139,20 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestLocations_NetworkPath()
         {
+            var mdf = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile.mdf");
+            var ldf = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile_log.ldf");
+
             try
             {
-                File.WriteAllText("MyFile.mdf", "fish");
-                File.WriteAllText("MyFile_log.ldf", "fish");
+                File.WriteAllText(mdf, "fish");
+                File.WriteAllText(ldf, "fish");
 
                 string serverDatabasePath = @"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\";
                 var locations = new MdfFileAttachLocations(new DirectoryInfo("."), serverDatabasePath, @"\\MyDbServer1\Share\Database");
 
 
-                Assert.AreEqual(new FileInfo("MyFile.mdf").FullName, locations.OriginLocationMdf);
-                Assert.AreEqual(new FileInfo("MyFile_log.ldf").FullName, locations.OriginLocationLdf);
+                Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
+                Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
 
                 Assert.AreEqual(@"\\MyDbServer1\Share\Database\MyFile_log.ldf", locations.CopyToLdf);
                 Assert.AreEqual(@"\\MyDbServer1\Share\Database\MyFile.mdf", locations.CopyToMdf);
@@ -155,8 +161,8 @@ namespace DataLoadEngineTests.Unit
             }
             finally
             {
-                File.Delete("MyFile.mdb");
-                File.Delete("MyFile_log.ldf");
+                File.Delete(mdf);
+                File.Delete(ldf);
             }
         }
        

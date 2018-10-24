@@ -147,7 +147,7 @@ namespace CohortManagerTests
         public void ShortcutFilters_AlreadyHasFilter()
         {
             Assert.IsNotNull(aggregate1.RootFilterContainer_ID);
-            var ex = Assert.Throws<Exception>(()=>aggregate1.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = -500);//not ok
+            var ex = Assert.Throws<NotSupportedException>(()=>aggregate1.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = -500);//not ok
             Assert.AreEqual("Cannot set OverrideFiltersByUsingParentAggregateConfigurationInstead_ID because this AggregateConfiguration already has a filter container set (if you were to be a shortcut and also have a filter tree set it would be very confusing)",ex.Message);
         }
         [Test]

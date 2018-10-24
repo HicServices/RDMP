@@ -17,9 +17,10 @@ namespace DataLoadEngineTests.Integration
     {
         private FixedWidthFormatFile CreateFormatFile()
         {
-            File.WriteAllText("FixedWidthFormat.csv", HICProjectDirectory.ExampleFixedWidthFormatFileContents);
+            FileInfo fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@"FixedWidthFormat.csv"));
 
-            FileInfo fileInfo = new FileInfo(@"FixedWidthFormat.csv");
+            File.WriteAllText(fileInfo.FullName, HICProjectDirectory.ExampleFixedWidthFormatFileContents);
+            
             Assert.IsTrue(fileInfo.Exists);
 
             return new FixedWidthFormatFile(fileInfo);
@@ -88,7 +89,7 @@ namespace DataLoadEngineTests.Integration
         {
             FixedWidthFormatFile formatFile = CreateFormatFile();
 
-            string tempFileToCreate = "unitTestFixedWidthFile.txt";
+            string tempFileToCreate = Path.Combine(TestContext.CurrentContext.WorkDirectory,"unitTestFixedWidthFile.txt");
 
             StreamWriter streamWriter = File.CreateText(tempFileToCreate);
             try
@@ -141,7 +142,7 @@ namespace DataLoadEngineTests.Integration
 
 
             //Create the working directory that will be processed
-            var workingDir = new DirectoryInfo(".");
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var parentDir = workingDir.CreateSubdirectory("FixedWidthTests");
 
             DirectoryInfo toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("TestHeaderMatching"));
