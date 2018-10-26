@@ -4,7 +4,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.Referencing
 {
-    public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity
+    public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObjects
     {
         private string _referencedObjectType;
         private int _referencedObjectID;

@@ -92,12 +92,12 @@ namespace DataExportLibrary.Data.DataTables
 
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
+                {"ReferencedObjectID",extractedObject.ID},
+                {"ReferencedObjectType",extractedObject.GetType().Name},
+                {"ReferencedObjectRepositoryType",extractedObject.Repository.GetType().Name},
                 {"ExtractionConfiguration_ID", configuration.ID},
                 {"SQLExecuted", sql},
-                {"ExtractedType", extractedObject.GetType().FullName },
-                {"ExtractedId", extractedObject.ID },
-                {"ExtractedName", name },
-                {"RepositoryType", extractedObject.Repository.GetType().FullName }
+                {"ExtractedName", name }
             });
 
             IsGlobal = true;
@@ -113,12 +113,12 @@ namespace DataExportLibrary.Data.DataTables
 
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
+                {"ReferencedObjectID",extractedObject.ID},
+                {"ReferencedObjectType",extractedObject.GetType().Name},
+                {"ReferencedObjectRepositoryType",extractedObject.Repository.GetType().Name},
                 {"CumulativeExtractionResults_ID", configuration.ID},
                 {"SQLExecuted", sql},
-                {"ExtractedType", extractedObject.GetType().FullName },
-                {"ExtractedId", extractedObject.ID },
-                {"ExtractedName", name },
-                {"RepositoryType", extractedObject.Repository.GetType().FullName }
+                {"ExtractedName", name }
             });
 
             IsGlobal = false;
@@ -134,10 +134,7 @@ namespace DataExportLibrary.Data.DataTables
             DateOfExtraction = (DateTime)r["DateOfExtraction"];
             Exception = r["Exception"] as string;
             SQLExecuted = r["SQLExecuted"] as string;
-            ReferencedObjectType = r["ExtractedType"] as string;
-            ReferencedObjectID = r["ExtractedId"] is DBNull ? 0 : Convert.ToInt32(r["ExtractedId"]);
             ExtractedName = r["ExtractedName"] as string;
-            ReferencedObjectRepositoryType = r["RepositoryType"] as string;
             DestinationType = r["DestinationType"] as string; 
 
             IsGlobal = CumulativeExtractionResults_ID == null && ExtractionConfiguration_ID != null;

@@ -56,9 +56,9 @@ namespace CatalogueLibrary.Data
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
-                {"TypeName", objectToFavourite.GetType().Name},
-                {"ObjectID", objectToFavourite.ID},
-                {"RepositoryTypeName",objectToFavourite.Repository.GetType().Name},
+                {"ReferencedObjectID",objectToFavourite.ID},
+                {"ReferencedObjectType",objectToFavourite.GetType().Name},
+                {"ReferencedObjectRepositoryType",objectToFavourite.Repository.GetType().Name},
                 {"Username", Environment.UserName},
                 {"FavouritedDate", DateTime.Now},
             });

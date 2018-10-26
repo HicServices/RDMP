@@ -84,9 +84,10 @@ namespace CatalogueLibrary.Data.Cohort
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
+                {"ReferencedObjectID",parent.ID},
+                {"ReferencedObjectType",parent.GetType().Name},
+                {"ReferencedObjectRepositoryType",parent.Repository.GetType().Name},
                 {"ParameterSQL", parameterSQL},
-                {"Parent_ID", parent.ID},
-                {"ParentTable", parent.GetType().Name}
             });
         }
 

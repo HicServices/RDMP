@@ -173,7 +173,7 @@ namespace CatalogueLibrary.Repositories
             if (!AnyTableSqlParameter.IsSupportedType(type))
                 throw new NotSupportedException("This table does not support parents of type " + type.Name);
 
-            return GetAllObjects<AnyTableSqlParameter>("where ParentTable = '" + type.Name + "' and Parent_ID =" + parent.ID);
+            return GetReferencesTo<AnyTableSqlParameter>(parent);
         }
 
         /// <summary>

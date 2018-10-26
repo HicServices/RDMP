@@ -50,10 +50,11 @@ namespace CatalogueLibrary.Data.Dashboarding
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
+                {"ReferencedObjectID",objectToSave.ID},
+                {"ReferencedObjectType",objectToSave.GetType().Name},
+                {"ReferencedObjectRepositoryType",objectToSave.Repository.GetType().Name},
                 {"DashboardControl_ID",parentControl.ID},
-                {"TypeName", objectToSave.GetType().Name},
-                {"ObjectID", objectToSave.ID},
-                {"RepositoryTypeName",objectToSave.Repository.GetType().Name}
+                
             });
         }
     }
