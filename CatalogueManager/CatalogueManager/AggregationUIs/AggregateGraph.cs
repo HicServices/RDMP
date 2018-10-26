@@ -251,6 +251,8 @@ namespace CatalogueManager.AggregationUIs
                 }
              
                 Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Crashed"; }));
+                
+                ShowHeatmapTab(heatmapUI.HasDataTable());
             }
             catch (Exception e)
             {
@@ -266,9 +268,7 @@ namespace CatalogueManager.AggregationUIs
                 
                 AbortLoadGraph();
                 
-                ShowHeatmapTab(heatmapUI.HasDataTable());
-
-                SetToolbarButtonsEnabled(false);
+                SetToolbarButtonsEnabled(true);
                 Done = true;
 
             }
