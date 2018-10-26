@@ -158,6 +158,7 @@
     <Compile Include="DataExtraction\ExecuteFullExtractionToDatabaseMSSqlDestinationTest.cs" />
     <Compile Include="DataExtraction\ExecutePkSynthesizerDatasetExtractionSourceTests.cs" />
     <Compile Include="DataExtraction\NormalDataExtractionTests.cs" />
+    <Compile Include="DataExtraction\SupplementalExtractionResultsTest.cs" />
     <Compile Include="DataExtraction\TestCohortRefreshing.cs" />
     <Compile Include="DataExtraction\TestsRequiringAnExtractionConfiguration.cs" />
     <Compile Include="DataUserTests.cs" />

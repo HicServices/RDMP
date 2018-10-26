@@ -1,6 +1,6 @@
 ﻿namespace CatalogueLibrary.Data.Referencing
 {
-    interface IReferenceOtherObjects
+    public interface IReferenceOtherObject
     {
     }
 }

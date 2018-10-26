@@ -4,7 +4,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.Referencing
 {
-    public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObjects
+    public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObject
     {
         private string _referencedObjectType;
         private int _referencedObjectID;
@@ -48,6 +48,28 @@ namespace CatalogueLibrary.Data.Referencing
             ReferencedObjectType = r["ReferencedObjectType"].ToString();
             ReferencedObjectID = Convert.ToInt32(r["ReferencedObjectID"]);
             ReferencedObjectRepositoryType = r["ReferencedObjectRepositoryType"].ToString();
+        }
+
+
+        public bool IsReferenceTo(Type type)
+        {
+            return AreProbablySameType(ReferencedObjectType, type);
+        }
+
+        public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o)
+        {
+            return o.ID == ReferencedObjectID
+                   &&
+                   AreProbablySameType(ReferencedObjectType, o.GetType())
+                   &&
+                   AreProbablySameType(ReferencedObjectRepositoryType, o.Repository.GetType());
+        }
+
+        private bool AreProbablySameType(string storedTypeName, Type candidate)
+        {
+            return
+                storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
+                storedTypeName.Equals(candidate.FullName, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }

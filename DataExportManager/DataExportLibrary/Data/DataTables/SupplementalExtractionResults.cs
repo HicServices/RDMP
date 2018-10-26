@@ -7,6 +7,7 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Annotations;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -159,7 +160,6 @@ namespace DataExportLibrary.Data.DataTables
             SaveToDatabase();
         }
 
-        
 
         public override string ToString()
         {
