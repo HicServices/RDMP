@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.UI.WebControls;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -27,32 +22,13 @@ namespace CatalogueLibrary.Data.Cohort
     /// so that you don't have to manually update every parameter when you want to change your study criteria.  For this to work all AggregateFilterParameters must have the same name
     /// and datatype AND comment! as the study filters (see CohortQueryBuilder).
     /// </summary>
-    public class AnyTableSqlParameter : VersionedDatabaseEntity, ISqlParameter,IHasDependencies
+    public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlParameter,IHasDependencies
     {
         #region Database Properties
-
-        private int _parentID;
-        private string _parentTable;
         private string _parameterSQL;
         private string _value;
         private string _comment;
-
-        /// <summary>
-        /// The ID of the parent object table in <see cref="ParentTable"/> which the parameter is declared against.
-        /// </summary>
-        public int Parent_ID
-        {
-            get { return _parentID; }
-            set { SetField(ref  _parentID, value); }
-        }
-        /// <summary>
-        /// The name of the table in which the parent object declaring this parameter resides (See <see cref="Parent_ID"/>).
-        /// </summary>
-        public string ParentTable
-        {
-            get { return _parentTable; }
-            set { SetField(ref  _parentTable, value); }
-        }
+        private string _softwareVersion;
         
         /// <inheritdoc/>
         [Sql]
@@ -77,6 +53,15 @@ namespace CatalogueLibrary.Data.Cohort
             set { SetField(ref  _comment, value); }
         }
 
+        /// <summary>
+        /// The version of RDMP that was running when the object was created
+        /// </summary>
+        [DoNotExtractProperty]
+        public string SoftwareVersion
+        {
+            get { return _softwareVersion; }
+            set { SetField(ref  _softwareVersion, value); }
+        }
 
         #endregion
 
@@ -108,9 +93,8 @@ namespace CatalogueLibrary.Data.Cohort
         internal AnyTableSqlParameter(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
+            SoftwareVersion = r["SoftwareVersion"].ToString();
             Value = r["Value"] as string;
-            Parent_ID = (int)r["Parent_ID"];
-            ParentTable = r["ParentTable"].ToString();
             ParameterSQL = r["ParameterSQL"] as string;
             Comment = r["Comment"] as string;
         }
@@ -151,7 +135,7 @@ namespace CatalogueLibrary.Data.Cohort
         }
 
         /// <summary>
-        /// Describes how the <see cref="ISqlParameter"/>s declared in this table will be used with parents of the supplied Type (See <see cref="ParentTable"/>).
+        /// Describes how the <see cref="ISqlParameter"/>s declared in this table will be used with parents of the supplied Type (See <see cref="ReferencedObjectType"/>).
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -171,14 +155,14 @@ namespace CatalogueLibrary.Data.Cohort
         }
 
         /// <summary>
-        /// Returns the parent object that declares this paramter (see <see cref="Parent_ID"/> and <see cref="ParentTable"/>)
+        /// Returns the parent object that declares this paramter (see <see cref="ReferencedObjectID"/> and <see cref="ReferencedObjectType"/>)
         /// </summary>
         /// <returns></returns>
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
-            var type = typeof (Catalogue).Assembly.GetTypes().Single(t=>t.Name.Equals(ParentTable));
+            var type = typeof (Catalogue).Assembly.GetTypes().Single(t=>t.Name.Equals(ReferencedObjectType));
 
-            return ((CatalogueRepository)Repository).GetObjectByID(type,Parent_ID);
+            return ((CatalogueRepository)Repository).GetObjectByID(type,ReferencedObjectID);
         }
 
         /// <inheritdoc/>
@@ -199,13 +183,13 @@ namespace CatalogueLibrary.Data.Cohort
         }
 
         /// <summary>
-        /// Returns true if the <paramref name="databaseEntity"/> supplied is the same as the one that this references (see <see cref="Parent_ID"/> and <see cref="ParentTable"/>)
+        /// Returns true if the <paramref name="databaseEntity"/> supplied is the same as the one that this references (see <see cref="ReferencedObjectID"/> and <see cref="ReferencedObjectType"/>)
         /// </summary>
         /// <param name="databaseEntity"></param>
         /// <returns></returns>
         public bool BelongsTo(DatabaseEntity databaseEntity)
         {
-            return ParentTable.Equals(databaseEntity.GetType().Name) && Parent_ID == databaseEntity.ID;
+            return ReferencedObjectType.Equals(databaseEntity.GetType().Name) && ReferencedObjectID == databaseEntity.ID;
         }
     }
 }

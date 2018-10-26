@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
@@ -15,14 +16,11 @@ namespace CatalogueLibrary.Data.ImportExport
     /// <para>This table exists to avoid all the unmaintainability/scalability of IDENTITY INSERT whilst also ensuring referential integrity of object shares and preventing
     /// duplication of imported objects.</para>
     /// </summary>
-    public class ObjectImport : DatabaseEntity
+    public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     {
         #region Database Properties
 
         private string _sharingUID;
-        private int _localObjectID;
-        private string _localTypeName;
-        private string _repositoryTypeName;
         
         #endregion
 
@@ -31,22 +29,9 @@ namespace CatalogueLibrary.Data.ImportExport
             get { return _sharingUID; }
             set { SetField(ref _sharingUID, value); }
         }
-        public int LocalObjectID
-        {
-            get { return _localObjectID; }
-            set { SetField(ref _localObjectID, value); }
-        }
-        public string LocalTypeName
-        {
-            get { return _localTypeName; }
-            set { SetField(ref _localTypeName, value); }
-        }
-        public string RepositoryTypeName
-        {
-            get { return _repositoryTypeName; }
-            set { SetField(ref _repositoryTypeName, value); }
-        }
 
+        
+        
         [NoMappingToDatabase]
         public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); } }
 
@@ -60,10 +45,11 @@ namespace CatalogueLibrary.Data.ImportExport
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
-                {"LocalTypeName",localObject.GetType().Name},
-                {"LocalObjectID",localObject.ID},
-                {"SharingUID",sharingUID},
-                {"RepositoryTypeName",localObject.Repository.GetType().Name}
+                {"ReferencedObjectRepositoryType",localObject.Repository.GetType().Name},
+                {"ReferencedObjectType",localObject.GetType().Name},
+                {"ReferencedObjectID",localObject.ID},
+                {"SharingUID",sharingUID}
+                
             });
 
             if (ID == 0 || Repository != repository)
@@ -73,29 +59,26 @@ namespace CatalogueLibrary.Data.ImportExport
             : base(repository, r)
         {
             SharingUID = r["SharingUID"].ToString();
-            LocalObjectID = Convert.ToInt32(r["LocalObjectID"]);
-            LocalTypeName = r["LocalTypeName"].ToString();
-            RepositoryTypeName = r["RepositoryTypeName"].ToString();
         }
 
         public override string ToString()
         {
-            return "I::" + LocalTypeName + "::" + SharingUID;
+            return "I::" + ReferencedObjectType + "::" + SharingUID;
         }
 
         public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
         {
-            return o.ID == LocalObjectID && o.GetType().Name.Equals(LocalTypeName) && o.Repository.GetType().Name.Equals(RepositoryTypeName);
+            return o.ID == ReferencedObjectID && o.GetType().Name.Equals(ReferencedObjectType) && o.Repository.GetType().Name.Equals(ReferencedObjectRepositoryType);
         }
 
         public bool LocalObjectStillExists(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            return repositoryLocator.ArbitraryDatabaseObjectExists(RepositoryTypeName, LocalTypeName, LocalObjectID);
+            return repositoryLocator.ArbitraryDatabaseObjectExists(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
         }
 
         public IMapsDirectlyToDatabaseTable GetLocalObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            return repositoryLocator.GetArbitraryDatabaseObject(RepositoryTypeName, LocalTypeName, LocalObjectID);
+            return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
         }
     }
 }

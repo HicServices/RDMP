@@ -134,7 +134,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// <returns></returns>
         public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
         {
-            return _catalogueRepository.GetAllObjects<ObjectExport>("WHERE ObjectID = " + o.ID + " AND ObjectTypeName = '" + o.GetType().Name + "' AND RepositoryTypeName = '" + o.Repository.GetType().Name + "'").Any();
+            return _catalogueRepository.GetReferencesTo<ObjectExport>(o).Any();
         }
 
 
@@ -145,7 +145,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// <returns></returns>
         public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
         {
-            return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE LocalObjectID = " + o.ID + " AND LocalTypeName = '" + o.GetType().Name + "' AND RepositoryTypeName = '" + o.Repository.GetType().Name + "'").Any();
+            return _catalogueRepository.GetReferencesTo<ObjectImport>(o).Any();
         }
 
         /// <summary>

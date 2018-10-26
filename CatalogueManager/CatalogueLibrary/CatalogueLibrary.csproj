@@ -287,6 +287,8 @@
     <Compile Include="Data\Pipelines\IPipelineUser.cs" />
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
+    <Compile Include="Data\Referencing\IReferenceOtherObjects.cs" />
+    <Compile Include="Data\Referencing\ReferenceOtherObjectDatabaseEntity.cs" />
     <Compile Include="Data\Remoting\RemoteRDMP.cs" />
     <Compile Include="Data\Serialization\DatabaseEntityJsonConverter.cs" />
     <Compile Include="Data\Serialization\IPickAnyConstructorFinishedCallback.cs" />

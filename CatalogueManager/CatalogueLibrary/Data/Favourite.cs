@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
@@ -14,42 +15,12 @@ namespace CatalogueLibrary.Data
     /// whenever an RDMPCollectionUI is visible and that object is onscreen a star will appear beside it.  Favourites are stored on a 'per user' basis in the Catalogue database so 
     /// even if you switch computers/change sessions Favourites are preserved. 
     /// </summary>
-    public class Favourite:DatabaseEntity
+    public class Favourite:ReferenceOtherObjectDatabaseEntity
     {
         #region Database Properties
-        private string _typeName;
-        private int _objectID;
-        private string _repositoryTypeName;
         private string _username;
         private DateTime _favouritedDate;
-
-        /// <summary>
-        /// The Type of object that was favourited (e.g. <see cref="Catalogue"/>).  Must be an <see cref="IMapsDirectlyToDatabaseTable"/> object
-        /// </summary>
-        public string TypeName
-        {
-            get { return _typeName; }
-            set { SetField(ref _typeName, value); }
-        }
-
-        /// <summary>
-        /// The ID of the object favourited
-        /// </summary>
-        public int ObjectID
-        {
-            get { return _objectID; }
-            set { SetField(ref _objectID, value); }
-        }
-
-        /// <summary>
-        /// The platform database which is storing the object favourited (e.g. DataExport or Catalogue)
-        /// </summary>
-        public string RepositoryTypeName
-        {
-            get { return _repositoryTypeName; }
-            set { SetField(ref _repositoryTypeName, value); }
-        } 
-
+        
         /// <summary>
         /// The user that favourited the object
         /// </summary>
@@ -71,9 +42,6 @@ namespace CatalogueLibrary.Data
 
         internal Favourite(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
-            TypeName = r["TypeName"].ToString();
-            ObjectID = Convert.ToInt32(r["ObjectID"]);
-            RepositoryTypeName = r["RepositoryTypeName"].ToString();
             Username = r["Username"].ToString();
             FavouritedDate = Convert.ToDateTime(r["FavouritedDate"]);
         }
@@ -108,7 +76,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc cref="IsFavourite(IMapsDirectlyToDatabaseTable)"/>
         public bool IsFavourite(int id, Type type)
         {
-            return ObjectID == id && TypeName.Equals(type.Name);
+            return ReferencedObjectID == id && ReferencedObjectType.Equals(type.Name);
         }
     }
 }

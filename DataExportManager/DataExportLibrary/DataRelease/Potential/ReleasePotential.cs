@@ -100,9 +100,9 @@ namespace DataExportLibrary.DataRelease.Potential
         private Releaseability MakeSupplementalAssesment(ISupplementalExtractionResults supplementalExtractionResults)
         {
             var extractedObject = _repositoryLocator.GetArbitraryDatabaseObject(
-                supplementalExtractionResults.RepositoryType,
-                supplementalExtractionResults.ExtractedType,
-                supplementalExtractionResults.ExtractedId) as INamed;
+                supplementalExtractionResults.ReferencedObjectRepositoryType,
+                supplementalExtractionResults.ReferencedObjectType,
+                supplementalExtractionResults.ReferencedObjectID) as INamed;
 
             if (extractedObject == null)
                 return Releaseability.Undefined;

@@ -1,26 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Properties;
-using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories.Construction;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Repositories
@@ -363,7 +358,7 @@ namespace CatalogueLibrary.Repositories
                                 if (parentImport == null)
                                     throw new Exception("Cannot import an object of type " + typeof(T) + " because the ShareDefinition specifies a relationship to an object that has not yet been imported (A " + relationshipAttribute.Cref + " with a SharingUID of " + importGuidOfParent);
 
-                                newValue = parentImport.LocalObjectID;
+                                newValue = parentImport.ReferencedObjectID;
                                 break;
                             case RelationshipType.LocalReference:
                                 newValue = shareManager.GetLocalReference(property, relationshipAttribute, shareDefinition);
@@ -413,6 +408,17 @@ namespace CatalogueLibrary.Repositories
                         value = Convert.ChangeType(value, propertyType); //the property is not an enum
 
             prop.SetValue(onObject, value); //if it's a shared property (most properties) use the new shared value being imported
+        }
+
+
+        /// <summary>
+        /// Returns all objects of Type T which reference the supplied object <paramref name="o"/>
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity
+        {
+            return GetAllObjects<T>("WHERE ReferencedObjectID = " + o.ID + " AND ReferencedObjectType = '" + o.GetType().Name + "' AND ReferencedObjectRepositoryType = '" + o.Repository.GetType().Name + "'");
         }
     }
 

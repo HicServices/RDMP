@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
@@ -14,13 +15,10 @@ namespace CatalogueLibrary.Data.Dashboarding
     /// DashboardControl for the pie chart and a DashboardObjectUse pointing at that specific Catalogue.  These refernces do not stop objects being deleted.  References can also be 
     /// cross database (e.g. pointing at objects in a DataExport database like Project etc).
     /// </summary>
-    public class DashboardObjectUse:DatabaseEntity
+    public class DashboardObjectUse: ReferenceOtherObjectDatabaseEntity
     {
         #region Database Properties
 
-        private string _typeName;
-        private int _objectID;
-        private string _repositoryTypeName;
         private int _dashboardControlID;
 
         /// <summary>
@@ -31,44 +29,14 @@ namespace CatalogueLibrary.Data.Dashboarding
             get { return _dashboardControlID; }
             set { SetField(ref _dashboardControlID , value); }
         }
-
-        /// <summary>
-        /// The C# System.Type name of the object being used e.g. <see cref="CatalogueLibrary.Data.Catalogue"/>
-        /// </summary>
-        public string TypeName
-        {
-            get { return _typeName; }
-            set { SetField(ref _typeName, value); }
-        }
-
-        /// <summary>
-        /// The <see cref="DatabaseEntity.ID"/> of the object being used by the referenced <see cref="DashboardControl_ID"/>
-        /// </summary>
-        public int ObjectID
-        {
-            get { return _objectID; }
-            set { SetField(ref _objectID, value); }
-        }
-
-        /// <summary>
-        /// The C# System.Type name of the <see cref="IRepository"/> in which the object is stored e.g. the Catalogue or DataExport database
-        /// </summary>
-        public string RepositoryTypeName
-        {
-            get { return _repositoryTypeName; }
-            set { SetField(ref _repositoryTypeName, value); }
-        } 
-
+        
+        
 
         #endregion
 
-        internal DashboardObjectUse(ICatalogueRepository repository, DbDataReader r)
-            : base(repository, r)
+        internal DashboardObjectUse(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
             DashboardControl_ID = Convert.ToInt32(r["DashboardControl_ID"]);
-            TypeName = r["TypeName"].ToString();
-            ObjectID = Convert.ToInt32(r["ObjectID"]);
-            RepositoryTypeName = r["RepositoryTypeName"].ToString();
 
         }
          
