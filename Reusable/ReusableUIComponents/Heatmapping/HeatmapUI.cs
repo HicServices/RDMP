@@ -168,8 +168,9 @@ namespace ReusableUIComponents.Heatmapping
             if(value == null)
                 return;
             
-            //show the tool tip
-            tt.Show(value.ToString(), this, new Point(pos.X,pos.Y - 10));//allow room for cusor to not overdraw the tool tip
+            if(Visible)
+                //show the tool tip
+                tt.Show(value.ToString(), this, new Point(pos.X,pos.Y - 10));//allow room for cusor to not overdraw the tool tip
             
         }
 
