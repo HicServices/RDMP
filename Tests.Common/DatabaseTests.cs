@@ -312,6 +312,7 @@ delete from {0}..LoadModuleAssembly
 delete from {0}..Plugin
 
 delete from {1}..ReleaseLog
+delete from {1}..SupplementalExtractionResults
 delete from {1}..CumulativeExtractionResults
 delete from {1}..ExtractableColumn
 delete from {1}..SelectedDataSets

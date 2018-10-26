@@ -47,7 +47,7 @@ namespace DataExportLibrary.DataRelease.Potential
                 }
             }
 
-            if (GlobalResult.GetExtractedType() == typeof (SupportingDocument))
+            if (GlobalResult.IsReferenceTo(typeof (SupportingDocument)))
                 CheckFileExists(notifier, GlobalResult.DestinationDescription);
             else
                 CheckDestination(notifier, GlobalResult);

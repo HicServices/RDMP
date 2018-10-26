@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Referencing;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 
@@ -25,5 +26,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         List<ISupplementalExtractionResults> SupplementalExtractionResults { get; }
         ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject);
         bool IsFor(ISelectedDataSets selectedDataSet);
+
     }
 }

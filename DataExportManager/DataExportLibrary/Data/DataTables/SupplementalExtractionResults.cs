@@ -140,12 +140,7 @@ namespace DataExportLibrary.Data.DataTables
 
             IsGlobal = CumulativeExtractionResults_ID == null && ExtractionConfiguration_ID != null;
         }
-
-        public Type GetExtractedType()
-        {
-            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(ReferencedObjectType);
-        }
-
+        
         public Type GetDestinationType()
         {
             return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(DestinationType);

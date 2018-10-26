@@ -1,12 +1,13 @@
 using System;
 using CatalogueLibrary.Data.Referencing;
+using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
     /// <summary>
     /// See SupplementalExtractionResults
     /// </summary>
-    public interface ISupplementalExtractionResults : IReferenceOtherObject, IExtractionResults
+    public interface ISupplementalExtractionResults :  IExtractionResults
     {
         int? CumulativeExtractionResults_ID { get; }
         int? ExtractionConfiguration_ID { get; }
@@ -19,6 +20,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         string ReferencedObjectRepositoryType { get; }
 
         void CompleteAudit(Type destinationType, string destinationDescription, int uniqueIdentifiers);
-        bool IsReferenceTo(Type type);
+        
     }
 }
