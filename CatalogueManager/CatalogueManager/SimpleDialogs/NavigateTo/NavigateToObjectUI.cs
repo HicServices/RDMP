@@ -200,8 +200,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 b.Image = activator.CoreIconProvider.GetImage(t);
                 b.CheckOnClick = true;
                 b.Tag = t;
-                b.DisplayStyle = ToolStripItemDisplayStyle.Image;
-                b.Text = t.ToString();
+                b.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
+                b.Text = t.Name;
                 b.CheckedChanged += CollectionCheckedChanged;
                 b.Checked = startingFilters != null && startingFilters.Contains(t);
 
