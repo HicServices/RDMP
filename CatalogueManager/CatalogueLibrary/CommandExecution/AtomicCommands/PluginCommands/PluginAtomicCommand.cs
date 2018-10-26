@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.Drawing;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -14,8 +15,15 @@ namespace CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands
     [InheritedExport(typeof(IAtomicCommand))]
     public abstract class PluginAtomicCommand : BasicCommandExecution, IAtomicCommand
     {
+        /// <summary>
+        /// Stores the location of the RDMP repository databases (catalogue and data export).  Use this property to fetch RDMP objects (<see cref="Catalogue"/> etc).
+        /// </summary>
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
 
+        /// <summary>
+        /// Constructor for plugin commands, allows access to <see cref="RepositoryLocator"/>
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
         protected PluginAtomicCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             RepositoryLocator = repositoryLocator;

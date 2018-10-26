@@ -37,10 +37,19 @@ namespace CatalogueLibrary.Data
         [NoMappingToDatabase]
         public IRepository Repository { get; set; }
 
+        /// <summary>
+        /// Constructs a new instance.  You should only use this when your object does not yet exist in the database
+        /// and you are trying to create it into the db
+        /// </summary>
         protected DatabaseEntity()
         {
         }
 
+        /// <summary>
+        /// Creates a new instance and hydrates it from the current values of <paramref name="r"/>
+        /// </summary>
+        /// <param name="repository">The database which the record/object was read from</param>
+        /// <param name="r">Data reader with values for hydrating this object</param>
         protected DatabaseEntity(IRepository repository, DbDataReader r)
         {
             Repository = repository;
@@ -68,6 +77,12 @@ namespace CatalogueLibrary.Data
             return false;
         }
 
+        /// <summary>
+        /// Converts the <paramref name="fieldName"/> into a <see cref="Uri"/>.  DBNull.Value and null are returned as null;
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
         protected Uri ParseUrl(DbDataReader r, string fieldName)
         {
             object uri = r[fieldName];
@@ -120,18 +135,11 @@ namespace CatalogueLibrary.Data
             return Repository.StillExists(this);
         }
 
-        protected DateTime? ParseDateFromReader(DbDataReader r, string columnName)
-        {
-            if (r[columnName] is DBNull) return null;
-            return DateTime.Parse(r[columnName].ToString());
-        }
-
-        protected int? ParseIntFromReader(DbDataReader r, string columnName)
-        {
-            if (r[columnName] is DBNull) return null;
-            return Convert.ToInt32(r[columnName].ToString());
-        }
-
+        /// <summary>
+        /// Converts the supplied object to a <see cref="DateTime"/> or null if o is null/DBNull.Value
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         protected DateTime? ObjectToNullableDateTime(object o)
         {
             if (o == null || o == DBNull.Value)
@@ -140,6 +148,11 @@ namespace CatalogueLibrary.Data
             return (DateTime)o;
         }
 
+        /// <summary>
+        /// Converts the supplied object to a <see cref="int"/> or null if o is null/DBNull.Value
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         protected int? ObjectToNullableInt(object o)
         {
             if (o == null || o == DBNull.Value)
@@ -147,6 +160,12 @@ namespace CatalogueLibrary.Data
 
             return int.Parse(o.ToString());
         }
+
+        /// <summary>
+        /// Converts the supplied object to a <see cref="bool"/> or null if o is null/DBNull.Value
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         protected bool? ObjectToNullableBool(object o)
         {
             if (o == null || o == DBNull.Value)
@@ -158,12 +177,26 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc cref="IMapsDirectlyToDatabaseTable.PropertyChanged"/>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Fired when any database tied property is changed in memory.
+        /// </summary>
+        /// <param name="propertyName"></param>
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        /// <summary>
+        /// Changes the value of <paramref name="field"/> to <paramref name="value"/> and triggers <see cref="OnPropertyChanged"/>.  You should have a public Property and
+        /// a backing field for all database fields on your object.  The Property should use this method to change the underlying fields value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="value"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
         protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;

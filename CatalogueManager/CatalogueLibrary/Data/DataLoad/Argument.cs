@@ -101,10 +101,12 @@ namespace CatalogueLibrary.Data.DataLoad
 
         #endregion
 
-        protected Argument()
+        /// <inheritdoc/>
+        protected Argument():base()
         {
         }
 
+        /// <inheritdoc/>
         protected Argument(ICatalogueRepository repository, DbDataReader dataReader)
             : base(repository, dataReader)
         {
