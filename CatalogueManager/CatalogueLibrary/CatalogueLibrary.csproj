@@ -413,7 +413,6 @@
     <Compile Include="DataFlowPipeline\IDataFlowSource.cs" />
     <Compile Include="DataFlowPipeline\IPluginDataFlowComponent.cs" />
     <Compile Include="DataFlowPipeline\IPluginDataFlowSource.cs" />
-    <Compile Include="DataFlowPipeline\IResetableSource.cs" />
     <Compile Include="DataFlowPipeline\Events\PipelineEngineEventArgs.cs" />
     <Compile Include="DataFlowPipeline\Requirements\DataFlowPipelineContext.cs" />
     <Compile Include="DataFlowPipeline\Requirements\DataFlowPipelineContextFactory.cs" />
