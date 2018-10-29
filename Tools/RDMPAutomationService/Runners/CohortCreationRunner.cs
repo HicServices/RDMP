@@ -14,6 +14,9 @@ using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationService.Runners
 {
+    /// <summary>
+    /// Runner for Cohort Creation Tasks.
+    /// </summary>
     public class CohortCreationRunner : IRunner
     {
         private readonly CohortCreationOptions _options;
