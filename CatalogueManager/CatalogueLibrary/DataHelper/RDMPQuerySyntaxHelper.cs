@@ -21,8 +21,12 @@ namespace CatalogueLibrary.DataHelper
     {
         static MicrosoftQuerySyntaxHelper _syntaxHelper = new MicrosoftQuerySyntaxHelper();
 
-        public static readonly string ParameterSQLRegex_Pattern = "(@[A-Za-z0-9_]*)\\s?";
-        public static Regex ParameterSQLRegex = new Regex(ParameterSQLRegex_Pattern);
+        private const string ParameterSQLRegexPattern = "(@[A-Za-z0-9_]*)\\s?";
+
+        /// <summary>
+        /// Regex pattern used for validating Sql Parameter names e.g. @MyParam
+        /// </summary>
+        public static Regex ParameterSQLRegex = new Regex(ParameterSQLRegexPattern);
 
         private const string IsScalarValuedFunctionRegex = @"\(.*\)";
 

@@ -54,6 +54,7 @@ namespace CatalogueLibrary.DataHelper
 
         public List<AnyTableSqlParameter> ParametersCreated { get; private set; }
 
+        /// <inheritdoc/>
         public void DoImport(out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
         {
             string finalName = "[" + _database + "].." + _tableValuedFunctionName + "(";
@@ -79,6 +80,7 @@ namespace CatalogueLibrary.DataHelper
             }
         }
 
+        /// <inheritdoc/>
         public ColumnInfo CreateNewColumnInfo(TableInfo parent, DiscoveredColumn discoveredColumn)
         {
             var toAdd =
