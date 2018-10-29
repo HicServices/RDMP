@@ -40,7 +40,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    
     <DocumentationFile>bin\Debug\RDMPAutomationService.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -76,9 +75,11 @@
     <Compile Include="Options\Abstracts\ConcurrentRDMPCommandLineOptions.cs" />
     <Compile Include="Options\Abstracts\RDMPCommandLineOptions.cs" />
     <Compile Include="Options\CacheOptions.cs" />
+    <Compile Include="Options\CohortCreationOptions.cs" />
     <Compile Include="Options\DqeOptions.cs" />
     <Compile Include="Options\ListOptions.cs" />
     <Compile Include="Options\ReleaseOptions.cs" />
+    <Compile Include="Runners\CohortCreationRunner.cs" />
     <Compile Include="Runners\DqeRunner.cs" />
     <Compile Include="Runners\DleRunner.cs" />
     <Compile Include="Options\DleOptions.cs" />
