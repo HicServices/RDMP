@@ -115,7 +115,7 @@ namespace CatalogueLibrary.Data.ImportExport
 
                 //which was imported as a local object
                 if (localImport != null)
-                    return localImport.GetLocalObject(RepositoryLocator); //get the local object
+                    return localImport.GetReferencedObject(RepositoryLocator); //get the local object
             }
 
             //otherwise get the existing master object
@@ -170,12 +170,12 @@ namespace CatalogueLibrary.Data.ImportExport
         /// <returns></returns>
         public ObjectExport GetNewOrExistingExportFor(IMapsDirectlyToDatabaseTable o)
         {
-            var existingExport = _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(o));
+            var existingExport = _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsReferenceTo(o));
 
             if (existingExport != null)
                 return existingExport;
 
-            var existingImport = _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsImportedObject(o));
+            var existingImport = _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsReferenceTo(o));
             
             if (existingImport != null)
                 return new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid);
@@ -197,7 +197,7 @@ namespace CatalogueLibrary.Data.ImportExport
             if (import == null)
                 return null;
 
-            return import.GetLocalObject(RepositoryLocator);
+            return import.GetReferencedObject(RepositoryLocator);
         }
 
         /// <inheritdoc cref="GetExistingImportObject(string)"/>
@@ -219,7 +219,7 @@ namespace CatalogueLibrary.Data.ImportExport
             if (export == null)
                 return null;
 
-            return export.GetLocalObject(RepositoryLocator);
+            return export.GetReferencedObject(RepositoryLocator);
         }
 
         /// <inheritdoc cref="GetExistingExportObject(string)"/>

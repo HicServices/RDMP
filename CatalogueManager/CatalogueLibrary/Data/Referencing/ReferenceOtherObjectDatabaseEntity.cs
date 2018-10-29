@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Data.Common;
+using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.Referencing
 {
+    /// <summary>
+    /// Abstract base class for all database objects that reference a single other arbitrary database object e.g. <see cref="Favourite"/>.
+    /// </summary>
     public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObject
     {
         private string _referencedObjectType;
@@ -50,12 +54,21 @@ namespace CatalogueLibrary.Data.Referencing
             ReferencedObjectRepositoryType = r["ReferencedObjectRepositoryType"].ToString();
         }
 
-
+        /// <summary>
+        /// True if the object referenced by this class is of Type <paramref name="type"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public bool IsReferenceTo(Type type)
         {
             return AreProbablySameType(ReferencedObjectType, type);
         }
-
+        
+        /// <summary>
+        /// True if the <paramref name="o"/> is the object that is explicitly referenced by this class instance
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o)
         {
             return o.ID == ReferencedObjectID
@@ -70,6 +83,16 @@ namespace CatalogueLibrary.Data.Referencing
             return
                 storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
                 storedTypeName.Equals(candidate.FullName, StringComparison.CurrentCultureIgnoreCase);
+        }
+        
+        /// <summary>
+        /// Returns the instance of the object referenced by this class or null if it no longer exists (e.g. has been deleted)
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <returns></returns>
+        public IMapsDirectlyToDatabaseTable GetReferencedObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
         }
     }
 }

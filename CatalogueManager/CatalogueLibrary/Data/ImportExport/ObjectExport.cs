@@ -59,24 +59,5 @@ namespace CatalogueLibrary.Data.ImportExport
         {
             return "E::" + ReferencedObjectType +"::" + SharingUID;
         }
-
-        /// <summary>
-        /// Returns true if this ObjectExport is an export declaration for the passed parameter
-        /// </summary>
-        /// <returns></returns>
-        public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
-        {
-            return o.ID == ReferencedObjectID && o.GetType().Name == ReferencedObjectType && o.Repository.GetType().Name == ReferencedObjectRepositoryType;
-        }
-
-        /// <summary>
-        /// Returns the local object referenced by this export declaration
-        /// </summary>
-        /// <param name="repositoryLocator"></param>
-        /// <returns></returns>
-        public IMapsDirectlyToDatabaseTable GetLocalObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
-        }
     }
 }

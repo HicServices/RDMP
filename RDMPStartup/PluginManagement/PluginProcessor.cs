@@ -68,7 +68,7 @@ namespace RDMPStartup.PluginManagement
                 //For assemblies that have less dll dependencies now than before (i.e. redundant assemblies)
                 foreach (LoadModuleAssembly unused in legacyDlls)
                 {
-                    var export = _repository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsExportedObject(unused));
+                    var export = _repository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsReferenceTo(unused));
                     if(export != null)
                         export.DeleteInDatabase();
 

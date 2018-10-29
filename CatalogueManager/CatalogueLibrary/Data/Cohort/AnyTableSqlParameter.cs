@@ -182,15 +182,5 @@ namespace CatalogueLibrary.Data.Cohort
 
             return new IHasDependencies[0];
         }
-
-        /// <summary>
-        /// Returns true if the <paramref name="databaseEntity"/> supplied is the same as the one that this references (see <see cref="ReferencedObjectID"/> and <see cref="ReferencedObjectType"/>)
-        /// </summary>
-        /// <param name="databaseEntity"></param>
-        /// <returns></returns>
-        public bool BelongsTo(DatabaseEntity databaseEntity)
-        {
-            return ReferencedObjectType.Equals(databaseEntity.GetType().Name) && ReferencedObjectID == databaseEntity.ID;
-        }
     }
 }

@@ -63,20 +63,5 @@ namespace CatalogueLibrary.Data
                 {"FavouritedDate", DateTime.Now},
             });
         }
-
-        /// <summary>
-        /// True if the <paramref name="mapsDirectlyToDatabaseTable"/> is the object that is explicitly referenced by this class instance
-        /// </summary>
-        /// <param name="mapsDirectlyToDatabaseTable"></param>
-        /// <returns></returns>
-        public bool IsFavourite(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
-        {
-            return IsFavourite(mapsDirectlyToDatabaseTable.ID, mapsDirectlyToDatabaseTable.GetType());
-        }
-        /// <inheritdoc cref="IsFavourite(IMapsDirectlyToDatabaseTable)"/>
-        public bool IsFavourite(int id, Type type)
-        {
-            return ReferencedObjectID == id && ReferencedObjectType.Equals(type.Name);
-        }
     }
 }

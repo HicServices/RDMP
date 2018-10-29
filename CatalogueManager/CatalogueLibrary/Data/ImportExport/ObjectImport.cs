@@ -66,19 +66,10 @@ namespace CatalogueLibrary.Data.ImportExport
             return "I::" + ReferencedObjectType + "::" + SharingUID;
         }
 
-        public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
-        {
-            return o.ID == ReferencedObjectID && o.GetType().Name.Equals(ReferencedObjectType) && o.Repository.GetType().Name.Equals(ReferencedObjectRepositoryType);
-        }
-
         public bool LocalObjectStillExists(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             return repositoryLocator.ArbitraryDatabaseObjectExists(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
         }
 
-        public IMapsDirectlyToDatabaseTable GetLocalObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
-        }
     }
 }

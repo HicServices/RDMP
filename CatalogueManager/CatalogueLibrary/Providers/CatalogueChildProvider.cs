@@ -711,7 +711,7 @@ namespace CatalogueLibrary.Providers
         {
             var childrenObjects = new HashSet<object>();
 
-            var parameters = AllAnyTableParameters.Where(p => p.BelongsTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
+            var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
             var node = new ParametersNode(aggregateConfiguration, parameters);
             childrenObjects.Add(node);
 
@@ -816,7 +816,7 @@ namespace CatalogueLibrary.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
-            var parameters = AllAnyTableParameters.Where(p => p.BelongsTo(cic)).Cast<ISqlParameter>().ToArray();
+            var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
             var node = new ParametersNode(cic, parameters);
 
             children.Add(node);
