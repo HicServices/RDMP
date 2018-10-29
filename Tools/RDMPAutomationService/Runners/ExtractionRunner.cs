@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Checks;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
@@ -181,11 +183,21 @@ namespace RDMPAutomationService.Runners
             if(_options.Command == CommandLineActivity.check)
             {
                 var sds = GetCheckNotifier(extractableData);
+                var pipe = GetSingleCheckerResults<DataFlowPipelineEngine<System.Data.DataTable>>(
+                    df => df.SourceObject is ExecuteDatasetExtractionSource &&
+                          (df.SourceObject as ExecuteDatasetExtractionSource).Request != null &&
+                          (df.SourceObject as ExecuteDatasetExtractionSource).Request.SelectedDataSets.ExtractableDataSet_ID == extractableData.ID);
 
-                if (sds == null)
+                if (sds == null && pipe == null)
                     return null;
 
-                return sds.GetWorst();
+                var worst = CheckResult.Warning;
+                if (sds != null)
+                    worst = sds.GetWorst();
+                if (pipe != null && pipe.GetWorst() > worst)
+                    worst = pipe.GetWorst();
+
+                return worst;
             }
 
             if(_options.Command == CommandLineActivity.run)
@@ -200,7 +212,6 @@ namespace RDMPAutomationService.Runners
                     return ExtractCommands[sds].State;
                 }
             }
-                
             
             return null;
         }
@@ -210,11 +221,20 @@ namespace RDMPAutomationService.Runners
             if (_options.Command == CommandLineActivity.check)
             {
                 var g = GetSingleCheckerResults<GlobalExtractionChecker>();
-
-                if (g == null)
+                var pipe = GetSingleCheckerResults<DataFlowPipelineEngine<System.Data.DataTable>>(
+                    df => df.SourceObject is ExecuteDatasetExtractionSource &&
+                          (df.SourceObject as ExecuteDatasetExtractionSource).GlobalsRequest != null);
+                
+                if (g == null && pipe == null)
                     return null;
 
-                return g.GetWorst();
+                var worst = CheckResult.Warning;
+                if (g != null)
+                    worst = g.GetWorst();
+                if (pipe != null && pipe.GetWorst() > worst)
+                    worst = pipe.GetWorst();
+
+                return worst;
             }
 
             if (_options.Command == CommandLineActivity.run && _globalsCommand != null)

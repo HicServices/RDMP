@@ -17,7 +17,7 @@ namespace RDMPAutomationService.Options
         [Option('e',"ExtractionConfiguration",HelpText = "The ExtractionConfiguration ID to extract",Required = true)]
         public int ExtractionConfiguration { get; set; }
 
-        [Option('s', "Datasets", HelpText = "Restrict extraction to only those ExtractableDatasets that have the provided list of IDs (must be part of the ExtractionConfiguration")]
+        [Option('s', "Datasets", HelpText = "Restrict extraction to only those ExtractableDatasets that have the provided list of IDs (must be part of the ExtractionConfiguration)")]
         public IEnumerable<int> Datasets { get; set; }
 
         [Option('p', "Pipeline", HelpText = "The ID of the extraction Pipeline to use")]
