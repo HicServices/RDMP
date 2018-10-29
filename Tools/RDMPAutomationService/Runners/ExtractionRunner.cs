@@ -141,20 +141,17 @@ namespace RDMPAutomationService.Runners
                 CheckDatasets = false,
                 CheckGlobals = false
             });
-            
-            if(_options.ExtractGlobals)
-                checkables.Add(new GlobalExtractionChecker(_configuration));
 
             foreach (var runnable in GetRunnables())
             {
-                var command = runnable as IExtractCommand;
+                var globalsCommand = runnable as ExtractGlobalsCommand;
                 var datasetCommand = runnable as ExtractDatasetCommand;
-                
-                if (datasetCommand != null)
-                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets, RepositoryLocator));
 
-                checkables.Add(new ExtractionPipelineUseCase(_project, command, _pipeline, DataLoadInfo.Empty) { Token = Token }
-                                       .GetEngine(_pipeline, new ToMemoryDataLoadEventListener(false)));
+                if (globalsCommand != null)
+                    checkables.Add(new GlobalExtractionChecker(_configuration, globalsCommand, _pipeline));
+
+                if (datasetCommand != null)
+                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets, RepositoryLocator, false, _pipeline));
             }
             
             return checkables.ToArray();
@@ -183,21 +180,18 @@ namespace RDMPAutomationService.Runners
             if(_options.Command == CommandLineActivity.check)
             {
                 var sds = GetCheckNotifier(extractableData);
-                var pipe = GetSingleCheckerResults<DataFlowPipelineEngine<System.Data.DataTable>>(
-                    df => df.SourceObject is ExecuteDatasetExtractionSource &&
-                          (df.SourceObject as ExecuteDatasetExtractionSource).Request != null &&
-                          (df.SourceObject as ExecuteDatasetExtractionSource).Request.SelectedDataSets.ExtractableDataSet_ID == extractableData.ID);
 
-                if (sds == null && pipe == null)
+                if (sds == null)
                     return null;
 
-                var worst = CheckResult.Warning;
-                if (sds != null)
-                    worst = sds.GetWorst();
-                if (pipe != null && pipe.GetWorst() > worst)
-                    worst = pipe.GetWorst();
+                return sds.GetWorst();
+                //var worst = CheckResult.Warning;
+                //if (sds != null)
+                //    worst = sds.GetWorst();
+                //if (pipe != null && pipe.GetWorst() > worst)
+                //    worst = pipe.GetWorst();
 
-                return worst;
+                //return worst;
             }
 
             if(_options.Command == CommandLineActivity.run)
@@ -221,20 +215,22 @@ namespace RDMPAutomationService.Runners
             if (_options.Command == CommandLineActivity.check)
             {
                 var g = GetSingleCheckerResults<GlobalExtractionChecker>();
-                var pipe = GetSingleCheckerResults<DataFlowPipelineEngine<System.Data.DataTable>>(
-                    df => df.SourceObject is ExecuteDatasetExtractionSource &&
-                          (df.SourceObject as ExecuteDatasetExtractionSource).GlobalsRequest != null);
+                //var pipe = GetSingleCheckerResults<DataFlowPipelineEngine<System.Data.DataTable>>(
+                //    df => df.SourceObject is ExecuteDatasetExtractionSource &&
+                //          (df.SourceObject as ExecuteDatasetExtractionSource).GlobalsRequest != null);
                 
-                if (g == null && pipe == null)
+                if (g == null)
                     return null;
 
-                var worst = CheckResult.Warning;
-                if (g != null)
-                    worst = g.GetWorst();
-                if (pipe != null && pipe.GetWorst() > worst)
-                    worst = pipe.GetWorst();
+                return g.GetWorst();
 
-                return worst;
+                //var worst = CheckResult.Warning;
+                //if (g != null)
+                //    worst = g.GetWorst();
+                //if (pipe != null && pipe.GetWorst() > worst)
+                //    worst = pipe.GetWorst();
+
+                //return worst;
             }
 
             if (_options.Command == CommandLineActivity.run && _globalsCommand != null)
