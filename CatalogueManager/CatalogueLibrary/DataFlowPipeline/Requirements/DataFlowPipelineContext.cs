@@ -5,14 +5,10 @@ using System.Reflection;
 using System.Text;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
 namespace CatalogueLibrary.DataFlowPipeline.Requirements
 {
-    public delegate void ContextInitialzedObjectEventHandler(object componentBeingInitialized, object valueBeingConsumed);
-
     /// <summary>
     /// Low level description of what an IPipeline must look like to be compatible with a given use case for a IDataFlowPipelineEngine.  This includes whether there must be
     /// a specific base type / interface for source / destination components as well as what the flow T object is (e.g. System.Data.DataTable).  
@@ -31,8 +27,6 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         public Type MustHaveDestination { get; set; }
         public HashSet<Type> CannotHave { get; private set; }
         
-        public event ContextInitialzedObjectEventHandler ObjectInitialized = delegate { };
-
         public DataFlowPipelineContext()
         {
             CannotHave = new HashSet<Type>();
@@ -258,10 +252,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
                 
                 //invoke it
                 preInit.Invoke(component, new[] {value, listener});
-
-                //call the event that lets external viewers know we called it
-                ObjectInitialized(component, value);
-
+                
                 //return the type of T for IPipelineRequirement<T> interface that was called
                 return interfaceToInvokeIfAny.GenericTypeArguments[0];
             }
