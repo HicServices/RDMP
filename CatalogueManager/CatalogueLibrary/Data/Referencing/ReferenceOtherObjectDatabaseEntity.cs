@@ -94,5 +94,16 @@ namespace CatalogueLibrary.Data.Referencing
         {
             return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
         }
+        
+        /// <summary>
+        /// Returns true if the object referenced by this class still exists in the database
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <returns></returns>
+        public bool ReferencedObjectExists(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            return repositoryLocator.ArbitraryDatabaseObjectExists(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
+        }
+
     }
 }

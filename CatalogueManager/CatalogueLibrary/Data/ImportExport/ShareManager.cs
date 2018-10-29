@@ -287,7 +287,7 @@ namespace CatalogueLibrary.Data.ImportExport
         public void DeleteAllOrphanImportDefinitions()
         {
             foreach (var import in GetAllImports())
-                if (!import.LocalObjectStillExists(RepositoryLocator))
+                if (!import.ReferencedObjectExists(RepositoryLocator))
                     import.DeleteInDatabase();
         }
 

@@ -20,6 +20,10 @@ namespace CatalogueLibrary.Data.ImportExport
         
         #endregion
 
+        /// <summary>
+        /// The globally unique identifier for refering to the shared object.  This allows the object to be updated later / new versions to be distributed
+        /// even though the ID is different (e.g. it has been imported into another instance of RDMP).
+        /// </summary>
         public string SharingUID
         {
             get { return _sharingUID; }
@@ -49,6 +53,8 @@ namespace CatalogueLibrary.Data.ImportExport
             if (ID == 0 || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
         }
+
+        /// <inheritdoc/>
         public ObjectExport(IRepository repository, DbDataReader r)
             : base(repository, r)
         {
