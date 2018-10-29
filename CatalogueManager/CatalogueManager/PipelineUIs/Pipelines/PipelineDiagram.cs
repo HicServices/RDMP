@@ -186,7 +186,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             Exception exConstruction;
             
             //create the pipeline realization (might fail
-            var value = _pipelineFactory.TryCreateComponent(_pipeline, toRealize, out exConstruction);
+            var value = _pipelineFactory.TryCreateComponent(toRealize, out exConstruction);
 
             if (role != DataFlowComponentVisualisation.Role.Source)
                 AddDividerIfReorderingAvailable();
