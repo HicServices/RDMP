@@ -25,10 +25,13 @@ namespace CatalogueLibrary.Data
 
         #endregion
         
-        protected VersionedDatabaseEntity()
+        /// <inheritdoc/>
+        protected VersionedDatabaseEntity():base()
         {
 
         }
+
+        /// <inheritdoc/>
         protected VersionedDatabaseEntity(IRepository repository, DbDataReader r):base(repository,r)
         {
             SoftwareVersion = r["SoftwareVersion"].ToString();
