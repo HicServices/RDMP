@@ -10,6 +10,11 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
     /// </summary>
     public interface IDataFlowPipelineContext
     {
+        /// <summary>
+        /// Returns the Type which must flow down pipeline engines assembled under this context e.g. DataTable, ReleaseAudit etc.  This determines the T that all
+        /// <see cref="IDataFlowComponent{T}"/> must be implement in order to be compatible.
+        /// </summary>
+        /// <returns></returns>
         Type GetFlowType();
 
         /// <summary>
@@ -43,6 +48,9 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         /// <returns>true if the component is compatible with the context</returns>
         bool IsAllowable(Type type, out string reason);
 
+        /// <summary>
+        /// Types which <see cref="IPipelineComponent"/> classes (<see cref="IPipelineComponent.Class"/>) are not allowed to implement.
+        /// </summary>
         HashSet<Type> CannotHave { get; }
 
         /// <summary>
@@ -55,7 +63,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
 
 
         /// <summary>
-        /// Calls all <see cref="IPipelineRequirement{T}.PreInitialize"/> methods on the component (which must be an <see cref="IDataFlowComponent{T}"/> or <see cref="IDataFlowSource{T}"/>)
+        /// Calls all <see cref="IPipelineRequirement{T}.PreInitialize"/> methods on the <paramref name="component"/> (which must be an <see cref="IDataFlowComponent{T}"/> or <see cref="IDataFlowSource{T}"/>)
         /// </summary>
         /// <param name="listener"></param>
         /// <param name="component"></param>

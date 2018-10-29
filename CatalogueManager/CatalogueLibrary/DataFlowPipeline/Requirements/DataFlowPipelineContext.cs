@@ -23,21 +23,40 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
     /// <typeparam name="T"></typeparam>
     public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     {
+
+        /// <summary>
+        /// Optional.  Specifies that in order for an <see cref="IPipeline"/> to be compatible with the context, it's <see cref="IPipeline.Source"/> must inherit/implement the given Type
+        /// </summary>
         public Type MustHaveSource { get; set; }
+
+        /// <summary>
+        /// Optional.  Specifies that in order for an <see cref="IPipeline"/> to be compatible with the context, it's <see cref="IPipeline.Destination"/> must inherit/implement the given Type
+        /// </summary>
         public Type MustHaveDestination { get; set; }
+
+        /// <inheritdoc/>
         public HashSet<Type> CannotHave { get; private set; }
         
+        /// <summary>
+        /// Creates a new empty context for determining <see cref="IPipeline"/> compatibility
+        /// </summary>
         public DataFlowPipelineContext()
         {
             CannotHave = new HashSet<Type>();
         }
 
+        /// <summary>
+        /// Returns true the Type <paramref name="t"/> would be allowed by the context e.g. it doesn't implement an <see cref="CannotHave"/> and it is compatible with the flow Type {T} etc
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public bool IsAllowable(Type t)
         {
             string whoCares;
             return IsAllowable(t, out whoCares);
         }
         
+        /// <inheritdoc/>
         public bool IsAllowable(Type t, out string reason)
         {
             //if t is a source
@@ -106,6 +125,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
             return forbiddenType == null;
         }
 
+        /// <inheritdoc/>
         public bool IsAllowable(IPipeline pipeline, out string reason)
         {
             foreach (var component in pipeline.PipelineComponents)
@@ -158,6 +178,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
             return null;
         }
 
+        /// <inheritdoc/>
         public bool IsAllowable(IPipeline pipeline)
         {
             string whocares;
@@ -165,18 +186,29 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
         }
 
 
-        //objects that we can initialize with IPipelineRequirement<>
+        /// <summary>
+        /// Initializes the given <paramref name="component"/> by calling all <see cref="IPipelineRequirement{T}"/> it implements with the appropriate
+        /// input object <paramref name="parameters"/>
+        /// </summary>
+        /// <param name="listener"></param>
+        /// <param name="component"></param>
+        /// <param name="parameters"></param>
         public void PreInitialize(IDataLoadEventListener listener, IDataFlowComponent<T> component, params object[] parameters)
         {
             PreInitializeComponentWithAllObjects(listener, component, parameters);
         }
+
+        /// <summary>
+        /// Initializes the given <paramref name="component"/> by calling all <see cref="IPipelineRequirement{T}"/> it implements with the appropriate
+        /// input object <paramref name="parameters"/>
+        /// </summary>
         public void PreInitialize(IDataLoadEventListener listener, IDataFlowSource<T> component, params object[] parameters)
         {
             PreInitializeComponentWithAllObjects(listener, component, parameters);
         }
 
                
-        protected void PreInitializeComponentWithAllObjects(IDataLoadEventListener listener, object component, params object[] parameters)
+        private void PreInitializeComponentWithAllObjects(IDataLoadEventListener listener, object component, params object[] parameters)
         {
             Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents = new Dictionary<object, Dictionary<MethodInfo, object>>();
 
@@ -222,7 +254,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
                     );
         }
 
-        protected Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, object component, object value, Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents)
+        private Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, object component, object value, Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents)
         {
             var compatibleInterfaces = component.GetType()
                 .GetInterfaces().Where(i => 
@@ -260,6 +292,7 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
             return null;
         }
 
+        /// <inheritdoc/>
         public void PreInitializeGeneric(IDataLoadEventListener listener, object component, params object[] initializationObjects)
         {
             if(component is IDataFlowSource<T>)
@@ -273,25 +306,8 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
                     GetFullName(typeof (T)));
         }
 
-        public string GetHumanReadableDescription()
-        {
-            StringBuilder toReturn = new StringBuilder();
-
-            toReturn.Append("Flow is of type " + GetFullName(typeof(T)));
-
-            if (MustHaveSource != null)
-                toReturn.Append(", from Source " + GetFullName(MustHaveSource));
-
-            if (MustHaveDestination != null)
-                toReturn.Append(", to Destination " + GetFullName(MustHaveDestination));
-
-            if (CannotHave.Any())
-                toReturn.Append(" (Forbidden Types Are:" + string.Join(",", CannotHave.Select(GetFullName)) + ")");
-
-            return toReturn.ToString();
-        }
-
-        static string GetFullName(Type t)
+      
+        private static string GetFullName(Type t)
         {
             if (!t.IsGenericType)
                 return t.Name;
@@ -310,11 +326,13 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
             return sb.ToString();
         }
 
+        /// <inheritdoc/>
         public IEnumerable<Type> GetIPipelineRequirementsForType(Type t)
         {
             return t.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPipelineRequirement<>)).Select(r=>r.GetGenericArguments()[0]);
         }
 
+        /// <inheritdoc/>
         public Type GetFlowType()
         {
             return typeof (T);

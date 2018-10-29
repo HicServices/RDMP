@@ -7,6 +7,10 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions
     /// </summary>
     public class MultipleMatchingImplmentationException : Exception
     {
+        /// <summary>
+        /// Creates a new Exception with the provided message
+        /// </summary>
+        /// <param name="s"></param>
         public MultipleMatchingImplmentationException(string s) : base (s)
         {
         }

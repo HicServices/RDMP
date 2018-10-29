@@ -19,9 +19,13 @@ namespace CatalogueLibrary.DataFlowPipeline.Events
         /// </summary>
         public IDataFlowPipelineEngine PipelineEngine { get; private set; }
 
-        public PipelineEngineEventArgs(IDataFlowPipelineEngine p)
+        /// <summary>
+        /// Describes an event happening on <paramref name="sender"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        public PipelineEngineEventArgs(IDataFlowPipelineEngine sender)
         {
-            PipelineEngine = p;
+            PipelineEngine = sender;
         }
     }
 }

@@ -11,6 +11,12 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
     /// <typeparam name="T"></typeparam>
     public class DataFlowPipelineContextFactory<T>
     {
+        /// <summary>
+        /// Creates a new <see cref="DataFlowPipelineContext{T}"/> set up with appropriate <see cref="DataFlowPipelineContext{T}.CannotHave"/> /
+        /// <see cref="DataFlowPipelineContext{T}.MustHaveSource"/> etc for the given <paramref name="flags"/>.
+        /// </summary>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public DataFlowPipelineContext<T> Create(PipelineUsage flags)
         {
             DataFlowPipelineContext<T> toReturn = new DataFlowPipelineContext<T>();
