@@ -185,13 +185,6 @@ namespace RDMPAutomationService.Runners
                     return null;
 
                 return sds.GetWorst();
-                //var worst = CheckResult.Warning;
-                //if (sds != null)
-                //    worst = sds.GetWorst();
-                //if (pipe != null && pipe.GetWorst() > worst)
-                //    worst = pipe.GetWorst();
-
-                //return worst;
             }
 
             if(_options.Command == CommandLineActivity.run)
@@ -215,22 +208,11 @@ namespace RDMPAutomationService.Runners
             if (_options.Command == CommandLineActivity.check)
             {
                 var g = GetSingleCheckerResults<GlobalExtractionChecker>();
-                //var pipe = GetSingleCheckerResults<DataFlowPipelineEngine<System.Data.DataTable>>(
-                //    df => df.SourceObject is ExecuteDatasetExtractionSource &&
-                //          (df.SourceObject as ExecuteDatasetExtractionSource).GlobalsRequest != null);
                 
                 if (g == null)
                     return null;
 
                 return g.GetWorst();
-
-                //var worst = CheckResult.Warning;
-                //if (g != null)
-                //    worst = g.GetWorst();
-                //if (pipe != null && pipe.GetWorst() > worst)
-                //    worst = pipe.GetWorst();
-
-                //return worst;
             }
 
             if (_options.Command == CommandLineActivity.run && _globalsCommand != null)
