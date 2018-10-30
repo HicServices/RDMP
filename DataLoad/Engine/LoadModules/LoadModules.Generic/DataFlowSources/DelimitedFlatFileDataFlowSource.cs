@@ -130,6 +130,13 @@ namespace LoadModules.Generic.DataFlowSources
         /// </summary>
         HashSet<int> _badLines = new HashSet<int>();
 
+        /// <summary>
+        /// Column headers that appear in the middle of the file (i.e. not trailing) but that don't have a header name.  These get thrown away
+        /// and they must never have data in them.  This lets you have a full blank column in the middle of your file e.g. if you have inserted
+        /// it via Excel
+        /// </summary>
+        private List<DataColumn> _unamedColumns = new List<DataColumn>();
+
         public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             try
@@ -169,12 +176,16 @@ namespace LoadModules.Generic.DataFlowSources
                                 duplicateHeaders.Add(header);
                                 continue;
                             }
-                        
-                        //override type
-                        if (ExplicitlyTypedColumns != null && ExplicitlyTypedColumns.ExplicitTypesCSharp.ContainsKey(h))
-                            _workingTable.Columns.Add(h, ExplicitlyTypedColumns.ExplicitTypesCSharp[h]);
+
+                        if (IsNull(h))
+                            _unamedColumns.Add(_workingTable.Columns.Add(h));
                         else
-                            _workingTable.Columns.Add(h);
+                            //override type
+                            if (ExplicitlyTypedColumns != null &&
+                                ExplicitlyTypedColumns.ExplicitTypesCSharp.ContainsKey(h))
+                                _workingTable.Columns.Add(h, ExplicitlyTypedColumns.ExplicitTypesCSharp[h]);
+                            else
+                                _workingTable.Columns.Add(h);
                     }
           
                     if (duplicateHeaders.Any())
@@ -228,7 +239,12 @@ namespace LoadModules.Generic.DataFlowSources
                     return null;//we are done
 
                 //rows were read so return a copy of the DataTable, because we will continually reload the same DataTable schema throughout the file we don't want to give up our reference to good headers incase someone mutlates it
-                return _workingTable.Copy();
+                var copy =  _workingTable.Copy();
+
+                foreach (DataColumn unamed in _unamedColumns)
+                    copy.Columns.Remove(unamed.ColumnName);
+                
+                return copy;
             }
             catch (Exception )
             {
@@ -556,7 +572,7 @@ namespace LoadModules.Generic.DataFlowSources
             else
             {
                 //user has some specific headers he wants to override with
-                _headers = ForceHeaders.Split(new[] { Separator }, StringSplitOptions.RemoveEmptyEntries);
+                _headers = ForceHeaders.Split(new[] { Separator },StringSplitOptions.None);
                 _reader.Configuration.HasHeaderRecord = false;
             }
 
@@ -714,7 +730,6 @@ namespace LoadModules.Generic.DataFlowSources
                 
                 _lineNumberBatch++;
             }
-
         }
 
         private bool IsNull(string s)

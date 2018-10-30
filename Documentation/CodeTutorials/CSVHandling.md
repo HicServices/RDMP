@@ -8,6 +8,7 @@
 	* [Blank Lines](#blank-lines)
 	* [Null Values](#null-values)
 	* [Trailing Nulls](#trailing-nulls)
+	* [Empty Headers](#empty-headers)
 1. [Resolved According To Strategy](#resolved-according-to-strategy)
 	* [Empty Files](#empty-files)
 1. [Unresolveable](#unresolveable)
@@ -87,6 +88,21 @@ CHI ,StudyID,Date,,
 0101010101,5,2001-01-05
 ```
 _TrailingNulls_InHeader_
+
+### Empty Columns
+Sometimes a CSV file will have an entirely null column in the middle.  This can occur if you open a CSV in excel and insert a row or you have two 'tables' side by side in the CSV with a blank line separator.  In this situation RDMP will expect the unamed column to be null/empty for all cells and it will ignore it.
+
+```
+CHI ,,StudyID,Date
+0101010101,,5,2001-01-05
+0101010101,,5,2001-01-05
+0101010101,,5,2001-01-05
+0101010101,,5,2001-01-05
+```
+_NullHeader_InMiddleOfColumns_
+
+
+## Resolved According To Strategy
 
 ### Empty Files
 The `ThrowOnEmptyFiles` setting determines behaviour if a file empty.  True will throw an Exception (error), False will skip the file.
