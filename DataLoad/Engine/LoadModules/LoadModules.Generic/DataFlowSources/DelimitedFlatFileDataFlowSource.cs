@@ -76,9 +76,45 @@ namespace LoadModules.Generic.DataFlowSources
         [DemandsInitialization("Bad Data handling strategy")]
         public BadDataHandlingStrategy BadDataHandlingStrategy { get; set; }
 
+        /// <summary>
+        /// The database table we are trying to load
+        /// </summary>
         private DataTable _workingTable;
 
+        /// <summary>
+        /// File we are trying to load
+        /// </summary>
+        private FlatFileToLoad _fileToLoad;
+
+        /// <summary>
+        /// File where we put error rows
+        /// </summary>
         public FileInfo DivertErrorsFile;
+
+        /// <summary>
+        /// The Headers found in the file / overridden by ForceHeaders
+        /// </summary>
+        private string[] _headers = null;
+
+        private bool _haveComplainedAboutColumnMismatch = false;
+
+        /// <summary>
+        /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty
+        /// </summary>
+        private long _bufferOverrunsWhereColumnValueWasBlank = 0;
+
+        //things we know we definetly cannot load!
+        private string[] _prohibitedExtensions = 
+        {
+            ".xls",".xlsx",".doc",".docx"
+        };
+
+        //used to advise user if he has selected the wrong separator
+        private string[] _commonSeparators = new[] { "|", ",", "    ", "#" };
+        private string _separator;
+
+        private int _lineNumberBatch;
+        HashSet<int> _badLines = new HashSet<int>();
 
         public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -332,7 +368,6 @@ namespace LoadModules.Generic.DataFlowSources
         protected void OpenFile(FileInfo fileToLoad)
         {
             _dataAvailable = true;
-            _lineNumberTotal = 0;
             _lineNumberBatch = 0;
 
             //if it is blank or null (although tab is allowed)
@@ -345,18 +380,15 @@ namespace LoadModules.Generic.DataFlowSources
                 Delimiter = Separator,
                 HasHeaderRecord = string.IsNullOrWhiteSpace(ForceHeaders),
                 ShouldSkipRecord = ShouldSkipRecord,
-                DetectColumnCountChanges = true,
                 BadDataFound = BadDataFound,
                 ReadingExceptionOccurred = ReadingExceptionOccurred
             });
 
-            
-            
             _reader.Configuration.IgnoreBlankLines = IgnoreBlankLines;
             _reader.Configuration.IgnoreQuotes = IgnoreQuotes;
         }
 
-
+        
         private void ReadingExceptionOccurred(CsvHelperException obj)
         {
             switch (BadDataHandlingStrategy)
@@ -364,7 +396,7 @@ namespace LoadModules.Generic.DataFlowSources
                 case BadDataHandlingStrategy.IgnoreRows:
                     _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on line " + obj.ReadingContext.RawRow,obj));
                     //move to next line
-                    _reader.Read();
+                    _badLines.Add(obj.ReadingContext.RawRow);
 
                     break;
                 case BadDataHandlingStrategy.DivertRows:
@@ -388,7 +420,7 @@ namespace LoadModules.Generic.DataFlowSources
                     _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on line " + obj.RawRow));
                     
                     //move to next line
-                    _reader.Read();
+                    _badLines.Add(obj.RawRow);
 
                     break;
                 case BadDataHandlingStrategy.DivertRows:
@@ -420,17 +452,15 @@ namespace LoadModules.Generic.DataFlowSources
             File.AppendAllText(DivertErrorsFile.FullName, context.RawRecord);
 
             //move to next line
-            _reader.Read();
+            _badLines.Add(context.RawRow);
         }
 
         private bool ShouldSkipRecord(string[] strings)
         {
-            if (_lineNumberTotal == 0 //first line of file
+            if (_reader.Context.RawRow == 1 //first line of file
                 && !string.IsNullOrWhiteSpace(ForceHeaders) //and we are forcing headers
                 && ForceHeadersReplacesFirstLineInFile) //and those headers replace the first line of the file
             {
-                _lineNumberTotal ++;
-                
                 //create an ascii art representation of the headers being replaced in the format
                 //[0]MySensibleCol>>>My Silly Coll#
                 StringBuilder asciiArt = new StringBuilder();
@@ -458,10 +488,6 @@ namespace LoadModules.Generic.DataFlowSources
             return false;
         }
 
-        private FlatFileToLoad _fileToLoad;
-
-        private string[] _headers = null;
-
         protected int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int batchSize)
         {
             if (!_dataAvailable)
@@ -475,15 +501,13 @@ namespace LoadModules.Generic.DataFlowSources
 
             while (_dataAvailable = _reader.Read()) //while we can read data -- also record whether the data was exhausted by this Read() because  CSVReader blows up if you ask it to Read() after Read() has already returned a false once
             {
-                //If we ReadHeader it means we have already called Read
-                _readerReadAlreadyCalled = false;
-
+                //if there is bad data on the current row just read the next
+                if (_badLines.Contains(_reader.Context.RawRow))
+                    continue;
+                
                 _lineNumberBatch++;
-                _lineNumberTotal++;
-
-                DataRow currentRow = dt.Rows.Add();
-
-                FillUpDataTable(dt, _reader.Context.Record, _reader.Parser.Context.RawRow, currentRow, _headers);
+                
+                FillUpDataTable(dt, _reader.Context.Record, _headers);
 
                 if (!_dataAvailable)
                     break;
@@ -501,7 +525,6 @@ namespace LoadModules.Generic.DataFlowSources
         {
             if (string.IsNullOrWhiteSpace(ForceHeaders))
             {
-                _readerReadAlreadyCalled = true;
                 _reader.Read();
 
                 //get headers from first line of the file
@@ -545,37 +568,21 @@ namespace LoadModules.Generic.DataFlowSources
         }
         
 
-        private bool _haveComplainedAboutColumnMismatch = false;
-        /// <summary>
-        /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty
-        /// </summary>
-        private long _bufferOverrunsWhereColumnValueWasBlank = 0;
-
-        //things we know we definetly cannot load!
-        private string[] _prohibitedExtensions = 
-        {
-            ".xls",".xlsx",".doc",".docx"
-        };
-
-        //used to advise user if he has selected the wrong separator
-        private string[] _commonSeparators = new []{"|",",","    ","#"};
-        private string _separator;
-        
-        private int _lineNumberTotal = 0;
-        private int _lineNumberBatch;
-        private bool _readerReadAlreadyCalled;
 
 
-        private void FillUpDataTable(DataTable dt, string[] splitUpInputLine, int lineNumber, DataRow currentRow, string[] headers)
+        private void FillUpDataTable(DataTable dt, string[] splitUpInputLine, string[] headers)
         {
             int headerCount = headers.Count(h => !string.IsNullOrWhiteSpace(h));
+            
             //if the number of not empty headers doesn't match the headers in the data table
             if (dt.Columns.Count != headerCount)
                 if (!_haveComplainedAboutColumnMismatch)
                 {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Flat file '" + _fileToLoad.File.Name + "' line number '" + lineNumber + "' had  " + headerCount + " columns while the destination DataTable had " + dt.Columns.Count + " columns.  This message apperas only once per file"));
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Flat file '" + _fileToLoad.File.Name + "' line number '" + _reader.Context.RawRow + "' had  " + headerCount + " columns while the destination DataTable had " + dt.Columns.Count + " columns.  This message apperas only once per file"));
                     _haveComplainedAboutColumnMismatch = true;
                 }
+
+            Dictionary<string, object> rowValues = new Dictionary<string, object>();
 
             bool haveIncremented_bufferOverrunsWhereColumnValueWasBlank = false;
             for (int i = 0; i < splitUpInputLine.Length; i++)
@@ -593,18 +600,22 @@ namespace LoadModules.Generic.DataFlowSources
                         continue; //do not bother buffer overruning with null whitespace stuff
                     }
                     else
-                        throw new FileLoadException("Buffer overrun on line " + lineNumber + " of file '" + dt.TableName + "', it has too many columns (expected " + headers.Length + " columns but line had " + splitUpInputLine.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : ""));
+                    {
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Buffer overrun on line " + _reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + headers.Length + " columns but line had " + splitUpInputLine.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
+                        BadDataFound(_reader.Context);
+                        break;
+                    }
 
                 //its an empty header, dont bother populating it
                 if (string.IsNullOrWhiteSpace(headers[i]))
                     if (!string.IsNullOrWhiteSpace(splitUpInputLine[i]))
-                        throw new FileLoadException("The header at index " + i + " in flat file '" +dt.TableName+ "' had no name but there was a value in the data column (on Line number " + lineNumber + ")");
+                        throw new FileLoadException("The header at index " + i + " in flat file '" +dt.TableName+ "' had no name but there was a value in the data column (on Line number " + _reader.Context.RawRow + ")");
                     else
                         continue;
 
                 //sometimes flat files have ,NULL,NULL,"bob" in instead of ,,"bob"
                 if (string.IsNullOrWhiteSpace(splitUpInputLine[i]) || splitUpInputLine[i].ToUpper().Equals("NULL"))
-                    currentRow[headers[i]] = DBNull.Value;
+                    rowValues.Add(headers[i], DBNull.Value);
                 else
                 {
                     object hackedValue = HackValueReadFromFile(splitUpInputLine[i]);
@@ -635,15 +646,23 @@ namespace LoadModules.Generic.DataFlowSources
                         }
                         //make it an int because apparently C# is too stupid to convert "1" into a bool but is smart enough to turn 1 into a bool.... seriously?!!?
 
-                        currentRow[headers[i]] = Convert.ChangeType(hackedValue, dt.Columns[headers[i]].DataType);
+                        rowValues.Add(headers[i], Convert.ChangeType(hackedValue, dt.Columns[headers[i]].DataType));
                         //convert to correct datatype (datatype was setup in SetupTypes)
                     }
                     catch (Exception e)
                     {
-                        throw new FileLoadException("Error reading file '" + dt.TableName + "'.  Problem loading value " + splitUpInputLine[i] + " into data table (on Line number " + lineNumber + ") the header we were trying to populate was " + _headers[i] + " and was of datatype " + dt.Columns[headers[i]].DataType, e);
+                        throw new FileLoadException("Error reading file '" + dt.TableName + "'.  Problem loading value " + splitUpInputLine[i] + " into data table (on Line number " + _reader.Context.RawRow + ") the header we were trying to populate was " + _headers[i] + " and was of datatype " + dt.Columns[headers[i]].DataType, e);
                     }
                 }
             }
+
+            if(!_badLines.Contains(_reader.Context.RawRow))
+            {
+                DataRow currentRow = dt.Rows.Add();
+                foreach (KeyValuePair<string, object> kvp in rowValues)
+                    currentRow[kvp.Key] = kvp.Value;
+            }
+
         }
         public void PreInitialize(FlatFileToLoad value, IDataLoadEventListener listener)
         {

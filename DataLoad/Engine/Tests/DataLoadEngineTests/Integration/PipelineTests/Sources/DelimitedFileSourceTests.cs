@@ -19,7 +19,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
     {
         private string filename;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void CreateTestFile()
         {
             filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "DelimitedFileSourceTests.txt");
@@ -134,7 +134,6 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
                 File.Delete(filename);
 
             StringBuilder sb = new StringBuilder();
-
             sb.AppendLine("CHI,StudyID,Date");
             sb.AppendLine("0101010101,5,2001-01-05");
             sb.AppendLine("0101010101,5,2001-01-05");
@@ -154,32 +153,142 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
             source.StronglyTypeInput = true;//makes the source interpret the file types properly
             source.BadDataHandlingStrategy = strategy;
-
-            switch (strategy)
+            try
             {
-                case BadDataHandlingStrategy.ThrowException:
-                    var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
-                    StringAssert.Contains("line 4",ex.Message);
-                    break;
-                case BadDataHandlingStrategy.IgnoreRows:
-                    var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
-                    Assert.IsNotNull(dt);
+                switch (strategy)
+                {
+                    case BadDataHandlingStrategy.ThrowException:
+                        var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                        StringAssert.Contains("line 4",ex.Message);
+                        break;
+                    case BadDataHandlingStrategy.IgnoreRows:
+                        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
+                        Assert.IsNotNull(dt);
 
-                    Assert.AreEqual(4,dt.Rows.Count);
-                    break;
-                case BadDataHandlingStrategy.DivertRows:
-                    var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-                    Assert.AreEqual(4, dt2.Rows.Count);
+                        Assert.AreEqual(4,dt.Rows.Count);
+                        break;
+                    case BadDataHandlingStrategy.DivertRows:
+                        var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                        Assert.AreEqual(4, dt2.Rows.Count);
 
-                    Assert.IsNotNull(source.DivertErrorsFile);
+                        Assert.IsNotNull(source.DivertErrorsFile);
 
-                    Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n",File.ReadAllText(source.DivertErrorsFile.FullName));
+                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n",File.ReadAllText(source.DivertErrorsFile.FullName));
 
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("strategy");
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("strategy");
+                }
             }
-            source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);    
+            }
+            
+        }
+
+        [TestCase(BadDataHandlingStrategy.DivertRows)]
+        [TestCase(BadDataHandlingStrategy.IgnoreRows)]
+        [TestCase(BadDataHandlingStrategy.ThrowException)]
+        public void BadDataTestExtraColumns_ErrorIsOnLastLine(BadDataHandlingStrategy strategy)
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("CHI,StudyID,Date");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05,fish,watafak");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+
+            source.MaxBatchSize = 10000;
+
+            source.StronglyTypeInput = true;//makes the source interpret the file types properly
+            source.BadDataHandlingStrategy = strategy;
+            try
+            {
+                switch (strategy)
+                {
+                    case BadDataHandlingStrategy.ThrowException:
+                        var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                        StringAssert.Contains("line 6", ex.Message);
+                        break;
+                    case BadDataHandlingStrategy.IgnoreRows:
+                        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                        Assert.IsNotNull(dt);
+
+                        Assert.AreEqual(4, dt.Rows.Count);
+                        break;
+                    case BadDataHandlingStrategy.DivertRows:
+                        var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                        Assert.AreEqual(4, dt2.Rows.Count);
+
+                        Assert.IsNotNull(source.DivertErrorsFile);
+
+                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n", File.ReadAllText(source.DivertErrorsFile.FullName));
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("strategy");
+                }
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }   
+        }
+
+        [Test]
+        public void NewLinesInFile()
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("CHI,StudyID,Date");
+            sb.AppendLine(@"0101010101,""5
+    The first"",2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+
+            source.MaxBatchSize = 10000;
+            source.StronglyTypeInput = true;//makes the source interpret the file types properly
+            
+            try
+            {
+                var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                Assert.IsNotNull(dt);
+                Assert.AreEqual(5, dt.Rows.Count);
+                Assert.AreEqual(@"5
+    The first",dt.Rows[0][1]);
+                      
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }
+
         }
 
         [Test]
