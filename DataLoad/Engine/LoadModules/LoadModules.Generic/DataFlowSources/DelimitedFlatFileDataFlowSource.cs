@@ -565,10 +565,18 @@ namespace LoadModules.Generic.DataFlowSources
                 if (!string.IsNullOrWhiteSpace(_headers[i]))
                     _headers[i] =_headers[i].Trim();
 
+            //throw away trailing null headers
+            var trailingNullHeaders = _headers.Reverse().TakeWhile(IsNull).Count();
+
+            if (trailingNullHeaders > 0)
+                _headers = _headers.Take(_headers.Length - trailingNullHeaders).ToArray();
+
             //and maybe also help them out with a bit of sanity fixing
             if(MakeHeaderNamesSane)
                 for (int i = 0; i < _headers.Length; i++)
                     _headers[i] = QuerySyntaxHelper.MakeHeaderNameSane(_headers[i]);
+
+            
 
             return true;
         }
@@ -602,10 +610,10 @@ namespace LoadModules.Generic.DataFlowSources
         private void FillUpDataTable(DataTable dt, string[] splitUpInputLine, string[] headers)
         {
             //skip the blank lines
-            if(splitUpInputLine.Length == 0 || splitUpInputLine.All(string.IsNullOrWhiteSpace))
+            if (splitUpInputLine.Length == 0 || splitUpInputLine.All(IsNull))
                 return;
 
-            int headerCount = headers.Count(h => !string.IsNullOrWhiteSpace(h));
+            int headerCount = headers.Count(h => !IsNull(h));
             
             //if the number of not empty headers doesn't match the headers in the data table
             if (dt.Columns.Count != headerCount)
@@ -631,7 +639,7 @@ namespace LoadModules.Generic.DataFlowSources
             {
                 //about to do a buffer overrun
                 if (i >= headers.Length)
-                    if (string.IsNullOrWhiteSpace(splitUpInputLine[i]))
+                    if (IsNull(splitUpInputLine[i]))
                     {
                         if (!haveIncremented_bufferOverrunsWhereColumnValueWasBlank)
                         {
@@ -649,14 +657,14 @@ namespace LoadModules.Generic.DataFlowSources
                     }
 
                 //its an empty header, dont bother populating it
-                if (string.IsNullOrWhiteSpace(headers[i]))
-                    if (!string.IsNullOrWhiteSpace(splitUpInputLine[i]))
+                if (IsNull(headers[i]))
+                    if (!IsNull(splitUpInputLine[i]))
                         throw new FileLoadException("The header at index " + i + " in flat file '" +dt.TableName+ "' had no name but there was a value in the data column (on Line number " + _reader.Context.RawRow + ")");
                     else
                         continue;
 
                 //sometimes flat files have ,NULL,NULL,"bob" in instead of ,,"bob"
-                if (string.IsNullOrWhiteSpace(splitUpInputLine[i]) || splitUpInputLine[i].ToUpper().Equals("NULL"))
+                if (IsNull(splitUpInputLine[i]))
                     rowValues.Add(headers[i], DBNull.Value);
                 else
                 {
@@ -708,6 +716,12 @@ namespace LoadModules.Generic.DataFlowSources
             }
 
         }
+
+        private bool IsNull(string s)
+        {
+            return string.IsNullOrWhiteSpace(s) || s.Trim().Equals("NULL", StringComparison.CurrentCultureIgnoreCase);
+        }
+
         public void PreInitialize(FlatFileToLoad value, IDataLoadEventListener listener)
         {
             //we have been given a new file we no longer know the headers.

@@ -6,6 +6,8 @@
 1. [Corrupt Files](#corrupt-files)
 1. [Resolved Automatically](#resolved-automatically)
 	* [Blank Lines](#blank-lines)
+	* [Null Values](#null-values)
+	* [Trailing Nulls](#trailing-nulls)
 1. [Resolved According To Strategy](#resolved-according-to-strategy)
 	* [Empty Files](#empty-files)
 1. [Unresolveable](#unresolveable)
@@ -56,11 +58,35 @@ Herbert,2002-01-01,Hey
 ```
 *NewLineInFile_RespectedWhenQuoted*
 
+### Null Values
+There are many ways that a database null can be represented in a CSV file.  The most common are to skip the value (e.g. `Bob,,32`) or use the value null (e.g. `Bob,null,32`).  
+
+Any cell value that is blank, whitespace or 'null' (ignoring capitalisation / trim) will be treated as `DBNull.Value` and enter the database as a null
+
+The unit test for this behaviour is _NullCellValues_ToDbNull_
+
+### Trailing nulls
+Sometimes one or more rows of a CSV will have trailing commas (or null values).  This usually happens when making a change in Microsoft Excel and saving as CSV.  An example is shown below.  In such a case the trailing null values are ignored.
+
+```
+CHI ,StudyID,Date
+0101010101,5,2001-01-05
+0101010101,5,2001-01-05,,  ,null,
+0101010101,5,2001-01-05
+0101010101,5,2001-01-05
+```
+_TrailingNulls_InRows_
 
 
-## Resolved According To Strategy
-
-The `BadDataHandlingStrategy` determines the behaviour of `DelimitedFlatFileDataFlowSource` when it encounters bad rows / bad data in the file and the problem could potentially be resolved.
+This also applies to trailing nulls in the header of the file
+```
+CHI ,StudyID,Date,,
+0101010101,5,2001-01-05
+0101010101,5,2001-01-05
+0101010101,5,2001-01-05
+0101010101,5,2001-01-05
+```
+_TrailingNulls_InHeader_
 
 ### Empty Files
 The `ThrowOnEmptyFiles` setting determines behaviour if a file empty.  True will throw an Exception (error), False will skip the file.
