@@ -1,6 +1,7 @@
 # Frequently Asked Questions
 ## Table of contents
 1. [Can RDMP Load UnTyped Data?](#untyped)
+1. [How does RDMP deal with Csv/text files?](#csv)
 1. [How does RDMP handle / translate untyped, C# and Database Types](#typetranslation)
 1. [How do I stop some nodes being reordered in RDMPCollectionUIs?](#reorder)
 2. [How do I add new nodes to RDMPCollectionUIs?](#addNewNodes)
@@ -14,6 +15,10 @@
 <a name="untyped"></a>
 ### Can RDMP Load UnTyped Data?
 Yes, [determining database types from untyped data (e.g. CSV)](./DataTableUpload.md) is a core feature.
+
+<a name="csv"></a>
+### How does RDMP deal with Csv/text files?
+RDMP supports files delimited by any character (tab separated, pipe separated, comma separated etc).  Since [invalid formatting is a common problem with ETL of CSV files RDMP has several fault tolernace features](./CSVHandling.md).
 
 <a name="typetranslation"></a>
 ### How does RDMP handle / translate untyped, C# and Database Types?

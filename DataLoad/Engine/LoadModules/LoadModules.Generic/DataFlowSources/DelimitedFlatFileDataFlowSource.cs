@@ -31,7 +31,6 @@ namespace LoadModules.Generic.DataFlowSources
         private bool _dataAvailable;
         private IDataLoadEventListener _listener;
 
-        
         public const string ForceHeaders_DemandDescription = "Forces specific headers to be interpreted for columns, this is a string that will effectively be appended to the front of the file when it is read.  WARNING: Use this argument only when the file does not have any headers (Note that you must use the appropriate separator for your file)";
         public const string ForceHeadersReplacesFirstLineInFile_Description = "Only used when ForceHeaders is specified, if true then the line will replace the first line of the file.  If left as false (default) then the line will be appended to the file.  Use true if you want to replace existing headers in the file and false if hte file doesn't have any headers in it at all.";
         public const string IgnoreQuotes_DemandDescription = "True if the parser should treat double quotes as normal characters";
@@ -76,6 +75,9 @@ namespace LoadModules.Generic.DataFlowSources
         [DemandsInitialization("Bad Data handling strategy")]
         public BadDataHandlingStrategy BadDataHandlingStrategy { get; set; }
 
+        [DemandsInitialization(@"Determines system behaviour when a file is empty or has only a header row")]
+        public bool ThrowOnEmptyFiles { get; set; }
+
         /// <summary>
         /// The database table we are trying to load
         /// </summary>
@@ -103,17 +105,29 @@ namespace LoadModules.Generic.DataFlowSources
         /// </summary>
         private long _bufferOverrunsWhereColumnValueWasBlank = 0;
 
-        //things we know we definetly cannot load!
+        /// <summary>
+        /// things we know we definetly cannot load!
+        /// </summary>
         private string[] _prohibitedExtensions = 
         {
             ".xls",".xlsx",".doc",".docx"
         };
 
-        //used to advise user if he has selected the wrong separator
+        /// <summary>
+        /// used to advise user if he has selected the wrong separator
+        /// </summary>
         private string[] _commonSeparators = new[] { "|", ",", "    ", "#" };
         private string _separator;
 
+        /// <summary>
+        /// Used to split the records read into chunks to avoid running out of memory
+        /// </summary>
         private int _lineNumberBatch;
+
+        /// <summary>
+        /// All line numbers of the source file being read that could not be processed.  Allows BadDataFound etc to be called multiple times without skipping
+        /// records by accident.
+        /// </summary>
         HashSet<int> _badLines = new HashSet<int>();
 
         public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -129,7 +143,8 @@ namespace LoadModules.Generic.DataFlowSources
                         "_fileToLoad was not set, it is supposed to be set because of IPipelineRequirement<FlatFileToLoad> - maybe this PreInitialize method was not called?");
 
                 if (_headers == null)
-                    LoadHeaders();
+                    if (!LoadHeaders()) //load headers
+                        return null; //if load headers failed but didn't throw then we have an empty file
 
                 //if we do not yet have a data table to load
                 if (_workingTable == null)
@@ -190,6 +205,9 @@ namespace LoadModules.Generic.DataFlowSources
 
                     if (StronglyTypeInput)
                         StronglyTypeWorkingTable();
+
+                    if (rowsRead == 0 && ThrowOnEmptyFiles)
+                        FileIsEmpty();
                 }
                 else
                 {
@@ -255,7 +273,7 @@ namespace LoadModules.Generic.DataFlowSources
 
         }
 
-        private void LoadHeaders()
+        private bool LoadHeaders()
         {
             if(_headers != null)
                 throw new Exception("Headers have already been loaded from the flat file");
@@ -264,7 +282,7 @@ namespace LoadModules.Generic.DataFlowSources
             OpenFile(_fileToLoad.File);
 
             //get the headers - either ForceHeaders or the ones read from the first line of the file
-            GetHeadersFromFile();
+            return GetHeadersFromFile();
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -364,7 +382,7 @@ namespace LoadModules.Generic.DataFlowSources
             else
                 notifier.OnCheckPerformed(new CheckEventArgs("Unexpected file extension '"+actualExtension+"' (expected " + expectedExtension + ") ", CheckResult.Warning));
         }
-
+        
         protected void OpenFile(FileInfo fileToLoad)
         {
             _dataAvailable = true;
@@ -505,8 +523,6 @@ namespace LoadModules.Generic.DataFlowSources
                 if (_badLines.Contains(_reader.Context.RawRow))
                     continue;
                 
-                _lineNumberBatch++;
-                
                 FillUpDataTable(dt, _reader.Context.Record, _headers);
 
                 if (!_dataAvailable)
@@ -521,12 +537,18 @@ namespace LoadModules.Generic.DataFlowSources
 
         }
 
-        protected void GetHeadersFromFile()
+        protected bool GetHeadersFromFile()
         {
             if (string.IsNullOrWhiteSpace(ForceHeaders))
             {
-                _reader.Read();
+                bool empty = !_reader.Read();
 
+                if (empty)
+                {
+                    FileIsEmpty();
+                    return false;
+                }
+                    
                 //get headers from first line of the file
                 _reader.ReadHeader();
                 _headers = _reader.Context.HeaderRecord;
@@ -547,6 +569,16 @@ namespace LoadModules.Generic.DataFlowSources
             if(MakeHeaderNamesSane)
                 for (int i = 0; i < _headers.Length; i++)
                     _headers[i] = QuerySyntaxHelper.MakeHeaderNameSane(_headers[i]);
+
+            return true;
+        }
+
+        private void FileIsEmpty()
+        {
+            if (ThrowOnEmptyFiles)
+                throw new FlatFileLoadException("File " + _fileToLoad + " is empty");
+            
+            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "File " + _fileToLoad + " is empty"));
         }
 
         public static string MakeHeaderUnique(string newColumnName, DataColumnCollection columnsSoFar, IDataLoadEventListener listener, object sender)
@@ -567,11 +599,12 @@ namespace LoadModules.Generic.DataFlowSources
             return newName;
         }
         
-
-
-
         private void FillUpDataTable(DataTable dt, string[] splitUpInputLine, string[] headers)
         {
+            //skip the blank lines
+            if(splitUpInputLine.Length == 0 || splitUpInputLine.All(string.IsNullOrWhiteSpace))
+                return;
+
             int headerCount = headers.Count(h => !string.IsNullOrWhiteSpace(h));
             
             //if the number of not empty headers doesn't match the headers in the data table
@@ -584,7 +617,16 @@ namespace LoadModules.Generic.DataFlowSources
 
             Dictionary<string, object> rowValues = new Dictionary<string, object>();
 
+            if (splitUpInputLine.Length < headerCount)
+            {
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Too few columns on line " + _reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + headers.Length + " columns but line had " + splitUpInputLine.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
+                BadDataFound(_reader.Context);
+                return;
+            }
+
             bool haveIncremented_bufferOverrunsWhereColumnValueWasBlank = false;
+
+
             for (int i = 0; i < splitUpInputLine.Length; i++)
             {
                 //about to do a buffer overrun
@@ -601,7 +643,7 @@ namespace LoadModules.Generic.DataFlowSources
                     }
                     else
                     {
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Buffer overrun on line " + _reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + headers.Length + " columns but line had " + splitUpInputLine.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Column mismatch on line " + _reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + headers.Length + " columns but line had " + splitUpInputLine.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
                         BadDataFound(_reader.Context);
                         break;
                     }
@@ -661,6 +703,8 @@ namespace LoadModules.Generic.DataFlowSources
                 DataRow currentRow = dt.Rows.Add();
                 foreach (KeyValuePair<string, object> kvp in rowValues)
                     currentRow[kvp.Key] = kvp.Value;
+                
+                _lineNumberBatch++;
             }
 
         }
