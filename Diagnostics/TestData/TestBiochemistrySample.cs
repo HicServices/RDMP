@@ -27,18 +27,18 @@ namespace Diagnostics.TestData
                 throw new Exception("Could not find embedded resource file " + toFind);
           
              
-            CsvReader r = new CsvReader(new StreamReader(lookup),new CsvConfiguration(){Delimiter =","});
+            CsvReader r = new CsvReader(new StreamReader(lookup),new Configuration(){Delimiter =","});
             
             
             lookupTable = new DataTable();
 
             r.Read();
-            foreach (string header in r.FieldHeaders)
+            foreach (string header in r.Context.HeaderRecord)
                 lookupTable.Columns.Add(header);
 
             do
             {
-                lookupTable.Rows.Add(r.CurrentRecord);
+                lookupTable.Rows.Add(r.GetRecord<string[]>());
             } while (r.Read());
              
             weightToRow = new Dictionary<int, int>();

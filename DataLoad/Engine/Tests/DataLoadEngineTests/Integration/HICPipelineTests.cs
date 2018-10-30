@@ -117,7 +117,6 @@ namespace DataLoadEngineTests.Integration
                     new Tuple<string, string, Type>("FilePattern", "1.csv", typeof (string)),
                     new Tuple<string, string, Type>("TableName", "TestData", typeof (string)),
                     new Tuple<string, string, Type>("ForceHeaders", null, typeof (string)),
-                    new Tuple<string, string, Type>("UnderReadBehaviour", "Ignore", typeof (BehaviourOnUnderReadType)),
                     new Tuple<string, string, Type>("IgnoreQuotes", null, typeof (bool)),
                     new Tuple<string, string, Type>("IgnoreBlankLines", null, typeof (bool)),
                     new Tuple<string, string, Type>("ForceHeadersReplacesFirstLineInFile", null, typeof (bool)),

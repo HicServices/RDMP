@@ -34,7 +34,6 @@ namespace LoadModules.Generic.DataFlowSources
         
         public const string ForceHeaders_DemandDescription = "Forces specific headers to be interpreted for columns, this is a string that will effectively be appended to the front of the file when it is read.  WARNING: Use this argument only when the file does not have any headers (Note that you must use the appropriate separator for your file)";
         public const string ForceHeadersReplacesFirstLineInFile_Description = "Only used when ForceHeaders is specified, if true then the line will replace the first line of the file.  If left as false (default) then the line will be appended to the file.  Use true if you want to replace existing headers in the file and false if hte file doesn't have any headers in it at all.";
-        public const string UnderReadBehaviour_DemandDescription = "Determines the systems behaviour when less cells are read in a row than the number of headers.  This usually occurs when there are newlines in the middle or records but can also occur when you use ForceHeaders with more headers than there are columns in the actual file.  Ignore will attempt commit the row anyway with the missing cells left as NULL, AppendNextLineToCurrentRow will attempt to create a complete record by reading more lines from the file until the matched number of headers are obtained";
         public const string IgnoreQuotes_DemandDescription = "True if the parser should treat double quotes as normal characters";
         public const string IgnoreBlankLines_DemandDescription = "True if the parser should skip over blank lines";
         public const string MakeHeaderNamesSane_DemandDescription = "True (recommended) if you want to fix columns that have crazy names e.g. 'my column #1' would become 'mycolumn1'";
@@ -52,9 +51,6 @@ namespace LoadModules.Generic.DataFlowSources
 
         [DemandsInitialization(ForceHeadersReplacesFirstLineInFile_Description)]
         public bool ForceHeadersReplacesFirstLineInFile { get; set; }
-
-        [DemandsInitialization(UnderReadBehaviour_DemandDescription)]
-        public BehaviourOnUnderReadType UnderReadBehaviour { get; set; }
 
         [DemandsInitialization(IgnoreQuotes_DemandDescription)]
         public bool IgnoreQuotes { get; set; }
@@ -77,7 +73,12 @@ namespace LoadModules.Generic.DataFlowSources
         [DemandsInitialization("A collection of column names that are expected to be found in the input file which you want to specify as explicit types (e.g. you load barcodes like 0110 and 1111 and want these all loaded as char(4) instead of int)")]
         public ExplicitTypingCollection ExplicitlyTypedColumns { get; set; }
 
+        [DemandsInitialization("Bad Data handling strategy")]
+        public BadDataHandlingStrategy BadDataHandlingStrategy { get; set; }
+
         private DataTable _workingTable;
+
+        public FileInfo DivertErrorsFile;
 
         public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -267,6 +268,7 @@ namespace LoadModules.Generic.DataFlowSources
                 _workingTable = null;
                 _reader = null;
                 _haveComplainedAboutColumnMismatch = false;
+                DivertErrorsFile = null;
 
                 return toReturn;
             }
@@ -338,16 +340,124 @@ namespace LoadModules.Generic.DataFlowSources
                 throw new Exception("Could not open file " + fileToLoad.FullName + " because the file Separator has not been set yet, make sure to set all relevant [DemandsInitialization] properties");
 
             StreamReader sr = new StreamReader(fileToLoad.FullName);
-            _reader = new CsvReader(sr, new CsvConfiguration() { Delimiter = Separator });
+            _reader = new CsvReader(sr, new Configuration()
+            {
+                Delimiter = Separator,
+                HasHeaderRecord = string.IsNullOrWhiteSpace(ForceHeaders),
+                ShouldSkipRecord = ShouldSkipRecord,
+                DetectColumnCountChanges = true,
+                BadDataFound = BadDataFound,
+                ReadingExceptionOccurred = ReadingExceptionOccurred
+            });
+
+            
             
             _reader.Configuration.IgnoreBlankLines = IgnoreBlankLines;
             _reader.Configuration.IgnoreQuotes = IgnoreQuotes;
         }
 
-        private bool _haveComplainedAboutUnderReadYet = false;
-        private bool _havesuccessfullyResolvedUnderReadAtLeastOnce = false;
-        private bool _performedOverReadByAccident = false;
-        private bool _haveDiscardedFirstLineInFileDueToReplacementHeaders = false;
+
+        private void ReadingExceptionOccurred(CsvHelperException obj)
+        {
+            switch (BadDataHandlingStrategy)
+            {
+                case BadDataHandlingStrategy.IgnoreRows:
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on line " + obj.ReadingContext.RawRow,obj));
+                    //move to next line
+                    _reader.Read();
+
+                    break;
+                case BadDataHandlingStrategy.DivertRows:
+
+                    DivertErrorRow(obj.ReadingContext,obj);
+                    break;
+
+                case BadDataHandlingStrategy.ThrowException:
+                    throw new FlatFileLoadException("Bad data found on line " + obj.ReadingContext.RawRow,obj);
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        private void BadDataFound(ReadingContext obj)
+        {
+            switch (BadDataHandlingStrategy)
+            {
+                case BadDataHandlingStrategy.IgnoreRows:
+                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on line " + obj.RawRow));
+                    
+                    //move to next line
+                    _reader.Read();
+
+                    break;
+                case BadDataHandlingStrategy.DivertRows:
+                    DivertErrorRow(obj, null);
+                    break;
+                
+                case BadDataHandlingStrategy.ThrowException:
+                    throw new FlatFileLoadException("Bad data found on line "+ obj.RawRow);
+
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void DivertErrorRow(ReadingContext context, Exception ex)
+        {
+            if (DivertErrorsFile == null)
+            {
+                DivertErrorsFile = new FileInfo(Path.Combine(_fileToLoad.File.Directory.FullName, Path.GetFileNameWithoutExtension(_fileToLoad.File.Name) + "_Errors.txt"));
+
+                //delete any old version
+                if (DivertErrorsFile.Exists)
+                    DivertErrorsFile.Delete();
+            }
+
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Diverting Error on line " + context.RawRow + " to '" + DivertErrorsFile.FullName + "'", ex));
+
+            File.AppendAllText(DivertErrorsFile.FullName, context.RawRecord);
+
+            //move to next line
+            _reader.Read();
+        }
+
+        private bool ShouldSkipRecord(string[] strings)
+        {
+            if (_lineNumberTotal == 0 //first line of file
+                && !string.IsNullOrWhiteSpace(ForceHeaders) //and we are forcing headers
+                && ForceHeadersReplacesFirstLineInFile) //and those headers replace the first line of the file
+            {
+                _lineNumberTotal ++;
+                
+                //create an ascii art representation of the headers being replaced in the format
+                //[0]MySensibleCol>>>My Silly Coll#
+                StringBuilder asciiArt = new StringBuilder();
+                for (int i = 0; i < _headers.Length; i++)
+                {
+                    asciiArt.Append("[" + i + "]" + _headers[i] + ">>>");
+                    asciiArt.AppendLine(i < strings.Length ? strings[i] : "???");
+                }
+
+                for (int i = _headers.Length; i < strings.Length; i++)
+                    asciiArt.AppendLine("[" + i + "]???>>>" + strings[i]);
+
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Your attacher has ForceHeaders and ForceHeadersReplacesFirstLineInFile=true, I will now tell you about the first line of data in the file that you skipped (and how it related to your forced headers).  Replacement headers are " + Environment.NewLine + Environment.NewLine + asciiArt));
+
+                if (strings.Length != _headers.Length)
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
+                
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Skipped first line of file because there are forced replacement headers, we discarded" + string.Join(",", strings)));
+                
+                //skip the line
+                return true;
+            }
+
+            //otherwise don't skip lines
+            return false;
+        }
+
         private FlatFileToLoad _fileToLoad;
 
         private string[] _headers = null;
@@ -362,104 +472,18 @@ namespace LoadModules.Generic.DataFlowSources
             
             _lineNumberBatch = 0;
 
-            while (
-                _performedOverReadByAccident //gets evaluated first - if we performed an overread when we were looking up the headers then dont do the reader.Read() -- works because C# will stop after it has evaluated the first half of the OR
-                ||
-                (_dataAvailable = _reader.Read())) //while we can read data -- also record whether the data was exhausted by this Read() because  CSVReader blows up if you ask it to Read() after Read() has already returned a false once
+
+            while (_dataAvailable = _reader.Read()) //while we can read data -- also record whether the data was exhausted by this Read() because  CSVReader blows up if you ask it to Read() after Read() has already returned a false once
             {
-                _performedOverReadByAccident = false;
+                //If we ReadHeader it means we have already called Read
+                _readerReadAlreadyCalled = false;
 
-                //if we are supposed to replace the existing headers with alternative ones
-                if (!_haveDiscardedFirstLineInFileDueToReplacementHeaders //if we have not already discarded the first line
-                    && !string.IsNullOrWhiteSpace(ForceHeaders)//and there are force headers for the file
-                    && ForceHeadersReplacesFirstLineInFile)//and the force headers are intended to replace the first line in the file
-                {
-                    _haveDiscardedFirstLineInFileDueToReplacementHeaders = true;//we have now discarded the first row
-
-                    string[] aboutToDiscardRow = GetFields(_reader);
-
-                    //create an ascii art representation of the headers being replaced in the format
-                    //[0]MySensibleCol>>>My Silly Coll#
-                    StringBuilder asciiArt = new StringBuilder();
-                    for (int i = 0; i < _headers.Length; i++)
-                    {
-                        asciiArt.Append("[" + i + "]" + _headers[i] + ">>>");
-                        asciiArt.AppendLine(i < aboutToDiscardRow.Length ? aboutToDiscardRow[i]: "???");
-                    }
-
-                    for (int i = _headers.Length; i < aboutToDiscardRow.Length; i++)
-                        asciiArt.AppendLine("[" + i + "]???>>>" + aboutToDiscardRow[i]);
-
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Your attacher has ForceHeaders and ForceHeadersReplacesFirstLineInFile=true, I will now tell you about the first line of data in the file that you skipped (and how it related to your forced headers).  Replacement headers are " + Environment.NewLine + Environment.NewLine + asciiArt));
-                    
-                    if(aboutToDiscardRow.Length != _headers.Length)
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
-
-                    if (!_reader.Read())
-                        throw new Exception("We were trying to skip the first line in the file because the user specified replacement headers but there was no subsequent data in the file! - does your file have 1 header row and no data in it?");
-                    else
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Skipped first line of file because there are forced replacement headers, we discarded" + string.Join(",", aboutToDiscardRow)));
-
-                }
-                
                 _lineNumberBatch++;
                 _lineNumberTotal++;
 
                 DataRow currentRow = dt.Rows.Add();
-                string[] fields = GetFields(_reader);
 
-                
-                //do not add empty lines to data table thankyou
-                if (!fields.Any())
-                    continue;
-
-                //We have under run, there are less values in the row of cells (array) than we expect in the headers list
-                if (fields.Length != _headers.Length)
-                {
-                    //complain to user
-                    if (!_haveComplainedAboutUnderReadYet)
-                    {
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "There were " + _headers.Length + " headers but the current line number " + _lineNumberTotal + " of the file has " + fields.Length + " cells in it, possibly there is a freetext field in the middle of the row.  Current under read handling behaviour is :" + UnderReadBehaviour));
-                        _haveComplainedAboutUnderReadYet = true;
-                    }
-
-                    //see what the user wants to do about this problem
-                    //if the user wants to resolve it by adding on further lines until (hopefully) the exact number of expected cells is found
-                    if (UnderReadBehaviour == BehaviourOnUnderReadType.AppendNextLineToCurrentRow && fields.Length < _headers.Length)
-                    {
-                        int subsequentLinesRead = 0;
-                        int problemLine = _reader.Parser.Row;
-
-                        //while we have not found enough cells to match the number of headers (exactly)
-                        while (fields.Length < _headers.Length)
-                        {
-                            //read the next row
-                            _dataAvailable = _reader.Read();
-
-                            //if there is no more data break
-                            if (!_dataAvailable)
-                                break;
-
-                            //add the next row as a concatenation of the current row (joining last and first elements together)
-                            fields = AppendNextLineToCurrentRow(fields, GetFields(_reader));
-                            subsequentLinesRead++;
-                        }
-
-                        if (fields.Length != _headers.Length)
-                            if (!_dataAvailable)
-                                throw new Exception("We were attempting to resolve a read underrun that originated on line number " + problemLine + " (line number " + _lineNumberTotal + " of batch) but the file ended while we were still reading lines out of the file (we read " + subsequentLinesRead + " subsequent line reads before Read() returned false)");
-                            else
-                                throw new Exception("We were attempting to resolve the mismatch in the number of cells read and the number of headers demanded by using BehaviourOnUnderReadType.AppendNextLineToCurrentRow but after appending " + subsequentLinesRead + " subsequent rows we ended up with " + fields.Length + " cells which exceedes the number of headers " + _headers.Length + " original problem line started on line number " + problemLine + "(line number " + _lineNumberTotal + ")");
-                        else
-                            if (!_havesuccessfullyResolvedUnderReadAtLeastOnce)
-                            {
-                                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Successfully resolved under read by joining values from the next " + subsequentLinesRead + " line(s) onto the current line, the new line has the same number of cell values " + fields.Length + " as the expected number of headers " + _headers.Length + " (note that this message will only be displayed once no matter how many future successfully resolved under reads are encountered.  Failures will still be reported)"));
-                                _havesuccessfullyResolvedUnderReadAtLeastOnce = true;
-                            }
-                    }
-                }
-
-                FillUpDataTable(dt, fields, _reader.Parser.Row, currentRow, _headers);
+                FillUpDataTable(dt, _reader.Context.Record, _reader.Parser.Context.RawRow, currentRow, _headers);
 
                 if (!_dataAvailable)
                     break;
@@ -477,12 +501,12 @@ namespace LoadModules.Generic.DataFlowSources
         {
             if (string.IsNullOrWhiteSpace(ForceHeaders))
             {
-                //get headers from first line of the file
+                _readerReadAlreadyCalled = true;
                 _reader.Read();
 
-                //reader.Read() also reads the first record! (like aswell as the headers) so if we used Read() to populate headers instead of say spontaneously inventing them then we will have to make sure not to move the CurrentRecord pointer down again when we start trying to read rows
-                _performedOverReadByAccident = true;
-                _headers = _reader.FieldHeaders;
+                //get headers from first line of the file
+                _reader.ReadHeader();
+                _headers = _reader.Context.HeaderRecord;
             }
             else
             {
@@ -520,60 +544,6 @@ namespace LoadModules.Generic.DataFlowSources
             return newName;
         }
         
-        /// <summary>
-        /// Trims the null elements off of the end of a reader.CurrentRecord array (e.g. sometimes you get "bob","frank",null,null,null -- usually occurs when you don't have any headers or have a newline in the middle of a row and are trying to resolve this
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        private string[] GetFields(CsvReader reader)
-        {
-            string[] currentRecord = reader.CurrentRecord;
-
-            //there are nulls
-            if (currentRecord.Any(e => e == null))
-            {
-                //nulls are permissable but must be all at the end of the array, these can all be safely dropped 
-                List<string> toReturn = new List<string>();
-
-                int i = 0;
-
-                //these should all be not null
-                for (; i < currentRecord.Length; i++)
-                    if (currentRecord[i] != null)
-                        toReturn.Add(currentRecord[i]);
-                    else
-                        break;
-
-                //these should all be null
-                for (; i < currentRecord.Length; i++)
-                    if (currentRecord[i] != null)
-                        throw new Exception(
-                            "Found null value in the middle of line elements array when calling GetFields, should not happen eh (we expect that when you find a null all the other elements in the array will be null also)");
-
-                //return the sub array (Where nulls have been trimmed off the end)
-                return toReturn.ToArray();
-            }
-
-            //there are no nulls
-            return currentRecord;
-        }
-
-        /// <summary>
-        /// Takes the existing array of elements, and appends the next array list into them (but here's the catch, it merges the last cell and the first cell of the two arrays together (separating them with " ").  This is intended for when users put random newlines in the middle of files they are trying to load.
-        /// </summary>
-        /// <param name="line1"></param>
-        /// <param name="line2"></param>
-        /// <returns></returns>
-        private string[] AppendNextLineToCurrentRow(string[] line1, string[] line2)
-        {
-            List<string> l = line1.ToList();
-
-            l[l.Count - 1] += " " + line2.First();
-
-            l.AddRange(line2.Skip(1));
-
-            return l.ToArray();
-        }
 
         private bool _haveComplainedAboutColumnMismatch = false;
         /// <summary>
@@ -593,6 +563,7 @@ namespace LoadModules.Generic.DataFlowSources
         
         private int _lineNumberTotal = 0;
         private int _lineNumberBatch;
+        private bool _readerReadAlreadyCalled;
 
 
         private void FillUpDataTable(DataTable dt, string[] splitUpInputLine, int lineNumber, DataRow currentRow, string[] headers)
@@ -678,7 +649,6 @@ namespace LoadModules.Generic.DataFlowSources
         {
             //we have been given a new file we no longer know the headers.
             _headers = null;
-            _haveDiscardedFirstLineInFileDueToReplacementHeaders = false;
             
             _fileToLoad = value;
             _listener = listener;
@@ -788,11 +758,10 @@ namespace LoadModules.Generic.DataFlowSources
         }
     }
 
-
-    public enum BehaviourOnUnderReadType
+    public enum BadDataHandlingStrategy 
     {
-        Ignore,
-        AppendNextLineToCurrentRow
+        ThrowException,
+        IgnoreRows,
+        DivertRows
     }
-
 }

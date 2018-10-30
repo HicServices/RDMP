@@ -33,13 +33,6 @@ namespace LoadModules.Generic.Attachers
             get { return _source.ForceHeaders; }
             set { _source.ForceHeaders = value; }
         }
-
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.UnderReadBehaviour_DemandDescription)]
-        public BehaviourOnUnderReadType UnderReadBehaviour
-        {
-            get { return _source.UnderReadBehaviour; }
-            set { _source.UnderReadBehaviour = value; }
-        }
         
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreQuotes_DemandDescription)]
         public bool IgnoreQuotes
