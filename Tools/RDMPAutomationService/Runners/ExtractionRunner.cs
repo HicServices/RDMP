@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Checks;
+using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
@@ -137,20 +141,17 @@ namespace RDMPAutomationService.Runners
                 CheckDatasets = false,
                 CheckGlobals = false
             });
-            
-            if(_options.ExtractGlobals)
-                checkables.Add(new GlobalExtractionChecker(_configuration));
 
             foreach (var runnable in GetRunnables())
             {
-                var command = runnable as IExtractCommand;
+                var globalsCommand = runnable as ExtractGlobalsCommand;
                 var datasetCommand = runnable as ExtractDatasetCommand;
-                
-                if (datasetCommand != null)
-                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets, RepositoryLocator));
 
-                checkables.Add(new ExtractionPipelineUseCase(_project, command, _pipeline, DataLoadInfo.Empty) { Token = Token }
-                                       .GetEngine(_pipeline, new ToMemoryDataLoadEventListener(false)));
+                if (globalsCommand != null)
+                    checkables.Add(new GlobalExtractionChecker(_configuration, globalsCommand, _pipeline));
+
+                if (datasetCommand != null)
+                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets, RepositoryLocator, false, _pipeline));
             }
             
             return checkables.ToArray();
@@ -198,7 +199,6 @@ namespace RDMPAutomationService.Runners
                     return ExtractCommands[sds].State;
                 }
             }
-                
             
             return null;
         }
@@ -208,7 +208,7 @@ namespace RDMPAutomationService.Runners
             if (_options.Command == CommandLineActivity.check)
             {
                 var g = GetSingleCheckerResults<GlobalExtractionChecker>();
-
+                
                 if (g == null)
                     return null;
 

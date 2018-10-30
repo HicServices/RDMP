@@ -208,9 +208,9 @@ namespace DataExportManager.ProjectUI
                 Command = activityRequested,
                 ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
                 MaxConcurrentExtractions = 3,
-                Datasets = _datasets.All(tlvDatasets.IsChecked)?new int[0]:_datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray(),
+                Datasets = _datasets.All(tlvDatasets.IsChecked) ? new int[0] : _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray(),
                 ExtractionConfiguration = _extractionConfiguration.ID,
-                Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 :_pipelineSelectionUI1.Pipeline.ID
+                Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 : _pipelineSelectionUI1.Pipeline.ID
             };
         }
 
@@ -371,7 +371,7 @@ namespace DataExportManager.ProjectUI
 
         private void tlvDatasets_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            checkAndExecuteUI1.Enabled = tlvDatasets.CheckedObjects.Cast<object>().Any();
+            checkAndExecuteUI1.Enabled = tlvDatasets.CheckedObjects.Cast<object>().OfType<SelectedDataSets>().Any();
         }
     }
 

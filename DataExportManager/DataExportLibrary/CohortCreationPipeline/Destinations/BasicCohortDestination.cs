@@ -67,7 +67,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                         continue;
                        
                     //no, allocate them an ID (or null if there is no allocator)
-                    _cohortDictionary.Add(priv,_allocator == null? DBNull.Value : _allocator.AllocateReleaseIdentifier(priv));
+                    _cohortDictionary.Add(priv, _allocator == null? DBNull.Value : _allocator.AllocateReleaseIdentifier(priv));
                 }
             else
             {
@@ -155,7 +155,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
 
                     connection.ManagedTransaction.CommitAndCloseConnection();
                 }
-                catch(Exception)
+                catch 
                 {
                     connection.ManagedTransaction.AbandonAndCloseConnection();
                     throw;

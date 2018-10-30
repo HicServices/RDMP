@@ -85,7 +85,7 @@ namespace CatalogueManager.SimpleControls
                 options.CatalogueConnectionString = _activator.RepositoryLocator.CatalogueRepository.ConnectionStringBuilder.ConnectionString;
 
             if (string.IsNullOrWhiteSpace(options.DataExportConnectionString))
-                options.CatalogueDatabaseName = _activator.RepositoryLocator.DataExportRepository.ConnectionStringBuilder.ConnectionString;
+                options.DataExportConnectionString = _activator.RepositoryLocator.DataExportRepository.ConnectionStringBuilder.ConnectionString;
         }
 
         public void SetEnabled(bool e)

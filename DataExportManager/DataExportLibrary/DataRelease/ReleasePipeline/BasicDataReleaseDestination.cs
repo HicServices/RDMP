@@ -96,14 +96,11 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Data release succeded into:" + _destinationFolder));
                 //mark configuration as released
-                if (ReleaseSettings.FreezeReleasedConfigurations)
+                foreach (var config in _configurationReleased)
                 {
-                    foreach (var config in _configurationReleased)
-                    {
-                        config.IsReleased = true;
-                        config.SaveToDatabase();
-                    }
-                } 
+                    config.IsReleased = true;
+                    config.SaveToDatabase();
+                }
                 if (ReleaseSettings.DeleteFilesOnSuccess)
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cleaning up..."));
