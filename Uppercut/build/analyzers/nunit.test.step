@@ -29,7 +29,7 @@
   <property name="test.args.framework" value="" if="${platform::is-unix()}" />
   <property name="test.args.framework" value="${nunit.separator}framework=${microsoft.framework}" if="${platform::is-windows()}" />
   <property name="test.args" value="${nunit.separator}out=&quot;${dirs.test_results}${path.separator}nunit-results.xml&quot; ${nunit.separator}result=nunit2 ${nunit.separator}noheader ${nunit.separator}labels=After ${test.args.framework}" />
-  <property name="test.args.exclude" value="${nunit.separator}where=&quot; cat != Database && cat != Integration &quot;" />
+  <property name="test.args.exclude" value="${nunit.separator}where=&quot; cat != Database &amp;&amp; cat != Integration &quot;" />
   <!--<property name="app.nunit.console" value="NUnit${path.separator}nunit-console.exe" overwrite="false" if="${platform::is-windows()}" />
   <property name="app.nunit.console" value="nunit-console" overwrite="false" if="${platform::is-unix()}"/>-->
   <property name="dlls.test" value="" />
