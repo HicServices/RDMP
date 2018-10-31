@@ -16,9 +16,10 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
 {
 
     /// <summary>
-    /// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/> it facilitates loading potentially dirty CSV files etc.  The component
-    /// has two main operational modes after it has read headers: <see cref="GetDataTableWithHeaders"/> and <see cref="MakeDataTableFitHeaders"/>
-    ///
+    /// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for processing the headers (or overriding headers) 
+    /// of a CSV (TSV etc) file.
+    /// 
+    /// <para>The component has two main operational modes after it has read headers: <see cref="GetDataTableWithHeaders"/> and  <see cref="MakeDataTableFitHeaders"/></para>
     /// </summary>
     public class FlatFileColumnCollection
     {

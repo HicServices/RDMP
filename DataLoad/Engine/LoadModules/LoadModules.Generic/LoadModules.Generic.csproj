@@ -320,6 +320,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Attachers\GenericAttachers.cd" />
+    <None Include="DataFlowSources\DelimitedFlatFileDataFlowSource.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

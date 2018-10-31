@@ -12,6 +12,10 @@ using ReusableLibraryCode.Extensions;
 
 namespace LoadModules.Generic.DataFlowSources.SubComponents
 {
+    /// <summary>
+    /// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for adding rows read from the CSV file to
+    /// the DataTable built by <see cref="FlatFileColumnCollection"/>.
+    /// </summary>
     public class FlatFileToDataTablePusher
     {
         private readonly FlatFileToLoad _fileToLoad;
