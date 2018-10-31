@@ -35,12 +35,16 @@ namespace Diagnostics.TestData
             lookupTable = new DataTable();
 
             r.Read();
+            r.ReadHeader();
+
             foreach (string header in r.Context.HeaderRecord)
                 lookupTable.Columns.Add(header);
+            
+            r.Read();
 
             do
             {
-                lookupTable.Rows.Add(r.GetRecord<string[]>());
+                lookupTable.Rows.Add(r.Context.Record);
             } while (r.Read());
              
             weightToRow = new Dictionary<int, int>();

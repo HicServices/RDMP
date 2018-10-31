@@ -10,6 +10,7 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngineTests.Integration.Mocks;
 using LoadModules.Generic.Attachers;
+using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -93,19 +94,15 @@ namespace DataLoadEngineTests.Integration
                 attacher.ForceHeadersReplacesFirstLineInFile = true;
             }
 
-            try
+            if(separator == "|")
             {
-                attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-                if(separator == "|")
-                    Assert.Fail("Expected it to crash because of giving it the wrong separator");
-            }
-            catch (Exception e)
-            {
-                if (e.InnerException != null && e.InnerException.Message.Contains("Your separator '|' does not appear in the headers line of your file (bob.csv) but the separator ',' does"))
-                    Assert.Pass();
 
-                throw;
+                var ex = Assert.Throws<FlatFileLoadException>(()=>attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
+                
+                Assert.IsNotNull(ex.InnerException);
+                StringAssert.StartsWith(ex.InnerException.Message,"Your separator '|' does not appear in the headers line of your file (bob.csv) but the separator ',' does");
             }
+            
 
             var table = _database.ExpectTable("Bob");
             Assert.IsTrue(table.Exists());
