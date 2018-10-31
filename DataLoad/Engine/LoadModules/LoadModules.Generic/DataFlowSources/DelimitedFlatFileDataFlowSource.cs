@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using CsvHelper.Configuration;
+using LoadModules.Generic.DataFlowSources.SubComponents;
 using LoadModules.Generic.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataFlowSources
@@ -87,24 +88,11 @@ namespace LoadModules.Generic.DataFlowSources
         /// File we are trying to load
         /// </summary>
         private FlatFileToLoad _fileToLoad;
-
-        /// <summary>
-        /// File where we put error rows
-        /// </summary>
-        public FileInfo DivertErrorsFile;
-
-        /// <summary>
-        /// The Headers found in the file / overridden by ForceHeaders
-        /// </summary>
-        private string[] _headers = null;
-
-        private bool _haveComplainedAboutColumnMismatch = false;
-
-        /// <summary>
-        /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty
-        /// </summary>
-        private long _bufferOverrunsWhereColumnValueWasBlank = 0;
-
+        
+        public FlatFileColumnCollection Headers { get; private set; }
+        public FlatFileEventHandlers EventHandlers { get; private set; }
+        public FlatFileToDataTablePusher DataPusher { get; private set; }
+        
         /// <summary>
         /// things we know we definetly cannot load!
         /// </summary>
@@ -113,10 +101,6 @@ namespace LoadModules.Generic.DataFlowSources
             ".xls",".xlsx",".doc",".docx"
         };
 
-        /// <summary>
-        /// used to advise user if he has selected the wrong separator
-        /// </summary>
-        private string[] _commonSeparators = new[] { "|", ",", "    ", "#" };
         private string _separator;
 
         /// <summary>
@@ -124,18 +108,14 @@ namespace LoadModules.Generic.DataFlowSources
         /// </summary>
         private int _lineNumberBatch;
 
-        /// <summary>
-        /// All line numbers of the source file being read that could not be processed.  Allows BadDataFound etc to be called multiple times without skipping
-        /// records by accident.
-        /// </summary>
-        HashSet<int> _badLines = new HashSet<int>();
 
-        /// <summary>
-        /// Column headers that appear in the middle of the file (i.e. not trailing) but that don't have a header name.  These get thrown away
-        /// and they must never have data in them.  This lets you have a full blank column in the middle of your file e.g. if you have inserted
-        /// it via Excel
-        /// </summary>
-        private List<DataColumn> _unamedColumns = new List<DataColumn>();
+        private void InitializeComponents()
+        {
+            Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders, ForceHeadersReplacesFirstLineInFile);
+            DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile);
+            EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener);
+        }
+
 
         public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -149,48 +129,29 @@ namespace LoadModules.Generic.DataFlowSources
                     throw new Exception(
                         "_fileToLoad was not set, it is supposed to be set because of IPipelineRequirement<FlatFileToLoad> - maybe this PreInitialize method was not called?");
 
-                if (_headers == null)
-                    if (!LoadHeaders()) //load headers
-                        return null; //if load headers failed but didn't throw then we have an empty file
+                if (Headers == null)
+                {
+                    InitializeComponents();
+                    
+                    //open the file
+                    OpenFile(_fileToLoad.File);
 
+                    Headers.GetHeadersFromFile(_reader); 
+                    
+                    if(Headers.FileIsEmpty)
+                    {
+                        EventHandlers.FileIsEmpty();
+                        return null;
+                    }
+                }
+                    
                 //if we do not yet have a data table to load
                 if (_workingTable == null)
                 {
                     //create a table with the name of the file
-                    _workingTable = new DataTable();
+                    _workingTable = Headers.GetDataTableWithHeaders(_listener);
                     _workingTable.TableName = QuerySyntaxHelper.MakeHeaderNameSane(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
-
-                    List<string> duplicateHeaders = new List<string>();
-
-                    //create a string column for each header - these will change type once we have read some data
-                    foreach (string header in _headers)
-                    {
-                        string h = header;
-
-                        //watch for duplicate columns
-                        if (_workingTable.Columns.Contains(header))
-                            if (MakeHeaderNamesSane)
-                                h = MakeHeaderUnique(header, _workingTable.Columns, listener, this);
-                            else
-                            {
-                                duplicateHeaders.Add(header);
-                                continue;
-                            }
-
-                        if (IsNull(h))
-                            _unamedColumns.Add(_workingTable.Columns.Add(h));
-                        else
-                            //override type
-                            if (ExplicitlyTypedColumns != null &&
-                                ExplicitlyTypedColumns.ExplicitTypesCSharp.ContainsKey(h))
-                                _workingTable.Columns.Add(h, ExplicitlyTypedColumns.ExplicitTypesCSharp[h]);
-                            else
-                                _workingTable.Columns.Add(h);
-                    }
-          
-                    if (duplicateHeaders.Any())
-                        throw new FlatFileLoadException("Found the following duplicate headers in file '" + _fileToLoad.File + "':" + string.Join(",", duplicateHeaders));
-          
+                    
                     //set the data table to the new untyped but correctly headered table
                     SetDataTable(_workingTable);
 
@@ -217,8 +178,8 @@ namespace LoadModules.Generic.DataFlowSources
                     if (StronglyTypeInput)
                         StronglyTypeWorkingTable();
 
-                    if (rowsRead == 0 && ThrowOnEmptyFiles)
-                        FileIsEmpty();
+                    if (rowsRead == 0)
+                        EventHandlers.FileIsEmpty();
                 }
                 else
                 {
@@ -241,7 +202,7 @@ namespace LoadModules.Generic.DataFlowSources
                 //rows were read so return a copy of the DataTable, because we will continually reload the same DataTable schema throughout the file we don't want to give up our reference to good headers incase someone mutlates it
                 var copy =  _workingTable.Copy();
 
-                foreach (DataColumn unamed in _unamedColumns)
+                foreach (DataColumn unamed in Headers.UnamedColumns)
                     copy.Columns.Remove(unamed.ColumnName);
                 
                 return copy;
@@ -289,17 +250,6 @@ namespace LoadModules.Generic.DataFlowSources
 
         }
 
-        private bool LoadHeaders()
-        {
-            if(_headers != null)
-                throw new Exception("Headers have already been loaded from the flat file");
-
-            //open the file
-            OpenFile(_fileToLoad.File);
-
-            //get the headers - either ForceHeaders or the ones read from the first line of the file
-            return GetHeadersFromFile();
-        }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
@@ -326,7 +276,7 @@ namespace LoadModules.Generic.DataFlowSources
                 return _workingTable;
 
             //we have not loaded anything yet
-            if(_headers == null)
+            if(Headers == null)
             {
                 //get a chunk
                 DataTable toReturn = GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
@@ -334,11 +284,12 @@ namespace LoadModules.Generic.DataFlowSources
                 //clear these to close the file and reset state to 'I need to open the file again state'
                 CloseReader();
                 
-                _headers = null;
+                Headers = null;
+                EventHandlers = null;
+                DataPusher = null;
+                
                 _workingTable = null;
                 _reader = null;
-                _haveComplainedAboutColumnMismatch = false;
-                DivertErrorsFile = null;
 
                 return toReturn;
             }
@@ -413,107 +364,25 @@ namespace LoadModules.Generic.DataFlowSources
             {
                 Delimiter = Separator,
                 HasHeaderRecord = string.IsNullOrWhiteSpace(ForceHeaders),
-                ShouldSkipRecord = ShouldSkipRecord,
-                BadDataFound = BadDataFound,
-                ReadingExceptionOccurred = ReadingExceptionOccurred
+                ShouldSkipRecord = ShouldSkipRecord
             });
+
+            EventHandlers.RegisterEvents(_reader.Configuration);
 
             _reader.Configuration.IgnoreBlankLines = IgnoreBlankLines;
             _reader.Configuration.IgnoreQuotes = IgnoreQuotes;
         }
 
         
-        private void ReadingExceptionOccurred(CsvHelperException obj)
-        {
-            switch (BadDataHandlingStrategy)
-            {
-                case BadDataHandlingStrategy.IgnoreRows:
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on line " + obj.ReadingContext.RawRow,obj));
-                    //move to next line
-                    _badLines.Add(obj.ReadingContext.RawRow);
-
-                    break;
-                case BadDataHandlingStrategy.DivertRows:
-
-                    DivertErrorRow(obj.ReadingContext,obj);
-                    break;
-
-                case BadDataHandlingStrategy.ThrowException:
-                    throw new FlatFileLoadException("Bad data found on line " + obj.ReadingContext.RawRow,obj);
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
         
-        private void BadDataFound(ReadingContext obj)
-        {
-            switch (BadDataHandlingStrategy)
-            {
-                case BadDataHandlingStrategy.IgnoreRows:
-                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on line " + obj.RawRow));
-                    
-                    //move to next line
-                    _badLines.Add(obj.RawRow);
-
-                    break;
-                case BadDataHandlingStrategy.DivertRows:
-                    DivertErrorRow(obj, null);
-                    break;
-                
-                case BadDataHandlingStrategy.ThrowException:
-                    throw new FlatFileLoadException("Bad data found on line "+ obj.RawRow);
-
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void DivertErrorRow(ReadingContext context, Exception ex)
-        {
-            if (DivertErrorsFile == null)
-            {
-                DivertErrorsFile = new FileInfo(Path.Combine(_fileToLoad.File.Directory.FullName, Path.GetFileNameWithoutExtension(_fileToLoad.File.Name) + "_Errors.txt"));
-
-                //delete any old version
-                if (DivertErrorsFile.Exists)
-                    DivertErrorsFile.Delete();
-            }
-
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Diverting Error on line " + context.RawRow + " to '" + DivertErrorsFile.FullName + "'", ex));
-
-            File.AppendAllText(DivertErrorsFile.FullName, context.RawRecord);
-
-            //move to next line
-            _badLines.Add(context.RawRow);
-        }
-
         private bool ShouldSkipRecord(string[] strings)
         {
             if (_reader.Context.RawRow == 1 //first line of file
                 && !string.IsNullOrWhiteSpace(ForceHeaders) //and we are forcing headers
                 && ForceHeadersReplacesFirstLineInFile) //and those headers replace the first line of the file
             {
-                //create an ascii art representation of the headers being replaced in the format
-                //[0]MySensibleCol>>>My Silly Coll#
-                StringBuilder asciiArt = new StringBuilder();
-                for (int i = 0; i < _headers.Length; i++)
-                {
-                    asciiArt.Append("[" + i + "]" + _headers[i] + ">>>");
-                    asciiArt.AppendLine(i < strings.Length ? strings[i] : "???");
-                }
+                Headers.ShowForceHeadersAsciiArt(strings,_listener);
 
-                for (int i = _headers.Length; i < strings.Length; i++)
-                    asciiArt.AppendLine("[" + i + "]???>>>" + strings[i]);
-
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Your attacher has ForceHeaders and ForceHeadersReplacesFirstLineInFile=true, I will now tell you about the first line of data in the file that you skipped (and how it related to your forced headers).  Replacement headers are " + Environment.NewLine + Environment.NewLine + asciiArt));
-
-                if (strings.Length != _headers.Length)
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
-                
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Skipped first line of file because there are forced replacement headers, we discarded" + string.Join(",", strings)));
-                
                 //skip the line
                 return true;
             }
@@ -527,19 +396,18 @@ namespace LoadModules.Generic.DataFlowSources
             if (!_dataAvailable)
                 return 0;
 
-            if (_headers == null)
+            if (Headers == null)
                 throw new Exception("headers was null, how did that happen?");
             
             _lineNumberBatch = 0;
 
-
             while (_dataAvailable = _reader.Read()) //while we can read data -- also record whether the data was exhausted by this Read() because  CSVReader blows up if you ask it to Read() after Read() has already returned a false once
             {
                 //if there is bad data on the current row just read the next
-                if (_badLines.Contains(_reader.Context.RawRow))
+                if (DataPusher.BadLines.Contains(_reader.Context.RawRow))
                     continue;
-                
-                FillUpDataTable(dt, _reader.Context.Record, _headers);
+
+                _lineNumberBatch += DataPusher.PushCurrentLine(_reader, dt,_listener,EventHandlers);
 
                 if (!_dataAvailable)
                     break;
@@ -552,195 +420,12 @@ namespace LoadModules.Generic.DataFlowSources
             return _lineNumberBatch;
 
         }
-
-        protected bool GetHeadersFromFile()
-        {
-            if (string.IsNullOrWhiteSpace(ForceHeaders))
-            {
-                bool empty = !_reader.Read();
-
-                if (empty)
-                {
-                    FileIsEmpty();
-                    return false;
-                }
-                    
-                //get headers from first line of the file
-                _reader.ReadHeader();
-                _headers = _reader.Context.HeaderRecord;
-            }
-            else
-            {
-                //user has some specific headers he wants to override with
-                _headers = ForceHeaders.Split(new[] { Separator },StringSplitOptions.None);
-                _reader.Configuration.HasHeaderRecord = false;
-            }
-
-            //at least trim them
-            for (int i = 0; i < _headers.Length; i++)
-                if (!string.IsNullOrWhiteSpace(_headers[i]))
-                    _headers[i] =_headers[i].Trim();
-
-            //throw away trailing null headers
-            var trailingNullHeaders = _headers.Reverse().TakeWhile(IsNull).Count();
-
-            if (trailingNullHeaders > 0)
-                _headers = _headers.Take(_headers.Length - trailingNullHeaders).ToArray();
-
-            //and maybe also help them out with a bit of sanity fixing
-            if(MakeHeaderNamesSane)
-                for (int i = 0; i < _headers.Length; i++)
-                    _headers[i] = QuerySyntaxHelper.MakeHeaderNameSane(_headers[i]);
-
-            
-
-            return true;
-        }
-
-        private void FileIsEmpty()
-        {
-            if (ThrowOnEmptyFiles)
-                throw new FlatFileLoadException("File " + _fileToLoad + " is empty");
-            
-            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "File " + _fileToLoad + " is empty"));
-        }
-
-        public static string MakeHeaderUnique(string newColumnName, DataColumnCollection columnsSoFar, IDataLoadEventListener listener, object sender)
-        {
-            //if it is already unique then that's fine
-            if (!columnsSoFar.Contains(newColumnName))
-                return newColumnName;
-            
-            //otherwise issue a rename
-            int number = 2;
-            while (columnsSoFar.Contains(newColumnName + "_" + number))
-                number++;
-
-            var newName = newColumnName + "_" + number;
-
-            //found a novel number
-            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Warning, "Renamed duplicate column '" + newColumnName + "' to '" + newName + "'"));
-            return newName;
-        }
         
-        private void FillUpDataTable(DataTable dt, string[] splitUpInputLine, string[] headers)
-        {
-            //skip the blank lines
-            if (splitUpInputLine.Length == 0 || splitUpInputLine.All(IsNull))
-                return;
-
-            int headerCount = headers.Count(h => !IsNull(h));
-            
-            //if the number of not empty headers doesn't match the headers in the data table
-            if (dt.Columns.Count != headerCount)
-                if (!_haveComplainedAboutColumnMismatch)
-                {
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Flat file '" + _fileToLoad.File.Name + "' line number '" + _reader.Context.RawRow + "' had  " + headerCount + " columns while the destination DataTable had " + dt.Columns.Count + " columns.  This message apperas only once per file"));
-                    _haveComplainedAboutColumnMismatch = true;
-                }
-
-            Dictionary<string, object> rowValues = new Dictionary<string, object>();
-
-            if (splitUpInputLine.Length < headerCount)
-            {
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Too few columns on line " + _reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + headers.Length + " columns but line had " + splitUpInputLine.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
-                BadDataFound(_reader.Context);
-                return;
-            }
-
-            bool haveIncremented_bufferOverrunsWhereColumnValueWasBlank = false;
-
-
-            for (int i = 0; i < splitUpInputLine.Length; i++)
-            {
-                //about to do a buffer overrun
-                if (i >= headers.Length)
-                    if (IsNull(splitUpInputLine[i]))
-                    {
-                        if (!haveIncremented_bufferOverrunsWhereColumnValueWasBlank)
-                        {
-                            _bufferOverrunsWhereColumnValueWasBlank++;
-                            haveIncremented_bufferOverrunsWhereColumnValueWasBlank = true;
-                        }
-
-                        continue; //do not bother buffer overruning with null whitespace stuff
-                    }
-                    else
-                    {
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Column mismatch on line " + _reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + headers.Length + " columns but line had " + splitUpInputLine.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
-                        BadDataFound(_reader.Context);
-                        break;
-                    }
-
-                //its an empty header, dont bother populating it
-                if (IsNull(headers[i]))
-                    if (!IsNull(splitUpInputLine[i]))
-                        throw new FileLoadException("The header at index " + i + " in flat file '" +dt.TableName+ "' had no name but there was a value in the data column (on Line number " + _reader.Context.RawRow + ")");
-                    else
-                        continue;
-
-                //sometimes flat files have ,NULL,NULL,"bob" in instead of ,,"bob"
-                if (IsNull(splitUpInputLine[i]))
-                    rowValues.Add(headers[i], DBNull.Value);
-                else
-                {
-                    object hackedValue = HackValueReadFromFile(splitUpInputLine[i]);
-
-                    if (hackedValue is string)
-                        hackedValue = ((string)hackedValue).Trim();
-
-                    try
-                    {
-                        //if we are trying to load a boolean value out of the flat file into the strongly typed C# data type
-                        if (dt.Columns[headers[i]].DataType == typeof (Boolean))
-                        {
-                            bool boolean;
-                            int integer;
-                            if (hackedValue is string)
-                            {
-                                if (Boolean.TryParse((string) hackedValue, out boolean)) //could be the text "true"
-                                    hackedValue = boolean;
-                                else
-                                    if (int.TryParse((string)hackedValue, out integer)) //could be the number string "1" or "0"
-                                        hackedValue = integer;
-
-                                //else god knows what it is as a datatype, hopefully Convert.ChangeType will handle it
-                            }
-                            else if (int.TryParse(hackedValue.ToString(), out integer)) //could be the number 1 or 0 or something else that ToStrings into a legit value
-                                hackedValue = integer;
-
-                        }
-                        //make it an int because apparently C# is too stupid to convert "1" into a bool but is smart enough to turn 1 into a bool.... seriously?!!?
-
-                        rowValues.Add(headers[i], Convert.ChangeType(hackedValue, dt.Columns[headers[i]].DataType));
-                        //convert to correct datatype (datatype was setup in SetupTypes)
-                    }
-                    catch (Exception e)
-                    {
-                        throw new FileLoadException("Error reading file '" + dt.TableName + "'.  Problem loading value " + splitUpInputLine[i] + " into data table (on Line number " + _reader.Context.RawRow + ") the header we were trying to populate was " + _headers[i] + " and was of datatype " + dt.Columns[headers[i]].DataType, e);
-                    }
-                }
-            }
-
-            if(!_badLines.Contains(_reader.Context.RawRow))
-            {
-                DataRow currentRow = dt.Rows.Add();
-                foreach (KeyValuePair<string, object> kvp in rowValues)
-                    currentRow[kvp.Key] = kvp.Value;
-                
-                _lineNumberBatch++;
-            }
-        }
-
-        private bool IsNull(string s)
-        {
-            return string.IsNullOrWhiteSpace(s) || s.Trim().Equals("NULL", StringComparison.CurrentCultureIgnoreCase);
-        }
-
+        
         public void PreInitialize(FlatFileToLoad value, IDataLoadEventListener listener)
         {
             //we have been given a new file we no longer know the headers.
-            _headers = null;
+            Headers = null;
             
             _fileToLoad = value;
             _listener = listener;
@@ -753,7 +438,6 @@ namespace LoadModules.Generic.DataFlowSources
         /// <returns></returns>
         protected virtual object HackValueReadFromFile(string s)
         {
-
             return s;
         }
 
@@ -763,90 +447,13 @@ namespace LoadModules.Generic.DataFlowSources
         /// <param name="dt"></param>
         public void SetDataTable(DataTable dt)
         {
-            if(_headers == null)
+            if(Headers == null)
             {
-                LoadHeaders();
-                _headers = FixFlatFileNameToDatabaseTableMismatchedColumnNames(dt, _headers);
+                InitializeComponents();
+                Headers.MakeDataTableFitHeaders(dt,_listener);
             }
 
             _workingTable = dt;
-        }
-
-
-
-        private string[] FixFlatFileNameToDatabaseTableMismatchedColumnNames(DataTable dt, string[] headers)
-        {
-            StringBuilder ASCIIArt = new StringBuilder();
-
-            List<string> headersNotFound = new List<string>();
-           
-            for (int index = 0; index < headers.Length; index++)
-            {
-                ASCIIArt.Append("[" + index + "]");
-                
-                if (dt.Columns.Contains(headers[index]))    //exact match
-                {
-                    ASCIIArt.AppendLine(headers[index] + ">>>" + headers[index]);
-                    continue;
-                }
-                
-                if (string.IsNullOrWhiteSpace(headers[index])) //Empty column header, ignore it
-                {
-                    ASCIIArt.AppendLine("Blank Column>>>IGNORED" );
-                    continue;
-                }
-
-                //try replacing spaces with underscores
-                if (dt.Columns.Contains(headers[index].Replace(" ", "_")))
-                {
-                    string before = headers[index];
-                    headers[index] = headers[index].Replace(" ", "_");
-
-                    ASCIIArt.AppendLine(before + ">>>" + headers[index]);
-                    continue;
-                }
-
-                //try replacing spaces with nothing
-                if (dt.Columns.Contains(headers[index].Replace(" ", "")))
-                {
-                    string before = headers[index];
-                    headers[index] = headers[index].Replace(" ", "");
-
-                    ASCIIArt.AppendLine(before + ">>>" + headers[index]);
-                    continue;
-                }
-
-                ASCIIArt.AppendLine(headers[index] + ">>>????" );
-                headersNotFound.Add(headers[index]);
-            }
-
-            //now that we have adjusted the header names
-            string[] unmatchedColumns =
-                dt.Columns.Cast<DataColumn>()
-                    .Where(c => !headers.Any(h => h != null && h.ToLower().Equals(c.ColumnName.ToLower())))//get all columns in data table where there are not any with the same name
-                    .Select(c => c.ColumnName)
-                    .ToArray();
-
-            if (unmatchedColumns.Any())
-                ASCIIArt.AppendLine(Environment.NewLine + "Unmatched Columns In DataTable:" + Environment.NewLine +
-                                    string.Join(Environment.NewLine, unmatchedColumns));
-
-            //if there is exactly 1 column found by the program and there are unmatched columns it is likely the user has selected the wrong separator
-            if(headers.Length == 1 && unmatchedColumns.Any())
-                foreach (string commonSeparator in _commonSeparators)
-                    if(headers[0].Contains(commonSeparator))
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Your separator '" + Separator + "' does not appear in the headers line of your file ("+_fileToLoad.File.Name+") but the separator '"+commonSeparator+"' does... did you mean to set the Separator to '"+commonSeparator+"'? The headers line is:\"" + headers[0] +"\""));
-
-
-            _listener.OnNotify(this, new NotifyEventArgs(
-                headersNotFound.Any()?ProgressEventType.Error : ProgressEventType.Information, //information or warning if there are unrecognised field names
-                "I will now tell you about how the columns in your file do or do not match the columns in your database, Matching flat file columns (or forced replacement headers) against database headers resulted in:" + Environment.NewLine + ASCIIArt)); //tell them about what columns match what
-
-
-            if(headersNotFound.Any())
-                throw new Exception("Could not find a suitable target column for flat file columns " +string.Join(",",headersNotFound)+ " amongst database data table columns (" + string.Join(",",from DataColumn col in dt.Columns select col.ColumnName) + ")");
-
-            return headers;
         }
     }
 

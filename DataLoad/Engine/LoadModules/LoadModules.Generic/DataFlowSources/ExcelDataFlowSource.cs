@@ -15,6 +15,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Reports;
 using LoadModules.Generic.Checks;
+using LoadModules.Generic.DataFlowSources.SubComponents;
 using LoadModules.Generic.Exceptions;
 using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode;
@@ -194,7 +195,7 @@ namespace LoadModules.Generic.DataFlowSources
                                 //watch for duplicate columns
                                 if(toReturn.Columns.Contains(header))
                                     if (MakeHeaderNamesSane)
-                                        header = DelimitedFlatFileDataFlowSource.MakeHeaderUnique(header,toReturn.Columns, listener,this);
+                                        header = FlatFileColumnCollection.MakeHeaderUnique(header,toReturn.Columns, listener,this);
                                     else
                                     {
                                         duplicateHeaders.Add(header);

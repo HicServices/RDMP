@@ -171,9 +171,9 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
                         var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
                         Assert.AreEqual(4, dt2.Rows.Count);
 
-                        Assert.IsNotNull(source.DivertErrorsFile);
+                        Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
 
-                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n",File.ReadAllText(source.DivertErrorsFile.FullName));
+                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
 
                         break;
                     default:
@@ -234,9 +234,9 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
                         var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
                         Assert.AreEqual(4, dt2.Rows.Count);
 
-                        Assert.IsNotNull(source.DivertErrorsFile);
+                        Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
 
-                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n", File.ReadAllText(source.DivertErrorsFile.FullName));
+                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
 
                         break;
                     default:
@@ -336,11 +336,11 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
                         var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
                         Assert.AreEqual(4, dt2.Rows.Count);
 
-                        Assert.IsNotNull(source.DivertErrorsFile);
+                        Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
 
                         Assert.AreEqual(@"0101010101,5
     The first,2001-01-05
-", File.ReadAllText(source.DivertErrorsFile.FullName));
+", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
 
                         break;
                     default:
@@ -401,11 +401,11 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
                         var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
                         Assert.AreEqual(4, dt2.Rows.Count);
 
-                        Assert.IsNotNull(source.DivertErrorsFile);
+                        Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
 
                         Assert.AreEqual(@"0101010101,5
     The first,2001-01-05
-", File.ReadAllText(source.DivertErrorsFile.FullName));
+", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
 
                         break;
                     default:

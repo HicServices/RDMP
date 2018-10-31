@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -19,6 +20,16 @@ namespace ReusableLibraryCode.Extensions
                 options
             );
             return result;
+        }
+
+        /// <summary>
+        /// Returns true if s is null, whitespace or the text 'null' (ignoring trimm and case)
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool IsBasicallyNull(this string s)
+        {
+            return string.IsNullOrWhiteSpace(s) || s.Trim().Equals("NULL", StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }
