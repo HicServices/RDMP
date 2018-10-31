@@ -94,15 +94,19 @@ namespace DataLoadEngineTests.Integration
                 attacher.ForceHeadersReplacesFirstLineInFile = true;
             }
 
+            //Case when you are using the wrong separator
             if(separator == "|")
             {
 
                 var ex = Assert.Throws<FlatFileLoadException>(()=>attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
                 
                 Assert.IsNotNull(ex.InnerException);
-                StringAssert.StartsWith(ex.InnerException.Message,"Your separator '|' does not appear in the headers line of your file (bob.csv) but the separator ',' does");
+                StringAssert.StartsWith("Your separator does not appear in the headers line of your file (bob.csv) but the separator ',' does", ex.InnerException.Message);
+                return;
             }
-            
+
+            //other cases (i.e. correct separator)
+            attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
             var table = _database.ExpectTable("Bob");
             Assert.IsTrue(table.Exists());
