@@ -220,6 +220,9 @@
     <Compile Include="DataFlowOperations\RowDeleter.cs" />
     <Compile Include="DataFlowOperations\TableVersionNamer.cs" />
     <Compile Include="DataFlowSources\DoNothingCacheSource.cs" />
+    <Compile Include="DataFlowSources\SubComponents\FlatFileColumnCollection.cs" />
+    <Compile Include="DataFlowSources\SubComponents\FlatFileEventHandlers.cs" />
+    <Compile Include="DataFlowSources\SubComponents\FlatFileToDataTablePusher.cs" />
     <Compile Include="DataProvider\FlatFileManipulation\ExcelToCSVFilesConverter.cs" />
     <Compile Include="DataProvider\ImportFilesDataProvider.cs" />
     <Compile Include="DataProvider\ShareDefinitionImporter.cs" />
@@ -317,6 +320,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Attachers\GenericAttachers.cd" />
+    <None Include="DataFlowSources\DelimitedFlatFileDataFlowSource.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
