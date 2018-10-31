@@ -13,6 +13,7 @@
 	* [Empty Files](#empty-files)
 	* [Too Many Cells](#too-many-cells)
 	* [Too Few Cells](#too-few-cells)
+	* [Dodgy Column Names](#dodgy-column-names)
 1. [Unresolveable](#unresolveable)
 	* [Unclosed quotes](#unclosed-quotes)
 	
@@ -180,6 +181,23 @@ Hes ok,Dennis,35
 _BadCSV_FreeTextFirstColumn_
 
 Bad rows are treated according to the `BadDataHandlingStrategy`.
+
+### Dodgy Column Names
+Sometimes a CSV file will have an odd choice of column names or one that does not match your database.  It can even be invalid data due to commas etc.  In this case you can use `ForceHeaders` and `ForceHeadersReplacesFirstLineInFile` to substitute in more sensible columns.
+
+```
+Patient's first name, Patients blood glucose, measured in mg
+Thomas,100
+Frank,300
+```
+_BadCSV_ForceHeaders_
+
+If your data table doesn't have any headers at all then you can apply a `ForceHeaders` and set `ForceHeadersReplacesFirstLineInFile` to false.
+```
+Thomas,100
+Frank,300
+```
+_BadCSV_ForceHeaders_NoReplace_
 
 ## Unresolveable
 

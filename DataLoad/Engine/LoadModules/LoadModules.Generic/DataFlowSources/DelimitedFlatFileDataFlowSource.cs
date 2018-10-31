@@ -141,8 +141,6 @@ False - Treat the line as bad data (See BadDataHandlingStrategy)")]
                     //open the file
                     OpenFile(_fileToLoad.File);
 
-                    Headers.GetHeadersFromFile(_reader); 
-                    
                     if(Headers.FileIsEmpty)
                     {
                         EventHandlers.FileIsEmpty();
@@ -376,6 +374,8 @@ False - Treat the line as bad data (See BadDataHandlingStrategy)")]
 
             _reader.Configuration.IgnoreBlankLines = IgnoreBlankLines;
             _reader.Configuration.IgnoreQuotes = IgnoreQuotes;
+
+            Headers.GetHeadersFromFile(_reader); 
         }
 
         
@@ -468,6 +468,8 @@ False - Treat the line as bad data (See BadDataHandlingStrategy)")]
             if(Headers == null)
             {
                 InitializeComponents();
+                OpenFile(_fileToLoad.File);
+                
                 Headers.MakeDataTableFitHeaders(dt,_listener);
             }
 

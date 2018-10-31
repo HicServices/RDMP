@@ -263,5 +263,52 @@ to be honest",
 
 
         }
+
+        [Test]
+        public void BadCSV_ForceHeaders()
+        {
+            var file = CreateTestFile(
+                "Patient's first name, Patients blood glucose, measured in mg",
+                "Thomas,100",
+                "Frank,300");
+
+            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = false; }));
+            Assert.AreEqual("Bad data found on line 2", ex.Message);
+
+
+            var dt = RunGetChunk(file, s =>
+            {
+                s.AttemptToResolveNewlinesInRecords = false;
+                s.ForceHeaders = "Name,BloodGlucose";
+                s.ForceHeadersReplacesFirstLineInFile = true;
+            });
+
+            Assert.AreEqual(2,dt.Rows.Count);
+            Assert.AreEqual(2, dt.Columns.Count);
+            Assert.AreEqual("Thomas", dt.Rows[0]["Name"]);
+            Assert.AreEqual(100, dt.Rows[0]["BloodGlucose"]);
+
+        }
+
+        [Test]
+        public void BadCSV_ForceHeaders_NoReplace()
+        {
+            var file = CreateTestFile(
+                "Thomas,100",
+                "Frank,300");
+
+            var dt = RunGetChunk(file, s =>
+            {
+                s.AttemptToResolveNewlinesInRecords = false;
+                s.ForceHeaders = "Name,BloodGlucose";
+            });
+
+            Assert.AreEqual(2,dt.Rows.Count);
+            Assert.AreEqual(2, dt.Columns.Count);
+            Assert.AreEqual("Thomas", dt.Rows[0]["Name"]);
+            Assert.AreEqual(100, dt.Rows[0]["BloodGlucose"]);
+
+        }
+        
     }
 }

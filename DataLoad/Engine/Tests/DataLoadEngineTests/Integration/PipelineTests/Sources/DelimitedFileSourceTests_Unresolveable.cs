@@ -49,7 +49,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
                     //read 2 rows and rejected the rest
                     var dt2 = RunGetChunk(file, adjust);
                     Assert.AreEqual(2, dt2.Rows.Count);
-                    AssertDivertFileIsExactly("Frank,\"Is the greatest,100\r\nFrank,Is the greatest,100\r\nFrank,Is the greatest,100\r\nFrank,Is the greatest,100\r\n");
+                    AssertDivertFileIsExactly("Frank,\"Is the greatest,100\r\nFrank,Is the greatest,100\r\nFrank,Is the greatest,100\r\nFrank,Is the greatest,100\r\nFrank,Is the greatest,100\r\n");
 
                     break;
                 default:

@@ -62,7 +62,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         /// and they must never have data in them.  This lets you have a full blank column in the middle of your file e.g. if you have inserted
         /// it via Excel
         /// </summary>
-        public ReadOnlyCollection<DataColumn> UnamedColumns;
+        public ReadOnlyCollection<DataColumn> UnamedColumns = new ReadOnlyCollection<DataColumn>(new DataColumn[0]); //start off with none
 
         public bool FileIsEmpty = false;
 
