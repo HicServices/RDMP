@@ -286,6 +286,7 @@
     <Compile Include="Integration\PipelineTests\Sources\DelimitedFileSourceTestsBase.cs" />
     <Compile Include="Integration\PipelineTests\Sources\DelimitedFileSourceTests_AutomaticallyResolved.cs" />
     <Compile Include="Integration\PipelineTests\Sources\DelimitedFileSourceTests_ResolvedAccordingToStrategy.cs" />
+    <Compile Include="Integration\PipelineTests\Sources\DelimitedFileSourceTests_Unresolveable.cs" />
     <Compile Include="Integration\PipelineTests\TestDataPipelineAssembler.cs" />
     <Compile Include="Integration\PrematureLoadEnderTests.cs" />
     <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestQueryBuilding.cs" />

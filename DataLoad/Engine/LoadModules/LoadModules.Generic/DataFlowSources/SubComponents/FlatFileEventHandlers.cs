@@ -45,10 +45,12 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         
         public void ReadingExceptionOccurred(CsvHelperException obj)
         {
+            var line = new FlatFileLine(obj.ReadingContext);
+
             switch (_strategy)
             {
                 case BadDataHandlingStrategy.IgnoreRows:
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on line " + obj.ReadingContext.RawRow, obj));
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on " + line.GetLineDescription(), obj));
                     //move to next line
                     _dataPusher.BadLines.Add(obj.ReadingContext.RawRow);
 
@@ -59,7 +61,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     break;
 
                 case BadDataHandlingStrategy.ThrowException:
-                    throw new FlatFileLoadException("Bad data found on line " + obj.ReadingContext.RawRow, obj);
+                    throw new FlatFileLoadException("Bad data found on li" + line.GetLineDescription(), obj);
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -71,7 +73,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             switch (_strategy)
             {
                 case BadDataHandlingStrategy.IgnoreRows:
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on line " + line.LineNumber));
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on " + line.GetLineDescription()));
 
                     //move to next line
                     _dataPusher.BadLines.Add(line.LineNumber);
@@ -82,7 +84,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     break;
 
                 case BadDataHandlingStrategy.ThrowException:
-                    throw new FlatFileLoadException("Bad data found on line " + line.LineNumber);
+                    throw new FlatFileLoadException("Bad data found on " + line.GetLineDescription());
 
 
                 default:
@@ -101,7 +103,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     DivertErrorsFile.Delete();
             }
 
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Diverting Error on line " + line.LineNumber+ " to '" + DivertErrorsFile.FullName + "'", ex));
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Diverting Error on " + line.GetLineDescription() + " to '" + DivertErrorsFile.FullName + "'", ex));
 
             File.AppendAllText(DivertErrorsFile.FullName, line.RawRecord);
 

@@ -35,7 +35,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             if(throwOnEmpty)
             {
                 var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, BadDataHandlingStrategy.ThrowException, throwOnEmpty));
-                Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex.Message);
+                StringAssert.StartsWith("File DelimitedFileSourceTests.txt is empty", ex.Message);
             }
             else
             {
@@ -103,7 +103,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             {
                 case BadDataHandlingStrategy.ThrowException:
                     var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, strategy, true));
-                    Assert.AreEqual("Bad data found on line 3", ex.Message);
+                    StringAssert.StartsWith("Bad data found on line 3", ex.Message);
                     break;
                 case BadDataHandlingStrategy.IgnoreRows:
                     var dt = RunGetChunk(file, strategy, true);
@@ -145,7 +145,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             {
                 case BadDataHandlingStrategy.ThrowException:
                     var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, adjust));
-                    Assert.AreEqual("Bad data found on line 4", ex.Message);
+                    StringAssert.StartsWith("Bad data found on line 4", ex.Message);
                     break;
                 case BadDataHandlingStrategy.IgnoreRows:
                     var dt = RunGetChunk(file, adjust);
@@ -185,7 +185,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             {
                 case BadDataHandlingStrategy.ThrowException:
                     var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, adjust));
-                    Assert.AreEqual("Bad data found on line 3", ex.Message);
+                    StringAssert.StartsWith("Bad data found on line 3", ex.Message);
                     break;
                 case BadDataHandlingStrategy.IgnoreRows:
                     var dt = RunGetChunk(file, adjust);

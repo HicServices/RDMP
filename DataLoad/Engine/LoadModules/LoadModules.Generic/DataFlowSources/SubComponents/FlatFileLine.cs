@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CsvHelper;
+﻿using CsvHelper;
 
 namespace LoadModules.Generic.DataFlowSources.SubComponents
 {
@@ -13,23 +8,23 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         public string[] Cells { get; set; }
         public string RawRecord { get; set; }
 
-        public FlatFileLine(int lineNumber, string[] cells, string rawRecord)
-        {
-            LineNumber = lineNumber;
-            Cells = cells;
-            RawRecord = rawRecord;
-        }
-
         public FlatFileLine(ReadingContext context)
         {
             LineNumber = context.RawRow;
             Cells = context.Record;
             RawRecord = context.RawRecord;
+
+            //Doesn't seem to be correct:  StartPosition = context.RawRecordStartPosition;
         }
 
         public string this[int i]
         {
             get { return Cells[i]; }
+        }
+
+        public string GetLineDescription()
+        {
+            return string.Format("line {0}",LineNumber);
         }
     }
 }
