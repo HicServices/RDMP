@@ -24,6 +24,17 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             return new FlatFileToLoad(new FileInfo(filename));
         }
 
+        protected void AssertDivertFileIsExactly(string expectedContents)
+        {
+            var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "DelimitedFileSourceTests_Errors.txt");
+
+            if(!File.Exists(filename))
+                Assert.Fail("No Divert file was generated at expected path " + filename);
+
+            var contents = File.ReadAllText(filename);
+            Assert.AreEqual(contents,expectedContents);
+        }
+
 
         protected DataTable RunGetChunk(FlatFileToLoad file,BadDataHandlingStrategy strategy, bool throwOnEmpty)
         {
@@ -41,7 +52,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             source.Separator = ",";
             source.StronglyTypeInput = true;//makes the source interpret the file types properly
             source.StronglyTypeInputBatchSize = 100;
-
+            source.AttemptToResolveNewlinesInRecords = true; //maximise potential for conflicts
             if (adjust != null)
                 adjust(source);
 

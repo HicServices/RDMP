@@ -55,7 +55,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     break;
                 case BadDataHandlingStrategy.DivertRows:
 
-                    DivertErrorRow(obj.ReadingContext, obj);
+                    DivertErrorRow(new FlatFileLine(obj.ReadingContext), obj);
                     break;
 
                 case BadDataHandlingStrategy.ThrowException:
@@ -66,23 +66,23 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             }
         }
 
-        public void BadDataFound(ReadingContext obj)
+        public void BadDataFound(FlatFileLine line)
         {
             switch (_strategy)
             {
                 case BadDataHandlingStrategy.IgnoreRows:
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on line " + obj.RawRow));
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on line " + line.LineNumber));
 
                     //move to next line
-                    _dataPusher.BadLines.Add(obj.RawRow);
+                    _dataPusher.BadLines.Add(line.LineNumber);
 
                     break;
                 case BadDataHandlingStrategy.DivertRows:
-                    DivertErrorRow(obj, null);
+                    DivertErrorRow(line, null);
                     break;
 
                 case BadDataHandlingStrategy.ThrowException:
-                    throw new FlatFileLoadException("Bad data found on line " + obj.RawRow);
+                    throw new FlatFileLoadException("Bad data found on line " + line.LineNumber);
 
 
                 default:
@@ -90,7 +90,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             }
         }
 
-        public void DivertErrorRow(ReadingContext context, Exception ex)
+        public void DivertErrorRow(FlatFileLine line, Exception ex)
         {
             if (DivertErrorsFile == null)
             {
@@ -101,17 +101,17 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     DivertErrorsFile.Delete();
             }
 
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Diverting Error on line " + context.RawRow + " to '" + DivertErrorsFile.FullName + "'", ex));
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Diverting Error on line " + line.LineNumber+ " to '" + DivertErrorsFile.FullName + "'", ex));
 
-            File.AppendAllText(DivertErrorsFile.FullName, context.RawRecord);
+            File.AppendAllText(DivertErrorsFile.FullName, line.RawRecord);
 
             //move to next line
-            _dataPusher.BadLines.Add(context.RawRow);
+            _dataPusher.BadLines.Add(line.LineNumber);
         }
 
         public void RegisterEvents(IReaderConfiguration configuration)
         {
-            configuration.BadDataFound = BadDataFound;
+            configuration.BadDataFound = s=>BadDataFound(new FlatFileLine(s));
             configuration.ReadingExceptionOccurred = ReadingExceptionOccurred;
         }
     }

@@ -87,5 +87,181 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
                     s =>{ s.ThrowOnEmptyFiles = false; s.ForceHeaders="Name,Address"; s.ForceHeadersReplacesFirstLineInFile = true;}));
             }
         }
+
+        [TestCase(BadDataHandlingStrategy.DivertRows)]
+        [TestCase(BadDataHandlingStrategy.ThrowException)]
+        [TestCase(BadDataHandlingStrategy.IgnoreRows)]
+        public void BadCSV_TooManyCellsInRow(BadDataHandlingStrategy strategy)
+        {
+            var file = CreateTestFile(
+                "Name,Description,Age",
+                "Frank,Is the greatest,100",
+                "Bob,He's also dynamite, seen him do a lot of good work,30",
+                "Dennis,Hes ok,35");
+
+            switch (strategy)
+            {
+                case BadDataHandlingStrategy.ThrowException:
+                    var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, strategy, true));
+                    Assert.AreEqual("Bad data found on line 3", ex.Message);
+                    break;
+                case BadDataHandlingStrategy.IgnoreRows:
+                    var dt = RunGetChunk(file, strategy, true);
+                    Assert.AreEqual(2,dt.Rows.Count);
+                    break;
+                case BadDataHandlingStrategy.DivertRows:
+                    var dt2 = RunGetChunk(file, strategy, true);
+                    Assert.AreEqual(2,dt2.Rows.Count);
+
+                    AssertDivertFileIsExactly("Bob,He's also dynamite, seen him do a lot of good work,30\r\n");
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("strategy");
+            }
+        }
+        
+        [TestCase(BadDataHandlingStrategy.DivertRows,true)]
+        [TestCase(BadDataHandlingStrategy.ThrowException,false)]
+        [TestCase(BadDataHandlingStrategy.ThrowException,true)]
+        [TestCase(BadDataHandlingStrategy.IgnoreRows,false)]
+        public void BadCSV_TooFewCellsInRow(BadDataHandlingStrategy strategy,bool tryToResolve)
+        {
+            var file = CreateTestFile(
+                "Name,Description,Age",
+                "Frank,Is the greatest,100",
+                "",
+                "Other People To Investigate",
+                "Dennis,Hes ok,35");
+
+            Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+            {
+                a.BadDataHandlingStrategy = strategy;
+                a.AttemptToResolveNewlinesInRecords = tryToResolve;
+                a.ThrowOnEmptyFiles = true;
+            };
+
+            switch (strategy)
+            {
+                case BadDataHandlingStrategy.ThrowException:
+                    var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, adjust));
+                    Assert.AreEqual("Bad data found on line 4", ex.Message);
+                    break;
+                case BadDataHandlingStrategy.IgnoreRows:
+                    var dt = RunGetChunk(file, adjust);
+                    Assert.AreEqual(2, dt.Rows.Count);
+                    break;
+                case BadDataHandlingStrategy.DivertRows:
+                    var dt2 = RunGetChunk(file, adjust);
+                    Assert.AreEqual(2, dt2.Rows.Count);
+
+                    AssertDivertFileIsExactly("\r\nOther People To Investigate\r\n");
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("strategy");
+            }
+        }
+
+        [TestCase(BadDataHandlingStrategy.DivertRows, true)]
+        [TestCase(BadDataHandlingStrategy.ThrowException, false)]
+        [TestCase(BadDataHandlingStrategy.ThrowException, true)]
+        [TestCase(BadDataHandlingStrategy.IgnoreRows, false)]
+        public void BadCSV_TooFewColumnsOnLastLine(BadDataHandlingStrategy strategy, bool tryToResolve)
+        {
+            var file = CreateTestFile(
+                "Name,Description,Age",
+                "Frank,Is the greatest,100",
+                "Bob");
+
+            Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+            {
+                a.BadDataHandlingStrategy = strategy;
+                a.AttemptToResolveNewlinesInRecords = tryToResolve;
+                a.ThrowOnEmptyFiles = true;
+            };
+
+            switch (strategy)
+            {
+                case BadDataHandlingStrategy.ThrowException:
+                    var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, adjust));
+                    Assert.AreEqual("Bad data found on line 3", ex.Message);
+                    break;
+                case BadDataHandlingStrategy.IgnoreRows:
+                    var dt = RunGetChunk(file, adjust);
+                    Assert.AreEqual(1, dt.Rows.Count);
+                    break;
+                case BadDataHandlingStrategy.DivertRows:
+                    var dt2 = RunGetChunk(file, adjust);
+                    Assert.AreEqual(1, dt2.Rows.Count);
+
+                    AssertDivertFileIsExactly("Bob\r\n");
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("strategy");
+            }
+        }
+
+        [Test]
+        public void BadCSV_FreeTextMiddleColumn()
+        {
+            //This is recoverable
+            var file = CreateTestFile(
+                "Name,Description,Age",
+                "Frank,Is the greatest,100",
+                @"Bob,He's
+not too bad
+to be honest,20",
+                "Dennis,Hes ok,35");
+
+            var dt = RunGetChunk(file,s=> { s.AttemptToResolveNewlinesInRecords = true; });
+            Assert.AreEqual(3, dt.Rows.Count);
+            Assert.AreEqual("He's\r\nnot too bad\r\nto be honest", dt.Rows[1][1]);
+        }
+
+        [Test]
+        public void BadCSV_FreeTextFirstColumn()
+        {
+            var file = CreateTestFile(
+                "Description,Name,Age",
+                "Is the greatest,Frank,100",
+                @"He's
+not too bad
+to be honest,Bob,20",
+                "Hes ok,Dennis,35");
+
+            var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = true; }));
+            Assert.AreEqual("Bad data found on line 3",ex.Message);
+
+            //looks like a good record followed by 2 bad records
+            var dt = RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = true; s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows; });
+            Assert.AreEqual(3, dt.Rows.Count);
+            Assert.AreEqual("to be honest", dt.Rows[1][0]);
+            Assert.AreEqual("Bob", dt.Rows[1][1]);
+            Assert.AreEqual(20, dt.Rows[1][2]);
+        }
+
+        [Test]
+        public void BadCSV_FreeTextLastColumn()
+        {
+            var file = CreateTestFile(
+                "Name,Age,Description",
+                "Frank,100,Is the greatest",
+                @"Bob,20,He's
+not too bad
+to be honest",
+                "Dennis,35,Hes ok");
+
+            var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = true; }));
+            Assert.AreEqual("Bad data found on line 4",ex.Message);
+
+            //looks like a good record followed by 2 bad records
+            var dt = RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = true;s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows; });
+            Assert.AreEqual(3,dt.Rows.Count);
+            Assert.AreEqual("He's", dt.Rows[1][2]);
+
+
+        }
     }
 }

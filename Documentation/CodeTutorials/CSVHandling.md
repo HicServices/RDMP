@@ -11,8 +11,11 @@
 	* [Empty Headers](#empty-headers)
 1. [Resolved According To Strategy](#resolved-according-to-strategy)
 	* [Empty Files](#empty-files)
+	* [Too Many Cells](#too-many-cells)
+	* [Too Few Cells](#too-few-cells)
 1. [Unresolveable](#unresolveable)
-
+	* [Unclosed quotes](#unclosed-quotes)
+	
 ## Background
 CSV stands for 'Comma Separated Values'.  A CSV file is created by writting a text document in which the cells of the table are separated by a comma.  Here is an example CSV file:
 
@@ -48,7 +51,6 @@ Frank,2001-01-01
 Herbert,2002-01-01
 ```
 *NewLineInFile_Ignored*
-
 
 ```
 Name,Dob,Description
@@ -101,7 +103,6 @@ CHI ,,StudyID,Date
 ```
 _NullHeader_InMiddleOfColumns_
 
-
 ## Resolved According To Strategy
 
 ### Empty Files
@@ -113,5 +114,74 @@ A file is considered empty if it:
 * Has only whitespace (i.e. space, tab, return) in it (_EmptyFile_AllWhitespace_)
 * Has a header record but is otherwise only whitespace _EmptyFile_HeaderOnly_
 
+### Too Many Cells
+This can occur if a free text field is not escaped properly and contains the separator e.g. comma.  Depending on the `BadDataHandlingStrategy` you can ignore the row, throw exception or divert it to an _Errors file.
+
+```
+Name,Description,Age
+Frank,Is the greatest,100
+Bob,He's also dynamite, seen him do a lot of good work,30
+Dennis,Hes ok,35
+```
+_BadCSV_TooManyCellsInRow_
+
+### Too Few Cells
+There are many reasons why there might be too few cells on a given row.  It could have a header in the middle:
+
+```````
+Name,Description,Age
+Frank,Is the greatest,100
+Other People To Investigate
+Dennis,Hes ok,35
+```````
+_BadCSV_TooFewCellsInRow_
+
+Or it could have a free text field is not escaped properly and contains new lines:
+```
+Name,Description,Age
+Frank,Is the greatest,100
+Bob,He's
+not too bad
+to be honest,20
+Dennis,Hes ok,35
+```
+_BadCSV_FreeTextMiddleColumn_
+
+You can attempt to solve the problem of too few cells on a row by setting `AttemptToResolveNewlinesInRecords`.  This will trigger when the current row has too few cells.  It will investigate appending the subsequent rows to form a valid length of row (one where the number of cells match the number of headers).
+
+![FlowChart](Images/CSVHandling/TooFewCellsFlow.png) 
+
+This is a conservative approach in which the process is abandonned as soon as:
+* A valid length row is read during the process (all work is discarded and processing resumes from this record)
+* Too many cells are read (all work is discarded and processing resumes from the last record read)
+
+![FlowChart](Images/CSVHandling/TooFewCellsLimitations.png) 
+
+Since the process only triggers when too few cells are read, newlines in the last column do not trigger the process:
+```
+Name,Age,Description
+Frank,100,Is the greatest
+Bob,20,He's
+not too bad
+to be honest
+Dennis,35,Hes ok
+```
+_BadCSV_FreeTextLastColumn_
+
+Since the process stops as soon as a valid length row is encountered, newlines in the first column will never trigger the process:
+```
+Description,Name,Age
+Is the greatest,Frank,100
+He's
+not too bad
+to be honest,Bob,20
+Hes ok,Dennis,35
+```
+_BadCSV_FreeTextFirstColumn_
+
+Bad rows are treated according to the `BadDataHandlingStrategy`.
 
 ## Unresolveable
+
+### Unclosed Quotes
+

@@ -79,6 +79,11 @@ namespace LoadModules.Generic.DataFlowSources
         [DemandsInitialization(@"Determines system behaviour when a file is empty or has only a header row")]
         public bool ThrowOnEmptyFiles { get; set; }
 
+        [DemandsInitialization(@"Determines system behaviour when a line has too few cells compared to the header count.  
+True - Attempt to read more lines to make a complete record
+False - Treat the line as bad data (See BadDataHandlingStrategy)")]
+        public bool AttemptToResolveNewlinesInRecords { get; set; }
+
         /// <summary>
         /// The database table we are trying to load
         /// </summary>
@@ -112,7 +117,7 @@ namespace LoadModules.Generic.DataFlowSources
         private void InitializeComponents()
         {
             Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders, ForceHeadersReplacesFirstLineInFile);
-            DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile);
+            DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewlinesInRecords);
             EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener);
         }
 
@@ -401,13 +406,26 @@ namespace LoadModules.Generic.DataFlowSources
             
             _lineNumberBatch = 0;
 
-            while (_dataAvailable = _reader.Read()) //while we can read data -- also record whether the data was exhausted by this Read() because  CSVReader blows up if you ask it to Read() after Read() has already returned a false once
+            //read from the peek first if there is anything otherwise read from the reader
+            while (_dataAvailable = DataPusher.PeekedRecord != null || _reader.Read()) //while we can read data -- also record whether the data was exhausted by this Read() because  CSVReader blows up if you ask it to Read() after Read() has already returned a false once
             {
-                //if there is bad data on the current row just read the next
-                if (DataPusher.BadLines.Contains(_reader.Context.RawRow))
-                    continue;
+                FlatFileLine currentRow;
 
-                _lineNumberBatch += DataPusher.PushCurrentLine(_reader, dt,_listener,EventHandlers);
+                if (DataPusher.PeekedRecord != null)
+                {
+                    currentRow = DataPusher.PeekedRecord;
+                    DataPusher.PeekedRecord = null;
+                }
+                else
+                {
+                    currentRow = new FlatFileLine(_reader.Context);
+
+                    //if there is bad data on the current row just read the next
+                    if (DataPusher.BadLines.Contains(_reader.Context.RawRow))
+                        continue;
+                }
+
+                _lineNumberBatch += DataPusher.PushCurrentLine(_reader,currentRow, dt,_listener,EventHandlers);
 
                 if (!_dataAvailable)
                     break;

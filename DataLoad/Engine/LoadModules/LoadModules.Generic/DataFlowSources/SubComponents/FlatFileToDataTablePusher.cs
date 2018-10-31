@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using ReusableLibraryCode.Progress;
@@ -21,6 +19,14 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         private readonly FlatFileToLoad _fileToLoad;
         private readonly FlatFileColumnCollection _headers;
         private readonly Func<string, object> _hackValuesFunc;
+        private readonly bool _attemptToResolveNewlinesInRecords;
+        
+        /// <summary>
+        /// Used in the event of reading too few cells for the current line.  The pusher will peek at the next lines to see if they
+        /// make up a coherent row e.g. if a free text field is splitting up the document with newlines.  If the peeked lines do not
+        /// resolve the problem then the line will be marked as BadData and the peeked records must be reprocessed by <see cref="DelimitedFlatFileDataFlowSource"/>
+        /// </summary>
+        public FlatFileLine PeekedRecord;
 
         /// <summary>
         /// All line numbers of the source file being read that could not be processed.  Allows BadDataFound etc to be called multiple times without skipping
@@ -39,19 +45,18 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         /// </summary>
         private bool _haveComplainedAboutColumnMismatch;
 
-        public FlatFileToDataTablePusher(FlatFileToLoad fileToLoad,FlatFileColumnCollection headers, Func<string,object> hackValuesFunc)
+        public FlatFileToDataTablePusher(FlatFileToLoad fileToLoad, FlatFileColumnCollection headers, Func<string, object> hackValuesFunc, bool attemptToResolveNewlinesInRecords)
         {
             _fileToLoad = fileToLoad;
             _headers = headers;
             _hackValuesFunc = hackValuesFunc;
+            _attemptToResolveNewlinesInRecords = attemptToResolveNewlinesInRecords;
         }
 
-        public int PushCurrentLine(CsvReader reader, DataTable dt,IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
+        public int PushCurrentLine(CsvReader reader,FlatFileLine lineToPush, DataTable dt,IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
         {
-            var currentLine = reader.Context.Record;
-
             //skip the blank lines
-            if (currentLine.Length == 0 || currentLine.All(h=>h.IsBasicallyNull()))
+            if (lineToPush.Cells.Length == 0 || lineToPush.Cells.All(h => h.IsBasicallyNull()))
                 return 0;
 
             int headerCount = _headers.CountNotNull;
@@ -66,21 +71,18 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
 
             Dictionary<string, object> rowValues = new Dictionary<string, object>();
 
-            if (currentLine.Length < headerCount)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Too few columns on line " + reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + _headers.Length + " columns but line had " + currentLine.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
-                eventHandlers.BadDataFound(reader.Context);
-                return 0;
-            }
+            if (lineToPush.Cells.Length < headerCount)
+                if (!DealWithTooFewCellsOnCurrentLine(reader, lineToPush, listener, eventHandlers))
+                    return 0;
 
             bool haveIncremented_bufferOverrunsWhereColumnValueWasBlank = false;
 
 
-            for (int i = 0; i < currentLine.Length; i++)
+            for (int i = 0; i < lineToPush.Cells.Length; i++)
             {
                 //about to do a buffer overrun
                 if (i >= _headers.Length)
-                    if (currentLine[i].IsBasicallyNull())
+                    if (lineToPush[i].IsBasicallyNull())
                     {
                         if (!haveIncremented_bufferOverrunsWhereColumnValueWasBlank)
                         {
@@ -92,24 +94,24 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     }
                     else
                     {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Column mismatch on line " + reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + _headers.Length + " columns but line had " + currentLine.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
-                        eventHandlers.BadDataFound(reader.Context);
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Column mismatch on line " + reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + _headers.Length + " columns but line had " + lineToPush.Cells.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
+                        eventHandlers.BadDataFound(lineToPush);
                         break;
                     }
 
                 //its an empty header, dont bother populating it
                 if (_headers[i].IsBasicallyNull())
-                    if (!currentLine[i].IsBasicallyNull())
+                    if (!lineToPush[i].IsBasicallyNull())
                         throw new FileLoadException("The header at index " + i + " in flat file '" +dt.TableName+ "' had no name but there was a value in the data column (on Line number " + reader.Context.RawRow + ")");
                     else
                         continue;
 
                 //sometimes flat files have ,NULL,NULL,"bob" in instead of ,,"bob"
-                if (currentLine[i].IsBasicallyNull())
+                if (lineToPush[i].IsBasicallyNull())
                     rowValues.Add(_headers[i], DBNull.Value);
                 else
                 {
-                    object hackedValue = _hackValuesFunc(currentLine[i]);
+                    object hackedValue = _hackValuesFunc(lineToPush[i]);
 
                     if (hackedValue is string)
                         hackedValue = ((string)hackedValue).Trim();
@@ -142,7 +144,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     }
                     catch (Exception e)
                     {
-                        throw new FileLoadException("Error reading file '" + dt.TableName + "'.  Problem loading value " + currentLine[i] + " into data table (on Line number " + reader.Context.RawRow + ") the header we were trying to populate was " + _headers[i] + " and was of datatype " + dt.Columns[_headers[i]].DataType, e);
+                        throw new FileLoadException("Error reading file '" + dt.TableName + "'.  Problem loading value " + lineToPush[i] + " into data table (on Line number " + reader.Context.RawRow + ") the header we were trying to populate was " + _headers[i] + " and was of datatype " + dt.Columns[_headers[i]].DataType, e);
                     }
                 }
             }
@@ -157,6 +159,107 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             }
 
             return 0;
+        }
+        
+        private bool DealWithTooFewCellsOnCurrentLine(CsvReader reader, FlatFileLine lineToPush, IDataLoadEventListener listener,FlatFileEventHandlers eventHandlers)
+        {
+            if(!_attemptToResolveNewlinesInRecords)
+            {
+                //we read too little cell count but we don't want to solve the problem
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Too few columns on line " + reader.Context.RawRow + " of file '" + _fileToLoad + "', it has too many columns (expected " + _headers.Length + " columns but line had " + lineToPush.Cells.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
+                eventHandlers.BadDataFound(lineToPush);
+
+                //didn't bother trying to fix the problem
+                return false;
+            }
+
+            //We want to try to fix the problem by reading more data
+
+            //Create a composite row
+            List<string> newCells = new List<string>(lineToPush.Cells);
+            
+            //track what we are Reading incase it doesn't work
+            var allPeekedLines = new List<FlatFileLine>();
+
+            do
+            {
+                FlatFileLine peekedLine;
+
+                //try adding the next row
+                if (reader.Read())
+                {
+                    peekedLine = new FlatFileLine(reader.Context);
+
+                    //peeked line was 'valid' on it's own
+                    if (peekedLine.Cells.Length >= _headers.Length)
+                    {
+                        //queue it for reprocessing
+                        PeekedRecord = peekedLine;
+
+                        //and mark everything else as bad
+                        AllBad(lineToPush, allPeekedLines,eventHandlers);
+                        return false;
+                    }
+
+                    //peeked line was invalid (too short) so we can add it onto ourselves
+                    allPeekedLines.Add(peekedLine);
+                }
+                else
+                {
+                    //Ran out of space in the file without fixing the problem so it's all bad
+                    AllBad(lineToPush, allPeekedLines,eventHandlers);
+
+                    //couldn't fix the problem
+                    return false;
+                }
+
+                //add the peeked line to the current cells
+                //add the first record as an extension of the last cell in current row
+                newCells[newCells.Count - 1] += Environment.NewLine + peekedLine.Cells[0];
+
+                //add any further cells on after that
+                newCells.AddRange(peekedLine.Cells.Skip(1));
+
+            } while (newCells.Count() < _headers.Length);
+
+
+            //if we read too much or reached the end of the file
+            if (newCells.Count() > _headers.Length)
+            {
+                AllBadExceptLastSoRequeueThatOne(lineToPush,allPeekedLines,eventHandlers);
+                return false;
+            }
+
+            if (newCells.Count() != _headers.Length)
+                throw new Exception("We didn't over read or reach end of file, how did we get here?");
+
+            //we managed to create a full row
+            lineToPush.Cells = newCells.ToArray();
+
+            //problem was fixed
+            return true;
+        }
+
+        private void AllBadExceptLastSoRequeueThatOne(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)
+        {
+            //the current line is bad
+            eventHandlers.BadDataFound(lineToPush);
+
+            //last line resulted in the overrun so requeue it
+            PeekedRecord = allPeekedLines.Last();
+
+            //but throw away everything else we read
+            foreach (FlatFileLine line in allPeekedLines.Take(allPeekedLines.Count() - 1))
+                eventHandlers.BadDataFound(line);
+        }
+
+        private void AllBad(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)
+        {
+            //the current line is bad
+            eventHandlers.BadDataFound(lineToPush);
+
+            foreach (FlatFileLine line in allPeekedLines)
+                eventHandlers.BadDataFound(line);
         }
     }
 }

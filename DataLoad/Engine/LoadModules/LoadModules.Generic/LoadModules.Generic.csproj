@@ -222,6 +222,7 @@
     <Compile Include="DataFlowSources\DoNothingCacheSource.cs" />
     <Compile Include="DataFlowSources\SubComponents\FlatFileColumnCollection.cs" />
     <Compile Include="DataFlowSources\SubComponents\FlatFileEventHandlers.cs" />
+    <Compile Include="DataFlowSources\SubComponents\FlatFileLine.cs" />
     <Compile Include="DataFlowSources\SubComponents\FlatFileToDataTablePusher.cs" />
     <Compile Include="DataProvider\FlatFileManipulation\ExcelToCSVFilesConverter.cs" />
     <Compile Include="DataProvider\ImportFilesDataProvider.cs" />
