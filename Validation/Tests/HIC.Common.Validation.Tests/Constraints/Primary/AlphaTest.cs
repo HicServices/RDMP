@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace HIC.Common.Validation.Tests.Constraints.Primary
 {
-    [TestFixture]
+    
     class AlphaTest
     {
         private IPrimaryConstraint _alpha;

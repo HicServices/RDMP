@@ -426,7 +426,7 @@ namespace ReusableLibraryCode
                         throw new NotSupportedException("Found float value " + value + " in data table, SQLServer does not support floats in bulk insert, instead you should use doubles otherwise you will end up with the value 0.85 turning into :0.850000023841858 in your database");
                 }
         }
-        
+
         /// <summary>
         /// Locates a manifest resource in the assembly under the manifest name subspace.  If you want to spray the resource MySoftwareSuite.MyApplication.MyResources.Bob.txt then pass:
         /// 1. the assembly containing the resource (e.g. typeof(MyClass1).Assembly)
@@ -436,8 +436,12 @@ namespace ReusableLibraryCode
         /// <param name="assembly">The dll e.g. MySoftwareSuite.MyApplication.dll</param>
         /// <param name="manifestName">The full path to the manifest resource e.g. MySoftwareSuite.MyApplication.MyResources.Bob.txt</param>
         /// <param name="file">The filename ONLY of the resource e.g. Bob.txt</param>
-        public static FileInfo SprayFile(Assembly assembly, string manifestName, string file)
+        /// <param name="outputDirectory">The directory to put the generated file in.  Defaults to %appdata%/RDMP </param>
+        public static FileInfo SprayFile(Assembly assembly, string manifestName, string file, string outputDirectory = null)
         {
+            if(outputDirectory == null)
+                outputDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP");
+
             Stream fileToSpray = assembly.GetManifestResourceStream(manifestName);
 
             if (fileToSpray == null)
@@ -447,12 +451,10 @@ namespace ReusableLibraryCode
             byte[] buffer = new byte[fileToSpray.Length];
             fileToSpray.Read(buffer, 0, buffer.Length);
 
-            string folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string pathToDataApp = Path.Combine(folder, "RDMP");
-            if (!Directory.Exists(pathToDataApp))
-                Directory.CreateDirectory(pathToDataApp);
+            if (!Directory.Exists(outputDirectory))
+                Directory.CreateDirectory(outputDirectory);
 
-            FileInfo target = new FileInfo(Path.Combine(pathToDataApp,file));
+            FileInfo target = new FileInfo(Path.Combine(outputDirectory,file));
 
             File.WriteAllBytes(target.FullName, buffer);
 

@@ -19,7 +19,7 @@ namespace CatalogueLibraryTests.Integration.Validation
             try
             {
                 Assert.IsNotNull(regex.ConceptName);
-                Assert.IsNullOrEmpty(regex.Description);
+                Assert.IsTrue(string.IsNullOrEmpty(regex.Description));
 
                 regex.ConceptName = "Fish";
                 regex.Regex = "^(Fish)$";

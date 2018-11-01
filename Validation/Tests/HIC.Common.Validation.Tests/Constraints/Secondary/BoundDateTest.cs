@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace HIC.Common.Validation.Tests.Constraints.Secondary
 {
-    [TestFixture]
+    
     class BoundDateTest
     {
         [Test]

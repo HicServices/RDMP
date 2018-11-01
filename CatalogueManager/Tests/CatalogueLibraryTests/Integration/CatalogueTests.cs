@@ -362,13 +362,13 @@ namespace CatalogueLibraryTests.Integration
 
 
         [Test]
-        [ExpectedException(ExpectedMessage = @"All catalogue paths must start with \ but Catalogue bob had an attempt to set it's folder to :fish")]
         public void CatalogueFolder_CannotSetToNonRoot()
         {
             var c = new Catalogue(CatalogueRepository, "bob");
             try
             {
-                c.Folder.Path = "fish";
+                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = "fish");
+                Assert.AreEqual(@"All catalogue paths must start with \ but Catalogue bob had an attempt to set it's folder to :fish",ex.Message);
             }
             finally
             {
@@ -377,13 +377,13 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = @"An attempt was made to set Catalogue bob Folder to null, every Catalogue must have a folder, set it to \ if you want the root")]
         public void CatalogueFolder_CannotSetToNull()
         {
             var c = new Catalogue(CatalogueRepository, "bob");
             try
             {
-                c.Folder.Path = null;
+                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = null);
+                Assert.AreEqual(@"An attempt was made to set Catalogue bob Folder to null, every Catalogue must have a folder, set it to \ if you want the root",ex.Message);
             }
             finally
             {
@@ -392,15 +392,14 @@ namespace CatalogueLibraryTests.Integration
         }
         
         [Test]
-        [ExpectedException(ExpectedMessage = @"Catalogue paths cannot contain double slashes '\\', Catalogue bob had an attempt to set it's folder to :\\bob\\")]
         public void CatalogueFolder_CannotHaveDoubleSlashes()
         {
             var c = new Catalogue(CatalogueRepository, "bob");
             try
             {
                 //notice the @ symbol that makes the double slashes actual double slashes - common error we might make and what this test is designed to prevent
-                c.Folder.Path = @"\\bob\\";
-                c.SaveToDatabase();
+                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = @"\\bob\\");
+                Assert.AreEqual(@"Catalogue paths cannot contain double slashes '\\', Catalogue bob had an attempt to set it's folder to :\\bob\\",ex.Message);
             }
             finally
             {

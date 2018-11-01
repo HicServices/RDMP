@@ -24,12 +24,11 @@
   <property name="file.test_results" value="index" overwrite="true" />
   <property name="tests.excluded_categories.comma_separated" value="Unit,Slow,NotWorking,Ignore,Oracle,unit,slow,notworking,ignore,oracle" overwrite="false" />
   <property name="nunit.separator" value="--" if="${platform::is-unix()}" />
-  <property name="nunit.separator" value="/" if="${platform::is-windows()}" />
+  <property name="nunit.separator" value="--" if="${platform::is-windows()}" />
   <property name="test.args.framework" value="" if="${platform::is-unix()}" />
   <property name="test.args.framework" value="${nunit.separator}framework=${microsoft.framework}" if="${platform::is-windows()}" />
-  <!--property name="test.args" value="${nunit.separator}xml=&quot;${dirs.test_results}${path.separator}nunit-results.xml&quot; ${nunit.separator}nologo " /-->
-  <property name="test.args" value="${nunit.separator}xml=&quot;${dirs.test_results}${path.separator}nunit-results.xml&quot; ${nunit.separator}nologo ${nunit.separator}labels ${test.args.framework}" />
-  <property name="test.args.exclude" value="${nunit.separator}exclude=&quot;${tests.excluded_categories.comma_separated}&quot;" />
+  <property name="test.args" value="${nunit.separator}workers=1 ${nunit.separator}inprocess ${nunit.separator}result=&quot;${dirs.test_results}${path.separator}nunit-results.xml&quot;;format=nunit2 ${nunit.separator}noheader ${nunit.separator}labels=After ${test.args.framework}" />
+  <property name="test.args.exclude" value="" />
   <!--<property name="app.nunit.console" value="${path::get-full-path(dirs.lib)}${path.separator}NUnit${path.separator}nunit-console.exe" overwrite="false" if="${platform::is-windows()}" />
   <property name="app.nunit.console" value="nunit-console" overwrite="false" if="${platform::is-unix()}"/>-->
   <property name="dlls.test" value="" />
@@ -76,7 +75,8 @@
         <items>
           <include name="${dirs.tests}${path.separator}**${path.separator}*Test*dll" />
           <include name="${dirs.tests}**${path.separator}*.Integration*dll" />
-          <include name="${dirs.tests}**${path.separator}*Test*dll" />
+          <include name="${dirs.tests}**${path.separator}*Tests.dll" />
+          <include name="${dirs.tests}**${path.separator}*Tests.Common.dll" />
           <include name="${dirs.tests}${path.separator}**${path.separator}*Spec*dll" />
         </items>
       </in>

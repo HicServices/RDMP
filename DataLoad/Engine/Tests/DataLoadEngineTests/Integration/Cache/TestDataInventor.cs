@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using CachingEngine.PipelineExecution.Sources;
 using CachingEngine.Requests;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -12,6 +13,9 @@ namespace DataLoadEngineTests.Integration.Cache
     public class TestDataInventor : CacheSource<TestDataWriterChunk>
     {
         Random r = new Random();
+        
+        [DemandsInitialization("Directory to create files into",Mandatory=true)]
+        public string WorkingFolder { get; set; }
 
         public override void DoGetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -38,7 +42,7 @@ namespace DataLoadEngineTests.Integration.Cache
 
         private FileInfo GetFileForDay(DateTime currentDay)
         {
-            string filename = currentDay.ToString("yyyyMMdd") + ".csv";
+            string filename = Path.Combine(WorkingFolder,currentDay.ToString("yyyyMMdd") + ".csv");
 
             string contents = "MyRand,DateOfRandom" + Environment.NewLine;
             for (int i = 0; i < 100; i++)

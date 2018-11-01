@@ -29,7 +29,7 @@ namespace AnonymisationTests
         
         BulkTestsData _bulkData;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetupBulkTestData()
         {
             Console.WriteLine("Cleaning up remnants");
@@ -144,7 +144,6 @@ namespace AnonymisationTests
 
         #region tests that throw
         [Test]
-        [ExpectedException(ExpectedMessage = "Column forename was found in the IdentifierDump table ID_BulkData but was not one of the primary keys or a PreLoadDiscardedColumn")]
         public void DumpAllIdentifiersInTable_UnexpectedColumnFoundInIdentifierDumpTable()
         {
             var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "surname");
@@ -186,7 +185,8 @@ namespace AnonymisationTests
 
             try
             {
-                dumper2.Check(thrower);
+                var ex = Assert.Throws<Exception>(()=>dumper2.Check(thrower));
+                Assert.AreEqual("Column forename was found in the IdentifierDump table ID_BulkData but was not one of the primary keys or a PreLoadDiscardedColumn",ex.Message);
             }
             finally
             {
@@ -213,7 +213,6 @@ namespace AnonymisationTests
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "IdentifierDumper STAGING insert (ID_BulkData_STAGING) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStagging() when you are done)")]
         public void IdentifierDumperCheckFails_StagingNotCalled()
         {
             var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename");
@@ -229,7 +228,8 @@ namespace AnonymisationTests
             try
             {
                 dumper.Check(new AcceptAllCheckNotifier());
-                dumper.DumpAllIdentifiersInTable(_bulkData.GetDataTable(10));
+                var ex = Assert.Throws<Exception>(()=>dumper.DumpAllIdentifiersInTable(_bulkData.GetDataTable(10)));
+                Assert.AreEqual("IdentifierDumper STAGING insert (ID_BulkData_STAGING) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStagging() when you are done)",ex.Message);
             }
             finally
             {
@@ -312,7 +312,6 @@ namespace AnonymisationTests
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage ="does not have a listed IdentifierDump ExternalDatabaseServer" ,MatchType = MessageMatch.Contains)]
         public void IdentifierDumperCheckFails_NoTableOnServerRejectChange()
         {
             var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "NationalSecurityNumber");
@@ -322,9 +321,8 @@ namespace AnonymisationTests
                 preDiscardedColumn1.SqlDataType = "varchar(10)";
                 preDiscardedColumn1.SaveToDatabase();
 
-                IdentifierDumper dumper = new IdentifierDumper(tableInfoCreated);
-           
-                dumper.Check(new ThrowImmediatelyCheckNotifier());
+                var ex = Assert.Throws<ArgumentException>(()=> new IdentifierDumper(tableInfoCreated));
+                StringAssert.Contains("does not have a listed IdentifierDump ExternalDatabaseServer",ex.Message);
             }
             finally
             {
@@ -372,7 +370,7 @@ namespace AnonymisationTests
 
         #endregion
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void Cleanup()
         {
             foreach (var cata in CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name.Equals(BulkTestsData.BulkDataTable)))

@@ -14,14 +14,14 @@ namespace ReusableCodeTests
         private BulkTestsData _bulkTests;
 
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BulkTestsSetUp()
         {
             _bulkTests = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
             _bulkTests.SetupTestData();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void BulkTestsTearDown()
         {
             _bulkTests.Destroy();
@@ -91,7 +91,6 @@ namespace ReusableCodeTests
         }
         
         [Test]
-        [ExpectedException(ExpectedMessage = "Found float value 1.5 in data table, SQLServer does not support floats in bulk insert", MatchType = MessageMatch.Contains)]
         public void BulkInsertWithBetterErrorMessagesCorrectlyWarnsUsAboutFloats()
         {
             DataTable dt = new DataTable();
@@ -99,7 +98,8 @@ namespace ReusableCodeTests
             dt.Rows.Add(1.5f);
 
             SqlBulkCopy copy = new SqlBulkCopy(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString);
-            UsefulStuff.BulkInsertWithBetterErrorMessages(copy, dt, DiscoveredServerICanCreateRandomDatabasesAndTablesOn);
+            var ex = Assert.Throws<NotSupportedException>(()=>UsefulStuff.BulkInsertWithBetterErrorMessages(copy, dt, DiscoveredServerICanCreateRandomDatabasesAndTablesOn));
+            StringAssert.Contains("Found float value 1.5 in data table, SQLServer does not support floats in bulk insert",ex.Message);
         }
     }
 }

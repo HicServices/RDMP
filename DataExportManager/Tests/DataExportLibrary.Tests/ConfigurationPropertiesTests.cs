@@ -21,11 +21,10 @@ namespace DataExportLibrary.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(KeyNotFoundException))]
         public void GetNonExistantValue_KeyNotFound()
         {
             ConfigurationProperties properties = new ConfigurationProperties(true, DataExportRepository);
-            properties.GetValue("asdfasljdfljsadkflkasjdflkjasdfljk");
+            Assert.Throws<KeyNotFoundException>(()=>properties.GetValue("asdfasljdfljsadkflkasjdflkjasdfljk"));
         }
 
 

@@ -17,12 +17,14 @@ namespace DataExportLibrary.Tests.Cohort
 {
     public class CommittingNewCohortsTests : TestsRequiringACohort
     {
-        private string filename = "CommittingNewCohorts.csv";
+        private string filename;
         private string projName = "MyProj";
 
         [SetUp]
         public void GenerateFileToLoad()
         {
+            filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "CommittingNewCohorts.csv");
+
             StreamWriter sw = new StreamWriter(filename);    
             sw.WriteLine("PrivateID,ReleaseID,SomeHeader");
             sw.WriteLine("Priv_1111,Pub_1111,Smile buddy");
@@ -42,34 +44,34 @@ namespace DataExportLibrary.Tests.Cohort
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?")]
         public void CommittingNewCohortFile_IDPopulated_Throws()
         {
             var proj = new Project(DataExportRepository, projName);
 
             CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(511, "CommittingNewCohorts",1,999,_externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
-            request.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?",ex.Message);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)")]
         public void CommittingNewCohortFile_ProjectNumberNumberMissing()
         {
             var proj = new Project(DataExportRepository, projName);
 
             CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
-            request.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)",ex.Message);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999")]
         public void CommittingNewCohortFile_ProjectNumberMismatch()
         {
             var proj = new Project(DataExportRepository, projName) {ProjectNumber = 321};
             proj.SaveToDatabase();
 
             CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
-            request.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999",ex.Message);
         }
 
         [Test]

@@ -26,7 +26,7 @@ namespace DataLoadEngineTests.Integration
 
         private UserAcceptanceTestEnvironmentHelper _userAcceptanceTestEnvironmentHelper;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         protected void CallUserAcceptanceTestEnvironmentHelper_SetUp()
         {
             try
@@ -47,7 +47,7 @@ namespace DataLoadEngineTests.Integration
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         protected void AfterAllDatabaseClonerTests()
         {
             _userAcceptanceTestEnvironmentHelper.TearDown();

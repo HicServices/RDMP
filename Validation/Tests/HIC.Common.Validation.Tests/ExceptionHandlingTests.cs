@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace HIC.Common.Validation.Tests
 {
-    [TestFixture]
+    
     class ExceptionHandlingTests
     {
 

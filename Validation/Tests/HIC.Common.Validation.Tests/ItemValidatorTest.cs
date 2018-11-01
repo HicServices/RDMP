@@ -15,7 +15,7 @@ namespace HIC.Common.Validation.Tests
      * 
      */
 
-    [TestFixture]
+    
     public class ItemValidatorTest
     {
         private ItemValidator _v;

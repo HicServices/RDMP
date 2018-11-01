@@ -71,13 +71,13 @@ namespace AnonymisationTests
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage="ix_suffixMustBeUnique", MatchType = MessageMatch.Contains)]
         public void DuplicateSuffix_Throws()
         {
             var anoTable = GetANOTable();
             try
             {
-                new ANOTable(CatalogueRepository, anoTable.Server, "DuplicateSuffix", anoTable.Suffix);
+                var ex = Assert.Throws<SqlException>(()=>new ANOTable(CatalogueRepository, anoTable.Server, "DuplicateSuffix", anoTable.Suffix));
+                StringAssert.Contains("ix_suffixMustBeUnique", ex.Message);
             }
             finally
             {
@@ -86,14 +86,14 @@ namespace AnonymisationTests
         }
         
         [Test]
-        [ExpectedException(ExpectedMessage = "NumberOfCharactersToUseInAnonymousRepresentation cannot be negative")]
         public void CreateAnANOTable_CharCountNegative()
         {
             var anoTable = GetANOTable();
             try
             {
                 anoTable.NumberOfCharactersToUseInAnonymousRepresentation = -500;
-                anoTable.SaveToDatabase();
+                var ex = Assert.Throws<Exception>(anoTable.SaveToDatabase);
+                Assert.AreEqual("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative",ex.Message);
             }
             finally
             {
@@ -103,7 +103,6 @@ namespace AnonymisationTests
         }
         
         [Test]
-        [ExpectedException(ExpectedMessage = "NumberOfIntegersToUseInAnonymousRepresentation cannot be negative")]
         public void CreateAnANOTable_IntCountNegative()
         {
             ANOTable anoTable = GetANOTable();
@@ -111,7 +110,8 @@ namespace AnonymisationTests
             try
             {
                 anoTable.NumberOfIntegersToUseInAnonymousRepresentation = -500;
-                anoTable.SaveToDatabase();
+                var ex = Assert.Throws<Exception>(anoTable.SaveToDatabase);
+                Assert.AreEqual("NumberOfIntegersToUseInAnonymousRepresentation cannot be negative", ex.Message);
             }
             finally
             {
@@ -121,7 +121,6 @@ namespace AnonymisationTests
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Anonymous representations must have at least 1 integer or character")]
         public void CreateAnANOTable_TotalCountZero()
         {
             var anoTable = GetANOTable();
@@ -129,7 +128,8 @@ namespace AnonymisationTests
             {
                 anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 0;
                 anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
-                anoTable.SaveToDatabase();
+                var ex = Assert.Throws<Exception>(anoTable.SaveToDatabase);
+                Assert.AreEqual("Anonymous representations must have at least 1 integer or character",ex.Message);
             }
             finally
             {

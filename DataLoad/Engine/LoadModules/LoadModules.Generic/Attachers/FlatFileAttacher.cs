@@ -52,11 +52,6 @@ namespace LoadModules.Generic.Attachers
             if(TableName != null)
                 TableName = TableName.Trim();
 
-            var baseResult = base.Attach(job,cancellationToken);
-
-            if (baseResult != ExitCodeType.Success)
-                throw new Exception("Base class for "+this.GetType().FullName+" failed to return ExitCodeType.Success");
-
             Stopwatch timer = new Stopwatch();
             timer.Start();
 

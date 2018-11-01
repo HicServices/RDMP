@@ -34,7 +34,7 @@ namespace DataLoadEngineTests.Integration
 
         private const string DatabaseName = "BackfillTests";
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUpFixture()
         {
             _catalogue = CatalogueRepository.GetAllCatalogues().SingleOrDefault(c => c.Name.Equals("BackfillTests"));

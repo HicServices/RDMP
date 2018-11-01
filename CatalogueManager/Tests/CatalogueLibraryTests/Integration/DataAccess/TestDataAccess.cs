@@ -24,7 +24,6 @@ namespace CatalogueLibraryTests.Integration.DataAccess
         #region Distinct Connection String (from Collection tests - Failing)
 
         [Test]
-        [ExpectedException(ExpectedMessage = "collection could not agree on a single Password", MatchType = MessageMatch.Contains)]
         public void TestDistinctCredentials_PasswordMismatch()
         {
             List<TestAccessPoint>  testPoints = new List<TestAccessPoint>();
@@ -33,12 +32,12 @@ namespace CatalogueLibraryTests.Integration.DataAccess
             testPoints.Add(new TestAccessPoint("frank","bob","username","mydifferentPass"));
 
             //call this
-            var result = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+            var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
+            StringAssert.Contains("collection could not agree on a single Password",ex.Message);
 
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "collection could not agree whether to use Credentials", MatchType = MessageMatch.Contains)]
         public void TestDistinctCredentials_UsernamePasswordAreNull()
         {
             List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
@@ -47,12 +46,12 @@ namespace CatalogueLibraryTests.Integration.DataAccess
             testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
 
             //call this
-            var result = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+            var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
+            StringAssert.Contains("collection could not agree whether to use Credentials",ex.Message);
 
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "collection could not agree on a single Username", MatchType = MessageMatch.Contains)]
         public void TestDistinctCredentials_UsernameMismatch()
         {
             List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
@@ -61,7 +60,9 @@ namespace CatalogueLibraryTests.Integration.DataAccess
             testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
 
             //call this
-            var result = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+            
+            var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
+            StringAssert.Contains("collection could not agree on a single Username",ex.Message);
 
         }
 

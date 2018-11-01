@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace HIC.Common.Validation.Tests.Constraints.Secondary
 {
-    [TestFixture]
+    
     class RegularExpressionTest
     {
         private RegularExpression _regex;

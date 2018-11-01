@@ -10,7 +10,7 @@ using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
 {
-    [TestFixture]
+    
     public class VersioningTests :DatabaseTests
     {
         [Test]

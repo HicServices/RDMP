@@ -17,7 +17,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
     {
         private BulkTestsData _bulkTestData;
         
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetupBulkTestData()
         {
             _bulkTestData = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
@@ -25,7 +25,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
 
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void AfterAllTests()
         {
             _bulkTestData.Destroy();

@@ -127,7 +127,7 @@ namespace CatalogueLibraryTests.Integration
             string worked;
             implementer.DropTrigger(out problems,out worked);
 
-            Assert.IsNullOrEmpty(problems);
+            Assert.IsTrue(string.IsNullOrEmpty(problems));
 
             Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
         }

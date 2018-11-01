@@ -65,12 +65,12 @@ namespace CatalogueLibrary.Repositories
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
         }
 
-        public void LoadHelp()
+        public void LoadHelp(params string[] directories)
         {
             if (!SuppressHelpLoading)
             {
                 CommentStore = new CommentStore();
-                CommentStore.ReadComments();
+                CommentStore.ReadComments(directories);
                 AddToHelp(Resources.KeywordHelp);
             }
         }

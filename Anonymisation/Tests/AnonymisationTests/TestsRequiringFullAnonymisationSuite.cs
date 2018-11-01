@@ -21,7 +21,7 @@ namespace AnonymisationTests
         protected ExternalDatabaseServer IdentifierDump_ExternalDatabaseServer { get; set; }
         public DiscoveredDatabase IdentifierDump_Database { get; set; }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup_IdentifierDump()
         {
             IdentifierDump_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(IdentifierDump_DatabaseName);
@@ -40,7 +40,7 @@ namespace AnonymisationTests
 
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public override void FixtureTearDown()
         {
             if (IdentifierDump_Database.Exists())
