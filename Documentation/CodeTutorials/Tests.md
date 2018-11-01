@@ -4,6 +4,8 @@ Code testing is vital for ensuring the long term stability of a codebase.  Prope
 
 RDMP is designed to manage research datasets stored in several formats (Sql Server, MySql, Oracle).  Cross platform tests or test cases can be run when suitable testing server instances are available.
 
+*IMPORTANT:* Many tests create objects in the test databases or create files in the test working directory therefore [parallel test execution](https://github.com/nunit/docs/wiki/Parallelizable-Attribute) is not supported.
+
 ![ReOrdering](Images/Tests/TestCategories.png) 
 
 ## Running Tests
