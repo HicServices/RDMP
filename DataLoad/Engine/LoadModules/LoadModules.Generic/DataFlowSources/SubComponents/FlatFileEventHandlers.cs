@@ -20,19 +20,21 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         private readonly bool _throwOnEmptyFiles;
         private readonly BadDataHandlingStrategy _strategy;
         private readonly IDataLoadEventListener _listener;
-        
+        private int _maximumErrorsToReport;
+
         /// <summary>
         /// File where we put error rows
         /// </summary>
         public FileInfo DivertErrorsFile;
 
-        public FlatFileEventHandlers(FlatFileToLoad fileToLoad, FlatFileToDataTablePusher dataPusher, bool throwOnEmptyFiles, BadDataHandlingStrategy strategy, IDataLoadEventListener listener)
+        public FlatFileEventHandlers(FlatFileToLoad fileToLoad, FlatFileToDataTablePusher dataPusher, bool throwOnEmptyFiles, BadDataHandlingStrategy strategy, IDataLoadEventListener listener, int maximumErrorsToReport)
         {
             _fileToLoad = fileToLoad;
             _dataPusher = dataPusher;
             _throwOnEmptyFiles = throwOnEmptyFiles;
             _strategy = strategy;
             _listener = listener;
+            _maximumErrorsToReport = maximumErrorsToReport;
         }
 
         public void FileIsEmpty()
@@ -50,7 +52,9 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             switch (_strategy)
             {
                 case BadDataHandlingStrategy.IgnoreRows:
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on " + line.GetLineDescription(), obj));
+                    if (_maximumErrorsToReport-- >0)
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on " + line.GetLineDescription(), obj));
+
                     //move to next line
                     _dataPusher.BadLines.Add(obj.ReadingContext.RawRow);
 
@@ -73,7 +77,9 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             switch (_strategy)
             {
                 case BadDataHandlingStrategy.IgnoreRows:
-                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on " + line.GetLineDescription()));
+
+                    if (_maximumErrorsToReport-- > 0)
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored BadData on " + line.GetLineDescription()));
 
                     //move to next line
                     _dataPusher.BadLines.Add(line.LineNumber);
@@ -103,7 +109,8 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     DivertErrorsFile.Delete();
             }
 
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Diverting Error on " + line.GetLineDescription() + " to '" + DivertErrorsFile.FullName + "'", ex));
+            if (_maximumErrorsToReport-- > 0)
+                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Diverting Error on " + line.GetLineDescription() + " to '" + DivertErrorsFile.FullName + "'", ex));
 
             File.AppendAllText(DivertErrorsFile.FullName, line.RawRecord);
 

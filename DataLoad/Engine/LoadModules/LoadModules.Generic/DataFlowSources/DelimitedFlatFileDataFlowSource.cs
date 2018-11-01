@@ -32,12 +32,28 @@ namespace LoadModules.Generic.DataFlowSources
         private bool _dataAvailable;
         private IDataLoadEventListener _listener;
 
+        #region User viewable descriptions of what properties do (used to help wrapper classes have consistent definitions
         public const string ForceHeaders_DemandDescription = "Forces specific headers to be interpreted for columns, this is a string that will effectively be appended to the front of the file when it is read.  WARNING: Use this argument only when the file does not have any headers (Note that you must use the appropriate separator for your file)";
         public const string ForceHeadersReplacesFirstLineInFile_Description = "Only used when ForceHeaders is specified, if true then the line will replace the first line of the file.  If left as false (default) then the line will be appended to the file.  Use true if you want to replace existing headers in the file and false if hte file doesn't have any headers in it at all.";
         public const string IgnoreQuotes_DemandDescription = "True if the parser should treat double quotes as normal characters";
         public const string IgnoreBlankLines_DemandDescription = "True if the parser should skip over blank lines";
         public const string MakeHeaderNamesSane_DemandDescription = "True (recommended) if you want to fix columns that have crazy names e.g. 'my column #1' would become 'mycolumn1'";
+        
+        public const string BadDataHandlingStrategy_DemandDescription = 
+@"Determines system behaviour when unprocessable rows are found in the file being loaded:
+ThrowException - Stop the loading process with an error
+IgnoreRows - Step over the line in the file and carry on loading
+DivertRows - As IgnoreRows but write all unloadable lines to X_Errors.txt where X is the file name being loaded";
 
+        public const string ThrowOnEmptyFiles_DemandDescription = @"Determines system behaviour when a file is empty or has only a header row";
+
+        public const string AttemptToResolveNewLinesInRecords_DemandDescription = 
+@"Determines system behaviour when a line has too few cells compared to the header count.  
+True - Attempt to read more lines to make a complete record
+False - Treat the line as bad data (See BadDataHandlingStrategy)";
+
+        public const string MaximumErrorsToReport_DemandDescription = "The maximum number of file report before suppressing logging.  This is important if you have a large file e.g. 80 million rows and you have a bug/configuration problem that results in lots of bad rows.  Specify 0 for no limit.  Negatives also result in no limit";
+        #endregion
 
         [DemandsInitialization("The separator that delimits the file", Mandatory = true)]
         public string Separator
@@ -73,16 +89,17 @@ namespace LoadModules.Generic.DataFlowSources
         [DemandsInitialization("A collection of column names that are expected to be found in the input file which you want to specify as explicit types (e.g. you load barcodes like 0110 and 1111 and want these all loaded as char(4) instead of int)")]
         public ExplicitTypingCollection ExplicitlyTypedColumns { get; set; }
 
-        [DemandsInitialization("Bad Data handling strategy")]
+        [DemandsInitialization(BadDataHandlingStrategy_DemandDescription, DefaultValue=BadDataHandlingStrategy.ThrowException)]
         public BadDataHandlingStrategy BadDataHandlingStrategy { get; set; }
 
-        [DemandsInitialization(@"Determines system behaviour when a file is empty or has only a header row")]
+        [DemandsInitialization(ThrowOnEmptyFiles_DemandDescription, DefaultValue = true)]
         public bool ThrowOnEmptyFiles { get; set; }
 
-        [DemandsInitialization(@"Determines system behaviour when a line has too few cells compared to the header count.  
-True - Attempt to read more lines to make a complete record
-False - Treat the line as bad data (See BadDataHandlingStrategy)")]
-        public bool AttemptToResolveNewlinesInRecords { get; set; }
+        [DemandsInitialization(AttemptToResolveNewLinesInRecords_DemandDescription, DefaultValue = false)]
+        public bool AttemptToResolveNewLinesInRecords { get; set; }
+
+        [DemandsInitialization(MaximumErrorsToReport_DemandDescription, DefaultValue = 100)]
+        public int MaximumErrorsToReport { get; set; }
 
         /// <summary>
         /// The database table we are trying to load
@@ -117,8 +134,8 @@ False - Treat the line as bad data (See BadDataHandlingStrategy)")]
         private void InitializeComponents()
         {
             Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders, ForceHeadersReplacesFirstLineInFile);
-            DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewlinesInRecords);
-            EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener);
+            DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewLinesInRecords);
+            EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener, MaximumErrorsToReport <= 0 ? int.MaxValue:MaximumErrorsToReport);
         }
 
 

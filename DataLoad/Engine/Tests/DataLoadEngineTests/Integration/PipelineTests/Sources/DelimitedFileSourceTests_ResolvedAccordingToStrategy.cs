@@ -137,7 +137,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
             {
                 a.BadDataHandlingStrategy = strategy;
-                a.AttemptToResolveNewlinesInRecords = tryToResolve;
+                a.AttemptToResolveNewLinesInRecords = tryToResolve;
                 a.ThrowOnEmptyFiles = true;
             };
 
@@ -177,7 +177,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
             {
                 a.BadDataHandlingStrategy = strategy;
-                a.AttemptToResolveNewlinesInRecords = tryToResolve;
+                a.AttemptToResolveNewLinesInRecords = tryToResolve;
                 a.ThrowOnEmptyFiles = true;
             };
 
@@ -215,7 +215,7 @@ not too bad
 to be honest,20",
                 "Dennis,Hes ok,35");
 
-            var dt = RunGetChunk(file,s=> { s.AttemptToResolveNewlinesInRecords = true; });
+            var dt = RunGetChunk(file,s=> { s.AttemptToResolveNewLinesInRecords = true; });
             Assert.AreEqual(3, dt.Rows.Count);
             Assert.AreEqual("He's\r\nnot too bad\r\nto be honest", dt.Rows[1][1]);
         }
@@ -231,11 +231,11 @@ not too bad
 to be honest,Bob,20",
                 "Hes ok,Dennis,35");
 
-            var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = true; }));
+            var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
             Assert.AreEqual("Bad data found on line 3",ex.Message);
 
             //looks like a good record followed by 2 bad records
-            var dt = RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = true; s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows; });
+            var dt = RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows; });
             Assert.AreEqual(3, dt.Rows.Count);
             Assert.AreEqual("to be honest", dt.Rows[1][0]);
             Assert.AreEqual("Bob", dt.Rows[1][1]);
@@ -253,11 +253,11 @@ not too bad
 to be honest",
                 "Dennis,35,Hes ok");
 
-            var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = true; }));
+            var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
             Assert.AreEqual("Bad data found on line 4",ex.Message);
 
             //looks like a good record followed by 2 bad records
-            var dt = RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = true;s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows; });
+            var dt = RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true;s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows; });
             Assert.AreEqual(3,dt.Rows.Count);
             Assert.AreEqual("He's", dt.Rows[1][2]);
 
@@ -272,13 +272,13 @@ to be honest",
                 "Thomas,100",
                 "Frank,300");
 
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, s => { s.AttemptToResolveNewlinesInRecords = false; }));
+            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = false; }));
             Assert.AreEqual("Bad data found on line 2", ex.Message);
 
 
             var dt = RunGetChunk(file, s =>
             {
-                s.AttemptToResolveNewlinesInRecords = false;
+                s.AttemptToResolveNewLinesInRecords = false;
                 s.ForceHeaders = "Name,BloodGlucose";
                 s.ForceHeadersReplacesFirstLineInFile = true;
             });
@@ -299,7 +299,7 @@ to be honest",
 
             var dt = RunGetChunk(file, s =>
             {
-                s.AttemptToResolveNewlinesInRecords = false;
+                s.AttemptToResolveNewLinesInRecords = false;
                 s.ForceHeaders = "Name,BloodGlucose";
             });
 

@@ -52,7 +52,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             source.Separator = ",";
             source.StronglyTypeInput = true;//makes the source interpret the file types properly
             source.StronglyTypeInputBatchSize = 100;
-            source.AttemptToResolveNewlinesInRecords = true; //maximise potential for conflicts
+            source.AttemptToResolveNewLinesInRecords = true; //maximise potential for conflicts
             if (adjust != null)
                 adjust(source);
 
