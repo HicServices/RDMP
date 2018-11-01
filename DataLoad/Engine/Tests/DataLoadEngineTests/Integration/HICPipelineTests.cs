@@ -122,8 +122,13 @@ namespace DataLoadEngineTests.Integration
                     new Tuple<string, string, Type>("ForceHeadersReplacesFirstLineInFile", null, typeof (bool)),
                     new Tuple<string, string, Type>("SendLoadNotRequiredIfFileNotFound", "false", typeof (bool)),
                     new Tuple<string, string, Type>("Separator", ",", typeof (string)),
-                    new Tuple<string, string, Type>("TableToLoad", null, typeof (TableInfo))
+                    new Tuple<string, string, Type>("TableToLoad", null, typeof (TableInfo)),
+                    new Tuple<string, string, Type>("BadDataHandlingStrategy", BadDataHandlingStrategy.ThrowException.ToString(), typeof (BadDataHandlingStrategy)),
+                    new Tuple<string, string, Type>("ThrowOnEmptyFiles", "true", typeof (bool)),
+                    new Tuple<string, string, Type>("AttemptToResolveNewLinesInRecords", "true", typeof (bool)),
+                    new Tuple<string, string, Type>("MaximumErrorsToReport", "0", typeof (int))
                 };
+                
 
                 foreach (var tuple in processTaskArgs)
                 {
