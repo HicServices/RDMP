@@ -150,22 +150,14 @@ namespace CatalogueLibrary.Data
         private Lazy<bool> _knownIsLookup;
 
         #region Relationships
-        /// <summary>
-        /// Fetches all the ColumnInfos associated with this TableInfo (This is refreshed every time you call this property)
-        /// </summary>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ColumnInfo[] ColumnInfos { get
         {
             return _knownColumnInfos.Value;
         }}
 
-        /// <summary>
-        /// Gets all the <see cref="PreLoadDiscardedColumn"/> declared against this table reference.  These are virtual columns which 
-        /// do not exist in the LIVE table schema (Unless <see cref="DiscardedColumnDestination.Dilute"/>) but which appear in the RAW 
-        /// stage of the data load.  
-        /// 
-        /// <para>See <see cref="PreLoadDiscardedColumn"/> for more information</para>
-        /// </summary>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public PreLoadDiscardedColumn[] PreLoadDiscardedColumns { get
         {
