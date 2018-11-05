@@ -61,6 +61,7 @@ namespace CatalogueLibrary.Data.ImportExport
             SharingUID = r["SharingUID"].ToString();
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return "E::" + ReferencedObjectType +"::" + SharingUID;

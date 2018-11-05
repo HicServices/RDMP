@@ -74,6 +74,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                 _name = "Undefined pipeline";
         }
 
+        /// <inheritdoc/>
         public void Initialize(params object[] initializationObjects)
         {
             _context.PreInitialize(_listener,Source,initializationObjects);
@@ -86,6 +87,7 @@ namespace CatalogueLibrary.DataFlowPipeline
             initialized = true;
         }
 
+        /// <inheritdoc/>
         public void ExecutePipeline(GracefulCancellationToken cancellationToken)
         {
             Exception exception = null;
@@ -174,6 +176,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                 throw new Exception("Data Flow Pipeline Crashed",exception);
         }
 
+        /// <inheritdoc/>
         public bool ExecuteSinglePass(GracefulCancellationToken cancellationToken)
         {
             if (!initialized)
@@ -288,6 +291,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                  
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return _name;
