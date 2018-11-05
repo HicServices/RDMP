@@ -319,10 +319,15 @@ namespace CatalogueManager.ExtractionUIs
 
             currentOrder.Remove(beingDragged);
 
+            var idxDrop = currentOrder.IndexOf(beingDroppedOnto);
+
+            if(idxDrop == -1)
+                return;
+            
             if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                currentOrder.Insert(currentOrder.IndexOf(beingDroppedOnto), beingDragged);
+                currentOrder.Insert(idxDrop, beingDragged);
             else if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                currentOrder.Insert(currentOrder.IndexOf(beingDroppedOnto) + 1, beingDragged);
+                currentOrder.Insert(idxDrop + 1, beingDragged);
             else
                 throw new NotSupportedException();
 

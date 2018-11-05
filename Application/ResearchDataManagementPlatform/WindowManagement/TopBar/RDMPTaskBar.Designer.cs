@@ -186,6 +186,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // btnDeleteDash
             // 
             this.btnDeleteDash.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDeleteDash.Enabled = false;
             this.btnDeleteDash.Image = ((System.Drawing.Image)(resources.GetObject("btnDeleteDash.Image")));
             this.btnDeleteDash.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDeleteDash.Name = "btnDeleteDash";
@@ -208,6 +209,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // btnDeleteLayout
             // 
             this.btnDeleteLayout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDeleteLayout.Enabled = false;
             this.btnDeleteLayout.Image = ((System.Drawing.Image)(resources.GetObject("btnDeleteLayout.Image")));
             this.btnDeleteLayout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDeleteLayout.Name = "btnDeleteLayout";

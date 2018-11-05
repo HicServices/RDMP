@@ -456,7 +456,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                     cmd.Execute();
 
                     _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
-                    SetDatabaseObject(_activator,_catalogue);
+                    SetDatabaseObject(_activator, _catalogue);
 
                     MessageBox.Show("Lookup created successfully, fields will now be cleared");
                     pk1.Clear();
@@ -468,7 +468,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                     fk3.Clear();
 
                     olvSelectedDescriptionColumns.ClearObjects();
-
+                    SetStage(LookupCreationStage.DragAPrimaryKey);
                     
                 }
                 btnCreateLookup.Enabled = true;
