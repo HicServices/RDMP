@@ -31,8 +31,9 @@ namespace CachingEngine.PipelineExecution.Sources
         protected MEF MEF;
 
         /// <summary>
-        /// Enforces behaviour required for logging unsuccessful cache requests and providing implementation-independent checks, so that the plugin author doesn't need to remember to call Request[Succeeded|Failed] or do general checks.
-        /// Plugin author provides implementation-specific caching in the 'DoGetChunk' function.
+        /// Enforces behaviour required for logging unsuccessful cache requests and providing implementation-independent checks, so that the plugin author
+        /// doesn't need to remember to call Request[Succeeded|Failed] or do general checks.  Plugin author provides implementation-specific caching in 
+        /// the 'DoGetChunk' function.
         /// </summary>
         /// <param name="listener"></param>
         /// <param name="cancellationToken"></param>
@@ -59,8 +60,7 @@ namespace CachingEngine.PipelineExecution.Sources
                 return null;
             }
 
-            //todo return type should be T 
-            DoGetChunk(listener, cancellationToken);
+            Chunk = DoGetChunk(Request,listener, cancellationToken);
 
             if (Chunk != null && Chunk.Request == null && Request != null)
                 listener.OnNotify(this,
@@ -70,7 +70,13 @@ namespace CachingEngine.PipelineExecution.Sources
             return Chunk;
         }
 
-        public abstract void DoGetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
+        /// <summary>
+        /// Handles the current <paramref name="request"/> returning an appropriate <see cref="ICacheChunk"/> for the time range specified.
+        /// </summary>
+        /// <param name="request">The period of time we want to fetch</param>
+        /// <param name="listener">For auditing progress during the fetch</param>
+        /// <param name="cancellationToken">Indicates if user is trying to cancel the process</param>
+        public abstract T DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
 
         public void PreInitialize(ICacheFetchRequestProvider value, IDataLoadEventListener listener)
         {

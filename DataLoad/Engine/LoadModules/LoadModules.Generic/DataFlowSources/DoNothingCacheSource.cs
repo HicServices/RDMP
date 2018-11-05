@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CachingEngine.PipelineExecution.Sources;
 using CachingEngine.Requests;
 using CatalogueLibrary.DataFlowPipeline;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -21,19 +16,20 @@ namespace LoadModules.Generic.DataFlowSources
     {
         private int runs;
 
-        public override void DoGetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        public override ICacheChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             //Data is never available for download
             if (runs < 10)
             {
                 runs++;
-                Chunk = new DoNothingCacheChunk(CatalogueRepository)
+                
+                return new DoNothingCacheChunk(CatalogueRepository)
                 {
                     RunIteration = runs
                 };
-                return;
             }
-            Chunk = null;
+
+            return null;
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
