@@ -121,8 +121,6 @@ namespace CatalogueManager.ItemActivation
 
         void ViewDataSample(IViewSQLAndResultsCollection collection);
 
-        DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard);
-
         event EmphasiseItemHandler Emphasise;
 
         /// <summary>

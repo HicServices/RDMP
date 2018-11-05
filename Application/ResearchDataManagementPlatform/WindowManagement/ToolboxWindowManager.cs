@@ -32,6 +32,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         private readonly DockPanel _mainDockPanel;
 
+        public RDMPMainForm MainForm { get; set; }
+
         /// <summary>
         /// The location finder for the Catalogue and optionally Data Export databases
         /// </summary>
@@ -45,7 +47,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         HomeUI _home;
         DockContent _homeContent;
 
-        public ToolboxWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
+        public ToolboxWindowManager(RDMPMainForm mainForm, RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
             _windowFactory = new WindowFactory(repositoryLocator,mainDockPanel);
             ContentManager = new ContentWindowManager(refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
@@ -55,7 +57,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _mainDockPanel.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
             
             _mainDockPanel.ShowDocumentIcon = true;
-            
+
+            MainForm = mainForm;
             RepositoryLocator = repositoryLocator;
         }
         

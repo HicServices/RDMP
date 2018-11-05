@@ -64,6 +64,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
                 activate.Execute();
         }
 
+        public void Setup(WindowLayout target)
+        {
+            _toolboxWindowManager.CloseAllToolboxes();
+            _toolboxWindowManager.CloseAllWindows();
+            _toolboxWindowManager.MainForm.LoadFromXml(target);
+        }
+
         public void SetupEditDataExtractionProject(object sender, Project project)
         {
             _toolboxWindowManager.CloseAllToolboxes();

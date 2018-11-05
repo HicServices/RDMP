@@ -39,7 +39,6 @@ namespace CatalogueManager.DashboardTabs
             this.cbxAvailableControls = new System.Windows.Forms.ToolStripComboBox();
             this.btnAddDashboardControl = new System.Windows.Forms.ToolStripButton();
             this.btnEditMode = new System.Windows.Forms.ToolStripButton();
-            this.btnDeleteDashboard = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,8 +51,7 @@ namespace CatalogueManager.DashboardTabs
             this.toolStripLabel2,
             this.cbxAvailableControls,
             this.btnAddDashboardControl,
-            this.btnEditMode,
-            this.btnDeleteDashboard});
+            this.btnEditMode});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1334, 25);
@@ -70,8 +68,8 @@ namespace CatalogueManager.DashboardTabs
             // 
             this.tbDashboardName.Name = "tbDashboardName";
             this.tbDashboardName.Size = new System.Drawing.Size(150, 25);
-            this.tbDashboardName.TextChanged += new System.EventHandler(this.tbDashboardName_TextChanged);
             this.tbDashboardName.LostFocus += new System.EventHandler(this.tbDashboardName_LostFocus);
+            this.tbDashboardName.TextChanged += new System.EventHandler(this.tbDashboardName_TextChanged);
             // 
             // toolStripSeparator1
             // 
@@ -110,16 +108,6 @@ namespace CatalogueManager.DashboardTabs
             this.btnEditMode.Text = "Move Or Delete Controls";
             this.btnEditMode.CheckedChanged += new System.EventHandler(this.btnEditMode_CheckedChanged);
             // 
-            // btnDeleteDashboard
-            // 
-            this.btnDeleteDashboard.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnDeleteDashboard.Image = ((System.Drawing.Image)(resources.GetObject("btnDeleteDashboard.Image")));
-            this.btnDeleteDashboard.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnDeleteDashboard.Name = "btnDeleteDashboard";
-            this.btnDeleteDashboard.Size = new System.Drawing.Size(23, 22);
-            this.btnDeleteDashboard.Text = "Delete Dashboard";
-            this.btnDeleteDashboard.Click += new System.EventHandler(this.btnDeleteDashboard_Click);
-            // 
             // DashboardLayoutUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -145,6 +133,5 @@ namespace CatalogueManager.DashboardTabs
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripComboBox cbxAvailableControls;
         private System.Windows.Forms.ToolStripButton btnAddDashboardControl;
-        private System.Windows.Forms.ToolStripButton btnDeleteDashboard;
     }
 }

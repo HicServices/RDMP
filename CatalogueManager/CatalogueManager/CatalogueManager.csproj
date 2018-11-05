@@ -415,12 +415,14 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
     <Compile Include="CommandExecution\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDashboardLayout.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernancePeriod.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsWindowLayout.cs" />
     <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
     <Compile Include="Copying\Commands\CacheProgressCommand.cs" />
     <Compile Include="Copying\Commands\CatalogueCommand.cs" />

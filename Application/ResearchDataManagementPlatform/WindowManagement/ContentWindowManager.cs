@@ -402,12 +402,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 cmd.Execute();
         }
 
-
-        public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
-        {
-            return Activate<DashboardLayoutUI, DashboardLayout>(dashboard);
-        }
-
         ///<inheritdoc/>
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
         {

@@ -287,6 +287,7 @@
     <Compile Include="Data\ImportExport\ShareManager.cs" />
     <Compile Include="Data\ImportExport\ObjectExport.cs" />
     <Compile Include="Data\ImportExport\ObjectImport.cs" />
+    <Compile Include="Data\WindowLayout.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IHasDesignTimeMode.cs" />
