@@ -6,6 +6,8 @@
 1. [How do I stop some nodes being reordered in RDMPCollectionUIs?](#reorder)
 2. [How do I add new nodes to RDMPCollectionUIs?](#addNewNodes)
 3. [How do platform databases / database objects work?](#databaseObjects)
+3. [When I connect to MySql it says 'The host localhost does not support SSL connections'](#disableSSL)
+3. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
 4. [My metadata databases are being hammered by thousands of requests](#databaseDdos)
 5. [How does RDMP handle untyped input (e.g. csv)?](#dataTypeComputer)
 6. [Does RDMP Support Plugins?](#plugins)
@@ -53,8 +55,19 @@ https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/Cre
 
 See `DataStructures.cd` (todo: How about a README.md - Ed)
 
+<a name="disableSSL"></a>
+### When I connect to MySql it says 'The host localhost does not support SSL connections'
+If your MySql server does not support SSL connections then you can specify a [Connection String Keyword](#connectionStringKeywords) 'SSLMode' with the Value 'None' (Make sure you select DatabaseType:MySQLServer)
+
+
+<a name="connectionStringKeywords"></a>
+### How do I set a custom port / SSL certificate / connection string option?
+RDMP manages connection strings internally.  If you want a keyword applied on your connection strings you can add it in the 'Connection String Keywords' node.  Each keyword is associated with a single database provider (MySql, Oracle etc).  In order for the changes to take effect you will need to restart RDMP.
+
+![ConnectionStringKeywords](Images/FAQ/ConnectionStringKeywords.png)
+
 <a name="databaseDdos"></a>
-### My metadata databases are being hammered by thousands of requests
+### My metadata databases are being hammered by thousands of requests?
 The entire RDMP meta data model is stored in platform databases (Catalogue / Data Export etc).  Classes e.g. `Catalogue` are fetched either all at once or by `ID`.  The class Properties can be used to fetch other related objects e.g. `Catalogue.CatalogueItems`.  This usually does not result in a bottleneck but under some conditions deeply nested use of these properties can result in your platform database being hammered with requests.  You can determine whether this is the case by using the PerformanceCounter.  This tool will show every database request issued while it is running including the number of distinct Stack Frames responsible for the query being issued.  Hundreds or even thousands of requests isn't a problem but if you start getting into the tens of thousands for trivial operations you might want to refactor your code.
 
 ![PerformanceCounter](Images/FAQ/PerformanceCounter.png) 
