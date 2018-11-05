@@ -44,5 +44,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
             Activator.Activate<DQEExecutionControl, Catalogue>(_catalogue);
         }
+
+        public override string GetCommandName()
+        {
+            return "Data Quality Engine";
+        }
     }
 }

@@ -11,6 +11,7 @@ using CatalogueLibrary.Data;
 
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.Exceptions;
@@ -39,7 +40,7 @@ namespace Dashboard
             var c = o as Catalogue;
 
             if (c != null)
-                return new[] {new DQEMenuItem(ItemActivator, c)};
+                return new[]{ new DQEMenuItem(ItemActivator,c)};
 
             var lmd = o as LoadMetadata;
 

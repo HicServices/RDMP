@@ -395,7 +395,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void ActivateViewDQEResultsForCatalogue(Catalogue catalogue)
         {
-            new ExecuteCommandViewDQEResultsForCatalogue(this).SetTarget(catalogue).Execute();
+            var cmd = new ExecuteCommandViewDQEResultsForCatalogue(this).SetTarget(catalogue);
+            if(cmd.IsImpossible)
+                MessageBox.Show(cmd.ReasonCommandImpossible);
+            else
+                cmd.Execute();
         }
 
 

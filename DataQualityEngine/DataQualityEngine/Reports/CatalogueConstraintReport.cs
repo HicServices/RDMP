@@ -297,7 +297,7 @@ namespace DataQualityEngine.Reports
             //there is XML
             if (string.IsNullOrWhiteSpace(_catalogue.ValidatorXML))
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("There is no ValidatorXML specified for the Catalogue " + _catalogue + ", configure validation in CatalogueManger by right clicking a Catalogue",CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs("There is no ValidatorXML specified for the Catalogue " + _catalogue + ", you must configure validation rules",CheckResult.Fail));
                 return;
             }
             notifier.OnCheckPerformed(new CheckEventArgs("Found ValidatorXML specified for the Catalogue " + _catalogue + ":"+Environment.NewLine + _catalogue.ValidatorXML, CheckResult.Success));
