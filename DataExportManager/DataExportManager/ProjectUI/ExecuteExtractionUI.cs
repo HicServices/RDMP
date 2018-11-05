@@ -227,7 +227,8 @@ namespace DataExportManager.ProjectUI
                     AddFavouriteColumn = false,
                     AllowPinning=false,
                     SuppressChildrenAdder=true,
-                    SuppressActivate = true
+                    SuppressActivate = true,
+                    AddCheckColumn = false
                 });
 
             checkAndExecuteUI1.SetItemActivator(activator);

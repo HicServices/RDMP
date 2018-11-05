@@ -328,7 +328,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             {
                 _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator,databaseObject);
 
-                var settings = new RDMPCollectionCommonFunctionalitySettings {AddFavouriteColumn = false, AllowPinning = false};
+                var settings = new RDMPCollectionCommonFunctionalitySettings {AddFavouriteColumn = false, AllowPinning = false, AddCheckColumn = false};
 
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();

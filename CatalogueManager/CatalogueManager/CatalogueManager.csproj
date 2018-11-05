@@ -361,6 +361,7 @@
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\OrderableComparer.cs" />
+    <Compile Include="Collections\Providers\CheckColumnProvider.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="Collections\Providers\IDColumnProvider.cs" />

@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.Checks;
@@ -14,13 +15,15 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         private readonly ICheckable _checkable;
         private readonly Action<ICheckable, CheckResult> _reportWorstTo;
 
-        public ExecuteCommandCheck(IActivateItems activator, ICheckable checkable): base(activator)
+        public ExecuteCommandCheck(IActivateItems activator, DatabaseEntity checkable): base(activator)
         {
-            _checkable = checkable;
+            _checkable = checkable as ICheckable;
+
+            if(_checkable == null)
+                SetImpossible("Object is not checkable");
         }
-        public ExecuteCommandCheck(IActivateItems activator, ICheckable checkable,Action<ICheckable,CheckResult> reportWorst): base(activator)
+        public ExecuteCommandCheck(IActivateItems activator, DatabaseEntity checkable,Action<ICheckable,CheckResult> reportWorst): this(activator,checkable)
         {
-            _checkable = checkable;
             _reportWorstTo = reportWorst;
         }
 

@@ -117,7 +117,7 @@ namespace CohortManager.SubComponents
                 _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol, new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddFavouriteColumn = false,
-                    AddIDColumn = false
+                    AddCheckColumn = false
                 });
 
                 tlvCic.AddObject(_configuration);
