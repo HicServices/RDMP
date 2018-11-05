@@ -177,37 +177,5 @@ namespace CatalogueLibrary.DataHelper
 
             return toReturn;
         }
-
-
-        public static string EnsureMultiPartValueIsWrapped(string s, DatabaseType type = DatabaseType.MicrosoftSQLServer)
-        {
-
-            if (type != DatabaseType.MicrosoftSQLServer)
-                throw new NotSupportedException();
-
-            if (s.Contains("."))
-            {
-                StringBuilder result = new StringBuilder();
-
-                foreach (string part in s.Split('.'))
-                {
-                    string strippedPart = part.Trim(new char[] { '[', ']' });
-
-                    //handle db..table 
-                    if (string.IsNullOrWhiteSpace(part))
-                        result.Append(".");
-                    else
-                        result.Append('[' + strippedPart + ']' + ".");
-
-                }
-
-                return result.ToString().Trim('.');
-            }
-
-
-            string stripped = s.Trim(new char[] { '[', ']' });
-
-            return '[' + stripped + ']';
-        }
     }
 }

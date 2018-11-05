@@ -256,7 +256,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public string GetFullyQualifiedName()
         {
-            return Name;
+            return GetQuerySyntaxHelper().EnsureFullyQualified(Database, null, GetRuntimeName());
         }
 
         /// <summary>
