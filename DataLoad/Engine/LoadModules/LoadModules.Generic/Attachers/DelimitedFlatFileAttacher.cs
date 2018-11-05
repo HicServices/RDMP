@@ -1,22 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Data;
+﻿using System.Data;
 using System.IO;
-using System.Linq;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CsvHelper;
-using CsvHelper.Configuration;
-using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
 using LoadModules.Generic.DataFlowSources;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
@@ -32,13 +20,6 @@ namespace LoadModules.Generic.Attachers
         public string ForceHeaders {
             get { return _source.ForceHeaders; }
             set { _source.ForceHeaders = value; }
-        }
-
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.UnderReadBehaviour_DemandDescription)]
-        public BehaviourOnUnderReadType UnderReadBehaviour
-        {
-            get { return _source.UnderReadBehaviour; }
-            set { _source.UnderReadBehaviour = value; }
         }
         
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreQuotes_DemandDescription)]
@@ -60,6 +41,35 @@ namespace LoadModules.Generic.Attachers
             get { return _source.ForceHeadersReplacesFirstLineInFile; }
             set { _source.ForceHeadersReplacesFirstLineInFile = value; }
         }
+
+        [DemandsInitialization(DelimitedFlatFileDataFlowSource.BadDataHandlingStrategy_DemandDescription,DefaultValue = BadDataHandlingStrategy.ThrowException)]
+        public BadDataHandlingStrategy BadDataHandlingStrategy
+        {
+            get { return _source.BadDataHandlingStrategy; }
+            set { _source.BadDataHandlingStrategy = value; }
+        }
+
+        [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription,DefaultValue = true)]
+        public bool ThrowOnEmptyFiles
+        {
+            get { return _source.ThrowOnEmptyFiles; }
+            set { _source.ThrowOnEmptyFiles = value; }
+        }
+
+        [DemandsInitialization(DelimitedFlatFileDataFlowSource.AttemptToResolveNewLinesInRecords_DemandDescription, DefaultValue = false)]
+        public bool AttemptToResolveNewLinesInRecords
+        {
+            get { return _source.AttemptToResolveNewLinesInRecords; }
+            set { _source.AttemptToResolveNewLinesInRecords = value; }
+        }
+
+        [DemandsInitialization(DelimitedFlatFileDataFlowSource.MaximumErrorsToReport_DemandDescription,DefaultValue = 100)]
+        public int MaximumErrorsToReport
+        {
+            get { return _source.MaximumErrorsToReport; }
+            set { _source.MaximumErrorsToReport = value; }
+        }
+        
         private GracefulCancellationToken cancellationToken = new GracefulCancellationToken();
 
           protected DelimitedFlatFileAttacher(char separator)

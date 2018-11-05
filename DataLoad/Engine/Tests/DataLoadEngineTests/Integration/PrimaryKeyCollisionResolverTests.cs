@@ -81,11 +81,12 @@ namespace DataLoadEngineTests.Integration
         }
 
         [Test]
-        [ExpectedException(MatchType = MessageMatch.Contains, ExpectedMessage = "Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)")]
         public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNotInitialized()
         {
             var mutilation = new PrimaryKeyCollisionResolverMutilation();
-            mutilation.Check(new ThrowImmediatelyCheckNotifier());
+            
+            var ex = Assert.Throws<Exception>(()=>mutilation.Check(new ThrowImmediatelyCheckNotifier()));
+            StringAssert.Contains("Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",ex.Message);
         }
 
         [Test]     
@@ -130,7 +131,6 @@ namespace DataLoadEngineTests.Integration
         }
 
         [Test]
-        [ExpectedException(MatchType = MessageMatch.Contains, ExpectedMessage = "The ColumnInfos of TableInfo PrimaryKeyCollisionResolverTests do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.")]
         public void NoColumnOrdersConfigured_ThrowsException()
         {
             TableInfo t;
@@ -144,7 +144,8 @@ namespace DataLoadEngineTests.Integration
                 c1.SaveToDatabase();
 
                 PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(t);
-                Console.WriteLine(resolver.GenerateSQL());
+                var ex = Assert.Throws<Exception>(()=>Console.WriteLine(resolver.GenerateSQL()));
+                StringAssert.Contains("The ColumnInfos of TableInfo PrimaryKeyCollisionResolverTests do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.",ex.Message);
             }
             finally
             {
@@ -153,7 +154,6 @@ namespace DataLoadEngineTests.Integration
         }
 
         [Test]
-        [ExpectedException(MatchType = MessageMatch.Contains, ExpectedMessage = "does not have any primary keys defined so cannot resolve primary key collisions")]
         public void NoPrimaryKeys_ThrowsException()
         {
             TableInfo t;
@@ -165,7 +165,8 @@ namespace DataLoadEngineTests.Integration
             try
             {
                 PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(t);
-                Console.WriteLine(resolver.GenerateSQL());
+                var ex = Assert.Throws<Exception>(()=>Console.WriteLine(resolver.GenerateSQL()));
+                StringAssert.Contains("does not have any primary keys defined so cannot resolve primary key collisions",ex.Message);
             }
             finally
             {

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
@@ -20,16 +22,17 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         private LoadMetadata _lmd;
         private ProcessTask _task;
         private ProcessTaskChecks _checker;
+        private DirectoryInfo _dir;
 
         [SetUp]
         public void CreateTask()
         {
             _lmd = new LoadMetadata(CatalogueRepository);
 
-            var dir = new DirectoryInfo("ProcessTaskCheckingTests");
-            dir.Create();
+            _dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"ProcessTaskCheckingTests"));
+            _dir.Create();
 
-            var hicdir = HICProjectDirectory.CreateDirectoryStructure(dir, "ProjDir", true);
+            var hicdir = HICProjectDirectory.CreateDirectoryStructure(_dir, "ProjDir", true);
             _lmd.LocationOfFlatFiles = hicdir.RootPath.FullName;
             _lmd.SaveToDatabase();
 
@@ -58,7 +61,7 @@ namespace DataLoadEngineTests.Integration.CheckingTests
             
             _lmd.DeleteInDatabase();
             
-            new DirectoryInfo("ProcessTaskCheckingTests").Delete(true);
+            _dir.Delete(true);
         }
 
 
@@ -69,13 +72,13 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         [TestCase(null,ProcessTaskType.SQLFile)]
         [TestCase("",ProcessTaskType.SQLFile)]
         [TestCase("     ",ProcessTaskType.SQLFile)]
-        [ExpectedException(ExpectedMessage = "does not have a path specified",MatchType = MessageMatch.Contains)]
         public void EmptyFilePath(string path, ProcessTaskType typeThatRequiresFiles)
         {
             _task.ProcessTaskType = typeThatRequiresFiles;
             _task.Path = path;
             _task.SaveToDatabase();
-            _checker.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier()));
+            StringAssert.Contains("does not have a path specified",ex.Message);
         }
 
         [Test]
@@ -84,14 +87,14 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         [TestCase("     ", ProcessTaskType.MutilateDataTable, LoadStage.AdjustRaw)]
         [TestCase(null, ProcessTaskType.Attacher, LoadStage.Mounting)]
         [TestCase(null, ProcessTaskType.DataProvider, LoadStage.GetFiles)]
-        [ExpectedException(MatchType = MessageMatch.Regex, ExpectedMessage = "Path is blank for ProcessTask 'New Process.*' - it should be a class name of type")]
         public void EmptyClassPath(string path, ProcessTaskType typeThatRequiresMEF, LoadStage stage)
         {
             _task.ProcessTaskType = typeThatRequiresMEF;
             _task.Path = path;
             _task.LoadStage = stage;
             _task.SaveToDatabase();
-            _checker.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<ArgumentException>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.IsTrue(Regex.IsMatch(ex.Message,"Path is blank for ProcessTask 'New Process.*' - it should be a class name of type"));
         }
 
         [Test]
@@ -124,7 +127,7 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         public void MEFCompatibleType_NoArgs()
         {
 
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo("."), "DelMeProjDir", true);
+            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "DelMeProjDir", true);
             try
             {
                 _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
@@ -150,7 +153,7 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         [Test]
         public void MEFCompatibleType_Passes()
         {
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo("."), "DelMeProjDir", true);
+            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "DelMeProjDir", true);
             try
             {
                 _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
@@ -198,13 +201,13 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         [TestCase("bob.exe")]
         [TestCase(@"""C:\ProgramFiles\My Software With Spaces\bob.exe""")]
         [TestCase(@"""C:\ProgramFiles\My Software With Spaces\bob.exe"" arg1 arg2 -f ""c:\my folder\arg3.exe""")]
-        [ExpectedException(ExpectedMessage = "bob.exe which does not exist at this time.",MatchType = MessageMatch.Contains)]
         public void ImaginaryFile(string path)
         {
             _task.ProcessTaskType = ProcessTaskType.Executable;
             _task.Path = path;
             _task.SaveToDatabase();
-            _checker.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning=true});
+            var ex = Assert.Throws<Exception>(()=>_checker.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning=true}));
+            StringAssert.Contains("bob.exe which does not exist at this time.",ex.Message);
         }
 
     }

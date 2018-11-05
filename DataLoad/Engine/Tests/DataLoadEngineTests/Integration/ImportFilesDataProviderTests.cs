@@ -21,8 +21,8 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void CopyFiles()
         {
-            var sourceDir = new DirectoryInfo(Directory.GetCurrentDirectory()).CreateSubdirectory("subdir");
-            var targetDir = new DirectoryInfo(Directory.GetCurrentDirectory()).CreateSubdirectory("loaddir");
+            var sourceDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory).CreateSubdirectory("subdir");
+            var targetDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory).CreateSubdirectory("loaddir");
             
             //make sure target is empty
             foreach (var f in targetDir.GetFiles())

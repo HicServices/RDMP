@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
@@ -123,7 +124,6 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
         }
 
         [Test]
-        [ExpectedException(typeof(KeyNotFoundException),ExpectedMessage = "Could not find TableInfo with ID",MatchType = MessageMatch.Contains)]
         public void TableInfoType_FetchAfterDelete_Throws()
         {
             string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
@@ -153,10 +153,8 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
                 tableInfo.DeleteInDatabase();
 
                 //give the object back now please? - fails here because it's gone - like a rabit in a hat!
-                pta.GetValueAsSystemType();
-
-                Assert.Fail("Should have thrown already");
-              
+                var ex = Assert.Throws<KeyNotFoundException>(()=>pta.GetValueAsSystemType());
+                StringAssert.Contains("Could not find TableInfo with ID",ex.Message);
             }
             finally
             {
@@ -165,7 +163,6 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "has an incompatible Type specified (CatalogueLibrary.Data.DataLoad.PreLoadDiscardedColumn)", MatchType = MessageMatch.Contains)]
         public void LieToProcessTaskArgumentAboutWhatTypeIs_Throws()
         {
             string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
@@ -187,9 +184,9 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
                     //tell it that we are going to give it a PreLoadDiscardedColumn
                     pta.SetType(typeof(PreLoadDiscardedColumn));
                     //then surprise! heres a TableInfo!
-                    pta.SetValue(tableInfo);
+                    var ex = Assert.Throws<Exception>(()=>pta.SetValue(tableInfo));
+                    StringAssert.Contains("has an incompatible Type specified (CatalogueLibrary.Data.DataLoad.PreLoadDiscardedColumn)",ex.Message);
 
-                    Assert.Fail("Should have thrown already");
                 }
                 finally
                 {

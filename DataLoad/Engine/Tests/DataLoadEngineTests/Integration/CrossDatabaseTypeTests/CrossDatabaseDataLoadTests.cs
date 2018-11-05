@@ -431,7 +431,7 @@ MrMurder,2001-01-01,Yella");
 
         private HICProjectDirectory SetupLoadDirectory(LoadMetadata lmd)
         {
-            var projectDirectory = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(Environment.CurrentDirectory), "MyLoadDir", true);
+            var projectDirectory = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "MyLoadDir", true);
             lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
             lmd.SaveToDatabase();
 

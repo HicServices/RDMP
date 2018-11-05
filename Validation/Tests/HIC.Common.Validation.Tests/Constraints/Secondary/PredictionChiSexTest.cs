@@ -6,43 +6,39 @@ using NUnit.Framework;
 
 namespace HIC.Common.Validation.Tests.Constraints.Secondary
 {
-    [TestFixture]
+    
     class PredictionChiSexTest
     {
         private readonly DateTime _wrongType = DateTime.Now;
         
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Validate_IncompatibleChiType_ThrowsException()
         {
             var p = new Prediction(new ChiSexPredictor(),"gender");
-            p.Validate(_wrongType, new[] { "M" }, new[] { "gender" });
+            Assert.Throws<ArgumentException>(()=>p.Validate(_wrongType, new[] { "M" }, new[] { "gender" }));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Validate_IncompatibleGenderType_ThrowsException()
         {
             var p = new Prediction(new ChiSexPredictor(), "gender");
-            p.Validate(TestConstants._VALID_CHI, new object[] { _wrongType }, new string[] { "gender" });
+            Assert.Throws<ArgumentException>(()=>p.Validate(TestConstants._VALID_CHI, new object[] { _wrongType }, new string[] { "gender" }));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Validate_NullChiAndGender_IsIgnored()
         {
             var p = new Prediction(new ChiSexPredictor(), "gender");
-            p.Validate(TestConstants._VALID_CHI, null, null);
+            Assert.Throws<ArgumentException>(()=>p.Validate(TestConstants._VALID_CHI, null, null));
         }
 
         [Test]
-        [ExpectedException(typeof(MissingFieldException))]
         public void Validate_TargetFieldNotPresent_ThrowsException()
         {
             var p = new Prediction(new ChiSexPredictor(), "gender");
             var otherCols = new object[] {"M"};
             var otherColsNames = new string[] {"amagad"};
-            p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames);
+            Assert.Throws<MissingFieldException>(()=>p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames));
         }
 
         [Test]

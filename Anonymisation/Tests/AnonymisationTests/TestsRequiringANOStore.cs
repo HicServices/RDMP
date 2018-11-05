@@ -17,7 +17,7 @@ namespace AnonymisationTests
         protected DiscoveredDatabase ANOStore_Database { get; set; }
         protected string ANOStore_DatabaseName = TestDatabaseNames.GetConsistentName("ANOStore");
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             ANOStore_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(ANOStore_DatabaseName);
@@ -36,7 +36,7 @@ namespace AnonymisationTests
                 ANOStore_Database.ForceDrop();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public virtual void FixtureTearDown()
         {
             RemovePreExistingReference();

@@ -20,7 +20,7 @@ namespace CohortManagerTests.QueryTests
         private ExternalDatabaseServer externalDatabaseServer;
         private DatabaseColumnRequest _chiColumnSpecification = new DatabaseColumnRequest("chi","varchar(10)");
         
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUpCache()
         {
             queryCacheDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.Prefix + "QueryCache");
@@ -35,7 +35,7 @@ namespace CohortManagerTests.QueryTests
             externalDatabaseServer.SetProperties(queryCacheDatabase);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void DropDatabases()
         {
             queryCacheDatabase.ForceDrop();

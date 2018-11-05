@@ -361,7 +361,7 @@ namespace RDMPStartup
 
             _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
             var sw = Stopwatch.StartNew();
-            catalogueRepository.LoadHelp();
+            catalogueRepository.LoadHelp(Environment.CurrentDirectory);
 
             sw.Stop();
             _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));

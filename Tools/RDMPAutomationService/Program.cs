@@ -16,18 +16,20 @@ namespace RDMPAutomationService
         public static int Main(string[] args)
         {
            try
-            {
-               var returnCode = 
-                    UsefulStuff.GetParser().ParseArguments<DleOptions, DqeOptions, CacheOptions,ListOptions,ExtractionOptions,ReleaseOptions>(args)
-                        .MapResult(
-                            //Add new verbs as options here and invoke relevant runner
-                            (DleOptions opts) => Run(opts),
-                            (DqeOptions opts)=> Run(opts),
-                            (CacheOptions opts)=>Run(opts),
-                            (ListOptions opts)=>Run(opts),
-                            (ExtractionOptions opts)=>Run(opts),
-                            (ReleaseOptions opts)=>Run(opts),
-                            errs => 1);
+           {
+               var returnCode =
+                   UsefulStuff.GetParser()
+                       .ParseArguments<DleOptions, DqeOptions, CacheOptions, ListOptions, ExtractionOptions, ReleaseOptions, CohortCreationOptions>(args)
+                       .MapResult(
+                           //Add new verbs as options here and invoke relevant runner
+                           (DleOptions opts) => Run(opts),
+                           (DqeOptions opts) => Run(opts),
+                           (CacheOptions opts) => Run(opts),
+                           (ListOptions opts) => Run(opts),
+                           (ExtractionOptions opts) => Run(opts),
+                           (ReleaseOptions opts) => Run(opts),
+                           (CohortCreationOptions opts) => Run(opts),
+                           errs => 1);
 
                NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
                 return returnCode;

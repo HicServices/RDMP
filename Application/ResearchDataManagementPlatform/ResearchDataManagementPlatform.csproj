@@ -130,9 +130,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=2.13.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>
-        ..\..\packages\DockPanelSuite.ThemeVS2015.2.13.0\lib\net40\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll
-      </HintPath>
+      <HintPath>..\..\packages\DockPanelSuite.ThemeVS2015.2.13.0\lib\net40\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

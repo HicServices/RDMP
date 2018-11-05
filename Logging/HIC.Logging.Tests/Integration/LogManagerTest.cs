@@ -82,7 +82,7 @@ namespace HIC.Logging.Tests.Integration
                 Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(_setupException,true));
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         protected void TearDown()
         {
             using (var conn = new SqlConnection(UnitTestLoggingConnectionString.ConnectionString))

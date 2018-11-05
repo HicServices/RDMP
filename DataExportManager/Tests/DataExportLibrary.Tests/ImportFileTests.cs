@@ -40,7 +40,6 @@ namespace DataExportLibrary.Tests
                 {
                     Separator = ",",
                     IgnoreBlankLines = true,
-                    UnderReadBehaviour = BehaviourOnUnderReadType.AppendNextLineToCurrentRow,
                     MakeHeaderNamesSane = true,
                     StronglyTypeInputBatchSize = -1,
                     StronglyTypeInput = true

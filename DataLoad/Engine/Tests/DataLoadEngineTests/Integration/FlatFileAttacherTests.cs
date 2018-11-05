@@ -10,6 +10,7 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngineTests.Integration.Mocks;
 using LoadModules.Generic.Attachers;
+using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -28,7 +29,7 @@ namespace DataLoadEngineTests.Integration
         [SetUp]
         public void CreateTestDatabase()
         {
-            var workingDir = new DirectoryInfo(".");
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);;
             parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
 
             DirectoryInfo toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("Test_CSV_Attachment"));
@@ -93,19 +94,19 @@ namespace DataLoadEngineTests.Integration
                 attacher.ForceHeadersReplacesFirstLineInFile = true;
             }
 
-            try
+            //Case when you are using the wrong separator
+            if(separator == "|")
             {
-                attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-                if(separator == "|")
-                    Assert.Fail("Expected it to crash because of giving it the wrong separator");
-            }
-            catch (Exception e)
-            {
-                if (e.InnerException != null && e.InnerException.Message.Contains("Your separator '|' does not appear in the headers line of your file (bob.csv) but the separator ',' does"))
-                    Assert.Pass();
 
-                throw;
+                var ex = Assert.Throws<FlatFileLoadException>(()=>attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
+                
+                Assert.IsNotNull(ex.InnerException);
+                StringAssert.StartsWith("Your separator does not appear in the headers line of your file (bob.csv) but the separator ',' does", ex.InnerException.Message);
+                return;
             }
+
+            //other cases (i.e. correct separator)
+            attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
             var table = _database.ExpectTable("Bob");
             Assert.IsTrue(table.Exists());

@@ -23,6 +23,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Tests.Common
 {
+    [TestFixture]
     [Category("Database")]
     public class DatabaseTests
     {
@@ -183,7 +184,7 @@ namespace Tests.Common
             }
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         protected virtual void SetUp()
         {
             //if it is the first time
@@ -200,7 +201,7 @@ namespace Tests.Common
             RepositoryLocator.CatalogueRepository.MEF.Setup(_startup.MEFSafeDirectoryCatalog);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         void DropCreatedDatabases()
         {
             foreach (DiscoveredDatabase db in forCleanup)

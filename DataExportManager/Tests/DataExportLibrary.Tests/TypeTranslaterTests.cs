@@ -11,13 +11,14 @@ using Tests.Common;
 
 namespace DataExportLibrary.Tests
 {
+    [TestFixture]
     public class TypeTranslaterTests : DatabaseTests
     {
         private DiscoveredDatabase _msDb;
         private DiscoveredDatabase _mysqlDb;
         private DiscoveredDatabase _oracleDb;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetupDatabases()
         {
             _msDb = GetCleanedServer(DatabaseType.MicrosoftSQLServer);

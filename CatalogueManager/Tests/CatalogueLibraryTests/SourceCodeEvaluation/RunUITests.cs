@@ -42,7 +42,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandCreateNewPipeline),
                 typeof(ExecuteCommandEditPipelineWithUseCase),
 
-                typeof(ExecuteCommandCheck)
+                typeof(ExecuteCommandCheck),
+                typeof(ExecuteCommandExportLoggedDataToCsv)
             });
 
         [Test]

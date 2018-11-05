@@ -1,8 +1,13 @@
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Pipelines;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.ExtractionTime.Commands;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline;
+using HIC.Logging;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Checks
 {
@@ -13,10 +18,17 @@ namespace DataExportLibrary.Checks
     public class GlobalExtractionChecker : ICheckable
     {
         private readonly ExtractionConfiguration _configuration;
+        private readonly ExtractGlobalsCommand _command;
+        private readonly IPipeline _alsoCheckPipeline;
 
-        public GlobalExtractionChecker(ExtractionConfiguration configuration)
+        public GlobalExtractionChecker(ExtractionConfiguration configuration) : this (configuration, null, null)
+        { }
+        
+        public GlobalExtractionChecker(ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
         {
             this._configuration = configuration;
+            this._command = command;
+            this._alsoCheckPipeline = alsoCheckPipeline;
         }
 
         public void Check(ICheckNotifier notifier)
@@ -26,6 +38,13 @@ namespace DataExportLibrary.Checks
 
             foreach (SupportingDocument document in _configuration.GetGlobals().OfType<SupportingDocument>())
                 new SupportingDocumentsFetcher(document).Check(notifier);
+
+            if (_alsoCheckPipeline != null && _command != null)
+            {
+                var engine = new ExtractionPipelineUseCase(_configuration.Project, _command, _alsoCheckPipeline, DataLoadInfo.Empty)
+                                    .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
+                engine.Check(notifier);
+            }
         }
     }
 }

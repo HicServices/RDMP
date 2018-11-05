@@ -17,7 +17,7 @@ namespace CatalogueLibraryTests.Integration
 {
     public class CredentialsTests : DatabaseTests
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void TestSetup()
         {
             
@@ -100,7 +100,6 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "You cannot ask for any credentials, you must supply a usage context",MatchType = MessageMatch.Contains)]
         public void TestThe_Any_EnumValue_CannotRequestAnyCredentials()
         {
             TableInfo tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
@@ -116,7 +115,9 @@ namespace CatalogueLibraryTests.Integration
                 tableInfo.SaveToDatabase();
 
                 //attempt to request ANY credentials
-                DataAccessCredentials creds2 = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.Any);
+                var ex = Assert.Throws<Exception>(()=> tableInfo.GetCredentialsIfExists(DataAccessContext.Any));
+                Assert.AreEqual("You cannot ask for any credentials, you must supply a usage context.",ex.Message);
+
 
             }
             finally
@@ -245,7 +246,6 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Cannot delete credentials bob because it is in use by one or more TableInfo objects(Dependency1,Dependency2)")]
         public void Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt_ThrowsThatCredentialsHasDependencies()
         {
             //Get all TableInfos that share this credential
@@ -261,7 +261,8 @@ namespace CatalogueLibraryTests.Integration
                 tableInfo1.SaveToDatabase();
                 tableInfo2.SaveToDatabase();
 
-                creds.DeleteInDatabase();//the bit that fails (because tables are there)
+                var ex = Assert.Throws<CredentialsInUseException>(creds.DeleteInDatabase);//the bit that fails (because tables are there)
+                Assert.AreEqual("Cannot delete credentials bob because it is in use by one or more TableInfo objects(Dependency1,Dependency2)",ex.Message);
             }
             finally
             {

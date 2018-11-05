@@ -29,11 +29,10 @@ namespace DataLoadEngineTests.Unit
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestGetValueStringError()
         {
             var obj = new CommandLineHelperTests();
-            CommandLineHelper.GetValueString(obj);
+            Assert.Throws<ArgumentException>(()=>CommandLineHelper.GetValueString(obj));
         }
 
         [Test]
@@ -53,24 +52,21 @@ namespace DataLoadEngineTests.Unit
         }
 
         [Test]
-        [ExpectedException(ExpectedException = typeof (ArgumentException))]
         public void TestEmptyArgumentName()
         {
-            CommandLineHelper.CreateArgString("", "value");
+            Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("", "value"));
         }
 
         [Test]
-        [ExpectedException(ExpectedException = typeof(ArgumentException))]
         public void TestNameWithoutLeadingUppercaseCharacter()
         {
-            CommandLineHelper.CreateArgString("dateFrom", "2014-01-01");
+            Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("dateFrom", "2014-01-01"));
         }
 
         [Test]
-        [ExpectedException(ExpectedException = typeof(ArgumentException))]
         public void TestNullValue()
         {
-            CommandLineHelper.CreateArgString("DateFrom", null);
+            Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("DateFrom", null));
         }
     }
 }

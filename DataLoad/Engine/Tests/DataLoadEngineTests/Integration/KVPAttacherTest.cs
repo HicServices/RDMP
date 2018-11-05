@@ -40,7 +40,7 @@ namespace DataLoadEngineTests.Integration
             var attacher = new KVPAttacher();
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("KVPTestTable");
 
-            var workingDir = new DirectoryInfo(".");
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var parentDir = workingDir.CreateSubdirectory("KVPAttacherTestProjectDirectory");
             var projectDir = HICProjectDirectory.CreateDirectoryStructure(parentDir, "KVPAttacherTest", true);
 
@@ -227,7 +227,7 @@ namespace DataLoadEngineTests.Integration
         private void CopyToBin(HICProjectDirectory projDir, string file)
         {
             
-            string testFileLocation = ".\\Resources\\" + file;
+            string testFileLocation = Path.Combine(TestContext.CurrentContext.WorkDirectory,"Resources" , file);
             Assert.IsTrue(File.Exists(testFileLocation));
 
             File.Copy(testFileLocation, projDir.ForLoading.FullName + "\\" + file, true);

@@ -1,12 +1,6 @@
-using System.ComponentModel;
-using System.ComponentModel.Composition;
 using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
@@ -20,11 +14,8 @@ namespace DataLoadEngine.Attachers
     public abstract class Attacher : IAttacher
     {
         protected DiscoveredDatabase _dbInfo;
-        
-        public virtual ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-        {
-            return ExitCodeType.Success;
-        }
+
+        public abstract ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
 
         public IHICProjectDirectory HICProjectDirectory { get; set; }
         

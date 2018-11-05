@@ -21,7 +21,7 @@ namespace CatalogueLibraryTests.Integration.Validation
         private ColumnInfo[] _columnInfo;
         private ReferentialIntegrityConstraint _constraint;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("ReferentialIntegrityConstraintTests");
@@ -93,7 +93,7 @@ namespace CatalogueLibraryTests.Integration.Validation
 
         
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void Drop()
         {
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("ReferentialIntegrityConstraintTests");

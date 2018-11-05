@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using CatalogueLibrary.Checks;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
@@ -74,16 +75,13 @@ namespace CatalogueLibraryTests.Unit
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = @"The IExtractableColumn.SelectSQL value ""MangleQuery([mydb]..[myExcitingField])"" looks like a ScalarValuedFunction but it is missing an Alias.  Add an Alias so that it has a runtime name.")]
         public void GetRuntimeName_IColumns_ThrowBecauseMissingAliasOnScalarValueFunction()
         {
             TestColumn tc = new TestColumn();
 
             tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])";
-            string shouldHaveThrownHere = tc.GetRuntimeName();
-
-            Console.WriteLine("should have thrown but instead it returned:\"" + shouldHaveThrownHere + "\"");
-            
+            var ex = Assert.Throws<SyntaxErrorException>(()=> tc.GetRuntimeName());
+            Assert.AreEqual(@"The IExtractableColumn.SelectSQL value ""MangleQuery([mydb]..[myExcitingField])"" looks like a ScalarValuedFunction but it is missing an Alias.  Add an Alias so that it has a runtime name.",ex.Message);
         }
 
 
@@ -103,41 +101,44 @@ namespace CatalogueLibraryTests.Unit
 
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Whitespace found in unwrapped Alias \"bob smith\"")]
         public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias1()
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "bob smith";
-            tc.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"",ex.Message);
 
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Invalid characters found in Alias \"`bob\"")]
         public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias2()
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "`bob";
-            tc.Check(new ThrowImmediatelyCheckNotifier());
+
+            var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Invalid characters found in Alias \"`bob\"",ex.Message);
            
         }
         [Test]
-        [ExpectedException(ExpectedMessage = "Invalid characters found in Alias \"bob]\"")]
         public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias3()
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "bob]";
-            tc.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Invalid characters found in Alias \"bob]\"",ex.Message);
+            
         }
 
         [Test] 
-        [ExpectedException(ExpectedMessage = "Mismatch in the number of opening '(' and closing ')'")]
+        
         public void CheckSyntax_IColumn_ThrowBecauseInvalidSelectSQL()
         {
             TestColumn tc = new TestColumn();
             tc.Alias = "bob";
             tc.SelectSQL = "GetSomething('here'";
-            tc.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'",ex.Message);
         }
     }
 }

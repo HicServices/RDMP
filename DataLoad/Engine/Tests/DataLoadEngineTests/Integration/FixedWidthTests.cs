@@ -17,9 +17,10 @@ namespace DataLoadEngineTests.Integration
     {
         private FixedWidthFormatFile CreateFormatFile()
         {
-            File.WriteAllText("FixedWidthFormat.csv", HICProjectDirectory.ExampleFixedWidthFormatFileContents);
+            FileInfo fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@"FixedWidthFormat.csv"));
 
-            FileInfo fileInfo = new FileInfo(@"FixedWidthFormat.csv");
+            File.WriteAllText(fileInfo.FullName, HICProjectDirectory.ExampleFixedWidthFormatFileContents);
+            
             Assert.IsTrue(fileInfo.Exists);
 
             return new FixedWidthFormatFile(fileInfo);
@@ -88,7 +89,7 @@ namespace DataLoadEngineTests.Integration
         {
             FixedWidthFormatFile formatFile = CreateFormatFile();
 
-            string tempFileToCreate = "unitTestFixedWidthFile.txt";
+            string tempFileToCreate = Path.Combine(TestContext.CurrentContext.WorkDirectory,"unitTestFixedWidthFile.txt");
 
             StreamWriter streamWriter = File.CreateText(tempFileToCreate);
             try
@@ -136,12 +137,14 @@ namespace DataLoadEngineTests.Integration
             if (testCase == FixedWidthTestCase.MisnamedHeaders)
                 flatFileColumn = "chickenDippers";
 
-            File.WriteAllText("Format.csv",@"From,To,Field,Size,DateFormat
+            FileInfo formatFile = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Format.csv"));
+
+            File.WriteAllText(formatFile.FullName, @"From,To,Field,Size,DateFormat
 1,5," + flatFileColumn + ",5");
 
 
             //Create the working directory that will be processed
-            var workingDir = new DirectoryInfo(".");
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var parentDir = workingDir.CreateSubdirectory("FixedWidthTests");
 
             DirectoryInfo toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("TestHeaderMatching"));
@@ -162,7 +165,7 @@ namespace DataLoadEngineTests.Integration
 
             var attacher = new FixedWidthAttacher();
             attacher.Initialize(hicProjectDirectory, db);
-            attacher.PathToFormatFile = new FileInfo(@"Format.csv");
+            attacher.PathToFormatFile = formatFile;
             attacher.TableName = "TestHeaderMatching_Compatible";
             attacher.FilePattern = "*.txt";
 
