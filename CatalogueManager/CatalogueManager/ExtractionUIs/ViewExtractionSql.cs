@@ -13,8 +13,10 @@ using CatalogueLibrary.Spontaneous;
 using CatalogueManager.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;
@@ -41,8 +43,6 @@ namespace CatalogueManager.ExtractionUIs
         {
             InitializeComponent();
             
-            olvExtractionInformations.RowFormatter+= RowFormatter;
-            
             #region Query Editor setup
 
 
@@ -55,35 +55,13 @@ namespace CatalogueManager.ExtractionUIs
             #endregion
 
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            olvColumn1.ImageGetter += ImageGetter;
         }
 
-        private void RowFormatter(OLVListItem olvItem)
+        private object ImageGetter(object rowObject)
         {
-            var ei = (ExtractionInformation)olvItem.RowObject;
-            switch (ei.ExtractionCategory)
-            {
-                case ExtractionCategory.Core:
-                case ExtractionCategory.ProjectSpecific:
-                    olvItem.ForeColor = Color.Green;
-                    break;
-                case ExtractionCategory.Supplemental:
-                    olvItem.ForeColor = Color.Orange;
-                    break;
-                case ExtractionCategory.SpecialApprovalRequired:
-                    olvItem.ForeColor = Color.Tan;
-                    break;
-                case ExtractionCategory.Internal:
-                    olvItem.ForeColor = Color.Red;
-                    break;
-                case ExtractionCategory.Deprecated:
-                    olvItem.ForeColor = Color.OrangeRed;
-                    break;
-                    case ExtractionCategory.Any:
-                    throw new NotSupportedException();
-                
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            return _activator.CoreIconProvider.GetImage(rowObject);
         }
 
         private bool bLoading = false;
@@ -254,6 +232,13 @@ namespace CatalogueManager.ExtractionUIs
         public override string GetTabName()
         {
             return base.GetTabName() + "(SQL)";
+        }
+
+        private void olvExtractionInformations_ItemActivate(object sender, EventArgs e)
+        {
+            var o = olvExtractionInformations.SelectedObject as IMapsDirectlyToDatabaseTable;
+            if(o != null)
+                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
         }
     }
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewExtractionSql_Design, UserControl>))]

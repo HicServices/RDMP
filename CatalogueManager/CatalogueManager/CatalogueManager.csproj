@@ -1658,6 +1658,7 @@
     <None Include="Icons\WaitingForDatabase.png" />
     <None Include="Icons\StandardPipelineUseCaseNode.png" />
     <None Include="Icons\OtherPipelinesNode.png" />
+    <None Include="Icons\LookupCompositeJoinInfo.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

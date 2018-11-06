@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
@@ -357,6 +358,13 @@ namespace CatalogueManager.ExtractionUIs
         {
             lbDesiredOrder.Items.Clear();
             lbNewOrder.Items.Clear();
+        }
+
+        private void olvExtractionInformations_ItemActivate(object sender, EventArgs e)
+        {
+            var o = olvExtractionInformations.SelectedObject as IMapsDirectlyToDatabaseTable;
+            if(o != null)
+                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
         }
     }
 

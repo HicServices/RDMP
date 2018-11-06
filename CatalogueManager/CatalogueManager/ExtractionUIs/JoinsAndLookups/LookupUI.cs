@@ -20,6 +20,14 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         public LookupUI()
         {
             InitializeComponent();
+            
+            olvCompositeJoinColumn.ImageGetter = ImageGetter;
+            olvExtractionInformationName.ImageGetter = ImageGetter;
+        }
+
+        private object ImageGetter(object rowObject)
+        {
+            return _activator.CoreIconProvider.GetImage(rowObject);
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)

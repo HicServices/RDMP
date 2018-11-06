@@ -33,7 +33,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.olvExtractionDescriptions = new BrightIdeasSoftware.ObjectListView();
             this.olvExtractionInformationName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvCompositeJoins = new BrightIdeasSoftware.ObjectListView();
-            this.olvCompositeJoin = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvCompositeJoinColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.tbPk = new System.Windows.Forms.TextBox();
@@ -59,6 +59,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.olvExtractionDescriptions.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvExtractionDescriptions.Location = new System.Drawing.Point(6, 224);
             this.olvExtractionDescriptions.Name = "olvExtractionDescriptions";
+            this.olvExtractionDescriptions.RowHeight = 19;
             this.olvExtractionDescriptions.ShowGroups = false;
             this.olvExtractionDescriptions.Size = new System.Drawing.Size(745, 257);
             this.olvExtractionDescriptions.TabIndex = 0;
@@ -75,13 +76,14 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             // olvCompositeJoins
             // 
-            this.olvCompositeJoins.AllColumns.Add(this.olvCompositeJoin);
+            this.olvCompositeJoins.AllColumns.Add(this.olvCompositeJoinColumn);
             this.olvCompositeJoins.CellEditUseWholeCell = false;
             this.olvCompositeJoins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvCompositeJoin});
+            this.olvCompositeJoinColumn});
             this.olvCompositeJoins.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvCompositeJoins.Location = new System.Drawing.Point(6, 33);
             this.olvCompositeJoins.Name = "olvCompositeJoins";
+            this.olvCompositeJoins.RowHeight = 19;
             this.olvCompositeJoins.ShowGroups = false;
             this.olvCompositeJoins.Size = new System.Drawing.Size(745, 156);
             this.olvCompositeJoins.TabIndex = 0;
@@ -91,10 +93,10 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             // olvCompositeJoin
             // 
-            this.olvCompositeJoin.AspectName = "ToString";
-            this.olvCompositeJoin.FillsFreeSpace = true;
-            this.olvCompositeJoin.Text = "Composite Joins";
-            this.olvCompositeJoin.Width = 142;
+            this.olvCompositeJoinColumn.AspectName = "ToString";
+            this.olvCompositeJoinColumn.FillsFreeSpace = true;
+            this.olvCompositeJoinColumn.Text = "Composite Joins";
+            this.olvCompositeJoinColumn.Width = 142;
             // 
             // label2
             // 
@@ -204,7 +206,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         private ObjectListView olvExtractionDescriptions;
         private OLVColumn olvExtractionInformationName;
         private ObjectListView olvCompositeJoins;
-        private OLVColumn olvCompositeJoin;
+        private OLVColumn olvCompositeJoinColumn;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbPk;

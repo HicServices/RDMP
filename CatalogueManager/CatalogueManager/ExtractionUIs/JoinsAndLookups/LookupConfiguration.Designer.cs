@@ -94,6 +94,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.olvExtractionInformations.TabIndex = 1;
             this.olvExtractionInformations.UseCompatibleStateImageBehavior = false;
             this.olvExtractionInformations.View = System.Windows.Forms.View.Details;
+            this.olvExtractionInformations.ItemActivate += new System.EventHandler(this.olv_ItemActivate);
             // 
             // olvExtractionInformationsNameColumn
             // 
@@ -170,6 +171,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.olvLookupColumns.UseCompatibleStateImageBehavior = false;
             this.olvLookupColumns.View = System.Windows.Forms.View.Details;
             this.olvLookupColumns.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.olvLookupColumns_CellRightClick);
+            this.olvLookupColumns.ItemActivate += new System.EventHandler(this.olv_ItemActivate);
             // 
             // olvLookupNameColumn
             // 
