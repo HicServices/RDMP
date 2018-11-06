@@ -14,7 +14,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
         public PipelineGetter Getter { get; private set; }
         public PipelineSetter Setter { get; private set; }
 
-        public PluginPipelineUser( RequiredPropertyInfo demand,IArgument argument, object demanderInstance)
+        public PluginPipelineUser(RequiredPropertyInfo demand, IArgument argument, object demanderInstance)
+            : base(new Type[] { }) //makes it a design time use case
         {
             Getter = () =>
             {
@@ -38,7 +39,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
             
             ExplicitSource = _useCase.ExplicitSource;
             ExplicitDestination = _useCase.ExplicitDestination;
-
+            
             foreach (var o in GetInitializationObjects())
                 AddInitializationObject(o);
 
