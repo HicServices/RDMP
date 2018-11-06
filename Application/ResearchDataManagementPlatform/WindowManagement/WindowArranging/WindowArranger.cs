@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
@@ -68,12 +69,24 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
         public void Setup(WindowLayout target)
         {
             //Do not reload an existing layout
-            if(_toolboxWindowManager.MainForm.GetCurrentLayoutXml().Equals(target.LayoutData,StringComparison.CurrentCultureIgnoreCase))
-                return;
+            string oldXml = _toolboxWindowManager.MainForm.GetCurrentLayoutXml();
+            string newXml = target.LayoutData;
 
+            if(AreBasicallyTheSameLayout(oldXml, newXml))
+                return;
+            
             _toolboxWindowManager.CloseAllToolboxes();
             _toolboxWindowManager.CloseAllWindows();
             _toolboxWindowManager.MainForm.LoadFromXml(target);
+        }
+
+        private bool AreBasicallyTheSameLayout(string oldXml, string newXml)
+        {
+            var patStripActive = @"Active.*=[""\-\d]*";
+            oldXml = Regex.Replace(oldXml, patStripActive, "");
+            newXml = Regex.Replace(newXml, patStripActive, "");
+
+            return oldXml.Equals(newXml, StringComparison.CurrentCultureIgnoreCase);
         }
 
         public void SetupEditDataExtractionProject(object sender, Project project)

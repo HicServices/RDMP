@@ -192,13 +192,25 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                 cmd.Execute();
             }
 
+            UpdateButtonEnabledness();
+        }
+
+
+
+        private void cbx_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateButtonEnabledness();
+        }
+
+        private void UpdateButtonEnabledness()
+        {
+            btnSaveWindowLayout.Enabled = cbxLayouts.SelectedItem is WindowLayout;
             btnDeleteLayout.Enabled = cbxLayouts.SelectedItem is WindowLayout;
             btnDeleteDash.Enabled = cbxDashboards.SelectedItem is DashboardLayout;
         }
 
         private void AddNewLayout()
         {
-
             string xml = _manager.MainForm.GetCurrentLayoutXml();
 
             var dialog = new TypeTextOrCancelDialog("Layout Name", "Name", 100, null, false);
@@ -247,6 +259,18 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             {
                 _manager.ContentManager.DeleteWithConfirmation(this, d);
                 ReCreateDropDowns();
+            }
+        }
+
+        private void btnSaveWindowLayout_Click(object sender, EventArgs e)
+        {
+            var layout = cbxLayouts.SelectedItem as WindowLayout;
+            if(layout != null)
+            {
+                string xml = _manager.MainForm.GetCurrentLayoutXml();
+
+                layout.LayoutData = xml;
+                layout.SaveToDatabase();
             }
         }
 
