@@ -72,6 +72,7 @@ namespace CatalogueManager.ExtractionUIs
             this.olvColumns,
             this.olvOrder});
             this.olvExtractionInformations.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvExtractionInformations.FullRowSelect = true;
             this.olvExtractionInformations.IsSimpleDragSource = true;
             this.olvExtractionInformations.IsSimpleDropSink = true;
             this.olvExtractionInformations.Location = new System.Drawing.Point(0, 19);

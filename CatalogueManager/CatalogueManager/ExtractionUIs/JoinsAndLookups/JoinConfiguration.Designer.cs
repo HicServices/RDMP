@@ -54,14 +54,14 @@
             this.rbAllRightHandTableRecords = new System.Windows.Forms.RadioButton();
             this.rbJoinInner = new System.Windows.Forms.RadioButton();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.pk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.pk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.fk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.fk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.fk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.olvLeftColumns)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvRightColumns)).BeginInit();
             this.panel1.SuspendLayout();
@@ -93,6 +93,7 @@
             this.olvLeftColumns.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvLeftColumnNames});
             this.olvLeftColumns.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvLeftColumns.FullRowSelect = true;
             this.olvLeftColumns.IsSimpleDragSource = true;
             this.olvLeftColumns.Location = new System.Drawing.Point(7, 29);
             this.olvLeftColumns.Name = "olvLeftColumns";
@@ -100,6 +101,7 @@
             this.olvLeftColumns.TabIndex = 3;
             this.olvLeftColumns.UseCompatibleStateImageBehavior = false;
             this.olvLeftColumns.View = System.Windows.Forms.View.Details;
+            this.olvLeftColumns.ItemActivate += new System.EventHandler(this.olv_ItemActivate);
             // 
             // olvLeftColumnNames
             // 
@@ -148,6 +150,7 @@
             this.olvRightColumns.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvRightColumnNames});
             this.olvRightColumns.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvRightColumns.FullRowSelect = true;
             this.olvRightColumns.IsSimpleDragSource = true;
             this.olvRightColumns.Location = new System.Drawing.Point(493, 29);
             this.olvRightColumns.Name = "olvRightColumns";
@@ -155,6 +158,7 @@
             this.olvRightColumns.TabIndex = 4;
             this.olvRightColumns.UseCompatibleStateImageBehavior = false;
             this.olvRightColumns.View = System.Windows.Forms.View.Details;
+            this.olvRightColumns.ItemActivate += new System.EventHandler(this.olv_ItemActivate);
             this.olvRightColumns.DragDrop += new System.Windows.Forms.DragEventHandler(this.olvRightColumns_DragDrop);
             this.olvRightColumns.DragEnter += new System.Windows.Forms.DragEventHandler(this.olvRightColumns_DragEnter);
             // 
@@ -366,45 +370,6 @@
             this.panel1.Size = new System.Drawing.Size(965, 224);
             this.panel1.TabIndex = 167;
             // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.label8);
-            this.panel2.Controls.Add(this.label3);
-            this.panel2.Controls.Add(this.tbLeftTableInfo);
-            this.panel2.Controls.Add(this.tbRightTableInfo);
-            this.panel2.Controls.Add(this.label9);
-            this.panel2.Controls.Add(this.btnChooseRightTableInfo);
-            this.panel2.Controls.Add(this.label2);
-            this.panel2.Controls.Add(this.tbFilterRight);
-            this.panel2.Controls.Add(this.olvRightColumns);
-            this.panel2.Controls.Add(this.tbFilterLeft);
-            this.panel2.Controls.Add(this.olvLeftColumns);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(965, 305);
-            this.panel2.TabIndex = 168;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.panel2);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Panel2MinSize = 240;
-            this.splitContainer1.Size = new System.Drawing.Size(965, 533);
-            this.splitContainer1.SplitterDistance = 305;
-            this.splitContainer1.TabIndex = 169;
-            // 
             // pk1
             // 
             this.pk1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -464,6 +429,45 @@
             this.fk2.Size = new System.Drawing.Size(226, 35);
             this.fk2.TabIndex = 15;
             this.fk2.SelectedColumnChanged += new System.Action(this.k_SelectedColumnChanged);
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.label8);
+            this.panel2.Controls.Add(this.label3);
+            this.panel2.Controls.Add(this.tbLeftTableInfo);
+            this.panel2.Controls.Add(this.tbRightTableInfo);
+            this.panel2.Controls.Add(this.label9);
+            this.panel2.Controls.Add(this.btnChooseRightTableInfo);
+            this.panel2.Controls.Add(this.label2);
+            this.panel2.Controls.Add(this.tbFilterRight);
+            this.panel2.Controls.Add(this.olvRightColumns);
+            this.panel2.Controls.Add(this.tbFilterLeft);
+            this.panel2.Controls.Add(this.olvLeftColumns);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(965, 305);
+            this.panel2.TabIndex = 168;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.panel2);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.panel1);
+            this.splitContainer1.Panel2MinSize = 240;
+            this.splitContainer1.Size = new System.Drawing.Size(965, 533);
+            this.splitContainer1.SplitterDistance = 305;
+            this.splitContainer1.TabIndex = 169;
             // 
             // JoinConfiguration
             // 

@@ -14,8 +14,10 @@ using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.Checks;
@@ -238,6 +240,16 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         {
             if (tbCollation.Text != null && tbCollation.Text.StartsWith("collate", StringComparison.CurrentCultureIgnoreCase))
                 tbCollation.Text = tbCollation.Text.Substring("collate".Length).Trim();
+        }
+
+        private void olv_ItemActivate(object sender, EventArgs e)
+        {
+            var olv = (ObjectListView)sender;
+
+            var o = olv.SelectedObject as IMapsDirectlyToDatabaseTable;
+            
+            if(o != null)
+                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
         }
     }
 
