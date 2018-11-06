@@ -17,7 +17,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
     /// </summary>
     public class PersistenceDecisionFactory
     {
-        public const char Separator = ':';
+        PersistStringHelper _persistStringHelper = new PersistStringHelper();
 
         public PersistenceDecisionFactory()
         {
@@ -34,15 +34,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
             if (!persistString.StartsWith(PersistableToolboxDockContent.Prefix))
                 return null;
 
-            var tokens = persistString.Split(Separator);
-
-            if (tokens.Length != 2)
-                return null;
-
-            RDMPCollection collection;
-            Enum.TryParse(tokens[1], true, out collection);
-            return collection;
-            
+            return PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
         }
 
         public DeserializeInstruction ShouldCreateSingleObjectControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
@@ -51,7 +43,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
                 return null;
 
             //return Prefix + s + _control.GetType().Name + s + _databaseObject.Repository.GetType() +  s + _databaseObject.GetType().Name + s + _databaseObject.ID;
-            var tokens = persistString.Split(Separator);
+            var tokens = persistString.Split(PersistStringHelper.Separator);
 
             if (tokens.Length != 5)
                 throw new PersistenceException("Unexpected number of tokens (" + tokens.Length + ") for Persistence of Type " + PersistableSingleDatabaseObjectDockContent.Prefix);
@@ -68,11 +60,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
             if (!persistString.StartsWith(PersistableObjectCollectionDockContent.Prefix))
                 return null;
             
-            if(!persistString.Contains(PersistableObjectCollectionDockContent.ExtraText))
-                throw new PersistenceException("Persistence string did not contain '" + PersistableObjectCollectionDockContent.ExtraText);
+            if(!persistString.Contains(PersistStringHelper.ExtraText))
+                throw new PersistenceException("Persistence string did not contain '" + PersistStringHelper.ExtraText);
 
             //Looks something like this  RDMPObjectCollection:MyCoolControlUI:MyControlUIsBundleOfObjects:[CatalogueRepository:AggregateConfiguration:105,CatalogueRepository:AggregateConfiguration:102,CatalogueRepository:AggregateConfiguration:101]###EXTRA_TEXT###I've got a lovely bunch of coconuts
-            var tokens = persistString.Split(Separator);
+            var tokens = persistString.Split(PersistStringHelper.Separator);
             
             var uiType = GetTypeByName(tokens[1],typeof(Control),repositoryLocator);
             var collectionType = GetTypeByName(tokens[2], typeof (IPersistableObjectCollection), repositoryLocator);
@@ -82,29 +74,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
                 
             if(collectionInstance.DatabaseObjects == null)
                 throw new PersistenceException("Constructor of Type '" +collectionType + "' did not initialise property DatabaseObjects");
-
-            var allObjectsString = PersistableObjectCollectionDockContent.MatchCollectionInString(persistString);
-            var objectStrings = allObjectsString.Split(new []{PersistableObjectCollectionDockContent.CollectionObjectSeparator},StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string objectString in objectStrings)
-            {
-                var objectTokens = objectString.Split(Separator);
-
-                if(objectTokens.Length != 3)
-                    throw new PersistenceException("Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens (" + objectTokens.Length + " tokens).  The current object string is:"+Environment.NewLine + objectString + " The current persistence string is:"+Environment.NewLine + persistString);
-
-                var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], int.Parse(objectTokens[2]));
-
-                if (dbObj != null)
-                    collectionInstance.DatabaseObjects.Add(dbObj);
-                else
-                    throw new PersistenceException("DatabaseObject '" + objectString +
-                                                   "' has been deleted meaning IPersistableObjectCollection " +
-                                                   collectionInstance.GetType().Name +
-                                                   " could not be properly created/populated");
-            }
             
-            var extraText = persistString.Substring(persistString.IndexOf(PersistableObjectCollectionDockContent.ExtraText, System.StringComparison.Ordinal) + PersistableObjectCollectionDockContent.ExtraText.Length);
+            var allObjectsString = _persistStringHelper.MatchCollectionInString(persistString);
+
+            collectionInstance.DatabaseObjects.AddRange(_persistStringHelper.GetObjectCollectionFromPersistString(allObjectsString,repositoryLocator));
+
+            var extraText = _persistStringHelper.GetExtraText(persistString);
             collectionInstance.LoadExtraText(extraText);
 
             return new DeserializeInstruction(uiType,collectionInstance);

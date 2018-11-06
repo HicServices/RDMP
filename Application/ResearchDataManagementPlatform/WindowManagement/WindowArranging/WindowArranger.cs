@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -66,6 +67,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
 
         public void Setup(WindowLayout target)
         {
+            //Do not reload an existing layout
+            if(_toolboxWindowManager.MainForm.GetCurrentLayoutXml().Equals(target.LayoutData,StringComparison.CurrentCultureIgnoreCase))
+                return;
+
             _toolboxWindowManager.CloseAllToolboxes();
             _toolboxWindowManager.CloseAllWindows();
             _toolboxWindowManager.MainForm.LoadFromXml(target);

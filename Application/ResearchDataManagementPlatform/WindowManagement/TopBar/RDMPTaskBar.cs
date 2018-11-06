@@ -192,7 +192,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                 cmd.Execute();
             }
 
-            btnDeleteLayout.Enabled = cbxLayouts.SelectedItem is DashboardLayout;
+            btnDeleteLayout.Enabled = cbxLayouts.SelectedItem is WindowLayout;
             btnDeleteDash.Enabled = cbxDashboards.SelectedItem is DashboardLayout;
         }
 

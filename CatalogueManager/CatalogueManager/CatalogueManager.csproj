@@ -418,6 +418,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDashboardLayout.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernancePeriod.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLookup.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
@@ -443,6 +444,12 @@
     <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
     <Compile Include="Copying\Commands\TableInfoCommand.cs" />
     <Compile Include="Copying\RDMPCommandFactory.cs" />
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.Designer.cs">
+      <DependentUpon>LookupUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemIssue.cs" />
@@ -1710,6 +1717,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupUI.resx">
+      <DependentUpon>LookupUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\ConnectionStringKeywordUI.resx">
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>

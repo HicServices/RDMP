@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using CatalogueLibrary.Reports;
+using CatalogueLibrary.Repositories;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data.Dashboarding
 {
@@ -12,6 +16,16 @@ namespace CatalogueLibrary.Data.Dashboarding
     /// </summary>
     public class PersistStringHelper
     {
+        public const string CollectionObjectSeparator = ",";
+        public const string CollectionStartDelimiter = "[";
+        public const string CollectionEndDelimiter = "]";
+        public const char Separator = ':';
+
+        /// <summary>
+        /// Divider between Type section (what is the control) and args dictionary
+        /// </summary>
+        public const string ExtraText = "###EXTRA_TEXT###";
+
         /// <summary>
         /// Serializes the dictionary to a string of XML
         /// </summary>
@@ -19,7 +33,6 @@ namespace CatalogueLibrary.Data.Dashboarding
         /// <returns></returns>
         public string SaveDictionaryToString(Dictionary<string, string> dict)
         {
-            
             XElement el = new XElement("root",
                 dict.Select(kv => new XElement(kv.Key, kv.Value)));
 
@@ -33,7 +46,7 @@ namespace CatalogueLibrary.Data.Dashboarding
         /// <returns></returns>
         public Dictionary<string, string> LoadDictionaryFromString(string str)
         {
-            if(string.IsNullOrWhiteSpace(str))
+            if(String.IsNullOrWhiteSpace(str))
                 return new Dictionary<string, string>();
 
             XElement rootElement = XElement.Parse(str);
@@ -60,6 +73,80 @@ namespace CatalogueLibrary.Data.Dashboarding
                 return dict[key];
             
             return null;
+        }
+
+        public string GetObjectCollectionPersistString(params IMapsDirectlyToDatabaseTable[] objects)
+        {
+
+            StringBuilder sb = new StringBuilder();
+
+            //output [obj1,obj2,obj3]
+            sb.Append(CollectionStartDelimiter);
+
+            //where obj is <RepositoryType>:<DatabaseObjectType>:<ObjectID>
+            sb.Append(String.Join(CollectionObjectSeparator, objects.Select(o => o.Repository.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
+            
+            //ending bracket for the object collection
+            sb.Append(CollectionEndDelimiter);
+
+            return sb.ToString();
+        }
+
+        public string MatchCollectionInString(string persistenceString)
+        {
+            try
+            {
+                //match the starting delimiter
+                string pattern = Regex.Escape(CollectionStartDelimiter);
+                pattern += "(.*)";//then anything
+                pattern += Regex.Escape(CollectionEndDelimiter);//then the ending delimiter
+
+                return Regex.Match(persistenceString, pattern).Groups[1].Value;
+            }
+            catch (Exception e)
+            {
+                throw new PersistenceException("Could not match ObjectCollection delimiters in persistenceString '" + persistenceString + "'", e);
+            }
+        }
+
+        public List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            var toReturn = new List<IMapsDirectlyToDatabaseTable>();
+
+            allObjectsString = allObjectsString.Trim(CollectionStartDelimiter.ToCharArray()[0], CollectionEndDelimiter.ToCharArray()[0]);
+
+            var objectStrings = allObjectsString.Split(new[] { CollectionObjectSeparator }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string objectString in objectStrings)
+            {
+                var objectTokens = objectString.Split(Separator);
+                
+                if (objectTokens.Length != 3)
+                    throw new PersistenceException("Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens (" + objectTokens.Length + " tokens).  The current object string is:" + Environment.NewLine + objectString);
+
+                var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], Int32.Parse(objectTokens[2]));
+
+                if (dbObj != null)
+                    toReturn.Add(dbObj);
+                else
+                    throw new PersistenceException("DatabaseObject '" + objectString +
+                                                   "' has been deleted meaning IPersistableObjectCollection could not be properly created/populated");
+            }
+
+            return toReturn;
+        }
+
+        /// <summary>
+        /// Returns all text appearing after <see cref="ExtraText"/>
+        /// </summary>
+        /// <param name="persistString"></param>
+        /// <returns></returns>
+        public string GetExtraText(string persistString)
+        {
+            if (!persistString.Contains(ExtraText))
+                return null;
+
+            return persistString.Substring(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length);
         }
     }
 }

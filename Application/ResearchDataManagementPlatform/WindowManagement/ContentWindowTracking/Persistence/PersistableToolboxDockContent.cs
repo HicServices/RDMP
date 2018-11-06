@@ -1,6 +1,17 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Dashboarding;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
+using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
+using CommandLine;
+using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -19,6 +30,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
         public readonly RDMPCollection CollectionType;
 
+        PersistStringHelper persistStringHelper = new PersistStringHelper();
+
         public PersistableToolboxDockContent(RDMPCollection collectionType)
         {
             CollectionType = collectionType;
@@ -26,12 +39,61 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
         protected override string GetPersistString()
         {
-            return Prefix + PersistenceDecisionFactory.Separator + CollectionType;
+            var ui = Controls.OfType<RDMPCollectionUI>().Single();
+
+            var pin = ui.CommonFunctionality.CurrentlyPinned as IMapsDirectlyToDatabaseTable;
+
+            var args = new Dictionary<string, string>();
+            args.Add("Toolbox",CollectionType.ToString());
+            
+            if(pin != null)
+                args.Add("Pin",persistStringHelper.GetObjectCollectionPersistString(pin));
+
+            return Prefix + PersistStringHelper.Separator + persistStringHelper.SaveDictionaryToString(args);
+        }
+
+        public void LoadPersistString(IActivateItems activator, string persistString)
+        {
+            try
+            {
+                var s = persistString.Substring(Prefix.Length + 1);
+                var pinValue = persistStringHelper.GetValueIfExistsFromPersistString("Pin", s);
+
+                if (pinValue != null)
+                {
+                    var toPin = persistStringHelper.GetObjectCollectionFromPersistString(pinValue, activator.RepositoryLocator).SingleOrDefault();
+
+                    if(toPin != null)
+                        activator.RequestItemEmphasis(this,new EmphasiseRequest(toPin){Pin = true,ExpansionDepth = 2});
+                }
+            }
+            catch (Exception e)
+            {
+                activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to LoadPersistString '" + persistString + "' for collection " + CollectionType, CheckResult.Fail, e));
+            }
         }
 
         public RDMPCollectionUI GetCollection()
         {
             return Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
+        }
+
+        public static RDMPCollection? GetToolboxFromPersistString(string persistString)
+        {
+            var helper = new PersistStringHelper();
+            var s = persistString.Substring(PersistableToolboxDockContent.Prefix.Length + 1);
+
+            var args = helper.LoadDictionaryFromString(s);
+
+            RDMPCollection collection;
+
+            if (args.ContainsKey("Toolbox"))
+            {
+                Enum.TryParse(args["Toolbox"], true, out collection);
+                return collection;
+            }
+
+            return null;
         }
     }
 }

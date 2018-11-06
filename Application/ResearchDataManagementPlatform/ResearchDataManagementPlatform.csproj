@@ -162,7 +162,6 @@
     <Compile Include="WindowManagement\ContentWindowTracking\Persistence\PersistableSingleDatabaseObjectDockContent.cs" />
     <Compile Include="WindowManagement\ContentWindowTracking\Persistence\PersistableToolboxDockContent.cs" />
     <Compile Include="WindowManagement\ContentWindowTracking\Persistence\PersistenceDecisionFactory.cs" />
-    <Compile Include="WindowManagement\ContentWindowTracking\Persistence\PersistenceException.cs" />
     <Compile Include="WindowManagement\Events\RDMPCollectionCreatedEventHandler.cs" />
     <Compile Include="WindowManagement\Events\RDMPCollectionCreatedEventHandlerArgs.cs" />
     <Compile Include="WindowManagement\HomePane\HomeUI.cs">

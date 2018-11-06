@@ -1,6 +1,6 @@
 using System;
 
-namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
+namespace CatalogueLibrary.Data.Dashboarding
 {
     /// <summary>
     /// Occurs when there is an error restoring a specific Persistence String.  Often occurs when a UI class has been renamed or a plugin unloaded between 

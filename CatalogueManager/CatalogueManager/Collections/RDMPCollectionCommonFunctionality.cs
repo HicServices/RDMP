@@ -60,7 +60,7 @@ namespace CatalogueManager.Collections
         public Func<IActivateItems,IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
         
         private CollectionPinFilterUI _pinFilter;
-        private object _currentlyPinned;
+        public object CurrentlyPinned { get; private set; }
 
         public IDColumnProvider IDColumnProvider { get; set; }
         public OLVColumn IDColumn { get; set; }
@@ -305,12 +305,12 @@ namespace CatalogueManager.Collections
             
             _pinFilter = new CollectionPinFilterUI();
             _pinFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
-            _currentlyPinned = objectToPin;
+            CurrentlyPinned = objectToPin;
 
             _pinFilter.UnApplied += (s, e) =>
             {
                 _pinFilter = null;
-                _currentlyPinned = null;
+                CurrentlyPinned = null;
             };
         }
 
@@ -426,7 +426,7 @@ namespace CatalogueManager.Collections
         private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
         {
             RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
-            args.CurrentlyPinnedObject = _currentlyPinned;
+            args.CurrentlyPinnedObject = CurrentlyPinned;
             args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
 
             var objectConstructor = new ObjectConstructor();

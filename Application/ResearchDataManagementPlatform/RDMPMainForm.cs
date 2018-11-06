@@ -194,7 +194,11 @@ namespace ResearchDataManagementPlatform
             {
                 var toolbox = _persistenceFactory.ShouldCreateCollection(persiststring);
                 if (toolbox.HasValue)
-                    return _windowManager.Create(toolbox.Value);
+                {
+                    var toolboxInstance = _windowManager.Create(toolbox.Value);
+                    toolboxInstance.LoadPersistString(_windowManager.ContentManager,persiststring);
+                    return toolboxInstance;
+                }
 
                 var instruction = _persistenceFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
                                   _persistenceFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);

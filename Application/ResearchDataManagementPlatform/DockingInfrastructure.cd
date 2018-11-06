@@ -1,32 +1,54 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Comment CommentText="Abdication Layer -  exists to provide abdication of responsibility from individual top level controls from the container display system (The tab docking, tab tracking etc).">
-    <Position X="10.253" Y="4.806" Height="0.386" Width="12.506" />
+    <Position X="10.253" Y="4.806" Height="0.386" Width="14.686" />
   </Comment>
   <Comment CommentText="Example instances of Controls which have more than 1 object required to function or where the object(s) are of dynamic Types that do not share a useful common interface ">
     <Position X="11.211" Y="9.786" Height="0.75" Width="4.283" />
   </Comment>
   <Comment CommentText="Implementation / Control Layer">
-    <Position X="10.285" Y="7.42" Height="0.386" Width="12.506" />
+    <Position X="10.285" Y="7.42" Height="0.386" Width="14.614" />
   </Comment>
   <Comment CommentText="Application Container Layer">
-    <Position X="10.25" Y="1.143" Height="0.386" Width="12.506" />
+    <Position X="10.25" Y="1.143" Height="0.386" Width="14.902" />
+  </Comment>
+  <Comment CommentText="Container for tree view collections of objects e.g. CatalogueCollectionUI">
+    <Position X="22.501" Y="3.97" Height="0.468" Width="2.429" />
+  </Comment>
+  <Comment CommentText="Container for controls requiring multiple DatabaseEntity objects.">
+    <Position X="11.801" Y="3.958" Height="0.456" Width="3.168" />
+  </Comment>
+  <Comment CommentText="Container for controls requiring only a single DatabaseEntity object (closes if object is deleted etc).">
+    <Position X="18.559" Y="3.952" Height="0.539" Width="3.264" />
+  </Comment>
+  <Comment CommentText="Examples of single object controls">
+    <Position X="17.09" Y="9.82" Height="0.319" Width="5.725" />
+  </Comment>
+  <Comment CommentText="Main Application Window.  Also responsible for Persist/Load of states">
+    <Position X="0.579" Y="10.663" Height="0.463" Width="2.622" />
+  </Comment>
+  <Comment CommentText="Persistence Handling">
+    <Position X="3.577" Y="6.949" Height="0.343" Width="6.432" />
+  </Comment>
+  <Comment CommentText="Examples of tree collections">
+    <Position X="23.558" Y="9.82" Height="0.319" Width="4.707" />
   </Comment>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ToolboxWindowManager">
     <Position X="0.5" Y="0.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAABEAkAAIAAABAAICAQD0AEBAAAAAAAgEAAA=</HashCode>
+      <HashCode>AIAAQAAAABECkAAIAAABAAICAQD0AEBAAAAAAAgEAAA=</HashCode>
       <FileName>WindowManagement\ToolboxWindowManager.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="ContentManager" />
       <Field Name="_windowFactory" />
+      <Property Name="MainForm" />
     </ShowAsAssociation>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.WindowFactory" Collapsed="true">
     <Position X="5" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gAAAIAAAAAUQAAAAgAiAgAAAAAAAAEAAAAACAAAAAAA=</HashCode>
+      <HashCode>gAAAIAAAAAUQAAAAgAiAAAAAAAAAAEAAAAACAAAAAAA=</HashCode>
       <FileName>WindowManagement\WindowFactory.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -34,9 +56,9 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowManager" Collapsed="true">
-    <Position X="5" Y="2.5" Width="2" />
+    <Position X="5" Y="2.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAQAACEIEAGCghDAAAAAoACkYSAhggBhBFMIQIFAAQA=</HashCode>
+      <HashCode>AAQAACgAAAECghDAAAAAoCAgYQQggwNhFFAIQMFAAAA=</HashCode>
       <FileName>WindowManagement\ContentWindowManager.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -44,43 +66,43 @@
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.ContentWindowTracker" Collapsed="true">
     <Position X="8" Y="1.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAABIAAgAAAAAgBAgAAAAABAACAAAAAEAAAAA=</HashCode>
+      <HashCode>AAAAAAAAABIEAgAAAAAgBAgAAAAABAACAAAAAEAAAAA=</HashCode>
       <FileName>WindowManagement\ContentWindowTracking\ContentWindowTracker.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence.RDMPSingleControlTab" Collapsed="true">
-    <Position X="13.75" Y="2" Width="3" />
+    <Position X="15.25" Y="2" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAAAAgAAQAAAAAAAAAAAAAAAAAAAAAEAIAAAAAAAAAA=</HashCode>
+      <HashCode>AAQAAgAAQAAAAAAAAAAAAAAAAAAAAAEAIAAAAAAAAAA=</HashCode>
       <FileName>WindowManagement\ContentWindowTracking\Persistence\RDMPSingleControlTab.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence.PersistableObjectCollectionDockContent" Collapsed="true">
-    <Position X="11.75" Y="3.5" Width="3.25" />
+    <Position X="11.75" Y="3.25" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AEAAAkCAQAAAAAAAAAAAAAACAAAACAEAIAAAAAAABIA=</HashCode>
+      <HashCode>AAAAAgCAQAAAAAAAAAABAAACAAAAAAEAIAAAAAAABAA=</HashCode>
       <FileName>WindowManagement\ContentWindowTracking\Persistence\PersistableObjectCollectionDockContent.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence.PersistableSingleDatabaseObjectDockContent" Collapsed="true">
-    <Position X="15.75" Y="3.5" Width="3.25" />
+    <Position X="18.5" Y="3.25" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAAAAgCAQAAAAAAAAAAAAAgCAAAAAAEAIAAAAAAABAA=</HashCode>
       <FileName>WindowManagement\ContentWindowTracking\Persistence\PersistableSingleDatabaseObjectDockContent.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
-    <Position X="17.75" Y="6" Width="2.75" />
+    <Position X="18.5" Y="6.25" Width="2.75" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CatalogueManager.MainFormUITabs.CatalogueTab_Design" Collapsed="true">
-    <Position X="17" Y="8.5" Width="2.75" />
+    <Position X="17" Y="9" Width="2.75" />
     <TypeIdentifier />
   </Class>
   <Class Name="CatalogueManager.MainFormUITabs.CatalogueItemTab_Design" Collapsed="true">
-    <Position X="23.5" Y="8.5" Width="2.75" />
+    <Position X="20" Y="9" Width="2.75" />
     <TypeIdentifier />
   </Class>
   <Class Name="CohortManager.SubComponents.Graphs.CohortSummaryAggregateGraph" Collapsed="true">
@@ -93,9 +115,64 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.ExtractionUIs.FilterUIs.ExtractionFilterUI_Design" Collapsed="true">
-    <Position X="20" Y="8.5" Width="3.25" />
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence.DeserializeInstruction">
+    <Position X="3.5" Y="10" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAkAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>WindowManagement\ContentWindowTracking\Persistence\DeserializeInstruction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence.PersistableToolboxDockContent" Collapsed="true">
+    <Position X="22.5" Y="3.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAABABAAQCAAAAAAAAAAAAAEAABAA=</HashCode>
+      <FileName>WindowManagement\ContentWindowTracking\Persistence\PersistableToolboxDockContent.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="CollectionType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ResearchDataManagementPlatform.RDMPMainForm">
+    <Position X="0.5" Y="7.5" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAABATCACAAAAACAAABCAQAIAgEAAAAQAAAAAQA=</HashCode>
+      <FileName>RDMPMainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence.PersistenceDecisionFactory">
+    <Position X="3.5" Y="7.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAABAAAAAAAAAAAABAAAAAgAAAAAAAAAAAEA=</HashCode>
+      <FileName>WindowManagement\ContentWindowTracking\Persistence\PersistenceDecisionFactory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_persistStringHelper" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CatalogueLibrary.Data.Dashboarding.PersistStringHelper">
+    <Position X="7.25" Y="7.75" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier />
+  </Class>
+  <Class Name="CatalogueManager.Collections.RDMPCollectionUI" Collapsed="true">
+    <Position X="22.75" Y="6.25" Width="2.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueManager.Collections.CatalogueCollectionUI" Collapsed="true">
+    <Position X="23.5" Y="9" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DataExportManager.Collections.DataExportCollectionUI" Collapsed="true">
+    <Position X="26.25" Y="9" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
   </Class>
   <Interface Name="CatalogueManager.ItemActivation.IActivateItems" Collapsed="true">
     <Position X="10.25" Y="5.5" Width="2.75" />
@@ -112,5 +189,9 @@
     <Position X="13.75" Y="6.75" Width="2.5" />
     <TypeIdentifier />
   </Interface>
+  <Enum Name="CatalogueManager.Collections.RDMPCollection">
+    <Position X="26.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier />
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
