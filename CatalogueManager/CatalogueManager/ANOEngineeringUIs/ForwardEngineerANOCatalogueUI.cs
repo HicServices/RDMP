@@ -324,10 +324,10 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             base.SetDatabaseObject(activator, databaseObject);
 
+            _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator, databaseObject);
+
             if (!_setup)
             {
-                _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator,databaseObject);
-
                 var settings = new RDMPCollectionCommonFunctionalitySettings {AddFavouriteColumn = false, AllowPinning = false};
 
                 //Set up tree view to show ANO Tables that are usable
@@ -349,8 +349,6 @@ namespace CatalogueManager.ANOEngineeringUIs
 
                 _setup = true;
             }
-            else
-                _planManager.RefreshTableInfos();
 
             //Add them and expand them
             tlvTableInfoMigrations.ClearObjects();
