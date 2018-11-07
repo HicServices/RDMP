@@ -42,15 +42,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.tbPassword = new System.Windows.Forms.TextBox();
-            this.ddDatabaseType = new System.Windows.Forms.ComboBox();
             this.llLoading = new System.Windows.Forms.LinkLabel();
             this.pbLoading = new System.Windows.Forms.PictureBox();
             this.btnRefreshDatabases = new System.Windows.Forms.Button();
             this.btnRefreshTables = new System.Windows.Forms.Button();
+            this.databaseTypeUI1 = new ReusableUIComponents.DatabaseTypeUI();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
-            this.pbDatabaseProvider = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbDatabaseProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // lblTable
@@ -73,7 +71,7 @@
             this.cbxTable.FormattingEnabled = true;
             this.cbxTable.Location = new System.Drawing.Point(64, 119);
             this.cbxTable.Name = "cbxTable";
-            this.cbxTable.Size = new System.Drawing.Size(471, 21);
+            this.cbxTable.Size = new System.Drawing.Size(450, 21);
             this.cbxTable.TabIndex = 6;
             this.cbxTable.SelectedIndexChanged += new System.EventHandler(this.cbxTable_SelectedIndexChanged);
             // 
@@ -97,7 +95,7 @@
             this.cbxDatabase.FormattingEnabled = true;
             this.cbxDatabase.Location = new System.Drawing.Point(64, 81);
             this.cbxDatabase.Name = "cbxDatabase";
-            this.cbxDatabase.Size = new System.Drawing.Size(471, 21);
+            this.cbxDatabase.Size = new System.Drawing.Size(450, 21);
             this.cbxDatabase.Sorted = true;
             this.cbxDatabase.TabIndex = 4;
             this.cbxDatabase.SelectedIndexChanged += new System.EventHandler(this.cbxDatabase_SelectedIndexChanged);
@@ -123,7 +121,7 @@
             this.cbxServer.FormattingEnabled = true;
             this.cbxServer.Location = new System.Drawing.Point(64, 54);
             this.cbxServer.Name = "cbxServer";
-            this.cbxServer.Size = new System.Drawing.Size(364, 21);
+            this.cbxServer.Size = new System.Drawing.Size(406, 21);
             this.cbxServer.TabIndex = 2;
             this.cbxServer.SelectedIndexChanged += new System.EventHandler(this.cbxServer_SelectedIndexChanged);
             this.cbxServer.Leave += new System.EventHandler(this.cbxServer_Leave);
@@ -157,7 +155,7 @@
             this.cbxTableValueFunctions.FormattingEnabled = true;
             this.cbxTableValueFunctions.Location = new System.Drawing.Point(64, 157);
             this.cbxTableValueFunctions.Name = "cbxTableValueFunctions";
-            this.cbxTableValueFunctions.Size = new System.Drawing.Size(514, 21);
+            this.cbxTableValueFunctions.Size = new System.Drawing.Size(450, 21);
             this.cbxTableValueFunctions.TabIndex = 8;
             this.cbxTableValueFunctions.SelectedIndexChanged += new System.EventHandler(this.cbxTableValueFunctions_SelectedIndexChanged);
             // 
@@ -197,17 +195,6 @@
             this.tbPassword.Size = new System.Drawing.Size(329, 20);
             this.tbPassword.TabIndex = 1;
             // 
-            // ddDatabaseType
-            // 
-            this.ddDatabaseType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddDatabaseType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddDatabaseType.FormattingEnabled = true;
-            this.ddDatabaseType.Location = new System.Drawing.Point(434, 54);
-            this.ddDatabaseType.Name = "ddDatabaseType";
-            this.ddDatabaseType.Size = new System.Drawing.Size(121, 21);
-            this.ddDatabaseType.TabIndex = 3;
-            this.ddDatabaseType.SelectedIndexChanged += new System.EventHandler(this.ddDatabaseType_SelectedIndexChanged);
-            // 
             // llLoading
             // 
             this.llLoading.AutoSize = true;
@@ -235,7 +222,7 @@
             // 
             this.btnRefreshDatabases.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshDatabases.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshDatabases.Image")));
-            this.btnRefreshDatabases.Location = new System.Drawing.Point(541, 78);
+            this.btnRefreshDatabases.Location = new System.Drawing.Point(520, 81);
             this.btnRefreshDatabases.Name = "btnRefreshDatabases";
             this.btnRefreshDatabases.Size = new System.Drawing.Size(22, 24);
             this.btnRefreshDatabases.TabIndex = 5;
@@ -246,12 +233,21 @@
             // 
             this.btnRefreshTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshTables.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshTables.Image")));
-            this.btnRefreshTables.Location = new System.Drawing.Point(541, 119);
+            this.btnRefreshTables.Location = new System.Drawing.Point(520, 116);
             this.btnRefreshTables.Name = "btnRefreshTables";
             this.btnRefreshTables.Size = new System.Drawing.Size(22, 24);
             this.btnRefreshTables.TabIndex = 7;
             this.btnRefreshTables.UseVisualStyleBackColor = true;
             this.btnRefreshTables.Click += new System.EventHandler(this.btnRefreshTables_Click);
+            // 
+            // databaseTypeUI1
+            // 
+            this.databaseTypeUI1.DatabaseType = ReusableLibraryCode.DatabaseType.MicrosoftSQLServer;
+            this.databaseTypeUI1.Location = new System.Drawing.Point(470, 50);
+            this.databaseTypeUI1.Name = "databaseTypeUI1";
+            this.databaseTypeUI1.Size = new System.Drawing.Size(150, 28);
+            this.databaseTypeUI1.TabIndex = 168;
+            this.databaseTypeUI1.DatabaseTypeChanged += new System.EventHandler(this.databaseTypeUI1_DatabaseTypeChanged);
             // 
             // ragSmiley1
             // 
@@ -263,26 +259,16 @@
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 5;
             // 
-            // pbDatabaseProvider
-            // 
-            this.pbDatabaseProvider.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbDatabaseProvider.Location = new System.Drawing.Point(559, 54);
-            this.pbDatabaseProvider.Name = "pbDatabaseProvider";
-            this.pbDatabaseProvider.Size = new System.Drawing.Size(19, 19);
-            this.pbDatabaseProvider.TabIndex = 168;
-            this.pbDatabaseProvider.TabStop = false;
-            // 
             // ServerDatabaseTableSelector
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoSize = true;
-            this.Controls.Add(this.pbDatabaseProvider);
+            this.Controls.Add(this.databaseTypeUI1);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.btnRefreshTables);
             this.Controls.Add(this.btnRefreshDatabases);
             this.Controls.Add(this.pbLoading);
             this.Controls.Add(this.llLoading);
-            this.Controls.Add(this.ddDatabaseType);
             this.Controls.Add(this.tbPassword);
             this.Controls.Add(this.tbUsername);
             this.Controls.Add(this.lblOr);
@@ -297,9 +283,8 @@
             this.Controls.Add(this.label50);
             this.Controls.Add(this.cbxServer);
             this.Name = "ServerDatabaseTableSelector";
-            this.Size = new System.Drawing.Size(581, 204);
+            this.Size = new System.Drawing.Size(623, 204);
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbDatabaseProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -320,12 +305,11 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbUsername;
         private System.Windows.Forms.TextBox tbPassword;
-        private System.Windows.Forms.ComboBox ddDatabaseType;
         private System.Windows.Forms.LinkLabel llLoading;
         private System.Windows.Forms.PictureBox pbLoading;
         private System.Windows.Forms.Button btnRefreshDatabases;
         private System.Windows.Forms.Button btnRefreshTables;
         private RAGSmiley ragSmiley1;
-        private System.Windows.Forms.PictureBox pbDatabaseProvider;
+        private DatabaseTypeUI databaseTypeUI1;
     }
 }
