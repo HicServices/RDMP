@@ -361,6 +361,7 @@
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\OrderableComparer.cs" />
+    <Compile Include="Collections\Providers\CheckColumnProvider.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="Collections\Providers\IDColumnProvider.cs" />
@@ -414,12 +415,15 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
     <Compile Include="CommandExecution\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDashboardLayout.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernancePeriod.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLookup.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsWindowLayout.cs" />
     <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
     <Compile Include="Copying\Commands\CacheProgressCommand.cs" />
     <Compile Include="Copying\Commands\CatalogueCommand.cs" />
@@ -440,6 +444,12 @@
     <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
     <Compile Include="Copying\Commands\TableInfoCommand.cs" />
     <Compile Include="Copying\RDMPCommandFactory.cs" />
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.Designer.cs">
+      <DependentUpon>LookupUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemIssue.cs" />
@@ -1648,6 +1658,7 @@
     <None Include="Icons\WaitingForDatabase.png" />
     <None Include="Icons\StandardPipelineUseCaseNode.png" />
     <None Include="Icons\OtherPipelinesNode.png" />
+    <None Include="Icons\LookupCompositeJoinInfo.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1707,6 +1718,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupUI.resx">
+      <DependentUpon>LookupUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\ConnectionStringKeywordUI.resx">
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>

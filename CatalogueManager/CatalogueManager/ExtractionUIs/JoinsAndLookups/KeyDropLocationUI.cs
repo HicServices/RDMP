@@ -47,7 +47,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         public KeyDropLocationUI()
         {
             InitializeComponent();
-            btnClear.Image = FamFamFamIcons.bin_closed;
+            btnClear.Image = FamFamFamIcons.delete;
         }
         
         private void tbPk1_DragEnter(object sender, DragEventArgs e)

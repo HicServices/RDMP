@@ -100,7 +100,7 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("UseCaching", false); }
             set { AppSettings.AddOrUpdateValue("UseCaching", value); }
         }
-
+        
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

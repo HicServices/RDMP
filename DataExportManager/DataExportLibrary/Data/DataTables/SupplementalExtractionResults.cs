@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Annotations;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -13,7 +15,7 @@ namespace DataExportLibrary.Data.DataTables
     /// Describes the extraction status of a supplemental file/table which was bundled along with the normal datasets being extracted.  This could
     /// be lookup tables, pdf documents, etc.
     /// </summary>
-    public class SupplementalExtractionResults : DatabaseEntity, ISupplementalExtractionResults
+    public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity, ISupplementalExtractionResults
     {
         #region Database Properties
 
@@ -24,9 +26,6 @@ namespace DataExportLibrary.Data.DataTables
         private DateTime _dateOfExtraction;
         private string _exception;
         private string _sQLExecuted;
-        private string _extractedType;
-        private int _extractedId;
-        private string _repositoryType;
         private string _extractedName;
         private string _destinationType;
 
@@ -67,27 +66,10 @@ namespace DataExportLibrary.Data.DataTables
             get { return _sQLExecuted; }
             set { SetField(ref _sQLExecuted, value); }
         }
-        public string ExtractedType
-        {
-            get { return _extractedType; }
-            set { SetField(ref _extractedType, value); }
-        }
         public string ExtractedName
         {
             get { return _extractedName; }
             set { SetField(ref _extractedName, value); }
-        }
-
-        public string RepositoryType
-        {
-            get { return _repositoryType; }
-            set { SetField(ref _repositoryType, value); }
-        }
-
-        public int ExtractedId
-        {
-            get { return _extractedId; }
-            set { SetField(ref _extractedId, value); }
         }
 
         public string DestinationType
@@ -111,12 +93,12 @@ namespace DataExportLibrary.Data.DataTables
 
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
+                {"ReferencedObjectID",extractedObject.ID},
+                {"ReferencedObjectType",extractedObject.GetType().Name},
+                {"ReferencedObjectRepositoryType",extractedObject.Repository.GetType().Name},
                 {"ExtractionConfiguration_ID", configuration.ID},
                 {"SQLExecuted", sql},
-                {"ExtractedType", extractedObject.GetType().FullName },
-                {"ExtractedId", extractedObject.ID },
-                {"ExtractedName", name },
-                {"RepositoryType", extractedObject.Repository.GetType().FullName }
+                {"ExtractedName", name }
             });
 
             IsGlobal = true;
@@ -132,12 +114,12 @@ namespace DataExportLibrary.Data.DataTables
 
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
+                {"ReferencedObjectID",extractedObject.ID},
+                {"ReferencedObjectType",extractedObject.GetType().Name},
+                {"ReferencedObjectRepositoryType",extractedObject.Repository.GetType().Name},
                 {"CumulativeExtractionResults_ID", configuration.ID},
                 {"SQLExecuted", sql},
-                {"ExtractedType", extractedObject.GetType().FullName },
-                {"ExtractedId", extractedObject.ID },
-                {"ExtractedName", name },
-                {"RepositoryType", extractedObject.Repository.GetType().FullName }
+                {"ExtractedName", name }
             });
 
             IsGlobal = false;
@@ -153,20 +135,12 @@ namespace DataExportLibrary.Data.DataTables
             DateOfExtraction = (DateTime)r["DateOfExtraction"];
             Exception = r["Exception"] as string;
             SQLExecuted = r["SQLExecuted"] as string;
-            ExtractedType = r["ExtractedType"] as string;
-            ExtractedId = r["ExtractedId"] is DBNull ? 0 : Convert.ToInt32(r["ExtractedId"]);
             ExtractedName = r["ExtractedName"] as string;
-            RepositoryType = r["RepositoryType"] as string;
             DestinationType = r["DestinationType"] as string; 
 
             IsGlobal = CumulativeExtractionResults_ID == null && ExtractionConfiguration_ID != null;
         }
-
-        public Type GetExtractedType()
-        {
-            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(ExtractedType);
-        }
-
+        
         public Type GetDestinationType()
         {
             return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(DestinationType);
@@ -181,7 +155,6 @@ namespace DataExportLibrary.Data.DataTables
             SaveToDatabase();
         }
 
-        
 
         public override string ToString()
         {

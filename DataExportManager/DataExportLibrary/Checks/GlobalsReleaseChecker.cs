@@ -35,7 +35,7 @@ namespace DataExportLibrary.Checks
         {
             var globalResult = _configurations.SelectMany(c => c.SupplementalExtractionResults)
                                                   .Distinct()
-                                                  .FirstOrDefault(ser => ser.ExtractedId == _globalToCheck.ID && ser.GetExtractedType() == _globalToCheck.GetType());
+                                                  .FirstOrDefault(ser => ser.IsReferenceTo(_globalToCheck));
 
             if (globalResult == null)
                 return new NoGlobalReleasePotential(_repositoryLocator, null, _globalToCheck);

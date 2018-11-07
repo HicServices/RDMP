@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using BrightIdeasSoftware;
+using CatalogueLibrary.Data.Aggregation;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueManager.Collections.Providers

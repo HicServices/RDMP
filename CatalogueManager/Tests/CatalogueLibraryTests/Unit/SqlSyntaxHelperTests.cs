@@ -1,4 +1,6 @@
 ﻿using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.QueryBuilding;
+using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
@@ -9,16 +11,19 @@ namespace CatalogueLibraryTests.Unit
         [Test]
         public void GetNullSubstituteTests()
         {
-            Assert.AreEqual("-999",RDMPQuerySyntaxHelper.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true));
-            Assert.AreEqual("-9999999999", RDMPQuerySyntaxHelper.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true));
-            Assert.AreEqual("-99.9", RDMPQuerySyntaxHelper.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true));
-            Assert.AreEqual("-.9999", RDMPQuerySyntaxHelper.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true));
+
+            var pk = new PrimaryKeyCollisionResolver(null);
+
+            Assert.AreEqual("-999",pk.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true));
+            Assert.AreEqual("-9999999999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true));
+            Assert.AreEqual("-99.9", pk.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true));
+            Assert.AreEqual("-.9999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true));
 
 
-            Assert.AreEqual("999", RDMPQuerySyntaxHelper.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false));
-            Assert.AreEqual("9999999999", RDMPQuerySyntaxHelper.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false));
-            Assert.AreEqual("99.9", RDMPQuerySyntaxHelper.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false));
-            Assert.AreEqual(".9999", RDMPQuerySyntaxHelper.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false));
+            Assert.AreEqual("999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false));
+            Assert.AreEqual("9999999999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false));
+            Assert.AreEqual("99.9", pk.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false));
+            Assert.AreEqual(".9999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false));
 
         }
 

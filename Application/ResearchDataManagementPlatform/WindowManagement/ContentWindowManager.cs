@@ -395,13 +395,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void ActivateViewDQEResultsForCatalogue(Catalogue catalogue)
         {
-            new ExecuteCommandViewDQEResultsForCatalogue(this).SetTarget(catalogue).Execute();
-        }
-
-
-        public DashboardLayoutUI ActivateDashboard(object sender, DashboardLayout dashboard)
-        {
-            return Activate<DashboardLayoutUI, DashboardLayout>(dashboard);
+            var cmd = new ExecuteCommandViewDQEResultsForCatalogue(this).SetTarget(catalogue);
+            if(cmd.IsImpossible)
+                MessageBox.Show(cmd.ReasonCommandImpossible);
+            else
+                cmd.Execute();
         }
 
         ///<inheritdoc/>

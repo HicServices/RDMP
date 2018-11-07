@@ -19,12 +19,6 @@ namespace CatalogueManager.Menus
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
 
-            var collection = args.GetTreeParentControlOfType<CatalogueCollectionUI>();
-            
-            Add(collection == null
-                ? new ExecuteCommandCheck(_activator, catalogue)
-                : new ExecuteCommandCheck(_activator, catalogue, collection.RecordWorst));
-
             Items.Add(new ToolStripSeparator());
 
             var addItem = new ToolStripMenuItem("Add", null);

@@ -184,9 +184,16 @@ namespace DataExportLibrary.Data.DataTables
             return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(_destinationType);
         }
 
-        public Type GetExtractedType()
+        public bool IsReferenceTo(Type t)
         {
-            return typeof (ExtractableDataSet);
+            return t == typeof (ExtractableDataSet);
+        }
+
+        public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o)
+        {
+            var eds = o as ExtractableDataSet;
+
+            return eds != null && eds.ID == ExtractionConfiguration_ID;
         }
 
         public void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted)

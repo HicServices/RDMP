@@ -148,7 +148,7 @@ Dennis,Hes ok,35
 ```
 _BadCSV_FreeTextMiddleColumn_
 
-You can attempt to solve the problem of too few cells on a row by setting `AttemptToResolveNewlinesInRecords`.  This will trigger when the current row has too few cells.  It will investigate appending the subsequent rows to form a valid length of row (one where the number of cells match the number of headers).
+You can attempt to solve the problem of too few cells on a row by setting `AttemptToResolveNewLinesInRecords`.  This will trigger when the current row has too few cells.  It will investigate appending the subsequent rows to form a valid length of row (one where the number of cells match the number of headers).
 
 ![FlowChart](Images/CSVHandling/TooFewCellsFlow.png) 
 

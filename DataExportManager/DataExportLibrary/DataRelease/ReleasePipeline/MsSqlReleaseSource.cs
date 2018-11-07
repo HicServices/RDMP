@@ -101,8 +101,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                                         "Please re-run the extracts against the same database.");
 
                 foreach (var supplementalResult in cumulativeResult.SupplementalExtractionResults
-                                                                   .Where(x => x.GetExtractedType() == typeof(SupportingSQLTable) || 
-                                                                               x.GetExtractedType() == typeof(TableInfo)))
+                                                                   .Where(x => x.IsReferenceTo(typeof(SupportingSQLTable)) ||
+                                                                               x.IsReferenceTo(typeof(TableInfo))))
                 {
                     if (supplementalResult.DestinationDescription.Split('|').Length != 3)
                         throw new Exception("The extraction did not generate a description that can be parsed. " +
@@ -120,8 +120,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             }
 
             foreach (var globalResult in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.SupplementalExtractionResults)
-                                                                              .Where(x => x.GetExtractedType() == typeof(SupportingSQLTable) ||
-                                                                                          x.GetExtractedType() == typeof(TableInfo)))
+                                                                              .Where(x => x.IsReferenceTo(typeof(SupportingSQLTable)) ||
+                                                                                          x.IsReferenceTo(typeof(TableInfo))))
             {
                 if (globalResult.DestinationDescription.Split('|').Length != 3)
                     throw new Exception("The extraction did not generate a description that can be parsed. " +

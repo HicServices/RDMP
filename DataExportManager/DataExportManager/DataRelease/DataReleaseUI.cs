@@ -189,7 +189,8 @@ namespace DataExportManager.DataRelease
                 {
                     AddFavouriteColumn = false,
                     AllowPinning = false,
-                    SuppressChildrenAdder = true
+                    SuppressChildrenAdder = true,
+                    AddCheckColumn = false
                 });
 
             _childProvider = (DataExportChildProvider)_activator.CoreChildProvider;

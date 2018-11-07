@@ -72,7 +72,8 @@ namespace CatalogueLibrary.DataHelper
             _server = new DiscoveredServer(_builder);
         }
         #endregion
-
+        
+        /// <inheritdoc/>
         public void DoImport(out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
         {
             var cataRepository = (CatalogueRepository) _repository;
@@ -173,6 +174,7 @@ namespace CatalogueLibrary.DataHelper
             return true;
         }
 
+        /// <inheritdoc/>
         public ColumnInfo CreateNewColumnInfo(TableInfo parent,DiscoveredColumn discoveredColumn)
         {
             var col = new ColumnInfo((ICatalogueRepository) parent.Repository,

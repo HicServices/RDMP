@@ -37,8 +37,14 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         private PipelineSelectionUI _pipelineSelectionUI;
         private PipelineDiagram pipelineDiagram1;
 
-
+        /// <summary>
+        /// Fired when the user executes the pipeline (this can happen multiple times if it crashes).
+        /// </summary>
         public event PipelineEngineEventHandler PipelineExecutionStarted;
+
+        /// <summary>
+        /// Fired when the pipeline finishes execution without throwing an exception.
+        /// </summary>
         public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
         private ForkDataLoadEventListener fork = null;

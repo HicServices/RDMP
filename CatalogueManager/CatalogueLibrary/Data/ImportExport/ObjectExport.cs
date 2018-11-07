@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
@@ -11,37 +12,24 @@ namespace CatalogueLibrary.Data.ImportExport
     /// allows multiple external users to access and import the shared object (and any dependant objects).  Having an ObjectExport declared on an object prevents it from
     /// being deleted (see ObjectSharingObscureDependencyFinder) since this would leave external users with orphaned objects.
     /// </summary>
-    public class ObjectExport : DatabaseEntity
+    public class ObjectExport : ReferenceOtherObjectDatabaseEntity
     {
         #region Database Properties
 
-        private string _objectTypeName;
-        private int _objectID;
         private string _sharingUID;
-        private string _repositoryTypeName;
+        
         #endregion
 
-        public string ObjectTypeName
-        {
-            get { return _objectTypeName; }
-            set { SetField(ref _objectTypeName, value); }
-        }
-        public int ObjectID
-        {
-            get { return _objectID; }
-            set { SetField(ref _objectID, value); }
-        }
+        /// <summary>
+        /// The globally unique identifier for refering to the shared object.  This allows the object to be updated later / new versions to be distributed
+        /// even though the ID is different (e.g. it has been imported into another instance of RDMP).
+        /// </summary>
         public string SharingUID
         {
             get { return _sharingUID; }
             set { SetField(ref _sharingUID, value); }
         }
-        public string RepositoryTypeName
-        {
-            get { return _repositoryTypeName; }
-            set { SetField(ref _repositoryTypeName, value); }
-        }
-
+        
         /// <inheritdoc cref="SharingUID"/>
         [NoMappingToDatabase]
         public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); }}
@@ -55,9 +43,9 @@ namespace CatalogueLibrary.Data.ImportExport
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
-                {"ObjectID",objectForSharing.ID},
-                {"ObjectTypeName",objectForSharing.GetType().Name},
-                {"RepositoryTypeName",objectForSharing.Repository.GetType().Name},
+                {"ReferencedObjectID",objectForSharing.ID},
+                {"ReferencedObjectType",objectForSharing.GetType().Name},
+                {"ReferencedObjectRepositoryType",objectForSharing.Repository.GetType().Name},
                 {"SharingUID",guid.ToString()},
             
             });
@@ -65,37 +53,18 @@ namespace CatalogueLibrary.Data.ImportExport
             if (ID == 0 || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
         }
+
+        /// <inheritdoc/>
         public ObjectExport(IRepository repository, DbDataReader r)
             : base(repository, r)
         {
-            ObjectTypeName = r["ObjectTypeName"].ToString();
-            ObjectID = Convert.ToInt32(r["ObjectID"]);
             SharingUID = r["SharingUID"].ToString();
-            RepositoryTypeName = r["RepositoryTypeName"].ToString();
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
-            return "E::" + ObjectTypeName +"::" + SharingUID;
-        }
-
-        /// <summary>
-        /// Returns true if this ObjectExport is an export declaration for the passed parameter
-        /// </summary>
-        /// <returns></returns>
-        public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
-        {
-            return o.ID == ObjectID && o.GetType().Name == ObjectTypeName && o.Repository.GetType().Name == RepositoryTypeName;
-        }
-
-        /// <summary>
-        /// Returns the local object referenced by this export declaration
-        /// </summary>
-        /// <param name="repositoryLocator"></param>
-        /// <returns></returns>
-        public IMapsDirectlyToDatabaseTable GetLocalObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            return repositoryLocator.GetArbitraryDatabaseObject(RepositoryTypeName, ObjectTypeName, ObjectID);
+            return "E::" + ReferencedObjectType +"::" + SharingUID;
         }
     }
 }

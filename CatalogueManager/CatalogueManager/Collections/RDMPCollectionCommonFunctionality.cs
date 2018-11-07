@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
@@ -21,6 +24,7 @@ using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.TreeHelper;
@@ -56,10 +60,12 @@ namespace CatalogueManager.Collections
         public Func<IActivateItems,IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
         
         private CollectionPinFilterUI _pinFilter;
-        private object _currentlyPinned;
+        public object CurrentlyPinned { get; private set; }
 
         public IDColumnProvider IDColumnProvider { get; set; }
         public OLVColumn IDColumn { get; set; }
+        public CheckColumnProvider CheckColumnProvider { get; set; }
+        public OLVColumn CheckColumn { get; set; }
 
         /// <summary>
         /// List of Types for which the children should not be returned.  By default the IActivateItems child provider knows all objects children all the way down
@@ -69,7 +75,7 @@ namespace CatalogueManager.Collections
         public Type[] AxeChildren { get; set; }
 
         public Type[] MaintainRootObjects { get; set; }
-
+        
         public RDMPCollectionCommonFunctionalitySettings Settings { get; private set; }
 
         /// <summary>
@@ -163,6 +169,14 @@ namespace CatalogueManager.Collections
                 Tree.RebuildColumns();
             }
 
+            if (Settings.AddCheckColumn)
+            {
+                CheckColumnProvider = new CheckColumnProvider(tree, _activator.CoreIconProvider);
+                CheckColumn = CheckColumnProvider.CreateColumn();
+                
+                Tree.AllColumns.Add(CheckColumn);
+                Tree.RebuildColumns();
+            }
             CoreIconProvider = activator.CoreIconProvider;
 
             CopyPasteProvider = new CopyPasteProvider();
@@ -291,12 +305,12 @@ namespace CatalogueManager.Collections
             
             _pinFilter = new CollectionPinFilterUI();
             _pinFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
-            _currentlyPinned = objectToPin;
+            CurrentlyPinned = objectToPin;
 
             _pinFilter.UnApplied += (s, e) =>
             {
                 _pinFilter = null;
-                _currentlyPinned = null;
+                CurrentlyPinned = null;
             };
         }
 
@@ -406,11 +420,13 @@ namespace CatalogueManager.Collections
 
         //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
         Dictionary<Type,Type> _cachedMenuCompatibility = new Dictionary<Type, Type>();
+        
+
 
         private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
         {
             RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
-            args.CurrentlyPinnedObject = _currentlyPinned;
+            args.CurrentlyPinnedObject = CurrentlyPinned;
             args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
 
             var objectConstructor = new ObjectConstructor();
@@ -520,7 +536,7 @@ namespace CatalogueManager.Collections
                     Tree.AddObject(o); //add it
                     return;
                 }
-            
+
             if(!IsHiddenByFilter(o))
                 //if we have the object
                 if (Tree.IndexOf(o) != -1)
@@ -543,7 +559,9 @@ namespace CatalogueManager.Collections
                             
                     }
                     else
-                        if (!exists)
+                        if (exists)
+                            Tree.RefreshObject(o); //it exists so refresh it!
+                        else
                             //remove it
                             Tree.RemoveObject(o);
                 }
@@ -567,5 +585,6 @@ namespace CatalogueManager.Collections
                 _activator.Emphasise -= _activator_Emphasise;
             }
         }
+
     }
 }

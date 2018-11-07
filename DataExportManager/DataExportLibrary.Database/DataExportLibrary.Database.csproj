@@ -65,7 +65,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -148,6 +147,7 @@
     <EmbeddedResource Include="db\up\015_AddedPropertiesToCumulativeExtractionResult.sql" />
     <EmbeddedResource Include="db\up\016_CustomDataRefactoring.sql" />
     <EmbeddedResource Include="db\up\017_NewSupplementalExtractionresults.sql" />
+    <EmbeddedResource Include="db\up\018_ObjectReferenceSupportDataExport.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

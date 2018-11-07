@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
@@ -51,7 +54,7 @@ namespace ResearchDataManagementPlatform
             _globalErrorCheckNotifier = exceptionCounter;
             _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
-            _windowManager = new ToolboxWindowManager(_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
+            _windowManager = new ToolboxWindowManager(this,_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
             _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
@@ -76,7 +79,8 @@ namespace ResearchDataManagementPlatform
                 try
                 {
                     if (_persistenceFile.Exists)
-                        dockPanel1.LoadFromXml(new FileStream(_persistenceFile.FullName, FileMode.Open), DeserializeContent);
+                        LoadFromXml(new FileStream(_persistenceFile.FullName, FileMode.Open));
+
                     //load the stateusing the method
                 }
                 catch (Exception ex)
@@ -88,6 +92,85 @@ namespace ResearchDataManagementPlatform
             }
          
             FormClosing += CloseForm;
+        }
+
+        public void LoadFromXml(Stream stream)
+        {
+            if (dockPanel1.DocumentStyle == DocumentStyle.SystemMdi)
+            {
+                foreach (Form form in MdiChildren)
+                    form.Close();
+            }
+            else
+            {
+                foreach (IDockContent document in dockPanel1.DocumentsToArray())
+                {
+                    // IMPORANT: dispose all panes.
+                    document.DockHandler.DockPanel = null;
+                    document.DockHandler.Close();
+                }
+            }
+
+            foreach (var pane in dockPanel1.Panes.ToList())
+            {
+                pane.CloseActiveContent();
+                pane.Dispose();
+            }
+
+            // IMPORTANT: dispose all float windows.
+            foreach (var window in dockPanel1.FloatWindows.ToList())
+                window.Dispose();
+            
+            System.Diagnostics.Debug.Assert(dockPanel1.Panes.Count == 0);
+            System.Diagnostics.Debug.Assert(dockPanel1.Contents.Count == 0);
+            System.Diagnostics.Debug.Assert(dockPanel1.FloatWindows.Count == 0);
+
+            dockPanel1.LoadFromXml(stream, DeserializeContent);
+        }
+        public void LoadFromXml(WindowLayout target)
+        {
+            UnicodeEncoding uniEncoding = new UnicodeEncoding();
+            
+            // You might not want to use the outer using statement that I have
+            // I wasn't sure how long you would need the MemoryStream object    
+            using (MemoryStream ms = new MemoryStream())
+            {
+                var sw = new StreamWriter(ms, uniEncoding);
+                try
+                {
+                    sw.Write(target.LayoutData);
+                    sw.Flush();//otherwise you are risking empty stream
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    LoadFromXml(ms);
+                }
+                finally
+                {
+                    sw.Dispose();
+                }
+            }
+        }
+
+
+        public string GetCurrentLayoutXml()
+        {
+            UnicodeEncoding uniEncoding = new UnicodeEncoding();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                dockPanel1.SaveAsXml(ms, uniEncoding);
+
+                ms.Seek(0, SeekOrigin.Begin);
+
+                try
+                {
+                    return new StreamReader(ms).ReadToEnd();
+                }
+                finally
+                {
+                    ms.Dispose();
+                }
+            }
         }
 
         private void CloseForm(object sender, FormClosingEventArgs e)
@@ -111,7 +194,11 @@ namespace ResearchDataManagementPlatform
             {
                 var toolbox = _persistenceFactory.ShouldCreateCollection(persiststring);
                 if (toolbox.HasValue)
-                    return _windowManager.Create(toolbox.Value);
+                {
+                    var toolboxInstance = _windowManager.Create(toolbox.Value);
+                    toolboxInstance.LoadPersistString(_windowManager.ContentManager,persiststring);
+                    return toolboxInstance;
+                }
 
                 var instruction = _persistenceFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
                                   _persistenceFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
@@ -131,6 +218,5 @@ namespace ResearchDataManagementPlatform
         {
             SqlDependencyTableMonitor.Stop();
         }
-
     }
 }

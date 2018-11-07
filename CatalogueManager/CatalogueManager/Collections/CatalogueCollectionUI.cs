@@ -1,29 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Governance;
-using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
-using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Filtering;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
-using MapsDirectlyToDatabaseTable;
-using CatalogueManager.Copying;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Collections
 {
@@ -66,116 +56,20 @@ namespace CatalogueManager.Collections
             cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
             cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
 
-            olvCheckResult.ImageGetter += CheckImageGetter;
             olvFilters.AspectGetter += FilterAspectGetter;
             
             bLoading = false;
         }
 
         //The color to highlight each Catalogue based on its extractability status
-        private object ocheckResultsDictionaryLock = new object();
-        Dictionary<ICheckable, CheckResult> checkResultsDictionary = new Dictionary<ICheckable, CheckResult>();
-        private Thread checkingThread;
-
-        public void RecordWorst(ICheckable o, CheckResult result)
-        {
-            lock (checkResultsDictionary)
-            {
-                if (checkResultsDictionary.ContainsKey(o))
-                    checkResultsDictionary.Remove(o);
-                
-                checkResultsDictionary.Add(o,result);
-
-                if(tlvCatalogues.IndexOf(o) != -1)
-                    tlvCatalogues.RefreshObject(o);
-            }
-
-        }
-
-        public void CheckCatalogues()
-        {
-            if (checkingThread != null && checkingThread.IsAlive)
-            {
-                MessageBox.Show("Checking is already happening");
-                return;
-            }
-            
-            //reset the dictionary
-            lock (ocheckResultsDictionaryLock)
-            {
-                checkResultsDictionary = new Dictionary<ICheckable, CheckResult>();
-            }
-
-            var visibleCatalogues = tlvCatalogues.FilteredObjects.OfType<Catalogue>().ToArray();
-
-            //reset the progress bar
-            progressBar1.Maximum = visibleCatalogues.Length;
-            progressBar1.Value = 0;
-            progressBar1.Visible = true;
-
-            checkingThread = new Thread(() =>
-            {
-                //only check the items that are visible int he listview
-                foreach (var catalogue in visibleCatalogues)//make copy to prevent synchronization issues
-                {
-                    var notifier = new ToMemoryCheckNotifier();
-                    catalogue.Check(notifier);
-
-                    lock (ocheckResultsDictionaryLock)
-                        checkResultsDictionary.Add(catalogue, notifier.GetWorst());
-
-                    //increase progress bar count by one
-                    Invoke(new MethodInvoker(() => { progressBar1.Value++; }));
-                }
-                
-                
-                foreach (var configuration in RepositoryLocator.CatalogueRepository.GetAllObjects<AggregateConfiguration>().ToArray())
-                {
-                    var notifier = new ToMemoryCheckNotifier();
-                    configuration.Check(notifier);
-                        
-                    lock (ocheckResultsDictionaryLock)
-                        checkResultsDictionary.Add(configuration, notifier.GetWorst());
-                }
-
-
-                //now load images to UI
-                Invoke(new MethodInvoker(() =>
-                {
-                    progressBar1.Visible = false;
-                    tlvCatalogues.RebuildColumns();//should update the images?
-                }));
-
-            });
-
-            checkingThread.Start();
-        }
-
-        private object CheckImageGetter(object rowobject)
-        {
-            var checkable = rowobject as ICheckable;
-            if (checkable == null)
-                return null;
-            
-            lock (ocheckResultsDictionaryLock)
-            {
-                if (checkResultsDictionary.ContainsKey(checkable))
-                    return CommonFunctionality.CoreIconProvider.GetImage(checkResultsDictionary[checkable]);
-
-            }
-            //not been checked yet
-            return null;
-        }
-
+        
+        
         /// <summary> 
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (checkingThread != null)
-                checkingThread.Abort();
-
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -241,11 +135,6 @@ namespace CatalogueManager.Collections
             TOP1Worked
         }
         
-        private void btnCheckCatalogues_Click(object sender, EventArgs e)
-        {
-            CheckCatalogues();
-        }
-
         private object FilterAspectGetter(object rowObject)
         {
             var cataItem = rowObject as CatalogueItem;

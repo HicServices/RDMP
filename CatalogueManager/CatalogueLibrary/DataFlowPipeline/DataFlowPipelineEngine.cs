@@ -29,7 +29,14 @@ namespace CatalogueLibrary.DataFlowPipeline
         /// </summary>
         public ReadOnlyCollection<IDataFlowComponent<T>> Components { get { return ComponentObjects.Cast<IDataFlowComponent<T>>().ToList().AsReadOnly(); } }
 
+        /// <summary>
+        /// The last component in the pipeline, responsible for writing the chunks (of type {T}) to somewhere (E.g. to disk, to database etc)
+        /// </summary>
         public IDataFlowDestination<T> Destination { get; private set; }
+
+        /// <summary>
+        /// The first component in the pipeline, responsible for iteratively generating chunks (of type {T}) for feeding to downstream pipeline components
+        /// </summary>
         public IDataFlowSource<T> Source { get; private set; }
 
         /// <summary>
@@ -37,9 +44,20 @@ namespace CatalogueLibrary.DataFlowPipeline
         /// </summary>
         public List<object> ComponentObjects { get; set; }
 
+        /// <inheritdoc cref="Destination"/>
         public object DestinationObject { get { return Destination; } }
+
+        /// <inheritdoc cref="Source"/>
         public object SourceObject { get { return Source; } }
 
+        /// <summary>
+        /// Creates a new pipeline engine ready to run under the <paramref name="context"/> recording events that occur to <paramref name="listener"/>.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <param name="listener"></param>
+        /// <param name="pipelineSource"></param>
         public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source, 
                                       IDataFlowDestination<T> destination, IDataLoadEventListener listener,
                                       IPipeline pipelineSource = null)
@@ -56,6 +74,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                 _name = "Undefined pipeline";
         }
 
+        /// <inheritdoc/>
         public void Initialize(params object[] initializationObjects)
         {
             _context.PreInitialize(_listener,Source,initializationObjects);
@@ -68,6 +87,7 @@ namespace CatalogueLibrary.DataFlowPipeline
             initialized = true;
         }
 
+        /// <inheritdoc/>
         public void ExecutePipeline(GracefulCancellationToken cancellationToken)
         {
             Exception exception = null;
@@ -156,6 +176,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                 throw new Exception("Data Flow Pipeline Crashed",exception);
         }
 
+        /// <inheritdoc/>
         public bool ExecuteSinglePass(GracefulCancellationToken cancellationToken)
         {
             if (!initialized)
@@ -206,6 +227,10 @@ namespace CatalogueLibrary.DataFlowPipeline
             return true;
         }
 
+        /// <summary>
+        /// Runs checks on all components in the pipeline that support <see cref="ICheckable"/>
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             try
@@ -266,6 +291,7 @@ namespace CatalogueLibrary.DataFlowPipeline
                  
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return _name;

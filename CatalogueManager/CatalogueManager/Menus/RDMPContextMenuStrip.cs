@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections;
+using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
@@ -136,6 +137,18 @@ namespace CatalogueManager.Menus
                     Add(new ExecuteCommandPin(_activator, databaseEntity));
 
                 Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, _activator.GetLazyCatalogueObjectVisualisation()));
+            }
+
+            if (commonFunctionality.CheckColumnProvider != null)
+            {
+                if(databaseEntity != null)
+                    Add(new ExecuteCommandCheck(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst));
+              
+                var checkAll = new ToolStripMenuItem("Check All",null,(s,e)=>commonFunctionality.CheckColumnProvider.CheckCheckables());
+                checkAll.Image = CatalogueIcons.TinyYellow;
+                checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
+                Items.Add(checkAll);
+                
             }
             
             foreach (var plugin in _activator.PluginUserInterfaces)

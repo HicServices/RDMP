@@ -32,6 +32,11 @@ namespace CatalogueLibrary.DataFlowPipeline
         
         private Type _engineType;
 
+        /// <summary>
+        /// Creates a new factory which can translate <see cref="IPipeline"/> blueprints into runnable <see cref="IDataFlowPipelineEngine"/> instances.
+        /// </summary>
+        /// <param name="useCase">The use case which describes which <see cref="IPipeline"/> are compatible, which objects are available for hydration/preinitialization etc</param>
+        /// <param name="mefPlugins">Class for generating Types by name, use <see cref="ICatalogueRepository.MEF"/> to get this </param>
         public DataFlowPipelineEngineFactory(IPipelineUseCase useCase,MEF mefPlugins)
         {
             _mefPlugins = mefPlugins;
@@ -44,11 +49,13 @@ namespace CatalogueLibrary.DataFlowPipeline
             _engineType = typeof (DataFlowPipelineEngine<>).MakeGenericType(_flowType);
         }
 
+        /// <inheritdoc/>
         public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline): this(useCase,((ICatalogueRepository)pipeline.Repository).MEF)
         {
             
         }
 
+        /// <inheritdoc/>
         public IDataFlowPipelineEngine Create(IPipeline pipeline, IDataLoadEventListener listener)
         {
             string reason;
@@ -110,14 +117,18 @@ namespace CatalogueLibrary.DataFlowPipeline
         }
 
 
-        public object TryCreateComponent(IPipeline pipeline, IPipelineComponent component, out Exception ex)
+        /// <summary>
+        /// Attempts to construct an instance of the class described by <see cref="IPipelineComponent.Class"/> and fulfil it's <see cref="DemandsInitializationAttribute"/>.
+        /// Returns null and populates <paramref name="ex"/> if this is not possible/errors.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="ex"></param>
+        /// <returns></returns>
+        public object TryCreateComponent(IPipelineComponent component, out Exception ex)
         {
             ex = null;
             try
             {
-                if (component.ID == pipeline.SourcePipelineComponent_ID)
-                    return CreateComponent(component);
-
                 return CreateComponent(component);
             }
             catch (Exception e)
@@ -217,7 +228,12 @@ namespace CatalogueLibrary.DataFlowPipeline
             }
         }
 
-
+        /// <summary>
+        /// Retrieves and creates an instance of the class described in the blueprint <see cref="IPipeline.Source"/> if there is one.  Pipelines do not have
+        /// to have a source if the use case requires a fixed source instance generated at runtime.
+        /// </summary>
+        /// <param name="pipeline"></param>
+        /// <returns></returns>
         public object CreateSourceIfExists(IPipeline pipeline)
         {
             var source = pipeline.Source;
@@ -229,6 +245,10 @@ namespace CatalogueLibrary.DataFlowPipeline
             return CreateComponent(source);
         }
 
+        /// <summary>
+        /// Retrieves and creates an instance of the class described in the blueprint <see cref="IPipeline.Destination"/> if there is one.  Pipelines do not have
+        /// to have a destination if the use case requires a fixed destination instance generated at runtime
+        /// </summary>
         public object CreateDestinationIfExists(IPipeline pipeline)
         {
             var destination = pipeline.Destination;
@@ -242,6 +262,13 @@ namespace CatalogueLibrary.DataFlowPipeline
             return CreateComponent(destination);
         }
 
+        /// <summary>
+        /// Attempts to create an instance of <see cref="IDataFlowPipelineEngine"/> described by the blueprint <paramref name="pipeline"/>.  Components are then checked if they
+        /// support <see cref="ICheckable"/> using the <paramref name="checkNotifier"/> to record the results.
+        /// </summary>
+        /// <param name="pipeline">The blueprint to attempt to generate</param>
+        /// <param name="checkNotifier">The event notifier to record how it went</param>
+        /// <param name="initizationObjects">The objects available for fulfilling IPipelineRequirements</param>
         public void Check(IPipeline pipeline, ICheckNotifier checkNotifier, object[] initizationObjects)
         {
             //Try to construct the pipeline into an in memory Engine based on the in Catalogue blueprint (Pipeline)

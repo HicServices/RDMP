@@ -267,6 +267,7 @@
     <Compile Include="Data\Dashboarding\DashboardLayout.cs" />
     <Compile Include="Data\Dashboarding\DashboardObjectUse.cs" />
     <Compile Include="Data\Dashboarding\IPersistableObjectCollection.cs" />
+    <Compile Include="Data\Dashboarding\PersistenceException.cs" />
     <Compile Include="Data\Dashboarding\PersistStringHelper.cs" />
     <Compile Include="Data\DataLoad\Extensions\LoadStageExtensions.cs" />
     <Compile Include="Data\DataLoad\IHasStageSpecificRuntimeName.cs" />
@@ -287,6 +288,7 @@
     <Compile Include="Data\ImportExport\ShareManager.cs" />
     <Compile Include="Data\ImportExport\ObjectExport.cs" />
     <Compile Include="Data\ImportExport\ObjectImport.cs" />
+    <Compile Include="Data\WindowLayout.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IHasDesignTimeMode.cs" />
@@ -294,6 +296,8 @@
     <Compile Include="Data\Pipelines\IPipelineUser.cs" />
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
+    <Compile Include="Data\Referencing\IReferenceOtherObject.cs" />
+    <Compile Include="Data\Referencing\ReferenceOtherObjectDatabaseEntity.cs" />
     <Compile Include="Data\Remoting\RemoteRDMP.cs" />
     <Compile Include="Data\Serialization\DatabaseEntityJsonConverter.cs" />
     <Compile Include="Data\Serialization\IPickAnyConstructorFinishedCallback.cs" />
@@ -418,7 +422,6 @@
     <Compile Include="DataFlowPipeline\IDataFlowSource.cs" />
     <Compile Include="DataFlowPipeline\IPluginDataFlowComponent.cs" />
     <Compile Include="DataFlowPipeline\IPluginDataFlowSource.cs" />
-    <Compile Include="DataFlowPipeline\IResetableSource.cs" />
     <Compile Include="DataFlowPipeline\Events\PipelineEngineEventArgs.cs" />
     <Compile Include="DataFlowPipeline\Requirements\DataFlowPipelineContext.cs" />
     <Compile Include="DataFlowPipeline\Requirements\DataFlowPipelineContextFactory.cs" />

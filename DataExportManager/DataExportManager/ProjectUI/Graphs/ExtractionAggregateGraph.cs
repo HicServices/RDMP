@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
@@ -108,16 +109,34 @@ namespace DataExportManager.ProjectUI.Graphs
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            //todo handle deletion here
             if (e.Object.Equals(_collection.SelectedDataSets))
-                _collection.SelectedDataSets.RevertToDatabaseState();
+                if (e.Exists)
+                    _collection.SelectedDataSets.RevertToDatabaseState();
+                else
+                {
+                    Close();
+                    return;
+                }
             else if (e.Object.Equals(_collection.Graph))
-                _collection.Graph.RevertToDatabaseState();
+                if (e.Exists)
+                    _collection.Graph.RevertToDatabaseState();
+                else
+                {
+                    Close();
+                    return;
+                }
             else
                 return;//change was not to a relevant object
 
             //now reload the graph because the change was to a relevant object
             LoadGraphAsync();
+        }
+
+        private void Close()
+        {
+            var parent = ParentForm;
+            if (parent != null && !parent.IsDisposed)
+                parent.Close();//self destruct because object was deleted
         }
 
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)

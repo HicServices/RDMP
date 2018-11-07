@@ -13,10 +13,12 @@ using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -456,7 +458,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                     cmd.Execute();
 
                     _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
-                    SetDatabaseObject(_activator,_catalogue);
+                    SetDatabaseObject(_activator, _catalogue);
 
                     MessageBox.Show("Lookup created successfully, fields will now be cleared");
                     pk1.Clear();
@@ -468,7 +470,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                     fk3.Clear();
 
                     olvSelectedDescriptionColumns.ClearObjects();
-
+                    SetStage(LookupCreationStage.DragAPrimaryKey);
                     
                 }
                 btnCreateLookup.Enabled = true;
@@ -493,6 +495,17 @@ Only define secondary columns if you really need them! if any of the key fields 
         {
             olvExtractionInformations.UseFiltering = true;
             olvExtractionInformations.ModelFilter = new TextMatchFilter(olvExtractionInformations,tbFilter.Text);
+        }
+
+        private void olv_ItemActivate(object sender, EventArgs e)
+        {
+            var olv = (ObjectListView)sender;
+
+            var o = olv.SelectedObject as IMapsDirectlyToDatabaseTable;
+            
+            if(o != null)
+                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
+
         }
     }
 

@@ -65,7 +65,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -258,6 +257,7 @@
     <EmbeddedResource Include="db\up\061_NoMoreAutomationServer.sql" />
     <EmbeddedResource Include="db\up\060_MappedDataPathForExternalDbServer.sql" />
     <EmbeddedResource Include="db\up\061_CacheProgess INamed.sql" />
+    <EmbeddedResource Include="db\up\062_ObjectReferenceSupportCatalogue.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

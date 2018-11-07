@@ -28,24 +28,32 @@ namespace CatalogueLibrary.Data.Remoting
 
         #endregion
 
+        /// <summary>
+        /// Web service URL for communicating with the remote RDMP instance
+        /// </summary>
         public string URL
         {
             get { return _uRL; }
             set { SetField(ref _uRL, value); }
         }
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
 
+        /// <summary>
+        /// Username to specify when connecting to the remote webservice
+        /// </summary>
         public string Username
         {
             get { return _username; }
             set { SetField(ref _username, value); }
         }
         
+        /// <inheritdoc/>
         public string Password
         {
             get { return _encryptedPasswordHost.Password; }
@@ -59,12 +67,15 @@ namespace CatalogueLibrary.Data.Remoting
             }
         }
 
+        /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
             return _encryptedPasswordHost.GetDecryptedPassword();
         }
 
-        public RemoteRDMP(ICatalogueRepository repository)
+
+        /// <inheritdoc/>
+        public RemoteRDMP(ICatalogueRepository repository):base()
         {
             // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
             _encryptedPasswordHost = new EncryptedPasswordHost(repository);
@@ -79,6 +90,7 @@ namespace CatalogueLibrary.Data.Remoting
                 throw new ArgumentException("Repository failed to properly hydrate this class");
         }
 
+        /// <inheritdoc/>
         public RemoteRDMP(IRepository repository, DbDataReader r) : base(repository, r)
         {
             // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
@@ -90,11 +102,20 @@ namespace CatalogueLibrary.Data.Remoting
             Password = r["Password"] as string;
         }
 
+        /// <inheritdoc cref="Name"/>
         public override string ToString()
         {
             return Name;
         }
 
+
+
+        /// <summary>
+        /// Gets the web service sub url for interacting with the object T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="isarray"></param>
+        /// <returns></returns>
         public string GetUrlFor<T>(bool isarray = false)
         {
             var baseUri = new UriBuilder(new Uri(URL));
@@ -106,6 +127,10 @@ namespace CatalogueLibrary.Data.Remoting
             return baseUri.ToString();
         }
 
+        /// <summary>
+        /// Gets the web service sub url for performing a data release
+        /// </summary>
+        /// <returns></returns>
         public string GetUrlForRelease()
         {
             var baseUri = new UriBuilder(new Uri(URL));
@@ -115,6 +140,10 @@ namespace CatalogueLibrary.Data.Remoting
             return baseUri.ToString();
         }
 
+        /// <summary>
+        /// Gets the web service sub url for value checking?
+        /// </summary>
+        /// <returns></returns>
         public string GetCheckingUrl()
         {
             var baseUri = new UriBuilder(new Uri(URL));

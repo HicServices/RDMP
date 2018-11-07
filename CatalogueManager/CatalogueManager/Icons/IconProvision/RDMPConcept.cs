@@ -94,6 +94,7 @@ namespace CatalogueManager.Icons.IconProvision
 
         AggregateDimension,
         Lookup,
+        LookupCompositeJoinInfo,
         JoinInfo,
 
         //to release a completed project extract

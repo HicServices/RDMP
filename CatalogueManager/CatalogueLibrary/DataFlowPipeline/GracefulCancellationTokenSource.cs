@@ -10,8 +10,15 @@ namespace CatalogueLibrary.DataFlowPipeline
     {
         private readonly CancellationTokenSource _stopTokenSource;
         private readonly CancellationTokenSource _abortTokenSource;
+
+        /// <summary>
+        /// The object for checking whether stop / abort have been triggered
+        /// </summary>
         public GracefulCancellationToken Token { get; private set; }
 
+        /// <summary>
+        /// Creates a new source for issuing a <see cref="GracefulCancellationToken"/> and triggering stop/abort later on.
+        /// </summary>
         public GracefulCancellationTokenSource()
         {
             _stopTokenSource = new CancellationTokenSource();
@@ -20,20 +27,16 @@ namespace CatalogueLibrary.DataFlowPipeline
         }
 
         /// <summary>
-        /// 
+        /// Triggers the stop flag of <see cref="Token"/> (<see cref="GracefulCancellationToken.StopToken"/>
         /// </summary>
-        /// <exception cref="ObjectDisposedException"></exception>
-        /// <exception cref="AggregateException"></exception>
         public void Stop()
         {
             _stopTokenSource.Cancel();
         }
 
         /// <summary>
-        /// 
+        /// Triggers the abort flag of <see cref="Token"/> (<see cref="GracefulCancellationToken.AbortToken"/>
         /// </summary>
-        /// <exception cref="ObjectDisposedException"></exception>
-        /// <exception cref="AggregateException"></exception>
         public void Abort()
         {
             _abortTokenSource.Cancel();
