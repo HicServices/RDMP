@@ -536,7 +536,7 @@ namespace CatalogueManager.Collections
                     Tree.AddObject(o); //add it
                     return;
                 }
-            
+
             if(!IsHiddenByFilter(o))
                 //if we have the object
                 if (Tree.IndexOf(o) != -1)
@@ -559,7 +559,9 @@ namespace CatalogueManager.Collections
                             
                     }
                     else
-                        if (!exists)
+                        if (exists)
+                            Tree.RefreshObject(o); //it exists so refresh it!
+                        else
                             //remove it
                             Tree.RemoveObject(o);
                 }
