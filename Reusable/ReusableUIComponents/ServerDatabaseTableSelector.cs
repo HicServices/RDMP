@@ -228,6 +228,8 @@ namespace ReusableUIComponents
 
         public DatabaseType DatabaseType {
             get { return databaseTypeUI1.DatabaseType; }
+            set { databaseTypeUI1.DatabaseType = value; }
+
         }
 
         public DiscoveredServer Result { get { return new DiscoveredServer(GetBuilder()); } }
@@ -422,6 +424,15 @@ namespace ReusableUIComponents
             UpdateDatabaseList();
             cbxDatabase.Text = databaseName;
         }
+        public void SetExplicitDatabase(string serverName, string databaseName, string username, string password)
+        {
+            cbxServer.Text = serverName;
+            tbUsername.Text = username;
+            tbPassword.Text = password;
+            
+            UpdateDatabaseList();
+            cbxDatabase.Text = databaseName;
+        }
 
         private void cbxDatabase_TextChanged(object sender, EventArgs e)
         {
@@ -439,5 +450,6 @@ namespace ReusableUIComponents
         {
             databaseTypeUI1.LockDatabaseType(databaseType);
         }
+
     }
 }

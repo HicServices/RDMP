@@ -60,7 +60,7 @@ namespace DataExportLibrary.Providers
         private Dictionary<ExtractionConfiguration, SelectedDataSets[]> _configurationToDatasetMapping;
         private DataExportFilterHierarchy _dataExportFilterHierarchy;
 
-        private static List<ExternalCohortTable> BlackListedSources = new List<ExternalCohortTable>();
+        public List<ExternalCohortTable> BlackListedSources { get; private set; }
         
         public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>>();
         public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>();
@@ -81,6 +81,7 @@ namespace DataExportLibrary.Providers
 
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
+            BlackListedSources = new List<ExternalCohortTable>();
             _errorsCheckNotifier = errorsCheckNotifier;
             var dataExportRepository = (DataExportRepository)repositoryLocator.DataExportRepository;
 
@@ -375,7 +376,7 @@ namespace DataExportLibrary.Providers
         
         private void AddChildren(AllCohortsNode cohortsNode, DescendancyList descendancy)
         {
-            var validSources = CohortSources.Except(BlackListedSources).ToArray();
+            var validSources = CohortSources.ToArray();
 
             AddToDictionaries(new HashSet<object>(validSources), descendancy);
             foreach (var s in validSources)
@@ -414,10 +415,10 @@ namespace DataExportLibrary.Providers
                     ex = exception;
                 }
 
-                if (server == null || !server.RespondsWithinTime(10, out ex))
+                if (server == null || !server.RespondsWithinTime(10, out ex) || !source.IsFullyPopulated())
                 {
                     BlackListedSources.Add(source);
-
+                    
                     _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Blacklisted source '" + source + "'",CheckResult.Fail, ex));
 
                     //tell them not to bother looking for the cohort data because its inaccessible
