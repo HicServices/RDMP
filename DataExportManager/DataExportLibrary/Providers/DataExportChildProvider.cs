@@ -415,7 +415,7 @@ namespace DataExportLibrary.Providers
                     ex = exception;
                 }
 
-                if (server == null || !server.RespondsWithinTime(10, out ex) || !source.IsFullyPopulated())
+                if (server == null || !server.RespondsWithinTime(3, out ex) || !source.IsFullyPopulated())
                 {
                     BlackListedSources.Add(source);
                     
