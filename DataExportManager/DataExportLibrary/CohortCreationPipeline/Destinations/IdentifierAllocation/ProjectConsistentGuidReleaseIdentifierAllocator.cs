@@ -54,7 +54,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAlloca
             using (var con = cohortDatabase.Server.GetConnection())
             {
                 string sql =
-                    string.Format("SELECT DISTINCT {0},{1} FROM {2} JOIN {3} ON {2}.{4}={3}.{5} WHERE {3}.{6}={7}"
+                    string.Format("SELECT DISTINCT {0},{1} FROM {2} JOIN {3} ON {4}={3}.{5} WHERE {3}.{6}={7}"
                         , ect.PrivateIdentifierField,
                         ect.ReleaseIdentifierField,
                         ect.TableName,
