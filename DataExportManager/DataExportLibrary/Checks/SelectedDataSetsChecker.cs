@@ -6,16 +6,21 @@ using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.LinkCreators;
+using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using HIC.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Checks
 {
@@ -27,12 +32,14 @@ namespace DataExportLibrary.Checks
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly bool _checkGlobals;
+        private readonly IPipeline _alsoCheckPipeline;
         public ISelectedDataSets SelectedDataSet { get; private set; }
         
-        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, IRDMPPlatformRepositoryServiceLocator repositoryLocator, bool checkGlobals = false)
+        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, IRDMPPlatformRepositoryServiceLocator repositoryLocator, bool checkGlobals = false, IPipeline alsoCheckPipeline = null)
         {
             _repositoryLocator = repositoryLocator;
             _checkGlobals = checkGlobals;
+            _alsoCheckPipeline = alsoCheckPipeline;
             SelectedDataSet = selectedDataSet;
         }
 
@@ -59,7 +66,7 @@ namespace DataExportLibrary.Checks
             }
 
             var request = new ExtractDatasetCommand(_repositoryLocator, config, cohort, new ExtractableDatasetBundle(ds),
-                selectedcols, new HICProjectSalt(project), null) { TopX = 1 };
+                selectedcols, new HICProjectSalt(project), new ExtractionDirectory(project.ExtractionDirectory, config)) { TopX = 1 };
 
             try
             {
@@ -143,6 +150,13 @@ namespace DataExportLibrary.Checks
             //check catalogue locals
             foreach (SupportingSQLTable table in cata.GetAllSupportingSQLTablesForCatalogue(fetchOptions))
                 new SupportingSQLTableChecker(table).Check(notifier);
+
+            if (_alsoCheckPipeline != null)
+            {
+                var engine = new ExtractionPipelineUseCase(request.Project, request, _alsoCheckPipeline, DataLoadInfo.Empty)
+                                    .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
+                engine.Check(notifier);
+            }
         }
     }
 }

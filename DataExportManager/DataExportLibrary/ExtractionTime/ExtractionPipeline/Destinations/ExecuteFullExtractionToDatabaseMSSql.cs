@@ -127,13 +127,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private void WriteBundleContents(IExtractableDatasetBundle datasetBundle, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            var rootDir = _request.GetExtractionDirectory();
-            if (CleanExtractionFolderBeforeExtraction)
-            {
-                rootDir.Delete(true);
-                rootDir.Create();
-            }
-
             var bundle = ((ExtractDatasetCommand)_request).DatasetBundle;
             foreach (var sql in bundle.SupportingSQL)
                 bundle.States[sql] = ExtractSupportingSql(sql, listener, _dataLoadInfo);
@@ -341,6 +334,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             _request = value;
 
             DirectoryPopulated = _request.GetExtractionDirectory();
+
+            if (CleanExtractionFolderBeforeExtraction && value is ExtractDatasetCommand)
+            {
+                DirectoryPopulated.Delete(true);
+                DirectoryPopulated.Create();
+            }
         }
 
         public void PreInitialize(DataLoadInfo value, IDataLoadEventListener listener)

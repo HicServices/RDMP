@@ -34,7 +34,7 @@ namespace CatalogueLibraryTests.Integration
         public void CreateKeyFile()
         {
             var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-            var file = keyLocation.CreateNewKeyFile("my.key");
+            var file = keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.WorkDirectory,"my.key"));
 
             Console.WriteLine("Key file location is:" + file.FullName);
             Console.WriteLine("Text put into file is:" + Environment.NewLine +  File.ReadAllText(file.FullName));
@@ -66,7 +66,7 @@ namespace CatalogueLibraryTests.Integration
             Console.WriteLine("Decrypted (stock) is:" + encrypter.GetDecryptedValue());
 
             var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-            keyLocation.CreateNewKeyFile("my.key");
+            keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.WorkDirectory, "my.key"));
             var p = keyLocation.OpenKeyFile();
 
             SimpleStringValueEncryption s = new SimpleStringValueEncryption(CatalogueRepository);

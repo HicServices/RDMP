@@ -61,7 +61,7 @@ namespace DataExportLibrary.Data.DataTables
         public string DefinitionTableForeignKeyField
         {
             get { return _definitionTableForeignKeyField; }
-            set { SetField(ref _definitionTableForeignKeyField , RDMPQuerySyntaxHelper.EnsureValueIsNotWrapped(value)); }
+            set { SetField(ref _definitionTableForeignKeyField, GetQuerySyntaxHelper().EnsureFullyQualified(Database, null,TableName, value)); }
         }
 
         public string TableName
@@ -135,19 +135,14 @@ namespace DataExportLibrary.Data.DataTables
             Server = r["Server"] as string;
             Username = r["Username"] as string;
             Password = r["Password"] as string;
-
-
-            if(!string.IsNullOrWhiteSpace(Server))
-                Server = RDMPQuerySyntaxHelper.EnsureValueIsNotWrapped(Server);
-
             Database = r["Database"] as string;
-            if (!string.IsNullOrWhiteSpace(Database))
-                Database = RDMPQuerySyntaxHelper.EnsureValueIsNotWrapped(Database);
-
-            DefinitionTableForeignKeyField = r["DefinitionTableForeignKeyField"] as string;
 
             var syntaxHelper = GetQuerySyntaxHelper();
+
+            
             TableName = syntaxHelper.EnsureFullyQualified(Database, null, r["TableName"] as string);
+            DefinitionTableForeignKeyField = syntaxHelper.EnsureFullyQualified(Database, null, TableName, r["DefinitionTableForeignKeyField"] as string);
+
             DefinitionTableName = syntaxHelper.EnsureFullyQualified(Database, null, r["DefinitionTableName"] as string);
             
 
@@ -319,7 +314,7 @@ namespace DataExportLibrary.Data.DataTables
         {
             string tofind = GetQuerySyntaxHelper().GetRuntimeName(colToFindCanBeFullyQualifiedIfYouLike);
 
-            if (columns.Any(col=>col.GetRuntimeName().Equals(tofind)))
+            if (columns.Any(col=>col.GetRuntimeName().Equals(tofind,StringComparison.CurrentCultureIgnoreCase)))
                 notifier.OnCheckPerformed(new CheckEventArgs("Found required field " + tofind + " in table " + tableNameFullyQualified,
                     CheckResult.Success, null));
             else
@@ -346,7 +341,7 @@ namespace DataExportLibrary.Data.DataTables
 
         public string GetDecryptedPassword()
         {
-            return ((IEncryptedPasswordHost) this).GetDecryptedPassword();
+            return SelfCertifyingDataAccessPoint.GetDecryptedPassword();
         }
 
         public string Username
@@ -457,6 +452,20 @@ dtCreated as dtCreated
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];
+        }
+
+        /// <summary>
+        /// returns true if all the relevant fields are populated (table names, column names etc)
+        /// </summary>
+        /// <returns></returns>
+        public bool IsFullyPopulated()
+        {
+            return !
+                (string.IsNullOrWhiteSpace(TableName) ||
+                 string.IsNullOrWhiteSpace(PrivateIdentifierField) ||
+                 string.IsNullOrWhiteSpace(ReleaseIdentifierField) ||
+                 string.IsNullOrWhiteSpace(DefinitionTableForeignKeyField) ||
+                 string.IsNullOrWhiteSpace(DefinitionTableName));
         }
     }
 }

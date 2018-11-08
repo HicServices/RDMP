@@ -277,11 +277,11 @@ namespace CatalogueManager.Collections
             };
 
             //Things that are always visible regardless
-            CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
+            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingFile(_activator),
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true),
-                new ExecuteCommandCreateNewEmptyCatalogue(_activator)
+                new ExecuteCommandCreateNewCatalogueByImportingFile(a),
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a),
+                new ExecuteCommandCreateNewEmptyCatalogue(a)
             };
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);

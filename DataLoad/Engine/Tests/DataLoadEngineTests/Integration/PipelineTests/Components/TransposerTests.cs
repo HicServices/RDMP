@@ -11,12 +11,13 @@ using NUnit.Framework;
 
 namespace DataLoadEngineTests.Integration.PipelineTests.Components
 {
+    [TestFixture]
     public class TransposerTests
     {
         DataTable dt = new DataTable();
 
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             dt.Columns.Add("recipe");

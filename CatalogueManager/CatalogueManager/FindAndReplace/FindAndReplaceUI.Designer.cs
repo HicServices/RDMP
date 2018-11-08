@@ -28,11 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tlvAllObjects = new BrightIdeasSoftware.ObjectListView();
+            this.olvAllObjects = new BrightIdeasSoftware.FastObjectListView();
             this.olvObject = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvProperty = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvValue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.gbControls = new System.Windows.Forms.GroupBox();
+            this.btnFind = new System.Windows.Forms.Button();
             this.btnReplaceAll = new System.Windows.Forms.Button();
             this.tbReplace = new System.Windows.Forms.TextBox();
             this.tbFind = new System.Windows.Forms.TextBox();
@@ -41,32 +42,36 @@
             this.label1 = new System.Windows.Forms.Label();
             this.rbSqlAttribute = new System.Windows.Forms.RadioButton();
             this.rbLocationsAttribute = new System.Windows.Forms.RadioButton();
-            ((System.ComponentModel.ISupportInitialize)(this.tlvAllObjects)).BeginInit();
+            this.cbMatchCase = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.olvAllObjects)).BeginInit();
             this.gbControls.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tlvAllObjects
+            // olvAllObjects
             // 
-            this.tlvAllObjects.AllColumns.Add(this.olvObject);
-            this.tlvAllObjects.AllColumns.Add(this.olvProperty);
-            this.tlvAllObjects.AllColumns.Add(this.olvValue);
-            this.tlvAllObjects.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
-            this.tlvAllObjects.CellEditUseWholeCell = false;
-            this.tlvAllObjects.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvAllObjects.AllColumns.Add(this.olvObject);
+            this.olvAllObjects.AllColumns.Add(this.olvProperty);
+            this.olvAllObjects.AllColumns.Add(this.olvValue);
+            this.olvAllObjects.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
+            this.olvAllObjects.CellEditUseWholeCell = false;
+            this.olvAllObjects.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvObject,
             this.olvProperty,
             this.olvValue});
-            this.tlvAllObjects.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvAllObjects.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvAllObjects.Location = new System.Drawing.Point(0, 0);
-            this.tlvAllObjects.Name = "tlvAllObjects";
-            this.tlvAllObjects.Size = new System.Drawing.Size(956, 687);
-            this.tlvAllObjects.TabIndex = 1;
-            this.tlvAllObjects.Text = "label1";
-            this.tlvAllObjects.UseCompatibleStateImageBehavior = false;
-            this.tlvAllObjects.UseFiltering = true;
-            this.tlvAllObjects.View = System.Windows.Forms.View.Details;
-            this.tlvAllObjects.ItemActivate += new System.EventHandler(this.tlvAllObjects_ItemActivate);
+            this.olvAllObjects.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvAllObjects.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.olvAllObjects.Location = new System.Drawing.Point(0, 0);
+            this.olvAllObjects.Name = "olvAllObjects";
+            this.olvAllObjects.RowHeight = 19;
+            this.olvAllObjects.ShowGroups = false;
+            this.olvAllObjects.Size = new System.Drawing.Size(956, 687);
+            this.olvAllObjects.TabIndex = 1;
+            this.olvAllObjects.Text = "label1";
+            this.olvAllObjects.UseCompatibleStateImageBehavior = false;
+            this.olvAllObjects.UseFiltering = true;
+            this.olvAllObjects.View = System.Windows.Forms.View.Details;
+            this.olvAllObjects.VirtualMode = true;
+            this.olvAllObjects.ItemActivate += new System.EventHandler(this.tlvAllObjects_ItemActivate);
             // 
             // olvObject
             // 
@@ -92,6 +97,8 @@
             // 
             // gbControls
             // 
+            this.gbControls.Controls.Add(this.cbMatchCase);
+            this.gbControls.Controls.Add(this.btnFind);
             this.gbControls.Controls.Add(this.btnReplaceAll);
             this.gbControls.Controls.Add(this.tbReplace);
             this.gbControls.Controls.Add(this.tbFind);
@@ -107,6 +114,16 @@
             this.gbControls.TabIndex = 2;
             this.gbControls.TabStop = false;
             this.gbControls.Text = "Find and Replace";
+            // 
+            // btnFind
+            // 
+            this.btnFind.Location = new System.Drawing.Point(518, 11);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(75, 23);
+            this.btnFind.TabIndex = 3;
+            this.btnFind.Text = "Find All";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // btnReplaceAll
             // 
@@ -129,9 +146,8 @@
             // 
             this.tbFind.Location = new System.Drawing.Point(353, 13);
             this.tbFind.Name = "tbFind";
-            this.tbFind.Size = new System.Drawing.Size(442, 20);
+            this.tbFind.Size = new System.Drawing.Size(159, 20);
             this.tbFind.TabIndex = 2;
-            this.tbFind.TextChanged += new System.EventHandler(this.tbFind_TextChanged);
             // 
             // label3
             // 
@@ -156,11 +172,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(317, 16);
+            this.label1.Location = new System.Drawing.Point(297, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(30, 13);
+            this.label1.Size = new System.Drawing.Size(56, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Find:";
+            this.label1.Text = "Find what:";
             // 
             // rbSqlAttribute
             // 
@@ -187,15 +203,25 @@
             this.rbLocationsAttribute.UseVisualStyleBackColor = true;
             this.rbLocationsAttribute.CheckedChanged += new System.EventHandler(this.CheckedChanged);
             // 
+            // cbMatchCase
+            // 
+            this.cbMatchCase.AutoSize = true;
+            this.cbMatchCase.Location = new System.Drawing.Point(600, 16);
+            this.cbMatchCase.Name = "cbMatchCase";
+            this.cbMatchCase.Size = new System.Drawing.Size(83, 17);
+            this.cbMatchCase.TabIndex = 4;
+            this.cbMatchCase.Text = "Match Case";
+            this.cbMatchCase.UseVisualStyleBackColor = true;
+            // 
             // FindAndReplaceUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlvAllObjects);
+            this.Controls.Add(this.olvAllObjects);
             this.Controls.Add(this.gbControls);
             this.Name = "FindAndReplaceUI";
             this.Size = new System.Drawing.Size(956, 787);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvAllObjects)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.olvAllObjects)).EndInit();
             this.gbControls.ResumeLayout(false);
             this.gbControls.PerformLayout();
             this.ResumeLayout(false);
@@ -204,7 +230,7 @@
 
         #endregion
 
-        private BrightIdeasSoftware.ObjectListView tlvAllObjects;
+        private BrightIdeasSoftware.FastObjectListView olvAllObjects;
         private BrightIdeasSoftware.OLVColumn olvObject;
         private BrightIdeasSoftware.OLVColumn olvProperty;
         private System.Windows.Forms.GroupBox gbControls;
@@ -217,5 +243,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnReplaceAll;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnFind;
+        private System.Windows.Forms.CheckBox cbMatchCase;
     }
 }

@@ -75,10 +75,10 @@ namespace DataExportManager.Collections
                 olvName
                 );
 
-            CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
+            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter =(a)=> new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewDataExtractionProject(activator),
-                new ExecuteCommandCreateNewExtractableDataSetPackage(activator)
+                new ExecuteCommandCreateNewDataExtractionProject(a),
+                new ExecuteCommandCreateNewExtractableDataSetPackage(a)
             };
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);

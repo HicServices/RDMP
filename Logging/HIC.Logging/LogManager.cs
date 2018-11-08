@@ -33,14 +33,9 @@ namespace HIC.Logging
         /// </summary>
         public IDataAccessPoint DataAccessPointIfAny { get; private set; }
 
-        public ProgressLogging ProgressLogging { get; private set; }
-        private readonly FatalErrorLogging _fatalErrorLogging;
-        
-        public LogManager(DiscoveredServer server, ProgressLogging progressLogging = null, FatalErrorLogging fatalErrorLogging = null)
+        public LogManager(DiscoveredServer server)
         {
             Server = server;
-            ProgressLogging = progressLogging ?? ProgressLogging.GetInstance();
-            _fatalErrorLogging = fatalErrorLogging?? FatalErrorLogging.GetInstance();
         }
 
         public LogManager(IDataAccessPoint loggingServer) : this(DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging))
@@ -160,21 +155,6 @@ namespace HIC.Logging
 
             return toReturn;
 
-        }
-        /// <summary>
-        /// Added so calling code is not dependent on the ProgressLogging singleton, which could later be factored into an injectable service
-        /// </summary>
-        public void LogProgress(IDataLoadInfo dataLoadInfo, ProgressLogging.ProgressEventType eventType, string source, string description)
-        {
-            ProgressLogging.LogProgress(dataLoadInfo, eventType, source, description);
-        }
-
-        /// <summary>
-        /// Added so calling code is not dependent on the FatalErrorLogging singleton, which could later be factored into an injectable service
-        /// </summary>
-        public void LogFatalError(IDataLoadInfo dataLoadInfo, string errorSource, string errorDescription)
-        {
-            _fatalErrorLogging.LogFatalError(dataLoadInfo, errorSource, errorDescription);
         }
 
         ///// <summary>
@@ -297,7 +277,7 @@ t.name", con).ExecuteReader();
         }
 
 
-        public void ResolveFatalErrors(int[] ids, FatalErrorLogging.FatalErrorStates newState, string newExplanation)
+        public void ResolveFatalErrors(int[] ids, DataLoadInfo.FatalErrorStates newState, string newExplanation)
         {
             using (var conn = Server.GetConnection())
             {

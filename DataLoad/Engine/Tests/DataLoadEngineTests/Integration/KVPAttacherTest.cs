@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Attachers;
@@ -39,7 +40,7 @@ namespace DataLoadEngineTests.Integration
             var attacher = new KVPAttacher();
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("KVPTestTable");
 
-            var workingDir = new DirectoryInfo(".");
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var parentDir = workingDir.CreateSubdirectory("KVPAttacherTestProjectDirectory");
             var projectDir = HICProjectDirectory.CreateDirectoryStructure(parentDir, "KVPAttacherTest", true);
 
@@ -131,7 +132,7 @@ namespace DataLoadEngineTests.Integration
                 
                 attacher.Initialize(projectDir,DiscoveredDatabaseICanCreateRandomTablesIn);
 
-                attacher.Attach(new ThrowImmediatelyDataLoadJob());
+                attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
                 //test file contains 291 values belonging to 3 different people
                 int expectedRows = 291;
@@ -226,7 +227,7 @@ namespace DataLoadEngineTests.Integration
         private void CopyToBin(HICProjectDirectory projDir, string file)
         {
             
-            string testFileLocation = ".\\Resources\\" + file;
+            string testFileLocation = Path.Combine(TestContext.CurrentContext.WorkDirectory,"Resources" , file);
             Assert.IsTrue(File.Exists(testFileLocation));
 
             File.Copy(testFileLocation, projDir.ForLoading.FullName + "\\" + file, true);

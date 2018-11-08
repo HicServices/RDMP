@@ -91,12 +91,14 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
+        /// <inheritdoc/>
         protected ConcreteColumn(IRepository repository, DbDataReader r):base(repository,r)
         {
             
         }
 
-        protected ConcreteColumn()
+        /// <inheritdoc/>
+        protected ConcreteColumn():base()
         {
             
         }

@@ -173,6 +173,22 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
                     _lp.SaveToDatabase();
                 }
             }
+
+            if (sender == LineAnnotationCacheProgress)
+            {
+                var cp = _lp.CacheProgress;
+
+                if(cp == null)
+                    return;
+
+                var newDate = GetDateFromX((int)LineAnnotationCacheProgress.X);
+
+                if (MessageBox.Show("Set new CacheProgress date to " + newDate + "?", "Change Cache Progress Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    cp.CacheFillProgress = newDate;
+                    cp.SaveToDatabase();
+                }
+            }
         }
 
         private DateTime? GetDateFromX(int x)

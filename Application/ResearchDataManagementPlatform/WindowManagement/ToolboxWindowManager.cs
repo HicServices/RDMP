@@ -270,7 +270,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// </summary>
         public void CloseAllWindows()
         {
-            ContentManager.WindowFactory.WindowTracker.CloseAllWindows();
+            ContentManager.WindowFactory.WindowTracker.CloseAllWindows(null);
         }
     }
 }

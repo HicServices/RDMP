@@ -31,7 +31,6 @@ namespace CatalogueManager.Menus
             Items.Add("Bulk Process Catalogue Items...", null, (s, e) => BulkProcessCatalogueItems(node.Catalogue));
             Items.Add("Paste Clipboard as new Catalogue Items", iconProvider.GetImage(RDMPConcept.Clipboard,OverlayKind.Import), (s, e) => PasteClipboardAsNewCatalogueItems(node.Catalogue));
             Items.Add("Re-Order Columns", iconProvider.GetImage(RDMPConcept.ReOrder),(s, e) => ReOrderCatalogueItems(node.Catalogue));
-            Items.Add("Import Catalogue Item...", null, (s, e) => ImportCatalogueItem(node.Catalogue));
             Items.Add("Guess Associated Columns From TableInfo...", iconProvider.GetImage(RDMPConcept.ExtractionInformation,OverlayKind.Problem), (s, e) => GuessAssociatedColumns(node.Catalogue));
         }
 
@@ -111,14 +110,6 @@ namespace CatalogueManager.Menus
 
                 Publish(c);
             }
-        }
-
-        private void ImportCatalogueItem(Catalogue c)
-        {
-            ImportCloneOfCatalogueItem cloner = new ImportCloneOfCatalogueItem(c);
-            cloner.ShowDialog();
-
-            Publish(c);
         }
 
         private void PasteClipboardAsNewCatalogueItems(Catalogue c)

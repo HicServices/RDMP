@@ -17,6 +17,7 @@ using Tests.Common;
 
 namespace DataExportLibrary.Tests
 {
+    [TestFixture]
     public class TestsRequiringACohort : DatabaseTests
     {
         protected const int cohortIDInTestData = -599;
@@ -47,7 +48,7 @@ namespace DataExportLibrary.Tests
 
         
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         protected override void SetUp()
         {
             try

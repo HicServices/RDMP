@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Extensions;
 
 namespace CatalogueManager.FindAndReplace
 {
@@ -47,9 +47,10 @@ namespace CatalogueManager.FindAndReplace
             _currentValue = newValue;
         }
 
-        public void FindAndReplace(string find, string replace)
+        public void FindAndReplace(string find, string replace, bool ignoreCase)
         {
-            SetValue(_currentValue.ToString().Replace(find, replace));
+            if(_currentValue.ToString().Contains(find,ignoreCase? CompareOptions.IgnoreCase:CompareOptions.None ))
+                SetValue(_currentValue.ToString().Replace(find, replace,ignoreCase ? RegexOptions.IgnoreCase: RegexOptions.None));
         }
         #region Equality Members
         protected bool Equals(FindAndReplaceNode other)

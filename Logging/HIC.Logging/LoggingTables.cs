@@ -11,7 +11,6 @@ namespace HIC.Logging
         ProgressLog,
         FatalError,
         TableLoadRun,
-        DataSource,
-        
+        DataSource
     }
 }

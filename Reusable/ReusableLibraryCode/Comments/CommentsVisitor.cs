@@ -1,9 +1,12 @@
-﻿using NuDoq;
+﻿using System.Text.RegularExpressions;
+using NuDoq;
 
 namespace ReusableLibraryCode.Comments
 {
     class CommentsVisitor:Visitor
     {
+        Regex rMultiSpaces = new Regex(@"  +");
+
         private readonly CommentStore _store;
 
         public CommentsVisitor(CommentStore store)
@@ -14,7 +17,7 @@ namespace ReusableLibraryCode.Comments
         public override void VisitClass(Class type)
         {
             if (type.Info != null && !string.IsNullOrWhiteSpace(type.ToText()))
-                _store.Add(type.Info.Name, type.ToText());
+                Add(type.Info.Name, type.ToText());
 
             base.VisitClass(type);
         }
@@ -22,9 +25,17 @@ namespace ReusableLibraryCode.Comments
         public override void VisitInterface(Interface type)
         {
             if (type.Info != null && !string.IsNullOrWhiteSpace(type.ToText()))
-                _store.Add(type.Info.Name, type.ToText());
-
+                Add(type.Info.Name, type.ToText());
+            
             base.VisitInterface(type);
         }
+
+        private void Add(string name, string description)
+        {
+            var adjusted = rMultiSpaces.Replace(description, " ");
+            _store.Add(name, adjusted);
+        }
+
+        
     }
 }

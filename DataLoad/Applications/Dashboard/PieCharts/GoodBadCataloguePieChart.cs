@@ -242,8 +242,10 @@ namespace Dashboard.PieCharts
             
         }
 
+        bool _bLoading;
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
+            _bLoading = true;
             _activator = activator;
             _collection = (GoodBadCataloguePieChartObjectCollection)collection;
 
@@ -256,6 +258,7 @@ namespace Dashboard.PieCharts
             btnShowLabels.Checked = _collection.ShowLabels;
             
             GenerateChart();
+            _bLoading = false;
         }
 
         public IPersistableObjectCollection GetCollection()
@@ -327,7 +330,7 @@ namespace Dashboard.PieCharts
         }
         void ComboBox_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            if(ddChartType.SelectedItem == null)
+            if(ddChartType.SelectedItem == null || _bLoading)
                 return;
 
             var newType = (CataloguePieChartType) ddChartType.SelectedItem;
@@ -335,7 +338,7 @@ namespace Dashboard.PieCharts
             //no change
             if(newType == _collection.PieChartType)
                 return;
-
+            
             _collection.PieChartType = newType;
             GenerateChart();
             SaveCollectionChanges();
@@ -343,6 +346,9 @@ namespace Dashboard.PieCharts
 
         private void SaveCollectionChanges()
         {
+            if (_bLoading)
+                return;
+
             _dashboardControlDatabaseRecord.SaveCollectionState(_collection);
         }
         

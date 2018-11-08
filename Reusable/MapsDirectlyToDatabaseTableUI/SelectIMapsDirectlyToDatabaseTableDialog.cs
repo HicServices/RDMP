@@ -271,9 +271,13 @@ namespace MapsDirectlyToDatabaseTableUI
                 }
                 olvObjects.RebuildColumns();
             }
-
         }
 
+        public void SetInitialFilter(string text)
+        {
+            if (!string.IsNullOrEmpty(text))
+                tbFilter.Text = text;
+        }
 
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {

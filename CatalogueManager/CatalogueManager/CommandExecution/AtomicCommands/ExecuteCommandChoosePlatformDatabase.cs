@@ -41,7 +41,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
             
-            var dialog = new ChoosePlatformDatabases(_repositoryLocator, this);
+            var dialog = new ChoosePlatformDatabases(_repositoryLocator);
             dialog.ShowDialog();
         }
 

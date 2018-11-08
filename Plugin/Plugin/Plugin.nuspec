@@ -13,7 +13,7 @@
         <description>$Description$</description>
         <copyright>Copyright 2018</copyright>
         <dependencies>
-            <dependency id="CsvHelper" version="2.11.0" />
+            <dependency id="CsvHelper" version="7.1.1" />
             <dependency id="MySql.Data" version="8.0.12" />
             <dependency id="Newtonsoft.Json" version="11.0.2"/>
             <dependency id="Oracle.ManagedDataAccess" version="12.2.1100" />

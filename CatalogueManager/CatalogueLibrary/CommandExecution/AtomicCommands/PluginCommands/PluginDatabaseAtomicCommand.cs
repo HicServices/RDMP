@@ -8,6 +8,7 @@ namespace CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands
     /// </summary>
     public abstract class PluginDatabaseAtomicCommand : PluginAtomicCommand
     {
+        /// <inheritdoc cref="PluginAtomicCommand"/>
         protected PluginDatabaseAtomicCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator) : base(repositoryLocator)
         {
         }

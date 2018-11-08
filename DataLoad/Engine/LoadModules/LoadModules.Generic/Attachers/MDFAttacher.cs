@@ -9,6 +9,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
 using ReusableLibraryCode.Checks;
@@ -48,10 +49,8 @@ namespace LoadModules.Generic.Attachers
         
         MdfFileAttachLocations _locations;
 
-        public override ExitCodeType Attach(IDataLoadJob job)
+        public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            base.Attach(job);
-
             //The location of .mdf files from the perspective of the database server
             var databaseDirectory = FindDefaultSQLServerDatabaseDirectory();
             _locations = new MdfFileAttachLocations(HICProjectDirectory.ForLoading, databaseDirectory, OverrideMDFFileCopyDestination);

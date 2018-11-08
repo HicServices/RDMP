@@ -11,10 +11,6 @@ namespace HIC.Logging
         string[] ListDataTasks(bool hideTests=false);
         DateTime? GetDateOfLastLoadAttemptForTask(string nameOfTask,bool onlyIfSuccessful);
         IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description, string suggestedRollbackCommand, bool isTest);
-        void LogProgress(IDataLoadInfo dataLoadInfo, ProgressLogging.ProgressEventType eventType, string source, string description);
-        void LogFatalError(IDataLoadInfo dataLoadInfo, string errorSource, string errorDescription);
         ArchivalDataLoadInfo GetLoadStatusOf(PastEventType mostRecent, string newLoggingDataTask);
-
-        ProgressLogging ProgressLogging { get; }
     }
 }

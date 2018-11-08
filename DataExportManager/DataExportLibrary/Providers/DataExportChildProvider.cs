@@ -21,6 +21,7 @@ using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportLibrary.Providers.Nodes.UsedByNodes;
 using DataExportLibrary.Providers.Nodes.UsedByProject;
+using DataExportLibrary.Repositories;
 using DataLoadEngine.PipelineUseCases;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -59,7 +60,7 @@ namespace DataExportLibrary.Providers
         private Dictionary<ExtractionConfiguration, SelectedDataSets[]> _configurationToDatasetMapping;
         private DataExportFilterHierarchy _dataExportFilterHierarchy;
 
-        private static List<ExternalCohortTable> BlackListedSources = new List<ExternalCohortTable>();
+        public List<ExternalCohortTable> BlackListedSources { get; private set; }
         
         public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>>();
         public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>();
@@ -80,16 +81,17 @@ namespace DataExportLibrary.Providers
 
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
+            BlackListedSources = new List<ExternalCohortTable>();
             _errorsCheckNotifier = errorsCheckNotifier;
-            var dataExportRepository = repositoryLocator.DataExportRepository;
+            var dataExportRepository = (DataExportRepository)repositoryLocator.DataExportRepository;
 
-            AllProjectAssociatedCics = dataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
-            CohortSources = dataExportRepository.GetAllObjects<ExternalCohortTable>();
-            ExtractableDataSets = dataExportRepository.GetAllObjects<ExtractableDataSet>();
+            AllProjectAssociatedCics = GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>(dataExportRepository);
+            CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
+            ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
 
 
             //record all extractable columns in each ExtractionConfiguration for fast reference later
-            foreach (var c in dataExportRepository.GetAllObjects<ExtractableColumn>())
+            foreach (var c in GetAllObjects<ExtractableColumn>(dataExportRepository))
             {
                 if (c.CatalogueExtractionInformation_ID == null)
                     c.InjectKnown((ExtractionInformation) null);
@@ -109,7 +111,7 @@ namespace DataExportLibrary.Providers
                 ExtractionConfigurationToExtractableColumnsDictionary[c.ExtractionConfiguration_ID].Add(c);
             }
 
-            SelectedDataSets = dataExportRepository.GetAllObjects<SelectedDataSets>();
+            SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
             var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
             foreach (SelectedDataSets s in SelectedDataSets)
                 s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
@@ -120,16 +122,16 @@ namespace DataExportLibrary.Providers
                 if(dictionary.ContainsKey(ds.Catalogue_ID))
                     ds.InjectKnown(dictionary[ds.Catalogue_ID]);
                 
-            AllPackages = dataExportRepository.GetAllObjects<ExtractableDataSetPackage>();
+            AllPackages = GetAllObjects<ExtractableDataSetPackage>(dataExportRepository);
             PackageContents = new ExtractableDataSetPackageContents(dataExportRepository);
 
-            Projects = dataExportRepository.GetAllObjects<Project>();
-            ExtractionConfigurations = dataExportRepository.GetAllObjects<ExtractionConfiguration>();
-            AllGlobalExtractionFilterParameters = dataExportRepository.GetAllObjects<GlobalExtractionFilterParameter>();
+            Projects = GetAllObjects<Project>(dataExportRepository);
+            ExtractionConfigurations = GetAllObjects<ExtractionConfiguration>(dataExportRepository);
+            AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
 
             _dataExportFilterHierarchy = new DataExportFilterHierarchy(dataExportRepository);
 
-            Cohorts = dataExportRepository.GetAllObjects<ExtractableCohort>();
+            Cohorts = GetAllObjects<ExtractableCohort>(dataExportRepository);
             
             _configurationToDatasetMapping = new Dictionary<ExtractionConfiguration, SelectedDataSets[]>();
 
@@ -374,7 +376,7 @@ namespace DataExportLibrary.Providers
         
         private void AddChildren(AllCohortsNode cohortsNode, DescendancyList descendancy)
         {
-            var validSources = CohortSources.Except(BlackListedSources).ToArray();
+            var validSources = CohortSources.ToArray();
 
             AddToDictionaries(new HashSet<object>(validSources), descendancy);
             foreach (var s in validSources)
@@ -413,10 +415,10 @@ namespace DataExportLibrary.Providers
                     ex = exception;
                 }
 
-                if (server == null || !server.RespondsWithinTime(10, out ex))
+                if (server == null || !server.RespondsWithinTime(3, out ex) || !source.IsFullyPopulated())
                 {
                     BlackListedSources.Add(source);
-
+                    
                     _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Blacklisted source '" + source + "'",CheckResult.Fail, ex));
 
                     //tell them not to bother looking for the cohort data because its inaccessible

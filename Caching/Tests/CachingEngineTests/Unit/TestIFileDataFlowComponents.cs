@@ -11,6 +11,7 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 
 namespace CachingEngineTests.Unit
@@ -65,7 +66,7 @@ namespace CachingEngineTests.Unit
             var cacheProgress = new CacheProgress(null, (ILoadProgress) null);
             container.ComposeExportedValue(cacheProgress);
 
-            var directoryInfo = new DirectoryInfo(".");
+            var directoryInfo = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);;
             container.ComposeExportedValue(directoryInfo);
 
             var component = container.GetExportedValue<FilesystemCacheDestination>();

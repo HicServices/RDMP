@@ -10,6 +10,7 @@ using CatalogueManager.Refreshing;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.Menus;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace CohortManager.Collections
 {
@@ -45,7 +46,7 @@ namespace CohortManager.Collections
             CommonFunctionality.AxeChildren = new Type[]{typeof (CohortIdentificationConfiguration)};
             CommonFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
 
-            CommonFunctionality.WhitespaceRightClickMenuCommands = new []{new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)};
+            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{new ExecuteCommandCreateNewCohortIdentificationConfiguration(a)};
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
             

@@ -102,7 +102,7 @@ namespace DataLoadEngineTests.Integration
 
             pt1.CreateArgumentsForClassIfNotExists<TestCachedFileRetriever>();
 
-            var dir = new DirectoryInfo("delme");
+            var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"delme"));
 
             var projDir = HICProjectDirectory.CreateDirectoryStructure(dir, true);
             _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
@@ -127,7 +127,7 @@ namespace DataLoadEngineTests.Integration
             pt1.Name = "Cache1";
             pt1.SaveToDatabase();
 
-            var dir = new DirectoryInfo("delme");
+            var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"delme"));
 
             var projDir = HICProjectDirectory.CreateDirectoryStructure(dir, true);
             _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
@@ -160,7 +160,7 @@ namespace DataLoadEngineTests.Integration
             _cp.CacheFillProgress = new DateTime(2010, 1, 1);
             _cp.SaveToDatabase();
 
-            var dir = new DirectoryInfo("delme");
+            var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "delme"));
 
             //delete remnants
             if (dir.Exists)

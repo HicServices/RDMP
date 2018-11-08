@@ -93,7 +93,7 @@ namespace DataExportManager.Menus
                 try
                 {
                     var newCohort = new ExtractableCohort(RepositoryLocator.DataExportRepository, _externalCohortTable, toAddID);
-                    Publish(newCohort);
+                    Publish(_externalCohortTable);
                 }
                 catch (Exception exception)
                 {

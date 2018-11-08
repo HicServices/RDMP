@@ -33,7 +33,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         public override string GetCommandHelp()
         {
-            return "Update the cohort to a new version by rerunning the associated Cohort Identification Configuration (query).  This is useful if you have to do yearly\\monthly releases and update the cohort based on new data";
+            return "Update the cohort to a new version by rerunning the associated Cohort Identification Configuration (query). " +
+                   "This is useful if you have to do yearly\\monthly releases and update the cohort based on new data";
         }
 
         public override void Execute()

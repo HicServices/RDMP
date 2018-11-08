@@ -106,10 +106,10 @@ namespace CatalogueManager.Collections
                 olvColumn1
                 );
 
-            CommonFunctionality.WhitespaceRightClickMenuCommands = new IAtomicCommand[]
+            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=> new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false),
-                new ExecuteCommandBulkImportTableInfos(_activator)
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a, false),
+                new ExecuteCommandBulkImportTableInfos(a)
             };
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);

@@ -9,10 +9,10 @@ using Tests.Common;
 
 namespace HIC.Logging.Tests.Integration
 {
-    [TestFixture]
+    
     class FatalErrorLoggingTest : DatabaseTests
     {
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             using (var conn = new SqlConnection(UnitTestLoggingConnectionString.ConnectionString))
@@ -54,7 +54,7 @@ namespace HIC.Logging.Tests.Integration
             TableLoadInfo t = new TableLoadInfo(d, "Unit test only", "Unit test only", ds, 5);
             t.Inserts += 3; //simulate that it crashed after 3
 
-            FatalErrorLogging.GetInstance().LogFatalError(d, "HICSSISLibraryTests.FataErrorLoggingTest","Some terrible event happened");
+            d.LogFatalError("HICSSISLibraryTests.FataErrorLoggingTest","Some terrible event happened");
 
             Assert.IsTrue(d.IsClosed);
         }

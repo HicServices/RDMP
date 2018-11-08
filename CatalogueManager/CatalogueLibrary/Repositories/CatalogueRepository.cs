@@ -65,12 +65,12 @@ namespace CatalogueLibrary.Repositories
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
         }
 
-        public void LoadHelp()
+        public void LoadHelp(params string[] directories)
         {
             if (!SuppressHelpLoading)
             {
                 CommentStore = new CommentStore();
-                CommentStore.ReadComments();
+                CommentStore.ReadComments(directories);
                 AddToHelp(Resources.KeywordHelp);
             }
         }
@@ -132,32 +132,7 @@ namespace CatalogueLibrary.Repositories
             }
         }
         
-        /// <summary>
-        /// Returns Catalogue1.CatalogueItem1, Catalogue1.CatalogueItem2 etc, a CatalogueItem does not know the name of it's parent so 
-        /// for performance reasons this is a big saver it means we only have database query instead of having to construct and dereference
-        /// every CatalogueItem and Every Catalogue in the database.
-        /// </summary>
-        /// <returns></returns>
-        public List<FriendlyNamedCatalogueItem> GetFullNameOfAllCatalogueItems()
-        {
-            List<FriendlyNamedCatalogueItem> toReturn = new List<FriendlyNamedCatalogueItem>();
-
-            using (var con = GetConnection())
-            {
-
-                //get parent name and child name, separate with . (after removing any dots that our users might have put into the name (bad user!))
-                DbCommand cmd = DatabaseCommandHelper.GetCommand(@"SELECT REPLACE([Catalogue].Name,'.','') + '.' + REPLACE(CatalogueItem.Name,'.','') as FriendlyName, CatalogueItem.ID from Catalogue join CatalogueItem on Catalogue.ID = Catalogue_ID", con.Connection,con.Transaction);
-
-                DbDataReader r = cmd.ExecuteReader();
-                while (r.Read())
-                {
-                    toReturn.Add(new FriendlyNamedCatalogueItem(Convert.ToInt32(r["ID"]),r["FriendlyName"].ToString()));
-                }
-                //deals with crudy decimal/short types that SQL might throw at us
-            }
-            return toReturn;
-        }
-         
+        
         /// <inheritdoc/>
         public LogManager GetDefaultLogManager()
         {

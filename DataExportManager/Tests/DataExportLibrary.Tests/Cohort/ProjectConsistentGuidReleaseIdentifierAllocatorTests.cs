@@ -59,7 +59,7 @@ namespace DataExportLibrary.Tests.Cohort
 
             cohortTable.Insert(new Dictionary<string, object>()
             {
-                {ect.DefinitionTableForeignKeyField, 1},
+                {ect.GetQuerySyntaxHelper().GetRuntimeName(ect.DefinitionTableForeignKeyField), 1},
                 {"chi", "0202020202"},
                 {"ReleaseId", "0x0123"}
             });
@@ -87,7 +87,7 @@ namespace DataExportLibrary.Tests.Cohort
 
             cohortTable.Insert(new Dictionary<string, object>()
             {
-                {ect.DefinitionTableForeignKeyField, 2},
+                {ect.GetQuerySyntaxHelper().GetRuntimeName(ect.DefinitionTableForeignKeyField), 2},
                 {"chi", "0202020202"},
                 {"ReleaseId", "0x0127"}
             });
@@ -116,7 +116,7 @@ namespace DataExportLibrary.Tests.Cohort
 
             cohortTable.Insert(new Dictionary<string, object>()
             {
-                {ect.DefinitionTableForeignKeyField, 3},
+                {ect.GetQuerySyntaxHelper().GetRuntimeName(ect.DefinitionTableForeignKeyField), 3},
                 {"chi", "0202020202"},
                 {"ReleaseId", "0x0128"}
             });

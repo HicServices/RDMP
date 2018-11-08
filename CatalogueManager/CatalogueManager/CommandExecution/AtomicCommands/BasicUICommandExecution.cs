@@ -126,7 +126,27 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             dialog.ShowDialog();
 
+            if (dialog.DialogResult != DialogResult.OK)
+                return null;
+
             return dialog.SelectedTable;
+        }
+
+        protected bool SelectMany<T>(T[] available, out T[] selected) where T:DatabaseEntity
+        {
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(available, false, false);
+            dialog.AllowMultiSelect = true;
+
+            dialog.ShowDialog();
+            
+            if (dialog.DialogResult != DialogResult.OK)
+            {
+                selected = null;
+                return false;
+            }
+
+            selected = dialog.MultiSelected.Cast<T>().ToArray();
+            return true;
         }
 
         protected DiscoveredDatabase SelectDatabase(string taskDescription)
@@ -134,6 +154,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription, false, false);
 
             dialog.ShowDialog();
+            
+            if (dialog.DialogResult != DialogResult.OK)
+                return null;
 
             return dialog.SelectedDatabase;
         }

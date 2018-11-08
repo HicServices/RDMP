@@ -87,7 +87,7 @@ namespace CohortManagerTests
                 testData.DeleteCatalogue();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void AfterAllTests()
         {
             testData.Destroy();

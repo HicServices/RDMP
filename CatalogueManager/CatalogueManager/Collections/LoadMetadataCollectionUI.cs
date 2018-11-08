@@ -24,6 +24,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using CatalogueManager.Copying;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 
 namespace CatalogueManager.Collections
@@ -88,7 +89,7 @@ namespace CatalogueManager.Collections
                 olvName,
                 olvName);
 
-            CommonFunctionality.WhitespaceRightClickMenuCommands = new[] {new ExecuteCommandCreateNewLoadMetadata(_activator)};
+            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
             
             tlvLoadMetadata.AddObject(_activator.CoreChildProvider.AllPermissionWindowsNode);
             tlvLoadMetadata.AddObject(_activator.CoreChildProvider.AllLoadMetadatasNode);

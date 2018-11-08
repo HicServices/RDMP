@@ -23,6 +23,7 @@ using Rhino.Mocks;
 
 namespace DataLoadEngineTests.Unit
 {
+    [TestFixture]
     public class ExcelTests
     {
         public const string TestFile = "Book1.xlsx";
@@ -33,14 +34,14 @@ namespace DataLoadEngineTests.Unit
         public static FileInfo TestFileInfo;
         public static FileInfo FreakyTestFileInfo;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SprayToDisk()
         {
             
             officeInstalled = OfficeVersionFinder.GetVersion(OfficeVersionFinder.OfficeComponent.Excel) != null;
 
-            _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile));
-            _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile));
+            _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile,TestContext.CurrentContext.WorkDirectory));
+            _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile, TestContext.CurrentContext.WorkDirectory));
         }
 
 
@@ -55,13 +56,13 @@ namespace DataLoadEngineTests.Unit
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "File Book1.xlsx has a prohibitted file extension .xlsx",MatchType = MessageMatch.Contains)]
         public void DontTryToOpenWithDelimited_ThrowsInvalidFileExtension()
         {
             DelimitedFlatFileDataFlowSource invalid = new DelimitedFlatFileDataFlowSource();
             invalid.Separator = ",";
             invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), new ThrowImmediatelyDataLoadEventListener());
-            invalid.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>invalid.Check(new ThrowImmediatelyCheckNotifier()));
+            StringAssert.Contains("File Book1.xlsx has a prohibitted file extension .xlsx",ex.Message);
         }
 
         [Test]
@@ -181,7 +182,7 @@ namespace DataLoadEngineTests.Unit
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            var fi = new FileInfo(@".\Resources\BlankLineBook.xlsx");
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@".\Resources\BlankLineBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
@@ -205,7 +206,8 @@ namespace DataLoadEngineTests.Unit
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            var fi = new FileInfo(@".\Resources\BlankBook.xlsx");
+            
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@"Resources\BlankBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
@@ -226,12 +228,12 @@ namespace DataLoadEngineTests.Unit
             source.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
         }
         [Test]
-        [ExpectedException(ExpectedMessage = "File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)")]
         public void Checks_ValidFileExtension_InvalidExtensionPass()
         {
             ExcelDataFlowSource source = new ExcelDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), new ThrowImmediatelyDataLoadEventListener());
-            source.Check(new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+            var ex = Assert.Throws<Exception>(()=>source.Check(new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true }));
+            Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",ex.Message);
         }
 
         [Test]

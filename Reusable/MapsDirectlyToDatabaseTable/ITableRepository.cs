@@ -17,7 +17,6 @@ namespace MapsDirectlyToDatabaseTable
         DbConnectionStringBuilder ConnectionStringBuilder { get; }
         DiscoveredServer DiscoveredServer { get; }
         void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject);
-        bool CloneObjectInTableIfDoesntExist<T>(T oToClone, TableRepository destinationRepository) where T : IMapsDirectlyToDatabaseTable;
         Dictionary<string, int> GetObjectCountByVersion(Type type);
 
         IManagedConnection GetConnection();

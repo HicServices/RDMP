@@ -67,7 +67,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                         continue;
                        
                     //no, allocate them an ID (or null if there is no allocator)
-                    _cohortDictionary.Add(priv,_allocator == null? DBNull.Value : _allocator.AllocateReleaseIdentifier(priv));
+                    _cohortDictionary.Add(priv, _allocator == null? DBNull.Value : _allocator.AllocateReleaseIdentifier(priv));
                 }
             else
             {
@@ -151,13 +151,14 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
                             dt.Rows.Add(kvp.Key, kvp.Value, Request.NewCohortDefinition.ID);
 
                         bulkCopy.Upload(dt);
-
-                        connection.ManagedTransaction.CommitAndCloseConnection();
                     }
+
+                    connection.ManagedTransaction.CommitAndCloseConnection();
                 }
-                finally
+                catch 
                 {
                     connection.ManagedTransaction.AbandonAndCloseConnection();
+                    throw;
                 }
             }
 
@@ -183,7 +184,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
             _privateIdentifier = syntax.GetRuntimeName(target.PrivateIdentifierField);
             _releaseIdentifier = syntax.GetRuntimeName(target.ReleaseIdentifierField);
 
-            _fk = Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField;
+            _fk = syntax.GetRuntimeName(Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField);
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "CohortCreationRequest spotted, we will look for columns " + _privateIdentifier + " and " + _releaseIdentifier + " (both of which must be in the pipeline before we will allow the cohort to be submitted)"));
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "id column in table " + Request.NewCohortDefinition.LocationOfCohort.TableName + " is " + Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField));

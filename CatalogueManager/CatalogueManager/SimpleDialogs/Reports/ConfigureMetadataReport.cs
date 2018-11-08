@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -125,6 +126,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
                     checksUI1.OnCheckPerformed(new CheckEventArgs("Aggregate with ID " + aggregate.ID + " crashed", CheckResult.Fail,aggregateGraph1.Exception));
                     continue;
                 }
+
+                //wait 2 seconds for screen refresh?
+                Task.Delay(2000).Wait();
 
                 toReturn.AddRange(aggregateGraph1.GetImages());
             }

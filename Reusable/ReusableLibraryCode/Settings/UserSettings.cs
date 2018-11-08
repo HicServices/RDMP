@@ -94,6 +94,13 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("ShowNonExtractableCatalogues", true); }
             set { AppSettings.AddOrUpdateValue("ShowNonExtractableCatalogues", value); }
         }
+
+        public static bool UseCaching
+        {
+            get { return AppSettings.GetValueOrDefault("UseCaching", false); }
+            set { AppSettings.AddOrUpdateValue("UseCaching", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

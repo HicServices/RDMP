@@ -92,7 +92,8 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                 if (eventArgs.Status == RDMPPlatformDatabaseStatus.Broken ||
                     eventArgs.Status == RDMPPlatformDatabaseStatus.Unreachable)
                 {
-                    llChoosePlatformDatabases.Visible = true;
+                    btnSetupPlatformDatabases.Visible = true;
+                    pbLoadProgress.Visible = false;
                     pbWhereIsDatabase.Visible = true;
                     this.Icon = _red;
                 }
@@ -271,7 +272,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             pbRed.Visible = false;
             pbYellow.Visible = false;
             llException.Visible = false;
-            llChoosePlatformDatabases.Visible = false;
+            btnSetupPlatformDatabases.Visible = false;
 
             if (_startup.RepositoryLocator is UserSettingsRepositoryFinder)
                 repositoryFinderUI1.SetRepositoryFinder((UserSettingsRepositoryFinder)_startup.RepositoryLocator);
@@ -358,9 +359,14 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                 case RDMPPlatformDatabaseStatus.RequiresPatching:
                     Warning();
                     
-                    llException.Visible = true;
-                    llException.Text = "Patching Required on database of type " + eventArgs.DatabaseType;
-                    llException.LinkClicked += (s, e) => PatchingUI.ShowIfRequired((SqlConnectionStringBuilder)eventArgs.Repository.ConnectionStringBuilder, eventArgs.Repository, eventArgs.DatabaseAssembly, eventArgs.HostAssembly);
+                    if(MessageBox.Show("Patching Required on database of type " + eventArgs.DatabaseType,"Patch",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                         PatchingUI.ShowIfRequired((SqlConnectionStringBuilder)eventArgs.Repository.ConnectionStringBuilder, eventArgs.Repository, eventArgs.DatabaseAssembly, eventArgs.HostAssembly);
+                    else
+                    {
+                        llException.Visible = true;
+                        llException.Text = "User rejected patching";
+                        Angry();
+                    }
 
                     break;
                 case RDMPPlatformDatabaseStatus.Healthy:
@@ -457,8 +463,8 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                         Process.GetCurrentProcess().Kill();
                 }
         }
-
-        private void llChoosePlatformDatabases_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        
+        private void btnSetupPlatformDatabases_Click(object sender, EventArgs e)
         {
             var cmd = new ExecuteCommandChoosePlatformDatabase(new UserSettingsRepositoryFinder());
             cmd.Execute();

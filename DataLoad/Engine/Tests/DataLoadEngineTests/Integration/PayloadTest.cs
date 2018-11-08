@@ -40,7 +40,7 @@ namespace DataLoadEngineTests.Integration
             b.ImportAsCatalogue();
 
             var lmd = new LoadMetadata(CatalogueRepository, "Loading");
-            lmd.LocationOfFlatFiles = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo("delme"), true).RootPath.FullName;
+            lmd.LocationOfFlatFiles = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"delme")), true).RootPath.FullName;
             lmd.SaveToDatabase();
 
             CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
@@ -75,10 +75,8 @@ namespace DataLoadEngineTests.Integration
             {
             }
 
-            public override ExitCodeType Attach(IDataLoadJob job)
+            public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
             {
-                base.Attach(job);
-
                 job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found Payload:" + job.Payload));
                 PayloadTest.Success = ReferenceEquals(payload, job.Payload);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using NUnit.Framework;
 
 namespace Tests.Common
 {
@@ -13,12 +14,12 @@ namespace Tests.Common
             _type = type;
         }
 
-        public void SetUp(string rootPath = ".")
+        public void SetUp()
         {
             if (Directory != null)
                 throw new Exception("You should only call SetUp once");
 
-            var rootDir = new DirectoryInfo(rootPath);
+            var rootDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             Directory = rootDir.CreateSubdirectory(_type.FullName);
         }
 

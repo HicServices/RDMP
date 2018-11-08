@@ -3,6 +3,7 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using DataLoadEngineTests.Integration.Cache;
+using NUnit.Framework;
 
 namespace DataLoadEngineTests.Integration.PipelineTests
 {
@@ -23,6 +24,10 @@ namespace DataLoadEngineTests.Integration.PipelineTests
             Pipeline.SourcePipelineComponent_ID = Source.ID;
             Pipeline.DestinationPipelineComponent_ID = Destination.ID;
             Pipeline.SaveToDatabase();
+
+            var args = Source.CreateArgumentsForClassIfNotExists<TestDataInventor>();
+            args[0].SetValue(TestContext.CurrentContext.WorkDirectory);
+            args[0].SaveToDatabase();
         }
 
         public void ConfigureCacheProgressToUseThePipeline(CacheProgress cp)

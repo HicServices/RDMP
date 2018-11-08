@@ -243,10 +243,16 @@ namespace CatalogueManager.AggregationUIs
                         throw new NotSupportedException("Aggregates must have 2 columns at least");
 
                     //Invoke onto main UI thread so we can setup the chart
-                    this.Invoke(new MethodInvoker(() => PopulateGraphResults(countColumn, axis)));
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        PopulateGraphResults(countColumn, axis);
+                        Done = true;
+                    }));
                 }
              
                 Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Crashed"; }));
+                
+                ShowHeatmapTab(heatmapUI.HasDataTable());
             }
             catch (Exception e)
             {
@@ -262,14 +268,9 @@ namespace CatalogueManager.AggregationUIs
                 
                 AbortLoadGraph();
                 
-                ShowHeatmapTab(heatmapUI.HasDataTable());
-
-                SetToolbarButtonsEnabled(false);
-
-            }
-            finally
-            {
+                SetToolbarButtonsEnabled(true);
                 Done = true;
+
             }
         }
 

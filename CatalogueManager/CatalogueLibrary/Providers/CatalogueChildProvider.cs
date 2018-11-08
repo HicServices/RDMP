@@ -41,6 +41,8 @@ namespace CatalogueLibrary.Providers
     /// </summary>
     public class CatalogueChildProvider :ICoreChildProvider
     {
+        public static bool UseCaching { get; set; }
+
         public LoadMetadata[] AllLoadMetadatas { get; set; }
         public ProcessTask[] AllProcessTasks { get; set; }
 
@@ -126,6 +128,7 @@ namespace CatalogueLibrary.Providers
         public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
 
         protected Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary;
+        protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem;
 
         private readonly CatalogueFilterHierarchy _filterChildProvider;
 
@@ -151,49 +154,49 @@ namespace CatalogueLibrary.Providers
             
             AllMasqueraders = new Dictionary<object, HashSet<IMasqueradeAs>>();
 
-            AllAnyTableParameters = repository.GetAllObjects<AnyTableSqlParameter>();
+            AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
 
-            AllANOTables = repository.GetAllObjects<ANOTable>();
+            AllANOTables = GetAllObjects<ANOTable>(repository);
             AllANOTablesNode = new AllANOTablesNode();
             AddChildren(AllANOTablesNode);
-            
-            AllCatalogues = repository.GetAllObjects<Catalogue>();
+
+            AllCatalogues = GetAllObjects<Catalogue>(repository);
             AllCatalogueDictionary = AllCatalogues.ToDictionary(i => i.ID, o => o);
 
-            AllLoadMetadatas = repository.GetAllObjects<LoadMetadata>();
-            AllProcessTasks = repository.GetAllObjects<ProcessTask>();
-            AllLoadProgresses = repository.GetAllObjects<LoadProgress>();
-            AllCacheProgresses = repository.GetAllObjects<CacheProgress>();
+            AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
+            AllProcessTasks = GetAllObjects<ProcessTask>(repository);
+            AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
+            AllCacheProgresses = GetAllObjects<CacheProgress>(repository);
             
-            AllPermissionWindows = repository.GetAllObjects<PermissionWindow>();
+            AllPermissionWindows = GetAllObjects<PermissionWindow>(repository);
             AllPermissionWindowsNode = new AllPermissionWindowsNode();
             AddChildren(AllPermissionWindowsNode);
 
-            AllRemoteRDMPs = repository.GetAllObjects<RemoteRDMP>();
+            AllRemoteRDMPs = GetAllObjects<RemoteRDMP>(repository);
 
-            AllExternalServers = repository.GetAllObjects<ExternalDatabaseServer>();
+            AllExternalServers = GetAllObjects<ExternalDatabaseServer>(repository);
 
-            AllTableInfos = repository.GetAllObjects<TableInfo>();
-            AllDataAccessCredentials = repository.GetAllObjects<DataAccessCredentials>();
+            AllTableInfos = GetAllObjects<TableInfo>(repository);
+            AllDataAccessCredentials = GetAllObjects<DataAccessCredentials>(repository);
             AllDataAccessCredentialsNode = new AllDataAccessCredentialsNode();
             AddChildren(AllDataAccessCredentialsNode);
 
             AllConnectionStringKeywordsNode = new AllConnectionStringKeywordsNode();
-            AllConnectionStringKeywords = repository.GetAllObjects<ConnectionStringKeyword>().ToArray();
+            AllConnectionStringKeywords = GetAllObjects<ConnectionStringKeyword>(repository).ToArray();
             AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords), new DescendancyList(AllConnectionStringKeywordsNode));
             
             //which TableInfos use which Credentials under which DataAccessContexts
             AllDataAccessCredentialUsages = repository.TableInfoToCredentialsLinker.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
             
-            AllColumnInfos = repository.GetAllObjects<ColumnInfo>();
-            AllPreLoadDiscardedColumns = repository.GetAllObjects<PreLoadDiscardedColumn>();
+            AllColumnInfos = GetAllObjects<ColumnInfo>(repository);
+            AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
 
-            AllSupportingDocuments = repository.GetAllObjects<SupportingDocument>();
-            AllSupportingSQL = repository.GetAllObjects<SupportingSQLTable>();
+            AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
+            AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
-            AllCohortIdentificationConfigurations = repository.GetAllObjects<CohortIdentificationConfiguration>();
-            
-            AllCatalogueItemsDictionary = repository.GetAllObjects<CatalogueItem>().ToDictionary(i=>i.ID,o=>o);
+            AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
+
+            AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(repository).ToDictionary(i => i.ID, o => o);
             _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);
             
             //Inject known ColumnInfos into CatalogueItems
@@ -207,7 +210,8 @@ namespace CatalogueLibrary.Providers
                 ci.InjectKnown(col);
             }
 
-            AllExtractionInformationsDictionary = repository.GetAllObjects<ExtractionInformation>().ToDictionary(i => i.ID, o => o);
+            AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(repository).ToDictionary(i => i.ID, o => o);
+            _extractionInformationsByCatalogueItem = AllExtractionInformationsDictionary.Values.ToDictionary(k=>k.CatalogueItem_ID,v=>v);
 
             //Inject known CatalogueItems into ExtractionInformations
             foreach (ExtractionInformation ei in AllExtractionInformationsDictionary.Values)
@@ -217,14 +221,14 @@ namespace CatalogueLibrary.Providers
                 ei.InjectKnown(ci);
             }
 
-            _allCatalogueItemIssues = repository.GetAllObjects<CatalogueItemIssue>();
+            _allCatalogueItemIssues = GetAllObjects<CatalogueItemIssue>(repository);
 
-            AllAggregateConfigurations = repository.GetAllObjects<AggregateConfiguration>();
+            AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
             
             _filterChildProvider = new CatalogueFilterHierarchy(repository);
             _cohortContainerChildProvider = new CohortHierarchy(repository,this);
 
-            AllLookups = repository.GetAllObjects<Lookup>();
+            AllLookups = GetAllObjects<Lookup>(repository);
 
             foreach (Lookup l in AllLookups)
                 l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],_allColumnInfos[l.Description_ID]);
@@ -241,8 +245,8 @@ namespace CatalogueLibrary.Providers
             AddChildren(AllRDMPRemotesNode);
 
             AllObjectSharingNode = new AllObjectSharingNode();
-            AllExports = repository.GetAllObjects<ObjectExport>();
-            AllImports = repository.GetAllObjects<ObjectImport>();
+            AllExports = GetAllObjects<ObjectExport>(repository);
+            AllImports = GetAllObjects<ObjectImport>(repository);
 
             AddChildren(AllObjectSharingNode);
 
@@ -252,14 +256,14 @@ namespace CatalogueLibrary.Providers
 
             //Pipelines not found to be part of any use case after AddPipelineUseCases
             OtherPipelinesNode = new OtherPipelinesNode();
-            AllPipelines = repository.GetAllObjects<Pipeline>();
-            AllPipelineComponents = repository.GetAllObjects<PipelineComponent>();
+            AllPipelines = GetAllObjects<Pipeline>(repository);
+            AllPipelineComponents = GetAllObjects<PipelineComponent>(repository);
 
             foreach (Pipeline p in AllPipelines)
                 p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
 
             AllStandardRegexesNode = new AllStandardRegexesNode();
-            AllStandardRegexes = repository.GetAllObjects<StandardRegex>();
+            AllStandardRegexes = GetAllObjects<StandardRegex>(repository);
             AddToDictionaries(new HashSet<object>(AllStandardRegexes),new DescendancyList(AllStandardRegexesNode));
             
             //All the things for TableInfoCollectionUI
@@ -288,8 +292,8 @@ namespace CatalogueLibrary.Providers
             }
                     
             AllGovernanceNode = new AllGovernanceNode();
-            AllGovernancePeriods = repository.GetAllObjects<GovernancePeriod>();
-            AllGovernanceDocuments = repository.GetAllObjects<GovernanceDocument>();
+            AllGovernancePeriods = GetAllObjects<GovernancePeriod>(repository);
+            AllGovernanceDocuments = GetAllObjects<GovernanceDocument>(repository);
             GovernanceCoverage = GovernancePeriod.GetAllGovernedCataloguesForAllGovernancePeriods(repository);
 
             AddChildren(AllGovernanceNode);
@@ -752,13 +756,12 @@ namespace CatalogueLibrary.Providers
         {
             List<object> childObjects = new List<object>();
 
-            var extractionInformation = AllExtractionInformations.SingleOrDefault(ei => ei.CatalogueItem_ID == ci.ID);
-
-            if (extractionInformation != null)
+            if(_extractionInformationsByCatalogueItem.ContainsKey(ci.ID))
             {
-                ci.InjectKnown(extractionInformation);
-                childObjects.Add(extractionInformation);
-                AddChildren(extractionInformation,descendancy.Add(extractionInformation));
+                var ei = _extractionInformationsByCatalogueItem[ci.ID];
+                ci.InjectKnown(ei);
+                childObjects.Add(ei);
+                AddChildren(ei, descendancy.Add(ei));
             }
 
             if (ci.ColumnInfo_ID.HasValue)
@@ -1146,6 +1149,12 @@ namespace CatalogueLibrary.Providers
             //anything which has children or is a child of someone else (distinct because HashSet)
             return new HashSet<object>(_childDictionary.SelectMany(kvp => kvp.Value).Union(_childDictionary.Keys));
         }
+
+        protected T[] GetAllObjects<T>(TableRepository repository) where T : IMapsDirectlyToDatabaseTable
+        {
+            return UseCaching ? repository.GetAllObjectsCached<T>() : repository.GetAllObjects<T>();
+        }
+
 
         protected void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
         {

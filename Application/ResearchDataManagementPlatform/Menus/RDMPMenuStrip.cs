@@ -82,17 +82,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             InitializeComponent();
         }
-
-        private void changeCatalogueToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LaunchDatabaseSettingsChangeDialog();
-        }
-
-        private void LaunchDatabaseSettingsChangeDialog()
-        {
-            new ExecuteCommandChoosePlatformDatabase(RepositoryLocator).Execute();
-        }
-
+        
         private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ExecuteCommandConfigureDefaultServers(_activator).Execute();
@@ -211,29 +201,11 @@ namespace ResearchDataManagementPlatform.Menus
         
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTab == null)
+            var t = currentTab as RDMPSingleControlTab;
+            if(t == null)
                 return;
-            
-            var typeDocs = _windowManager.ContentManager.RepositoryLocator.CatalogueRepository.CommentStore;
 
-            StringBuilder sb = new StringBuilder();
-
-            string firstMatch = null;
-
-            foreach (var c in currentTab.Controls)
-                if (typeDocs.ContainsKey(c.GetType().Name))
-                {
-                    if (firstMatch == null)
-                        firstMatch = c.GetType().Name;
-
-                    sb.AppendLine(c.GetType().Name);
-                    sb.AppendLine(typeDocs[c.GetType().Name]);
-                    sb.AppendLine();
-                }
-            
-            if(sb.Length >0)
-                WideMessageBox.Show(sb.ToString(), environmentDotStackTrace: null, isModalDialog: true, keywordNotToAdd: firstMatch, title: "Help");
-        
+            t.ShowHelp(_activator);
         }
 
         public void SetWindowManager(ToolboxWindowManager windowManager)
@@ -305,6 +277,7 @@ namespace ResearchDataManagementPlatform.Menus
             currentTab = newTab;
             
             closeToolStripMenuItem.Enabled = currentTab != null && !(currentTab is PersistableToolboxDockContent);
+            showHelpToolStripMenuItem.Enabled = currentTab is RDMPSingleControlTab;
 
             var singleObjectControlTab = newTab as RDMPSingleControlTab;
             if (singleObjectControlTab == null)

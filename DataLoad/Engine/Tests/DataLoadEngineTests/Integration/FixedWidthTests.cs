@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
+using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
@@ -16,9 +17,10 @@ namespace DataLoadEngineTests.Integration
     {
         private FixedWidthFormatFile CreateFormatFile()
         {
-            File.WriteAllText("FixedWidthFormat.csv", HICProjectDirectory.ExampleFixedWidthFormatFileContents);
+            FileInfo fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@"FixedWidthFormat.csv"));
 
-            FileInfo fileInfo = new FileInfo(@"FixedWidthFormat.csv");
+            File.WriteAllText(fileInfo.FullName, HICProjectDirectory.ExampleFixedWidthFormatFileContents);
+            
             Assert.IsTrue(fileInfo.Exists);
 
             return new FixedWidthFormatFile(fileInfo);
@@ -87,7 +89,7 @@ namespace DataLoadEngineTests.Integration
         {
             FixedWidthFormatFile formatFile = CreateFormatFile();
 
-            string tempFileToCreate = "unitTestFixedWidthFile.txt";
+            string tempFileToCreate = Path.Combine(TestContext.CurrentContext.WorkDirectory,"unitTestFixedWidthFile.txt");
 
             StreamWriter streamWriter = File.CreateText(tempFileToCreate);
             try
@@ -135,12 +137,14 @@ namespace DataLoadEngineTests.Integration
             if (testCase == FixedWidthTestCase.MisnamedHeaders)
                 flatFileColumn = "chickenDippers";
 
-            File.WriteAllText("Format.csv",@"From,To,Field,Size,DateFormat
+            FileInfo formatFile = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Format.csv"));
+
+            File.WriteAllText(formatFile.FullName, @"From,To,Field,Size,DateFormat
 1,5," + flatFileColumn + ",5");
 
 
             //Create the working directory that will be processed
-            var workingDir = new DirectoryInfo(".");
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var parentDir = workingDir.CreateSubdirectory("FixedWidthTests");
 
             DirectoryInfo toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("TestHeaderMatching"));
@@ -161,7 +165,7 @@ namespace DataLoadEngineTests.Integration
 
             var attacher = new FixedWidthAttacher();
             attacher.Initialize(hicProjectDirectory, db);
-            attacher.PathToFormatFile = new FileInfo(@"Format.csv");
+            attacher.PathToFormatFile = formatFile;
             attacher.TableName = "TestHeaderMatching_Compatible";
             attacher.FilePattern = "*.txt";
 
@@ -184,7 +188,7 @@ namespace DataLoadEngineTests.Integration
                 {
                         //Success Case
                     case FixedWidthTestCase.CompatibleHeaders:
-                        attacher.Attach(new ThrowImmediatelyDataLoadJob());
+                        attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
                         Assert.AreEqual(2, table.GetRowCount());
                         return;//Return
 
@@ -193,12 +197,12 @@ namespace DataLoadEngineTests.Integration
                     case FixedWidthTestCase.MisnamedHeaders:
                         errorRegex = new Regex(
                             @"Format file \(.*Format.csv\) indicated there would be a header called 'chickenDippers' but the column did not appear in the RAW database table \(Columns in RAW were myNumber\)");
-                        ex = Assert.Throws<Exception>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob()));
+                        ex = Assert.Throws<Exception>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
                         break;
                     case FixedWidthTestCase.InsufficientLengthOfCharactersInFileToLoad:
                         errorRegex = new Regex(
                             @"Error on line 2 of file file.txt, the format file \(.*Format.csv\) specified that a column myNumber would be found between character positions 1 and 5 but the current line is only 2 characters long");
-                        ex = Assert.Throws<FlatFileLoadException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob()));
+                        ex = Assert.Throws<FlatFileLoadException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException("testCase");

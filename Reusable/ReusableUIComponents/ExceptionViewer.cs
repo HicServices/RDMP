@@ -117,6 +117,9 @@ namespace ReusableUIComponents
         {
             if (e.KeyCode == Keys.Escape)
                 this.Close();
+
+            if(e.KeyCode == Keys.W && e.Control)
+                this.Close();
         }
     }
 }

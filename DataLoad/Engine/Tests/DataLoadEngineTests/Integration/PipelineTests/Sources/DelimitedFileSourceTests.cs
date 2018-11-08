@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CsvHelper;
 using DataLoadEngine.Job;
 using LoadModules.Generic.DataFlowSources;
+using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
@@ -15,10 +17,13 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 {
     public class DelimitedFileSourceTests
     {
-        private const string filename = "DelimitedFileSourceTests.txt";
+        private string filename;
 
-        private FileInfo CreateTestFile()
+        [SetUp]
+        public void CreateTestFile()
         {
+            filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "DelimitedFileSourceTests.txt");
+
             if(File.Exists(filename))
                 File.Delete(filename);
 
@@ -28,30 +33,29 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             sb.AppendLine("0101010101,5,2001-01-05");
 
             File.WriteAllText(filename, sb.ToString());
-
-            return new FileInfo(filename);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "_fileToLoad was not set",MatchType=MessageMatch.Contains)]
         public void FileToLoadNotSet_Throws()
         {
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
-            DataTable chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            var ex = Assert.Throws<Exception>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+            StringAssert.Contains("_fileToLoad was not set",ex.Message);
         }
         [Test]
-        [ExpectedException(ExpectedMessage = "Separator has not been set", MatchType = MessageMatch.Contains)]
         public void SeparatorNotSet_Throws()
         {
-            FileInfo testFile = CreateTestFile();
+            var testFile = new FileInfo(filename);
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(testFile),new ThrowImmediatelyDataLoadEventListener() );
-            source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            var ex = Assert.Throws<Exception>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+            StringAssert.Contains("Separator has not been set", ex.Message);
         }
         [Test]
         public void LoadCSVWithCorrectDatatypes_ForceHeadersWhitespace()
         {
-            FileInfo testFile = CreateTestFile();
+            var testFile = new FileInfo(filename);
+
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
@@ -79,7 +83,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         public void LoadCSVWithCorrectDatatypes_DatatypesAreCorrect()
         {
 
-            FileInfo testFile = CreateTestFile();
+            var testFile = new FileInfo(filename);
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
@@ -99,7 +103,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         public void OverrideDatatypes_ForcedFreakyTypesCorrect()
         {
 
-            FileInfo testFile = CreateTestFile();
+            var testFile = new FileInfo(filename);
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
@@ -121,17 +125,15 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
         }
 
-        [Test]
-        [TestCase(null)]
-        [TestCase(BehaviourOnUnderReadType.Ignore)]
-        [TestCase(BehaviourOnUnderReadType.AppendNextLineToCurrentRow)]
-        public void OverReadBehaviour(BehaviourOnUnderReadType? behaviour)
+        [TestCase(BadDataHandlingStrategy.DivertRows)]
+        [TestCase(BadDataHandlingStrategy.IgnoreRows)]
+        [TestCase(BadDataHandlingStrategy.ThrowException)]
+        public void BadDataTestExtraColumns(BadDataHandlingStrategy strategy)
         {
             if (File.Exists(filename))
                 File.Delete(filename);
 
             StringBuilder sb = new StringBuilder();
-
             sb.AppendLine("CHI,StudyID,Date");
             sb.AppendLine("0101010101,5,2001-01-05");
             sb.AppendLine("0101010101,5,2001-01-05");
@@ -147,19 +149,210 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
 
-            if(behaviour.HasValue)
-                source.UnderReadBehaviour = behaviour.Value;
             source.MaxBatchSize = 10000;
 
             source.StronglyTypeInput = true;//makes the source interpret the file types properly
+            source.BadDataHandlingStrategy = strategy;
+            try
+            {
+                switch (strategy)
+                {
+                    case BadDataHandlingStrategy.ThrowException:
+                        var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                        StringAssert.Contains("line 4",ex.Message);
+                        break;
+                    case BadDataHandlingStrategy.IgnoreRows:
+                        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
+                        Assert.IsNotNull(dt);
 
-            var ex = Assert.Throws<FileLoadException>(() => source.TryGetPreview());
+                        Assert.AreEqual(4,dt.Rows.Count);
+                        break;
+                    case BadDataHandlingStrategy.DivertRows:
+                        var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                        Assert.AreEqual(4, dt2.Rows.Count);
 
-            Assert.AreEqual("Buffer overrun on line 4 of file 'DelimitedFileSourceTests', it has too many columns (expected 3 columns but line had 5).",ex.Message);
+                        Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
 
+                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("strategy");
+                }
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);    
+            }
             
-
         }
+
+        [TestCase(BadDataHandlingStrategy.DivertRows)]
+        [TestCase(BadDataHandlingStrategy.IgnoreRows)]
+        [TestCase(BadDataHandlingStrategy.ThrowException)]
+        public void BadDataTestExtraColumns_ErrorIsOnLastLine(BadDataHandlingStrategy strategy)
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("CHI,StudyID,Date");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05,fish,watafak");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+
+            source.MaxBatchSize = 10000;
+
+            source.StronglyTypeInput = true;//makes the source interpret the file types properly
+            source.BadDataHandlingStrategy = strategy;
+            try
+            {
+                switch (strategy)
+                {
+                    case BadDataHandlingStrategy.ThrowException:
+                        var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                        StringAssert.Contains("line 6", ex.Message);
+                        break;
+                    case BadDataHandlingStrategy.IgnoreRows:
+                        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                        Assert.IsNotNull(dt);
+
+                        Assert.AreEqual(4, dt.Rows.Count);
+                        break;
+                    case BadDataHandlingStrategy.DivertRows:
+                        var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                        Assert.AreEqual(4, dt2.Rows.Count);
+
+                        Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
+
+                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("strategy");
+                }
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }   
+        }
+
+        [Test]
+        public void NewLinesInConstantString_EscapedCorrectly()
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("CHI,StudyID,Date");
+            sb.AppendLine(@"0101010101,""5
+    The first"",2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+
+            source.MaxBatchSize = 10000;
+            source.StronglyTypeInput = true;//makes the source interpret the file types properly
+            
+            try
+            {
+                var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                Assert.IsNotNull(dt);
+                Assert.AreEqual(5, dt.Rows.Count);
+                Assert.AreEqual(@"5
+    The first",dt.Rows[0][1]);
+                      
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }
+        }
+
+        [TestCase(BadDataHandlingStrategy.ThrowException)]
+        [TestCase(BadDataHandlingStrategy.DivertRows)]
+        [TestCase(BadDataHandlingStrategy.IgnoreRows)]
+        public void NewLinesInConstantString_NotEscaped(BadDataHandlingStrategy strategy)
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("CHI,StudyID,Date");
+            sb.AppendLine(@"0101010101,5
+    The first,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+            sb.AppendLine("0101010101,5,2001-01-05");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+
+            source.MaxBatchSize = 10000;
+            source.StronglyTypeInput = true;//makes the source interpret the file types properly
+            source.BadDataHandlingStrategy = strategy;
+            try
+            {
+                switch (strategy)
+                {
+                    case BadDataHandlingStrategy.ThrowException:
+                        var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                        StringAssert.Contains("line 2", ex.Message);
+                        break;
+                    case BadDataHandlingStrategy.IgnoreRows:
+                        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                        Assert.IsNotNull(dt);
+
+                        Assert.AreEqual(4, dt.Rows.Count);
+                        break;
+                    case BadDataHandlingStrategy.DivertRows:
+                        var dt2 = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                        Assert.AreEqual(4, dt2.Rows.Count);
+
+                        Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
+
+                        Assert.AreEqual(@"0101010101,5
+    The first,2001-01-05
+", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("strategy");
+                }
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }   
+        }
+        
 
         [Test]
         public void OverrideHeadersAndTab()

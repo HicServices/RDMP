@@ -20,6 +20,7 @@ namespace RDMPAutomationService.Runners
             var listOpts = command as ListOptions;
             var extractionOpts = command as ExtractionOptions;
             var releaseOpts = command as ReleaseOptions;
+            var cohortOpts = command as CohortCreationOptions;
 
             if (dleOpts != null)
                 return new DleRunner(dleOpts);
@@ -38,6 +39,9 @@ namespace RDMPAutomationService.Runners
 
             if(releaseOpts != null)
                 return new ReleaseRunner(releaseOpts);
+
+            if (cohortOpts != null)
+                return new CohortCreationRunner(cohortOpts);
             
             throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
         }

@@ -89,6 +89,7 @@ namespace CatalogueLibrary.Data.Aggregation
                 });
         }
         
+        /// <inheritdoc/>
         internal AggregateContinuousDateAxis(ICatalogueRepository repository,DbDataReader r) : base(repository,r)
         {
             AggregateDimension_ID = int.Parse(r["AggregateDimension_ID"].ToString());

@@ -53,7 +53,7 @@ namespace CatalogueManager.Collections
 
         public bool IsSetup { get; private set; }
         
-        public IAtomicCommand[] WhitespaceRightClickMenuCommands { get; set; }
+        public Func<IActivateItems,IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
         
         private CollectionPinFilterUI _pinFilter;
         private object _currentlyPinned;
@@ -392,8 +392,13 @@ namespace CatalogueManager.Collections
 
                 AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator);
 
-                if (WhitespaceRightClickMenuCommands != null)
-                    return factory.CreateMenu(WhitespaceRightClickMenuCommands);
+                if (WhitespaceRightClickMenuCommandsGetter != null)
+                {
+                    var menu = factory.CreateMenu(_activator,Tree,_collection,WhitespaceRightClickMenuCommandsGetter(_activator));
+                    menu.AddCommonMenuItems(this);
+                    return menu;
+
+                }
             }
 
             return null;
@@ -515,25 +520,34 @@ namespace CatalogueManager.Collections
                     Tree.AddObject(o); //add it
                     return;
                 }
-            
+
             if(!IsHiddenByFilter(o))
                 //if we have the object
                 if (Tree.IndexOf(o) != -1)
                 {
-                    //remove it
-                    Tree.RemoveObject(o);
-
                     //we don't have the object but do we have something in it's descendancy?
                     if (knownDescendancy != null)
                     {
                         var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
 
+                        //does tree have parent?
                         if (lastParent != null)
                             Tree.RefreshObject(lastParent); //refresh parent
+                        else
+                            //Tree has object but not parent, bad times, maybe BetterRouteExists? Refresh the object if it exists
+                            if (!exists)
+                                //remove it
+                                Tree.RemoveObject(o);
+                            else
+                                Tree.RefreshObject(o);
+                            
                     }
-                    else 
-                        if(exists)
-                            Tree.AddObject(o);
+                    else
+                        if (exists)
+                            Tree.RefreshObject(o); //it exists so refresh it!
+                        else
+                            //remove it
+                            Tree.RemoveObject(o);
                 }
         }
 

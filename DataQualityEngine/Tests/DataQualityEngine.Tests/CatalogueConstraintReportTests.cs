@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
@@ -157,7 +158,6 @@ namespace DataQualityEngine.Tests
 
 
         [Test]
-        [ExpectedException(ExpectedMessage = "There is no ValidatorXML specified for the Catalogue TestTable",MatchType=MessageMatch.Contains)]
         public void SupportsValidation_NoValidatorXML()
         {
 
@@ -167,11 +167,11 @@ namespace DataQualityEngine.Tests
             //it has no validator XML currently 
             Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
-            report.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>report.Check(new ThrowImmediatelyCheckNotifier()));
+            StringAssert.Contains("There is no ValidatorXML specified for the Catalogue TestTable",ex.Message);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "ValidatorXML for Catalogue TestTable could not be deserialized into a Validator", MatchType = MessageMatch.Contains)]
         public void SupportsValidation_BadXML()
         {
             CatalogueConstraintReport report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
@@ -180,11 +180,11 @@ namespace DataQualityEngine.Tests
             //it has no validator XML currently 
             Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
-            report.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>report.Check(new ThrowImmediatelyCheckNotifier()));
+            StringAssert.Contains("ValidatorXML for Catalogue TestTable could not be deserialized into a Validator",ex.Message);
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Could not find a column in the extraction SQL that would match TargetProperty chi")]
         public void SupportsValidation_MadeUpColumnName()
         {
 
@@ -194,7 +194,8 @@ namespace DataQualityEngine.Tests
             //it has no validator XML currently 
             Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
-            report.Check(new ThrowImmediatelyCheckNotifier());
+            var ex = Assert.Throws<Exception>(()=>report.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Could not find a column in the extraction SQL that would match TargetProperty chi",ex.Message);
         }
 
         [Test]

@@ -62,9 +62,9 @@ namespace HIC.Logging
 
         private void CheckFatalErrorStatusTable(ICheckNotifier notifier)
         {
-            Debug.Assert((int)FatalErrorLogging.FatalErrorStates.Outstanding == 1);
-            Debug.Assert((int)FatalErrorLogging.FatalErrorStates.Resolved == 2);
-            Debug.Assert((int) FatalErrorLogging.FatalErrorStates.Blocked == 3);
+            Debug.Assert((int)DataLoadInfo.FatalErrorStates.Outstanding == 1);
+            Debug.Assert((int)DataLoadInfo.FatalErrorStates.Resolved == 2);
+            Debug.Assert((int)DataLoadInfo.FatalErrorStates.Blocked == 3);
 
             var expectedFatalErrorStatusRows = new Dictionary<int, string>
             {

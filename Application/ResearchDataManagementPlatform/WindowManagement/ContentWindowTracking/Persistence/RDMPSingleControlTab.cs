@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Text;
+using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
@@ -25,5 +26,29 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
         public abstract void HandleUserRequestingTabRefresh(IActivateItems activator);
 
         public abstract void HandleUserRequestingEmphasis(IActivateItems activator);
+
+        public void ShowHelp(IActivateItems activator)
+        {
+            var typeDocs = activator.RepositoryLocator.CatalogueRepository.CommentStore;
+
+            StringBuilder sb = new StringBuilder();
+
+            string firstMatch = null;
+
+            foreach (var c in Controls)
+                if (typeDocs.ContainsKey(c.GetType().Name))
+                {
+                    if (firstMatch == null)
+                        firstMatch = c.GetType().Name;
+
+                    sb.AppendLine(c.GetType().Name);
+                    sb.AppendLine(typeDocs[c.GetType().Name]);
+                    sb.AppendLine();
+                }
+
+            if (sb.Length > 0)
+                WideMessageBox.Show(sb.ToString(), environmentDotStackTrace: null, isModalDialog: true, keywordNotToAdd: firstMatch, title: "Help");
+        
+        }
     }
 }

@@ -258,9 +258,9 @@
       <HintPath>..\..\packages\CommandLineParser.2.2.1\lib\net45\CommandLine.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\CsvHelper.2.11.0\lib\net40-client\CsvHelper.dll</HintPath>
+    <Reference Include="CsvHelper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
@@ -397,6 +397,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFileUI.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueItemDescription.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportShareDefinitionList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueItemExtractable.cs" />
@@ -413,6 +414,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
     <Compile Include="CommandExecution\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernancePeriod.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
@@ -466,6 +468,7 @@
     </Compile>
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureDefaultServers.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportLoggedDataToCsv.cs" />
     <Compile Include="MainFormUITabs\ConnectionStringKeywordUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1220,12 +1223,6 @@
     <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.Designer.cs">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ImportCloneOfCatalogueItem.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SimpleDialogs\ImportCloneOfCatalogueItem.Designer.cs">
-      <DependentUpon>ImportCloneOfCatalogueItem.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainFormUITabs\CatalogueItemTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1973,9 +1970,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.resx">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ImportCloneOfCatalogueItem.resx">
-      <DependentUpon>ImportCloneOfCatalogueItem.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\CatalogueItemTab.resx">
       <DependentUpon>CatalogueItemTab.cs</DependentUpon>

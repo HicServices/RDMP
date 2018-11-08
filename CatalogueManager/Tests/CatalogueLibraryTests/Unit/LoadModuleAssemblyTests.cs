@@ -48,7 +48,7 @@ namespace CatalogueLibraryTests.Unit
         [Test]
         public void TestMefWithConstructorParam()
         {
-            var expectedConstructorParameterValue = new DirectoryInfo(".");
+            var expectedConstructorParameterValue = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var expectedPath = expectedConstructorParameterValue.FullName;
 
             var catalog = new TypeCatalog(typeof(TestMef), typeof(TestMefImporter));
@@ -66,7 +66,7 @@ namespace CatalogueLibraryTests.Unit
         [Test]
         public void TestWithoutSeparateImporterClass()
         {
-            var expectedConstructorParameterValue = new DirectoryInfo(".");
+            var expectedConstructorParameterValue = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var expectedPath = expectedConstructorParameterValue.FullName;
 
             var catalog = new TypeCatalog(typeof(TestMef));
@@ -85,7 +85,7 @@ namespace CatalogueLibraryTests.Unit
         [Test]
         public void TestConstructorInjectionWithMultipleConstructors()
         {
-            var expectedConstructorParameterValue = new DirectoryInfo(".");
+            var expectedConstructorParameterValue = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var expectedFilepath = expectedConstructorParameterValue.FullName;
 
             var catalog = new TypeCatalog(typeof(Foo), typeof(FooImporter));

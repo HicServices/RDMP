@@ -50,11 +50,11 @@ namespace HIC.Logging.Tests.Integration
                 _logManager = new LogManager(lds);
 
                 _failedLoad = _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
-                _logManager.LogFatalError(_failedLoad, "", "");
+                _failedLoad.LogFatalError("", "");
                 _failedLoad.CloseAndMarkComplete();
 
                 _successfulLoad = _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
-                _logManager.LogProgress(_successfulLoad, ProgressLogging.ProgressEventType.OnProgress, "", "");
+                _successfulLoad.LogProgress(DataLoadInfo.ProgressEventType.OnProgress, "", "");
                 _successfulLoad.CloseAndMarkComplete();
 
                 var tableLoadInfo = _successfulLoad.CreateTableLoadInfo("ignoreme", "Nowhereland",
@@ -66,7 +66,7 @@ namespace HIC.Logging.Tests.Integration
                 tableLoadInfo.CloseAndArchive();
 
                 _anotherSuccessfulLoad = _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
-                _logManager.LogProgress(_anotherSuccessfulLoad, ProgressLogging.ProgressEventType.OnProgress, "", "");
+                _anotherSuccessfulLoad.LogProgress(DataLoadInfo.ProgressEventType.OnProgress, "", "");
                 _anotherSuccessfulLoad.CloseAndMarkComplete();
             }
             catch (Exception e)
@@ -82,7 +82,7 @@ namespace HIC.Logging.Tests.Integration
                 Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(_setupException,true));
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         protected void TearDown()
         {
             using (var conn = new SqlConnection(UnitTestLoggingConnectionString.ConnectionString))

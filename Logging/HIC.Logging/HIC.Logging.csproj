@@ -156,7 +156,6 @@
     <Compile Include="DataSource.cs" />
     <Compile Include="IDataLoadInfo.cs" />
     <Compile Include="ILogManager.cs" />
-    <Compile Include="IProgressLogging.cs" />
     <Compile Include="ITableLoadInfo.cs" />
     <Compile Include="Listeners\Extensions\CheckEventArgsExtensions.cs" />
     <Compile Include="Listeners\NLogListeners\NLogICheckNotifier.cs" />
@@ -176,8 +175,6 @@
     <Compile Include="PastEvents\ArchivalDataLoadInfo.cs" />
     <Compile Include="PastEvents\ArchivalProgressLog.cs" />
     <Compile Include="PastEvents\IArchivalLoggingRecordOfPastEvent.cs" />
-    <Compile Include="ProgressLogging.cs" />
-    <Compile Include="FatalErrorLogging.cs" />
     <Compile Include="DataLoadInfo.cs" />
     <Compile Include="TableLoadInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

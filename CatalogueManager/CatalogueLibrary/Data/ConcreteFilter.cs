@@ -20,11 +20,13 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public abstract class ConcreteFilter :  VersionedDatabaseEntity,IFilter, ICheckable
     {
+        /// <inheritdoc/>
         protected ConcreteFilter(IRepository repository,DbDataReader r) : base(repository, r)
         {
             
         }
-
+        
+        /// <inheritdoc/>
         protected ConcreteFilter():base()
         {
             
@@ -128,6 +130,11 @@ namespace CatalogueLibrary.Data
 
         private DatabaseType? _cachedDatabaseTypeAnswer;
 
+        /// <summary>
+        /// Returns the database provider type (e.g. MySql / Sql Server) that the filter is written for.  This is determined by what <see cref="GetColumnInfoIfExists"/>
+        /// it is declared against.
+        /// </summary>
+        /// <returns></returns>
         protected DatabaseType GetDatabaseType()
         {
             if (_cachedDatabaseTypeAnswer != null)

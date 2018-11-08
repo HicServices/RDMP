@@ -35,7 +35,6 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.tpUserFriendly = new System.Windows.Forms.TabPage();
             this.pbWhereIsDatabase = new System.Windows.Forms.PictureBox();
             this.lblStartupComplete1 = new System.Windows.Forms.Label();
-            this.llChoosePlatformDatabases = new System.Windows.Forms.LinkLabel();
             this.llException = new System.Windows.Forms.LinkLabel();
             this.lblProgress = new System.Windows.Forms.Label();
             this.pbLoadProgress = new System.Windows.Forms.ProgressBar();
@@ -47,17 +46,18 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblTier1 = new System.Windows.Forms.Label();
-            this.repositoryFinderUI1 = new CatalogueManager.TestsAndSetup.StartupUI.RepositoryFinderUI();
             this.flpTier1Databases = new System.Windows.Forms.FlowLayoutPanel();
-            this.Catalogue = new CatalogueManager.TestsAndSetup.StartupUI.ManagedDatabaseUI();
-            this.mefStartupUI1 = new CatalogueManager.TestsAndSetup.StartupUI.MEFStartupUI();
-            this.DataExport = new CatalogueManager.TestsAndSetup.StartupUI.ManagedDatabaseUI();
             this.pbPluginPatchersArrow = new System.Windows.Forms.PictureBox();
             this.lblStartupComplete2 = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.flpTier3Databases = new System.Windows.Forms.FlowLayoutPanel();
             this.flpTier2Databases = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnSetupPlatformDatabases = new System.Windows.Forms.Button();
+            this.repositoryFinderUI1 = new CatalogueManager.TestsAndSetup.StartupUI.RepositoryFinderUI();
+            this.Catalogue = new CatalogueManager.TestsAndSetup.StartupUI.ManagedDatabaseUI();
+            this.mefStartupUI1 = new CatalogueManager.TestsAndSetup.StartupUI.MEFStartupUI();
+            this.DataExport = new CatalogueManager.TestsAndSetup.StartupUI.ManagedDatabaseUI();
             this.tabControl1.SuspendLayout();
             this.tpUserFriendly.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbWhereIsDatabase)).BeginInit();
@@ -84,9 +84,9 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             // 
             // tpUserFriendly
             // 
+            this.tpUserFriendly.Controls.Add(this.btnSetupPlatformDatabases);
             this.tpUserFriendly.Controls.Add(this.pbWhereIsDatabase);
             this.tpUserFriendly.Controls.Add(this.lblStartupComplete1);
-            this.tpUserFriendly.Controls.Add(this.llChoosePlatformDatabases);
             this.tpUserFriendly.Controls.Add(this.llException);
             this.tpUserFriendly.Controls.Add(this.lblProgress);
             this.tpUserFriendly.Controls.Add(this.pbLoadProgress);
@@ -124,20 +124,6 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.lblStartupComplete1.Size = new System.Drawing.Size(524, 25);
             this.lblStartupComplete1.TabIndex = 4;
             this.lblStartupComplete1.Text = "Startup Complete... Closing in 5s (Esc to cancel)";
-            // 
-            // llChoosePlatformDatabases
-            // 
-            this.llChoosePlatformDatabases.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.llChoosePlatformDatabases.AutoSize = true;
-            this.llChoosePlatformDatabases.LinkColor = System.Drawing.Color.Blue;
-            this.llChoosePlatformDatabases.Location = new System.Drawing.Point(41, 510);
-            this.llChoosePlatformDatabases.Name = "llChoosePlatformDatabases";
-            this.llChoosePlatformDatabases.Size = new System.Drawing.Size(214, 13);
-            this.llChoosePlatformDatabases.TabIndex = 3;
-            this.llChoosePlatformDatabases.TabStop = true;
-            this.llChoosePlatformDatabases.Text = "Setup Catalogue / Data Export databases...";
-            this.llChoosePlatformDatabases.Visible = false;
-            this.llChoosePlatformDatabases.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llChoosePlatformDatabases_LinkClicked);
             // 
             // llException
             // 
@@ -219,13 +205,13 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.tpTechnical.Controls.Add(this.label3);
             this.tpTechnical.Controls.Add(this.label2);
             this.tpTechnical.Controls.Add(this.lblTier1);
-            this.tpTechnical.Controls.Add(this.repositoryFinderUI1);
             this.tpTechnical.Controls.Add(this.flpTier1Databases);
             this.tpTechnical.Controls.Add(this.pbPluginPatchersArrow);
             this.tpTechnical.Controls.Add(this.lblStartupComplete2);
             this.tpTechnical.Controls.Add(this.flowLayoutPanel1);
             this.tpTechnical.Controls.Add(this.flpTier3Databases);
             this.tpTechnical.Controls.Add(this.flpTier2Databases);
+            this.tpTechnical.Controls.Add(this.repositoryFinderUI1);
             this.tpTechnical.Location = new System.Drawing.Point(4, 22);
             this.tpTechnical.Name = "tpTechnical";
             this.tpTechnical.Padding = new System.Windows.Forms.Padding(3);
@@ -264,16 +250,6 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.lblTier1.TabIndex = 1;
             this.lblTier1.Text = "Tier 1";
             // 
-            // repositoryFinderUI1
-            // 
-            this.repositoryFinderUI1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.repositoryFinderUI1.BackColor = System.Drawing.Color.OldLace;
-            this.repositoryFinderUI1.Location = new System.Drawing.Point(0, 628);
-            this.repositoryFinderUI1.Name = "repositoryFinderUI1";
-            this.repositoryFinderUI1.Size = new System.Drawing.Size(997, 75);
-            this.repositoryFinderUI1.TabIndex = 0;
-            // 
             // flpTier1Databases
             // 
             this.flpTier1Databases.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -287,33 +263,6 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.flpTier1Databases.Name = "flpTier1Databases";
             this.flpTier1Databases.Size = new System.Drawing.Size(997, 170);
             this.flpTier1Databases.TabIndex = 8;
-            // 
-            // Catalogue
-            // 
-            this.Catalogue.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.Catalogue.Location = new System.Drawing.Point(3, 3);
-            this.Catalogue.Name = "Catalogue";
-            this.Catalogue.Size = new System.Drawing.Size(300, 166);
-            this.Catalogue.TabIndex = 2;
-            this.Catalogue.Visible = false;
-            // 
-            // mefStartupUI1
-            // 
-            this.mefStartupUI1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.mefStartupUI1.Location = new System.Drawing.Point(309, 3);
-            this.mefStartupUI1.Name = "mefStartupUI1";
-            this.mefStartupUI1.Size = new System.Drawing.Size(364, 166);
-            this.mefStartupUI1.TabIndex = 3;
-            this.mefStartupUI1.Visible = false;
-            // 
-            // DataExport
-            // 
-            this.DataExport.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.DataExport.Location = new System.Drawing.Point(679, 3);
-            this.DataExport.Name = "DataExport";
-            this.DataExport.Size = new System.Drawing.Size(300, 166);
-            this.DataExport.TabIndex = 2;
-            this.DataExport.Visible = false;
             // 
             // pbPluginPatchersArrow
             // 
@@ -381,6 +330,53 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.flpTier2Databases.Size = new System.Drawing.Size(994, 180);
             this.flpTier2Databases.TabIndex = 4;
             // 
+            // btnSetupPlatformDatabases
+            // 
+            this.btnSetupPlatformDatabases.Location = new System.Drawing.Point(370, 81);
+            this.btnSetupPlatformDatabases.Name = "btnSetupPlatformDatabases";
+            this.btnSetupPlatformDatabases.Size = new System.Drawing.Size(208, 23);
+            this.btnSetupPlatformDatabases.TabIndex = 6;
+            this.btnSetupPlatformDatabases.Text = "Setup Platform Databases";
+            this.btnSetupPlatformDatabases.UseVisualStyleBackColor = true;
+            this.btnSetupPlatformDatabases.Click += new System.EventHandler(this.btnSetupPlatformDatabases_Click);
+            // 
+            // repositoryFinderUI1
+            // 
+            this.repositoryFinderUI1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.repositoryFinderUI1.BackColor = System.Drawing.Color.OldLace;
+            this.repositoryFinderUI1.Location = new System.Drawing.Point(0, 628);
+            this.repositoryFinderUI1.Name = "repositoryFinderUI1";
+            this.repositoryFinderUI1.Size = new System.Drawing.Size(997, 75);
+            this.repositoryFinderUI1.TabIndex = 0;
+            // 
+            // Catalogue
+            // 
+            this.Catalogue.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.Catalogue.Location = new System.Drawing.Point(3, 3);
+            this.Catalogue.Name = "Catalogue";
+            this.Catalogue.Size = new System.Drawing.Size(300, 166);
+            this.Catalogue.TabIndex = 2;
+            this.Catalogue.Visible = false;
+            // 
+            // mefStartupUI1
+            // 
+            this.mefStartupUI1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.mefStartupUI1.Location = new System.Drawing.Point(309, 3);
+            this.mefStartupUI1.Name = "mefStartupUI1";
+            this.mefStartupUI1.Size = new System.Drawing.Size(364, 166);
+            this.mefStartupUI1.TabIndex = 3;
+            this.mefStartupUI1.Visible = false;
+            // 
+            // DataExport
+            // 
+            this.DataExport.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.DataExport.Location = new System.Drawing.Point(679, 3);
+            this.DataExport.Name = "DataExport";
+            this.DataExport.Size = new System.Drawing.Size(300, 166);
+            this.DataExport.TabIndex = 2;
+            this.DataExport.Visible = false;
+            // 
             // StartupUIMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -435,10 +431,10 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblStartupComplete1;
         private System.Windows.Forms.Label lblStartupComplete2;
-        private System.Windows.Forms.LinkLabel llChoosePlatformDatabases;
         private System.Windows.Forms.PictureBox pbWhereIsDatabase;
         private System.Windows.Forms.FlowLayoutPanel flpTier1Databases;
         private RepositoryFinderUI repositoryFinderUI1;
+        private System.Windows.Forms.Button btnSetupPlatformDatabases;
 
     }
 }

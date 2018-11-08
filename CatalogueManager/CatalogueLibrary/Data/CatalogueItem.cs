@@ -223,12 +223,21 @@ namespace CatalogueLibrary.Data
             get { return Repository.GetAllObjectsWithParent<CatalogueItemIssue>(this); }
         }
 
-        public bool IsColumnInfoCached()
+
+        internal bool IsColumnInfoCached()
         {
             return _knownColumnInfo.IsValueCreated;
         }
 
         #endregion
+
+        /// <summary>
+        /// Name of the parent <see cref="Catalogue"/>.  This property value will be cached once fetched for a given object thanks to Lazy/IInjectKnown&lt;Catalogue&gt;"/>.
+        /// </summary>
+        [UsefulProperty]
+        [NoMappingToDatabase]
+        [DoNotExtractProperty]
+        public string CatalogueName { get { return Catalogue.Name; }}
 
         /// <summary>
         /// Creates a new virtual column description for for a column in the dataset (<paramref name="parent"/>) supplied with the given Name.

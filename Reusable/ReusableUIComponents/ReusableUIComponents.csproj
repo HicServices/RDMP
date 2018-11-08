@@ -65,7 +65,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -134,6 +133,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CsvHelper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GraphX.Controls">
       <HintPath>..\..\packages\GraphX.2.2.0.2\lib\net40-client\GraphX.Controls.dll</HintPath>
     </Reference>
@@ -143,6 +146,7 @@
     <Reference Include="GraphX.PCL.Logic">
       <HintPath>..\..\packages\GraphX.2.2.0.2\lib\net40-client\GraphX.PCL.Logic.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
       <Private>True</Private>
@@ -197,6 +201,12 @@
     <Compile Include="ConnectionStringTextBox.cs" />
     <Compile Include="CommandExecution\ICommandExecutionFactory.cs" />
     <Compile Include="CommandExecution\ICommandFactory.cs" />
+    <Compile Include="DatabaseTypeUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DatabaseTypeUI.Designer.cs">
+      <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataTableViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -411,6 +421,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ChecksUI\PopupChecksUI.resx">
       <DependentUpon>PopupChecksUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DatabaseTypeUI.resx">
+      <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataTableViewer.resx">
       <DependentUpon>DataTableViewer.cs</DependentUpon>

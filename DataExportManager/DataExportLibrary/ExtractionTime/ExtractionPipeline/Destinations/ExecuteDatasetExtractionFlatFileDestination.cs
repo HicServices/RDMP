@@ -118,11 +118,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
         private void WriteBundleContents(IExtractableDatasetBundle datasetBundle, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
             var rootDir = _request.GetExtractionDirectory();
-            if (CleanExtractionFolderBeforeExtraction)
-            {
-                rootDir.Delete(true);
-                rootDir.Create();
-            }
             var supportingSQLFolder = new DirectoryInfo(Path.Combine(rootDir.FullName, SupportingSQLTable.ExtractionFolderName));
             var lookupDir = rootDir.CreateSubdirectory("Lookups");
                     
@@ -237,6 +232,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             }
 
+            if (CleanExtractionFolderBeforeExtraction)
+            {
+                var rootDir = _request.GetExtractionDirectory();
+                rootDir.Delete(true);
+                rootDir.Create();
+            }
             LinesWritten = 0;
 
             DirectoryPopulated = request.GetExtractionDirectory();

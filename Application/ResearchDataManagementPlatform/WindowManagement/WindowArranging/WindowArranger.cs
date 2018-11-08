@@ -74,17 +74,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(project, int.MaxValue));
             var activateDataExportItems = _activator as IActivateItems;
 
-            bool foundAtLeastOneConfiguration = false;
-
             if (activateDataExportItems != null)
             {
                 //execute all unreleased configurations... what could possibly go wrong?
                 foreach (var config in project.ExtractionConfigurations.Cast<ExtractionConfiguration>())
                     if (!config.IsReleased)
                         new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(config).Execute();
-
-                if(!foundAtLeastOneConfiguration)
-                    new ExecuteCommandActivate(_activator,project).Execute();
             }
         }
 
