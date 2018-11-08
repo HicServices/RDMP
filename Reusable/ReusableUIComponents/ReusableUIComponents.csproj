@@ -201,6 +201,12 @@
     <Compile Include="ConnectionStringTextBox.cs" />
     <Compile Include="CommandExecution\ICommandExecutionFactory.cs" />
     <Compile Include="CommandExecution\ICommandFactory.cs" />
+    <Compile Include="DatabaseTypeUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DatabaseTypeUI.Designer.cs">
+      <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataTableViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -415,6 +421,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ChecksUI\PopupChecksUI.resx">
       <DependentUpon>PopupChecksUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DatabaseTypeUI.resx">
+      <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataTableViewer.resx">
       <DependentUpon>DataTableViewer.cs</DependentUpon>

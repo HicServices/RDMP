@@ -45,6 +45,17 @@ namespace DataExportLibrary.Providers
             if (o is ExtractionConfiguration)
                 return DescribeProblem((ExtractionConfiguration) o);
 
+            if (o is ExternalCohortTable)
+                return DescribeProblem((ExternalCohortTable) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(ExternalCohortTable externalCohortTable)
+        {
+            if (_exportChildProvider != null && _exportChildProvider.BlackListedSources.Contains(externalCohortTable))
+                return "Cohort Source database was unreachable";
+
             return null;
         }
 

@@ -22,7 +22,7 @@ namespace ReusableUIComponents
     public partial class ServerDatabaseTableSelector : UserControl
     {
         private bool _allowTableValuedFunctionSelection;
-        private bool _isDatabaseTypeLocked = false;
+
         public string Server
         {
             get { return cbxServer.Text; }
@@ -66,15 +66,10 @@ namespace ReusableUIComponents
         CancellationTokenSource _workerRefreshTablesToken;
         private List<DiscoveredTable> _listTablesAsyncResult;
         
-        DatabaseTypeIconProvider _databaseIconProvider;
-
         //constructor
         public ServerDatabaseTableSelector()
         {
-            _databaseIconProvider = new DatabaseTypeIconProvider();
-
             InitializeComponent();
-            ddDatabaseType.DataSource = Enum.GetValues(typeof (DatabaseType));
 
             _workerRefreshDatabases.DoWork += UpdateDatabaseListAsync;
             _workerRefreshDatabases.WorkerSupportsCancellation = true;
@@ -84,13 +79,13 @@ namespace ReusableUIComponents
             _workerRefreshTables.WorkerSupportsCancellation = true;
             _workerRefreshTables.RunWorkerCompleted += UpdateTablesAsyncCompleted;
             
-            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType);
-            
             var r = new RecentHistoryOfControls(cbxServer, new Guid("01ccc304-0686-4145-86a5-cc0468d40027"));
             r.AddHistoryAsItemsToComboBox(cbxServer);
 
             var r2 = new RecentHistoryOfControls(cbxDatabase, new Guid("e1a4e7a8-3f7a-4018-8ff5-2fd661ee06a3"));
             r2.AddHistoryAsItemsToComboBox(cbxDatabase);
+
+            _helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
         }
 
         
@@ -232,7 +227,9 @@ namespace ReusableUIComponents
         }
 
         public DatabaseType DatabaseType {
-            get { return (DatabaseType) ddDatabaseType.SelectedValue; }
+            get { return databaseTypeUI1.DatabaseType; }
+            set { databaseTypeUI1.DatabaseType = value; }
+
         }
 
         public DiscoveredServer Result { get { return new DiscoveredServer(GetBuilder()); } }
@@ -355,7 +352,7 @@ namespace ReusableUIComponents
 
             cbxServer.Enabled = !isLoading;
             cbxDatabase.Enabled = !isLoading;
-            ddDatabaseType.Enabled = !isLoading && !_isDatabaseTypeLocked;
+            databaseTypeUI1.Enabled = !isLoading;
             btnRefreshDatabases.Enabled = !isLoading;
             btnRefreshTables.Enabled = !isLoading;
 
@@ -398,17 +395,7 @@ namespace ReusableUIComponents
         {
             return _helper.GetConnectionStringBuilder(cbxServer.Text, cbxDatabase.Text, tbUsername.Text, tbPassword.Text);
         }
-
-        private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            _helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
-
-            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType);
-
-            UpdateDatabaseList();
-        }
-
-
+        
         private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             AbortWorkers();
@@ -437,6 +424,15 @@ namespace ReusableUIComponents
             UpdateDatabaseList();
             cbxDatabase.Text = databaseName;
         }
+        public void SetExplicitDatabase(string serverName, string databaseName, string username, string password)
+        {
+            cbxServer.Text = serverName;
+            tbUsername.Text = username;
+            tbPassword.Text = password;
+            
+            UpdateDatabaseList();
+            cbxDatabase.Text = databaseName;
+        }
 
         private void cbxDatabase_TextChanged(object sender, EventArgs e)
         {
@@ -444,11 +440,16 @@ namespace ReusableUIComponents
                 SelectionChanged();
         }
 
+        private void databaseTypeUI1_DatabaseTypeChanged(object sender, EventArgs e)
+        {
+            _helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
+            UpdateDatabaseList();
+        }
+
         public void LockDatabaseType(DatabaseType databaseType)
         {
-            ddDatabaseType.SelectedItem = databaseType;
-            ddDatabaseType.Enabled = false;
-            _isDatabaseTypeLocked = true;
+            databaseTypeUI1.LockDatabaseType(databaseType);
         }
+
     }
 }

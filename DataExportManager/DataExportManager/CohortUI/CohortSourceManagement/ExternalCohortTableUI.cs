@@ -33,32 +33,12 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
                 _bLoading = true;
                 _externalCohortTable = value;
 
-                if (value == null)
-                {
-                    tbID.Text = "";
-                    tbName.Text = "";
-                    tbServer.Text = "";
-                    tbDatabase.Text = "";
-
-                    tbUsername.Text = "";
-                    tbPassword.Text = "";
-
-                    tbTableName.Text = "";
-                    tbPrivateIdentifierField.Text = "";
-                    tbReleaseIdentifierField.Text = "";
-                    tbDefinitionTableForeignKeyField.Text = "";
-
-                    tbDefinitionTableName.Text = "";
-                }
-                else
                 {
                     tbID.Text = value.ID.ToString();
                     tbName.Text = value.Name;
-                    tbServer.Text = value.Server;
-                    tbDatabase.Text = value.Database;
 
-                    tbUsername.Text = value.Username;
-                    tbPassword.Text = value.Password;
+                    serverDatabaseTableSelector1.DatabaseType = value.DatabaseType;
+                    serverDatabaseTableSelector1.SetExplicitDatabase(value.Server, value.Database, value.Username, value.GetDecryptedPassword());
 
                     tbTableName.Text = value.TableName;
                     tbPrivateIdentifierField.Text = value.PrivateIdentifierField;
@@ -68,7 +48,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
                     tbDefinitionTableName.Text = value.DefinitionTableName;
                 }
 
-                btnSave.Enabled = false;
                 _bLoading = false;
             }
         }
@@ -78,14 +57,16 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             InitializeComponent();
 
             AssociatedCollection = RDMPCollection.SavedCohorts;
+
+            serverDatabaseTableSelector1.HideTableComponents();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             if(ExternalCohortTable != null)
             {
+                SaveDatabaseSettings();
                 ExternalCohortTable.SaveToDatabase();
-                btnSave.Enabled = false;
                 _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(ExternalCohortTable));
             }
         }
@@ -101,16 +82,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
 
             if(tbSender == tbName)
                 ExternalCohortTable.Name = value;
-            if (tbSender == tbServer)
-                ExternalCohortTable.Server = value;
-            if (tbSender == tbDatabase)
-                ExternalCohortTable.Database = value;
-
-            if (tbSender == tbUsername)
-                ExternalCohortTable.Username = value;
-            if (tbSender == tbPassword)
-                ExternalCohortTable.Password = value;
-
             if (tbSender == tbTableName)
                 ExternalCohortTable.TableName = value;
             if (tbSender == tbPrivateIdentifierField)
@@ -121,13 +92,26 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
                 ExternalCohortTable.DefinitionTableForeignKeyField = value;
             if (tbSender == tbDefinitionTableName)
                 ExternalCohortTable.DefinitionTableName = value;
-
-            btnSave.Enabled = true;
         }
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
+            SaveDatabaseSettings();
             checksUI1.StartChecking(ExternalCohortTable);
+        }
+
+        private void SaveDatabaseSettings()
+        {
+            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+
+            if(db == null)
+                return;
+
+            ExternalCohortTable.Server = db.Server.Name;
+            ExternalCohortTable.Database = db.GetRuntimeName();
+            ExternalCohortTable.Username = db.Server.ExplicitUsernameIfAny;
+            ExternalCohortTable.Password = db.Server.ExplicitPasswordIfAny;
+            ExternalCohortTable.DatabaseType = db.Server.DatabaseType;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ExternalCohortTable databaseObject)

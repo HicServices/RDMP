@@ -184,7 +184,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
             _privateIdentifier = syntax.GetRuntimeName(target.PrivateIdentifierField);
             _releaseIdentifier = syntax.GetRuntimeName(target.ReleaseIdentifierField);
 
-            _fk = Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField;
+            _fk = syntax.GetRuntimeName(Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField);
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "CohortCreationRequest spotted, we will look for columns " + _privateIdentifier + " and " + _releaseIdentifier + " (both of which must be in the pipeline before we will allow the cohort to be submitted)"));
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "id column in table " + Request.NewCohortDefinition.LocationOfCohort.TableName + " is " + Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField));
