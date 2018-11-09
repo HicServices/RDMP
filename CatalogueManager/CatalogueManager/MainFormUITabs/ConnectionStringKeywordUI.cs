@@ -56,6 +56,8 @@ namespace CatalogueManager.MainFormUITabs
             var type = (DatabaseType)ddDatabaseType.SelectedValue;
             _keyword.DatabaseType = type;
             pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(type);
+            
+            Check();
         }
 
         public ObjectSaverButton GetObjectSaverButton()
