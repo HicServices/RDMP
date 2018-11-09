@@ -15,13 +15,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
         private readonly IActivateItems _activator;
         private readonly RDMPSingleControlTab _tab;
 
-        public RDMPSingleControlTabMenu(IActivateItems activator, RDMPSingleControlTab tab, ContentWindowTracker windowTracker)
+        public RDMPSingleControlTabMenu(IActivateItems activator, RDMPSingleControlTab tab, WindowManager windowManager)
         {
             _activator = activator;
             _tab = tab;
             Items.Add("Close Tab", null, (s, e) => tab.Close());
-            Items.Add("Close All Tabs", null, (s, e) => windowTracker.CloseAllWindows(tab));
-            Items.Add("Close All But This", null, (s, e) => windowTracker.CloseAllButThis(tab));
+            Items.Add("Close All Tabs", null, (s, e) => windowManager.CloseAllWindows(tab));
+            Items.Add("Close All But This", null, (s, e) => windowManager.CloseAllButThis(tab));
 
             Items.Add("Show", null, (s, e) => tab.HandleUserRequestingEmphasis(activator));
             Items.Add("Refresh", FamFamFamIcons.arrow_refresh, (s, e) => _tab.HandleUserRequestingTabRefresh(_activator));

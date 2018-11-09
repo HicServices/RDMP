@@ -33,42 +33,33 @@
   <Comment CommentText="Examples of tree collections">
     <Position X="23.558" Y="9.82" Height="0.319" Width="4.707" />
   </Comment>
-  <Class Name="ResearchDataManagementPlatform.WindowManagement.ToolboxWindowManager">
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.WindowManager">
     <Position X="0.5" Y="0.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>AIAAQAAAABECkAAIAAABAAICAQD0AEBAAAAAAAgEAAA=</HashCode>
-      <FileName>WindowManagement\ToolboxWindowManager.cs</FileName>
+      <HashCode>AIAAQAAAABMGkgAoAAAhBAoCAQD0BEACAAACAEhEQAA=</HashCode>
+      <FileName>WindowManagement\WindowManager.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="ContentManager" />
+      <Field Name="ActivateItems" />
       <Field Name="_windowFactory" />
       <Property Name="MainForm" />
+      <Property Name="Navigation" />
     </ShowAsAssociation>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.WindowFactory" Collapsed="true">
-    <Position X="5" Y="1.25" Width="1.5" />
+    <Position X="5.25" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gAAAIAAAAAUQAAAAgAiAAAAAAAAAAEAAAAACAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAUQAAAAAAAAAAAAAAAAAEAAAAAAAAAAAQA=</HashCode>
       <FileName>WindowManagement\WindowFactory.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="WindowTracker" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowManager" Collapsed="true">
-    <Position X="5" Y="2.75" Width="2" />
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ActivateItems" Collapsed="true">
+    <Position X="5.25" Y="2.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAQAACgAAAECghDAAAAAoCAgYQQggwNhFFAIQMFAAAA=</HashCode>
-      <FileName>WindowManagement\ContentWindowManager.cs</FileName>
+      <HashCode>AAQAACgAAAECghDAAAAAoCAgYQQggwNhFFAAQMFAAQA=</HashCode>
+      <FileName>WindowManagement\ActivateItems.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.ContentWindowTracker" Collapsed="true">
-    <Position X="8" Y="1.25" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAABIEAgAAAAAgBAgAAAAABAACAAAAAEAAAAA=</HashCode>
-      <FileName>WindowManagement\ContentWindowTracking\ContentWindowTracker.cs</FileName>
-    </TypeIdentifier>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence.RDMPSingleControlTab" Collapsed="true">
     <Position X="15.25" Y="2" Width="3" />
@@ -173,6 +164,13 @@
     <Position X="26.25" Y="9" Width="2" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.NavigationTrack" Collapsed="true">
+    <Position X="5.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAACAAAAAAAAAAAAASAEAAAAAAgACAA=</HashCode>
+      <FileName>WindowManagement\ContentWindowTracking\NavigationTrack.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Interface Name="CatalogueManager.ItemActivation.IActivateItems" Collapsed="true">
     <Position X="10.25" Y="5.5" Width="2.75" />

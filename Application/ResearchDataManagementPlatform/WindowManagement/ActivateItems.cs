@@ -54,12 +54,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// Central class for RDMP main application, this class provides acceess to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child 
     /// provision etc.  See IActivateItems for full details
     /// </summary>
-    public class ContentWindowManager : IActivateItems, IRefreshBusSubscriber
+    public class ActivateItems : IActivateItems, IRefreshBusSubscriber
     {
         public event EmphasiseItemHandler Emphasise;
 
         private readonly DockPanel _mainDockPanel;
-        private readonly ToolboxWindowManager _toolboxWindowManager;
+        private readonly WindowManager _windowManager;
 
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
         public WindowFactory WindowFactory { get; private set; }
@@ -82,14 +82,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ICommandFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
         
-
         public List<IProblemProvider> ProblemProviders { get; private set; }
 
-        public ContentWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, ToolboxWindowManager toolboxWindowManager, ICheckNotifier globalErrorCheckNotifier)
+        public ActivateItems(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier)
         {
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
-            _toolboxWindowManager = toolboxWindowManager;
+            _windowManager = windowManager;
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
             RepositoryLocator = repositoryLocator;
 
@@ -111,7 +110,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
 
-            WindowArranger = new WindowArranger(this,_toolboxWindowManager,_mainDockPanel);
+            WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
             
             CommandFactory = new RDMPCommandFactory();
             CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
@@ -276,7 +275,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 root = request.ObjectToEmphasise; //assume maybe o is a root object itself?
 
             if (root != null)
-                _toolboxWindowManager.ShowCollectionWhichSupportsRootObjectType(root);
+                _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
 
             //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
             var h = Emphasise;
@@ -353,7 +352,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if (collection == RDMPCollection.None)
                 return false;
 
-            return _toolboxWindowManager.GetCollectionForRootObject(rootObject) == collection;
+            return _windowManager.GetCollectionForRootObject(rootObject) == collection;
         }
 
         /// <summary>
@@ -443,7 +442,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private bool PopExisting(Type windowType, IMapsDirectlyToDatabaseTable databaseObject, out Control existingHostedControlInstance)
         {
-            var existing = WindowFactory.WindowTracker.GetActiveWindowIfAnyFor(windowType, databaseObject);
+            var existing = _windowManager.GetActiveWindowIfAnyFor(windowType, databaseObject);
             existingHostedControlInstance = null;
 
             if (existing != null)

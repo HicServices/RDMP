@@ -41,7 +41,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             Assembly.Load(typeof(RacewayRenderAreaUI).Assembly.FullName);
             Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
-            Assembly.Load(typeof(ContentWindowManager).Assembly.FullName);
+            Assembly.Load(typeof(ActivateItems).Assembly.FullName);
 
             DocumentationReportFormsAndControlsUI controlsFinding = new DocumentationReportFormsAndControlsUI(null);
             controlsFinding.RepositoryLocator = RepositoryLocator;
@@ -77,7 +77,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
             Assembly.Load(typeof(RacewayRenderAreaUI).Assembly.FullName);
             Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
-            Assembly.Load(typeof(ContentWindowManager).Assembly.FullName);
+            Assembly.Load(typeof(ActivateItems).Assembly.FullName);
 
             //commands
             Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ICommandExecution),

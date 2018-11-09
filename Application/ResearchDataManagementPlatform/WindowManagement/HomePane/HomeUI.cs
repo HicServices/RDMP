@@ -38,13 +38,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
     /// </summary>
     public partial class HomeUI : UserControl,ILifetimeSubscriber
     {
-        private readonly ToolboxWindowManager _windowManager;
+        private readonly WindowManager _windowManager;
         private readonly AtomicCommandUIFactory _uiFactory;
 
-        public HomeUI(ToolboxWindowManager windowManager)
+        public HomeUI(WindowManager windowManager)
         {
             this._windowManager = windowManager;
-            _uiFactory = new AtomicCommandUIFactory(windowManager.ContentManager);
+            _uiFactory = new AtomicCommandUIFactory(windowManager.ActivateItems);
             InitializeComponent();
         }
 
@@ -55,7 +55,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             tlpDataExport.Controls.Clear();
             tlpDataLoad.Controls.Clear();
 
-            var activator = _windowManager.ContentManager;
+            var activator = _windowManager.ActivateItems;
             
             /////////////////////////////////////Data Management/////////////////////////////////
             AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(activator),tlpDataManagement);
@@ -162,7 +162,7 @@ tlpCohortCreation);
 
             BuildCommandLists();
 
-            _windowManager.ContentManager.RefreshBus.EstablishLifetimeSubscription(this);
+            _windowManager.ActivateItems.RefreshBus.EstablishLifetimeSubscription(this);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

@@ -16,6 +16,7 @@ using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 {
@@ -24,7 +25,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
     /// </summary>
     public partial class RDMPTaskBar : UserControl
     {
-        private ToolboxWindowManager _manager;
+        private WindowManager _manager;
         
         private const string CreateNewDashboard = "<<New Dashboard>>";
         private const string CreateNewLayout = "<<New Layout>>";
@@ -54,18 +55,25 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnLoad.BackgroundImage = provider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
             
             btnFavourites.Image = CatalogueIcons.Favourite;
-
         }
 
-        public void SetWindowManager(ToolboxWindowManager manager)
+        public void SetWindowManager(WindowManager manager)
         {
             _manager = manager;
+            _manager.TabChanged += _manager_TabChanged;
             btnDataExport.Enabled = manager.RepositoryLocator.DataExportRepository != null;
             
             ReCreateDropDowns();
-
+            
             SetupToolTipText();
         }
+
+        void _manager_TabChanged(object sender, IDockContent newTab)
+        {
+            btnBack.Enabled = _manager.Navigation.CanBack();
+            btnForward.Enabled = _manager.Navigation.CanForward();
+        }
+
 
         private void SetupToolTipText()
         {
@@ -73,7 +81,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             try
             {
-                var store = _manager.ContentManager.RepositoryLocator.CatalogueRepository.CommentStore;
+                var store = _manager.ActivateItems.RepositoryLocator.CatalogueRepository.CommentStore;
 
                 btnHome.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(HomeUI));
                 btnCatalogues.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(CatalogueCollectionUI));
@@ -87,7 +95,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             }
             catch (Exception e)
             {
-                _manager.ContentManager.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to setup tool tips", CheckResult.Fail, e));
+                _manager.ActivateItems.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to setup tool tips", CheckResult.Fail, e));
             }
 
         }
@@ -188,7 +196,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             if (toOpen != null)
             {
-                var cmd = new ExecuteCommandActivate(_manager.ContentManager, toOpen);
+                var cmd = new ExecuteCommandActivate(_manager.ActivateItems, toOpen);
                 cmd.Execute();
             }
 
@@ -218,7 +226,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             {
                 var layout = new WindowLayout(_manager.RepositoryLocator.CatalogueRepository, dialog.ResultText,xml);
 
-                var cmd = new ExecuteCommandActivate(_manager.ContentManager, layout);
+                var cmd = new ExecuteCommandActivate(_manager.ActivateItems, layout);
                 cmd.Execute();
 
                 ReCreateDropDowns();
@@ -232,7 +240,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             {
                 var dash = new DashboardLayout(_manager.RepositoryLocator.CatalogueRepository, dialog.ResultText);
                 
-                var cmd = new ExecuteCommandActivate(_manager.ContentManager, dash);
+                var cmd = new ExecuteCommandActivate(_manager.ActivateItems, dash);
                 cmd.Execute();
 
                 ReCreateDropDowns();
@@ -257,7 +265,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             var d = cbx.SelectedItem as IDeleteable;
             if (d != null)
             {
-                _manager.ContentManager.DeleteWithConfirmation(this, d);
+                _manager.ActivateItems.DeleteWithConfirmation(this, d);
                 ReCreateDropDowns();
             }
         }
@@ -274,5 +282,27 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             }
         }
 
+        private void btnBack_ButtonClick(object sender, EventArgs e)
+        {
+            _manager.Navigation.Back(true);
+        }
+
+        private void btnForward_Click(object sender, EventArgs e)
+        {
+            _manager.Navigation.Forward(true);
+        }
+
+        private void btnBack_DropDownOpening(object sender, EventArgs e)
+        {
+            btnBack.DropDownItems.Clear();
+
+            int backIndex = 1;
+
+            foreach (DockContent history in _manager.Navigation.GetHistory(16))
+            {
+                var i = backIndex++;
+                btnBack.DropDownItems.Add(history.TabText,null,(a,b)=>_manager.Navigation.Back(i,true));
+            }
+        }
     }
 }

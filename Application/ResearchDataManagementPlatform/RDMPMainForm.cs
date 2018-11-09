@@ -40,7 +40,7 @@ namespace ResearchDataManagementPlatform
                 new LicenseUI().ShowDialog();
         }
 
-        ToolboxWindowManager _windowManager;
+        WindowManager _windowManager;
         readonly RefreshBus _refreshBus = new RefreshBus();
         private FileInfo _persistenceFile;
         private ICheckNotifier _globalErrorCheckNotifier;
@@ -54,7 +54,7 @@ namespace ResearchDataManagementPlatform
             _globalErrorCheckNotifier = exceptionCounter;
             _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
-            _windowManager = new ToolboxWindowManager(this,_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
+            _windowManager = new WindowManager(this,_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
             _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
@@ -196,7 +196,7 @@ namespace ResearchDataManagementPlatform
                 if (toolbox.HasValue)
                 {
                     var toolboxInstance = _windowManager.Create(toolbox.Value);
-                    toolboxInstance.LoadPersistString(_windowManager.ContentManager,persiststring);
+                    toolboxInstance.LoadPersistString(_windowManager.ActivateItems,persiststring);
                     return toolboxInstance;
                 }
 
@@ -204,7 +204,7 @@ namespace ResearchDataManagementPlatform
                                   _persistenceFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
 
                 if (instruction != null)
-                    return _windowManager.ContentManager.Activate(instruction);
+                    return _windowManager.ActivateItems.Activate(instruction);
             }
             catch (Exception e)
             {

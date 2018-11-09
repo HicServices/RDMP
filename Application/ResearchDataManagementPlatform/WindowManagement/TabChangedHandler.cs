@@ -7,5 +7,5 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="newTab">The newly focused tab</param>
-    public delegate void TabChangedHandler(object sender, DockContent newTab);
+    public delegate void TabChangedHandler(object sender, IDockContent newTab);
 }

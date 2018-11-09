@@ -44,6 +44,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btnBack = new System.Windows.Forms.ToolStripSplitButton();
+            this.btnForward = new System.Windows.Forms.ToolStripButton();
             this.btnFavourites = new System.Windows.Forms.ToolStripButton();
             this.btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
             this.btnDeleteDash = new System.Windows.Forms.ToolStripButton();
@@ -143,6 +145,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnBack,
+            this.btnForward,
             this.btnHome,
             this.toolStripSeparator1,
             this.btnFavourites,
@@ -164,9 +168,32 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnDeleteLayout});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1278, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1319, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // btnBack
+            // 
+            this.btnBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnBack.Enabled = false;
+            this.btnBack.Image = ((System.Drawing.Image)(resources.GetObject("btnBack.Image")));
+            this.btnBack.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(32, 22);
+            this.btnBack.Text = "Back";
+            this.btnBack.ButtonClick += new System.EventHandler(this.btnBack_ButtonClick);
+            this.btnBack.DropDownOpening += new System.EventHandler(this.btnBack_DropDownOpening);
+            // 
+            // btnForward
+            // 
+            this.btnForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnForward.Enabled = false;
+            this.btnForward.Image = ((System.Drawing.Image)(resources.GetObject("btnForward.Image")));
+            this.btnForward.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnForward.Name = "btnForward";
+            this.btnForward.Size = new System.Drawing.Size(23, 22);
+            this.btnForward.Text = "Forward";
+            this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
             // 
             // btnFavourites
             // 
@@ -238,7 +265,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.toolStrip1);
             this.Name = "RDMPTaskBar";
-            this.Size = new System.Drawing.Size(1278, 25);
+            this.Size = new System.Drawing.Size(1319, 25);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -268,6 +295,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStripButton btnDeleteDash;
         private System.Windows.Forms.ToolStripButton btnDeleteLayout;
         private System.Windows.Forms.ToolStripButton btnSaveWindowLayout;
+        private System.Windows.Forms.ToolStripButton btnForward;
+        private System.Windows.Forms.ToolStripSplitButton btnBack;
 
     }
 }

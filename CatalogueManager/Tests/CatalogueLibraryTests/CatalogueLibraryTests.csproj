@@ -434,6 +434,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Integration\CommitAssemblyTest.cd" />
     <None Include="packages.config" />
     <None Include="Resources\InvalidPlugin.dll" />

@@ -28,6 +28,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// </summary>
     public class WindowFactory
     {
+        private readonly WindowManager _windowManager;
+
         /// <summary>
         /// Location of the Catalogue / Data export repository databases (and allows access to repository objects)
         /// </summary>
@@ -35,16 +37,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private readonly IconFactory _iconFactory = new IconFactory();
 
-        public ContentWindowTracker WindowTracker { get; private set; }
-
-        List<DockContent> activationQueue = new List<DockContent>();
-        public event TabChangedHandler TabChanged;
-
-        public WindowFactory(IRDMPPlatformRepositoryServiceLocator repositoryLocator, DockPanel mainDockPanel)
+        
+        public WindowFactory(IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowManager windowManager)
         {
+            _windowManager = windowManager;
             RepositoryLocator = repositoryLocator;
-            WindowTracker = new ContentWindowTracker();
-            mainDockPanel.ActiveDocumentChanged += ActiveDocumentChanged;
         }
 
         public PersistableToolboxDockContent Create(IActivateItems activator,Control control, string label, Bitmap image, RDMPCollection collection)
@@ -59,7 +56,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Bitmap image, IMapsDirectlyToDatabaseTable databaseObject)
         {
             var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject,refreshBus);
-            WindowTracker.AddWindow(content);
+            _windowManager.AddWindow(content);
 
             AddControlToDockContent(activator, (Control)control,content,"Loading...",image);
             
@@ -75,7 +72,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             AddControlToDockContent(activator,(Control)control, content,content.TabText, image);
             
             //add to the window tracker
-            WindowTracker.AddWindow(content);
+            _windowManager.AddWindow(content);
 
             //return the tab
             return content;
@@ -98,7 +95,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             AddControlToDockContent(activator, control, content,label, image);
 
-            WindowTracker.AddAdhocWindow(content);
+            _windowManager.AddAdhocWindow(content);
 
             return content;
         }
@@ -122,50 +119,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 content.FormClosing += consult.ConsultAboutClosing;
 
             content.KeyPreview = true;
-            content.FormClosed += FormClosed; //when content is closed activate the last focused document
             
             var tab = content as RDMPSingleControlTab;
 
             if (tab != null)
-                content.TabPageContextMenuStrip = new RDMPSingleControlTabMenu(activator, tab, WindowTracker);
+                content.TabPageContextMenuStrip = new RDMPSingleControlTabMenu(activator, tab, _windowManager);
         }
-        
-        private void ActiveDocumentChanged(object sender, EventArgs e)
-        {
-            var docContent = (DockContent)((DockPanel) sender).ActiveDocument;
-
-            if (TabChanged != null)
-                TabChanged(this, docContent);
-
-            if(docContent == null)
-                return;
-            
-            //whatever document got activated, bump it to the top of the list so that any close event makes it the next document to be activated
-            activationQueue.Remove(docContent);
-            activationQueue.Add(docContent);
-        }
-        private void FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //remove the closed form
-            activationQueue.Remove((DockContent) sender);
-            
-            //and any other mysteriously dead forms
-            PruneList();
-
-            //then get the last one the user focused
-            var last = activationQueue.LastOrDefault();
-
-            if(last != null)
-                last.Activate();//and pop it up
-        }
-
-        private void PruneList()
-        {
-            //get rid of any DockContent that have died somehow or are not visible
-            foreach (var dc in activationQueue.ToArray())
-                if (dc.IsDisposed || !dc.IsHandleCreated || dc.IsHidden)
-                    activationQueue.Remove(dc);
-        }
-
     }
 }
