@@ -64,11 +64,16 @@ namespace RDMPStartup.PluginManagement
                     report.Status = PluginAssemblyStatus.BadAssembly;
                     report.BadAssemblyException = Catalog.BadAssembliesDictionary[file.FullName];
                 }
+                else if (!Catalog.GoodAssemblies.ContainsKey(file.FullName))
+                {
+                    report.Status = PluginAssemblyStatus.FileMissing;
+                    report.BadAssemblyException =
+                        new Exception("File " + file.Name +
+                                      " is not in the Good or Bad Assembly lists of the SafeDirectoryCatalog.");
+                    ProgressMade(this, new PluginAnalyserProgressEventArgs(progress, maxProgress, null));
+                }
                 else
                 {
-                    if (!Catalog.GoodAssemblies.ContainsKey(file.FullName))
-                        throw new Exception("File " + file.Name + " is not in the Good or Bad Assembly lists of the SafeDirectoryCatalog, why?");
-
                     report.Assembly = Catalog.GoodAssemblies[file.FullName];
 
                     //if it has parts
