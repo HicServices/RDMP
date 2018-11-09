@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
-using DataExportLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
-using ScintillaNET;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -49,12 +44,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// <typeparam name="T"></typeparam>
         /// <param name="availableObjects"></param>
         /// <returns></returns>
-        protected T SelectOne<T>(IList<T> availableObjects) where T : DatabaseEntity
+        protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null) where T : DatabaseEntity
         {
             if (availableObjects.Count == 1)
                 return availableObjects[0];
 
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            dialog.SetInitialFilter(initialSearchText);
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 return (T)dialog.Selected;
@@ -69,7 +65,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// <param name="availableObjects"></param>
         /// <param name="selected"></param>
         /// <returns></returns>
-        protected bool SelectOne<T>(IList<T> availableObjects, out T selected) where T : DatabaseEntity
+        protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null) where T : DatabaseEntity
         {
             if (availableObjects.Count == 1)
             {
@@ -78,7 +74,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             }
 
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
-            
+            dialog.SetInitialFilter(initialSearchText);
+
             selected = dialog.ShowDialog() == DialogResult.OK? (T) dialog.Selected:null;
 
             return selected != null;
@@ -89,8 +86,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="repository"></param>
+        /// <param name="initialSearchText"></param>
         /// <returns></returns>
-        protected T SelectOne<T>(IRepository repository) where T : DatabaseEntity
+        protected T SelectOne<T>(IRepository repository, string initialSearchText = null) where T : DatabaseEntity
         {
             var availableObjects = repository.GetAllObjects<T>();
             
@@ -98,6 +96,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 return availableObjects[0];
 
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            dialog.SetInitialFilter(initialSearchText);
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 return (T)dialog.Selected;
@@ -112,12 +111,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         /// <param name="repository"></param>
         /// <param name="selected"></param>
         /// <returns></returns>
-        protected bool SelectOne<T>(IRepository repository, out T selected) where T : DatabaseEntity
+        protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null) where T : DatabaseEntity
         {
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(repository.GetAllObjects<T>(), false, false);
+            dialog.SetInitialFilter(initialSearchText);
 
             selected = dialog.ShowDialog() == DialogResult.OK ? (T)dialog.Selected : null;
-
+            
             return selected != null;
         }
         protected DiscoveredTable SelectTable(bool allowDatabaseCreation,string taskDescription)
@@ -132,11 +132,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return dialog.SelectedTable;
         }
 
-        protected bool SelectMany<T>(T[] available, out T[] selected) where T:DatabaseEntity
+        protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
         {
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(available, false, false);
             dialog.AllowMultiSelect = true;
-
+            dialog.SetInitialFilter(initialSearchText);
             dialog.ShowDialog();
             
             if (dialog.DialogResult != DialogResult.OK)
