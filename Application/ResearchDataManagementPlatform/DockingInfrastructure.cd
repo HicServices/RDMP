@@ -35,6 +35,9 @@
   </Comment>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.WindowManager">
     <Position X="0.5" Y="0.5" Width="3" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>AIAAQAAAABMGkgAoAAAhBAoCAQD0BEACAAACAEhEQAA=</HashCode>
       <FileName>WindowManagement\WindowManager.cs</FileName>
@@ -42,8 +45,8 @@
     <ShowAsAssociation>
       <Field Name="ActivateItems" />
       <Field Name="_windowFactory" />
-      <Property Name="MainForm" />
       <Property Name="Navigation" />
+      <Property Name="MainForm" />
     </ShowAsAssociation>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.WindowFactory" Collapsed="true">
@@ -168,7 +171,7 @@
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.NavigationTrack" Collapsed="true">
     <Position X="5.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAAACAAAAAAAAAAAAASAEAAAAAAgACAA=</HashCode>
+      <HashCode>AQCAAAAIAAAAAABCIAAAAAAAAAgABSAEAAAAAAgACAI=</HashCode>
       <FileName>WindowManagement\ContentWindowTracking\NavigationTrack.cs</FileName>
     </TypeIdentifier>
   </Class>

@@ -4,6 +4,9 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
 {
+    /// <summary>
+    /// Handles tracking which tabs the user switched between for Forward / Backward navigation.
+    /// </summary>
     public class NavigationTrack
     {
         private Stack<DockContent> _navigationStack = new Stack<DockContent>();
@@ -13,7 +16,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
         private bool _suspended = false;
 
         /// <summary>
-        /// The last tab navigated to
+        /// The last tab navigated to or null if no tabs are open
         /// </summary>
         public DockContent CurrentTab
         {
@@ -79,6 +82,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
             }
         }
 
+        /// <summary>
+        /// Returns and optionally Activates the previous tab in the history.  This changes the location history
+        /// </summary>
+        /// <param name="show"></param>
+        /// <returns></returns>
         public DockContent Back(bool show)
         {
             Prune();
@@ -103,6 +111,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
             return newHead;
         }
 
+        /// <summary>
+        /// Returns and optionally Activates the next tab in the history.  This changes the location history
+        /// 
+        /// <para>Does nothing if you have not already gone <see cref="Back(bool)"/></para>
+        /// </summary>
+        /// <param name="show"></param>
+        /// <returns></returns>
         public DockContent Forward(bool show)
         {
             Prune();
@@ -119,10 +134,19 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
             return r;
         }
 
+        /// <summary>
+        /// Returns true if there are tabs in the history that can be navigated back to
+        /// </summary>
+        /// <returns></returns>
         public bool CanBack()
         {
             return GetHistory(1).Any();
         }
+
+        /// <summary>
+        /// Returns true if there are tabs in the history that can be navigated forwards to
+        /// </summary>
+        /// <returns></returns>
         public bool CanForward()
         {
             Prune();
@@ -130,6 +154,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
             return _forward.Count > 0;
         }
 
+        /// <summary>
+        /// Returns x history tabs that <see cref="Back(bool)"/> would go to if called.  This does not affect the state of the history
+        /// </summary>
+        /// <returns></returns>
         public DockContent[] GetHistory(int maxToReturn)
         {
             Prune();
@@ -142,6 +170,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
             return peek.ParentForm != null;
         }
 
+        /// <summary>
+        /// Records that the user has made a new navigation to a fresh page.  This will invalidate any Forward history
+        /// </summary>
+        /// <param name="newTab"></param>
         public void Append(DockContent newTab)
         {
             //don't push the tab if we are suspended
@@ -158,12 +190,18 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking
             _navigationStack.Push(newTab);
         }
 
-        
+        /// <summary>
+        /// Changes the behaviour of <see cref="Append"/> to do nothing, use this if you want to activate a tab or load a layout without
+        /// populating the history / affecting the current history.
+        /// </summary>
         public void Suspend()
         {
             _suspended = true;
         }
 
+        /// <summary>
+        /// Ends the suspended state created by <see cref="Suspend"/>
+        /// </summary>
         public void Resume()
         {
             _suspended = false;

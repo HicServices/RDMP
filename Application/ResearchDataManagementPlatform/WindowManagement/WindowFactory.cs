@@ -23,8 +23,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 {
     /// <summary>
     /// Translates Controls into docked tabs (DockContent).  Provides overloads for the two main control Types IRDMPSingleDatabaseObjectControl and 
-    /// IObjectCollectionControl (for RDMPCollectionUI see ToolboxWindowManager).  Also tracks tab activation (focus) and ensures that when a tab is closed
-    /// a suitable tab is activated (brought to focus) in it's place.
+    /// IObjectCollectionControl (for <see cref="RDMPCollectionUI"/> see <see cref="WindowManager"/>).
     /// </summary>
     public class WindowFactory
     {
