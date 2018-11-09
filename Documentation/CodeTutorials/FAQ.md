@@ -3,6 +3,7 @@
 1. [Can RDMP Load UnTyped Data?](#untyped)
 1. [How does RDMP deal with Csv/text files?](#csv)
 1. [How does RDMP handle / translate untyped, C# and Database Types](#typetranslation)
+1. [What is a Catalogue?](#whatisacatalogue)
 1. [How do I stop some nodes being reordered in RDMPCollectionUIs?](#reorder)
 2. [How do I add new nodes to RDMPCollectionUIs?](#addNewNodes)
 3. [How do platform databases / database objects work?](#databaseObjects)
@@ -25,6 +26,28 @@ RDMP supports files delimited by any character (tab separated, pipe separated, c
 <a name="typetranslation"></a>
 ### How does RDMP handle / translate untyped, C# and Database Types?
 The [TypeTranslation namespace handles this](./TypeTranslation.md).
+
+<a name="whatisacatalogue"></a>
+### What is a Catalogue?
+A Catalogue is RDMP's representation of one of your datasets e.g. 'Hospital Admissions'.  A Catalogue consists of:
+
+* Human readable names/descriptions of what is in the dataset it is
+* A collection of items mapped to underlying columns in your database.  Each of these:
+	* Can be extractable or not, or extractable only with SpecialApproval
+	* Can involve a transform on the underlying column (E.g. hash on extraction, UPPER etc)
+	* Have a human readable name/description of the column/transform
+	* Can have curated WHERE filters defined on them which can be reused for project extraction/cohort generation etc
+* Validation rules for each of the extractable items in the dataset
+* Graph definitions for viewing the contents of the dataset (and testing filters / cohorts built)
+* Attachments which help understand the dataset (e.g. a pdf file)
+
+![PerformanceCounter](Images/FAQ/Catalogue.png)
+
+A Catalogue can be a part of project extraction configurations, used in cohort identification configurations.  They can be marked as Deprecated, Internal etc.
+
+The separation of dataset and underlying table allows you to have multiple datasets both of which draw data from the same table.  It also makes it easier to handle moving a table/database (e.g. to a new server or database) / renaming etc.
+
+Internally Catalogues are stored in the Catalogue table of the RDMP platform database (e.g. RDMP_Catalogue).  The ID field of this table is used by other objects to reference it (e.g. CatalogueItem.Catalogue_ID).  
 
 <a name="reorder"></a>
 ### How do I stop some nodes being reordered in RDMPCollectionUIs?
