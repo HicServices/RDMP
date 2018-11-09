@@ -518,74 +518,57 @@ namespace Diagnostics
                                         //is it identical?
                     if (IsSameDatabase(externalDatabaseServer,discoveredDatabase.Server.Name,discoveredDatabase.GetRuntimeName()))
                         return externalDatabaseServer;
+                    
+                    //remove existing dependencies
+                    IEnumerable<ANOTable> anoTableDependencies = repository.GetAllObjects<ANOTable>().Where(a => a.Server_ID == externalDatabaseServer.ID);
 
-
-                    if (SilentRunning ||//if running in silent, assume recreating the entity
-                        MessageBox.Show(
-                            "Found existing ExternalDatabaseServer called '" + nameForServer + "', Recreate it? It may have different Server/Database name than you have chosen so deleting it is highly recommended.",
-                            "Recreate Server Reference?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    foreach (ANOTable dependency in anoTableDependencies)
                     {
-
-                        //remove existing dependencies
-                        IEnumerable<ANOTable> anoTableDependencies = repository.GetAllObjects<ANOTable>().Where(a => a.Server_ID == externalDatabaseServer.ID);
-
-                        foreach (ANOTable dependency in anoTableDependencies)
+                        if(dependency.TableName.Equals(anoIdentifierTable))
                         {
-                            if(dependency.TableName.Equals(anoIdentifierTable))
+                            foreach (ColumnInfo columnInfo in repository.GetAllObjects<ColumnInfo>().Where(c => c.ANOTable_ID == dependency.ID))
                             {
-                                foreach (ColumnInfo columnInfo in repository.GetAllObjects<ColumnInfo>().Where(c => c.ANOTable_ID == dependency.ID))
-                                {
-                                    //clear it's anotable
-                                    columnInfo.ANOTable_ID = null;
-                                    columnInfo.SaveToDatabase();
-                                }
+                                //clear it's anotable
+                                columnInfo.ANOTable_ID = null;
+                                columnInfo.SaveToDatabase();
+                            }
 
-                                //delete the anotable
-                                dependency.DeleteInDatabase();
-                            }
-                            else
-                            {
-                                notifier.OnCheckPerformed(new CheckEventArgs(
-                                    "Failed to delete reference to external server " + externalDatabaseServer.Name +
-                                    " because of dependency on ANOTable " + dependency.TableName +
-                                    " (we were reluctant to delete the dependency because it's name did not match expectations)",
-                                    CheckResult.Fail, null));
-                            }
+                            //delete the anotable
+                            dependency.DeleteInDatabase();
                         }
-
-                        var cataloguesUsingServer = repository.GetAllCatalogues(true)
-                            .Where(
-                                c =>
-                                    c.LiveLoggingServer_ID == externalDatabaseServer.ID ||
-                                    c.TestLoggingServer_ID == externalDatabaseServer.ID).ToArray();
-
-                        foreach (Catalogue user in cataloguesUsingServer)
+                        else
                         {
-                            //if it is one we created! then it is either a hangover from previous execution or there is a default on the live/test server field
-                            if (user.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName)  || user.Name.Equals(CatalogueName))
-                            {
-
-                                user.LiveLoggingServer_ID = null;
-                                user.TestLoggingServer_ID = null;
-                                user.SaveToDatabase();
-                            }
-                            else
-                                notifier.OnCheckPerformed(new CheckEventArgs(
-                                    "Unable to delete ExternalLoggingServer because Catalogue " + user +
-                                    " uses it for logging", CheckResult.Fail, null));
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                                "Failed to delete reference to external server " + externalDatabaseServer.Name +
+                                " because of dependency on ANOTable " + dependency.TableName +
+                                " (we were reluctant to delete the dependency because it's name did not match expectations)",
+                                CheckResult.Fail, null));
                         }
+                    }
+
+                    var cataloguesUsingServer = repository.GetAllCatalogues(true)
+                        .Where(
+                            c =>
+                                c.LiveLoggingServer_ID == externalDatabaseServer.ID ||
+                                c.TestLoggingServer_ID == externalDatabaseServer.ID).ToArray();
+
+                    foreach (Catalogue user in cataloguesUsingServer)
+                    {
+                        //if it is one we created! then it is either a hangover from previous execution or there is a default on the live/test server field
+                        if (user.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName)  || user.Name.Equals(CatalogueName))
+                        {
+
+                            user.LiveLoggingServer_ID = null;
+                            user.TestLoggingServer_ID = null;
+                            user.SaveToDatabase();
+                        }
+                        else
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                                "Unable to delete ExternalLoggingServer because Catalogue " + user +
+                                " uses it for logging", CheckResult.Fail, null));
+                    }
                         
-                        externalDatabaseServer.DeleteInDatabase();//user wants to recreate it so delete it and drop through
-                    }
-                    else
-                    {     
-                        //warn user
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            "User opted not to delete existing reference to server " + nameForServer +
-                            " so proceeding to make it the server for the test data catalogue", CheckResult.Warning,
-                            null));
-                        return externalDatabaseServer;
-                    }
+                    externalDatabaseServer.DeleteInDatabase();//user wants to recreate it so delete it and drop through
                     
                 }
 
@@ -878,27 +861,16 @@ namespace Diagnostics
                 //tell user it exists
                 bool nukeProjectFolder = notifier.OnCheckPerformed(new CheckEventArgs("HICProjectDirectory dataset folder " + projectFolder.FullName+ " already exists", CheckResult.Warning, null,"Delete and recreate folder '" + projectFolder.FullName +"'"));
 
-                //user wants to nuke it
                 if (nukeProjectFolder)
-                    if (SilentRunning ||//if running in silent, assume recreating the entity
-                        //give him another opertunity to say no
-                        MessageBox.Show(
-                            "Are you ABSOLUTELY sure you want to delete folder " + projectFolder.FullName + "?",
-                            "Confirm DELETE", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                            try
-                            {
-                                projectFolder.Delete(true); //delete it and let the method progress (to create again)
-                            } catch (Exception e2)
-                            {
-                                //even the delete failed! - wow this is one messed up environment!
-                                notifier.OnCheckPerformed(new CheckEventArgs("Could not delete folder " + projectFolder.FullName, CheckResult.Fail, e2));
-                                return false;
-                            }
-                        else
-                            return false; //user changed his mind about deleting the folder
-                    else
-                        return false; //user did not want to delete the project folder
-                
+                    try
+                    {
+                        projectFolder.Delete(true); //delete it and let the method progress (to create again)
+                    } catch (Exception e2)
+                    {
+                        //even the delete failed! - wow this is one messed up environment!
+                        notifier.OnCheckPerformed(new CheckEventArgs("Could not delete folder " + projectFolder.FullName, CheckResult.Fail, e2));
+                        return false;
+                    }
             }
 
             //folder does not exist or we just nuked it
@@ -957,26 +929,23 @@ namespace Diagnostics
 
             //give user the option to delete the LoadMetadata again
             if(_loadMetaData != null)
-                if (SilentRunning ||//if running in silent, assume recreating the entity
-                    MessageBox.Show("LoadMetadata found in Catalogue called " + _loadMetaData.Name + ", do you want to delete it and recreate it? (Recommended)","Recreate LoadMetadata",MessageBoxButtons.YesNo)==DialogResult.Yes)
+                try
                 {
-                    try
-                    {
-                        //disassociate load
-                        DemographyCatalogue.LoadMetadata_ID = null;
-                        DemographyCatalogue.SaveToDatabase();
+                    //disassociate load
+                    DemographyCatalogue.LoadMetadata_ID = null;
+                    DemographyCatalogue.SaveToDatabase();
 
-                        //delete load
-                        _loadMetaData.DeleteInDatabase();
-                        _loadMetaData = null;
-                        notifier.OnCheckPerformed(new CheckEventArgs("Deleted LoadMetadata " + LoadMetaDataName + " ready for re-creation", CheckResult.Success, null));
-                    }
-                    catch (Exception e)
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs("Failed to delete LoadMetadata", CheckResult.Fail, e));
-                        return false;
-                    }
+                    //delete load
+                    _loadMetaData.DeleteInDatabase();
+                    _loadMetaData = null;
+                    notifier.OnCheckPerformed(new CheckEventArgs("Deleted LoadMetadata " + LoadMetaDataName + " ready for re-creation", CheckResult.Success, null));
                 }
+                catch (Exception e)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Failed to delete LoadMetadata", CheckResult.Fail, e));
+                    return false;
+                }
+                
 
             //load metadata does not already exist, create it
             if (_loadMetaData == null)
@@ -1029,32 +998,22 @@ namespace Diagnostics
                 DemographyCatalogue = repository.GetAllCatalogues().SingleOrDefault(cata => cata.Name.Equals(CatalogueName));
                 
                 if (DemographyCatalogue != null)
-                       if(SilentRunning ||//if running in silent, assume recreating the entity
-                           MessageBox.Show(
-                        "Found that Catalogue " + DemographyCatalogue.Name + " already existed, Delete and recreate it?",
-                        "ReCreate Catalogue?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                       {
+                {
+                    DemographyCatalogue.DeleteInDatabase();
 
-                           DemographyCatalogue.DeleteInDatabase();
+                    //also delete old reference to it
+                    try
+                    {
+                        foreach (var dataSet in RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>()
+                                .Where(e => e.Catalogue_ID == DemographyCatalogue.ID))
+                            dataSet.DeleteInDatabase();
+                    }
+                    catch (Exception e)
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs("Could not delete old ExtractableDataset which referenced the old Catalogue (this will likely leave a reference to 'Catalogue Deleted' in your DataExportManager application", CheckResult.Warning, e));
+                    }
 
-                           //also delete old reference to it
-                           try
-                           {
-                               foreach (var dataSet in RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>()
-                                       .Where(e => e.Catalogue_ID == DemographyCatalogue.ID))
-                                   dataSet.DeleteInDatabase();
-                           }
-                           catch (Exception e)
-                           {
-                               notifier.OnCheckPerformed(new CheckEventArgs("Could not delete old ExtractableDataset which referenced the old Catalogue (this will likely leave a reference to 'Catalogue Deleted' in your DataExportManager application", CheckResult.Warning, e));
-                           }
-
-                       }
-                        else
-                        {
-                            notifier.OnCheckPerformed(new CheckEventArgs("User opted not to delete existing Catalogue " + DemographyCatalogue.Name + ", proceeding with TestDataset creation", CheckResult.Warning, null));
-                            return true;
-                        }
+                }
 
                 //there was no existing catalogue or we opted to delete and recreate catalogue
                 DemographyCatalogue = new Catalogue(repository, CatalogueName);

@@ -74,9 +74,7 @@ namespace DataLoadEngineTests.Integration
                 (SqlConnectionStringBuilder) ANOStore_Database.Server.Builder,
                 (SqlConnectionStringBuilder) IdentifierDump_Database.Server.Builder,
                 RepositoryLocator);
-
-            stage1_setupCatalogue.SilentRunning = true;
-
+            
             try
             {
                 stage1_setupCatalogue.Check(new AcceptAllCheckNotifier());

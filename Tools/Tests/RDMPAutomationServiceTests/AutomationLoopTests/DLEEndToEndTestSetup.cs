@@ -47,8 +47,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             var datasetFolder = _testFolder.CreateSubdirectory("TestDataset");
             
             _stage1_setupCatalogue = new UserAcceptanceTestEnvironment((SqlConnectionStringBuilder) ServerICanCreateRandomDatabasesAndTablesOn.Builder, datasetFolder.FullName, UnitTestLoggingConnectionString, "Internal", null, null, RepositoryLocator);
-            _stage1_setupCatalogue.SilentRunning = true;
-
+            
             //create it all
             _stage1_setupCatalogue.Check(new AcceptAllCheckNotifier());
 
