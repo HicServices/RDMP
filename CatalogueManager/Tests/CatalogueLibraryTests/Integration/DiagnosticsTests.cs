@@ -30,7 +30,7 @@ namespace CatalogueLibraryTests.Integration
                 "Internal",
                 null,
                 null, 
-                RepositoryLocator) {SilentRunning = true};
+                RepositoryLocator);
 
             testEnvironment.Check(this);
 
