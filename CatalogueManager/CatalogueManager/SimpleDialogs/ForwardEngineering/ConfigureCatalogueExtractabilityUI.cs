@@ -366,10 +366,10 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             if (!eis.Any())
             {
-                MessageBox.Show("You have not marked any columns as extractable, try selecting an ExtractionCategory for your columns");
-                return;
+                if(MessageBox.Show("You have not marked any columns as extractable, are you sure you want to create a dataset with no extractable columns?","Create with no extractable columns?",MessageBoxButtons.YesNo) == DialogResult.No)
+                    return;
             }
-
+            else
             if (eis.Any(ei=>ei.IsExtractionIdentifier))
                 FinaliseExtractability();
             else
