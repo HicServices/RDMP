@@ -82,7 +82,15 @@ namespace Tests.Common
 
         public DatabaseTests()
         {
-            RepositoryLocator = new DatabaseCreationRepositoryFinder(TestDatabaseSettings.ServerName, TestDatabaseNames.Prefix);
+
+            var opts = new DatabaseCreationProgramOptions()
+            {
+                ServerName = TestDatabaseSettings.ServerName,
+                Prefix = TestDatabaseNames.Prefix
+            };
+
+            
+            RepositoryLocator = new DatabaseCreationRepositoryFinder(opts);
 
             Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + RepositoryLocator.CatalogueRepository.DiscoveredServer.Name + " Database=" + RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
             Assert.IsTrue(RepositoryLocator.CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
@@ -147,7 +155,13 @@ namespace Tests.Common
 
         private SqlConnectionStringBuilder CreateServerPointerInCatalogue(ServerDefaults defaults, string prefix, string databaseName, ServerDefaults.PermissableDefaults defaultToSet,Assembly creator)
         {
-            var builder = DatabaseCreationProgram.GetBuilder(TestDatabaseSettings.ServerName, prefix, databaseName);
+            var opts = new DatabaseCreationProgramOptions()
+            {
+                ServerName = TestDatabaseSettings.ServerName,
+                Prefix = prefix
+            };
+
+            var builder = opts.GetBuilder(databaseName);
 
             if (string.IsNullOrWhiteSpace(databaseName))
                 builder.InitialCatalog = "";

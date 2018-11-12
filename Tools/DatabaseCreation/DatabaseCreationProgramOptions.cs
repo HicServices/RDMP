@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using CommandLine;
 using CommandLine.Text;
 
@@ -15,6 +16,12 @@ namespace DatabaseCreation
         
         [Value(1, Required = true, HelpText = "The prefix to append to all databases created")]
         public string Prefix { get; set; }
+
+        [Option('u', HelpText = "Username for sql authentication (Optional)")]
+        public string Username { get; set; }
+
+        [Option('p', HelpText = "Password for sql authentication (Optional)")]
+        public string Password { get; set; }
 
         [Option('b', "Binary Collation", Default = false, HelpText = "Create the databases with Binary Collation")]
         public bool BinaryCollation { get; set; }
@@ -33,7 +40,25 @@ namespace DatabaseCreation
                 yield return new Example("Normal Scenario", new DatabaseCreationProgramOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_"});
                 yield return new Example("Drop existing", new DatabaseCreationProgramOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true });
                 yield return new Example("Binary Collation", new DatabaseCreationProgramOptions { ServerName = @"localhost\sqlexpress",Prefix =  "TEST_" , DropDatabases = true,BinaryCollation =true });
+                yield return new Example("Drop existing", new DatabaseCreationProgramOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", Username = "sa", Password = "lawl", DropDatabases = true });
             }
+        }
+
+        public SqlConnectionStringBuilder GetBuilder(string databaseName)
+        {
+         var builder = new SqlConnectionStringBuilder();
+            builder.DataSource = ServerName;
+            builder.InitialCatalog = (Prefix ?? "") + databaseName;
+
+            if (!string.IsNullOrWhiteSpace(Username))
+            {
+                builder.UserID = Username;
+                builder.Password = Password;
+            }
+            else
+                builder.IntegratedSecurity = true;
+
+            return builder;
         }
     }
 }

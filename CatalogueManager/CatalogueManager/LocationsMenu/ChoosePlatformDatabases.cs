@@ -8,6 +8,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup;
 using CatalogueManager.Tutorials;
+using CommandLine;
 using DatabaseCreation;
 using Diagnostics;
 using RDMPStartup;
@@ -265,11 +266,17 @@ namespace CatalogueManager.LocationsMenu
 
                 Console.SetOut(new StringWriter(sb));
 
+                var opts = new DatabaseCreationProgramOptions();
+                opts.ServerName = tbSuiteServer.Text;
+                opts.Prefix = tbDatabasePrefix.Text;
+                opts.Username = tbUsername.Text;
+                opts.Password = tbPassword.Text;
+
                 var task = new Task(() =>
                 {
                     try
                     {
-                        DatabaseCreationProgram.Main(new string[] {tbSuiteServer.Text, tbDatabasePrefix.Text});
+                        DatabaseCreationProgram.RunOptionsAndReturnExitCode(opts);
                     }
                     catch (Exception ex)
                     {
@@ -300,10 +307,8 @@ namespace CatalogueManager.LocationsMenu
 
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Finished Creating Platform Databases", CheckResult.Success));
 
-                var cata = DatabaseCreationProgram.GetBuilder(tbSuiteServer.Text, tbDatabasePrefix.Text,
-                    DatabaseCreationProgram.DefaultCatalogueDatabaseName);
-                var export = DatabaseCreationProgram.GetBuilder(tbSuiteServer.Text, tbDatabasePrefix.Text,
-                    DatabaseCreationProgram.DefaultDataExportDatabaseName);
+                var cata = opts.GetBuilder(DatabaseCreationProgram.DefaultCatalogueDatabaseName);
+                var export = opts.GetBuilder(DatabaseCreationProgram.DefaultDataExportDatabaseName);
                 
                 UserSettings.CatalogueConnectionString = cata.ConnectionString;
                 UserSettings.DataExportConnectionString = export.ConnectionString;
@@ -355,6 +360,11 @@ namespace CatalogueManager.LocationsMenu
             dialog.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
             if (dialog.ShowDialog() == DialogResult.OK)
                 tbDataExportManagerConnectionString.Text = dialog.SelectedDatabase.Server.Builder.ConnectionString;
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

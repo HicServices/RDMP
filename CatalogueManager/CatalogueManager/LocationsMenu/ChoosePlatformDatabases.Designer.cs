@@ -57,6 +57,11 @@ namespace CatalogueManager.LocationsMenu
             this.gbCreateNew = new System.Windows.Forms.GroupBox();
             this.btnBack1 = new System.Windows.Forms.Button();
             this.pResults = new System.Windows.Forms.Panel();
+            this.tbUsername = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbPassword = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.gbUseExisting.SuspendLayout();
             this.pReferenceADataExport.SuspendLayout();
             this.pReferenceACatalogue.SuspendLayout();
@@ -234,7 +239,7 @@ namespace CatalogueManager.LocationsMenu
             this.btnCreateSuite.Location = new System.Drawing.Point(452, 19);
             this.btnCreateSuite.Name = "btnCreateSuite";
             this.btnCreateSuite.Size = new System.Drawing.Size(107, 23);
-            this.btnCreateSuite.TabIndex = 5;
+            this.btnCreateSuite.TabIndex = 2;
             this.btnCreateSuite.Text = "Create";
             this.btnCreateSuite.UseVisualStyleBackColor = true;
             this.btnCreateSuite.Click += new System.EventHandler(this.btnCreateSuite_Click);
@@ -253,7 +258,7 @@ namespace CatalogueManager.LocationsMenu
             this.tbSuiteServer.Location = new System.Drawing.Point(59, 20);
             this.tbSuiteServer.Name = "tbSuiteServer";
             this.tbSuiteServer.Size = new System.Drawing.Size(143, 20);
-            this.tbSuiteServer.TabIndex = 2;
+            this.tbSuiteServer.TabIndex = 0;
             this.tbSuiteServer.Text = "localhost\\sqlexpress";
             // 
             // tbDatabasePrefix
@@ -261,7 +266,7 @@ namespace CatalogueManager.LocationsMenu
             this.tbDatabasePrefix.Location = new System.Drawing.Point(304, 21);
             this.tbDatabasePrefix.Name = "tbDatabasePrefix";
             this.tbDatabasePrefix.Size = new System.Drawing.Size(143, 20);
-            this.tbDatabasePrefix.TabIndex = 4;
+            this.tbDatabasePrefix.TabIndex = 1;
             this.tbDatabasePrefix.Text = "RDMP_";
             // 
             // label6
@@ -314,6 +319,11 @@ namespace CatalogueManager.LocationsMenu
             // 
             // gbCreateNew
             // 
+            this.gbCreateNew.Controls.Add(this.label9);
+            this.gbCreateNew.Controls.Add(this.tbPassword);
+            this.gbCreateNew.Controls.Add(this.label4);
+            this.gbCreateNew.Controls.Add(this.tbUsername);
+            this.gbCreateNew.Controls.Add(this.label3);
             this.gbCreateNew.Controls.Add(this.tbSuiteServer);
             this.gbCreateNew.Controls.Add(this.btnBack1);
             this.gbCreateNew.Controls.Add(this.tbDatabasePrefix);
@@ -322,7 +332,7 @@ namespace CatalogueManager.LocationsMenu
             this.gbCreateNew.Controls.Add(this.label6);
             this.gbCreateNew.Location = new System.Drawing.Point(479, 407);
             this.gbCreateNew.Name = "gbCreateNew";
-            this.gbCreateNew.Size = new System.Drawing.Size(761, 100);
+            this.gbCreateNew.Size = new System.Drawing.Size(761, 131);
             this.gbCreateNew.TabIndex = 15;
             this.gbCreateNew.TabStop = false;
             this.gbCreateNew.Text = "Create New Platform Databases";
@@ -331,10 +341,10 @@ namespace CatalogueManager.LocationsMenu
             // btnBack1
             // 
             this.btnBack1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBack1.Location = new System.Drawing.Point(6, 68);
+            this.btnBack1.Location = new System.Drawing.Point(6, 99);
             this.btnBack1.Name = "btnBack1";
             this.btnBack1.Size = new System.Drawing.Size(75, 23);
-            this.btnBack1.TabIndex = 0;
+            this.btnBack1.TabIndex = 5;
             this.btnBack1.Text = "<< Back";
             this.btnBack1.UseVisualStyleBackColor = true;
             this.btnBack1.Click += new System.EventHandler(this.btnBack_Click);
@@ -347,6 +357,51 @@ namespace CatalogueManager.LocationsMenu
             this.pResults.Name = "pResults";
             this.pResults.Size = new System.Drawing.Size(749, 410);
             this.pResults.TabIndex = 16;
+            // 
+            // tbUsername
+            // 
+            this.tbUsername.Location = new System.Drawing.Point(76, 47);
+            this.tbUsername.Name = "tbUsername";
+            this.tbUsername.Size = new System.Drawing.Size(143, 20);
+            this.tbUsername.TabIndex = 3;
+            this.tbUsername.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 50);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(62, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "*Username:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(221, 50);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(60, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "*Password:";
+            // 
+            // tbPassword
+            // 
+            this.tbPassword.Location = new System.Drawing.Point(285, 47);
+            this.tbPassword.Name = "tbPassword";
+            this.tbPassword.Size = new System.Drawing.Size(143, 20);
+            this.tbPassword.TabIndex = 4;
+            this.tbPassword.UseSystemPasswordChar = true;
+            this.tbPassword.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(12, 70);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(500, 13);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "(* Username and Password are Optional.  If omitted then Integrated Security will " +
+    "be used - recommended)";
             // 
             // ChoosePlatformDatabases
             // 
@@ -405,5 +460,10 @@ namespace CatalogueManager.LocationsMenu
         private System.Windows.Forms.Button btnBack2;
         private System.Windows.Forms.Button btnBrowseForDataExport;
         private System.Windows.Forms.Panel pResults;
+        private System.Windows.Forms.TextBox tbUsername;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox tbPassword;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label9;
     }
 }
