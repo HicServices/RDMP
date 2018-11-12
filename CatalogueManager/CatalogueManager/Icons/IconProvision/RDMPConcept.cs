@@ -160,6 +160,9 @@ namespace CatalogueManager.Icons.IconProvision
 
         AllGovernanceNode,
         GovernancePeriod,
-        GovernanceDocument
+        GovernanceDocument,
+
+        AllProjectCohortIdentificationConfigurationsNode,
+        AllFreeCohortIdentificationConfigurationsNode
     }
 }

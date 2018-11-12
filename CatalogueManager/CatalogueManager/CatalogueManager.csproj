@@ -1554,6 +1554,8 @@
     <None Include="Icons\AllStandardRegexesNode.png" />
     <None Include="Icons\AllPipelinesNode.png" />
     <None Include="Icons\AllGovernanceNode.png" />
+    <None Include="Icons\AllProjectCohortIdentificationConfigurationsNode.png" />
+    <None Include="Icons\AllFreeCohortIdentificationConfigurationsNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

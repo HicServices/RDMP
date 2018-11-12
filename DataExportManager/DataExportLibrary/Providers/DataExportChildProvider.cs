@@ -6,6 +6,7 @@ using CachingEngine.Factories;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.CohortNodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.CohortCreationPipeline;
@@ -77,6 +78,14 @@ namespace DataExportLibrary.Providers
         /// </summary>
         public Dictionary<int,List<ExtractableColumn>> ExtractionConfigurationToExtractableColumnsDictionary = new Dictionary<int, List<ExtractableColumn>>();
 
+        /// <summary>
+        /// ID of all CohortIdentificationConfiguration which have an ProjectCohortIdentificationConfigurationAssociation declared on them (i.e. the CIC is used with one or more Projects)
+        /// </summary>
+        private HashSet<int> _cicAssociations;
+
+        public AllFreeCohortIdentificationConfigurationsNode AllFreeCohortIdentificationConfigurationsNode = new AllFreeCohortIdentificationConfigurationsNode();
+        public AllProjectCohortIdentificationConfigurationsNode AllProjectCohortIdentificationConfigurationsNode = new AllProjectCohortIdentificationConfigurationsNode();
+        
         public IEnumerable<ExtractableColumn> AllExtractableColumns {get { return ExtractionConfigurationToExtractableColumnsDictionary.SelectMany(kvp => kvp.Value); }}
 
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
@@ -86,9 +95,14 @@ namespace DataExportLibrary.Providers
             var dataExportRepository = (DataExportRepository)repositoryLocator.DataExportRepository;
 
             AllProjectAssociatedCics = GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>(dataExportRepository);
+
+            _cicAssociations = new HashSet<int>(AllProjectAssociatedCics.Select(a => a.CohortIdentificationConfiguration_ID));
+
             CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
             ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
-
+            
+            AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => _cicAssociations.Contains(cic.ID))), new DescendancyList(AllProjectCohortIdentificationConfigurationsNode));
+            AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => !_cicAssociations.Contains(cic.ID))), new DescendancyList(AllFreeCohortIdentificationConfigurationsNode));
 
             //record all extractable columns in each ExtractionConfiguration for fast reference later
             foreach (var c in GetAllObjects<ExtractableColumn>(dataExportRepository))

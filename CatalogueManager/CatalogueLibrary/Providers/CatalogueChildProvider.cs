@@ -834,7 +834,7 @@ namespace CatalogueLibrary.Providers
             AddChildren(joinableNode, new DescendancyList(cic, joinableNode).SetBetterRouteExists());
             children.Add(joinableNode);
 
-            AddToDictionaries(children, new DescendancyList(cic));
+            AddToDictionaries(children, new DescendancyList(cic).SetBetterRouteExists());
         }
 
         private void AddChildren(JoinableCollectionNode joinablesNode, DescendancyList descendancy)
@@ -1044,8 +1044,6 @@ namespace CatalogueLibrary.Providers
             foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
                 toReturn.Add((IMapsDirectlyToDatabaseTable) kvp.Key, kvp.Value);
 
-            AddToReturnSearchablesWithNoDecendancy(toReturn,AllCohortIdentificationConfigurations);
-            
             return toReturn;
         }
 

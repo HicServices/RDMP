@@ -4,11 +4,13 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.CohortNodes;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.Menus;
+using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
@@ -44,18 +46,31 @@ namespace CohortManager.Collections
                 
                 );
             CommonFunctionality.AxeChildren = new Type[]{typeof (CohortIdentificationConfiguration)};
-            CommonFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
+            
+            var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
+
+            if (dataExportChildProvider == null)
+            {
+                CommonFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
+                tlvCohortIdentificationConfigurations.AddObjects(_activator.CoreChildProvider.AllCohortIdentificationConfigurations);
+            }
+            else
+            {
+                CommonFunctionality.MaintainRootObjects = new Type[] { typeof(AllProjectCohortIdentificationConfigurationsNode), typeof(AllFreeCohortIdentificationConfigurationsNode) };
+                tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllProjectCohortIdentificationConfigurationsNode);
+                tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllFreeCohortIdentificationConfigurationsNode);
+            }
 
             CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{new ExecuteCommandCreateNewCohortIdentificationConfiguration(a)};
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
             
-            tlvCohortIdentificationConfigurations.AddObjects(_activator.CoreChildProvider.AllCohortIdentificationConfigurations);
+            
         }
         
         public static bool IsRootObject(object root)
         {
-            return root is CohortIdentificationConfiguration;
+            return root is CohortIdentificationConfiguration || root is AllProjectCohortIdentificationConfigurationsNode || root is AllFreeCohortIdentificationConfigurationsNode;
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
