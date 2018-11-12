@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Reflection;
 using CatalogueLibrary.Data;
@@ -21,7 +22,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         private IconOverlayProvider _overlayProvider;
 
         public ExternalDatabaseServer ServerCreatedIfAny { get; private set; }
-        
+
+
+        [ImportingConstructor]
+        public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator) : this(activator,null,ServerDefaults.PermissableDefaults.None)
+        {
+            
+        }
+
         public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator, Assembly databaseAssembly, ServerDefaults.PermissableDefaults defaultToSet) : base(activator)
         {
             _databaseAssembly = databaseAssembly;

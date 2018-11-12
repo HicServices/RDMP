@@ -23,18 +23,15 @@ namespace LoadModules.Generic.FTP
     /// <summary>
     /// load component which downloads files from a remote FTP server to the ForLoading directory
     /// 
-    /// <para>Checks the HICProjectDirectory for an FTP configuration file (ftp_details.xml).  It then attempts to connect to the FTP server and download all files in the 
-    /// landing folder of the FTP (make sure you really want everything in the root folder - if not then configure redirection on the FTP so you land in the correct directory). 
-    /// Files are downloaded into the ForLoading folder</para>
+    /// <para>Attempts to connect to the FTP server and download all files in the landing folder of the FTP (make sure you really want everything in the
+    ///  root folder - if not then configure redirection on the FTP so you land in the correct directory).  Files are downloaded into the ForLoading folder</para>
     /// </summary>
     public class FTPDownloader : IPluginDataProvider
     {
         protected string _host;
-        protected string _port;
         protected string _username;
         protected string _password;
-        protected string _remoteDir;
-
+        
         private bool _useSSL = false;
 
         protected List<string> _filesRetrieved = new List<string>();
@@ -52,6 +49,13 @@ namespace LoadModules.Generic.FTP
         [DemandsInitialization("Tick to delete files from the FTP server when the load is succesful (ends with .Success not .OperationNotRequired - which happens when LoadNotRequired state).  This will only delete the files if they were actually fetched from the FTP server.  If the files were already in forLoading then the remote files are not deleted")]
         public bool DeleteFilesOffFTPServerAfterSuccesfulDataLoad { get; set; }
 
+        [DemandsInitialization("The FTP server to connect to.  Server should be specified with only IP:Port e.g. 127.0.0.1:20.  You do not have to specify ftp:// at the start",Mandatory=true)]
+        public ExternalDatabaseServer FTPServer { get; set; }
+
+        [DemandsInitialization("The directory on the FTP server that you want to download files from")]
+        public string RemoteDirectory { get; set; }
+
+
         public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
         {
             _directory = hicProjectDirectory;
@@ -59,7 +63,7 @@ namespace LoadModules.Generic.FTP
 
         public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            SetupFTP(_directory);
+            SetupFTP();
             return DownloadFilesOnFTP(_directory, job);
         }
 
@@ -75,27 +79,18 @@ namespace LoadModules.Generic.FTP
 
         public bool Validate(IHICProjectDirectory destination)
         {
-            SetupFTP(destination);
+            SetupFTP();
             return GetFileList().Any();
         }
 
-        private void SetupFTP(IHICProjectDirectory destination)
+        private void SetupFTP()
         {
-            if (destination.FTPDetails == null)
-                throw new NullReferenceException("Destination.FTPDetails - provided by "+typeof(HICProjectDirectory).FullName+" class was null");
+            _host = FTPServer.Server;
+            _username = FTPServer.Username ?? "anonymous";
+            _password = FTPServer.Password ?? "guest";
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(destination.FTPDetails.FullName);
-
-
-            _host = GetValueOfTag(doc, "Host");
-            _port = GetValueOfTag(doc, "Port");
-            _username = GetValueOfTag(doc, "User");
-            _password = GetValueOfTag(doc, "Pass");
-            _remoteDir = GetValueOfTag(doc, "RemoteDir");
-
-            if(string.IsNullOrWhiteSpace(_host) || string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
-                throw new NullReferenceException("Missing FTP details from file " + destination.FTPDetails.FullName);
+            if(string.IsNullOrWhiteSpace(_host))
+                throw new NullReferenceException("FTPServer is not set up correctly it must have Server property filled in" + FTPServer);
 
         }
 
@@ -165,21 +160,7 @@ namespace LoadModules.Generic.FTP
             return true;//any cert will do! yay
         }
 
-
-        private string GetValueOfTag(XmlDocument doc, string tagName)
-        {
-            XmlNodeList tagsFound = doc.GetElementsByTagName(tagName);
-            if(tagsFound.Count != 1)
-                throw new Exception("Found " + tagsFound.Count + " tags called " + tagName);
-
-            if (string.IsNullOrWhiteSpace(tagsFound[0].Value)) //try for value
-                return tagsFound[0].InnerText; //guess theres no value, so just do inner text... whatevs
-            else
-                return tagsFound[0].Value;
-        }
-
-
-
+        
         protected virtual string[] GetFileList()
         {
             StringBuilder result = new StringBuilder();
@@ -192,10 +173,10 @@ namespace LoadModules.Generic.FTP
                 string uri;
 
 
-                if (!string.IsNullOrWhiteSpace(_remoteDir))
-                    uri = "ftp://" + _host + ":" + _port + "/" + _remoteDir;
+                if (!string.IsNullOrWhiteSpace(RemoteDirectory))
+                    uri = "ftp://" + _host + "/" + RemoteDirectory;
                 else
-                    uri = "ftp://" + _host + ":" + _port;
+                    uri = "ftp://" + _host;
 
                 reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(uri));
                 reqFTP.UseBinary = true;
@@ -241,10 +222,10 @@ namespace LoadModules.Generic.FTP
             s.Start();
 
             string uri;
-            if (!string.IsNullOrWhiteSpace(_remoteDir))
-                uri = "ftp://" + _host + ":" + _port + "/" + _remoteDir + "/" + file;
+            if (!string.IsNullOrWhiteSpace(RemoteDirectory))
+                uri = "ftp://" + _host + "/" + RemoteDirectory + "/" + file;
             else
-                uri = "ftp://" + _host + ":" + _port + "/" + file;
+                uri = "ftp://" + _host + "/" + file;
 
             if (_useSSL)
                 uri = "s" + uri;
@@ -330,7 +311,7 @@ namespace LoadModules.Generic.FTP
         {
             try
             {
-                SetupFTP(_directory);
+                SetupFTP();
             }
             catch (Exception e)
             {

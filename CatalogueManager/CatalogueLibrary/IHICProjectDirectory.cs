@@ -15,7 +15,6 @@ namespace CatalogueLibrary
         DirectoryInfo RootPath { get; }
         DirectoryInfo DataPath { get; }
         DirectoryInfo ExecutablesPath { get; }
-        FileInfo FTPDetails { get; }
         
         bool Test { get; }
     }

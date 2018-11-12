@@ -39,8 +39,6 @@ namespace CatalogueLibrary
             if (!DataPath.Exists)
                 throw new DirectoryNotFoundException("Could not find directory '" + DataPath.FullName + "', every HICProjectDirectory must have a Data folder, the root folder was:" + RootPath);
 
-            FTPDetails = DataPath.EnumerateFiles("ftp_details.xml", SearchOption.TopDirectoryOnly).SingleOrDefault();
-            
             ForLoading = FindFolderInPathOrThrow(DataPath, "ForLoading");
             ForArchiving = FindFolderInPathOrThrow(DataPath, "ForArchiving");
             ForErrors = FindFolderInPathOrThrow(DataPath, "ForErrors");
@@ -70,10 +68,8 @@ namespace CatalogueLibrary
         public DirectoryInfo RootPath { get; private set; }
         public DirectoryInfo DataPath { get; private set; }
         public DirectoryInfo ExecutablesPath { get; private set; }
-        public FileInfo FTPDetails { get; private set; }
-        public bool Test { get; private set; }
         
-        object oLockConfigurationDataXML = new object();
+        public bool Test { get; private set; }
         
         public static HICProjectDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)
         {
@@ -104,39 +100,6 @@ namespace CatalogueLibrary
             swExampleFixedWidth.Write(ExampleFixedWidthFormatFileContents);
             swExampleFixedWidth.Flush();
             swExampleFixedWidth.Close();
-
-            StreamWriter swExampleFTPConfig = new StreamWriter(Path.Combine(dataDir.FullName, "ftp_details.xml"));
-            swExampleFTPConfig.Write(
-@"<!-- Complete as appropriate-->
-
-<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes"" ?>
-<FileZilla3>
-    <Servers>
-        <Server>
-            <Host>  </Host>
-            <Port>21</Port>
-            <Protocol>0</Protocol>
-            <Type>0</Type>
-            <User>  </User>
-            <Pass>  </Pass>
-            <Logontype>1</Logontype>
-            <TimezoneOffset>0</TimezoneOffset>
-            <PasvMode>MODE_DEFAULT</PasvMode>
-            <MaximumMultipleConnections>0</MaximumMultipleConnections>
-            <EncodingType>Auto</EncodingType>
-            <BypassProxy>0</BypassProxy>
-            <Name>CHI</Name>
-            <Comments />
-            <LocalDir />
-            <RemoteDir />
-            <SyncBrowsing>0</SyncBrowsing>CHI&#x0A;        
-        </Server>
-    </Servers>
-</FileZilla3>
-");
-            swExampleFTPConfig.Flush();
-            swExampleFTPConfig.Close();
-
 
             projectDir.CreateSubdirectory("Executables");
 
