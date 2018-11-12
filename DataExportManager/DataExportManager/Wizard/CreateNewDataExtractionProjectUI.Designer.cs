@@ -422,13 +422,11 @@ namespace DataExportManager.Wizard
             // cbDefineCohort
             // 
             this.cbDefineCohort.AutoSize = true;
-            this.cbDefineCohort.Checked = true;
-            this.cbDefineCohort.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbDefineCohort.Location = new System.Drawing.Point(17, 87);
             this.cbDefineCohort.Name = "cbDefineCohort";
-            this.cbDefineCohort.Size = new System.Drawing.Size(347, 17);
+            this.cbDefineCohort.Size = new System.Drawing.Size(182, 17);
             this.cbDefineCohort.TabIndex = 17;
-            this.cbDefineCohort.Text = "Define Cohort and Datasets Now (You can always change this later)";
+            this.cbDefineCohort.Text = "Define Cohort and Datasets Now";
             this.cbDefineCohort.UseVisualStyleBackColor = true;
             this.cbDefineCohort.CheckedChanged += new System.EventHandler(this.cbDefineCohort_CheckedChanged);
             // 
@@ -447,6 +445,7 @@ namespace DataExportManager.Wizard
             this.gbCohortAndDatasets.Controls.Add(this.ddExtractionPipeline);
             this.gbCohortAndDatasets.Controls.Add(this.label6);
             this.gbCohortAndDatasets.Controls.Add(this.pbCohortSources);
+            this.gbCohortAndDatasets.Enabled = false;
             this.gbCohortAndDatasets.Location = new System.Drawing.Point(17, 106);
             this.gbCohortAndDatasets.Name = "gbCohortAndDatasets";
             this.gbCohortAndDatasets.Size = new System.Drawing.Size(1023, 491);
