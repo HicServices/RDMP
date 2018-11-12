@@ -1,9 +1,8 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.LoadExecution.Components.Arguments
@@ -16,6 +15,9 @@ namespace DataLoadEngine.LoadExecution.Components.Arguments
     {
         public static string CreateArgString(string name, object value)
         {
+            if (value is HICProjectDirectory)
+                value = ((HICProjectDirectory) value).RootPath.FullName;
+
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("The argument 'name' parameter is empty");
 
