@@ -36,6 +36,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
         private IActivateItems _activator;
         public event Action LoadProgressChanged;
 
+        ChartLookAndFeelSetter _chartLookAndFeelSetter = new ChartLookAndFeelSetter();
+
 
         public LoadProgressDiagram()
         {
@@ -145,7 +147,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
             try
             {
                 //Catalogue periodicity chart
-                PopulateChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData, "Count of records");
+                _chartLookAndFeelSetter.PopulateYearMonthChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData, "Count of records");
             
                 //Annotations
                 _annotations = new LoadProgressAnnotation(_loadProgress, _report.CataloguesPeriodictiyData,
@@ -171,7 +173,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
 
                     cacheState.Palette = ChartColorPalette.None;
                     cacheState.PaletteCustomColors = new[] { Color.Red,Color.Green };
-                    PopulateChart(cacheState, _report.CachePeriodictiyData,"Fetch Failure/Success");
+                    _chartLookAndFeelSetter.PopulateYearMonthChart(cacheState, _report.CachePeriodictiyData, "Fetch Failure/Success");
                     splitContainer1.Panel2Collapsed = false;
 
                     cacheState.Series[0].ChartType = SeriesChartType.Column;
@@ -188,100 +190,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
             }
         }
 
-        private void PopulateChart(Chart chart, DataTable dt,string yAxisTitle)
-        {
-            chart.DataSource = dt;
-            chart.Annotations.Clear();
-            chart.Series.Clear();
-
-            chart.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
-            chart.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
-            chart.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-
-            chart.ChartAreas[0].AxisX.LineColor = Color.LightGray;
-            chart.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
-            chart.ChartAreas[0].AxisX.MinorGrid.LineColor = Color.LightGray;
-            chart.ChartAreas[0].AxisX.TitleForeColor = Color.DarkGray;
-            chart.ChartAreas[0].AxisX.LabelStyle.ForeColor = Color.DarkGray;
-
-
-            chart.ChartAreas[0].AxisY.LineColor = Color.LightGray;
-            chart.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
-            chart.ChartAreas[0].AxisY.MinorGrid.LineColor = Color.LightGray;
-            chart.ChartAreas[0].AxisY.TitleForeColor = Color.DarkGray;
-            chart.ChartAreas[0].AxisY.LabelStyle.ForeColor = Color.DarkGray;
-
-            int rowsPerYear = 12;
-            int datasetLifespanInYears = dt.Rows.Count / rowsPerYear;
-
-            if (dt.Rows.Count == 0)
-                throw new Exception("There are no rows in the DQE database (dataset is empty?)");
-
-            if (datasetLifespanInYears < 10)
-            {
-                chart.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
-                chart.ChartAreas[0].AxisX.MinorTickMark.Interval = 1;
-                chart.ChartAreas[0].AxisX.MajorGrid.Interval = 12;
-                chart.ChartAreas[0].AxisX.MajorTickMark.Interval = 4;
-                chart.ChartAreas[0].AxisX.Interval = 4; //ever quarter
-
-                //start at beginning of a quarter (%4)
-                string monthYearStart = dt.Rows[0]["YearMonth"].ToString();
-                int offset = GetOffset(monthYearStart);
-                chart.ChartAreas[0].AxisX.IntervalOffset = offset % 4;
-            }
-            else if (datasetLifespanInYears < 100)
-            {
-                chart.ChartAreas[0].AxisX.MinorGrid.Interval = 4;
-                chart.ChartAreas[0].AxisX.MinorTickMark.Interval = 4;
-                chart.ChartAreas[0].AxisX.MajorGrid.Interval = 12;
-                chart.ChartAreas[0].AxisX.MajorTickMark.Interval = 12;
-                chart.ChartAreas[0].AxisX.Interval = 12; //every year
-
-                //start at january
-                string monthYearStart = dt.Rows[0]["YearMonth"].ToString();
-                int offset = GetOffset(monthYearStart);
-                chart.ChartAreas[0].AxisX.IntervalOffset = offset;
-            }
-
-            chart.ChartAreas[0].AxisX.IsMarginVisible = false;
-            chart.ChartAreas[0].AxisX.Title = "Dataset Record Time (periodicity)";
-            chart.ChartAreas[0].AxisY.Title = yAxisTitle;
-
-
-            var cols = dt.Columns;
-
-            foreach (var col in cols.Cast<DataColumn>().Skip(3))
-            {
-                var s = new Series();
-                chart.Series.Add(s);
-                s.ChartType = SeriesChartType.StackedArea;
-                s.XValueMember = "YearMonth";
-                s.YValueMembers = col.ToString();
-                s.Name = col.ToString();
-            }
-
-            // Set gradient background of the chart area
-            chart.ChartAreas[0].BackColor = Color.White;
-            chart.ChartAreas[0].BackSecondaryColor = Color.FromArgb(255,230,230,230);
-            chart.ChartAreas[0].BackGradientStyle = GradientStyle.DiagonalRight;
-
-        }
-
-        /// <summary>
-        /// calculates how far offset the month is 
-        /// </summary>
-        /// <param name="yearMonth"></param>
-        /// <returns></returns>
-        private int GetOffset(string yearMonth)
-        {
-            var match = Regex.Match(yearMonth, @"\d{4}-(\d+)");
-
-            if (!match.Success)
-                throw new Exception("Regex did not match!");
-
-            return int.Parse(match.Groups[1].Value);
-        }
+        
 
         private void cataloguesRowCountChart_AnnotationPositionChanged(object sender, EventArgs e)
         {

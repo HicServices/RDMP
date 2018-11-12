@@ -27,6 +27,8 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting
     /// </summary>
     public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportingChart
     {
+        private readonly ChartLookAndFeelSetter _chartLookAndFeelSetter =  new ChartLookAndFeelSetter();
+
         public TimePeriodicityChart()
         {
             InitializeComponent();
@@ -66,67 +68,11 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting
             dataGridView1.DataSource = dt;
 
             chart1.Series.Clear();
+
+
+            if (dt.Rows.Count != 0)
+                _chartLookAndFeelSetter.PopulateYearMonthChart(chart1, dt, "Data Quality");
             
-            if(dt.Rows.Count != 0)
-            {
-
-
-                chart1.Series.Add(new Series());
-                chart1.Series[0].ChartType = SeriesChartType.StackedArea;
-                chart1.Series[0].XValueMember = "YearMonth";
-                chart1.Series[0].YValueMembers = "Correct";
-                chart1.Series[0].Name = "Correct";
-
-                chart1.ChartAreas[0].AxisX.MinorGrid.LineWidth = 1;
-                chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
-                chart1.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-
-                int rowsPerYear = 12;
-                int datasetLifespanInYears = dt.Rows.Count / rowsPerYear;//1 row per consequence + correct * 12 months per year
-
-                if (datasetLifespanInYears < 10)
-                {
-                    chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
-                    chart1.ChartAreas[0].AxisX.MinorTickMark.Interval = 1;
-                    chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 12;
-                    chart1.ChartAreas[0].AxisX.MajorTickMark.Interval = 4;
-                    chart1.ChartAreas[0].AxisX.Interval = 4; //ever quarter
-
-                    //start at beginning of a quarter (%4)
-                    string monthYearStart = dt.Rows[0]["YearMonth"].ToString();
-                    int offset = GetOffset(monthYearStart);
-                    chart1.ChartAreas[0].AxisX.IntervalOffset = offset%4;
-                }
-                else
-                    if (datasetLifespanInYears < 100)
-                    {
-                        chart1.ChartAreas[0].AxisX.MinorGrid.Interval = 4;
-                        chart1.ChartAreas[0].AxisX.MinorTickMark.Interval = 4;
-                        chart1.ChartAreas[0].AxisX.MajorGrid.Interval = 12;
-                        chart1.ChartAreas[0].AxisX.MajorTickMark.Interval = 12;
-                        chart1.ChartAreas[0].AxisX.Interval = 12;//every year
-
-                        //start at january
-                        string monthYearStart = dt.Rows[0]["YearMonth"].ToString();
-                        int offset = GetOffset(monthYearStart);
-                        chart1.ChartAreas[0].AxisX.IntervalOffset = offset;
-                    }
-
-                chart1.ChartAreas[0].AxisX.IsMarginVisible = false;
-                chart1.ChartAreas[0].AxisX.Title = "Dataset Record Time (periodicity)";
-                chart1.ChartAreas[0].AxisY.Title = "Count of records";
-
-
-                foreach (var enumValue in Enum.GetValues(typeof (Consequence)))
-                {
-                    var s = new Series();
-                    chart1.Series.Add(s);
-                    s.ChartType = SeriesChartType.StackedArea;
-                    s.XValueMember = "YearMonth";
-                    s.YValueMembers = enumValue.ToString();
-                    s.Name = enumValue.ToString();
-                }
-            }
             chart1.DataBind();
             chart1.Visible = true;
             

@@ -167,6 +167,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -181,6 +182,7 @@
     </Compile>
     <Compile Include="AbstractControlDescriptionProvider.cs" />
     <Compile Include="BetterListBoxScrollArgs.cs" />
+    <Compile Include="ChartLookAndFeelSetter.cs" />
     <Compile Include="ChecksUI\AllChecksCompleteHandler.cs" />
     <Compile Include="ChecksUI\AllChecksCompleteHandlerArgs.cs" />
     <Compile Include="ChecksUI\ChecksUI.cs">
