@@ -60,6 +60,11 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             fk2.KeyType = JoinKeyType.ForeignKey;
             fk3.KeyType = JoinKeyType.ForeignKey;
 
+            //cannot drop anything until you pick a foreign key table
+            fk1.IsValidGetter = c => false;
+            fk2.IsValidGetter = c => false;
+            fk3.IsValidGetter = c => false;
+
             olvLeftColumns.RowHeight = 19;
             olvRightColumns.RowHeight = 19;
             AssociatedCollection = RDMPCollection.Tables;
@@ -80,6 +85,14 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             
             olvLeftColumns.ClearObjects();
             olvLeftColumns.AddObjects(_leftTableInfo.ColumnInfos);
+
+            if (pk1.IsValidGetter == null)
+            {
+                pk1.IsValidGetter = c => c.TableInfo_ID == databaseObject.ID;
+                pk2.IsValidGetter = c => c.TableInfo_ID == databaseObject.ID;
+                pk3.IsValidGetter = c => c.TableInfo_ID == databaseObject.ID;
+            }
+
         }
 
         private void btnChooseRightTableInfo_Click(object sender, EventArgs e)
@@ -102,6 +115,10 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             fk1.Clear();
             fk2.Clear();
             fk3.Clear();
+
+            fk1.IsValidGetter = c => c.TableInfo_ID == t.ID;
+            fk2.IsValidGetter = c => c.TableInfo_ID == t.ID;
+            fk3.IsValidGetter = c => c.TableInfo_ID == t.ID;
 
             olvRightColumns.ClearObjects();
             olvRightColumns.AddObjects(_rightTableInfo.ColumnInfos);
@@ -149,6 +166,11 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
                 
                 var cataRepo = (CatalogueRepository) _leftTableInfo.Repository;
 
+                for (int i = 0; i < pks.Length; i++)
+                    if (cataRepo.JoinInfoFinder.GetAllJoinInfoForColumnInfoWhereItIsAForeignKey(fks[i]).Any(j => j.PrimaryKey_ID == pks[i].ID))
+                        throw new Exception("Join already exists between " + fks[i] + " and " + pks[i].ID);
+
+                
                 if (actuallyDoIt)
                 {
                     for (int i = 0; i < pks.Length; i++)

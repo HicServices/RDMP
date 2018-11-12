@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
@@ -42,18 +35,29 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             }
         }
 
+        /// <summary>
+        /// Set this to allow dragging only certain items onto the control.  Return true to allow drop and false to prevent it.
+        /// </summary>
+        public Func<ColumnInfo, bool> IsValidGetter { get; set; }
+
         public event Action SelectedColumnChanged;
 
         public KeyDropLocationUI()
         {
             InitializeComponent();
             btnClear.Image = FamFamFamIcons.delete;
+            btnClear.Enabled = false;
         }
         
         private void tbPk1_DragEnter(object sender, DragEventArgs e)
         {
+            e.Effect = DragDropEffects.None;
+
             var col = GetColumnInfoOrNullFromDrag(e);
 
+            if(IsValidGetter != null && !IsValidGetter(col))
+                return;
+            
             if(col != null)
                 e.Effect = DragDropEffects.Copy;
         }
@@ -62,6 +66,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         {
             SelectedColumn = GetColumnInfoOrNullFromDrag(e);
             tbPk1.Text = SelectedColumn.ToString();
+            btnClear.Enabled = true;
 
             if (SelectedColumnChanged != null)
                 SelectedColumnChanged();
@@ -94,6 +99,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         {
             tbPk1.Text = "";
             SelectedColumn = null;
+            btnClear.Enabled = false;
 
             if (SelectedColumnChanged != null)
                 SelectedColumnChanged();
