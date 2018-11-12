@@ -4,13 +4,11 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Windows;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
@@ -20,10 +18,8 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ScintillaNET;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using Point = System.Drawing.Point;
 
@@ -162,6 +158,14 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             olvLookupColumns.AddObjects(t.ColumnInfos);
 
             SetStage(LookupCreationStage.DragAPrimaryKey);
+
+            pk1.IsValidGetter = c => c.TableInfo_ID == t.ID;
+            pk2.IsValidGetter = c => c.TableInfo_ID == t.ID;
+            pk3.IsValidGetter = c => c.TableInfo_ID == t.ID;
+            
+            fk1.IsValidGetter = c => c.TableInfo_ID != t.ID;
+            fk2.IsValidGetter = c => c.TableInfo_ID != t.ID;
+            fk3.IsValidGetter = c => c.TableInfo_ID != t.ID;
         }
 
         private void btnImportNewTableInfo_Click(object sender, EventArgs e)
