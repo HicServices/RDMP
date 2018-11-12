@@ -105,6 +105,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public virtual string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete)
         {
+            if (string.IsNullOrWhiteSpace(tableName))
+                throw new ArgumentNullException("Table name cannot be null", "tableName");
+
             string bodySql = "";
 
             var server = database.Server;
