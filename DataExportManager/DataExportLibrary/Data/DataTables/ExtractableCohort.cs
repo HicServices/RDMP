@@ -137,6 +137,33 @@ namespace DataExportLibrary.Data.DataTables
         [UsefulProperty]
         public string Source { get { return ExternalCohortTable.Name; } }
 
+        [NoMappingToDatabase]
+        public int? ExternalProjectNumber
+        {
+            get { return (int?)GetFromCacheData(x => x.ExternalProjectNumber); }
+        }
+
+        [NoMappingToDatabase]
+        public int? ExternalVersion
+        {
+            get { return (int?)GetFromCacheData(x => x.ExternalVersion); }
+        }
+
+        private object GetFromCacheData(Func<IExternalCohortDefinitionData, object> func)
+        {
+            try
+            {
+                var v = _cacheData.Value;
+                return func(v);
+            }
+            catch (Exception)
+            {
+                _cacheData = new Lazy<IExternalCohortDefinitionData>(() => null);
+            }
+                
+            return "null";
+        }
+
         internal ExtractableCohort(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {

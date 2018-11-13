@@ -31,15 +31,21 @@
             this.components = new System.ComponentModel.Container();
             this.tlvSavedCohorts = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.tlvSavedCohorts)).BeginInit();
             this.SuspendLayout();
             // 
             // tlvSavedCohorts
             // 
             this.tlvSavedCohorts.AllColumns.Add(this.olvName);
+            this.tlvSavedCohorts.AllColumns.Add(this.olvProjectNumber);
+            this.tlvSavedCohorts.AllColumns.Add(this.olvVersion);
             this.tlvSavedCohorts.CellEditUseWholeCell = false;
             this.tlvSavedCohorts.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
+            this.olvName,
+            this.olvProjectNumber,
+            this.olvVersion});
             this.tlvSavedCohorts.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvSavedCohorts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvSavedCohorts.FullRowSelect = true;
@@ -60,6 +66,16 @@
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Saved Cohorts";
             // 
+            // olvProjectNumber
+            // 
+            this.olvProjectNumber.AspectName = "";
+            this.olvProjectNumber.Text = "Project Number";
+            // 
+            // olvVersion
+            // 
+            this.olvVersion.AspectName = "";
+            this.olvVersion.Text = "Version";
+            // 
             // SavedCohortsCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -76,5 +92,7 @@
 
         private BrightIdeasSoftware.TreeListView tlvSavedCohorts;
         private BrightIdeasSoftware.OLVColumn olvName;
+        private BrightIdeasSoftware.OLVColumn olvProjectNumber;
+        private BrightIdeasSoftware.OLVColumn olvVersion;
     }
 }

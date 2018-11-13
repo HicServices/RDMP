@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Providers;
 using DataExportLibrary.Providers.Nodes;
 
@@ -26,6 +18,29 @@ namespace DataExportManager.Collections
         public SavedCohortsCollectionUI()
         {
             InitializeComponent();
+
+            olvProjectNumber.AspectGetter = AspectGetter_ProjectNumber;
+            olvVersion.AspectGetter = AspectGetter_Version;
+        }
+
+        private object AspectGetter_Version(object rowObject)
+        {
+            var c = rowObject as ExtractableCohort;
+
+            if (c != null)
+                return c.ExternalVersion;
+
+            return null;
+        }
+
+        private object AspectGetter_ProjectNumber(object rowObject)
+        {
+            var c = rowObject as ExtractableCohort;
+
+            if (c != null)
+                return c.ExternalProjectNumber;;
+
+            return null;
         }
 
         public override void SetItemActivator(IActivateItems activator)
