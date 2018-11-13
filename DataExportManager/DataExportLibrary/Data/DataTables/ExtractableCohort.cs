@@ -33,7 +33,7 @@ namespace DataExportLibrary.Data.DataTables
     /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
     /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>, IHasDependencies, IMightBeDeprecated
+    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>, IHasDependencies, ICustomSearchString
     {
         #region Database Properties
         private int _externalCohortTable_ID;
@@ -134,16 +134,18 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
         [NoMappingToDatabase]
-        [UsefulProperty]
+        [UsefulProperty(DisplayName = "V")]
         public string Source { get { return ExternalCohortTable.Name; } }
 
         [NoMappingToDatabase]
+        [UsefulProperty(DisplayName = "P")]
         public int? ExternalProjectNumber
         {
             get { return (int?)GetFromCacheData(x => x.ExternalProjectNumber); }
         }
 
         [NoMappingToDatabase]
+        [UsefulProperty]
         public int? ExternalVersion
         {
             get { return (int?)GetFromCacheData(x => x.ExternalVersion); }
@@ -204,20 +206,12 @@ namespace DataExportLibrary.Data.DataTables
 
         public override string ToString()
         {
-            IExternalCohortDefinitionData v = null;
+            return GetFromCacheData(x => x.ExternalDescription) as string ?? "Broken Cohort";
+        }
 
-            try
-            {
-                v = _cacheData.Value;
-            }
-            catch (Exception)
-            {
-                _cacheData = new Lazy<IExternalCohortDefinitionData>(()=>null);    
-            }
-            if (v == null)
-                return "Broken Cohort";
-
-            return v.ExternalProjectNumber + "_" + v.ExternalDescription + "_V" + v.ExternalVersion;
+        public string GetSearchString()
+        {
+            return ToString() + " " + ExternalProjectNumber + " " + ExternalVersion;
         }
 
         private IQuerySyntaxHelper _cachedQuerySyntaxHelper;

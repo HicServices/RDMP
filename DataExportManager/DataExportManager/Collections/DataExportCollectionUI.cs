@@ -36,6 +36,9 @@ namespace DataExportManager.Collections
 
             olvCohortSource.IsEditable = false;
             olvCohortSource.AspectGetter = CohortSourceAspectGetter;
+
+            olvCohortVersion.IsEditable = false;
+            olvCohortVersion.AspectGetter = CohortVersionAspectGetter;
         }
 
         private object CohortSourceAspectGetter(object rowObject)
@@ -56,9 +59,32 @@ namespace DataExportManager.Collections
         private object ProjectNumberAspectGetter(object rowObject)
         {
             var p = rowObject as Project;
+            
+            var masquerade = rowObject as IMasqueradeAs;
 
             if (p != null)
                 return p.ProjectNumber;
+
+            if(masquerade != null)
+            {
+                var c = masquerade.MasqueradingAs() as ExtractableCohort;
+                if (c != null)
+                    return c.ExternalProjectNumber;
+            }
+
+            return null;
+        }
+
+        private object CohortVersionAspectGetter(object rowObject)
+        {
+            var masquerade = rowObject as IMasqueradeAs;
+
+            if (masquerade != null)
+            {
+                var c = masquerade.MasqueradingAs() as ExtractableCohort;
+                if (c != null)
+                    return c.ExternalVersion;
+            }
 
             return null;
         }

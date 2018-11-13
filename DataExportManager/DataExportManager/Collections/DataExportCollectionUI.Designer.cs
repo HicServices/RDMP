@@ -36,6 +36,7 @@ namespace DataExportManager.Collections
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvCohortSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvCohortVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).BeginInit();
             this.SuspendLayout();
             // 
@@ -44,10 +45,12 @@ namespace DataExportManager.Collections
             this.tlvDataExport.AllColumns.Add(this.olvName);
             this.tlvDataExport.AllColumns.Add(this.olvProjectNumber);
             this.tlvDataExport.AllColumns.Add(this.olvCohortSource);
+            this.tlvDataExport.AllColumns.Add(this.olvCohortVersion);
             this.tlvDataExport.CellEditUseWholeCell = false;
             this.tlvDataExport.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName,
-            this.olvProjectNumber});
+            this.olvProjectNumber,
+            this.olvCohortVersion});
             this.tlvDataExport.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvDataExport.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvDataExport.FullRowSelect = true;
@@ -78,6 +81,10 @@ namespace DataExportManager.Collections
             this.olvCohortSource.IsVisible = false;
             this.olvCohortSource.Text = "CohortSource";
             // 
+            // olvCohortVersion
+            // 
+            this.olvCohortVersion.Text = "Version";
+            // 
             // DataExportCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -96,5 +103,6 @@ namespace DataExportManager.Collections
         private OLVColumn olvName;
         private OLVColumn olvProjectNumber;
         private OLVColumn olvCohortSource;
+        private OLVColumn olvCohortVersion;
     }
 }

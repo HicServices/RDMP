@@ -190,6 +190,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             var cohorts = ExtractableCohort.GetImportableCohortDefinitions(_target).ToArray();
             var maxVersionCohorts = cohorts.Where(c => //get cohorts where
                 !cohorts.Any(c2 => c2.Description.Equals(c.Description) //there are not any other cohorts with the same name
+                    && c2.ProjectNumber == c.ProjectNumber
                     && c2.Version > c.Version)//and a higher version
                     ).ToArray();
 

@@ -1,41 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AutocompleteMenuNS;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Providers;
-using CatalogueManager.AggregationUIs;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Filtering;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Theme;
-using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Providers.Nodes;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 using IContainer = CatalogueLibrary.Data.IContainer;
@@ -134,8 +124,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private bool _skipEscape;
 
         private List<Type> showOnlyTypes = new List<Type>();
+        private AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
         
-
         public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
         {
             if(!TypesThatAreNotUsefulParents.Contains(t))
@@ -151,6 +141,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             _searchables = _activator.CoreChildProvider.GetAllSearchables();
             
+            _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
+
             ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
             _scintilla = factory.Create();
             panel1.Controls.Add(_scintilla);
@@ -500,11 +492,20 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
                         string text = _matches[i].ToString();
 
+                        float textRight = e.Graphics.MeasureString(text, Font).Width + 20;
                         //record how wide it is so we know how much space is left to draw parents
-                        maxWidthUsedDuringRender = Math.Max(maxWidthUsedDuringRender,e.Graphics.MeasureString(text, Font).Width + 20);
+                        maxWidthUsedDuringRender = Math.Max(maxWidthUsedDuringRender,textRight);
 
                         e.Graphics.DrawImage(img,1,currentRowStartY);
                         e.Graphics.DrawString(text,Font,Brushes.Black,20,currentRowStartY );
+
+                        string extraText =" " + GetUsefulProperties(_matches[i]);
+                        if (!string.IsNullOrWhiteSpace(extraText))
+                        {
+                            e.Graphics.DrawString(extraText, Font, Brushes.Gray, textRight, currentRowStartY);
+                            float extraTextRight = textRight + e.Graphics.MeasureString(extraText, Font).Width;
+                            maxWidthUsedDuringRender = Math.Max(maxWidthUsedDuringRender, extraTextRight);
+                        }
                     }
                 
                     //now draw parent string and icon on the right
@@ -556,7 +557,37 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Returns the text drawn for the object e.g. ToString() + (UsefulProperty)
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        private string GetUsefulProperties(IMapsDirectlyToDatabaseTable m)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var p = _usefulPropertyFinder.GetProperties(m).ToArray();
+
+            if (p.Length == 0)
+                return null;
+
+            sb.Append("(");
+
+            foreach (var propertyInfo in p)
+            {
+                var attr = _usefulPropertyFinder.GetAttribute(propertyInfo);
+
+                var key = string.IsNullOrWhiteSpace(attr.DisplayName) ? propertyInfo.Name : attr.DisplayName;
+                var val = propertyInfo.GetValue(m);
+                sb.Append(key + "='" + val + "' ");
+            }
+            
+            sb.Append(")");
+
+            return sb.ToString();
+        }
+
         private void DrawDescendancyDiagram(PaintEventArgs e, IMapsDirectlyToDatabaseTable match, DescendancyList descendancy, int diagramStartX, int diagramStartY, int diagramWidth)
         {
             
