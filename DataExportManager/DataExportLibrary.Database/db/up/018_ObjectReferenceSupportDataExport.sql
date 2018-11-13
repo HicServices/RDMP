@@ -10,3 +10,6 @@ if(not exists (select 1 from sys.columns where OBJECT_NAME(object_id) = 'Supplem
 
 if(not exists (select 1 from sys.columns where OBJECT_NAME(object_id) = 'SupplementalExtractionResults' and name ='ReferencedObjectType'))
 	EXEC sp_rename 'SupplementalExtractionResults.ExtractedType', 'ReferencedObjectType', 'COLUMN'; 
+
+if(not exists (select 1 from sys.columns where OBJECT_NAME(object_id) = 'ExtractableCohort' and name ='IsDeprecated'))
+	ALTER TABLE ExtractableCohort Add IsDeprecated BIT NOT NULL default 0 WITH VALUES

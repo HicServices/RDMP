@@ -22,7 +22,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
-    public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed
+    public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IMightBeDeprecated
     {
         /// <summary>
         /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
@@ -61,12 +61,6 @@ namespace CatalogueLibrary.Data
         /// </summary>
         int? PivotCategory_ExtractionInformation_ID { get; set; }
 
-        /// <summary>
-        /// Bit flag indicating whether the dataset should be considered Deprecated (i.e. do not use anymore).  This is preferred to deleting a Catalogue.  The implications
-        /// of this are that it no longer appears in UIs by default and that warnings will appear when trying to do extractions of the Catalogue
-        /// </summary>
-        bool IsDeprecated { get; set; }
-        
         /// <summary>
         /// Bit flag indicating whether the dataset should NEVER be extracted and ONLY EVER used internally by data analysts.
         /// </summary>

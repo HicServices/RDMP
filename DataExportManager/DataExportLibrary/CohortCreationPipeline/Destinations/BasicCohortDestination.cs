@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation;
 using DataExportLibrary.Interfaces.Pipeline;
-
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
-using Xceed.Words.NET;
 using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations

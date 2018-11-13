@@ -33,12 +33,13 @@ namespace DataExportLibrary.Data.DataTables
     /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
     /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>, IHasDependencies
+    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>, IHasDependencies, IMightBeDeprecated
     {
         #region Database Properties
         private int _externalCohortTable_ID;
         private string _overrideReleaseIdentifierSQL;
         private string _auditLog;
+        private bool _isDeprecated;
 
         public int ExternalCohortTable_ID
         {
@@ -69,6 +70,14 @@ namespace DataExportLibrary.Data.DataTables
             set { SetField(ref _originID, value); }
         }
 
+        /// <summary>
+        /// True if the cohort has been replaced by another cohort or otherwise should not be used
+        /// </summary>
+        public bool IsDeprecated
+        {
+            get { return _isDeprecated; }
+            set { SetField(ref _isDeprecated, value); }
+        }
 
         #endregion
 
@@ -135,6 +144,7 @@ namespace DataExportLibrary.Data.DataTables
             OriginID = Convert.ToInt32(r["OriginID"]);
             ExternalCohortTable_ID = Convert.ToInt32(r["ExternalCohortTable_ID"]);
             AuditLog = r["AuditLog"] as string;
+            IsDeprecated = (bool)r["IsDeprecated"];
 
             ClearAllInjections();
         }
@@ -384,6 +394,7 @@ namespace DataExportLibrary.Data.DataTables
         //these need to be private since ReverseAnonymiseDataTable will likely be called in batch
         private int _reverseAnonymiseProgressFetchingMap = 0;
         private int _reverseAnonymiseProgressReversing = 0;
+        
 
         public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
         {
@@ -515,7 +526,8 @@ namespace DataExportLibrary.Data.DataTables
             return Repository.GetAllObjects<ExtractionConfiguration>("WHERE Cohort_ID = " + ID);
         }
     }
-        public enum OneToMErrorResolutionStrategy
+
+    public enum OneToMErrorResolutionStrategy
     {
         TriggerFatalCrash,
         Top1,
