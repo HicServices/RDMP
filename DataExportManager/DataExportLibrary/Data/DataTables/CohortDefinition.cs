@@ -15,7 +15,12 @@ namespace DataExportLibrary.Data.DataTables
         public int Version { get; set; }
         public int ProjectNumber { get; set; }
         public IExternalCohortTable LocationOfCohort { get; private set; }
-        
+
+        /// <summary>
+        /// The cohort replaced if uploading a new version
+        /// </summary>
+        public IExtractableCohort CohortReplacedIfAny { get; set; }
+
         public CohortDefinition(int? id, string description, int version, int projectNumber, IExternalCohortTable locationOfCohort)
         {
             ID = id;
