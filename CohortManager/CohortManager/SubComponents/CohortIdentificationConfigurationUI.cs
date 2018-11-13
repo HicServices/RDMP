@@ -110,6 +110,8 @@ namespace CohortManager.SubComponents
 
             CohortCompilerUI1.SetDatabaseObject(activator,databaseObject);
 
+            tlvCic.Enabled = !databaseObject.Frozen;
+
             if (_commonFunctionality == null)
             {
                 _commonFunctionality = new RDMPCollectionCommonFunctionality();

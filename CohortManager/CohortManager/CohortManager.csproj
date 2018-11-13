@@ -170,6 +170,7 @@
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortIdentificationConfiguration.cs" />
     <Compile Include="Menus\CohortAggregateContainerMenu.cs" />
     <Compile Include="Menus\CohortIdentificationConfigurationMenu.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFreezeCohortIdentificationConfiguration.cs" />
     <Compile Include="Menus\JoinableCollectionNodeMenu.cs" />
     <Compile Include="SubComponents\CohortIdentificationConfigurationUI.cs">
       <SubType>UserControl</SubType>
