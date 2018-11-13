@@ -12,7 +12,7 @@ namespace CatalogueManager.Menus
 {
     class AggregatesNodeMenu : RDMPContextMenuStrip
     {
-        public AggregatesNodeMenu(RDMPContextMenuStripArgs args, AggregatesNode aggregatesNode):base(args,null)
+        public AggregatesNodeMenu(RDMPContextMenuStripArgs args, AggregatesNode aggregatesNode):base(args,aggregatesNode)
         {
             Add(new ExecuteCommandAddNewAggregateGraph(_activator, aggregatesNode.Catalogue));
         }

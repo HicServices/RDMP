@@ -75,34 +75,6 @@ namespace CatalogueManager.Menus
             return mi;
         }
 
-        /// <summary>
-        /// Adds all commands (usually plugins) that are derrived from T e.g. PluginDatabaseAtomicCommand.  This will only add Types that are exposed
-        /// via MEF Export decorations so if you define a new base Type T make sure to inherit from PluginAtomicCommand to pick up the [InheritedExport].
-        /// 
-        /// <para>All derrived classes must have either a blank constructor or one taking either an <see cref="IActivateItems"/> or <see cref="IRDMPPlatformRepositoryServiceLocator"/></para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        protected void AddAll<T>()
-        {
-            var types = _activator.RepositoryLocator.CatalogueRepository.MEF
-                .GetTypes<IAtomicCommand>().Where(t =>
-                    typeof(T).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
-
-            foreach (var type in types)
-            {
-                var constructor = new ObjectConstructor();
-
-                var instance =
-                    constructor.ConstructIfPossible(type, _activator)?? //what about one that takes an IActivateItems?
-                    constructor.ConstructIfPossible(type, _activator.RepositoryLocator)?? //maybe it takes a repo locator
-                    constructor.ConstructIfPossible(type);  //does it maybe have a blank constructor?
-
-                if(instance == null)
-                    throw new NotSupportedException("Type " + type + " did not have any valid constructors");
-
-                Add((IAtomicCommand)instance);
-            }
-        }
 
         public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)
         {

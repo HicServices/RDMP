@@ -250,8 +250,6 @@
     <Compile Include="Checks\SyntaxChecking\ParameterSyntaxChecker.cs" />
     <Compile Include="Checks\SyntaxChecking\SyntaxChecker.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginDatabaseAtomicCommand.cs" />
     <Compile Include="CommandExecution\ExecuteCommandCreateLookup.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\OverlappingImplementationsException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\MultipleMatchingImplmentationException.cs" />

@@ -3,24 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.SimpleDialogs.Reports;
 using Dashboard.Raceway;
 using DataExportManager.ProjectUI;
 using NUnit.Framework;
-using RDMPStartup;
 using ResearchDataManagementPlatform.WindowManagement;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 using ReusableUIComponents.CommandExecution.Proposals;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
@@ -90,8 +83,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 "CommandExecution.AtomicCommands",
                 "CommandExecution.AtomicCommands.PluginCommands",
                 "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
-
-            Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(PluginAtomicCommand), "CommandExecution.AtomicCommands.PluginCommands"));
 
             //proposals
             Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ICommandExecutionProposal), "CommandExecution.Proposals"));

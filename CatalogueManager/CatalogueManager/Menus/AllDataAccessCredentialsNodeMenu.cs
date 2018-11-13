@@ -1,20 +1,14 @@
 using System;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
     internal class AllDataAccessCredentialsNodeMenu : RDMPContextMenuStrip
     {
-        public AllDataAccessCredentialsNodeMenu(RDMPContextMenuStripArgs args, AllDataAccessCredentialsNode node): base(args, null)
+        public AllDataAccessCredentialsNodeMenu(RDMPContextMenuStripArgs args, AllDataAccessCredentialsNode node): base(args, node)
         {
             Items.Add("Add New Credentials", _activator.CoreIconProvider.GetImage(RDMPConcept.DataAccessCredentials,OverlayKind.Add), (s, e) => AddCredentials());
         }

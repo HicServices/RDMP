@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -11,7 +10,7 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     internal class AllExternalServersNodeMenu : RDMPContextMenuStrip
     {
-        public AllExternalServersNodeMenu(RDMPContextMenuStripArgs args, AllExternalServersNode node) : base(args,null)
+        public AllExternalServersNodeMenu(RDMPContextMenuStripArgs args, AllExternalServersNode node) : base(args,node)
         {
             var assemblyDictionary = new Dictionary<ServerDefaults.PermissableDefaults, Assembly>();
 
@@ -32,8 +31,6 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, kvp.Value, kvp.Key));
 
             Add(new ExecuteCommandConfigureDefaultServers(_activator));
-
-            AddAll<PluginAtomicCommand>();
         }
     }
 }

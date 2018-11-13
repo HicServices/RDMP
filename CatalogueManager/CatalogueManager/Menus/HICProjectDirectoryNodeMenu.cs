@@ -1,14 +1,11 @@
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
-using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus.MenuItems;
 
 namespace CatalogueManager.Menus
 {
     class HICProjectDirectoryNodeMenu : RDMPContextMenuStrip
     {
-        public HICProjectDirectoryNodeMenu(RDMPContextMenuStripArgs args,HICProjectDirectoryNode node) : base(args, null)
+        public HICProjectDirectoryNodeMenu(RDMPContextMenuStripArgs args,HICProjectDirectoryNode node) : base(args, node)
         {
             Add(new ExecuteCommandOpenInExplorer(_activator, node.GetDirectoryInfoIfAny()));
             Add(new ExecuteCommandChooseHICProjectDirectory(_activator, node.LoadMetadata));

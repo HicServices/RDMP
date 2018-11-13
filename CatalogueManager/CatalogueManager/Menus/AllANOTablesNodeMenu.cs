@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
+﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
 
@@ -11,8 +6,7 @@ namespace CatalogueManager.Menus
 {
     class AllANOTablesNodeMenu:RDMPContextMenuStrip
     {
-        public AllANOTablesNodeMenu(RDMPContextMenuStripArgs args, AllANOTablesNode node)
-            : base(args, null)
+        public AllANOTablesNodeMenu(RDMPContextMenuStripArgs args, AllANOTablesNode node): base(args, node)
         {
             Add(new ExecuteCommandCreateNewANOTable(_activator));
             

@@ -1,21 +1,12 @@
 using System;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus.MenuItems;
-using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs;
 using MapsDirectlyToDatabaseTableUI;
-using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -23,7 +14,7 @@ namespace CatalogueManager.Menus
 {
      class CatalogueItemsNodeMenu : RDMPContextMenuStrip
     {
-        public CatalogueItemsNodeMenu(RDMPContextMenuStripArgs args, CatalogueItemsNode node): base(args, null)
+        public CatalogueItemsNodeMenu(RDMPContextMenuStripArgs args, CatalogueItemsNode node): base(args, node)
         {
             var iconProvider = _activator.CoreIconProvider;
 
