@@ -799,7 +799,6 @@
     <Compile Include="CommandExecution\ExecuteCommandAddCatalogueToCohortIdentificationSetContainer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandAddCohortToExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\ExecuteCommandAddDatasetsToConfiguration.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandAddFilesAsSupportingDocuments.cs" />
     <Compile Include="CommandExecution\ExecuteCommandConvertAggregateConfigurationToPatientIndexTable.cs" />
     <Compile Include="CommandExecution\ExecuteCommandImportNewCopyOfFilterIntoContainer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain.cs" />

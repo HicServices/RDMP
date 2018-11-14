@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Copying.Commands;
@@ -14,13 +18,32 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddNewSupportingDocument : BasicUICommandExecution,IAtomicCommand
     {
-        private IActivateItems _activator;
-        private readonly Catalogue _catalogue;
+        private readonly FileCollectionCommand _fileCollectionCommand;
+        private readonly Catalogue _targetCatalogue;
 
+        [ImportingConstructor]
         public ExecuteCommandAddNewSupportingDocument(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
-             _activator = activator;
-            _catalogue = catalogue;
+            _targetCatalogue = catalogue;
+        }
+        public ExecuteCommandAddNewSupportingDocument(IActivateItems activator, FileCollectionCommand fileCollectionCommand, Catalogue targetCatalogue): base(activator)
+        {
+            _fileCollectionCommand = fileCollectionCommand;
+            _targetCatalogue = targetCatalogue;
+            var allExisting = targetCatalogue.GetAllSupportingDocuments(FetchOptions.AllGlobalsAndAllLocals);
+
+            foreach (var doc in allExisting)
+            {
+                string filename = doc.GetFileName();
+                
+                if(filename == null)
+                    continue;
+
+                var collisions = _fileCollectionCommand.Files.FirstOrDefault(f => f.Name.Equals(filename));
+                
+                if(collisions != null)
+                    SetImpossible("File '" + collisions.Name +"' is already a SupportingDocument (ID=" + doc.ID + " - '"+doc.Name+"')");
+            }
         }
 
         public override string GetCommandHelp()
@@ -32,24 +55,36 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Multiselect = true;
-            if (fileDialog.ShowDialog() == DialogResult.OK)
+            FileInfo[] files = null;
+
+            if (_fileCollectionCommand != null)
+                files = _fileCollectionCommand.Files;
+            else
             {
-                var files = fileDialog.FileNames.Select(f => new FileInfo(f)).Where(fi => fi.Exists).ToArray();
-
-                if (files.Any())
-                {
-
-                    var execution = new ExecuteCommandAddFilesAsSupportingDocuments(_activator,new FileCollectionCommand(files), _catalogue);
-                    if (execution.IsImpossible)
-                        WideMessageBox.Show(execution.ReasonCommandImpossible);
-                    else
-                        execution.Execute();
-                }
+                OpenFileDialog fileDialog = new OpenFileDialog();
+                fileDialog.Multiselect = true;
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                    files = fileDialog.FileNames.Select(f => new FileInfo(f)).Where(fi => fi.Exists).ToArray();
+                else
+                    return;
             }
-        }
 
+            List<SupportingDocument> created = new List<SupportingDocument>();
+            foreach (var f in files)
+            {
+                var doc = new SupportingDocument((ICatalogueRepository)_targetCatalogue.Repository, _targetCatalogue, f.Name);
+                doc.URL = new Uri(f.FullName);
+                doc.SaveToDatabase();
+                created.Add(doc);
+            }
+
+            Publish(_targetCatalogue);
+
+            Emphasise(created.Last());
+            
+            foreach (var doc in created)
+                Activate(doc);
+        }
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SupportingDocument, OverlayKind.Add);
