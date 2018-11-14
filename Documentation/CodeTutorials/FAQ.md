@@ -14,6 +14,7 @@
 6. [Does RDMP Support Plugins?](#plugins)
 7. [Are there Unit/Integration Tests?](#tests)
 8. [When loading data can I skip some columns?](#skipColumns)
+9. [Can I run SQL Scripts during a load?](#sqlScripts)
 
 <a name="untyped"></a>
 ### Can RDMP Load UnTyped Data?
@@ -40,6 +41,7 @@ A Catalogue is RDMP's representation of one of your datasets e.g. 'Hospital Admi
 * Validation rules for each of the extractable items in the dataset
 * Graph definitions for viewing the contents of the dataset (and testing filters / cohorts built)
 * Attachments which help understand the dataset (e.g. a pdf file)
+
 
 ![PerformanceCounter](Images/FAQ/Catalogue.png)
 
@@ -152,3 +154,30 @@ If you want to dump / dilute the column you must configure a dump server.  And i
 ![ReOrdering](Images/FAQ/DiscardedColumnsFull.png)
 
 This approach gives a single workflow for acknowledging new columns and making conscious descisions about how to treat that data.  And since it is ALLOWED for columns in the database to appear that are not in input files you can still run the new load configuration on old files without it breaking.
+
+<a name="sqlScripts"></a>
+### Can I run SQL Scripts during a load?
+Yes once you have a load set up you can add SQL scripts to adjust the data in RAW / STAGING during the load.  You can also run scripts in PostLoad (which happens after data is migrated into the LIVE tables) but this is not recommended since it breaks the paradigm load isolation.
+
+![Add new script right click menu](Images/FAQ/AddNewRunSqlScriptTask.png)
+
+
+The Load Diagram shows the tables that will exist in RAW/STAGING.  Notice that the names for the tables/databases change depending on the stage.  This is handled by autocomplete when writting scripts (see below).
+
+![Load Stage Based Autocomplete](Images/FAQ/LoadStageAutoComplete.png)
+
+If you want to make a script agnostic of the LoadStage or if you are writting your own `INameDatabasesAndTablesDuringLoads` then you can reference columns/tables by ID using the following Sytnax
+
+```
+{T:100}
+```
+
+Where T is for `TableInfo` and 100 is the `ID` of the `TableInfo` you want the name of.  You can find the ID by viewing the ID column of the Tables collection:
+
+![How to specify column and table names using curly bracer syntax](Images/FAQ/TableAndColumnCurlyBracerSyntax.png)
+
+If you want to share one script between lots of different loads you can drag the .sql file from Windows Explorer onto the bubble node (e.g. AdjustStaging)
+
+![How to drop sql files onto load nodes](Images/FAQ/DragAndDropSqlScript.png)
+
+In order to allow other people to run the data load it is advised to store all SQL Script files on a shared network drive.
