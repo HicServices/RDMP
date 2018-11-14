@@ -44,14 +44,18 @@ namespace CatalogueManager.AutoComplete
         }
 
 
-        public void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName,LoadStage stage)
+        public void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName, LoadStage stage, IQuerySyntaxHelper syntaxHelper)
         {
-            var runtimeName = columnInfo.GetRuntimeName(stage);
+            var col = columnInfo.GetRuntimeName(stage);
+            var table = tableInfo.GetRuntimeName(stage);
+            var dbName = tableInfo.GetDatabaseRuntimeName(stage);
 
-            var snip = new SubstringAutocompleteItem(runtimeName);
-            snip.MenuText = runtimeName;
-            
-            snip.Text = columnInfo.Name;
+            var snip = new SubstringAutocompleteItem(col);
+            snip.MenuText = col;
+
+            var fullySpecified = syntaxHelper.EnsureFullyQualified(dbName, null, table, col);
+
+            snip.Text = fullySpecified;
             snip.Tag = columnInfo;
             snip.ImageIndex = GetIndexFor(columnInfo, RDMPConcept.ColumnInfo.ToString());
             
@@ -178,7 +182,8 @@ namespace CatalogueManager.AutoComplete
             var runtimeName = tableInfo.GetRuntimeName(loadStage);
             var dbName = tableInfo.GetDatabaseRuntimeName(loadStage);
 
-            var fullSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(dbName,null, runtimeName);
+            var syntaxHelper = tableInfo.GetQuerySyntaxHelper();
+            var fullSql = syntaxHelper.EnsureFullyQualified(dbName,null, runtimeName);
 
             var snip = new SubstringAutocompleteItem(tableInfo.GetRuntimeName());
             snip.MenuText = runtimeName; //name of table
@@ -196,7 +201,7 @@ namespace CatalogueManager.AutoComplete
                     Add(preDiscarded, tableInfo, dbName);
                 else
                 if(columnInfo != null)
-                    Add(columnInfo, tableInfo, dbName, loadStage);
+                    Add(columnInfo, tableInfo, dbName, loadStage, syntaxHelper);
                 else throw new Exception("Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '" + o.GetType().Name +"'");
             }
 

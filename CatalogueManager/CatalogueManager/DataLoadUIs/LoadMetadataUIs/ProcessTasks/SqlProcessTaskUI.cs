@@ -51,7 +51,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             _processTask = databaseObject;
             
             objectSaverButton1.SetupFor(_processTask, activator.RefreshBus);
-
             
             LoadFile();
             
@@ -111,7 +110,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             //if theres an old one dispose it
             if (_autoComplete == null)
                 _autoComplete = new AutoCompleteProviderFactory(_activator).Create(_processTask.LoadMetadata.GetQuerySyntaxHelper());
-            
+            else
+                _autoComplete.Clear();
+
             foreach (var table in _processTask.LoadMetadata.GetDistinctTableInfoList(false))
                 _autoComplete.Add(table, _processTask.LoadStage);
 
@@ -120,12 +121,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
         bool objectSaverButton1_BeforeSave(CatalogueLibrary.Data.DatabaseEntity arg)
         {
-            if(!string.IsNullOrWhiteSpace(_scintilla.Text))
-            {
-                File.WriteAllText(_processTask.Path,_scintilla.Text);
-                _scintilla.SetSavePoint();
-            }
-
+            File.WriteAllText(_processTask.Path,_scintilla.Text);
+            _scintilla.SetSavePoint();
+            
             return true;
         }
 
