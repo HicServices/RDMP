@@ -44,24 +44,8 @@ namespace Dashboard.CatalogueSummary
             get { return _catalogue; }
             private set
             {
-                if(value == null)
-                {
-                    ClearDQEGraphs();
-                    _catalogue = null;
-                    return;
-                }
-                
-                //if it had an old value
-                if (Catalogue != null)
-                    if (Catalogue.Equals(value))//and the old value is the same as the new value
-                        return;//dont bother
-
                 //novel value
                 _catalogue = value;
-
-                LoadMetadata lmd = null;
-                if(value.LoadMetadata_ID != null)
-                    lmd = value.LoadMetadata;
                 
                 //clear old DQE graphs
                 ClearDQEGraphs();
@@ -97,7 +81,6 @@ namespace Dashboard.CatalogueSummary
 
         private void ClearDQEGraphs()
         {
-
             timePeriodicityChart1.ClearGraph();
             columnStatesChart1.ClearGraph();
         }
