@@ -342,7 +342,8 @@ WHERE [Evaluation].[CatalogueID] IS NOT NULL and [Evaluation].[CatalogueID] <> '
 --Evaluation ID
 [Evaluation_ID] IN (  select ID from Evaluation e where CatalogueID in ({0}) AND DateOfEvaluation = (select max(DateOfEvaluation) from  Evaluation sub where e.CatalogueID = sub.CatalogueID))
 )
-
+AND 
+PivotCategory = 'ALL'
 group by 
 [Evaluation].[CatalogueID]
 order by 
@@ -400,7 +401,8 @@ WHERE
 --Evaluation ID
 [Evaluation_ID] IN (  select ID from Evaluation e where CatalogueID in ({0}) AND DateOfEvaluation = (select max(DateOfEvaluation) from  Evaluation sub where e.CatalogueID = sub.CatalogueID))
 )
-
+AND 
+PivotCategory = ''ALL''
 group by 
 [Evaluation].[CatalogueID],
 CONVERT(varchar(4),Year) + ''-'' + CONVERT(varchar(2),Month),
