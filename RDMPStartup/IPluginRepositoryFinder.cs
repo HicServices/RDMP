@@ -1,4 +1,5 @@
 using System;
+using CatalogueLibrary.Data.Referencing;
 using MapsDirectlyToDatabaseTable;
 
 namespace RDMPStartup
@@ -12,7 +13,17 @@ namespace RDMPStartup
     /// </summary>
     public interface IPluginRepositoryFinder
     {
-        IRepository GetRepositoryIfAny();
+        /// <summary>
+        /// Returns an instance capable of loading and saving objects into the database.
+        /// </summary>
+        /// <returns></returns>
+        PluginRepository GetRepositoryIfAny();
+
+        /// <summary>
+        /// Returns the Type of object returned by <see cref="GetRepositoryIfAny"/>.  This is used before constructing an actual instance to decide whether or not a given
+        /// unknown object reference should be resolved by your <see cref="IRepository"/> or somebody elses (See <see cref="IReferenceOtherObject"/>).  
+        /// </summary>
+        /// <returns></returns>
         Type GetRepositoryType();
     }
 }
