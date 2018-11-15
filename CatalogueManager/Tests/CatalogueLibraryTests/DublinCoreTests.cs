@@ -42,6 +42,22 @@ namespace CatalogueLibraryTests
             StringAssert.Contains("2001-01-01", contents);
             StringAssert.Contains("http://foo.com", contents);
             StringAssert.Contains("http://foo2.com", contents);
+
+            var def2 = new DublinCoreDefinition();
+            def2.LoadFrom(XDocument.Load(f.FullName).Root);
+
+            Assert.AreEqual(def.Title, def2.Title);
+            Assert.AreEqual(def.Alternative, def2.Alternative);
+            Assert.AreEqual(def.Description, def2.Description);
+            Assert.AreEqual(def.Format, def2.Format);
+            Assert.AreEqual(def.Publisher, def2.Publisher);
+            Assert.AreEqual(def.Subject, def2.Subject);
+
+            Assert.AreEqual(def.Modified, def2.Modified);
+            Assert.AreEqual(def.IsPartOf.ToString(), def2.IsPartOf.ToString());
+            Assert.AreEqual(def.Identifier.ToString(), def2.Identifier.ToString());
+
+
         }
 
         [Test]

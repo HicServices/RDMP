@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Xml;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
@@ -35,10 +36,15 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(catalogue));
             Add(new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, catalogue));
             
-
             Items.Add(new ToolStripSeparator());
 
-            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {catalogue}));
+
+            var extract = new ToolStripMenuItem("Import/Export");
+            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {catalogue}),Keys.None,extract);
+            Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue),Keys.None,extract);
+            Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue), Keys.None, extract);
+
+            Items.Add(extract);
 
             Add(new ExecuteCommandCreateANOVersion(_activator, catalogue));
 

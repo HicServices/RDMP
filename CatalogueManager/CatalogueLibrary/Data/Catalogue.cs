@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Web.UI.WebControls;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.DataLoad.Extensions;
-using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.DublinCore;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -1358,5 +1353,21 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
+        public DublinCoreDefinition ToDublinCore()
+        {
+            var definition = new DublinCoreDefinition();
+
+            definition.Title = Name;
+            definition.Description = Description;
+            definition.Subject = Search_keywords;
+
+            return definition;
+        }
+
+        public void FromDublinCore(DublinCoreDefinition definition)
+        {
+            Name = definition.Title;
+            Description =  definition.Description;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -37,7 +38,26 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             Activator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
         }
+        
+        protected FileInfo SelectSaveFile(string filter)
+        {
+            var sfd = new SaveFileDialog();
+            sfd.Filter = filter;
+            if (sfd.ShowDialog() == DialogResult.OK)
+                return new FileInfo(sfd.FileName);
 
+            return null;
+        }
+
+        protected FileInfo SelectOpenFile(string filter)
+        {
+            var ofd = new OpenFileDialog();
+            ofd.Filter = filter;
+            if (ofd.ShowDialog() == DialogResult.OK)
+                return new FileInfo(ofd.FileName);
+
+            return null;
+        }
         /// <summary>
         /// Prompts user to select 1 of the objects of type T in the list you provide
         /// </summary>
