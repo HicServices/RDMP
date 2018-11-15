@@ -242,6 +242,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
+    <Compile Include="DublinCoreTests.cs" />
     <Compile Include="ImportTests\GatherAndShareTests.cs" />
     <Compile Include="ImportTests\PluginClassTests.cs" />
     <Compile Include="ImportTests\TestImportingAnObject.cs" />
