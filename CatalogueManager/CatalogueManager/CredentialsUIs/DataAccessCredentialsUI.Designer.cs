@@ -30,25 +30,14 @@ namespace CatalogueManager.CredentialsUIs
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnClearUsernamePassword = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.tbPassword = new System.Windows.Forms.TextBox();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
-            // 
-            // btnClearUsernamePassword
-            // 
-            this.btnClearUsernamePassword.Location = new System.Drawing.Point(286, 46);
-            this.btnClearUsernamePassword.Name = "btnClearUsernamePassword";
-            this.btnClearUsernamePassword.Size = new System.Drawing.Size(75, 48);
-            this.btnClearUsernamePassword.TabIndex = 0;
-            this.btnClearUsernamePassword.Text = "Clear \r\nCredentials";
-            this.btnClearUsernamePassword.UseVisualStyleBackColor = true;
-            this.btnClearUsernamePassword.Click += new System.EventHandler(this.btnClearUsernamePassword_Click);
             // 
             // label1
             // 
@@ -65,6 +54,7 @@ namespace CatalogueManager.CredentialsUIs
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(287, 20);
             this.tbName.TabIndex = 2;
+            this.tbName.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
             // label2
             // 
@@ -90,6 +80,7 @@ namespace CatalogueManager.CredentialsUIs
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(206, 20);
             this.tbUsername.TabIndex = 5;
+            this.tbUsername.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
             // tbPassword
             // 
@@ -98,33 +89,30 @@ namespace CatalogueManager.CredentialsUIs
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(206, 20);
             this.tbPassword.TabIndex = 6;
+            this.tbPassword.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
-            // btnSave
+            // objectSaverButton1
             // 
-            this.btnSave.Location = new System.Drawing.Point(74, 100);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(95, 25);
-            this.btnSave.TabIndex = 7;
-            this.btnSave.Text = "&Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.objectSaverButton1.Location = new System.Drawing.Point(74, 97);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
+            this.objectSaverButton1.TabIndex = 7;
             // 
             // DataAccessCredentialsUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.tbPassword);
             this.Controls.Add(this.tbUsername);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbName);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.btnClearUsernamePassword);
             this.MinimumSize = new System.Drawing.Size(404, 198);
             this.Name = "DataAccessCredentialsUI";
             this.Size = new System.Drawing.Size(404, 198);
-            this.Load += new System.EventHandler(this.EditCredentialControl_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -132,13 +120,12 @@ namespace CatalogueManager.CredentialsUIs
 
         #endregion
 
-        private System.Windows.Forms.Button btnClearUsernamePassword;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbUsername;
         private System.Windows.Forms.TextBox tbPassword;
-        private System.Windows.Forms.Button btnSave;
+        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

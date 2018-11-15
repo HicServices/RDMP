@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
@@ -13,10 +13,9 @@ namespace CatalogueManager.CredentialsUIs
     /// <summary>
     /// Allows you to change a stored username/password (DataAccessCredentials).  For more information about how passwords are encrypted See PasswordEncryptionKeyLocationUI
     /// </summary>
-    public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design
+    public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, ISaveableUI
     {
         private DataAccessCredentials _credentials;
-        private bool _enableSaveUsernamePassword;
         
         public DataAccessCredentialsUI()
         {
@@ -24,80 +23,55 @@ namespace CatalogueManager.CredentialsUIs
 
             AssociatedCollection = RDMPCollection.Tables;
         }
-
-        private void UpdateFormComponents()
+        
+        private bool _bLoading;
+        public override void SetDatabaseObject(IActivateItems activator, DataAccessCredentials databaseObject)
         {
+            _bLoading = true;
             try
             {
+                base.SetDatabaseObject(activator,databaseObject);
+            
+                _credentials = databaseObject;
+
                 tbName.Text = _credentials.Name;
                 tbUsername.Text = _credentials.Username;
                 tbPassword.Text = _credentials.Password;
 
-                if (_credentials.Username == null || _credentials.GetDecryptedPassword() == null)
-                {
-                    btnClearUsernamePassword.Visible = false;
-                    tbUsername.Text = null;
-                    tbPassword.Text = null;
-                    tbUsername.ReadOnly = false;
-                    tbPassword.ReadOnly = false;
-                    _enableSaveUsernamePassword = true;
-                }
-                else
-                {
-                    btnClearUsernamePassword.Visible = true;
-                    tbUsername.ReadOnly = true;
-                    tbPassword.ReadOnly = true;
-                    _enableSaveUsernamePassword = false;
-                }
-
+                objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
             }
-            catch (Exception e)
+            finally
             {
-                ExceptionViewer.Show(e);
+                _bLoading = false;
             }
         }
-        
-        private void btnClearUsernamePassword_Click(object sender, EventArgs e)
-        {
-            tbUsername.Text = null;
-            tbPassword.Text = null;
-            _credentials.Username = null;
-            _credentials.Password = null;
-            _credentials.SaveToDatabase();
-            UpdateFormComponents();
-        }
 
-        private void EditCredentialControl_Load(object sender, EventArgs e)
+        private void tb_TextChanged(object sender, EventArgs e)
         {
-
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
+            if(_bLoading)
+                return;
+            
             try
             {
-                _credentials.Name = tbName.Text;
-                if (_enableSaveUsernamePassword == true)
-                {
-                    _credentials.Username = tbUsername.Text;
-                    _credentials.Password = tbPassword.Text;
-                }
-                _credentials.SaveToDatabase();
-                Publish(_credentials);
+                var tb = (TextBox)sender;
+
+                if (tb == tbName)
+                    _credentials.Name = tb.Text;
+                if (tb == tbUsername)
+                    _credentials.Username = tb.Text;
+                if (tb == tbPassword)
+                    _credentials.Password = tb.Text;
+            
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                ExceptionViewer.Show(exception);
+                ExceptionViewer.Show(ex);
             }
         }
 
-        public override void SetDatabaseObject(IActivateItems activator, DataAccessCredentials databaseObject)
+        public ObjectSaverButton GetObjectSaverButton()
         {
-            base.SetDatabaseObject(activator,databaseObject);
-            
-            _credentials = databaseObject;
-            _enableSaveUsernamePassword = true;
-            UpdateFormComponents();
+            return objectSaverButton1;
         }
     }
 

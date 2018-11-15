@@ -134,25 +134,28 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
         [NoMappingToDatabase]
-        [UsefulProperty(DisplayName = "V")]
+        [UsefulProperty(DisplayName = "Source")]
         public string Source { get { return ExternalCohortTable.Name; } }
 
         [NoMappingToDatabase]
         [UsefulProperty(DisplayName = "P")]
-        public int? ExternalProjectNumber
+        public int ExternalProjectNumber
         {
-            get { return (int?)GetFromCacheData(x => x.ExternalProjectNumber); }
+            get { return (int?)GetFromCacheData(x => x.ExternalProjectNumber) ?? -1; }
         }
 
         [NoMappingToDatabase]
-        [UsefulProperty]
-        public int? ExternalVersion
+        [UsefulProperty(DisplayName = "V")]
+        public int ExternalVersion
         {
-            get { return (int?)GetFromCacheData(x => x.ExternalVersion); }
+            get { return (int?)GetFromCacheData(x => x.ExternalVersion) ?? -1; }
         }
 
         private object GetFromCacheData(Func<IExternalCohortDefinitionData, object> func)
         {
+            if (_broken)
+                return null;
+
             try
             {
                 var v = _cacheData.Value;
@@ -160,10 +163,11 @@ namespace DataExportLibrary.Data.DataTables
             }
             catch (Exception)
             {
+                _broken = true;
                 _cacheData = new Lazy<IExternalCohortDefinitionData>(() => null);
             }
                 
-            return "null";
+            return null;
         }
 
         internal ExtractableCohort(IDataExportRepository repository, DbDataReader r)
@@ -416,6 +420,11 @@ namespace DataExportLibrary.Data.DataTables
         private int _reverseAnonymiseProgressFetchingMap = 0;
         private int _reverseAnonymiseProgressReversing = 0;
         
+        /// <summary>
+        /// Indicates whether the CohortsSource database was unreachable, cohort has been since deleted etc.
+        /// </summary>
+        private bool _broken;
+
 
         public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
         {
@@ -523,6 +532,9 @@ namespace DataExportLibrary.Data.DataTables
 
         public void InjectKnown(IExternalCohortDefinitionData instance)
         {
+            if (instance == null)
+                _broken = true;
+
             _cacheData = new Lazy<IExternalCohortDefinitionData>(() => instance);
         }
 

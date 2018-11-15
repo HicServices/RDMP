@@ -424,13 +424,12 @@ namespace ReusableUIComponents
             UpdateDatabaseList();
             cbxDatabase.Text = databaseName;
         }
+
         public void SetExplicitDatabase(string serverName, string databaseName, string username, string password)
         {
-            cbxServer.Text = serverName;
             tbUsername.Text = username;
             tbPassword.Text = password;
-            
-            UpdateDatabaseList();
+            cbxServer.Text = serverName;
             cbxDatabase.Text = databaseName;
         }
 

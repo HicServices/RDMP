@@ -52,8 +52,8 @@
             this.btnValidationRules.Image = ((System.Drawing.Image)(resources.GetObject("btnValidationRules.Image")));
             this.btnValidationRules.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnValidationRules.Name = "btnValidationRules";
-            this.btnValidationRules.Size = new System.Drawing.Size(145, 22);
-            this.btnValidationRules.Text = "Configure Validation...";
+            this.btnValidationRules.Size = new System.Drawing.Size(64, 22);
+            this.btnValidationRules.Text = "Rules...";
             this.btnValidationRules.Click += new System.EventHandler(this.btnValidationRules_Click);
             // 
             // btnViewResults
