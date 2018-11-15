@@ -16,13 +16,28 @@ namespace CatalogueLibrary.Data.Dashboarding
     /// </summary>
     public class PersistStringHelper
     {
+        /// <summary>
+        /// The string to use to divide objects declared within a collection e.g. ',' in [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
+        /// </summary>
         public const string CollectionObjectSeparator = ",";
+
+        /// <summary>
+        /// The string to use to indicate the start of an objects collection e.g. '[' in  [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
+        /// </summary>
         public const string CollectionStartDelimiter = "[";
+
+        /// <summary>
+        /// The string to use to indicate the end of an objects collection e.g. ']' in  [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
+        /// </summary>
         public const string CollectionEndDelimiter = "]";
+
+        /// <summary>
+        /// The string to use to separate logic portions of a persistence string e.g. ':"  in  [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
+        /// </summary>
         public const char Separator = ':';
 
         /// <summary>
-        /// Divider between Type section (what is the control) and args dictionary
+        /// Divider between Type section  (see <see cref="Separator"/> - what is the control) and args dictionary for IPersistableObjectCollection
         /// </summary>
         public const string ExtraText = "###EXTRA_TEXT###";
 
@@ -75,6 +90,11 @@ namespace CatalogueLibrary.Data.Dashboarding
             return null;
         }
 
+        /// <summary>
+        /// Returns the objects IDs formatted with the <see cref="CollectionStartDelimiter"/>, <see cref="CollectionEndDelimiter"/> and <see cref="CollectionObjectSeparator"/>
+        /// </summary>
+        /// <param name="objects"></param>
+        /// <returns></returns>
         public string GetObjectCollectionPersistString(params IMapsDirectlyToDatabaseTable[] objects)
         {
 
@@ -92,6 +112,13 @@ namespace CatalogueLibrary.Data.Dashboarding
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Returns the object list section of any <paramref name="persistenceString"/>. This string must take the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
+        /// 
+        /// <para>Throws <see cref="PersistenceException"/> if there is not exactly 1 match or if the number of subtokens in each section is not 3.</para>
+        /// </summary>
+        /// <param name="persistenceString">persistence string in the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]</param>
+        /// <returns></returns>
         public string MatchCollectionInString(string persistenceString)
         {
             try
@@ -108,7 +135,14 @@ namespace CatalogueLibrary.Data.Dashboarding
                 throw new PersistenceException("Could not match ObjectCollection delimiters in persistenceString '" + persistenceString + "'", e);
             }
         }
+         
 
+        /// <summary>
+        /// Fetches the listed objects out of the collection section of a persistence string by fetching the listed ObjectType by ID from the RepoType
+        /// </summary>
+        /// <param name="allObjectsString">A string with a list of objects ID's, should have the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]</param>
+        /// <param name="repositoryLocator"></param>
+        /// <returns></returns>
         public List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             var toReturn = new List<IMapsDirectlyToDatabaseTable>();
