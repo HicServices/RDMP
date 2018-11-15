@@ -1353,21 +1353,5 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
-        public DublinCoreDefinition ToDublinCore()
-        {
-            var definition = new DublinCoreDefinition();
-
-            definition.Title = Name;
-            definition.Description = Description;
-            definition.Subject = Search_keywords;
-
-            return definition;
-        }
-
-        public void FromDublinCore(DublinCoreDefinition definition)
-        {
-            Name = definition.Title;
-            Description =  definition.Description;
-        }
     }
 }

@@ -12,10 +12,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     {
         private readonly DublinCoreDefinition _definition;
         private FileInfo _toExport;
+        readonly DublinCoreTranslater _translater = new DublinCoreTranslater();
 
         public ExecuteCommandExportInDublinCoreFormat(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
-            _definition = catalogue.ToDublinCore();
+            _definition = _translater.GenerateFrom(catalogue);
         }
 
         public override void Execute()

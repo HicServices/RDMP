@@ -46,8 +46,8 @@ namespace CatalogueLibrary.DublinCore
             doc.Root.Add(new XElement(dc + "description", Description));
             doc.Root.Add(new XElement(dc + "publisher", Publisher));
 
-            doc.Root.Add(new XElement(dcterms + "isPartOf", new XAttribute(xsi + "type", "dcters:URI"), IsPartOf));
-            doc.Root.Add(new XElement(dcterms + "identifier", new XAttribute(xsi + "type", "dcters:URI"), Identifier));
+            doc.Root.Add(new XElement(dcterms + "isPartOf", new XAttribute(xsi + "type", "dcterms:URI"), IsPartOf));
+            doc.Root.Add(new XElement(dcterms + "identifier", new XAttribute(xsi + "type", "dcterms:URI"), Identifier));
 
             //<dcterms:modified xsi:type="dcterms:W3CDTF">
             if (Modified.HasValue)

@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Xml;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 
@@ -40,7 +41,9 @@ namespace CatalogueManager.Menus
 
 
             var extract = new ToolStripMenuItem("Import/Export");
+
             Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {catalogue}),Keys.None,extract);
+            Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue),Keys.None,extract);
             Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue),Keys.None,extract);
             Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue), Keys.None, extract);
 

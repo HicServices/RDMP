@@ -304,6 +304,7 @@
     <Compile Include="Data\Serialization\PickAnyConstructorJsonConverter.cs" />
     <Compile Include="Data\Serialization\ShareDefinition.cs" />
     <Compile Include="DublinCore\DublinCoreDefinition.cs" />
+    <Compile Include="DublinCore\DublinCoreTranslater.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />

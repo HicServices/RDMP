@@ -14,6 +14,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     {
         private Catalogue _target;
         private FileInfo _toImport;
+        readonly DublinCoreTranslater _translater = new DublinCoreTranslater();
 
         public ExecuteCommandImportDublinCoreFormat(IActivateItems activator, Catalogue catalogue):base(activator)
         {
@@ -31,7 +32,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             var doc = XDocument.Load(_toImport.FullName);
             dc.LoadFrom(doc.Root);
 
-            _target.FromDublinCore(dc);
+            _translater.Fill(_target,dc);
             _target.SaveToDatabase();
             
             Publish(_target);

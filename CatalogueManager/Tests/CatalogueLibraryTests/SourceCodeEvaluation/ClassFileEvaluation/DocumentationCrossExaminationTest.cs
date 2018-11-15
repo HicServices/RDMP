@@ -198,7 +198,11 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "DrugList",
             "DrugCodeFormat",
             "GenderCodeDescription",
-            "MyParam"
+            "MyParam",
+
+            "GPCode",
+            "RepoType",
+
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

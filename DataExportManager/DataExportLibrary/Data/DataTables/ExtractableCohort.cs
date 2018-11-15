@@ -421,7 +421,7 @@ namespace DataExportLibrary.Data.DataTables
         private int _reverseAnonymiseProgressReversing = 0;
         
         /// <summary>
-        /// Indicates whether the CohortsSource database was unreachable, cohort has been since deleted etc.
+        /// Indicates whether the database described in ExternalCohortTable is unreachable or if the cohort has since been deleted etc.
         /// </summary>
         private bool _broken;
 
