@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+using System.Security;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace CatalogueLibrary.DublinCore
 {
-    class DublinCoreDefinition
+    /// <summary>
+    /// Class describing the RDMP exposed attributes defined in Dublin Core metadata format.
+    /// </summary>
+    public class DublinCoreDefinition
     {
         public string Title { get; set; }
         public string Alternative { get; set; }
@@ -55,6 +57,54 @@ namespace CatalogueLibrary.DublinCore
             
             using(StreamWriter sw = new StreamWriter(to))
                 sw.Write(doc.ToString(SaveOptions.None));
+        }
+
+        public void LoadFrom(XElement element)
+        {
+            if(element.Name != "metadata")
+                throw new XmlSyntaxException("Expected metadata element but got " + element);
+
+            var descendants = element.Descendants().ToArray();
+            Title = GetElement(descendants, "title",true);
+            Alternative = GetElement(descendants, "alternative",false);
+            Subject = GetElement(descendants, "subject", false);
+            Description = GetElement(descendants, "description", false);
+            Publisher = GetElement(descendants, "publisher", false);
+            IsPartOf = GetElementUri(descendants, "ispartof",false);
+            Identifier = GetElementUri(descendants, "identifier",false);
+            Modified = GetElementDateTime(descendants, "modified",false);
+            Format = GetElement(descendants, "format",false);
+        }
+
+        private DateTime? GetElementDateTime(XElement[] descendants, string tagLocalName, bool mandatory)
+        {
+            var stringValue = GetElement(descendants, tagLocalName, mandatory);
+            if (string.IsNullOrWhiteSpace(stringValue))
+                return null;
+
+            return DateTime.Parse(stringValue);
+        }
+
+        private Uri GetElementUri(XElement[] descendants, string tagLocalName, bool mandatory)
+        {
+            var stringValue = GetElement(descendants, tagLocalName, mandatory);
+            if (string.IsNullOrWhiteSpace(stringValue))
+                return null;
+
+            return new Uri(stringValue);
+        }
+
+        private string GetElement(XElement[] descendants, string tagLocalName, bool mandatory)
+        {
+            var match = descendants.FirstOrDefault(e => e.Name.LocalName.Equals(tagLocalName,StringComparison.CurrentCultureIgnoreCase));
+
+            if (match == null)
+                if(mandatory)
+                    throw new XmlSyntaxException("Failed to find mandatory tag " + tagLocalName);
+                else
+                    return null;
+
+            return match.Value.Trim();
         }
     }
 }
