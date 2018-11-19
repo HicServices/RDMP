@@ -1,8 +1,13 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Linq;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
@@ -115,97 +120,102 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <inheritdoc/>
         public object GetValueAsSystemType()
         {
+            return Deserialize(Value, Type);
+        }
+
+        private object Deserialize(string value, string type)
+        {
             object customType;
             if (HandleIfCustom(out customType))
                 return customType;
 
             //bool
-            if (Type.Equals(typeof(bool).ToString()))
+            if (type.Equals(typeof(bool).ToString()))
             {
-                if (String.IsNullOrWhiteSpace(Value))
+                if (String.IsNullOrWhiteSpace(value))
                     return false;
 
-                return Convert.ToBoolean(Value);
+                return Convert.ToBoolean(value);
             }
 
-            if (Type.Equals(typeof (Type).ToString()))
-                if (string.IsNullOrWhiteSpace(Value))
+            if (type.Equals(typeof(Type).ToString()))
+                if (string.IsNullOrWhiteSpace(value))
                     return null;
                 else
-                    return ((CatalogueRepository) Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(Value);
+                    return ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(value);
 
-            if (Type.Equals(typeof (CatalogueRepository).ToString()))
+            if (type.Equals(typeof(CatalogueRepository).ToString()))
                 return Repository;
 
 
             //float?
-            if (Type.Equals(typeof(float?).ToString()) || Type.Equals(typeof(float).ToString()))
-                if (string.IsNullOrWhiteSpace(Value))
+            if (type.Equals(typeof(float?).ToString()) || type.Equals(typeof(float).ToString()))
+                if (string.IsNullOrWhiteSpace(value))
                     return null;
                 else
-                    return float.Parse(Value);
+                    return float.Parse(value);
 
             //double?
-            if (Type.Equals(typeof(double?).ToString()) || Type.Equals(typeof(double).ToString()))
-                if (string.IsNullOrWhiteSpace(Value))
+            if (type.Equals(typeof(double?).ToString()) || type.Equals(typeof(double).ToString()))
+                if (string.IsNullOrWhiteSpace(value))
                     return null;
                 else
-                    return double.Parse(Value);
+                    return double.Parse(value);
 
             //int?
-            if (Type.Equals(typeof(int?).ToString()) || Type.Equals(typeof(int).ToString()))
-                if (string.IsNullOrWhiteSpace(Value))
+            if (type.Equals(typeof(int?).ToString()) || type.Equals(typeof(int).ToString()))
+                if (string.IsNullOrWhiteSpace(value))
                     return null;
                 else
-                    return int.Parse(Value);
-            
+                    return int.Parse(value);
+
             //char?
-            if (Type.Equals(typeof(char?).ToString()) || Type.Equals(typeof(char).ToString()))
-                if (string.IsNullOrWhiteSpace(Value))
+            if (type.Equals(typeof(char?).ToString()) || type.Equals(typeof(char).ToString()))
+                if (string.IsNullOrWhiteSpace(value))
                     return null;
                 else
-                    return char.Parse(Value);
+                    return char.Parse(value);
 
             //DateTime?
-            if (Type.Equals(typeof(DateTime?).ToString()) || Type.Equals(typeof(DateTime).ToString()))
-                if (string.IsNullOrWhiteSpace(Value))
+            if (type.Equals(typeof(DateTime?).ToString()) || type.Equals(typeof(DateTime).ToString()))
+                if (string.IsNullOrWhiteSpace(value))
                     return null;
                 else
-                    return DateTime.Parse(Value);
+                    return DateTime.Parse(value);
 
             //null
-            if (String.IsNullOrWhiteSpace(Value))
+            if (String.IsNullOrWhiteSpace(value))
                 return null;
 
-            if (Type.Equals(typeof(Uri).ToString()))
-                return new Uri(Value);
+            if (type.Equals(typeof(Uri).ToString()))
+                return new Uri(value);
 
-            if (Type.Equals(typeof(string).ToString()))
-                return Value;
+            if (type.Equals(typeof(string).ToString()))
+                return value;
 
-            if (Type.Equals(typeof(FileInfo).ToString()))
-                return new FileInfo(Value);
+            if (type.Equals(typeof(FileInfo).ToString()))
+                return new FileInfo(value);
 
-            if (Type.Equals(typeof(DirectoryInfo).ToString()))
-                return new DirectoryInfo(Value);
+            if (type.Equals(typeof(DirectoryInfo).ToString()))
+                return new DirectoryInfo(value);
 
-            if (Type.Equals(typeof(Regex).ToString()))
-                return new Regex(Value);
+            if (type.Equals(typeof(Regex).ToString()))
+                return new Regex(value);
 
-            Type type = GetConcreteSystemType();
+            Type concreteType = GetConcreteSystemType(type);
 
-            if(typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-                return Repository.GetObjectByID(type, Convert.ToInt32(Value));
+            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(concreteType))
+                return Repository.GetObjectByID(concreteType, Convert.ToInt32(value));
 
-            if (typeof (Array).IsAssignableFrom(type))
+            if (typeof(Array).IsAssignableFrom(concreteType))
             {
-                var elementType = type.GetElementType();
-                int[] ids = Value.Split(',').Select(int.Parse).ToArray();
+                var elementType = concreteType.GetElementType();
+                int[] ids = value.Split(',').Select(int.Parse).ToArray();
 
-                if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(elementType))
+                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(elementType))
                 {
                     var genericArray = Repository.GetAllObjectsInIDList(elementType, ids).ToArray();
-                    var typedArray = Array.CreateInstance(elementType,genericArray.Length);
+                    var typedArray = Array.CreateInstance(elementType, genericArray.Length);
 
                     for (int i = 0; i < genericArray.Length; i++)
                         typedArray.SetValue(genericArray[i], i);
@@ -214,11 +224,15 @@ namespace CatalogueLibrary.Data.DataLoad
                 }
             }
 
-            if (Type.Equals(typeof (EncryptedString).ToString()))
-                return new EncryptedString((CatalogueRepository) Repository) {Value = Value};
-            
-            throw new NotSupportedException("Custom arguments cannot be of type " + Type);
+            if (typeof(IDictionary).IsAssignableFrom(concreteType))
+            {
+                return DeserializeDictionary(value,concreteType);
+            }
 
+            if (type.Equals(typeof(EncryptedString).ToString()))
+                return new EncryptedString((CatalogueRepository)Repository) { Value = value };
+
+            throw new NotSupportedException("Custom arguments cannot be of type " + type);
         }
 
         private bool HandleIfCustom(out object answer)
@@ -276,16 +290,21 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <inheritdoc/>
         public Type GetSystemType()
         {
+            return GetSystemType(Type);
+        }
+
+        private Type GetSystemType(string type)
+        {
             //if we know they type (it is exactly one we are expecting)
             foreach (Type knownType in PermissableTypes)
             {
                 //return the type
-                if (knownType.ToString().Equals(Type))
+                if (knownType.ToString().Equals(type))
                     return knownType;
             }
 
             Regex arrayType = new Regex(@"(.*)\[]");
-            var arrayMatch = arrayType.Match(Type);
+            var arrayMatch = arrayType.Match(type);
 
             if (arrayMatch.Success)
             {
@@ -293,18 +312,27 @@ namespace CatalogueLibrary.Data.DataLoad
 
                 //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
                 var elementType = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(elementTypeAsString);
-                
+
                 if (elementType == null)
-                    throw new Exception("Could not figure out what SystemType to use for elementType = '" + elementTypeAsString + "' of Type '" + Type + "'");
+                    throw new Exception("Could not figure out what SystemType to use for elementType = '" + elementTypeAsString + "' of Type '" + type + "'");
 
                 return Array.CreateInstance(elementType, 0).GetType();
             }
 
-            //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-            var anyType =  ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(Type);
+            Type kType;
+            Type vType;
+            if (IsDictionary(type, out kType, out vType))
+            {
+                Type genericClass = typeof(Dictionary<,>);
+                Type constructedClass = genericClass.MakeGenericType(kType,vType);
+                return constructedClass;
+            }
 
-            if(anyType == null)
-                throw new Exception("Could not figure out what SystemType to use for Type = '" + Type +"'");
+            //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
+            var anyType = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type);
+
+            if (anyType == null)
+                throw new Exception("Could not figure out what SystemType to use for Type = '" + type + "'");
 
             return anyType;
         }
@@ -312,19 +340,25 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <inheritdoc/>
         public Type GetConcreteSystemType()
         {
-            var type = GetSystemType();
+            return GetConcreteSystemType(Type);
+        }
+
+        public Type GetConcreteSystemType(string typeAsString)
+        {
+            var type = GetSystemType(typeAsString);
 
             //if it is interface e.g. ITableInfo fetch instead the TableInfo object
             if (type.IsInterface && type.Name.StartsWith("I"))
             {
                 var candidate = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1)); // chop the 'I' off
 
-                if(!candidate.IsAbstract)
+                if (!candidate.IsAbstract)
                     return candidate;
             }
 
             return type;
         }
+        
         /// <inheritdoc/>
         public void SetType(Type t)
         {
@@ -337,42 +371,35 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <inheritdoc/>
         public void SetValue(object o)
         {
+            Value = Serialize(o, Type);
+        }
+
+        private string Serialize(object o, string asType)
+        {
             //anything implementing this interface is permitted 
             if (o is ICustomUIDrivenClass)
-            {
-                Value = ((ICustomUIDrivenClass)o).SaveStateToString();
-                return;
-            }
+                return ((ICustomUIDrivenClass) o).SaveStateToString();
 
             if (o == null)
-            {
-                Value = null;
-                return;
-            }
+                return null;
 
+            //We are being asked to store a Type e.g. MyPlugins.MyCustomSQLHacker instead of an instance so easy, we just store the Type as a full name
             if (o is Type)
-            {
-                Value = o.ToString();//We are being asked to store a Type e.g. MyPlugins.MyCustomSQLHacker instead of an instance so easy, we just store the Type as a full name
-                return;
-            }
-
+                return o.ToString();
+                    
             //get the system type
-            Type type = GetSystemType();
+            Type type = GetSystemType(asType);
 
             if (o is String)
             {
-                if (typeof (IEncryptedString).IsAssignableFrom(type))
+                if (typeof(IEncryptedString).IsAssignableFrom(type))
                 {
-                    var encryptor = new EncryptedString((CatalogueRepository) Repository);
+                    var encryptor = new EncryptedString((CatalogueRepository)Repository);
                     encryptor.Value = o.ToString();
-                    Value = encryptor.Value;
-                    return;
+                    return encryptor.Value;
                 }
-                else
-                {
-                    Value = o.ToString();
-                    return;
-                }
+
+                return o.ToString();
             }
 
             //if it's a nullable type find the underlying Type
@@ -380,19 +407,20 @@ namespace CatalogueLibrary.Data.DataLoad
                 type = Nullable.GetUnderlyingType(type);
 
             //if it's an array
-            if (type != null && typeof (Array).IsAssignableFrom(type))
+            if (type != null && typeof(Array).IsAssignableFrom(type))
             {
-                var arr = (Array) o;
-                if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType()))
-                    Value = string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID));
-                else
-                    throw new NotSupportedException("DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was " + type);
+                var arr = (Array)o;
+                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType()))
+                    return string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID));
                 
-                return;
+                throw new NotSupportedException("DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was " + type);
             }
-            
+
+            if (type != null && typeof (IDictionary).IsAssignableFrom(type))
+                return SerializeDictionary((IDictionary) o);
+
             //if we already have a known type set on us
-            if (!String.IsNullOrWhiteSpace(Type))
+            if (!String.IsNullOrWhiteSpace(asType))
             {
                 //if we are not being passed an Enum
                 if (!typeof(Enum).IsAssignableFrom(type))
@@ -403,14 +431,118 @@ namespace CatalogueLibrary.Data.DataLoad
 
                     //if we are passed something o of differing type to the known requested type then someone is lying to someone!
                     if (type != null && !type.IsInstanceOfType(o))
-                        throw new Exception("Cannot set value " + o + " (of Type " + o.GetType().FullName + ") to on ProcessTaskArgument because it has an incompatible Type specified (" + type.FullName + ")");                        
+                        throw new Exception("Cannot set value " + o + " (of Type " + o.GetType().FullName + ") to on ProcessTaskArgument because it has an incompatible Type specified (" + type.FullName + ")");
                 }
             }
-            
+
             if (o is IMapsDirectlyToDatabaseTable)
-                Value = ((IMapsDirectlyToDatabaseTable)o).ID.ToString();
-            else
-                Value = o.ToString();
+                return ((IMapsDirectlyToDatabaseTable)o).ID.ToString();
+            
+            return o.ToString();
         }
+
+        #region Dictionary Handling
+        private IDictionary DeserializeDictionary(string value, Type type)
+        {
+            var instance = (IDictionary)Activator.CreateInstance(type);
+
+            using (var sr = new StringReader(value))
+            {
+                var doc = XDocument.Load(sr);
+                var dict = doc.Element("dictionary");
+                foreach (XElement xElement in dict.Elements("entry"))
+                {
+                    var kElement = xElement.Element("key");
+                    var kType = kElement.Attribute("type").Value;
+                    var kValue = kElement.Attribute("o").Value;
+
+                    var keyInstance = Deserialize(kValue, kType);
+
+                    var vElement = xElement.Element("value");
+                    var vType = vElement.Attribute("type").Value;
+                    var vValue = vElement.Attribute("o").Value;
+
+                    var valueInstance = Deserialize(vValue, vType);
+
+                    instance.Add(keyInstance,valueInstance);
+                }
+            }
+
+            return instance;
+        }
+        
+        private string SerializeDictionary(IDictionary dictionary)
+        {
+            using (var sw = new StringWriter())
+            {
+                using (var xmlWriter = XmlWriter.Create(sw))
+                {
+                    // Build Xml with xw.
+
+                    xmlWriter.WriteStartDocument();
+                    xmlWriter.WriteStartElement("dictionary");
+                    
+                    foreach (DictionaryEntry entry in dictionary)
+                    {
+                        var keyObject = entry.Key;
+                        var keyObjectType = keyObject.GetType().ToString();
+
+                        var valueObject = entry.Value;
+                        var valueObjectType = valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
+                        
+                        xmlWriter.WriteStartElement("entry");
+                        
+                        xmlWriter.WriteStartElement("key");
+                        xmlWriter.WriteAttributeString("type", keyObjectType);
+                        xmlWriter.WriteAttributeString("o", Serialize(keyObject,keyObjectType));
+                        xmlWriter.WriteEndElement();
+
+                        xmlWriter.WriteStartElement("value");
+                        xmlWriter.WriteAttributeString("type", valueObjectType);
+                        xmlWriter.WriteAttributeString("o", Serialize(valueObject, valueObjectType));
+                        xmlWriter.WriteEndElement();
+
+                        xmlWriter.WriteEndElement();
+                    }
+                    
+                    xmlWriter.WriteEndDocument();
+                    xmlWriter.Close();
+
+                }
+                return sw.ToString();
+            }
+        }
+
+        private bool IsDictionary(string type, out Type kType, out Type vType)
+        {
+            kType = null;
+            vType = null;
+
+            //regex to match the two types referenced in the Dictionary
+            Regex r = new Regex(
+                string.Format("{0}{1},{1}{2}",
+                Regex.Escape("System.Collections.Generic.Dictionary`2["),
+                "(.*)",
+                Regex.Escape("]"))
+                );
+
+            if (type == null)
+                return false;
+
+            var match = r.Match(type);
+
+            if (!match.Success)
+                return false;
+
+            var kString = match.Groups[1].Value;
+            var vString = match.Groups[2].Value;
+
+            kType = GetSystemType(kString);
+            vType = GetSystemType(vString);
+
+            return true;
+        }
+        #endregion
     }
+
 }
