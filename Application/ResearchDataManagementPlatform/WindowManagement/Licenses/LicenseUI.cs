@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
-using ReusableUIComponents.Settings;
 
 namespace ResearchDataManagementPlatform.WindowManagement.Licenses
 {
@@ -28,8 +19,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.Licenses
 
             try
             {
-                rtLicense.Text = GetTextFrom("LICENSE");
-                rtThirdPartyLicense.Text = GetTextFrom("LIBRARYLICENSES");
+                _main = new License("LICENSE");
+                _thirdParth = new License("LIBRARYLICENSES");
+
+                rtLicense.Text = _main.GetLicenseText();
+                rtThirdPartyLicense.Text = _thirdParth.GetLicenseText();
             }
             catch (Exception ex)
             {
@@ -37,42 +31,33 @@ namespace ResearchDataManagementPlatform.WindowManagement.Licenses
             }
         }
 
-        private string GetTextFrom(string resourceFilename)
-        {
-            string expectedResourceName = "ResearchDataManagementPlatform.WindowManagement.Licenses." + resourceFilename;
-            using (var stream = typeof(LicenseUI).Assembly.GetManifestResourceStream(expectedResourceName))
-            {
-                if(stream == null)
-                    throw new Exception("Could not find EmbeddedResource '" + expectedResourceName + "'");
-
-                return new StreamReader(stream).ReadToEnd();
-            }
-        }
-
+        
         private bool allowClose = false;
+
+        private License _main;
+        private License _thirdParth;
+
         private void btnAccept_Click(object sender, EventArgs e)
         {
-            UserSettings.LicenseAccepted = true;
+            UserSettings.LicenseAccepted = _thirdParth.GetMd5OfLicense();
             allowClose = true;
             this.Close();
         }
 
         private void btnDecline_Click(object sender, EventArgs e)
         {
-            UserSettings.LicenseAccepted = false;
+            UserSettings.LicenseAccepted = null;
             allowClose = true;
             Process.GetCurrentProcess().Kill();
         }
 
         private void LicenseUI_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!UserSettings.LicenseAccepted && !allowClose)
+            if (UserSettings.LicenseAccepted != _thirdParth.GetMd5OfLicense() && !allowClose)
             {
                 e.Cancel = true;
                 MessageBox.Show("You have not accepted/declined the license");
             }
-
-
         }
     }
 }

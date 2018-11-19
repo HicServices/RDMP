@@ -170,15 +170,6 @@ namespace ReusableLibraryCode
 
 
         }
-        [Obsolete("Not used by anyone")]
-        public static string MD5Stream(MemoryStream stream)
-        {
-            using (var md5 = MD5.Create())
-            {
-                return BitConverter.ToString(md5.ComputeHash(stream));
-            }
-        }
-        
      
         public static bool RequiresLength(string columnType)
         {
