@@ -158,6 +158,7 @@ namespace CatalogueLibrary.DataHelper
             return col;
         }
         
+        /// <inheritdoc cref="DoImport(out TableInfo,out ColumnInfo[])"/>
         public void DoImport()
         {
             TableInfo ignored;

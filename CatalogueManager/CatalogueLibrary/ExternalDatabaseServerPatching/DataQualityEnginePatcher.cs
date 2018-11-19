@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-using System.Reflection;
-using CatalogueLibrary.Data;
+﻿using System.Reflection;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
@@ -10,11 +7,13 @@ namespace CatalogueLibrary.ExternalDatabaseServerPatching
     /// </summary>
     public class DataQualityEnginePatcher : IPatcher
     {
+        /// <inheritdoc/>
         public Assembly GetHostAssembly()
         {
             return Assembly.Load("DataQualityEngine");
         }
 
+        /// <inheritdoc/>
         public Assembly GetDbAssembly()
         {
             return Assembly.Load("DataQualityEngine.Database");

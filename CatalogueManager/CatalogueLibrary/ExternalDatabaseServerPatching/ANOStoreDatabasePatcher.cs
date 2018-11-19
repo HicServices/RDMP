@@ -1,10 +1,4 @@
-using System;
-using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
@@ -13,11 +7,13 @@ namespace CatalogueLibrary.ExternalDatabaseServerPatching
     /// </summary>
     public class ANOStoreDatabasePatcher:IPatcher
     {
+        /// <inheritdoc/>
         public Assembly GetHostAssembly()
         {
             return Assembly.Load("ANOStore");
         }
 
+        /// <inheritdoc/>
         public Assembly GetDbAssembly()
         {
             return Assembly.Load("ANOStore.Database");

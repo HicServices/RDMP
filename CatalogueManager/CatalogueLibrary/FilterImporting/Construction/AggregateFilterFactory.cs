@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.FilterImporting.Construction
 {
@@ -18,26 +12,34 @@ namespace CatalogueLibrary.FilterImporting.Construction
     {
         private readonly ICatalogueRepository _repository;
 
+        /// <summary>
+        /// Sets class up to create <see cref="AggregateFilter"/> objects in the provided <paramref name="repository"/>
+        /// </summary>
+        /// <param name="repository"></param>
         public AggregateFilterFactory(ICatalogueRepository repository)
         {
             _repository = repository;
         }
 
+        /// <inheritdoc/>
         public IFilter CreateNewFilter(string name)
         {
             return new AggregateFilter(_repository,name);
         }
 
+        /// <inheritdoc/>
         public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
         {
             return new AggregateFilterParameter(_repository,parameterSQL,(AggregateFilter)filter);
         }
 
+        /// <inheritdoc/>
         public Type GetRootOwnerType()
         {
             return typeof (AggregateConfiguration);
         }
 
+        /// <inheritdoc/>
         public Type GetIContainerTypeIfAny()
         {
             return typeof (AggregateFilterContainer);

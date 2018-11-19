@@ -28,12 +28,21 @@ namespace CatalogueLibrary
         private readonly CatalogueRepository _repository;
         private readonly DirectoryInfo _folderToCreateIn;
 
+        /// <summary>
+        /// Prepares class to convert all <see cref="Catalogue"/> stored in the <paramref name="repository"/> into .dita files containing dataset/column descriptions.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="folderToCreateIn"></param>
         public DitaCatalogueExtractor(CatalogueRepository repository, DirectoryInfo folderToCreateIn)
         {
             _repository = repository;
             _folderToCreateIn = folderToCreateIn;
         }
 
+        /// <summary>
+        /// Generates the dita files and logs progress / errors to the <paramref name="listener"/>
+        /// </summary>
+        /// <param name="listener"></param>
         public void Extract(IDataLoadEventListener listener)
         {
             string xml = "";
@@ -285,6 +294,10 @@ namespace CatalogueLibrary
         }
 
         
+        /// <summary>
+        /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronymns etc
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             var catas = _repository.GetAllCatalogues().Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset).ToArray();
@@ -317,11 +330,13 @@ namespace CatalogueLibrary
                 }
                 
             }
-            
-
-
         }
 
+        /// <summary>
+        /// Suggests an appropriate short acryonymn based on the supplied full <paramref name="name"/> e.g. BIO for Biochemistry
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public string GetAcronymSuggestionFromCatalogueName(string name)
         {
             //concatenate all the capitals (and digits)

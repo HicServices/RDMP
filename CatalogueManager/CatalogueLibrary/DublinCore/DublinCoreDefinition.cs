@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace CatalogueLibrary.DublinCore
@@ -13,14 +11,49 @@ namespace CatalogueLibrary.DublinCore
     /// </summary>
     public class DublinCoreDefinition
     {
+        /// <summary>
+        /// A name given to the resource. See http://www.dublincore.org/documents/dces/
+        /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        /// Dublin Core property see http://www.dublincore.org/documents/dces/
+        /// </summary>
         public string Alternative { get; set; }
+
+        /// <summary>
+        /// Dublin Core property see http://www.dublincore.org/documents/dces/
+        /// </summary>
         public string Subject { get; set; }
+
+        /// <summary>
+        /// Dublin Core property see http://www.dublincore.org/documents/dces/
+        /// </summary>
         public string Description { get; set; }
+        
+        /// <summary>
+        /// Dublin Core property see http://www.dublincore.org/documents/dces/
+        /// </summary>
         public string Publisher { get; set; }
+
+        /// <summary>
+        /// Dublin Core property see http://www.dublincore.org/documents/dces/
+        /// </summary>
         public Uri IsPartOf { get; set; }
+
+        /// <summary>
+        /// Dublin Core property see http://www.dublincore.org/documents/dces/
+        /// </summary>
         public Uri Identifier { get; set; }
+        
+        /// <summary>
+        /// Dublin Core property see http://www.dublincore.org/documents/dces/
+        /// </summary>
         public DateTime? Modified { get; set; }
+
+        /// <summary>
+        /// Dublin Core property see http://www.dublincore.org/documents/dces/
+        /// </summary>
         public string Format { get; set; }
 
         /// <summary>
@@ -59,6 +92,10 @@ namespace CatalogueLibrary.DublinCore
                 sw.Write(doc.ToString(SaveOptions.None));
         }
 
+        /// <summary>
+        /// Parses elements such as title, subject, description etc out of a metadata tag expected to follow the Dublin Core Xml guidlines ( http://dublincore.org/documents/dc-xml-guidelines/)
+        /// </summary>
+        /// <param name="element"></param>
         public void LoadFrom(XElement element)
         {
             if(element.Name != "metadata")

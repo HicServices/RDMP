@@ -8,6 +8,14 @@ namespace CatalogueLibrary.DublinCore
     /// </summary>
     public class DublinCoreTranslater
     {
+        /// <summary>
+        /// Populates the given <paramref name="toFill"/> with the descriptions stored in <paramref name="fillWith"/>.   This will overwrite previous values. 
+        /// 
+        /// <para>Not all object types T are supported</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="toFill"></param>
+        /// <param name="fillWith"></param>
         public void Fill<T>(T toFill,DublinCoreDefinition fillWith)
         {
             Catalogue c = toFill as Catalogue;
@@ -23,6 +31,15 @@ namespace CatalogueLibrary.DublinCore
                 throw new NotSupportedException("Did not know how to hydrate the Type " + typeof(T) + " from a DublinCoreDefinition");
         }
 
+        /// <summary>
+        /// Generates a <see cref="DublinCoreDefinition"/> for the provided <paramref name="generateFrom"/> by reading specific fields out of the object
+        /// and translating them to dublin core metadata fields.
+        /// 
+        /// <para>Not all object types T are supported</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="generateFrom"></param>
+        /// <returns></returns>
         public DublinCoreDefinition GenerateFrom<T>(T generateFrom)
         {
             var toReturn = new DublinCoreDefinition();

@@ -1,7 +1,4 @@
-using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
@@ -13,11 +10,13 @@ namespace CatalogueLibrary.ExternalDatabaseServerPatching
     /// </summary>
     public class QueryCachingDatabasePatcher:IPatcher
     {
+        /// <inheritdoc/>
         public Assembly GetHostAssembly()
         {
             return Assembly.Load("QueryCaching");
         }
 
+        /// <inheritdoc/>
         public Assembly GetDbAssembly()
         {
             return Assembly.Load("QueryCaching.Database");
