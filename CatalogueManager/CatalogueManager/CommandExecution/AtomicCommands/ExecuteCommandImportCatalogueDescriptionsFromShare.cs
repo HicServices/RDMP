@@ -7,14 +7,13 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Copying.Commands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandImportCatalogueDescriptionsFromShare : BasicUICommandExecution, IAtomicCommand
     {

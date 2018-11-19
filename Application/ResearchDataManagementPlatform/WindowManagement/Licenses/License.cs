@@ -4,6 +4,10 @@ using System.Security.Cryptography;
 
 namespace ResearchDataManagementPlatform.WindowManagement.Licenses
 {
+    /// <summary>
+    /// Facilitates reading from the embedded license files for RDMP and third party libraries.  Also generates MD5 for tracking when a user has
+    /// agreed to a license that has been subsequently changed in a software update (e.g. if we use a new library).
+    /// </summary>
     public class License
     {
         private readonly string _resourceFilename;
