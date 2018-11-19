@@ -34,7 +34,6 @@ namespace CatalogueManager.TestsAndSetup
             this.gbChecks = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.btnCatalogueCheck = new System.Windows.Forms.Button();
-            this.btnCatalogueTableNames = new System.Windows.Forms.Button();
             this.btnListBadAssemblies = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnCatalogueFields = new System.Windows.Forms.Button();
@@ -67,7 +66,6 @@ namespace CatalogueManager.TestsAndSetup
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.btnCatalogueCheck);
-            this.groupBox4.Controls.Add(this.btnCatalogueTableNames);
             this.groupBox4.Location = new System.Drawing.Point(578, 17);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(377, 77);
@@ -84,16 +82,6 @@ namespace CatalogueManager.TestsAndSetup
             this.btnCatalogueCheck.Text = "Catalogue.Check()";
             this.btnCatalogueCheck.UseVisualStyleBackColor = true;
             this.btnCatalogueCheck.Click += new System.EventHandler(this.btnCatalogueCheck_Click);
-            // 
-            // btnCatalogueTableNames
-            // 
-            this.btnCatalogueTableNames.Location = new System.Drawing.Point(126, 19);
-            this.btnCatalogueTableNames.Name = "btnCatalogueTableNames";
-            this.btnCatalogueTableNames.Size = new System.Drawing.Size(212, 23);
-            this.btnCatalogueTableNames.TabIndex = 4;
-            this.btnCatalogueTableNames.Text = "DodgyNamedTableAndColumnsChecker";
-            this.btnCatalogueTableNames.UseVisualStyleBackColor = true;
-            this.btnCatalogueTableNames.Click += new System.EventHandler(this.btnCatalogueTableNames_Click);
             // 
             // btnListBadAssemblies
             // 
@@ -223,7 +211,6 @@ namespace CatalogueManager.TestsAndSetup
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnCohortDatabase;
         private System.Windows.Forms.Button btnListBadAssemblies;
-        private System.Windows.Forms.Button btnCatalogueTableNames;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button btnCatalogueCheck;
         private System.Windows.Forms.Label label8;

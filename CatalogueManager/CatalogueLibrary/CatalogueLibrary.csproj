@@ -512,7 +512,6 @@
     <Compile Include="DitaCatalogueExtractor.cs" />
     <Compile Include="Data\SupportingDocument.cs" />
     <Compile Include="Data\TableInfo.cs" />
-    <Compile Include="DodgyNamedTableAndColumnsChecker.cs" />
     <Compile Include="ExitCodeType.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPatcher.cs" />
     <Compile Include="ForwardEngineerCatalogue.cs" />

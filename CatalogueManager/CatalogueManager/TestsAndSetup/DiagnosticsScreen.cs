@@ -91,11 +91,6 @@ namespace CatalogueManager.TestsAndSetup
             StartChecking(new BadAssembliesChecker(RepositoryLocator.CatalogueRepository.MEF));
         }
 
-        private void btnCatalogueTableNames_Click(object sender, EventArgs e)
-        {
-            StartChecking(new DodgyNamedTableAndColumnsChecker(RepositoryLocator.CatalogueRepository));
-        }
-
         private void StartChecking(ICheckable checkable)
         {
             checksUI1.Clear();

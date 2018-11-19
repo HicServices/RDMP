@@ -36,6 +36,18 @@ namespace CatalogueLibrary.DataHelper
         private DiscoveredServer _server;
 
         #region Construction
+
+        /// <summary>
+        /// Prepares to import the named table as a <see cref="TableInfo"/>
+        /// </summary>
+        /// <param name="repository">Repository to create the <see cref="TableInfo"/>/<see cref="ColumnInfo"/> in</param>
+        /// <param name="importFromServer"></param>
+        /// <param name="importDatabaseName"></param>
+        /// <param name="importTableName"></param>
+        /// <param name="type"></param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="usageContext"></param>
         public TableInfoImporter(ICatalogueRepository repository,string importFromServer, string importDatabaseName, string importTableName, DatabaseType type, string username=null,string password=null, DataAccessContext usageContext=DataAccessContext.Any)
         {
             _repository = repository;
@@ -53,6 +65,11 @@ namespace CatalogueLibrary.DataHelper
             InitializeBuilder();
         }
 
+        /// <summary>
+        /// Prepares to import a reference to the <paramref name="table"/> as <see cref="TableInfo"/> and <see cref="ColumnInfo"/> in the RDMP <paramref name="catalogueRepository"/>
+        /// </summary>
+        /// <param name="catalogueRepository"></param>
+        /// <param name="table"></param>
         public TableInfoImporter(ICatalogueRepository catalogueRepository, DiscoveredTable table)
             : this(catalogueRepository,
             table.Database.Server.Name,
@@ -93,9 +110,7 @@ namespace CatalogueLibrary.DataHelper
             databaseName = RDMPQuerySyntaxHelper.EnsureValueIsWrapped(_importDatabaseName, _type);
 
             DiscoveredColumn[] discoveredColumns = _server.ExpectDatabase(_importDatabaseName).ExpectTable(_importTableName).DiscoverColumns();
-
-            ThrowIfDodgyEntityNames(tableName,discoveredColumns);
-
+            
             TableInfo parent = new TableInfo(cataRepository, tableName)
             {
                 DatabaseType = _type,
@@ -119,29 +134,6 @@ namespace CatalogueLibrary.DataHelper
                 DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(cataRepository);
                 credentialsFactory.Create(tableInfoCreated, _username, _password, _usageContext);
             }
-        }
-
-        private void ThrowIfDodgyEntityNames(string tableName, DiscoveredColumn[] columns)
-        {
-            var syntax = _server.GetQuerySyntaxHelper();
-
-            string rejectionReason;
-            if (!IsValidEntityName(tableName,syntax,out rejectionReason))
-                throw new Exception("Table name '" + _server.GetQuerySyntaxHelper().GetRuntimeName(tableName) +
-                                    "' was rejected because of it's name.  Reason given was:" + Environment.NewLine + rejectionReason);
-
-            var rejectedColumnNames = columns.Where(c => !IsValidEntityName(c.GetRuntimeName(),syntax)).Select(c => c.GetRuntimeName()).ToArray();
-
-            if (rejectedColumnNames.Any())
-                throw new Exception(
-                    ("The following column names were rejected because they contained freaky characters or were reserved keywords like 'USER' and 'TABLE' (table import abandoned):" +
-                     Environment.NewLine + string.Join(Environment.NewLine, rejectedColumnNames)));
-        }
-
-        public static bool IsValidEntityName(string name, IQuerySyntaxHelper syntax)
-        {
-            string whoCares;
-            return IsValidEntityName(name, syntax,out whoCares);
         }
 
         public static bool IsValidEntityName(string name, IQuerySyntaxHelper syntax, out string reason)
