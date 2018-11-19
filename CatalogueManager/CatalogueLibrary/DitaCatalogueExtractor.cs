@@ -26,7 +26,11 @@ namespace CatalogueLibrary
         //use http://sourceforge.net/projects/dita-ot/files/DITA-OT%20Stable%20Release/DITA%20Open%20Toolkit%201.8/DITA-OT1.8.M2_full_easy_install_bin.zip/download
         //to convert .dita files into html
 
+        /// <summary>
+        /// Triggered after each <seealso cref="Catalogue"/> is extracted
+        /// </summary>
         public event CatalogueProgressHandler CatalogueCompleted;
+
         private readonly CatalogueRepository _repository;
         private readonly DirectoryInfo _folderToCreateIn;
 

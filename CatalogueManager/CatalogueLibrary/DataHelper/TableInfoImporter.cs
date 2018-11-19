@@ -136,36 +136,6 @@ namespace CatalogueLibrary.DataHelper
             }
         }
 
-        public static bool IsValidEntityName(string name, IQuerySyntaxHelper syntax, out string reason)
-        {
-            //if it is a table valued function it's ok too
-            if (name != null && name.Count(c => c == '(') == 1 && name.Count(c => c ==')') == 1 && name.Contains("@"))
-            {
-                reason = null;
-                return true;
-            }
-
-            if(name != null)
-                if (ProhibitedNames.Any(p => name.ToLower().Equals(p.ToLower())))//if it matches any of the prohibited names - SQL reserved words complain
-                {
-                    reason = "Column or Table name " + name +" was REJECTED because it is an invalid name (probably it is a reserved word in SQL)";
-                    return false;
-                }
-
-            if (
-                UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.IsMatch(
-                    syntax.GetRuntimeName(name)))
-            {
-                reason = "Column or Table name " + name + " was REJECTED because it matches the regex " +
-                         UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores +
-                         " (UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores), probably your column contains spaces or something";
-                return false;
-            }
-            
-            reason = null;
-            return true;
-        }
-
         /// <inheritdoc/>
         public ColumnInfo CreateNewColumnInfo(TableInfo parent,DiscoveredColumn discoveredColumn)
         {

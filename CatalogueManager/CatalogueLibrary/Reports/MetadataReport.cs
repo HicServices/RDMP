@@ -15,6 +15,11 @@ using DataTable = System.Data.DataTable;
 
 namespace CatalogueLibrary.Reports
 {
+    /// <summary>
+    /// Describes a method that generates images for a <seealso cref="Catalogue"/> e.g. aggregate graphs
+    /// </summary>
+    /// <param name="catalogue"></param>
+    /// <returns></returns>
     public delegate BitmapWithDescription[] RequestCatalogueImagesHandler(Catalogue catalogue);
 
     /// <summary>
