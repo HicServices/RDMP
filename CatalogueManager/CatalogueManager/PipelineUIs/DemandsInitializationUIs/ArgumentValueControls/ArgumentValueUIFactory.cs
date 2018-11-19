@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 {
     public class ArgumentValueUIFactory
     {
-        public IArgumentValueUI Create(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, DataTable previewIfAny)
+        public IArgumentValueUI Create(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, DataTable previewIfAny, Action<object> setterAction, Action<Exception> fatalAction)
         {
             var argumentType = argument.GetSystemType();
             IArgumentValueUI toReturn;
@@ -21,8 +22,11 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             try
             {
                 //if it's an array
+                if(typeof(IDictionary).IsAssignableFrom(argumentType))
+                    toReturn = new ArgumentValueDictionaryUI();
+                else
                 if (typeof (Array).IsAssignableFrom(argumentType))
-                    toReturn = new ArgumentValueArrayUI(catalogueRepository);
+                    toReturn = new ArgumentValueArrayUI();
                 else
                     //if it's a pipeline
                     if (typeof (IPipeline).IsAssignableFrom(argumentType))
@@ -86,7 +90,17 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             }
 
             ((Control)toReturn).Dock = DockStyle.Fill;
-            toReturn.SetUp((Argument)argument, required, previewIfAny);
+
+            var args = new ArgumentValueUIArgs();
+            args.InitialValue = argument.GetValueAsSystemType();
+            args.Type = argument.GetSystemType();
+            args.Required = required;
+            args.PreviewIfAny = previewIfAny;
+            args.CatalogueRepository = catalogueRepository;
+            args.Setter = setterAction;
+            args.Fatal = fatalAction;
+
+            toReturn.SetUp(args);
             return toReturn;
         }
 
@@ -109,64 +123,9 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             else
                 array = repository.GetAllObjects(argumentType).ToArray(); //Default case fetch all the objects of the Type
 
-
             return new ArgumentValueComboBoxUI(array);
-            /*
-            //if we have a value it will be an ID
-            if (!string.IsNullOrWhiteSpace(argument.Value))
-                try
-                {
-                    if (valueAsSystemType == typeof(ColumnInfo))
-                        ProcessColumnInfoArgumentUI(argument);
-                    else
-                    {
-                        //get the value as the object type e.g. Catlogue
-                        cbxValue.Text = argument.GetValueAsSystemType().ToString();
-                    }
-                }
-                catch (KeyNotFoundException e)//the object might have been deleted (it's ID is no longer in the table, if so offer to set the param to null for the user)
-                {
-                    if (
-                        MessageBox.Show(e.Message, "Set value for parameter " + argument.Name + " to Null?",
-                            MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        argument.Value = null;
-                        argument.SaveToDatabase();
-                        SetProcessTaskArgument(_repository, parent, argument, demand);//relaunch method having fixed the null problem
-                        return;
-                    }
-                }
-            */
-            
         }
 
-        /*
-        /// <summary>
-        /// Set the argument UI for a ColumnInfo arg, taking into account the ability to assign either related or global ColumnInfos and setting the checkbox/dropdown contents accordingly.
-        /// </summary>
-        /// <param name="argument"></param>
-        private void ProcessColumnInfoArgumentUI(IArgument argument)
-        {
-            cbxValue.Text = argument.GetValueAsSystemType().ToString();
-
-            // If the text value hasn't been set for a ColumnInfo, this is potentially because it is a global reference rather than a column info related to this particular LoadMetadata
-            if (string.IsNullOrWhiteSpace(cbxValue.Text))
-            {
-                if (cbRelatedToLoadMetadata.Checked)
-                {
-                    // The drop-down is only displaying ColumnInfos related to the LoadMetadata, so change the UI to display all ColumnInfos
-                    cbRelatedToLoadMetadata.Checked = false;
-                    PopulateDropdownWith(GetAdvertisedColumnInfos());
-
-                    cbxValue.Text = argument.GetValueAsSystemType().ToString();
-                }
-
-                // If we're here and still haven't set cbxValue.Text then the ColumnInfo isn't being loaded into the drop-down's list for either global or related ColumnInfos
-                if (string.IsNullOrWhiteSpace(cbxValue.Text))
-                    throw new InvalidOperationException("Cannot find ColumnInfo " + argument.GetValueAsSystemType() +
-                                                        " in the global or LoadMetadata-related list of ColumnInfos");
-            }
-        }*/
         private IEnumerable<TableInfo> GetTableInfosFromParentOrThrow(ICatalogueRepository repository, IArgumentHost parent)
         {
             var t = parent as ITableInfoCollectionHost;

@@ -17,47 +17,26 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
     [TechnicalUI]
     public partial class ArgumentValueSqlUI : UserControl, IArgumentValueUI
     {
-        private Argument _argument;
-        private DemandsInitializationAttribute _demand;
+        private ArgumentValueUIArgs _args;
 
         public ArgumentValueSqlUI()
         {
             InitializeComponent();
         }
 
-        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
+        public void SetUp(ArgumentValueUIArgs args)
         {
-            _argument = argument;
-            _demand = requirement.Demand;
-
-            BombIfMandatoryAndEmpty();
+            _args = args;
         }
 
         private void btnSetSQL_Click(object sender, System.EventArgs e)
         {
-            
-            if (_argument != null)
-            {
-                SetSQLDialog dialog = new SetSQLDialog(_argument.Value, new RDMPCommandFactory());
-                DialogResult d = dialog.ShowDialog();
 
-                if (d == DialogResult.OK)
-                {
-                    ragSmiley1.Reset();
+            SetSQLDialog dialog = new SetSQLDialog((string)_args.InitialValue, new RDMPCommandFactory());
+            DialogResult d = dialog.ShowDialog();
 
-                    _argument.SetValue(dialog.Result);
-                    _argument.SaveToDatabase();
-
-                    BombIfMandatoryAndEmpty();
-                }
-            }
-        }
-
-        private void BombIfMandatoryAndEmpty()
-        {
-            if (_demand.Mandatory && string.IsNullOrWhiteSpace(_argument.Value))
-                ragSmiley1.Fatal(
-                    new Exception("Property is Mandatory which means it you have to Type an appropriate input in"));
+            if (d == DialogResult.OK)
+                _args.Setter(dialog.Result);
         }
     }
 }

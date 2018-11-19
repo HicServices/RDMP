@@ -17,11 +17,9 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
     [TechnicalUI]
     public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI
     {
-        private Argument _argument;
-        private DemandsInitializationAttribute _demand;
         private bool _bLoading = true;
-
         private bool _isPassword = false;
+        private ArgumentValueUIArgs _args;
 
         public ArgumentValueTextUI(bool isPassword)
         {
@@ -29,20 +27,20 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             InitializeComponent();
         }
 
-        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
+        public void SetUp(ArgumentValueUIArgs args)
         {
             _bLoading = true;
-            _argument = argument;
-            _demand = requirement.Demand;
-            tbText.Text = argument.Value;
+            _args = args;
 
-            if(argument.GetSystemType() == typeof(DirectoryInfo))
+            tbText.Text = args.InitialValue == null ? "":args.InitialValue.ToString();
+
+            if (args.Type == typeof(DirectoryInfo))
             {
                 tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 tbText.AutoCompleteSource = AutoCompleteSource.FileSystemDirectories;
             }
 
-            if (argument.GetSystemType() == typeof(FileInfo))
+            if (args.Type == typeof(FileInfo))
             {
                 tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 tbText.AutoCompleteSource = AutoCompleteSource.FileSystem;
@@ -51,11 +49,10 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             if (_isPassword)
             {
                 tbText.UseSystemPasswordChar = true;
-                var val = _argument.GetValueAsSystemType();
+                var val = args.InitialValue;
                 tbText.Text = val != null ? ((IEncryptedString)val).GetDecryptedValue() : "";
             }
 
-            BombIfMandatoryAndEmpty();
             _bLoading = false;
         }
 
@@ -64,29 +61,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             if(_bLoading)
                 return;
 
-            ragSmiley1.Reset();
-            
-            _argument.SetValue(tbText.Text);
-            
-            _argument.SaveToDatabase();
-
-            try
-            {
-                _argument.GetValueAsSystemType();
-                
-                BombIfMandatoryAndEmpty();
-            }
-            catch (Exception exception)
-            {
-                ragSmiley1.Fatal(exception);
-            }
-
-        }
-
-        private void BombIfMandatoryAndEmpty()
-        {
-            if (_demand.Mandatory && string.IsNullOrWhiteSpace(tbText.Text))
-                ragSmiley1.Fatal(new Exception("Property is Mandatory which means it you have to Type an appropriate input in"));
+            _args.Setter(tbText.Text);
         }
     }
 }

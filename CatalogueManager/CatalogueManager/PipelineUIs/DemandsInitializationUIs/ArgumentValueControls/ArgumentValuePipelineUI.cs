@@ -22,17 +22,12 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
     [TechnicalUI]
     public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
     {
-        private readonly CatalogueRepository _catalogueRepository;
-        private Argument _argument;
-        private DemandsInitializationAttribute _demand;
-        
         private IPipelineSelectionUI _pipelineSelectionUIInstance;
         private Type _typeOfUnderlyingClass;
 
 
         public ArgumentValuePipelineUI(CatalogueRepository catalogueRepository, IArgumentHost parent, Type argumentType)
         {
-            _catalogueRepository = catalogueRepository;
             InitializeComponent();
 
             string typeName = parent.GetClassNameWhoArgumentsAreFor();
@@ -44,23 +39,15 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 
         }
         
-        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
+        public void SetUp(ArgumentValueUIArgs args)
         {
-            _argument = argument;
-            _demand = requirement.Demand;
-
             var instanceOfParentType = Activator.CreateInstance(_typeOfUnderlyingClass);
 
-            var factory = new PipelineSelectionUIFactory(_catalogueRepository,requirement,argument, instanceOfParentType);
+            var factory = new PipelineSelectionUIFactory(args.CatalogueRepository,args.Required,args, instanceOfParentType);
             _pipelineSelectionUIInstance = factory.Create();
             _pipelineSelectionUIInstance.CollapseToSingleLineMode();
-            _pipelineSelectionUIInstance.PipelineChanged += (s, e) => BombIfMandatoryAndEmpty();
 
             var c = (Control)_pipelineSelectionUIInstance;
-            c.Width = ragSmiley1.Left;
-
-            ragSmiley1.Reset();
-
             Controls.Add(c);
 
             try
@@ -68,29 +55,17 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
                 Pipeline p = null;
                 try
                 {
-                    p = (Pipeline)argument.GetValueAsSystemType();
+                    p = (Pipeline)args.InitialValue;
                 }
                 catch (Exception e)
                 {
                     ExceptionViewer.Show(e);
                 }
-                
-                BombIfMandatoryAndEmpty();
             }
             catch (Exception e)
             {
-                ragSmiley1.Fatal(e);
+                args.Fatal(e);
             }
-        }
-
-        private void BombIfMandatoryAndEmpty()
-        {
-            ragSmiley1.Reset();
-
-            var pipe = _argument.GetValueAsSystemType();
-
-            if (_demand.Mandatory && pipe == null)
-                ragSmiley1.Fatal(new Exception("Property is Mandatory which means it you have to Type an appropriate input in"));
         }
     }
 }

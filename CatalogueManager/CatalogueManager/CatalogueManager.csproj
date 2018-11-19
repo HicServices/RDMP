@@ -511,6 +511,12 @@
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.Designer.cs">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
     </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.Designer.cs">
+      <DependentUpon>ArgumentValueDictionaryUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -559,6 +565,7 @@
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.Designer.cs">
       <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIArgs.cs" />
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIFactory.cs" />
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\IArgumentValueUI.cs" />
     <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.cs">
@@ -645,7 +652,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRename.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowKeywordHelp.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
@@ -1390,6 +1396,7 @@
     </Compile>
     <None Include="ExtractionUIs\FilterUIs\ParameterUIs\Parameters.cd" />
     <None Include="LogViewer\LoggingUI.cd" />
+    <None Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueUIs.cd" />
     <None Include="PipelineUIs\Pipelines\Pipelines.cd" />
     <None Include="SimpleControls\CheckAndExecuteUI.cd" />
     <None Include="TestsAndSetup\StartupUI\YellowFace.png" />
@@ -1740,6 +1747,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.resx">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.resx">
+      <DependentUpon>ArgumentValueDictionaryUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.resx">
       <DependentUpon>ArgumentValueArrayUI.cs</DependentUpon>

@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
@@ -20,13 +17,12 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
     public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
     {
         private readonly object[] _objectsForComboBox;
-        private Argument _argument;
-        private DemandsInitializationAttribute _demand;
         private bool _bLoading = true;
 
         private const string ClearSelection = "<<Clear Selection>>";
 
         private HashSet<Type> types;
+        private ArgumentValueUIArgs _args;
 
         public ArgumentValueComboBoxUI(object[] objectsForComboBox)
         {
@@ -60,21 +56,20 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             
         }
 
-        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
+        public void SetUp(ArgumentValueUIArgs args)
         {
             _bLoading = true;
-            _argument = argument;
-            _demand = requirement.Demand;
+            _args = args;
 
             object currentValue = null;
 
             try
             {
-                currentValue = argument.GetValueAsSystemType();
+                currentValue = _args.InitialValue;
             }
             catch (Exception e)
             {
-                ragSmiley1.Fatal(e);
+                _args.Fatal(e);
             }
 
             if (currentValue != null)
@@ -83,52 +78,23 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
                 else
                     cbxValue.Text = currentValue.ToString();
 
-            BombIfMandatoryAndEmpty();
             _bLoading = false;
         }
-
-        private void cbxValue_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-
-        }
-
+        
         private void cbxValue_TextChanged(object sender, System.EventArgs e)
         {
             if (_bLoading)
                 return;
-
-            ragSmiley1.Reset();
-
-           
+            
             //user chose to clear selection from a combo box
             if (cbxValue.Text == ClearSelection)
-                _argument.Value = null;
+                _args.Setter(null);
             else 
                 if (cbxValue.SelectedItem != null)
                     if (types != null)
-                        _argument.SetValue(types.Single(t=>t.Name.Equals(cbxValue.SelectedItem)));
+                        _args.Setter(types.Single(t => t.Name.Equals(cbxValue.SelectedItem)));
                     else
-                        _argument.SetValue(cbxValue.SelectedItem);
-
-            _argument.SaveToDatabase();
-
-            try
-            {
-                _argument.GetValueAsSystemType();
-            }
-            catch (Exception exception)
-            {
-                ragSmiley1.Fatal(exception);
-            }
-
-            BombIfMandatoryAndEmpty();
-            
-        }
-
-        private void BombIfMandatoryAndEmpty()
-        {
-            if (_demand.Mandatory && string.IsNullOrWhiteSpace(cbxValue.Text))
-                ragSmiley1.Fatal(new Exception("Property is Mandatory which means it you have to Type an appropriate input in"));
+                        _args.Setter(cbxValue.SelectedItem);
         }
 
         private void btnPick_Click(object sender, EventArgs e)

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.tbText = new System.Windows.Forms.TextBox();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.SuspendLayout();
             // 
             // tbText
@@ -38,25 +37,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbText.Location = new System.Drawing.Point(3, 5);
             this.tbText.Name = "tbText";
-            this.tbText.Size = new System.Drawing.Size(512, 20);
+            this.tbText.Size = new System.Drawing.Size(541, 20);
             this.tbText.TabIndex = 0;
             this.tbText.TextChanged += new System.EventHandler(this.tbText_TextChanged);
-            // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Location = new System.Drawing.Point(519, 0);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 1;
             // 
             // ArgumentValueTextUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.tbText);
             this.Name = "ArgumentValueTextUI";
             this.Size = new System.Drawing.Size(547, 28);
@@ -68,7 +56,6 @@
         #endregion
 
         private System.Windows.Forms.TextBox tbText;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
 
 
     }

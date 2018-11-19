@@ -20,26 +20,24 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
     [TechnicalUI]
     public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
     {
-        private readonly CatalogueRepository _catalogueRepository;
-        private Argument _argument;
+        private ArgumentValueUIArgs _args;
 
-        public ArgumentValueArrayUI(CatalogueRepository catalogueRepository)
+        public ArgumentValueArrayUI()
         {
-            _catalogueRepository = catalogueRepository;
+            
             InitializeComponent();
         }
 
-        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
+        public void SetUp(ArgumentValueUIArgs args)
         {
-            _argument = argument;
+            _args = args;
 
-            SetUp(argument);
+            var value = ((Array) (args.InitialValue));
+            SetUp(value);
         }
 
-        private void SetUp(Argument argument)
+        private void SetUp(Array value)
         {
-            var value = ((Array) (argument.GetValueAsSystemType()));
-
             if (value == null)
                 tbArray.Text = "";
             else
@@ -55,30 +53,30 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 
                 tbArray.Text = sb.ToString().TrimEnd(',');
             }
-            
+
             tbArray.ReadOnly = true;
         }
 
         private void btnPickDatabaseEntities_Click(object sender, EventArgs e)
         {
-            var type = _argument.GetConcreteSystemType();
+            var type = _args.Type;
             var elementType = type.GetElementType();
 
             if(elementType == null)
                 throw new NotSupportedException("No array element existed for DemandsInitialization Type " + type);
 
-            if(!_catalogueRepository.SupportsObjectType(elementType))
+            if (!_args.CatalogueRepository.SupportsObjectType(elementType))
                 throw new NotSupportedException("CatalogueRepository does not support element "+elementType+" for DemandsInitialization Type " + type);
 
-            var objects = _catalogueRepository.GetAllObjects(elementType);
+            var objects = _args.CatalogueRepository.GetAllObjects(elementType);
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(objects, true, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                _argument.SetValue(dialog.MultiSelected == null ? null : dialog.MultiSelected.ToArray());
-                _argument.SaveToDatabase();
-                SetUp(_argument);
+                var result = dialog.MultiSelected == null ? null : dialog.MultiSelected.ToArray();
+                _args.Setter(result);
+                SetUp(result);
             }
         }
     }

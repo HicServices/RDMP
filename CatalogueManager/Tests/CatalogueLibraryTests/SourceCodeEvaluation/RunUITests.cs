@@ -25,7 +25,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandCreateNewExternalDatabaseServer),
                 typeof(ExecuteCommandDelete),
                 typeof(ExecuteCommandRename),
-                typeof(ExecuteCommandSetPipeline),
                 typeof(ExecuteCommandShowKeywordHelp),
                 typeof(ExecuteCommandCollapseChildNodes),
                 typeof(ExecuteCommandExpandAllNodes),

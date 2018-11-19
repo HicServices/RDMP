@@ -2,6 +2,7 @@ using System;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
 {
@@ -14,21 +15,16 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
         public PipelineGetter Getter { get; private set; }
         public PipelineSetter Setter { get; private set; }
 
-        public PluginPipelineUser(RequiredPropertyInfo demand, IArgument argument, object demanderInstance)
+        public PluginPipelineUser(RequiredPropertyInfo demand, ArgumentValueUIArgs args, object demanderInstance)
             : base(new Type[] { }) //makes it a design time use case
         {
             Getter = () =>
             {
-                var p = (Pipeline) argument.GetValueAsSystemType();
+                var p = (Pipeline)args.InitialValue;
                 return p;
             };
 
-            Setter = v =>
-            {
-                argument.SetValue(v);
-                demand.PropertyInfo.SetValue(demanderInstance, v);
-                argument.SaveToDatabase();
-            };
+            Setter = v =>args.Setter(v);
 
             var pipeDemander = demanderInstance as IDemandToUseAPipeline;
 
