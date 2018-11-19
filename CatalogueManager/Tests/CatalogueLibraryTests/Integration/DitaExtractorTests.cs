@@ -4,6 +4,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using NUnit.Framework;
+using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -91,7 +92,7 @@ namespace CatalogueLibraryTests.Integration
             {
                 DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
 
-                extractor.Extract();
+                extractor.Extract(new ThrowImmediatelyDataLoadEventListener());
 
                 //make sure the root mapping files exist for navigating around
                 Assert.IsTrue(File.Exists(Path.Combine(testDir.FullName, "hic_data_catalogue.ditamap")));
@@ -127,7 +128,7 @@ namespace CatalogueLibraryTests.Integration
                 try
                 {
                     DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
-                    var ex = Assert.Throws<Exception>(extractor.Extract);
+                    var ex = Assert.Throws<Exception>(()=>extractor.Extract(new ThrowImmediatelyDataLoadEventListener()));
                     Assert.AreEqual("Dita Extraction requires that each catalogue have a unique Acronym, the catalogue UnitTestCatalogue is missing an Acronym",ex.Message);
 
                 }

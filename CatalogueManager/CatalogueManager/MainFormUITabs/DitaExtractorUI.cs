@@ -1,13 +1,11 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary;
-using CatalogueLibrary.Data;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using ReusableUIComponents.ChecksUI;
 
 namespace CatalogueManager.MainFormUITabs
 {
@@ -54,35 +52,13 @@ namespace CatalogueManager.MainFormUITabs
                 }
 
                 DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(RepositoryLocator.CatalogueRepository,outputPath);
-                extractor.CatalogueCompleted += extractor_CatalogueCompleted;
-                extractor.Extract();
+                extractor.Extract(progressBarsUI1);
             }
             catch (Exception ex)
             {
 
                 MessageBox.Show(ex.Message);
             }
-            
-        }
-
-        void extractor_CatalogueCompleted(int progress, int target,Catalogue currentCatalogue)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(() => extractor_CatalogueCompleted(progress, target, currentCatalogue)));
-                return;
-            }
-
-            progressBar1.Value = progress;
-            progressBar1.Maximum = target;
-            
-            if (progress == target)
-                lblCataloguesProcessed.Text = "Done";
-            else
-                lblCataloguesProcessed.Text = "Processing "+currentCatalogue.Name+"... (" + progress + "/" + target + ")";
-
-            lblCataloguesProcessed.Update();
-
             
         }
 
@@ -98,17 +74,10 @@ namespace CatalogueManager.MainFormUITabs
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            checksUI1.Clear();
+            var popup = new PopupChecksUI("Checking Dita extraction",false);
 
-            try
-            {
-                DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(RepositoryLocator.CatalogueRepository,null);
-                checksUI1.StartChecking(extractor);
-            }
-            catch (Exception ex)
-            {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Checking crashed, see Exception for details", CheckResult.Fail, ex));
-            }
+            DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(RepositoryLocator.CatalogueRepository,null);
+            popup.StartChecking(extractor);
         }
     }
 }

@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
 namespace ReusableUIComponents.Progress
@@ -24,6 +19,10 @@ namespace ReusableUIComponents.Progress
 
         public float EmSize = 9f;
 
+        public ProgressBarsUI()
+        {
+            InitializeComponent();
+        }
         public ProgressBarsUI(string caption,bool showClose = false)
         {
             InitializeComponent();

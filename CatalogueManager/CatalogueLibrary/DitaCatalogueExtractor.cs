@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,26 +12,19 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 
 namespace CatalogueLibrary
 {
-    public delegate void CatalogueProgressHandler(int progress, int target,Catalogue currentCatalogue);
-
     /// <summary>
     /// Generates an extract of all the Catalogues and CatalogueItems in your Catalogue database in .dita format.  Dita is apparently all the rage when it comes to metadata
     /// sharing.
     /// </summary>
     public class DitaCatalogueExtractor : ICheckable
     {
-
         //use http://sourceforge.net/projects/dita-ot/files/DITA-OT%20Stable%20Release/DITA%20Open%20Toolkit%201.8/DITA-OT1.8.M2_full_easy_install_bin.zip/download
         //to convert .dita files into html
-
-        /// <summary>
-        /// Triggered after each <seealso cref="Catalogue"/> is extracted
-        /// </summary>
-        public event CatalogueProgressHandler CatalogueCompleted;
-
+        
         private readonly CatalogueRepository _repository;
         private readonly DirectoryInfo _folderToCreateIn;
 
@@ -40,7 +34,7 @@ namespace CatalogueLibrary
             _folderToCreateIn = folderToCreateIn;
         }
 
-        public void Extract()
+        public void Extract(IDataLoadEventListener listener)
         {
             string xml = "";
             xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
@@ -67,12 +61,12 @@ namespace CatalogueLibrary
             List<Catalogue> catas = new List<Catalogue>(_repository.GetAllCatalogues().Where(c => !(c.IsDeprecated || c.IsInternalDataset || c.IsColdStorageDataset)));
             catas.Sort();
 
+            Stopwatch sw = Stopwatch.StartNew();
+
             int cataloguesCompleted = 0;
             foreach (Catalogue c in catas)
             {
-                //increment catalogue - ++ comes after so will start at 0 but with the catalogue c being passed
-                if (CatalogueCompleted != null)
-                    CatalogueCompleted(cataloguesCompleted++, catas.Count,c);
+                listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(cataloguesCompleted++,ProgressType.Records,catas.Count), sw.Elapsed));
 
                 //ensure that it has an acryonym
                 if(string.IsNullOrWhiteSpace(c.Acronym))
@@ -97,8 +91,7 @@ namespace CatalogueLibrary
                 xml += "</topicref>" + Environment.NewLine;
 
                 //completed - mostly for end of loop tbh 
-                if (CatalogueCompleted != null)
-                    CatalogueCompleted(cataloguesCompleted, catas.Count, c);
+                listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(cataloguesCompleted, ProgressType.Records, catas.Count), sw.Elapsed));
             }
 
             xml += Environment.NewLine;

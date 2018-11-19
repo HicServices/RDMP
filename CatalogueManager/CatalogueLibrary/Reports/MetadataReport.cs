@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data;
@@ -10,8 +10,8 @@ using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
 using Xceed.Words.NET;
-using DataTable = System.Data.DataTable;
 
 namespace CatalogueLibrary.Reports
 {
@@ -42,13 +42,10 @@ namespace CatalogueLibrary.Reports
         public float PageWidthInPixels { get; private set; }
         public int MaxLookupRows { get; set; }
         
-
-        public event CatalogueProgressHandler CatalogueCompleted;
         public event RequestCatalogueImagesHandler RequestCatalogueImages;
         
         private const int TextFontSize = 7;
-
-
+        
         public MetadataReport(CatalogueRepository repository,IEnumerable<Catalogue> catalogues, int timeout, bool includeRowCounts, bool includeDistinctRowCounts, bool skipImages,IDetermineDatasetTimespan timespanCalculator)
         {
             TimespanCalculator = timespanCalculator;
@@ -62,14 +59,14 @@ namespace CatalogueLibrary.Reports
 
         Thread thread;
 
-        public void GenerateWordFileAsync(ICheckNotifier warningsAndErrorsHandler)
+        public void GenerateWordFileAsync(IDataLoadEventListener listener)
         {
 
-            thread = new Thread(() => GenerateWordFile(warningsAndErrorsHandler));
+            thread = new Thread(() => GenerateWordFile(listener));
             thread.Start();
         }
 
-        private void GenerateWordFile(ICheckNotifier warningsAndErrorsHandler)
+        private void GenerateWordFile(IDataLoadEventListener listener)
         {
             try
             {
@@ -77,11 +74,9 @@ namespace CatalogueLibrary.Reports
                 int version = OfficeVersionFinder.GetMajorVersion(OfficeVersionFinder.OfficeComponent.Word);
 
                 if (version == 0)
-                    warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Microsoft Word not found, is it installed?",
-                        CheckResult.Fail, null));
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Microsoft Word not found, is it installed?"));
                 else
-                    warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Found Microsoft Word " + version + " installed",
-                        CheckResult.Success, null));
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found Microsoft Word " + version + " installed"));
 
                 var f = GetUniqueFilenameInWorkArea("MetadataReport");
 
@@ -95,10 +90,11 @@ namespace CatalogueLibrary.Reports
                     catch (Exception e)
                     {
                         if (e.Message.Contains("The message filter indicated that the application is busy"))
-                            warningsAndErrorsHandler.OnCheckPerformed(
-                                new CheckEventArgs(
+                            listener.OnNotify(this,
+                                new NotifyEventArgs(
+                                    ProgressEventType.Error, 
                                     "Word is trying to display a dialog (probably asking you about file associations or somethihg), you must manually launch Microsoft Word - resolve any popup dialogs and tick any boxes marked 'never warn me about this again'.  Once Word launches properly (without throwing up dialog boxes) this report will work",
-                                    CheckResult.Fail));
+                                    e));
                         else
                             throw;
                     }
@@ -108,6 +104,8 @@ namespace CatalogueLibrary.Reports
 
                     PageWidthInPixels = document.PageWidth;
                     
+                    var sw = Stopwatch.StartNew();
+
                     try
                     {
                         int completed = 0;
@@ -115,7 +113,7 @@ namespace CatalogueLibrary.Reports
 
                         foreach (Catalogue c in _catalogues)
                         {
-                            CatalogueCompleted(completed++, _catalogues.Length, c);
+                            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed++, ProgressType.Records, _catalogues.Length), sw.Elapsed));
 
                             int recordCount = -1;
                             int distinctRecordCount = -1;
@@ -132,8 +130,7 @@ namespace CatalogueLibrary.Reports
                             }
                             catch (Exception e)
                             {
-                                warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Error processing record count for Catalogue " + c.Name,
-                                    CheckResult.Fail, e));
+                                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Error processing record count for Catalogue " + c.Name,e));
                             }
 
                             InsertHeader(document,c.Name);
@@ -172,11 +169,11 @@ namespace CatalogueLibrary.Reports
                             if (completed != _catalogues.Length)
                                 document.InsertSectionPageBreak();
 
-                            CatalogueCompleted(completed, _catalogues.Length, c);
+                            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed, ProgressType.Records, _catalogues.Length), sw.Elapsed));
                         }
 
                         if (LookupsEncounteredToAppearInAppendix.Any())
-                            CreateLookupAppendix(document, warningsAndErrorsHandler);
+                            CreateLookupAppendix(document, listener);
 
                         document.Save();
                         ShowFile(f);
@@ -191,11 +188,11 @@ namespace CatalogueLibrary.Reports
             }
             catch (Exception e)
             {
-                warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Entire process failed, see Exception for details",CheckResult.Fail, e));
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Entire process failed, see Exception for details", e));
             }
         }
 
-        private void CreateLookupAppendix(DocX document, ICheckNotifier warningsAndErrorsHandler)
+        private void CreateLookupAppendix(DocX document, IDataLoadEventListener listener)
         {
             document.InsertSectionPageBreak();
             InsertHeader(document,"Appendix 1 - Lookup Tables");
@@ -211,7 +208,7 @@ namespace CatalogueLibrary.Reports
                 }
                 catch (Exception e)
                 {
-                    warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Failed to get the contents of loookup " + lookupTable.Name, CheckResult.Fail, e));
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Failed to get the contents of loookup " + lookupTable.Name, e));
                 }
                 
                 if(dt == null)
@@ -220,7 +217,7 @@ namespace CatalogueLibrary.Reports
                 //if it has too many columns
                 if (dt.Columns.Count > 5)
                 {
-                    warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs("Lookup table " + lookupTable.Name + " has more than 5 columns so will not be processed", CheckResult.Warning, null));
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Lookup table " + lookupTable.Name + " has more than 5 columns so will not be processed"));
                     continue;
                 }
 
@@ -260,8 +257,7 @@ namespace CatalogueLibrary.Reports
 
                 table.AutoFit = AutoFit.Contents;
 
-                warningsAndErrorsHandler.OnCheckPerformed(new CheckEventArgs(
-                    "Wrote out lookup table " + lookupTable.Name + " successfully", CheckResult.Success, null));
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Wrote out lookup table " + lookupTable.Name + " successfully"));
             }
         }
 
