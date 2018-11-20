@@ -153,7 +153,14 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
             if (required.Demand.Mandatory && string.IsNullOrWhiteSpace(argument.Value))
                 ragSmiley.Fatal(new Exception("Property " + argument.Name + " is Mandatory"));
 
-            var valueui = (Control)_valueUisFactory.Create(parent, argument, required, Preview, (v) =>
+            var args = new ArgumentValueUIArgs();
+            args.Parent = parent;
+            args.InitialValue = argument.GetValueAsSystemType();
+            args.Type = argument.GetSystemType();
+            args.Required = required;
+            args.PreviewIfAny = Preview;
+            args.CatalogueRepository = (CatalogueRepository) argument.Repository;
+            args.Setter = (v) =>
             {
                 ragSmiley.Reset();
                 
@@ -171,8 +178,10 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
                 {
                     ragSmiley.OnCheckPerformed(new CheckEventArgs("Failed to set property properly",CheckResult.Fail,ex));
                 }
-            },
-            ragSmiley.Fatal);
+            };
+            args.Fatal = ragSmiley.Fatal;
+
+            var valueui = (Control)_valueUisFactory.Create(args);
             
             valueui.Anchor = name.Anchor = AnchorStyles.Top |  AnchorStyles.Left | AnchorStyles.Right;
             _valueUIs.Add(valueui);

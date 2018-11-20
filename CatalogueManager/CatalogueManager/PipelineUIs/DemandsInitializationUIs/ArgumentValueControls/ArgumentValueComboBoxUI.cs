@@ -23,6 +23,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 
         private HashSet<Type> types;
         private ArgumentValueUIArgs _args;
+        private bool _isEnum;
 
         public ArgumentValueComboBoxUI(object[] objectsForComboBox)
         {
@@ -44,6 +45,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             else
             if (objectsForComboBox.All(t=>t is Enum)) //don't offer "ClearSelection" if it is an Enum list
             {
+                _isEnum = true;
                 cbxValue.DataSource = objectsForComboBox;
                 cbxValue.DropDownStyle = ComboBoxStyle.DropDownList;
             }
@@ -65,7 +67,10 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 
             try
             {
-                currentValue = _args.InitialValue;
+                if (_isEnum && _args.InitialValue == null)
+                    args.Setter(cbxValue.SelectedItem);
+                else
+                    currentValue = _args.InitialValue;
             }
             catch (Exception e)
             {

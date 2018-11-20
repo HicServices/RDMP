@@ -7,6 +7,8 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 {
     public class ArgumentValueUIArgs
     {
+        public IArgumentHost Parent { get; set; }
+
         public object InitialValue { get; set; }
         public Type Type { get; set; }
         public RequiredPropertyInfo Required { get; set; }
@@ -22,5 +24,20 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         /// Call this when the value populated in the user interface is illegal
         /// </summary>
         public Action<Exception> Fatal { get; set; }
+
+        public ArgumentValueUIArgs Clone()
+        {
+            var newInstance = new ArgumentValueUIArgs();
+            newInstance.Parent = Parent;
+            newInstance.InitialValue = InitialValue;
+            newInstance.Type = Type;
+            newInstance.Required = Required;
+            newInstance.PreviewIfAny = PreviewIfAny;
+            newInstance.CatalogueRepository = CatalogueRepository;
+            newInstance.Setter = Setter;
+            newInstance.Fatal = Fatal;
+            
+            return newInstance;
+        }
     }
 }

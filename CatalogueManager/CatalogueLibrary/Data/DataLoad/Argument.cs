@@ -125,10 +125,6 @@ namespace CatalogueLibrary.Data.DataLoad
 
         private object Deserialize(string value, string type)
         {
-            object customType;
-            if (HandleIfCustom(out customType))
-                return customType;
-
             //bool
             if (type.Equals(typeof(bool).ToString()))
             {
@@ -203,6 +199,15 @@ namespace CatalogueLibrary.Data.DataLoad
                 return new Regex(value);
 
             Type concreteType = GetConcreteSystemType(type);
+            
+            //try to enum it 
+            if (typeof(Enum).IsAssignableFrom(concreteType))
+                return Enum.Parse(concreteType, value);
+
+            //is it ICustomUIDrivenClass
+            object customType;
+            if (HandleIfICustomUIDrivenClass(value, concreteType, out customType))
+                return customType;
 
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(concreteType))
                 return Repository.GetObjectByID(concreteType, Convert.ToInt32(value));
@@ -235,30 +240,19 @@ namespace CatalogueLibrary.Data.DataLoad
             throw new NotSupportedException("Custom arguments cannot be of type " + type);
         }
 
-        private bool HandleIfCustom(out object answer)
+        private bool HandleIfICustomUIDrivenClass(string value, Type concreteType, out object answer)
         {
             answer = null;
 
-            //try to enum it 
-            Type type = GetSystemType();
-
-            if (typeof(Enum).IsAssignableFrom(type))
-                if (string.IsNullOrWhiteSpace(Value))
-                    return true;
-                else
-                {
-                    answer = Enum.Parse(type, Value);
-                    return true;
-                }
 
             //if it is data driven
-            if (typeof(ICustomUIDrivenClass).IsAssignableFrom(type))
+            if (typeof(ICustomUIDrivenClass).IsAssignableFrom(concreteType))
             {
                 ICustomUIDrivenClass result;
 
                 try
                 {
-                    Type t = ((CatalogueRepository) Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.FullName);
+                    Type t = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(concreteType.FullName);
 
                     ObjectConstructor constructor = new ObjectConstructor();
 
@@ -267,16 +261,16 @@ namespace CatalogueLibrary.Data.DataLoad
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Failed to create an ICustomUIDrivenClass of type " + type.FullName + " make sure that you mark your class as public, commit it to the catalogue and mark it with the export '[Export(typeof(ICustomUIDrivenClass))]'", e);
+                    throw new Exception("Failed to create an ICustomUIDrivenClass of type " + concreteType.FullName + " make sure that you mark your class as public, commit it to the catalogue and mark it with the export '[Export(typeof(ICustomUIDrivenClass))]'", e);
                 }
 
                 try
                 {
-                    result.RestoreStateFrom(Value);//, (CatalogueRepository)Repository);
+                    result.RestoreStateFrom(value);//, (CatalogueRepository)Repository);
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("RestoreState failed on your ICustomUIDrivenClass called " + type.FullName + " the restore value was the string value '" + Value + "'", e);
+                    throw new Exception("RestoreState failed on your ICustomUIDrivenClass called " + concreteType.FullName + " the restore value was the string value '" + value + "'", e);
                 }
 
                 answer =  result;

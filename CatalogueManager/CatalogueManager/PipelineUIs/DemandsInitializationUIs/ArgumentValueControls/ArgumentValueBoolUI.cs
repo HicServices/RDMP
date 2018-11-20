@@ -23,7 +23,16 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         {
             _args = args;
             _bLoading = true;
-            cbValue.Checked = (bool)args.InitialValue;
+
+            //if no value has been selected set it to false
+            if (args.InitialValue == null)
+            {
+                cbValue.Checked = false;
+                args.Setter(false);
+            }
+            else
+                cbValue.Checked = (bool)args.InitialValue;//otherwise use the previous value
+
             _bLoading = false;
         }
 
