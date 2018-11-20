@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Xml;
-using CatalogueLibrary.Data.Pipelines;
 
 namespace CatalogueLibrary
 {
@@ -12,7 +9,8 @@ namespace CatalogueLibrary
     /// </summary>
     public class HICProjectDirectory : IHICProjectDirectory
     {
-        public const string ExampleFixedWidthFormatFileContents = @"From,To,Field,Size,DateFormat
+
+        internal const string ExampleFixedWidthFormatFileContents = @"From,To,Field,Size,DateFormat
 1,7,gmc,7,
 8,12,gp_code,5,
 13,32,surname,20,

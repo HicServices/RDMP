@@ -20,14 +20,33 @@ namespace CatalogueLibrary.FilterImporting
         private readonly IFilterFactory _factory;
         private ISqlParameter[] _globals;
 
+        /// <summary>
+        /// Specifies overriding definitions for <see cref="ISqlParameter"/> which should be used with all <see cref="IFilter"/> built by this class.  When you import
+        /// a master filter that has parameters then this array will be consulted.  If a matching parameter name is found then the imported parameter will have that value
+        /// rather than it's default.
+        /// 
+        /// <para><seealso cref="ExtractionFilterParameterSet"/></para>
+        /// </summary>
         public ISqlParameter[] AlternateValuesToUseForNewParameters { get; set; }
 
+        /// <summary>
+        /// Sets up the factory to import filters which may or may not have parameters on them.
+        /// </summary>
+        /// <param name="factory">Determines which Type of <see cref="IFilter"/> is created</param>
+        /// <param name="globals">If filters being imported have parameters that match the names of these globals the global value will be used to override.</param>
         public FilterImporter(IFilterFactory factory, ISqlParameter[] globals)
         {
             _factory = factory;
             _globals = globals;
         }
         
+        /// <summary>
+        /// Creates a copy of the <paramref name="fromMaster"/> filter and any parameters it might have.  This will handle collisions on parameter name with
+        /// <paramref name="existingFiltersAlreadyInScope"/> and will respect any globals this class was constructed with.
+        /// </summary>
+        /// <param name="fromMaster"></param>
+        /// <param name="existingFiltersAlreadyInScope"></param>
+        /// <returns></returns>
         public IFilter ImportFilter(IFilter fromMaster, IFilter[] existingFiltersAlreadyInScope)
         {
             var extractionFilter = fromMaster as ExtractionFilter;
@@ -108,7 +127,12 @@ namespace CatalogueLibrary.FilterImporting
             return createdSoFar.Except(existingFiltersAlreadyInScope).ToArray();
         }
 
-
+        /// <summary>
+        /// Returns true if the <paramref name="filter"/> has a proper description, name etc.  This helps prevent poorly documented master filters.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="reason"></param>
+        /// <returns></returns>
         public static bool IsProperlyDocumented(IFilter filter, out string reason)
         {
             reason = null;

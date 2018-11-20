@@ -22,3 +22,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("CatalogueLibraryTests")]
 [assembly: InternalsVisibleTo("CatalogueManager")]
 [assembly: InternalsVisibleTo("DataExportLibrary")]
+[assembly: InternalsVisibleTo("DataLoadEngineTests")]
