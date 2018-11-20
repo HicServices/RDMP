@@ -39,7 +39,7 @@
             // 
             this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAdd.Image = ((System.Drawing.Image)(resources.GetObject("btnAdd.Image")));
-            this.btnAdd.Location = new System.Drawing.Point(3, 117);
+            this.btnAdd.Location = new System.Drawing.Point(4, 138);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(27, 27);
             this.btnAdd.TabIndex = 2;
@@ -54,7 +54,7 @@
             this.panel1.AutoScroll = true;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(541, 108);
+            this.panel1.Size = new System.Drawing.Size(541, 135);
             this.panel1.TabIndex = 3;
             // 
             // btnSave
@@ -62,7 +62,7 @@
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSave.Enabled = false;
             this.btnSave.Image = ((System.Drawing.Image)(resources.GetObject("btnSave.Image")));
-            this.btnSave.Location = new System.Drawing.Point(57, 117);
+            this.btnSave.Location = new System.Drawing.Point(58, 138);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(27, 27);
             this.btnSave.TabIndex = 2;
@@ -74,7 +74,7 @@
             this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnRemove.Enabled = false;
             this.btnRemove.Image = ((System.Drawing.Image)(resources.GetObject("btnRemove.Image")));
-            this.btnRemove.Location = new System.Drawing.Point(30, 117);
+            this.btnRemove.Location = new System.Drawing.Point(31, 138);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(27, 27);
             this.btnRemove.TabIndex = 2;
@@ -85,12 +85,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnRemove);
             this.Controls.Add(this.btnAdd);
+            this.Controls.Add(this.panel1);
             this.Name = "ArgumentValueDictionaryUI";
-            this.Size = new System.Drawing.Size(547, 148);
+            this.Size = new System.Drawing.Size(547, 165);
             this.ResumeLayout(false);
 
         }

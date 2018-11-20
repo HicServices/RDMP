@@ -66,8 +66,8 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             const int uiWidth = 350;
             int element = keys.Count;
             int y = element * 25;
-            keys.Add(null);
-            values.Add(null);
+            keys.Add(key);
+            values.Add(val);
 
             var keyArgs = _args.Clone();
 
@@ -114,6 +114,12 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            if (keys.Any(k => k == null) || keys.Count != keys.Distinct().Count())
+            {
+                MessageBox.Show("You cannot have null or duplicate values for keys");
+                return;
+            }
+
             try
             {
                 _dictionary.Clear();
