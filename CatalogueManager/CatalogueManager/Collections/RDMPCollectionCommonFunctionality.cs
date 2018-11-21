@@ -538,6 +538,23 @@ namespace CatalogueManager.Collections
                 }
 
             if(!IsHiddenByFilter(o))
+                //By preference refresh the parent that way we deal with hierarchy changes
+                if (knownDescendancy != null)
+                {
+                    var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
+
+                    //does tree have parent?
+                    if (lastParent != null)
+                        Tree.RefreshObject(lastParent); //refresh parent
+                    else
+                        //Tree has object but not parent, bad times, maybe BetterRouteExists? Refresh the object if it exists
+                        if (!exists)
+                            //remove it
+                            Tree.RemoveObject(o);
+                        else
+                            Tree.RefreshObject(o);
+                }
+                else
                 //if we have the object
                 if (Tree.IndexOf(o) != -1)
                 {
@@ -546,26 +563,6 @@ namespace CatalogueManager.Collections
                     else
                         //remove it
                         Tree.RemoveObject(o);
-                }
-                else
-                {
-                    //we don't have the object but do we have something in it's descendancy?
-                    if (knownDescendancy != null)
-                    {
-                        var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
-
-                        //does tree have parent?
-                        if (lastParent != null)
-                            Tree.RefreshObject(lastParent); //refresh parent
-                        else
-                            //Tree has object but not parent, bad times, maybe BetterRouteExists? Refresh the object if it exists
-                            if (!exists)
-                                //remove it
-                                Tree.RemoveObject(o);
-                            else
-                                Tree.RefreshObject(o);
-
-                    }
                 }
         }
 
