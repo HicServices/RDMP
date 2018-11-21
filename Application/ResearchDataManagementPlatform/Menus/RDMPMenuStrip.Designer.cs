@@ -43,6 +43,8 @@
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.navigateBackwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.navigateForwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.issuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.databaseAccessComplexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,17 +68,12 @@
             this.showHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tutorialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.navigateBackwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.navigateForwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBar();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.LocationsMenu,
@@ -86,7 +83,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(342, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1160, 24);
             this.menuStrip1.TabIndex = 56;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -197,6 +194,27 @@
             this.userSettingsToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
             this.userSettingsToolStripMenuItem.Text = "User Settings...";
             this.userSettingsToolStripMenuItem.Click += new System.EventHandler(this.userSettingsToolStripMenuItem_Click);
+            // 
+            // navigateBackwardToolStripMenuItem
+            // 
+            this.navigateBackwardToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("navigateBackwardToolStripMenuItem.Image")));
+            this.navigateBackwardToolStripMenuItem.Name = "navigateBackwardToolStripMenuItem";
+            this.navigateBackwardToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+-";
+            this.navigateBackwardToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.OemMinus)));
+            this.navigateBackwardToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
+            this.navigateBackwardToolStripMenuItem.Text = "Navigate Backward";
+            this.navigateBackwardToolStripMenuItem.Click += new System.EventHandler(this.navigateBackwardToolStripMenuItem_Click);
+            // 
+            // navigateForwardToolStripMenuItem
+            // 
+            this.navigateForwardToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("navigateForwardToolStripMenuItem.Image")));
+            this.navigateForwardToolStripMenuItem.Name = "navigateForwardToolStripMenuItem";
+            this.navigateForwardToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+-";
+            this.navigateForwardToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.OemMinus)));
+            this.navigateForwardToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
+            this.navigateForwardToolStripMenuItem.Text = "Navigate Forward";
+            this.navigateForwardToolStripMenuItem.Click += new System.EventHandler(this.navigateForwardToolStripMenuItem_Click);
             // 
             // issuesToolStripMenuItem
             // 
@@ -380,34 +398,12 @@
             this.licenseToolStripMenuItem.Text = "License";
             this.licenseToolStripMenuItem.Click += new System.EventHandler(this.licenseToolStripMenuItem_Click);
             // 
-            // navigateBackwardToolStripMenuItem
-            // 
-            this.navigateBackwardToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("navigateBackwardToolStripMenuItem.Image")));
-            this.navigateBackwardToolStripMenuItem.Name = "navigateBackwardToolStripMenuItem";
-            this.navigateBackwardToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+-";
-            this.navigateBackwardToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.OemMinus)));
-            this.navigateBackwardToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-            this.navigateBackwardToolStripMenuItem.Text = "Navigate Backward";
-            this.navigateBackwardToolStripMenuItem.Click += new System.EventHandler(this.navigateBackwardToolStripMenuItem_Click);
-            // 
-            // navigateForwardToolStripMenuItem
-            // 
-            this.navigateForwardToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("navigateForwardToolStripMenuItem.Image")));
-            this.navigateForwardToolStripMenuItem.Name = "navigateForwardToolStripMenuItem";
-            this.navigateForwardToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+-";
-            this.navigateForwardToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.OemMinus)));
-            this.navigateForwardToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-            this.navigateForwardToolStripMenuItem.Text = "Navigate Forward";
-            this.navigateForwardToolStripMenuItem.Click += new System.EventHandler(this.navigateForwardToolStripMenuItem_Click);
-            // 
             // rdmpTaskBar1
             // 
-            this.rdmpTaskBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rdmpTaskBar1.Location = new System.Drawing.Point(3, 27);
+            this.rdmpTaskBar1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rdmpTaskBar1.Location = new System.Drawing.Point(0, 24);
             this.rdmpTaskBar1.Name = "rdmpTaskBar1";
-            this.rdmpTaskBar1.Size = new System.Drawing.Size(1157, 25);
+            this.rdmpTaskBar1.Size = new System.Drawing.Size(1160, 25);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
             // RDMPTopMenuStrip
