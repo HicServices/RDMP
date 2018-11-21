@@ -536,6 +536,9 @@ namespace CatalogueManager.Collections
                     Tree.AddObject(o); //add it
                     return;
                 }
+             if (!exists)
+                //remove it
+                Tree.RemoveObject(o);
 
             if(!IsHiddenByFilter(o))
                 //By preference refresh the parent that way we deal with hierarchy changes
@@ -548,22 +551,13 @@ namespace CatalogueManager.Collections
                         Tree.RefreshObject(lastParent); //refresh parent
                     else
                         //Tree has object but not parent, bad times, maybe BetterRouteExists? Refresh the object if it exists
-                        if (!exists)
-                            //remove it
-                            Tree.RemoveObject(o);
-                        else
+                       if(exists)
                             Tree.RefreshObject(o);
                 }
                 else
                 //if we have the object
-                if (Tree.IndexOf(o) != -1)
-                {
-                   if (exists)
+                    if (Tree.IndexOf(o) != -1 && exists)
                         Tree.RefreshObject(o); //it exists so refresh it!
-                    else
-                        //remove it
-                        Tree.RemoveObject(o);
-                }
         }
 
         private bool IsHiddenByFilter(object o)
