@@ -13,6 +13,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
     {
         public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database)
         {
+
+            string objectName = discoveredTable.GetRuntimeName();
+
+            if (discoveredTable.Schema != null)
+                objectName = discoveredTable.Schema + "." + objectName;
+
             DbCommand cmd = DatabaseCommandHelper.GetCommand("use [" + database + @"];
 SELECT  
 sys.columns.name AS COLUMN_NAME,
@@ -27,7 +33,7 @@ sys.columns.collation_name
 from sys.columns 
 join 
 sys.types on sys.columns.user_type_id = sys.types.user_type_id
-where object_id =OBJECT_ID('" + discoveredTable.GetRuntimeName() + "')", connection.Connection, connection.Transaction);
+where object_id =OBJECT_ID('" + objectName + "')", connection.Connection, connection.Transaction);
 
             List<DiscoveredColumn> toReturn = new List<DiscoveredColumn>();
 

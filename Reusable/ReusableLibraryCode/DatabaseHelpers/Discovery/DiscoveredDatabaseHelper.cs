@@ -23,13 +23,13 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public abstract void DropDatabase(DiscoveredDatabase database);
         public abstract Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database);
 
-        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, bool createEmpty = false)
+        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, bool createEmpty = false, string schema = null)
         {
             Dictionary<string, DataTypeComputer> whoCares;
-            return CreateTable(out whoCares,database,tableName,dt,explicitColumnDefinitions,foreignKeyPairs,cascadeDelete,createEmpty);
+            return CreateTable(out whoCares,database,tableName,dt,explicitColumnDefinitions,foreignKeyPairs,cascadeDelete,createEmpty,schema);
         }
 
-        public DiscoveredTable CreateTable(out Dictionary<string, DataTypeComputer> typeDictionary, DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, bool createEmpty = false)
+        public DiscoveredTable CreateTable(out Dictionary<string, DataTypeComputer> typeDictionary, DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, bool createEmpty = false,string schema=null)
         {
             typeDictionary = new Dictionary<string, DataTypeComputer>(StringComparer.CurrentCultureIgnoreCase);
 
@@ -78,7 +78,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 }
             }
 
-            var tbl = CreateTable(database, tableName, columns.ToArray(), foreignKeyPairs, cascadeDelete);
+            var tbl = CreateTable(database, tableName, columns.ToArray(), foreignKeyPairs, cascadeDelete,schema);
 
             //unless we are being asked to create it empty then upload the DataTable to it
             if(!createEmpty)
@@ -87,9 +87,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return tbl;
         }
         
-        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs,bool cascadeDelete)
+        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs,bool cascadeDelete, string schema)
         {
-            string bodySql = GetCreateTableSql(database, tableName, columns, foreignKeyPairs, cascadeDelete);
+            string bodySql = GetCreateTableSql(database, tableName, columns, foreignKeyPairs, cascadeDelete,schema);
 
             var server = database.Server;
 
@@ -100,10 +100,10 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
                 UsefulStuff.ExecuteBatchNonQuery(bodySql,con);
             }
             
-            return database.ExpectTable(tableName);
+            return database.ExpectTable(tableName,schema);
         }
 
-        public virtual string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete)
+        public virtual string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, string schema)
         {
             if (string.IsNullOrWhiteSpace(tableName))
                 throw new ArgumentNullException("Table name cannot be null", "tableName");
@@ -117,7 +117,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             tableName = syntaxHelper.GetRuntimeName(tableName);
 
             //the name uflly specified e.g. [db]..[tbl] or `db`.`tbl` - See Test HorribleColumnNames
-            var fullyQualifiedName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(), null, tableName);
+            var fullyQualifiedName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(), schema, tableName);
 
             bodySql += "CREATE TABLE " + fullyQualifiedName + "(" + Environment.NewLine;
 

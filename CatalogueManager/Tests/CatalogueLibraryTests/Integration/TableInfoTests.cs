@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
+using CatalogueLibrary.DataHelper;
 using NUnit.Framework;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -92,6 +96,45 @@ namespace CatalogueLibraryTests.Integration
             {
                 c.DeleteInDatabase();
                 table.DeleteInDatabase();
+            }
+        }
+
+        [Test]
+        public void TestCreateTableInSchemaAndImportAsTableInfo()
+        {
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            using (var con = db.Server.GetConnection())
+            {
+                con.Open();
+
+                db.Server.GetCommand("CREATE SCHEMA Omg", con).ExecuteNonQuery();
+
+                var tbl = db.CreateTable("Fish", new [] {new DatabaseColumnRequest("MyCol", "int")},schema:"Omg");
+
+                Assert.AreEqual("Fish", tbl.GetRuntimeName());
+                Assert.AreEqual( "Omg", tbl.Schema);
+                Assert.IsTrue(tbl.GetFullyQualifiedName().EndsWith("Omg.[Fish]"));
+
+                Assert.IsTrue(tbl.Exists());
+
+                TableInfo ti;
+                ColumnInfo[] cols;
+                Import(tbl,out ti,out cols);
+
+                Assert.AreEqual("Omg",ti.Schema);
+                var tbl2 = ti.Discover(DataAccessContext.InternalDataProcessing);
+                Assert.AreEqual("Omg",tbl2.Schema);
+                Assert.IsTrue(tbl2.Exists());
+
+                Assert.IsTrue(ti.Name.EndsWith("Omg.[Fish]"));
+
+                Assert.IsTrue(ti.GetFullyQualifiedName().EndsWith("Omg.[Fish]"));
+
+                var c = cols.Single();
+
+                Assert.AreEqual("MyCol",c.GetRuntimeName());
+                StringAssert.Contains("Omg.[Fish]",c.GetFullyQualifiedName());
             }
         }
     }

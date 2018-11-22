@@ -25,19 +25,22 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
                 while (r.Read())
                 {
                     //its a system table
-                    if (r["TABLE_OWNER"] as string == "sys")
+                    string schema = r["TABLE_OWNER"] as string;
+                        
+                    //its a system table
+                    if (schema == "sys")
                         continue;
 
-                    if (r["TABLE_OWNER"] as string == "INFORMATION_SCHEMA")
+                    if (schema == "INFORMATION_SCHEMA")
                         continue;
 
                     //add views if we are including them
                     if (includeViews && r["TABLE_TYPE"].Equals("VIEW"))
-                        tables.Add(new DiscoveredTable(parent,(string)r["TABLE_NAME"],querySyntaxHelper,(string) r["TABLE_OWNER"],TableType.View));
+                        tables.Add(new DiscoveredTable(parent, (string)r["TABLE_NAME"], querySyntaxHelper, schema, TableType.View));
 
                     //add tables
                     if (r["TABLE_TYPE"].Equals("TABLE"))
-                        tables.Add(new DiscoveredTable(parent, (string)r["TABLE_NAME"], querySyntaxHelper, (string)r["TABLE_OWNER"], TableType.Table));
+                        tables.Add(new DiscoveredTable(parent, (string)r["TABLE_NAME"], querySyntaxHelper, schema, TableType.Table));
                 }
             
             return tables.ToArray();

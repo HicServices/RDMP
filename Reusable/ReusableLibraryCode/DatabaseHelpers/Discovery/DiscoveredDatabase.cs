@@ -114,9 +114,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             Server.CreateDatabase(GetRuntimeName());
         }
 
-        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns)
+        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns, string schema= null)
         {
-            return Helper.CreateTable(this, tableName, columns,null,false);
+            return Helper.CreateTable(this,tableName, columns,null,false,schema);
         }
         
         public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns,Dictionary<DatabaseColumnRequest,DiscoveredColumn> foreignKeyPairs,bool cascadeDelete)

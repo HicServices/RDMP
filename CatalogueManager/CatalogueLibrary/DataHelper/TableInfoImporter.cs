@@ -28,7 +28,8 @@ namespace CatalogueLibrary.DataHelper
         private readonly string _username;
         private readonly string _password;
         private readonly DataAccessContext _usageContext;
-        
+        private readonly string _importFromSchema;
+
         private readonly DatabaseType _type;
         
         private IDiscoveredServerHelper _helper;
@@ -48,7 +49,7 @@ namespace CatalogueLibrary.DataHelper
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <param name="usageContext"></param>
-        public TableInfoImporter(ICatalogueRepository repository,string importFromServer, string importDatabaseName, string importTableName, DatabaseType type, string username=null,string password=null, DataAccessContext usageContext=DataAccessContext.Any)
+        public TableInfoImporter(ICatalogueRepository repository,string importFromServer, string importDatabaseName, string importTableName, DatabaseType type, string username=null,string password=null, DataAccessContext usageContext=DataAccessContext.Any, string importFromSchema = null)
         {
             _repository = repository;
             _importFromServer = importFromServer;
@@ -59,6 +60,7 @@ namespace CatalogueLibrary.DataHelper
             _username = string.IsNullOrWhiteSpace(username) ? null : username;
             _password = string.IsNullOrWhiteSpace(password) ? null : password;
             _usageContext = usageContext;
+            _importFromSchema = importFromSchema;
 
             _helper = new DatabaseHelperFactory(type).CreateInstance();
             
@@ -77,7 +79,9 @@ namespace CatalogueLibrary.DataHelper
             table.GetRuntimeName(),
             table.Database.Server.DatabaseType,
             table.Database.Server.ExplicitUsernameIfAny,
-            table.Database.Server.ExplicitPasswordIfAny)
+            table.Database.Server.ExplicitPasswordIfAny,
+            DataAccessContext.Any,
+            table.Schema)
         {
             _usageContext = DataAccessContext.Any;
             InitializeBuilder();
@@ -100,7 +104,10 @@ namespace CatalogueLibrary.DataHelper
             tableName = RDMPQuerySyntaxHelper.EnsureValueIsWrapped(_importDatabaseName, _type);
 
             if (_type == DatabaseType.MicrosoftSQLServer)
-                tableName += "..";
+                if (_importFromSchema == "dbo")
+                    tableName += "..";
+                else
+                    tableName += "."+_importFromSchema+".";
             else if (_type == DatabaseType.MYSQLServer || _type == DatabaseType.Oracle)
                 tableName += ".";
             else
@@ -109,13 +116,14 @@ namespace CatalogueLibrary.DataHelper
             tableName += RDMPQuerySyntaxHelper.EnsureValueIsWrapped(_importTableName, _type);
             databaseName = RDMPQuerySyntaxHelper.EnsureValueIsWrapped(_importDatabaseName, _type);
 
-            DiscoveredColumn[] discoveredColumns = _server.ExpectDatabase(_importDatabaseName).ExpectTable(_importTableName).DiscoverColumns();
+            DiscoveredColumn[] discoveredColumns = _server.ExpectDatabase(_importDatabaseName).ExpectTable(_importTableName,_importFromSchema).DiscoverColumns();
             
             TableInfo parent = new TableInfo(cataRepository, tableName)
             {
                 DatabaseType = _type,
                 Database = databaseName,
-                Server = _importFromServer
+                Server = _importFromServer,
+                Schema = _importFromSchema
             };
 
             parent.SaveToDatabase();

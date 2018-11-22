@@ -33,17 +33,16 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle
         }
 
         public override string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns,
-            Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete)
+            Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, string schema)
         {
-            var bodySql = base.GetCreateTableSql(database, tableName, columns, foreignKeyPairs, cascadeDelete);
-
-
+            var bodySql = base.GetCreateTableSql(database, tableName, columns, foreignKeyPairs, cascadeDelete,schema);
+            
             var server = database.Server;
             var syntaxHelper = server.GetQuerySyntaxHelper();
 
             //the name sans brackets (hopefully they didn't pass any brackets)
             var tableRuntimeName = syntaxHelper.GetRuntimeName(tableName);
-            var tableNameFullyQualified = database.ExpectTable(tableRuntimeName).GetFullyQualifiedName();
+            var tableNameFullyQualified = database.ExpectTable(tableRuntimeName,schema).GetFullyQualifiedName();
             
             var autoIncrementColumn = columns.SingleOrDefault(c => c.IsAutoIncrement);
 
