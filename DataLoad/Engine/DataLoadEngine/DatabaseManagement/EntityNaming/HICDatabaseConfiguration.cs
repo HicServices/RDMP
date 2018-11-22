@@ -45,10 +45,8 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
         /// <param name="lmd"></param>
         /// <param name="namer"></param>
         public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null):
-            this(lmd.GetDistinctLiveDatabaseServer(), namer, new ServerDefaults(((CatalogueRepository)lmd.Repository)))
+            this(lmd.GetDistinctLiveDatabaseServer(), namer, new ServerDefaults(((CatalogueRepository)lmd.Repository)),lmd.OverrideRAWServer)
         {
-            
-            
         }
 
         /// <summary>
@@ -56,8 +54,9 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
         /// </summary>
         /// <param name="liveServer">The live server where the data is held, IMPORTANT: this must contain InitialCatalog parameter</param>
         /// <param name="namer">optionally lets you specify how to pick database names for the temporary bubbles STAGING and RAW</param>
-        /// <param name="defaults">optionally specifies the location to get RAW overrides from</param>
-        public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null)
+        /// <param name="defaults">optionally specifies the location to get RAW default server from</param>
+        /// <param name="overrideRAWServer">optionally specifies an explicit server to use for RAW</param>
+        public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
         {
             //respects the override of LIVE server
             string liveDatabase = liveServer.Helper.GetCurrentDatabase(liveServer.Builder);
@@ -68,14 +67,13 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
             // Default namer
             if (namer == null)
                 namer = new FixedStagingDatabaseNamer(liveDatabase);
-            
-            IExternalDatabaseServer overrideRAWServer = null;
-            DiscoveredServer rawServer = null;
-            
-            //if there are defaults
-            if(defaults != null)
-                overrideRAWServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.RAWDataLoadServer);//get the raw default if there is one
 
+            DiscoveredServer rawServer = null;
+
+            //if there are defaults
+            if(overrideRAWServer == null && defaults != null)
+                overrideRAWServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.RAWDataLoadServer);//get the raw default if there is one
+            
             //if there was defaults and a raw default server
             if (overrideRAWServer != null)
                 rawServer = DataAccessPortal.GetInstance().ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false); //get the raw server connection

@@ -18,6 +18,10 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
             User.SaveToDatabase();
         }
 
+        public override string ToString()
+        {
+            return "Override RAW:" + ObjectBeingUsed.Name;
+        }
 
         public string GetDeleteMessage()
         {
