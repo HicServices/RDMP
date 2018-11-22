@@ -15,6 +15,12 @@ namespace CatalogueLibrary.Data.DataLoad
         /// </summary>
         string LocationOfFlatFiles { get; set; }
 
+
+        /// <summary>
+        /// Optional - Overrides the <see cref="ServerDefaults"/> RAWDataLoadServer with an explicit RAW server to use this load only.
+        /// </summary>
+        ExternalDatabaseServer OverrideRAWServer { get; }
+
         /// <summary>
         /// List of all the user configured steps in a data load.  For example you could have 2 ProcessTasks, one that downloads files from an FTP server and one that loads RAW.
         /// </summary>

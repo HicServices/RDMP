@@ -18,6 +18,7 @@ using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
+using CatalogueLibrary.Nodes.UsedByNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -522,6 +523,13 @@ namespace CatalogueLibrary.Providers
         private void AddChildren(LoadMetadata lmd, DescendancyList descendancy)
         {
             List<object> childObjects = new List<object>();
+
+            if (lmd.OverrideRAWServer_ID.HasValue)
+            {
+                var server = AllExternalServers.Single(s => s.ID == lmd.OverrideRAWServer_ID.Value);
+                var usage = new OverrideRawServerNode(lmd, server);
+                childObjects.Add(usage);
+            }
 
             var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
             AddChildren(allSchedulesNode,descendancy.Add(allSchedulesNode));

@@ -345,12 +345,15 @@
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />
     <Compile Include="Nodes\CohortNodes\AllFreeCohortIdentificationConfigurationsNode.cs" />
     <Compile Include="Nodes\CohortNodes\AllProjectCohortIdentificationConfigurationsNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\OverrideRawServerNode.cs" />
     <Compile Include="Nodes\PipelineNodes\AllPipelinesNode.cs" />
     <Compile Include="Nodes\PipelineNodes\OtherPipelinesNode.cs" />
     <Compile Include="Nodes\PipelineNodes\PipelineCompatibleWithUseCaseNode.cs" />
     <Compile Include="Nodes\PipelineNodes\StandardPipelineUseCaseNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
+    <Compile Include="Nodes\UsedByNodes\IObjectUsedByOtherObjectNode.cs" />
+    <Compile Include="Nodes\UsedByNodes\ObjectUsedByOtherObjectNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
     <Compile Include="QueryBuilding\Options\AggregateBuilderBasicOptions.cs" />
