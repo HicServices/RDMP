@@ -16,7 +16,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         private string _functionName;
         
         //constructor
-        public DiscoveredTableValuedFunction(DiscoveredDatabase database, string functionName, IQuerySyntaxHelper querySyntaxHelper):base(database,functionName,querySyntaxHelper)
+        public DiscoveredTableValuedFunction(DiscoveredDatabase database, string functionName, IQuerySyntaxHelper querySyntaxHelper,string schema = null):base(database,functionName,querySyntaxHelper,schema)
         {
             _functionName = functionName;
         }

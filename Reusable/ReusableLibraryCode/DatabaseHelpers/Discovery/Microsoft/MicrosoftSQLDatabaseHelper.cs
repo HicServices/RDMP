@@ -50,14 +50,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
         {
             List<DiscoveredTableValuedFunction> functionsToReturn = new List<DiscoveredTableValuedFunction>();
 
-            DbCommand cmd = new SqlCommand("use [" + database + @"]; select name from sys.objects 
+            DbCommand cmd = new SqlCommand("use [" + database + @"];select name,
+ (select name from sys.schemas s where s.schema_id = o.schema_id) as schema_name
+  from sys.objects o
 WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FUNCTION'", (SqlConnection)connection);
 
             cmd.Transaction = transaction;
 
             using (DbDataReader r = cmd.ExecuteReader())
                 while (r.Read())
-                    functionsToReturn.Add(new DiscoveredTableValuedFunction(parent,r["name"].ToString(),querySyntaxHelper));
+                {
+                    string schema = r["schema_name"] as string;
+
+                    if (string.Equals("dbo", schema))
+                        schema = null;
+                    functionsToReturn.Add(new DiscoveredTableValuedFunction(parent, r["name"].ToString(), querySyntaxHelper,schema));
+
+                }
 
 
             return functionsToReturn.ToArray();

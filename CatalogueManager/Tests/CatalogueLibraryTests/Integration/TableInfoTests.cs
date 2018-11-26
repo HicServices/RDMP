@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
@@ -152,6 +153,26 @@ namespace CatalogueLibraryTests.Integration
                 Assert.AreEqual(TriggerStatus.Enabled, impl.GetTriggerStatus());
 
                 Assert.IsTrue( impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+
+                //should be synced
+                var sync = new TableInfoSynchronizer(ti);
+                sync.Synchronize(new AcceptAllCheckNotifier());
+
+                //Test importing the _Legacy table valued function that should be created in the Omg schema and test synching that too.
+                var tvf = ti.Discover(DataAccessContext.InternalDataProcessing).Database.ExpectTableValuedFunction("Fish_Legacy", "Omg");
+                Assert.IsTrue(tvf.Exists());
+
+                var importerTvf = new TableValuedFunctionImporter(CatalogueRepository, tvf);
+                TableInfo tvfTi;
+                ColumnInfo[] tvfCols;
+                importerTvf.DoImport(out tvfTi,out tvfCols);
+
+                Assert.AreEqual("Omg",tvfTi.Schema);
+
+                var syncTvf = new TableInfoSynchronizer(tvfTi);
+                syncTvf.Synchronize(new ThrowImmediatelyCheckNotifier());
+
+                StringAssert.EndsWith("Omg.Fish_Legacy(@index) AS Fish_Legacy",tvfTi.Name);
             }
         }
     }

@@ -64,7 +64,7 @@ namespace CatalogueLibrary
 
             if (_tableToSync.IsTableValuedFunction)
             {
-                expectedTable = expectedDatabase.ExpectTableValuedFunction(_tableToSync.GetRuntimeName());
+                expectedTable = expectedDatabase.ExpectTableValuedFunction(_tableToSync.GetRuntimeName(),_tableToSync.Schema);
                 if(!expectedTable.Exists())
                     throw new SynchronizationFailedException("Database " + expectedDatabase + " did not contain a TABLE VALUED FUNCTION called " + _tableToSync.GetRuntimeName());
             }
@@ -284,7 +284,7 @@ namespace CatalogueLibrary
         
         private bool SynchronizeParameters(TableValuedFunctionImporter importer, ICheckNotifier notifier)
         {
-            var discoveredParameters = _toSyncTo.GetCurrentDatabase().ExpectTableValuedFunction(_tableToSync.GetRuntimeName()).DiscoverParameters();
+            var discoveredParameters = _toSyncTo.GetCurrentDatabase().ExpectTableValuedFunction(_tableToSync.GetRuntimeName(),_tableToSync.Schema).DiscoverParameters();
             var currentParameters = _tableToSync.GetAllParameters();
             
             //For each parameter in underlying database

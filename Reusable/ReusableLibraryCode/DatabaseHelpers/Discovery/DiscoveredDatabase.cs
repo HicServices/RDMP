@@ -56,9 +56,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return new DiscoveredTable(this, tableName, _querySyntaxHelper, schema, tableType);
         }
 
-        public DiscoveredTableValuedFunction ExpectTableValuedFunction(string tableName)
+        public DiscoveredTableValuedFunction ExpectTableValuedFunction(string tableName,string schema = null)
         {
-            return new DiscoveredTableValuedFunction(this, tableName, _querySyntaxHelper);
+            return new DiscoveredTableValuedFunction(this, tableName, _querySyntaxHelper, schema);
         }
         public DiscoveredStoredprocedure[] DiscoverStoredprocedures()
         {

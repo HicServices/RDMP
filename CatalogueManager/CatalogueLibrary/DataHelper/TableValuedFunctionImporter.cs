@@ -31,6 +31,7 @@ namespace CatalogueLibrary.DataHelper
 
         private readonly DiscoveredTableValuedFunction _tableValuedFunction;
         private DiscoveredParameter[] _parameters;
+        private string _schema;
 
         /// <summary>
         /// List of parameters belonging to the <see cref="DiscoveredTableValuedFunction"/> being imported.  Each parameter will result in an RDMP object <see cref="AnyTableSqlParameter"/> 
@@ -51,6 +52,7 @@ namespace CatalogueLibrary.DataHelper
             _tableValuedFunction = tableValuedFunction;
             _server = _tableValuedFunction.Database.Server.Name;
             _database = _tableValuedFunction.Database.GetRuntimeName();
+            _schema = tableValuedFunction.Schema;
 
             _usageContext = usageContext;
 
@@ -69,7 +71,8 @@ namespace CatalogueLibrary.DataHelper
         /// <inheritdoc/>
         public void DoImport(out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
         {
-            string finalName = "[" + _database + "].." + _tableValuedFunctionName + "(";
+            
+            string finalName = "[" + _database + "]."+_schema+"." + _tableValuedFunctionName + "(";
 
             foreach (DiscoveredParameter parameter in _parameters)
                 finalName += parameter.ParameterName + ",";
@@ -80,6 +83,7 @@ namespace CatalogueLibrary.DataHelper
             tableInfoCreated.Server = _server;
             tableInfoCreated.Database = _database;
             tableInfoCreated.IsTableValuedFunction = true;
+            tableInfoCreated.Schema = _schema;
             tableInfoCreated.SaveToDatabase();
 
             columnInfosCreated = CreateColumnInfosBasedOnReturnColumnsOfFunction(tableInfoCreated);
