@@ -24,7 +24,7 @@ namespace CatalogueLibrary.Triggers.Implementations
         {
             _server = table.Database.Server;
             _table = table;
-            _archiveTable = _table.Database.ExpectTable(table.GetRuntimeName() + "_Archive");
+            _archiveTable = _table.Database.ExpectTable(table.GetRuntimeName() + "_Archive",table.Schema);
             _columns = table.DiscoverColumns();
             _primaryKeys = _columns.Where(c => c.IsPrimaryKey).ToArray();
             

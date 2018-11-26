@@ -6,8 +6,11 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.Triggers;
+using CatalogueLibrary.Triggers.Implementations;
 using NUnit.Framework;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
@@ -110,7 +113,7 @@ namespace CatalogueLibraryTests.Integration
 
                 db.Server.GetCommand("CREATE SCHEMA Omg", con).ExecuteNonQuery();
 
-                var tbl = db.CreateTable("Fish", new [] {new DatabaseColumnRequest("MyCol", "int")},schema:"Omg");
+                var tbl = db.CreateTable("Fish", new [] {new DatabaseColumnRequest("MyCol", "int"){IsPrimaryKey = true}},schema:"Omg");
 
                 Assert.AreEqual("Fish", tbl.GetRuntimeName());
                 Assert.AreEqual( "Omg", tbl.Schema);
@@ -135,6 +138,20 @@ namespace CatalogueLibraryTests.Integration
 
                 Assert.AreEqual("MyCol",c.GetRuntimeName());
                 StringAssert.Contains("Omg.[Fish]",c.GetFullyQualifiedName());
+
+                //should be primary key
+                Assert.IsTrue(c.IsPrimaryKey);
+
+                var triggerFactory = new TriggerImplementerFactory(DatabaseType.MicrosoftSQLServer);
+                var impl = triggerFactory.Create(tbl);
+                
+                Assert.AreEqual(TriggerStatus.Missing,impl.GetTriggerStatus());
+
+                impl.CreateTrigger(new ThrowImmediatelyCheckNotifier());
+
+                Assert.AreEqual(TriggerStatus.Enabled, impl.GetTriggerStatus());
+
+                Assert.IsTrue( impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
             }
         }
     }

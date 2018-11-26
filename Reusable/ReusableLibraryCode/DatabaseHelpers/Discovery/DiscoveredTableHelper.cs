@@ -85,7 +85,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
             var destinationTable = toCreateTable ?? table;
 
-            return table.Database.Helper.GetCreateTableSql(destinationTable.Database, destinationTable.GetRuntimeName(), columns.ToArray(), null, false);
+            string schema = toCreateTable != null ? toCreateTable.Schema : table.Schema;
+
+            return table.Database.Helper.GetCreateTableSql(destinationTable.Database, destinationTable.GetRuntimeName(), columns.ToArray(), null, false, schema);
         }
 
         public virtual bool IsEmpty(DbConnection connection, DiscoveredTable discoveredTable, DbTransaction transaction)

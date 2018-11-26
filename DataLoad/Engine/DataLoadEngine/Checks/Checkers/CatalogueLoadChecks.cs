@@ -94,7 +94,7 @@ namespace DataLoadEngine.Checks.Checkers
             DiscoveredDatabase staging = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
             DiscoveredDatabase live = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
 
-            var liveTable = live.ExpectTable(tableInfo.GetRuntimeName(LoadBubble.Live,_databaseConfiguration.DatabaseNamer));
+            var liveTable = live.ExpectTable(tableInfo.GetRuntimeName(LoadBubble.Live,_databaseConfiguration.DatabaseNamer),tableInfo.Schema);
             var liveCols = liveTable.DiscoverColumns();
 
             CheckTableInfoSynchronization(tableInfo,notifier);
@@ -184,7 +184,7 @@ namespace DataLoadEngine.Checks.Checkers
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "TableInfo " + tableInfo.Name + " has no IsPrimaryKey columns", CheckResult.Fail, null));
 
-            var primaryKeys = live.ExpectTable(tableInfo.GetRuntimeName()).DiscoverColumns().Where(c => c.IsPrimaryKey).ToArray();
+            var primaryKeys = live.ExpectTable(tableInfo.GetRuntimeName(),tableInfo.Schema).DiscoverColumns().Where(c => c.IsPrimaryKey).ToArray();
 
             if(primaryKeys.Any(k=>k.IsAutoIncrement))
                 notifier.OnCheckPerformed(new CheckEventArgs("AutoIncrement columns "+string.Join(",",primaryKeys.Where(k=>k.IsAutoIncrement))+" are not allowed as Primary Keys for your table because there is no way to differentiate new data being loaded from duplicate old data being loaded (the entire purpose of the RDMP DLE)",CheckResult.Fail));
