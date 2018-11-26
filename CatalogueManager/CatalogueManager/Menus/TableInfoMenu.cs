@@ -53,6 +53,8 @@ namespace CatalogueManager.Menus
             Items.Add(new ToolStripSeparator());
             Items.Add("View Extract", null, (s,e)=> _activator.ViewDataSample(new ViewTableInfoExtractUICollection(tableInfo,ViewType.TOP_100)));
 
+            Add(new ExecuteCommandScriptTable(_activator, tableInfo));
+
             Items.Add(new ToolStripSeparator());
             Items.Add("Create Shadow _Archive Table (Do not create on highly volatile tables!)", CatalogueIcons.Backup, delegate { CreateBackupTrigger_Click(tableInfo); });
 
