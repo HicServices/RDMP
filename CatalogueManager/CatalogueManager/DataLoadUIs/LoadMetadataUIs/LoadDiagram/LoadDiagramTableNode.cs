@@ -36,7 +36,11 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             State = LoadDiagramState.Anticipated;
             
             TableName = TableInfo.GetRuntimeName(Bubble);
-            Table = databaseNode.Database.ExpectTable(TableName);
+
+            //only reference schema if it is LIVE
+            string schema = bubble >= LoadBubble.Live ? tableInfo.Schema: null;
+
+            Table = databaseNode.Database.ExpectTable(TableName,schema);
 
 
             var cols =
