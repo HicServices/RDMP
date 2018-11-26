@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -141,7 +141,7 @@ namespace CatalogueLibrary.DataHelper
         /// Creates a parameter declaration SQL for the given <paramref name="parameter"/> e.g. if the parameter is @myVar varchar(10) then the declare SQL might be
         /// DECLARE @myVar as varchar(10);.  
         /// 
-        /// <seealso cref="IQuerySyntaxHelper.GetParameterDeclaration(string,string)"/>
+        /// <para><seealso cref="IQuerySyntaxHelper.GetParameterDeclaration(string,string)"/></para>
         /// </summary>
         internal string GetParamaterDeclarationSQL(DiscoveredParameter parameter)
         {

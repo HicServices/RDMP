@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _shareDefinitionFile = sourceFileCollection.Files.Single();
         }
 
+        [ImportingConstructor]
         public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, Catalogue targetCatalogue): base(activator)
         {
             _targetCatalogue = targetCatalogue;
