@@ -4,8 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using ReusableLibraryCode.Checks;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
 {
@@ -13,12 +11,6 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
     {
         public override DiscoveredColumn[] DiscoverColumns(DiscoveredTable discoveredTable, IManagedConnection connection, string database)
         {
-
-            string objectName = discoveredTable.GetRuntimeName();
-
-            if (discoveredTable.Schema != null)
-                objectName = discoveredTable.Schema + "." + objectName;
-
             DbCommand cmd = DatabaseCommandHelper.GetCommand("use [" + database + @"];
 SELECT  
 sys.columns.name AS COLUMN_NAME,
@@ -33,7 +25,7 @@ sys.columns.collation_name
 from sys.columns 
 join 
 sys.types on sys.columns.user_type_id = sys.types.user_type_id
-where object_id =OBJECT_ID('" + objectName + "')", connection.Connection, connection.Transaction);
+where object_id =OBJECT_ID('" + GetObjectName(discoveredTable) + "')", connection.Connection, connection.Transaction);
 
             List<DiscoveredColumn> toReturn = new List<DiscoveredColumn>();
 
@@ -70,6 +62,21 @@ where object_id =OBJECT_ID('" + objectName + "')", connection.Connection, connec
 
 
             return toReturn.ToArray();
+        }
+
+        /// <summary>
+        /// Returns the table name suitable for being passed into OBJECT_ID including schema if any
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        private string GetObjectName(DiscoveredTable table)
+        {
+            var objectName = table.GetRuntimeName();
+
+            if (table.Schema != null)
+                return table.Schema + "." + objectName;
+
+            return objectName;
         }
 
         public override IDiscoveredColumnHelper GetColumnHelper()
@@ -154,7 +161,7 @@ sys.parameters.precision AS PRECISION
 sys.parameters 
 join
 sys.types on sys.parameters.user_type_id = sys.types.user_type_id
-where object_id = OBJECT_ID('"+discoveredTableValuedFunction.GetRuntimeName()+"')";
+where object_id = OBJECT_ID('" + GetObjectName(discoveredTableValuedFunction) + "')";
 
             DbCommand cmd = DatabaseCommandHelper.GetCommand(query, connection);
             cmd.Transaction = transaction;
@@ -285,8 +292,8 @@ INNER JOIN sys.index_columns AS ic
 INNER JOIN sys.columns AS c ON ic.object_id = c.object_id AND ic.column_id = c.column_id 
 ON i.OBJECT_ID = ic.OBJECT_ID 
 AND i.index_id = ic.index_id 
-WHERE (i.is_primary_key = 1) AND ic.OBJECT_ID = OBJECT_ID('dbo.{0}')
-ORDER BY OBJECT_NAME(ic.OBJECT_ID), ic.key_ordinal", table.GetRuntimeName());
+WHERE (i.is_primary_key = 1) AND ic.OBJECT_ID = OBJECT_ID('{0}')
+ORDER BY OBJECT_NAME(ic.OBJECT_ID), ic.key_ordinal", GetObjectName(table));
 
             DbCommand cmd = DatabaseCommandHelper.GetCommand(query, con.Connection);
             cmd.Transaction = con.Transaction;

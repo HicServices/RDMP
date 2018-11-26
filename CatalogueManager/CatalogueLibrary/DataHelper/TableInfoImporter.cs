@@ -72,7 +72,8 @@ namespace CatalogueLibrary.DataHelper
         /// </summary>
         /// <param name="catalogueRepository"></param>
         /// <param name="table"></param>
-        public TableInfoImporter(ICatalogueRepository catalogueRepository, DiscoveredTable table)
+        /// <param name="usageContext"></param>
+        public TableInfoImporter(ICatalogueRepository catalogueRepository, DiscoveredTable table, DataAccessContext usageContext = DataAccessContext.Any)
             : this(catalogueRepository,
             table.Database.Server.Name,
             table.Database.GetRuntimeName(),
@@ -80,7 +81,7 @@ namespace CatalogueLibrary.DataHelper
             table.Database.Server.DatabaseType,
             table.Database.Server.ExplicitUsernameIfAny,
             table.Database.Server.ExplicitPasswordIfAny,
-            DataAccessContext.Any,
+            usageContext,
             table.Schema)
         {
             _usageContext = DataAccessContext.Any;

@@ -39,19 +39,7 @@ namespace ReusableUIComponents
         }
 
         public DiscoveredDatabase SelectedDatabase { get { return serverDatabaseTableSelector1.GetDiscoveredDatabase(); } }
-
-        public DiscoveredTable SelectedTable
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(serverDatabaseTableSelector1.Table))
-                    return null;
-
-                return SelectedDatabase != null
-                    ? SelectedDatabase.ExpectTable(serverDatabaseTableSelector1.Table)
-                    : null;
-            }
-        }
+        public DiscoveredTable SelectedTable { get { return serverDatabaseTableSelector1.GetDiscoveredTable(); }}
 
         private void btnOk_Click(object sender, EventArgs e)
         {

@@ -10,6 +10,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
 
 namespace CatalogueManager.MainFormUITabs.SubComponents
@@ -54,40 +55,22 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             var cataRepo = _activator.RepositoryLocator.CatalogueRepository;
             try
             {
-                if (!string.IsNullOrWhiteSpace(serverDatabaseTableSelector1.Table))
+                DiscoveredTable tbl = serverDatabaseTableSelector1.GetDiscoveredTable();
+
+                if (tbl == null)
                 {
-                    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-                    builder.DataSource = serverDatabaseTableSelector1.Server;
-                    builder.InitialCatalog = serverDatabaseTableSelector1.Database;
-
-                    //if there is no username/password then use integrated security
-                    if (string.IsNullOrWhiteSpace(serverDatabaseTableSelector1.Username))
-                    {
-                        builder.IntegratedSecurity = true;
-                        Importer = new TableInfoImporter(cataRepo, serverDatabaseTableSelector1.Server, serverDatabaseTableSelector1.Database, serverDatabaseTableSelector1.Table, serverDatabaseTableSelector1.DatabaseType);
-                    }
-                    else
-                    {
-
-                        builder.IntegratedSecurity = false;
-                        builder.UserID = serverDatabaseTableSelector1.Username;
-                        builder.Password = serverDatabaseTableSelector1.Password;
-
-                        Importer = new TableInfoImporter(cataRepo, serverDatabaseTableSelector1.Server, serverDatabaseTableSelector1.Database, serverDatabaseTableSelector1.Table, serverDatabaseTableSelector1.DatabaseType, username: serverDatabaseTableSelector1.Username, password: serverDatabaseTableSelector1.Password, usageContext: (DataAccessContext)ddContext.SelectedValue);
-                    }
-
-                    btnImport.Enabled = true;
+                    btnImport.Enabled = false;
+                    return;
                 }
+                
+                //if it isn't a table valued function
+                if (tbl is DiscoveredTableValuedFunction)
+                    Importer = new TableValuedFunctionImporter(cataRepo, (DiscoveredTableValuedFunction) tbl,(DataAccessContext) ddContext.SelectedValue);
                 else
-                    if (!string.IsNullOrWhiteSpace(serverDatabaseTableSelector1.TableValuedFunction))
-                    {
-                        var table = serverDatabaseTableSelector1.GetDiscoveredDatabase()
-                            .ExpectTableValuedFunction(serverDatabaseTableSelector1.TableValuedFunction);
-                        Importer = new TableValuedFunctionImporter(cataRepo, table, (DataAccessContext)ddContext.SelectedValue);
-                        btnImport.Enabled = true;
-                    }
-                    else
-                        btnImport.Enabled = false;
+                    Importer = new TableInfoImporter(cataRepo, tbl, (DataAccessContext) ddContext.SelectedValue);
+                    
+                btnImport.Enabled = true;
+                    
             }
             catch (Exception exception)
             {

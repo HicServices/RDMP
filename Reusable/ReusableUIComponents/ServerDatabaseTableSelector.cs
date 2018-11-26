@@ -37,7 +37,7 @@ namespace ReusableUIComponents
 
         public string Table
         {
-            get { return cbxTable.Text; }
+            private get { return cbxTable.Text; }
             set { cbxTable.Text = value; }
         }
 
@@ -53,7 +53,7 @@ namespace ReusableUIComponents
             set { tbPassword.Text = value; }
         }
 
-        public string TableValuedFunction {get { return cbxTableValueFunctions.Text; }}
+        private string TableValuedFunction { get { return cbxTableValueFunctions.Text; } }
 
         public event Action SelectionChanged;
         private IDiscoveredServerHelper _helper;
@@ -134,8 +134,8 @@ namespace ReusableUIComponents
             else
                 if (!e.Cancelled)
                 {
-                    cbxTable.Items.AddRange(_listTablesAsyncResult.Where(t => ! (t is DiscoveredTableValuedFunction)).Select(r=>r.GetRuntimeName()).ToArray());
-                    cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(t => t is DiscoveredTableValuedFunction).Select(r=>r.GetRuntimeName()).ToArray());
+                    cbxTable.Items.AddRange(_listTablesAsyncResult.Where(t => ! (t is DiscoveredTableValuedFunction)).ToArray());
+                    cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(t => t is DiscoveredTableValuedFunction).ToArray());
                 }
                 else
                     ragSmiley1.Warning(new Exception("User Cancelled"));
@@ -389,6 +389,36 @@ namespace ReusableUIComponents
                 return null;
 
             return new DiscoveredServer(GetBuilder()).ExpectDatabase(cbxDatabase.Text);
+        }
+
+        public DiscoveredTable GetDiscoveredTable()
+        {
+            //if user selected a specific object from the drop down properly
+            var tbl = cbxTable.SelectedItem as DiscoveredTable;
+            var tblValuedFunction = cbxTableValueFunctions.SelectedItem as DiscoveredTableValuedFunction;
+
+            if(tbl != null)
+                return tbl;
+
+            if (tblValuedFunction != null)
+                return tblValuedFunction;
+
+            //Did they at least pick a database
+            var db = GetDiscoveredDatabase();
+
+            if (db == null)
+                return null;
+
+            //They made up a table that may or may not exist 
+            if(!string.IsNullOrWhiteSpace(Table))
+                return db.ExpectTable(Table);
+
+            //They made up a table valued function which may or may not exist
+            if(!string.IsNullOrWhiteSpace(TableValuedFunction))
+                return db.ExpectTableValuedFunction(TableValuedFunction);
+
+            //they haven't entered anything
+            return null;
         }
 
         public DbConnectionStringBuilder GetBuilder()
