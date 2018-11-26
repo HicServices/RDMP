@@ -32,7 +32,7 @@ namespace CatalogueLibrary.Triggers.Implementations
 
         public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
-            _schema = _table.Schema ?? "dbo";
+            _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo":_table.Schema;
             _triggerName = _schema + "." + _table.GetRuntimeName() + "_OnUpdate";
         }
 
