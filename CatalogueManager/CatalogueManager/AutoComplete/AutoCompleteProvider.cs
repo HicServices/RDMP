@@ -53,7 +53,7 @@ namespace CatalogueManager.AutoComplete
             var snip = new SubstringAutocompleteItem(col);
             snip.MenuText = col;
 
-            var fullySpecified = syntaxHelper.EnsureFullyQualified(dbName, null, table, col);
+            var fullySpecified = syntaxHelper.EnsureFullyQualified(dbName, tableInfo.Schema, table, col);
 
             snip.Text = fullySpecified;
             snip.Tag = columnInfo;
