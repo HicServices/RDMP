@@ -583,6 +583,7 @@
     <None Include="QueryBuilding\MetadataComponentsForQueryBuilding.cd" />
     <None Include="QueryBuilding\QueryBuilding.cd" />
     <None Include="Spontaneous\Spontaneous.cd" />
+    <None Include="Triggers\Triggers.cd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">

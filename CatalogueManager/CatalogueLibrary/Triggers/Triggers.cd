@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CatalogueLibrary.Triggers.TriggerChecks">
+    <Position X="0.5" Y="1.75" Width="3" />
+    <AssociationLine Name="_table" Type="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredTable" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.5" Y="2.625" />
+        <Point X="3.875" Y="2.625" />
+        <Point X="3.875" Y="2.875" />
+        <Point X="5" Y="2.875" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_archiveTable" Type="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredTable" FixedToPoint="true">
+      <Path>
+        <Point X="3.5" Y="3.188" />
+        <Point X="5" Y="3.188" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>ABAAAAgAAAAAAgAAQAAEAAAAgAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Triggers\TriggerChecks.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_table" />
+      <Field Name="_archiveTable" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Triggers.Implementations.MicrosoftSQLTriggerImplementer" Collapsed="true">
+    <Position X="9.5" Y="4.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAABAAAAAAAAAAAgQABAoAAAgAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Triggers\Implementations\MicrosoftSQLTriggerImplementer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueLibrary.Triggers.Implementations.MySqlTriggerImplementer" Collapsed="true">
+    <Position X="12.5" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAgAAAAAAAAAAAQABAIAAAAAAAAAAAAAAgAABA=</HashCode>
+      <FileName>Triggers\Implementations\MySqlTriggerImplementer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CatalogueLibrary.Triggers.Implementations.TriggerImplementer" Collapsed="true">
+    <Position X="10.75" Y="3" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAQAAAAAAAgAAQAAQABAIQAAQAAAICAAAAAAAIEA=</HashCode>
+      <FileName>Triggers\Implementations\TriggerImplementer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Triggers.Implementations.TriggerImplementerFactory">
+    <Position X="8" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEEAAAAAAAAAAAA=</HashCode>
+      <FileName>Triggers\Implementations\TriggerImplementerFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredTable" Collapsed="true">
+    <Position X="5" Y="2.75" Width="1.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="CatalogueLibrary.Triggers.ITriggerImplementer">
+    <Position X="10.75" Y="1" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAQABAIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Triggers\ITriggerImplementer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

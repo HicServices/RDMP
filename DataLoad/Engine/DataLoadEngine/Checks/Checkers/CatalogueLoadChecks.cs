@@ -213,7 +213,7 @@ namespace DataLoadEngine.Checks.Checkers
 
         private void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier, out bool runSynchronizationAgain)
         {
-            TriggerChecks checker = new TriggerChecks(table, true);
+            TriggerChecks checker = new TriggerChecks(table);
             checker.Check(notifier);
 
             runSynchronizationAgain = checker.TriggerCreated;
