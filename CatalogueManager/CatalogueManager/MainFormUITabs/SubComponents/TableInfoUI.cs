@@ -65,6 +65,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             tbTableInfoName.Text = _tableInfo.Name;
             tbTableInfoDatabaseAccess.Text = _tableInfo.Server;
             tbTableInfoDatabaseName.Text = _tableInfo.Database;
+            tbSchema.Text = _tableInfo.Schema;
 
             btnParameters.Enabled = _tableInfo.IsTableValuedFunction;
 
@@ -162,6 +163,11 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             _tableInfo.Database = ((TextBox) sender).Text;
         }
 
+        private void tbSchema_TextChanged(object sender, EventArgs e)
+        {
+            _tableInfo.Schema = ((TextBox) sender).Text;
+        }
+
         private void btnParameters_Click(object sender, EventArgs e)
         {
             ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptionsFactory().Create(_tableInfo));
@@ -186,6 +192,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         {
             return objectSaverButton1;
         }
+
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<TableInfoUI_Design, UserControl>))]
