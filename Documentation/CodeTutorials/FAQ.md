@@ -16,6 +16,9 @@
 8. [When loading data can I skip some columns?](#skipColumns)
 9. [Can I run SQL Scripts during a load?](#sqlScripts)
 9. [Can I share/export/import my dataset metadata?](#sharing)
+9. [Does RDMP Support Schemas?](#schemas)
+9. [Does RDMP Views?](#views)
+9. [Does RDMP Support Table Valued Functions?](#tvf)
 
 <a name="untyped"></a>
 ### Can RDMP Load UnTyped Data?
@@ -268,3 +271,33 @@ An example .dita file is shown below:
 </strow>
 ...
 ```
+
+<a name="schemas"></a>
+### Does RDMP Support Schemas?
+
+Yes.  In Microsoft Sql Server, Schema is a scope between Database and Table.  By default all tables get created in the 'dbo' schema but it is possible to create tables in other schemas.  For example
+
+```sql
+--Table get's created in the default schema 'dbo'
+create table test..MyTable1(MyCol int not null)
+
+--Table get's created in the schema 'omg' within the database 'test'
+create schema omg
+create table test.omg.MyTable1(MyCol int not null)
+```
+
+When importing a table RDMP will record the schema it came from and fully qualify calls to the table.  When running the data load engine RAW and STAGING tables will always be created in dbo (to avoid issuing schema creation commands).
+
+<a name="views"></a>
+### Does RDMP Views?
+
+Yes, when importing a table from a database to create a `Catalogue` any views in the database will also be shown.  These are interacted with in exactly the same manner as regular tables.
+
+You cannot load a view with data using the Data Load Engine.
+
+<a name="tvf"></a>
+### Does RDMP Support Table Valued Functions?
+
+When importing a table from a Microsoft Sql Server database to create a `Catalogue` any table valued functions in the database will also be shown.  When you import these you will get a `TableInfo` which contains default values to supply to the function when querying it.  You can override these parameters e.g. for a project extraction, cohort identification configuration etc.
+
+![A Table Valued Function TableInfo](Images/FAQ/TableValuedFunctionExample.png)
