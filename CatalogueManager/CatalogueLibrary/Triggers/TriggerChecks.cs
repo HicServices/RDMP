@@ -25,7 +25,7 @@ namespace CatalogueLibrary.Triggers
         {
             _server = table.Database.Server;
             _table = table;
-            _archiveTable = table.Database.ExpectTable(_table.GetRuntimeName() + "_Archive");
+            _archiveTable = table.Database.ExpectTable(_table.GetRuntimeName() + "_Archive",_table.Schema);
             _expectedPresence = expectedPresence;
         }
 

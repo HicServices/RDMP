@@ -18,12 +18,10 @@ namespace DataLoadEngine.DatabaseManagement
     [Obsolete("This functionality should be ported to ReusableLibraryCode.DatabaseHelpers.Discovery namespace and made non Microsoft / SMO specific")]
     public class DatabaseOperations
     {
-        public static void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, string srcTableName, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls,PreLoadDiscardedColumn[]  dillutionColumns)
+        public static void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls, PreLoadDiscardedColumn[] dillutionColumns)
         {
-            DiscoveredTable sourceTable = srcDatabaseInfo.ExpectTable(srcTableName);
-            
             if (!sourceTable.Exists())
-                throw new Exception("Table " + srcTableName + " does not exist on " + srcDatabaseInfo);
+                throw new Exception("Table " + sourceTable + " does not exist on " + srcDatabaseInfo);
 
 
             //new table will start with the same name as the as the old scripted one

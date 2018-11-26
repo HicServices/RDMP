@@ -39,10 +39,11 @@ namespace DataLoadEngine.Migration
                 var fromTableName = tableInfo.GetRuntimeName(_fromBubble, _namer);
                 var toTableName = tableInfo.GetRuntimeName(_toBubble, _namer);
 
-                DiscoveredTable fromTable = _fromDatabaseInfo.ExpectTable(fromTableName);
+                DiscoveredTable fromTable = _fromDatabaseInfo.ExpectTable(fromTableName); //Staging doesn't have schema e.g. even if live schema is not dbo STAGING will be
+
                 DiscoveredTable toTable = DataAccessPortal.GetInstance()
                     .ExpectDatabase(tableInfo, DataAccessContext.DataLoad)
-                    .ExpectTable(toTableName);
+                    .ExpectTable(toTableName,tableInfo.Schema);
 
                 if(!fromTable.Exists())
                     if(lookupTableInfos.Contains(tableInfo))//its a lookup table which doesn't exist in from (Staging) - nevermind

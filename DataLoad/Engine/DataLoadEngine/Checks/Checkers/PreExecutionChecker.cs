@@ -147,8 +147,10 @@ namespace DataLoadEngine.Checks.Checkers
                 var tableName = tableInfo.GetRuntimeName(tableNamingConvention, _databaseConfiguration.DatabaseNamer);
                 try
                 {
+                    //only supply the schema if it is live/archive (RAW / STAGING never have schema name)
+                    string schema = deploymentStage >= LoadBubble.Live ? tableInfo.Schema : null;
 
-                    var cols = dbInfo.ExpectTable(tableName).DiscoverColumns().ToArray();
+                    var cols = dbInfo.ExpectTable(tableName, schema).DiscoverColumns().ToArray();
                     
                     string missing = string.Join(",",
                         columnNames.Where(
@@ -208,7 +210,7 @@ namespace DataLoadEngine.Checks.Checkers
             // Check that the update triggers are present/enabled
             foreach (var tableInfo in allTableInfos)
             {
-                TriggerChecks checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live].ExpectTable(tableInfo.GetRuntimeName()), true);
+                TriggerChecks checker = new TriggerChecks(_databaseConfiguration.DeployInfo[LoadBubble.Live].ExpectTable(tableInfo.GetRuntimeName(),tableInfo.Schema), true);
                 checker.Check(_notifier);
             }
         }
