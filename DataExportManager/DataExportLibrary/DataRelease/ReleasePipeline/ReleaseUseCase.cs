@@ -69,6 +69,9 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             return context;
         }
 
+        /// <summary>
+        /// Design time constructor
+        /// </summary>
         public ReleaseUseCase():base(new []
         {
             typeof(Project),
