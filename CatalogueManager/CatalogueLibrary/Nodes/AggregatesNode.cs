@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
+﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 
 namespace CatalogueLibrary.Nodes
@@ -13,6 +8,10 @@ namespace CatalogueLibrary.Nodes
     /// </summary>
     public class AggregatesNode
     {
+
+        /// <summary>
+        /// The <see cref="Catalogue"/> to which all the <see cref="AggregateConfiguration"/> belong
+        /// </summary>
         public Catalogue Catalogue { get; set; }
 
         public AggregatesNode(Catalogue c, AggregateConfiguration[] regularAggregates)

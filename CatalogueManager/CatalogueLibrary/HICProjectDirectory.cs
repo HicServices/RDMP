@@ -33,7 +33,12 @@ namespace CatalogueLibrary
 61,68,date_into_practice,8,yyyyMMdd
 69,76,date_out_of_practice,8,yyyyMMdd
 ";
-
+        /// <summary>
+        /// Declares that a new directory contains the folder structure required by the DLE.  Thows Exceptions if this folder doesn't exist or isn't set up yet.
+        /// 
+        /// <para>Use static method <see cref="CreateDirectoryStructure"/> if you want to create a new folder hierarchy on disk</para>
+        /// </summary>
+        /// <param name="rootPath"></param>
         public HICProjectDirectory(string rootPath)
         {
             if (string.IsNullOrWhiteSpace(rootPath))
@@ -57,7 +62,7 @@ namespace CatalogueLibrary
 
         private  DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName)
         {
-            return path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault(); ;
+            return path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
         }
 
         private DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
