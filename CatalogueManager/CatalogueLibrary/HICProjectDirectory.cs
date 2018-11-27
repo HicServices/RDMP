@@ -9,6 +9,19 @@ namespace CatalogueLibrary
     /// </summary>
     public class HICProjectDirectory : IHICProjectDirectory
     {
+        /// <inheritdoc/>
+        public DirectoryInfo ForLoading { get; private set; }
+        /// <inheritdoc/>
+        public DirectoryInfo ForArchiving { get; private set; }
+        /// <inheritdoc/>
+        public DirectoryInfo Cache { get; private set; }
+        /// <inheritdoc/>
+        public DirectoryInfo RootPath { get; private set; }
+        /// <inheritdoc/>
+        public DirectoryInfo DataPath { get; private set; }
+        /// <inheritdoc/>
+        public DirectoryInfo ExecutablesPath { get; private set; }
+        
 
         internal const string ExampleFixedWidthFormatFileContents = @"From,To,Field,Size,DateFormat
 1,7,gmc,7,
@@ -21,9 +34,8 @@ namespace CatalogueLibrary
 69,76,date_out_of_practice,8,yyyyMMdd
 ";
 
-        public HICProjectDirectory(string rootPath, bool useTestFolder)
+        public HICProjectDirectory(string rootPath)
         {
-            Test = useTestFolder;
             if (string.IsNullOrWhiteSpace(rootPath))
                 throw new Exception("Root path was blank, there is no HICProjectDirectory path specified?");
 
@@ -32,14 +44,13 @@ namespace CatalogueLibrary
             if (RootPath.Name.Equals("Data", StringComparison.CurrentCultureIgnoreCase))
                 throw new ArgumentException("HICProjectDirectory should be passed the root folder, not the Data folder");
 
-            DataPath = new DirectoryInfo(Path.Combine(RootPath.FullName, useTestFolder ? "TestData" : "Data"));
+            DataPath = new DirectoryInfo(Path.Combine(RootPath.FullName, "Data"));
 
             if (!DataPath.Exists)
                 throw new DirectoryNotFoundException("Could not find directory '" + DataPath.FullName + "', every HICProjectDirectory must have a Data folder, the root folder was:" + RootPath);
 
             ForLoading = FindFolderInPathOrThrow(DataPath, "ForLoading");
             ForArchiving = FindFolderInPathOrThrow(DataPath, "ForArchiving");
-            ForErrors = FindFolderInPathOrThrow(DataPath, "ForErrors");
             ExecutablesPath = FindFolderInPathOrThrow(RootPath, "Executables");
             Cache = FindFolderInPath(DataPath, "Cache");
         }
@@ -59,16 +70,13 @@ namespace CatalogueLibrary
             return d;
         }
 
-        public DirectoryInfo ForLoading { get; private set; }
-        public DirectoryInfo ForArchiving { get; private set; }
-        public DirectoryInfo ForErrors { get; private set; }
-        public DirectoryInfo Cache { get; private set; }
-        public DirectoryInfo RootPath { get; private set; }
-        public DirectoryInfo DataPath { get; private set; }
-        public DirectoryInfo ExecutablesPath { get; private set; }
-        
-        public bool Test { get; private set; }
-        
+        /// <summary>
+        /// Creates a new directory on disk compatible with <see cref="HICProjectDirectory"/>
+        /// </summary>
+        /// <param name="parentDir">Parent folder</param>
+        /// <param name="dirName"></param>
+        /// <param name="overrideExistsCheck"></param>
+        /// <returns></returns>
         public static HICProjectDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)
         {
             if (!parentDir.Exists)
@@ -76,22 +84,14 @@ namespace CatalogueLibrary
 
             var projectDir = new DirectoryInfo(Path.Combine(parentDir.FullName, dirName));
 
-            if (!overrideExistsCheck && projectDir.Exists)
+            if (!overrideExistsCheck && projectDir.Exists && projectDir.GetFileSystemInfos().Any())
                 throw new Exception("The directory " + projectDir.FullName + " already exists (and we don't want to accidentally nuke anything)");
             
             projectDir.Create();
 
-            return CreateDirectoryStructure(projectDir, overrideExistsCheck);
-            
-        }
-
-        public static HICProjectDirectory CreateDirectoryStructure(DirectoryInfo projectDir, bool overrideExistsCheck = false)
-        {
-          
             var dataDir = projectDir.CreateSubdirectory("Data");
             dataDir.CreateSubdirectory("ForLoading");
             dataDir.CreateSubdirectory("ForArchiving");
-            dataDir.CreateSubdirectory("ForErrors");
             dataDir.CreateSubdirectory("Cache");
 
             StreamWriter swExampleFixedWidth = new StreamWriter(Path.Combine(dataDir.FullName, "ExampleFixedWidthFormatFile.csv"));
@@ -101,7 +101,7 @@ namespace CatalogueLibrary
 
             projectDir.CreateSubdirectory("Executables");
 
-            return new HICProjectDirectory(projectDir.FullName, false);
+            return new HICProjectDirectory(projectDir.FullName);
         }
     }
 }

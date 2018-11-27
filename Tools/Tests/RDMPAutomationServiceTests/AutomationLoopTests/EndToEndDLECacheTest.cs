@@ -58,7 +58,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             patternArgument.SaveToDatabase();
 
             
-            var hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles, false);
+            var hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles);
 
             //take the forLoading file
             var csvFile = hicProjectDirectory.ForLoading.GetFiles().Single();

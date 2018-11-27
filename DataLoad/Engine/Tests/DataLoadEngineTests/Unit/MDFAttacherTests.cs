@@ -4,16 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
@@ -123,9 +119,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void ConnectToServer()
         {
-            var projDir = new DirectoryInfo(@"c:\temp\MDFAttacherTest\");
-
-            var hicProjDir = HICProjectDirectory.CreateDirectoryStructure(projDir,true);
+            var hicProjDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"MDFAttacherTest", true);
 
             var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("MyImaginaryDB_RAW");
             Assert.IsFalse(db.Exists());
@@ -148,8 +142,8 @@ namespace DataLoadEngineTests.Unit
             mdf.OverrideMDFFileCopyDestination = @"C:\temp";
             mdf.Check(memory2);
             Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,@"Found server DATA folder .*C:\\temp") && m.Result == CheckResult.Success));
-            
-            projDir.Delete(true);
+
+            hicProjDir.RootPath.Delete(true);
 
         }
 

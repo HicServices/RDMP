@@ -31,7 +31,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             try
             {
-                _hicProjectDirectory = new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles,false);
+                _hicProjectDirectory = new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles);
             }
             catch (Exception)
             {

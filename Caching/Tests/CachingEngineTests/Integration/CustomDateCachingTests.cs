@@ -54,7 +54,7 @@ namespace CachingEngineTests.Integration
             pipeline.Stub(p => p.Destination).Return(destinationComponent);
             pipeline.Stub(p => p.PipelineComponents).Return(Enumerable.Empty<IPipelineComponent>().OrderBy(p => p).ToList());
 
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"delme")),true);
+            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"delme",true);
 
             var lmd = MockRepository.GenerateStub<ILoadMetadata>();
             lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
