@@ -107,7 +107,7 @@ namespace DatabaseCreation
 
             CreatePipeline("DATA EXPORT:To CSV", typeof (ExecuteDatasetExtractionSource), typeof (ExecuteDatasetExtractionFlatFileDestination));
 
-            CreatePipeline("RELEASE PROJECT:To Directory", null, typeof (BasicDataReleaseDestination));
+            CreatePipeline("RELEASE PROJECT:To Directory", null, typeof (BasicDataReleaseDestination),typeof(ReleaseFolderProvider));
             
             CreatePipeline("CREATE TABLE:From Aggregate Query", null, typeof(DataTableUploadDestination));
         }
