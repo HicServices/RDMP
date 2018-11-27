@@ -38,7 +38,7 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
             if (_assemblyToIconDictionary.ContainsKey(assemblyName))
                 return _assemblyToIconDictionary[assemblyName];
 
-            throw new ArgumentOutOfRangeException("Did not know what icon to use for '" + assemblyName + "'.dll");
+            return _default;
         }
 
         public Bitmap GetImageIfSupportedObject(object o)

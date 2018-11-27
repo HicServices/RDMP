@@ -49,7 +49,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             if(_defaultToSet != ServerDefaults.PermissableDefaults.None)
                 return string.Format("Create New {0} Server...", UsefulStuff.PascalCaseStringToHumanReadable(_defaultToSet.ToString().Replace("_ID", "").Replace("Live", "").Replace("ANO", "Anonymisation")));
-            
+
+            if (_databaseAssembly != null)
+                return string.Format("Create New {0} Server...", _databaseAssembly.GetName().Name);
+
             return base.GetCommandName();
         }
 
