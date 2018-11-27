@@ -364,7 +364,8 @@ namespace CatalogueManager.LogViewer.Tabs
 
         private void FetchDataTable()
         {
-            LoadDataTable(LogManager.GetTable(GetTableEnum(), IDFilter, TopX,cbPreferNewer.Checked));
+            if(!IDFilter.IsEmpty)
+                LoadDataTable(LogManager.GetTable(GetTableEnum(), IDFilter, TopX,cbPreferNewer.Checked));
         }
 
         public void SelectRowWithID(int rowIDToSelect)
