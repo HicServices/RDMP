@@ -158,6 +158,12 @@ namespace DataExportLibrary.Data.LinkCreators
         {
             return Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
         }
+
+        /// <inheritdoc/>
+        public ICumulativeExtractionResults GetCumulativeExtractionResultsIfAny()
+        {
+            return ExtractionConfiguration.CumulativeExtractionResults.SingleOrDefault(ec => ec.IsFor(this));
+        }
     }
 }
 

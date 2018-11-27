@@ -159,7 +159,7 @@ namespace RDMPAutomationService.Runners
             //create new ReleaseAssesments
             foreach (ISelectedDataSets selectedDataSet in GetSelectedDataSets(configuration))//todo only the ones user ticked
             {
-                var extractionResults = configuration.CumulativeExtractionResults.FirstOrDefault(r => r.IsFor(selectedDataSet));
+                var extractionResults = selectedDataSet.GetCumulativeExtractionResultsIfAny();
 
                 //if it has never been extracted
                 if (extractionResults == null || extractionResults.DestinationDescription == null)

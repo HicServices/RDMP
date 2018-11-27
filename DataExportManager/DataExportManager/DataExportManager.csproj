@@ -323,6 +323,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowSummaryOfCohorts.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSelectedDataSetsExtractionSql.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewThenVsNowSql.cs" />
     <Compile Include="CommandExecution\DataExportPluginUserInterface.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExternalCohortTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractableCohort.cs" />

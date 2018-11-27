@@ -54,7 +54,8 @@ namespace DataExportManager.Menus
             Items.Add(addRootFilter);
 
             Add(new ExecuteCommandViewSelectedDataSetsExtractionSql(_activator).SetTarget(selectedDataSet));
-
+            
+            Add(new ExecuteCommandViewThenVsNowSql(_activator, selectedDataSet));
         }
 
 
