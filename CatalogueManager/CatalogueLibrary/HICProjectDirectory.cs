@@ -71,11 +71,11 @@ namespace CatalogueLibrary
         }
 
         /// <summary>
-        /// Creates a new directory on disk compatible with <see cref="HICProjectDirectory"/>
+        /// Creates a new directory on disk compatible with <see cref="HICProjectDirectory"/>.
         /// </summary>
-        /// <param name="parentDir">Parent folder</param>
-        /// <param name="dirName"></param>
-        /// <param name="overrideExistsCheck"></param>
+        /// <param name="parentDir">Parent folder to create the tree in e.g. c:\temp</param>
+        /// <param name="dirName">Root folder name for the DLE e.g. LoadingBiochem</param>
+        /// <param name="overrideExistsCheck">Determines behaviour if the folder already exists and contains files.  True to carry on, False to throw an Exception</param>
         /// <returns></returns>
         public static HICProjectDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)
         {

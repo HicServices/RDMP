@@ -100,6 +100,10 @@ namespace CatalogueLibrary.Data.DataLoad
             set { SetField(ref _cacheArchiveType, value); }
         }
 
+        /// <summary>
+        /// Optional.  Indicates that when running the Data Load Engine, the specific <see cref="ExternalDatabaseServer"/> should be used for the RAW server (instead of 
+        /// the system default - see <see cref="ServerDefaults"/>).
+        /// </summary>
         public int? OverrideRAWServer_ID
         {
             get { return _overrideRawServerID; }
