@@ -163,8 +163,16 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 {
                     try
                     {
+                        var parameters = constructor.GetParameters();
                         //null parameters!
-                        object[] p = new object[constructor.GetParameters().Count()];
+                        object[] p = new object[parameters.Count()];
+
+                        for (int i = 0; i < parameters.Count(); i++)
+                        {
+                            //Parameters we know how to satisfy
+                            if (parameters[i].ParameterType == typeof (IActivateItems))
+                                p[i] = _activator;
+                        }
 
                         //instantiate the control
                         Control c = (Control) constructor.Invoke(p);

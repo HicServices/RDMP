@@ -86,6 +86,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 }
             
                 SetupAutocomplete();
+                
+                ragSmiley1.Reset();
 
                 try
                 {
@@ -94,10 +96,11 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 }
                 catch (Exception e)
                 {
-                    ExceptionViewer.Show(e);
+                    ragSmiley1.Fatal(e);
                 }
 
-                ragSmiley1.StartChecking(_processTask);
+                if(!ragSmiley1.IsFatal())
+                    ragSmiley1.StartChecking(_processTask);
             }
             finally
             {

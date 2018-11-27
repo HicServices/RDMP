@@ -30,6 +30,9 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             _objectsForComboBox = objectsForComboBox;
             InitializeComponent();
 
+            if(objectsForComboBox == null)
+                return;
+
             btnPick.Enabled = objectsForComboBox.All(o => o is IMapsDirectlyToDatabaseTable);
 
             //If it is a dropdown of Types

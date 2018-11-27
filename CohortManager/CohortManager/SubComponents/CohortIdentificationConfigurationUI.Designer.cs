@@ -20,7 +20,7 @@ namespace CohortManager.SubComponents
             {
                 components.Dispose();
 
-                if(_commonFunctionality.IsSetup)
+                if (_commonFunctionality != null && _commonFunctionality.IsSetup)
                     _commonFunctionality.TearDown();
             }
             base.Dispose(disposing);

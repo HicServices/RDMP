@@ -87,6 +87,10 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
         bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
         {
+            //do not mess with the table name if it is a table valued function
+            if (_tableInfo.IsTableValuedFunction)
+                return true;
+            
             var newName = _tableInfo.GetFullyQualifiedName();
 
             var oldName = _tableInfo.Repository.GetObjectByID<TableInfo>(_tableInfo.ID).GetFullyQualifiedName();

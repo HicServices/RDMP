@@ -60,7 +60,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
             EnableOrDisableGoButton();
 
-            BuildHelpWorkflow(command);
+            if(command != null)
+                BuildHelpWorkflow(command);
         }
 
         private void BuildHelpWorkflow(ICommandExecution command)
@@ -114,7 +115,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
             ragSmileyPopulation.Visible = false;
             ragSmileyDirectory.Visible = false;
 
-            HelpWorkflow.Start();
+            if (HelpWorkflow != null)
+                HelpWorkflow.Start();
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
