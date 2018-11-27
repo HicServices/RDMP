@@ -1,5 +1,6 @@
 using System.IO;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
 using DataExportLibrary.Providers.Nodes;
 using DataExportManager.CommandExecution.AtomicCommands;
@@ -11,8 +12,7 @@ namespace DataExportManager.Menus
     {
         public ExtractionDirectoryNodeMenu(RDMPContextMenuStripArgs args, ExtractionDirectoryNode folder): base(args, folder)
         {
-            if (folder.Project.ExtractionDirectory != null)
-                Add(new ExecuteCommandOpenInExplorer(_activator, new DirectoryInfo(folder.Project.ExtractionDirectory)));
+            ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
             
             Add(new ExecuteCommandSetProjectExtractionDirectory(_activator, folder.Project));
         }
