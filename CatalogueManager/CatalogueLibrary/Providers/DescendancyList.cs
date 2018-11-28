@@ -16,6 +16,10 @@ namespace CatalogueLibrary.Providers
     /// </summary>
     public class DescendancyList
     {
+
+        /// <summary>
+        /// All objects that are above the described object in order from the root to the immediate parent.
+        /// </summary>
         public object[] Parents;
 
 
@@ -30,11 +34,18 @@ namespace CatalogueLibrary.Providers
         /// </summary>
         public bool BetterRouteExists { get; private set; }
 
+        /// <summary>
+        /// Declares that an object has hierarchical <paramref name="parents"/> which should be in order from root to immediate parent
+        /// </summary>
+        /// <param name="parents"></param>
         public DescendancyList(params object[] parents)
         {
             Parents = parents;
         }
 
+        /// <summary>
+        /// True if the list is empty (i.e. there are no <see cref="Parents"/>)
+        /// </summary>
         public bool IsEmpty { get { return !Parents.Any(); } }
 
         /// <summary>

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using MapsDirectlyToDatabaseTable;
-
 namespace CatalogueLibrary.Providers
 {
     /// <summary>
@@ -10,6 +6,11 @@ namespace CatalogueLibrary.Providers
     /// </summary>
     public interface IChildProvider
     {
+        /// <summary>
+        /// Returns all children that should hierarchically exist below the <paramref name="model"/> or null if none
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         object[] GetChildren(object model);
     }
 }

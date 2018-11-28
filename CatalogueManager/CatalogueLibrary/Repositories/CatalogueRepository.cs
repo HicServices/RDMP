@@ -32,14 +32,24 @@ namespace CatalogueLibrary.Repositories
     /// </summary>
     public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
+        /// <inheritdoc/>
         public AggregateForcedJoin AggregateForcedJoiner { get; set; }
+
+        /// <inheritdoc/>
         public TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
+
+        /// <inheritdoc/>
         public PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
+
+        /// <inheritdoc/>
         public JoinInfoFinder JoinInfoFinder { get; set; }
+
+        /// <inheritdoc/>
         public MEF MEF { get; set; }
         
         readonly ObjectConstructor _constructor = new ObjectConstructor();
 
+        /// <inheritdoc/>
         public CommentStore CommentStore { get; set; }
         
         /// <summary>
@@ -49,6 +59,10 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         public static bool SuppressHelpLoading;
 
+        /// <summary>
+        /// Sets up an <see cref="IRepository"/> which connects to the database <paramref name="catalogueConnectionString"/> to fetch/create <see cref="DatabaseEntity"/> objects.
+        /// </summary>
+        /// <param name="catalogueConnectionString"></param>
         public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
         {
             AggregateForcedJoiner = new AggregateForcedJoin(this);
@@ -60,6 +74,10 @@ namespace CatalogueLibrary.Repositories
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
         }
 
+        /// <summary>
+        /// Initializes and loads <see cref="CommentStore"/> with all the xml doc/dll files found in the provided <paramref name="directories"/> 
+        /// </summary>
+        /// <param name="directories"></param>
         public void LoadHelp(params string[] directories)
         {
             if (!SuppressHelpLoading)
@@ -93,18 +111,6 @@ namespace CatalogueLibrary.Repositories
             }
         }
         
-        public IEnumerable<CatalogueItem> GetAllCatalogueItemsNamed(string name, bool ignoreCase)
-        {
-            string sql;
-            if (ignoreCase)
-                sql = "WHERE UPPER(Name)='" + name.ToUpper() + "'";
-            else
-                sql = "WHERE Name='" + name + "'";
-
-            return GetAllObjects<CatalogueItem>(sql);
-        }
-
-
         /// <summary>
         /// If the configuration is part of any aggregate container anywhere this method will return the order within that container
         /// </summary>
@@ -135,11 +141,13 @@ namespace CatalogueLibrary.Repositories
             return new LogManager(defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
         }
 
+        /// <inheritdoc/>
         public Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false)
         {
             return GetAllObjects<Catalogue>().Where(cata => (!cata.IsDeprecated) || includeDeprecatedCatalogues).ToArray();
         }
 
+        /// <inheritdoc/>
         public Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem()
         {
             return
@@ -149,8 +157,6 @@ namespace CatalogueLibrary.Repositories
         }
 
         
-
-
         public IEnumerable<CohortIdentificationConfiguration> GetAllCohortIdentificationConfigurationsWithDependencyOn(AggregateConfiguration aggregate)
         {
             //1 query to fetch all these
