@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Ticketing;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Comments;
@@ -72,12 +73,23 @@ namespace CatalogueLibrary.Repositories
         /// <returns></returns>
         Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem();
 
-        IEnumerable<CohortIdentificationConfiguration> GetAllCohortIdentificationConfigurationsWithDependencyOn(AggregateConfiguration aggregate);
+        /// <summary>
+        /// Returns all sql parameters declared in the immediate scope of the <see cref="parent"/> (does not include parameters that are declared at a lower scope).
+        /// 
+        /// <para>To determine which parent types are supported see <see cref="AnyTableSqlParameter.IsSupportedType"/></para>
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent);
-        ColumnInfo[] GetColumnInfosWithNameExactly(string name);
+
+        /// <summary>
+        /// Returns the persistence object which describes which <see cref="ITicketingSystem"/> should be consulted when making governance decisions (e.g. according to
+        /// ticketing system, can I release this dataset?).  Returns null if no ticketing system has been configured.
+        /// 
+        /// <para>Use <see cref="TicketingSystemFactory"/> to instantiate an <see cref="ITicketingSystem"/> instance</para>
+        /// </summary>
+        /// <returns></returns>
         TicketingSystemConfiguration GetTicketingSystem();
-        IEnumerable<CacheProgress> GetAllCacheProgressWithoutAPermissionWindow();
-        TableInfo GetTableWithNameApproximating(string tableName, string database);
 
         /// <summary>
         /// This method is used to allow you to clone an IMapsDirectlyToDatabaseTable object into a DIFFERENT database.  You should use DbCommandBuilder

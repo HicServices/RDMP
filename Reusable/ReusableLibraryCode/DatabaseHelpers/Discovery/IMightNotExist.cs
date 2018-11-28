@@ -8,6 +8,11 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     /// </summary>
     public interface IMightNotExist
     {
+        /// <summary>
+        /// Returns true if the object can be reached (e.g. connected to).
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
         bool Exists(IManagedTransaction transaction = null);
     }
 }
