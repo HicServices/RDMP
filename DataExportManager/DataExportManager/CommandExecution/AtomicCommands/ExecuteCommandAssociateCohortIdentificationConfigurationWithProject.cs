@@ -82,8 +82,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             
             Publish(_project);
             Publish(_cic);
-
-            Activator.WindowArranger.SetupEditAnything(this,assoc);
+            Emphasise(_cic);
         }
 
         public Image GetImage(IIconProvider iconProvider)
