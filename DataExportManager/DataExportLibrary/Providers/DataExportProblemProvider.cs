@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using CatalogueLibrary.Providers;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
-using DataExportLibrary.Providers.Nodes.UsedByProject;
 
 namespace DataExportLibrary.Providers
 {
@@ -16,18 +14,19 @@ namespace DataExportLibrary.Providers
     {
         private DataExportChildProvider _exportChildProvider;
 
-      
+        /// <inheritdoc/>
         public void RefreshProblems(ICoreChildProvider childProvider)
         {
             _exportChildProvider = childProvider as DataExportChildProvider;
         }
 
-
+        /// <inheritdoc/>
         public bool HasProblem(object o)
         {
             return DescribeProblem(o) != null;
         }
 
+        /// <inheritdoc/>
         public string DescribeProblem(object o)
         {
             if (o is Project)
@@ -51,7 +50,7 @@ namespace DataExportLibrary.Providers
             return null;
         }
 
-        public string DescribeProblem(ExternalCohortTable externalCohortTable)
+        private string DescribeProblem(ExternalCohortTable externalCohortTable)
         {
             if (_exportChildProvider != null && _exportChildProvider.BlackListedSources.Contains(externalCohortTable))
                 return "Cohort Source database was unreachable";
@@ -59,7 +58,7 @@ namespace DataExportLibrary.Providers
             return null;
         }
 
-        public string DescribeProblem(ExtractionConfiguration extractionConfiguration)
+        private string DescribeProblem(ExtractionConfiguration extractionConfiguration)
         {
             if (extractionConfiguration.Cohort_ID == null)
                 return "Configuration has no Cohort configured";
@@ -71,7 +70,7 @@ namespace DataExportLibrary.Providers
             return null;
         }
 
-        public string DescribeProblem(SelectedDataSets selectedDataSets)
+        private string DescribeProblem(SelectedDataSets selectedDataSets)
         {
             var cols = _exportChildProvider.GetColumnsIn(selectedDataSets);
 
@@ -81,7 +80,7 @@ namespace DataExportLibrary.Providers
             return null;
         }
 
-        public string DescribeProblem(ExtractionConfigurationsNode extractionConfigurationsNode)
+        private string DescribeProblem(ExtractionConfigurationsNode extractionConfigurationsNode)
         {
             if (_exportChildProvider.Projects.Contains(extractionConfigurationsNode.Project))
                 if (!_exportChildProvider.GetConfigurations(extractionConfigurationsNode.Project).Any())
@@ -90,7 +89,7 @@ namespace DataExportLibrary.Providers
             return null;
         }
 
-        public string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode)
+        private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode)
         {
             if (_exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project))
                 return "Project has no cohorts";
@@ -98,7 +97,7 @@ namespace DataExportLibrary.Providers
             return null;
         }
 
-        public string DescribeProblem(Project project)
+        private string DescribeProblem(Project project)
         {
             if (project.ProjectNumber == null)
                 return "Project has no ProjectNumber";

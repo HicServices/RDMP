@@ -102,9 +102,7 @@ namespace DataLoadEngineTests.Integration
 
             pt1.CreateArgumentsForClassIfNotExists<TestCachedFileRetriever>();
 
-            var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"delme"));
-
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(dir, true);
+            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"delme", true);
             _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
             _lmd.SaveToDatabase();
             try
@@ -114,7 +112,7 @@ namespace DataLoadEngineTests.Integration
             }
             finally
             {
-                dir.Delete(true);
+                projDir.RootPath.Delete(true);
             }
         }
 
@@ -127,9 +125,7 @@ namespace DataLoadEngineTests.Integration
             pt1.Name = "Cache1";
             pt1.SaveToDatabase();
 
-            var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"delme"));
-
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(dir, true);
+            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "delme", true);
             _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
             _lmd.SaveToDatabase();
 
@@ -145,7 +141,7 @@ namespace DataLoadEngineTests.Integration
             {
                 _cp.Pipeline_ID = null;
                 pipeAssembler.Destroy();
-                dir.Delete(true);
+                projDir.RootPath.Delete(true);
             }
         }
         [Test]
@@ -160,13 +156,7 @@ namespace DataLoadEngineTests.Integration
             _cp.CacheFillProgress = new DateTime(2010, 1, 1);
             _cp.SaveToDatabase();
 
-            var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "delme"));
-
-            //delete remnants
-            if (dir.Exists)
-                dir.Delete(true);
-
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(dir, true);
+            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "delme", true);
             _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
             _lmd.SaveToDatabase();
             
@@ -196,7 +186,7 @@ namespace DataLoadEngineTests.Integration
             {
                 _cp.Pipeline_ID = null;
                 pipeAssembler.Destroy();
-                dir.Delete(true);
+                projDir.RootPath.Delete(true);
             }
         }
 

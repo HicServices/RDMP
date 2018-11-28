@@ -32,14 +32,24 @@ namespace CatalogueLibrary.Repositories
     /// </summary>
     public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
+        /// <inheritdoc/>
         public AggregateForcedJoin AggregateForcedJoiner { get; set; }
+
+        /// <inheritdoc/>
         public TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
+
+        /// <inheritdoc/>
         public PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
+
+        /// <inheritdoc/>
         public JoinInfoFinder JoinInfoFinder { get; set; }
+
+        /// <inheritdoc/>
         public MEF MEF { get; set; }
         
         readonly ObjectConstructor _constructor = new ObjectConstructor();
 
+        /// <inheritdoc/>
         public CommentStore CommentStore { get; set; }
         
         /// <summary>
@@ -49,6 +59,10 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         public static bool SuppressHelpLoading;
 
+        /// <summary>
+        /// Sets up an <see cref="IRepository"/> which connects to the database <paramref name="catalogueConnectionString"/> to fetch/create <see cref="DatabaseEntity"/> objects.
+        /// </summary>
+        /// <param name="catalogueConnectionString"></param>
         public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
         {
             AggregateForcedJoiner = new AggregateForcedJoin(this);
@@ -60,6 +74,10 @@ namespace CatalogueLibrary.Repositories
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
         }
 
+        /// <summary>
+        /// Initializes and loads <see cref="CommentStore"/> with all the xml doc/dll files found in the provided <paramref name="directories"/> 
+        /// </summary>
+        /// <param name="directories"></param>
         public void LoadHelp(params string[] directories)
         {
             if (!SuppressHelpLoading)
@@ -93,18 +111,6 @@ namespace CatalogueLibrary.Repositories
             }
         }
         
-        public IEnumerable<CatalogueItem> GetAllCatalogueItemsNamed(string name, bool ignoreCase)
-        {
-            string sql;
-            if (ignoreCase)
-                sql = "WHERE UPPER(Name)='" + name.ToUpper() + "'";
-            else
-                sql = "WHERE Name='" + name + "'";
-
-            return GetAllObjects<CatalogueItem>(sql);
-        }
-
-
         /// <summary>
         /// If the configuration is part of any aggregate container anywhere this method will return the order within that container
         /// </summary>
@@ -135,11 +141,13 @@ namespace CatalogueLibrary.Repositories
             return new LogManager(defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
         }
 
+        /// <inheritdoc/>
         public Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false)
         {
             return GetAllObjects<Catalogue>().Where(cata => (!cata.IsDeprecated) || includeDeprecatedCatalogues).ToArray();
         }
 
+        /// <inheritdoc/>
         public Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem()
         {
             return
@@ -148,24 +156,7 @@ namespace CatalogueLibrary.Repositories
                     .ToArray();
         }
 
-        
-
-
-        public IEnumerable<CohortIdentificationConfiguration> GetAllCohortIdentificationConfigurationsWithDependencyOn(AggregateConfiguration aggregate)
-        {
-            //1 query to fetch all these
-            //get all the ones that have a container system setup on them
-            var allConfigurations = GetAllObjects<CohortIdentificationConfiguration>().Where(c => c.RootCohortAggregateContainer_ID != null).ToArray();
-
-            foreach (CohortIdentificationConfiguration config in allConfigurations)
-            {
-                //get the root container
-                //see if the root container (or any of it's children) contain the aggregate you are looking for
-                if (config.RootCohortAggregateContainer.HasChild(aggregate))
-                    yield return config;
-            }
-        }
-
+        /// <inheritdoc/>
         public IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent)
         {
             var type = parent.GetType();
@@ -176,22 +167,7 @@ namespace CatalogueLibrary.Repositories
             return GetReferencesTo<AnyTableSqlParameter>(parent);
         }
 
-        /// <summary>
-        /// Returns all ColumnInfos which have names exactly matching name, this must be a fully qualified string e.g. [MyDatabase]..[MyTable].[MyColumn].  You can use
-        /// IQuerySyntaxHelper.EnsureFullyQualified to get this.  Return is an array because you can have an identical table/database structure on two different servers
-        /// in each case the ColumnInfo will have the same fully qualified name (or you could have duplicate references to the same ColumnInfo/TableInfo for some reason)
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public ColumnInfo[] GetColumnInfosWithNameExactly(string name)
-        {
-            return SelectAllWhere<ColumnInfo>("SELECT * FROM ColumnInfo WHERE LOWER(Name) = LOWER(@name)","ID",
-                new Dictionary<string, object>
-                {
-                    {"name", name}
-                }).ToArray();
-        }
-
+        /// <inheritdoc/>
         public TicketingSystemConfiguration GetTicketingSystem()
         {
             var configuration = GetAllObjects<TicketingSystemConfiguration>().Where(t => t.IsActive).ToArray();
@@ -204,55 +180,7 @@ namespace CatalogueLibrary.Repositories
 
             throw new NotSupportedException("There should only ever be one active ticketing system, something has gone very wrong, there are currently " + configuration.Length);
         }
-
-        public IEnumerable<CacheProgress> GetAllCacheProgressWithoutAPermissionWindow()
-        {
-            return GetAllObjects<CacheProgress>().Where(p => p.PermissionWindow_ID == null);
-        }
-
-        public TableInfo GetTableWithNameApproximating(string tableName, string database)
-        {
-            int id;
-            using (var con = GetConnection())
-            {
-                tableName = tableName.Trim(']', '[');
-
-                if (tableName.Contains("."))
-                    throw new ArgumentException("Must be a table name only must not have a database/schema prefix");
-
-                //add a percent  and dot so that we are matching Bob..MyTable or Dave.MyTable (MySQL) but either way we are throwing out [ ] and definetly not matching Bob..SomePrefixTextMyTable
-                var cmd = DatabaseCommandHelper.GetCommand("SELECT * FROM TableInfo WHERE " +
-                    "REPLACE(REPLACE(Name,']',''),'[','') LIKE @nameToFind", con.Connection, con.Transaction);
-
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@nameToFind", cmd));
-                cmd.Parameters["@nameToFind"].Value = database + "%..%" + tableName;
-
-                DbDataReader r = cmd.ExecuteReader();
-                try
-                {
-                    if (!r.Read())
-                        return null;
-
-                    id = Convert.ToInt32(r["ID"]);
-
-                    if (r.Read())
-                        throw new Exception("Found 2+ TableInfos named " + tableName);
-                }
-                finally
-                {
-
-                    r.Close();
-                }
-            }
-
-            if (id == 0)
-                throw new InvalidOperationException("A table was found, but it doesn't appear to have a valid ID");
-
-            return GetObjectByID<TableInfo>(id);
-        }
-
         
-
         protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
         {
             return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);

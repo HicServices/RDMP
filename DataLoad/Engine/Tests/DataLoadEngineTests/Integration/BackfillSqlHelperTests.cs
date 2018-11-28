@@ -82,15 +82,15 @@ namespace DataLoadEngineTests.Integration
         {
             ThreeTableSetupWhereTimePeriodIsGrandparent();
 
-            var ciTimePeriodicity = CatalogueRepository.GetColumnInfosWithNameExactly("[" + DatabaseName + "].." + _catalogue.Time_coverage).SingleOrDefault();
+            var ciTimePeriodicity = CatalogueRepository.GetAllObjects<ColumnInfo>().SingleOrDefault(c => c.GetRuntimeName().Equals("HeaderDate"));
             if (ciTimePeriodicity == null)
                 throw new InvalidOperationException("Could not find TimePeriodicity column");
 
             var sqlHelper = new BackfillSqlHelper(ciTimePeriodicity, _stagingDatabase, _liveDatabase);
 
-            var tiHeader = CatalogueRepository.GetTableWithNameApproximating("Headers", _liveDatabase.GetRuntimeName());
-            var tiSamples = CatalogueRepository.GetTableWithNameApproximating("Samples", _liveDatabase.GetRuntimeName());
-            var tiResults = CatalogueRepository.GetTableWithNameApproximating("Results", _liveDatabase.GetRuntimeName());
+            var tiHeader = CatalogueRepository.GetAllObjects<TableInfo>().Single(t=>t.GetRuntimeName().Equals("Headers"));
+            var tiSamples = CatalogueRepository.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Samples"));
+            var tiResults = CatalogueRepository.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Results"));
 
             var joinInfos = CatalogueRepository.JoinInfoFinder.GetAllJoinInfos();
             var joinPath = new List<JoinInfo>

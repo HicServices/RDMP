@@ -253,6 +253,12 @@ WHERE DuplicateCount > 1";
 
         }
 
+        /// <summary>
+        /// When using ORDER BY to resolve primary key collisions this will specify what substitution to use for null values (such that the ORDER BY works correctly).
+        /// </summary>
+        /// <param name="datatype">The Sql Server column datatype for the column you are substituting</param>
+        /// <param name="min">true to substitute null values for the minimum value of the <paramref name="datatype"/>, false to substitute for the maximum</param>
+        /// <returns></returns>
         public string GetNullSubstituteForComparisonsWithDataType(string datatype, bool min)
         {
             //technically these can go lower (real and float) but how realistic is that espcially when SqlServer plays fast and loose with very small numbers in floats... 

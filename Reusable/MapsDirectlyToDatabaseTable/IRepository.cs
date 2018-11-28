@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace MapsDirectlyToDatabaseTable
 {
@@ -35,6 +36,13 @@ namespace MapsDirectlyToDatabaseTable
         /// <param name="id"></param>
         /// <returns></returns>
         T GetObjectByID<T>(int id) where T:IMapsDirectlyToDatabaseTable;
+
+        /// <summary>
+        /// Gets all objects of the given Type from the database, optionally fetches only those that match SQL WHERE statement
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="whereText">Optional Boolean SQL logic that limits the objects returned e.g. "Catalogue_ID=7" (do not include the word WHERE)</param>
+        /// <returns></returns>
         T[] GetAllObjects<T>(string whereText = null) where T : IMapsDirectlyToDatabaseTable;
 
         IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t);
@@ -67,11 +75,31 @@ namespace MapsDirectlyToDatabaseTable
         /// <returns></returns>
         T[] GetAllObjectsWithParent<T,T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2:IMapsDirectlyToDatabaseTable;
 
+
+        /// <summary>
+        /// Saves the current state of all properties of <paramref name="oTableWrapperObject"/> to the database
+        /// </summary>
+        /// <param name="oTableWrapperObject"></param>
         void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject);
+
+        /// <summary>
+        /// Deletes the database record that matches <paramref name="oTableWrapperObject"/>.  After calling this the object will be <see cref="IRevertable.Exists"/> false and
+        /// will not be retrievable from the database.
+        /// </summary>
+        /// <param name="oTableWrapperObject"></param>
         void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject);
-
-
+        
+        /// <summary>
+        /// Repopulates all properties of the object to match the values currently stored in the database
+        /// </summary>
+        /// <param name="mapsDirectlyToDatabaseTable"></param>
         void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable);
+
+        /// <summary>
+        /// Identifies all differences in Properties on the object when compared to the persisted state in the database.
+        /// </summary>
+        /// <param name="mapsDirectlyToDatabaseTable"></param>
+        /// <returns></returns>
         RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable);
         
         /// <summary>
@@ -111,7 +139,16 @@ namespace MapsDirectlyToDatabaseTable
         int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows=true);
         int Update(string updateQuery, Dictionary<string, object> parameters);
 
+        /// <summary>
+        /// Creates a new copy of the <paramref name="oToClone"/> object in the database that is identical except for having a new <see cref="IMapsDirectlyToDatabaseTable.ID"/>.
+        /// This will not work if there are database constraints that would get in the way e.g. if there is an unique constraint on Name (for example). 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="oToClone">The database object to clone</param>
+        /// <returns>The new copy fetched out of the database</returns>
         T CloneObjectInTable<T>(T oToClone) where T:IMapsDirectlyToDatabaseTable;
+
+
         bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable;
         bool StillExists(IMapsDirectlyToDatabaseTable o);
 

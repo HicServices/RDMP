@@ -14,13 +14,12 @@ namespace Tests.Common
 
         public DirectoryInfo ForLoading { get; private set; }
         public DirectoryInfo ForArchiving { get; private set; }
-        public DirectoryInfo ForErrors { get; private set; }
         public DirectoryInfo Cache { get; private set; }
         public DirectoryInfo RootPath { get; private set; }
         public DirectoryInfo DataPath { get; private set; }
         public DirectoryInfo ExecutablesPath { get; private set; }
         public FileInfo FTPDetails { get; private set; }
-        public bool Test { get; private set; }
+
         public XmlNodeList GetTagFromConfigurationDataXML(string tagName)
         {
             return _configurationData.GetElementsByTagName(tagName);

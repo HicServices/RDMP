@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
+﻿namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
 {
     /// <summary>
     /// Hacky string container class that holds a single variable: the script needed to run on a Microsoft Sql Server to support WordAccessRightsByUser and 
@@ -13,6 +7,9 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
     /// </summary>
     public class AccessRightsReportPrerequisites
     {
+        /// <summary>
+        /// Sql to create the Audit database in an Sql Server (allows longitudinal tracking of what users have access to what tables/databases).
+        /// </summary>
         public const string SQL = @"
 CREATE DATABASE [Audit]
 GO

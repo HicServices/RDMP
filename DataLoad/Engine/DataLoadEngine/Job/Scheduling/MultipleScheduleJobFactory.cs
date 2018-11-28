@@ -50,7 +50,7 @@ namespace DataLoadEngine.Job.Scheduling
             if (!datesToRetrieve.Any())
                 return null;
 
-            var hicProjectDirectory = new HICProjectDirectory(LoadMetadata.LocationOfFlatFiles, false);
+            var hicProjectDirectory = new HICProjectDirectory(LoadMetadata.LocationOfFlatFiles);
             job = new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, hicProjectDirectory, listener,configuration);
             
             job.LoadProgress = loadProgress;

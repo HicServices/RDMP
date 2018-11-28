@@ -43,6 +43,10 @@ namespace CatalogueLibrary
         private RSAParameters _privateKey;
         private ICatalogueRepository _repository;
 
+        /// <summary>
+        /// The private key file parameters required to encrypt/decrypt strings.  These will either be read from the secure location on disk (<see cref="PasswordEncryptionKeyLocation"/>) or
+        /// will match the the default decryption certificate (<see cref="Key"/>).
+        /// </summary>
         public RSAParameters PrivateKey
         {
             get

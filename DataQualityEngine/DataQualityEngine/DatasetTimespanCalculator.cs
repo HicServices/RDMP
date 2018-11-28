@@ -21,6 +21,7 @@ namespace DataQualityEngine
     /// </summary>
     public class DatasetTimespanCalculator : IDetermineDatasetTimespan
     {
+        /// <inheritdoc/>
         public string GetHumanReadableTimepsanIfKnownOf(Catalogue catalogue,bool discardOutliers)
         {
             DataTable dt;

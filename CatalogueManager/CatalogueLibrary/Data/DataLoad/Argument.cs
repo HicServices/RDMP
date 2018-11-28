@@ -337,6 +337,7 @@ namespace CatalogueLibrary.Data.DataLoad
             return GetConcreteSystemType(Type);
         }
 
+        /// <inheritdoc cref="GetConcreteSystemType()"/>
         public Type GetConcreteSystemType(string typeAsString)
         {
             var type = GetSystemType(typeAsString);

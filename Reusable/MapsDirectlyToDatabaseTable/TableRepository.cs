@@ -47,6 +47,7 @@ namespace MapsDirectlyToDatabaseTable
             DiscoveredServer = new DiscoveredServer(connectionStringBuilder);
         }
 
+        /// <inheritdoc/>
         public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             lock (_oLockUpdateCommands)
@@ -84,6 +85,7 @@ namespace MapsDirectlyToDatabaseTable
             return toReturn;
         }
 
+        /// <inheritdoc/>
         public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             lock (_oLockUpdateCommands)
@@ -210,6 +212,7 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
+        /// <inheritdoc/>
         public T CloneObjectInTable<T>(T oToClone) where T:IMapsDirectlyToDatabaseTable
         {
             var repository = (TableRepository) oToClone.Repository;
@@ -494,6 +497,7 @@ namespace MapsDirectlyToDatabaseTable
             return type.GetProperties().Where(prop =>!Attribute.IsDefined(prop, typeof (NoMappingToDatabase))).ToArray();
         }
 
+        /// <inheritdoc/>
         public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable localCopy)
         {
             //get new copy out of database
@@ -511,6 +515,7 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
+        /// <inheritdoc/>
         public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable localCopy)
         {
             IMapsDirectlyToDatabaseTable dbCopy = null;

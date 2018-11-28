@@ -142,6 +142,10 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _isTableValuedFunction, value); }
         }
 
+        /// <summary>
+        /// The Schema scope of the table (or blank if dbo / default / not supported by dbms).  This scope exists below Database and Above Table.  Not all database management
+        /// engines support the concept of Schema (e.g. MySql).
+        /// </summary>
         public string Schema
         {
             get { return _schema; }

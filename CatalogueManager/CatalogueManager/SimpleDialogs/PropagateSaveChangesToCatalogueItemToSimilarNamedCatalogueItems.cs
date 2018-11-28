@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
@@ -35,6 +36,7 @@ namespace CatalogueManager.SimpleDialogs
     /// </summary>
     public partial class PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems : RDMPForm
     {
+        private readonly IActivateItems _activator;
         private readonly CatalogueItem _catalogueItemBeingSaved;
         protected List<PropertyInfo>ChangedProperties;
         private ScintillaNET.Scintilla previewOldValue;
@@ -43,8 +45,9 @@ namespace CatalogueManager.SimpleDialogs
         Dictionary<string,CatalogueItem> FriendlyNamedListOfCatalogueItems = new Dictionary<string, CatalogueItem>();
         Dictionary<string, PropertyInfo> FriendlyNamedListOfPropertiesChanged = new Dictionary<string, PropertyInfo>();
         
-        public PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems(CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed)
+        public PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed)
         {
+            _activator = activator;
             _catalogueItemBeingSaved = catalogueItemBeingSaved;
             InitializeComponent();
 
@@ -117,14 +120,11 @@ namespace CatalogueManager.SimpleDialogs
 
         private CatalogueItem[] GetAllCatalogueItemsSharingNameWith(CatalogueItem catalogueItemBeingSaved)
         {
-
-            List<CatalogueItem> cataItems = new List<CatalogueItem>(((CatalogueRepository)catalogueItemBeingSaved.Repository).GetAllCatalogueItemsNamed(catalogueItemBeingSaved.Name, true));
-
-            for (int i = 0; i < cataItems.Count; i++)
-                if (cataItems[i].ID == catalogueItemBeingSaved.ID)
-                    cataItems.RemoveAt(i);
-                    
-            return cataItems.ToArray();
+            return _activator.CoreChildProvider.AllCatalogueItems
+                .Where(ci=>
+                        ci.Name.Equals(catalogueItemBeingSaved.Name,StringComparison.CurrentCultureIgnoreCase) 
+                        && ci.ID != catalogueItemBeingSaved.ID)
+                        .ToArray();
         }
 
         private void clbCatalogues_SelectedIndexChanged(object sender, EventArgs e)

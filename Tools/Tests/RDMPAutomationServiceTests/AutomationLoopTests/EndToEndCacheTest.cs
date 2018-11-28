@@ -37,13 +37,9 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         {
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
-
-            var testDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, @"EndToEndCacheTest"));
-            if (!testDir.Exists)
-                testDir.Create();
-
+            
             _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
-            _hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(testDir, true);
+            _hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), @"EndToEndCacheTest", true);
             _lmd.LocationOfFlatFiles = _hicProjectDirectory.RootPath.FullName;
             _lmd.SaveToDatabase();
 

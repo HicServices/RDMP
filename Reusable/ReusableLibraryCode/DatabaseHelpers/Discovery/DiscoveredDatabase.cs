@@ -71,7 +71,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
         /// <summary>
-        /// 
+        /// Connects to the server and enumerates the databases to see whether the currently described database exists.
         /// </summary>
         /// <param name="transaction">Database level operations are usually not transaction bound so be very careful about setting a parameter for this</param>
         /// <returns></returns>

@@ -120,14 +120,18 @@ task :publishall, [:folder, :url] do |t, args|
         sh "call mklink \"#{basefolder}/Stable/ResearchDataManagementPlatform.exe\" \"#{deployfolder}/ResearchDataManagementPlatform.exe\""
         sh "call mklink \"#{basefolder}/Stable/setup.exe\" \"#{deployfolder}/setup.exe\""        
         sh "call mklink /J \"#{basefolder}/Stable/Application Files\" \"#{deployfolder}/Application Files\""
-    end
-    
-    # now we build the Automation Service
-    Dir.chdir('Tools/RDMPAutomationService') do
-        sh "./build.cmd #{deployfolder}/RDMPAutomationService/"
-        File.delete "#{basefolder}/Stable/RDMPAutomationService.zip" if File.exists?("#{basefolder}/Stable/RDMPAutomationService.zip")
-        sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('#{deployfolder}/RDMPAutomationService', '#{basefolder}/Stable/RDMPAutomationService.zip'); }\""
-    end
+
+        # zip up the standalone too
+        File.delete "#{basefolder}/Stable/Standalone.zip" if File.exists?("#{basefolder}/Stable/Standalone.zip")
+        sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('#{deployfolder}/standalone', '#{basefolder}/Stable/standalone.zip'); }\""
+        
+        # now we build the Automation Service
+        Dir.chdir('Tools/RDMPAutomationService') do
+            sh "./build.cmd #{deployfolder}/RDMPAutomationService/"
+            File.delete "#{basefolder}/Stable/RDMPAutomationService.zip" if File.exists?("#{basefolder}/Stable/RDMPAutomationService.zip")
+            sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('#{deployfolder}/RDMPAutomationService', '#{basefolder}/Stable/RDMPAutomationService.zip'); }\""
+        end
+    end    
 end
 
 
