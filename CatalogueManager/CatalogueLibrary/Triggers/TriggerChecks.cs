@@ -13,20 +13,17 @@ namespace CatalogueLibrary.Triggers
     /// </summary>
     public class TriggerChecks : ICheckable
     {
-        private readonly bool _expectedPresence;
-        
         private DiscoveredTable _table;
         private DiscoveredTable _archiveTable;
         private DiscoveredServer _server;
 
         public bool TriggerCreated { get; private set; }
 
-        public TriggerChecks(DiscoveredTable table, bool expectedPresence)
+        public TriggerChecks(DiscoveredTable table)
         {
             _server = table.Database.Server;
             _table = table;
-            _archiveTable = table.Database.ExpectTable(_table.GetRuntimeName() + "_Archive");
-            _expectedPresence = expectedPresence;
+            _archiveTable = table.Database.ExpectTable(_table.GetRuntimeName() + "_Archive",_table.Schema);
         }
 
         ///<inheritdoc/>
@@ -84,21 +81,11 @@ namespace CatalogueLibrary.Triggers
                 }
             }
 
-            //we expected it to be missing and it was or we expected it to be enabled and it was
-            if(present == _expectedPresence)
-                notifier.OnCheckPerformed(new CheckEventArgs("Trigger presence/intactness for table " + _table + " matched expected presence (" + _expectedPresence + ")",CheckResult.Success, null));
+            if(present)
+                notifier.OnCheckPerformed(new CheckEventArgs("Trigger presence/intactness for table " + _table + " matched expected presence",CheckResult.Success, null));
             else
-            {
-                //we did not find what we expected
-
-                //we expected it to be there
-                if(_expectedPresence)
-                    NotifyFail(null, notifier, implementer); //try creating it
-                else
-                    //we did not expect it to be there but it was, just fail and don't offer anything crazy like nuking it
-                    notifier.OnCheckPerformed(new CheckEventArgs("Trigger presence/intactness for table " + _table + " did not match expected presence (" + _expectedPresence + ")", CheckResult.Fail, null));
-                
-            }
+                NotifyFail(null, notifier, implementer); //try creating it
+            
         }
 
 
@@ -133,10 +120,6 @@ namespace CatalogueLibrary.Triggers
 
         private void NotifyFail(Exception e, ICheckNotifier notifier,ITriggerImplementer microsoftSQLTrigger)
         {
-            //if they expected it not to be there then it shouldn't be crashing trying to find it
-            if (!_expectedPresence)
-                throw e;
-
             bool shouldCreate = notifier.OnCheckPerformed(new CheckEventArgs(
                     "Trigger error encountered when checking integrity of table " + _table,
                     CheckResult.Warning, e, "Drop and then Re-Create Trigger on table " + _table));

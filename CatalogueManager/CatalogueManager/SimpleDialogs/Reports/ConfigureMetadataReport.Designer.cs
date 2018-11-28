@@ -31,12 +31,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.btnGenerateReport = new System.Windows.Forms.Button();
             this.cbIncludeDeprecated = new System.Windows.Forms.CheckBox();
             this.cbIncludeInternal = new System.Windows.Forms.CheckBox();
-            this.lblCurrentCatalogue = new System.Windows.Forms.Label();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.btnStop = new System.Windows.Forms.Button();
             this.cbxCatalogues = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -50,6 +47,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.cbIncludeGraphs = new System.Windows.Forms.CheckBox();
             this.nMaxLookupRows = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
+            this.progressBarsUI1 = new ReusableUIComponents.Progress.ProgressBarsUI();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nMaxLookupRows)).BeginInit();
             this.SuspendLayout();
@@ -63,19 +61,10 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.label1.TabIndex = 0;
             this.label1.Text = "To Generate For:";
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(14, 159);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(1012, 11);
-            this.progressBar1.TabIndex = 1;
-            // 
             // btnGenerateReport
             // 
             this.btnGenerateReport.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnGenerateReport.Location = new System.Drawing.Point(367, 172);
+            this.btnGenerateReport.Location = new System.Drawing.Point(374, 139);
             this.btnGenerateReport.Name = "btnGenerateReport";
             this.btnGenerateReport.Size = new System.Drawing.Size(112, 23);
             this.btnGenerateReport.TabIndex = 1;
@@ -103,28 +92,10 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.cbIncludeInternal.Text = "Include Internal";
             this.cbIncludeInternal.UseVisualStyleBackColor = true;
             // 
-            // lblCurrentCatalogue
-            // 
-            this.lblCurrentCatalogue.AutoSize = true;
-            this.lblCurrentCatalogue.Location = new System.Drawing.Point(14, 177);
-            this.lblCurrentCatalogue.Name = "lblCurrentCatalogue";
-            this.lblCurrentCatalogue.Size = new System.Drawing.Size(0, 13);
-            this.lblCurrentCatalogue.TabIndex = 6;
-            // 
-            // checksUI1
-            // 
-            this.checksUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.checksUI1.Location = new System.Drawing.Point(12, 201);
-            this.checksUI1.Name = "checksUI1";
-            this.checksUI1.Size = new System.Drawing.Size(1016, 279);
-            this.checksUI1.TabIndex = 7;
-            // 
             // btnStop
             // 
             this.btnStop.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnStop.Location = new System.Drawing.Point(485, 172);
+            this.btnStop.Location = new System.Drawing.Point(492, 139);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(112, 23);
             this.btnStop.TabIndex = 2;
@@ -228,10 +199,11 @@ namespace CatalogueManager.SimpleDialogs.Reports
             // 
             this.aggregateGraph1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.aggregateGraph1.BackColor = System.Drawing.Color.White;
-            this.aggregateGraph1.Location = new System.Drawing.Point(12, 486);
+            this.aggregateGraph1.Location = new System.Drawing.Point(5, 351);
             this.aggregateGraph1.Name = "aggregateGraph1";
             this.aggregateGraph1.Size = new System.Drawing.Size(781, 501);
             this.aggregateGraph1.TabIndex = 10;
+            this.aggregateGraph1.Timeout = 0;
             this.aggregateGraph1.Visible = false;
             // 
             // cbIncludeGraphs
@@ -273,11 +245,21 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.label3.TabIndex = 12;
             this.label3.Text = "Max lookup rows:";
             // 
+            // progressBarsUI1
+            // 
+            this.progressBarsUI1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarsUI1.Location = new System.Drawing.Point(12, 168);
+            this.progressBarsUI1.Name = "progressBarsUI1";
+            this.progressBarsUI1.Size = new System.Drawing.Size(1016, 181);
+            this.progressBarsUI1.TabIndex = 13;
+            // 
             // ConfigureMetadataReport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1040, 985);
+            this.ClientSize = new System.Drawing.Size(1040, 864);
+            this.Controls.Add(this.progressBarsUI1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.nMaxLookupRows);
             this.Controls.Add(this.cbIncludeGraphs);
@@ -287,11 +269,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.Controls.Add(this.tbTimeout);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.checksUI1);
-            this.Controls.Add(this.lblCurrentCatalogue);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnGenerateReport);
-            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label1);
             this.Name = "ConfigureMetadataReport";
             this.Text = "ConfigureMetadataReport";
@@ -307,12 +286,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button btnGenerateReport;
         private System.Windows.Forms.CheckBox cbIncludeDeprecated;
         private System.Windows.Forms.CheckBox cbIncludeInternal;
-        private System.Windows.Forms.Label lblCurrentCatalogue;
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.ComboBox cbxCatalogues;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -326,5 +302,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
         private System.Windows.Forms.CheckBox cbIncludeGraphs;
         private System.Windows.Forms.NumericUpDown nMaxLookupRows;
         private System.Windows.Forms.Label label3;
+        private ReusableUIComponents.Progress.ProgressBarsUI progressBarsUI1;
     }
 }

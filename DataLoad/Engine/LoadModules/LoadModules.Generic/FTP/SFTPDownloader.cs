@@ -16,7 +16,6 @@ namespace LoadModules.Generic.FTP
     /// </summary>
     public class SFTPDownloader:FTPDownloader
     {
-        
         protected override void Download(string file, IHICProjectDirectory destination,IDataLoadEventListener job)
         {
             if (file.Contains("/") || file.Contains("\\"))
@@ -31,7 +30,7 @@ namespace LoadModules.Generic.FTP
                 sftp.Connect();
                 
                 //if there is a specified remote directory then reference it otherwise reference it locally (or however we were told about it from GetFileList())
-                string fullFilePath = !string.IsNullOrWhiteSpace(_remoteDir) ? Path.Combine(_remoteDir, file) : file;
+                string fullFilePath = !string.IsNullOrWhiteSpace(RemoteDirectory) ? Path.Combine(RemoteDirectory, file) : file;
                 
                 string destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
@@ -83,7 +82,7 @@ namespace LoadModules.Generic.FTP
                 sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
                 sftp.Connect();
 
-                string directory = _remoteDir;
+                string directory = RemoteDirectory;
 
                 if (string.IsNullOrWhiteSpace(directory))
                     directory = ".";

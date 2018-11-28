@@ -168,6 +168,12 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Resharper generated code to test for equality based on Foreign, Primary and Extraction type
+        
+        /// <summary>
+        /// Returns true if the join described by <paramref name="other"/> is the same as this
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         protected bool Equals(JoinInfo other)
         {
             return Equals(ForeignKey.ID, other.ForeignKey.ID) && Equals(PrimaryKey.ID, other.PrimaryKey.ID) && ExtractionJoinType == other.ExtractionJoinType;

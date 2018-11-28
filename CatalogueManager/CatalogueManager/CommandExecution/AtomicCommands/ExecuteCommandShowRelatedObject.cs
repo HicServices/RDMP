@@ -47,10 +47,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             if (_import != null)
-                Emphasise((DatabaseEntity) _import.GetLocalObject(Activator.RepositoryLocator));
+                Emphasise((DatabaseEntity)_import.GetReferencedObject(Activator.RepositoryLocator));
             
             if (_export != null)
-                Emphasise((DatabaseEntity) _export.GetLocalObject(Activator.RepositoryLocator));
+                Emphasise((DatabaseEntity) _export.GetReferencedObject(Activator.RepositoryLocator));
         }
     }
 }

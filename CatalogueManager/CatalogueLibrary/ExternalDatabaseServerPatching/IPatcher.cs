@@ -1,6 +1,4 @@
-using System.ComponentModel.Composition;
 using System.Reflection;
-using CatalogueLibrary.Data;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
@@ -12,7 +10,16 @@ namespace CatalogueLibrary.ExternalDatabaseServerPatching
     /// </summary>
     public interface IPatcher
     {
+        /// <summary>
+        /// Returns the assembly containing all the class definitions for objects stored in the database e.g. CatalogueLibrary.dll
+        /// </summary>
+        /// <returns></returns>
         Assembly GetHostAssembly();
+
+        /// <summary>
+        /// Returns the dot database assembly containing all the Sql scripts to run to bring the database up to the current version e.g. CatalogueLibrary.Database.dll
+        /// </summary>
+        /// <returns></returns>
         Assembly GetDbAssembly();
     }
 }

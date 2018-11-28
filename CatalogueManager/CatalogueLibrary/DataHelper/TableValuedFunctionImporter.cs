@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -9,6 +9,7 @@ using CatalogueLibrary.Repositories;
 
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace CatalogueLibrary.DataHelper
@@ -30,14 +31,28 @@ namespace CatalogueLibrary.DataHelper
 
         private readonly DiscoveredTableValuedFunction _tableValuedFunction;
         private DiscoveredParameter[] _parameters;
+        private string _schema;
 
+        /// <summary>
+        /// List of parameters belonging to the <see cref="DiscoveredTableValuedFunction"/> being imported.  Each parameter will result in an RDMP object <see cref="AnyTableSqlParameter"/> 
+        /// which records the default value to send when fetching data etc as well as to facilitate the population of parameters in data extract / cohort generation etc.
+        /// </summary>
+        public List<AnyTableSqlParameter> ParametersCreated { get; private set; }
 
+        /// <summary>
+        /// Prepares to import the given table valued function <paramref name="tableValuedFunction"/> as <see cref="TableInfo"/> / <see cref="ColumnInfo"/> references in the
+        /// <paramref name="repository"/>.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="tableValuedFunction"></param>
+        /// <param name="usageContext"></param>
         public TableValuedFunctionImporter(CatalogueRepository repository, DiscoveredTableValuedFunction tableValuedFunction, DataAccessContext usageContext = DataAccessContext.Any)
         {
             _repository = repository;
             _tableValuedFunction = tableValuedFunction;
             _server = _tableValuedFunction.Database.Server.Name;
             _database = _tableValuedFunction.Database.GetRuntimeName();
+            _schema = tableValuedFunction.Schema;
 
             _usageContext = usageContext;
 
@@ -52,11 +67,12 @@ namespace CatalogueLibrary.DataHelper
             
         }
 
-        public List<AnyTableSqlParameter> ParametersCreated { get; private set; }
 
+        /// <inheritdoc/>
         public void DoImport(out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
         {
-            string finalName = "[" + _database + "].." + _tableValuedFunctionName + "(";
+            
+            string finalName = "[" + _database + "]."+_schema+"." + _tableValuedFunctionName + "(";
 
             foreach (DiscoveredParameter parameter in _parameters)
                 finalName += parameter.ParameterName + ",";
@@ -67,6 +83,7 @@ namespace CatalogueLibrary.DataHelper
             tableInfoCreated.Server = _server;
             tableInfoCreated.Database = _database;
             tableInfoCreated.IsTableValuedFunction = true;
+            tableInfoCreated.Schema = _schema;
             tableInfoCreated.SaveToDatabase();
 
             columnInfosCreated = CreateColumnInfosBasedOnReturnColumnsOfFunction(tableInfoCreated);
@@ -79,6 +96,7 @@ namespace CatalogueLibrary.DataHelper
             }
         }
 
+        /// <inheritdoc/>
         public ColumnInfo CreateNewColumnInfo(TableInfo parent, DiscoveredColumn discoveredColumn)
         {
             var toAdd =
@@ -110,13 +128,26 @@ namespace CatalogueLibrary.DataHelper
             return newColumnInfosToReturn.ToArray();
         }
 
-        public void CreateParameter(TableInfo parent, DiscoveredParameter discoveredParameter)
+        /// <summary>
+        /// Creates a new <see cref="AnyTableSqlParameter"/> for describing a parameter of the table valued function <paramref name="parent"/>.  This is public so that
+        /// it can be used for later synchronization as well as initial import.
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="discoveredParameter"></param>
+        internal AnyTableSqlParameter CreateParameter(TableInfo parent, DiscoveredParameter discoveredParameter)
         {
-            ParametersCreated.Add(new AnyTableSqlParameter(_repository, parent, GetParamaterDeclarationSQL(discoveredParameter)));
+            var created = new AnyTableSqlParameter(_repository, parent, GetParamaterDeclarationSQL(discoveredParameter));
+            ParametersCreated.Add(created);
+            return created;
         }
 
-
-        public string GetParamaterDeclarationSQL(DiscoveredParameter parameter)
+        /// <summary>
+        /// Creates a parameter declaration SQL for the given <paramref name="parameter"/> e.g. if the parameter is @myVar varchar(10) then the declare SQL might be
+        /// DECLARE @myVar as varchar(10);.  
+        /// 
+        /// <para><seealso cref="IQuerySyntaxHelper.GetParameterDeclaration(string,string)"/></para>
+        /// </summary>
+        internal string GetParamaterDeclarationSQL(DiscoveredParameter parameter)
         {
             var syntaxHelper = _tableValuedFunction.Database.Server.GetQuerySyntaxHelper();
 

@@ -13,21 +13,31 @@ namespace CatalogueLibrary
         private readonly TableInfo _tableInfo;
         private readonly ColumnInfo[] _columnInfos;
         private readonly bool _markAllExtractable;
-        private readonly CatalogueRepository _repository;
 
+        /// <summary>
+        /// Sets up the class to create a new <see cref="Catalogue"/> from the supplied table reference
+        /// </summary>
+        /// <param name="tableInfo"></param>
+        /// <param name="columnInfos"></param>
+        /// <param name="markAllExtractable"></param>
         public ForwardEngineerCatalogue(TableInfo tableInfo, ColumnInfo[] columnInfos, bool markAllExtractable = false)
         {
-            _repository = (CatalogueRepository)tableInfo.Repository;
             _tableInfo = tableInfo;
             _columnInfos = columnInfos;
             _markAllExtractable = markAllExtractable;
         }
 
+
+        /// <inheritdoc cref="ExecuteForwardEngineering()"/>
         public void ExecuteForwardEngineering(out Catalogue catalogue, out CatalogueItem[] items, out ExtractionInformation[] extractionInformations)
         {
             ExecuteForwardEngineering(null, out catalogue, out items, out extractionInformations);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="Catalogue"/> with <see cref="CatalogueItem"/> and <see cref="ExtractionInformation"/> with a one-to-one mapping to
+        ///  the <see cref="ColumnInfo"/> this class was constructed with.
+        /// </summary>
         public void ExecuteForwardEngineering()
         {
             Catalogue whoCaresCata;
@@ -37,6 +47,12 @@ namespace CatalogueLibrary
             ExecuteForwardEngineering(null,out whoCaresCata,out whoCaresItems,out whoCaresInformations);
         }
 
+        /// <summary>
+        /// Creates new <see cref="CatalogueItem"/> and <see cref="ExtractionInformation"/> with a one-to-one mapping to the <see cref="ColumnInfo"/> this class was constructed with.
+        /// 
+        /// <para>These new columns are added to an existing <see cref="Catalogue"/>.  Use this if you want a dataset that draws data from 2 tables using a <see cref="JoinInfo"/></para>
+        /// </summary>
+        /// <param name="intoExistingCatalogue"></param>
         public void ExecuteForwardEngineering(Catalogue intoExistingCatalogue)
         {
             Catalogue whoCaresCata;
@@ -46,6 +62,7 @@ namespace CatalogueLibrary
             ExecuteForwardEngineering(intoExistingCatalogue, out whoCaresCata, out whoCaresItems, out whoCaresInformations);
         }
 
+        /// <inheritdoc cref="ExecuteForwardEngineering()"/>
         public void ExecuteForwardEngineering(Catalogue intoExistingCatalogue,out Catalogue catalogue, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
         {
             var repo = (CatalogueRepository)_tableInfo.Repository;

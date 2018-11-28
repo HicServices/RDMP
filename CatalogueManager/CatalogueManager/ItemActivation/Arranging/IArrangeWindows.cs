@@ -23,5 +23,6 @@ namespace CatalogueManager.ItemActivation.Arranging
 
         //basic case where you only want to Emphasise and Activate it (after closing all other windows)
         void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o);
+        void Setup(WindowLayout target);
     }
 }

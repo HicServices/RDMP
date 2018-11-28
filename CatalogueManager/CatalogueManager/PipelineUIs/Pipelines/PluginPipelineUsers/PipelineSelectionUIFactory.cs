@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
 {
@@ -23,11 +24,11 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
             _useCase = useCase;
         }
 
-        public PipelineSelectionUIFactory(CatalogueRepository repository, RequiredPropertyInfo requirement, Argument argument, object demanderInstance)
+        public PipelineSelectionUIFactory(CatalogueRepository repository, RequiredPropertyInfo requirement, ArgumentValueUIArgs args, object demanderInstance)
         {
             _repository = repository;
 
-            var pluginUserAndCase = new PluginPipelineUser(requirement, argument, demanderInstance);
+            var pluginUserAndCase = new PluginPipelineUser(requirement, args, demanderInstance);
             _user = pluginUserAndCase;
             _useCase = pluginUserAndCase;
         }

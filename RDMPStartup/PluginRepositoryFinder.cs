@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.Composition;
+using System.Reflection;
 using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
 
 namespace RDMPStartup
 {
@@ -17,8 +17,11 @@ namespace RDMPStartup
             RepositoryLocator = repositoryLocator;
         }
 
-        public abstract IRepository GetRepositoryIfAny();
 
+        /// <inheritdoc/>
+        public abstract PluginRepository GetRepositoryIfAny();
+
+        /// <inheritdoc/>
         public abstract Type GetRepositoryType();
     }
 }

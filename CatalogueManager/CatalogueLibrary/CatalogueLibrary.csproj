@@ -250,8 +250,6 @@
     <Compile Include="Checks\SyntaxChecking\ParameterSyntaxChecker.cs" />
     <Compile Include="Checks\SyntaxChecking\SyntaxChecker.cs" />
     <Compile Include="CommandExecution\AtomicCommands\IAtomicCommandWithTarget.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginAtomicCommand.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\PluginCommands\PluginDatabaseAtomicCommand.cs" />
     <Compile Include="CommandExecution\ExecuteCommandCreateLookup.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\OverlappingImplementationsException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\MultipleMatchingImplmentationException.cs" />
@@ -267,6 +265,7 @@
     <Compile Include="Data\Dashboarding\DashboardLayout.cs" />
     <Compile Include="Data\Dashboarding\DashboardObjectUse.cs" />
     <Compile Include="Data\Dashboarding\IPersistableObjectCollection.cs" />
+    <Compile Include="Data\Dashboarding\PersistenceException.cs" />
     <Compile Include="Data\Dashboarding\PersistStringHelper.cs" />
     <Compile Include="Data\DataLoad\Extensions\LoadStageExtensions.cs" />
     <Compile Include="Data\DataLoad\IHasStageSpecificRuntimeName.cs" />
@@ -287,6 +286,7 @@
     <Compile Include="Data\ImportExport\ShareManager.cs" />
     <Compile Include="Data\ImportExport\ObjectExport.cs" />
     <Compile Include="Data\ImportExport\ObjectImport.cs" />
+    <Compile Include="Data\WindowLayout.cs" />
     <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IHasDesignTimeMode.cs" />
@@ -294,6 +294,8 @@
     <Compile Include="Data\Pipelines\IPipelineUser.cs" />
     <Compile Include="Data\Pipelines\PipelineUseCase.cs" />
     <Compile Include="Data\Pipelines\PipelineUser.cs" />
+    <Compile Include="Data\Referencing\IReferenceOtherObject.cs" />
+    <Compile Include="Data\Referencing\ReferenceOtherObjectDatabaseEntity.cs" />
     <Compile Include="Data\Remoting\RemoteRDMP.cs" />
     <Compile Include="Data\Serialization\DatabaseEntityJsonConverter.cs" />
     <Compile Include="Data\Serialization\IPickAnyConstructorFinishedCallback.cs" />
@@ -301,6 +303,8 @@
     <Compile Include="Data\Serialization\JsonConvertExtensions.cs" />
     <Compile Include="Data\Serialization\PickAnyConstructorJsonConverter.cs" />
     <Compile Include="Data\Serialization\ShareDefinition.cs" />
+    <Compile Include="DublinCore\DublinCoreDefinition.cs" />
+    <Compile Include="DublinCore\DublinCoreTranslater.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
@@ -339,12 +343,17 @@
     <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
     <Compile Include="Nodes\AllStandardRegexesNode.cs" />
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />
+    <Compile Include="Nodes\CohortNodes\AllFreeCohortIdentificationConfigurationsNode.cs" />
+    <Compile Include="Nodes\CohortNodes\AllProjectCohortIdentificationConfigurationsNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\OverrideRawServerNode.cs" />
     <Compile Include="Nodes\PipelineNodes\AllPipelinesNode.cs" />
     <Compile Include="Nodes\PipelineNodes\OtherPipelinesNode.cs" />
     <Compile Include="Nodes\PipelineNodes\PipelineCompatibleWithUseCaseNode.cs" />
     <Compile Include="Nodes\PipelineNodes\StandardPipelineUseCaseNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectExportsNode.cs" />
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
+    <Compile Include="Nodes\UsedByNodes\IObjectUsedByOtherObjectNode.cs" />
+    <Compile Include="Nodes\UsedByNodes\ObjectUsedByOtherObjectNode.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
     <Compile Include="QueryBuilding\Options\AggregateBuilderBasicOptions.cs" />
@@ -418,7 +427,6 @@
     <Compile Include="DataFlowPipeline\IDataFlowSource.cs" />
     <Compile Include="DataFlowPipeline\IPluginDataFlowComponent.cs" />
     <Compile Include="DataFlowPipeline\IPluginDataFlowSource.cs" />
-    <Compile Include="DataFlowPipeline\IResetableSource.cs" />
     <Compile Include="DataFlowPipeline\Events\PipelineEngineEventArgs.cs" />
     <Compile Include="DataFlowPipeline\Requirements\DataFlowPipelineContext.cs" />
     <Compile Include="DataFlowPipeline\Requirements\DataFlowPipelineContextFactory.cs" />
@@ -507,7 +515,6 @@
     <Compile Include="DitaCatalogueExtractor.cs" />
     <Compile Include="Data\SupportingDocument.cs" />
     <Compile Include="Data\TableInfo.cs" />
-    <Compile Include="DodgyNamedTableAndColumnsChecker.cs" />
     <Compile Include="ExitCodeType.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPatcher.cs" />
     <Compile Include="ForwardEngineerCatalogue.cs" />
@@ -576,6 +583,7 @@
     <None Include="QueryBuilding\MetadataComponentsForQueryBuilding.cd" />
     <None Include="QueryBuilding\QueryBuilding.cd" />
     <None Include="Spontaneous\Spontaneous.cd" />
+    <None Include="Triggers\Triggers.cd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.UsedByNodes;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -17,7 +18,6 @@ using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.Providers.Nodes.UsedByNodes;
 using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;
@@ -208,9 +208,9 @@ namespace DataExportManager.ProjectUI
                 Command = activityRequested,
                 ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
                 MaxConcurrentExtractions = 3,
-                Datasets = _datasets.All(tlvDatasets.IsChecked) ? new int[0] : _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray(),
                 ExtractionConfiguration = _extractionConfiguration.ID,
-                Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 : _pipelineSelectionUI1.Pipeline.ID
+                Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 : _pipelineSelectionUI1.Pipeline.ID,
+                Datasets = _datasets.All(tlvDatasets.IsChecked) ? new int[0] : _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray()
             };
         }
 
@@ -227,7 +227,8 @@ namespace DataExportManager.ProjectUI
                     AddFavouriteColumn = false,
                     AllowPinning=false,
                     SuppressChildrenAdder=true,
-                    SuppressActivate = true
+                    SuppressActivate = true,
+                    AddCheckColumn = false
                 });
 
             checkAndExecuteUI1.SetItemActivator(activator);

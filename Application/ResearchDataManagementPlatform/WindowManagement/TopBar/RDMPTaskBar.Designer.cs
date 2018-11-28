@@ -44,8 +44,15 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btnBack = new System.Windows.Forms.ToolStripSplitButton();
+            this.btnForward = new System.Windows.Forms.ToolStripButton();
             this.btnFavourites = new System.Windows.Forms.ToolStripButton();
             this.btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
+            this.btnDeleteDash = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.cbxLayouts = new System.Windows.Forms.ToolStripComboBox();
+            this.btnSaveWindowLayout = new System.Windows.Forms.ToolStripButton();
+            this.btnDeleteLayout = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -115,14 +122,15 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(69, 22);
-            this.toolStripLabel1.Text = "Dashboards";
+            this.toolStripLabel1.Size = new System.Drawing.Size(64, 22);
+            this.toolStripLabel1.Text = "Dashboard";
             // 
             // cbxDashboards
             // 
             this.cbxDashboards.Name = "cbxDashboards";
-            this.cbxDashboards.Size = new System.Drawing.Size(180, 25);
-            this.cbxDashboards.DropDownClosed += new System.EventHandler(this.cbxDashboards_DropDownClosed);
+            this.cbxDashboards.Size = new System.Drawing.Size(150, 25);
+            this.cbxDashboards.DropDownClosed += new System.EventHandler(this.cbx_DropDownClosed);
+            this.cbxDashboards.SelectedIndexChanged += new System.EventHandler(this.cbx_SelectedIndexChanged);
             // 
             // toolStripSeparator3
             // 
@@ -137,6 +145,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnBack,
+            this.btnForward,
             this.btnHome,
             this.toolStripSeparator1,
             this.btnFavourites,
@@ -150,12 +160,40 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripSeparator2,
             this.toolStripLabel1,
             this.cbxDashboards,
-            this.toolStripSeparator3});
+            this.btnDeleteDash,
+            this.toolStripSeparator3,
+            this.toolStripLabel2,
+            this.cbxLayouts,
+            this.btnSaveWindowLayout,
+            this.btnDeleteLayout});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1179, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1319, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // btnBack
+            // 
+            this.btnBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnBack.Enabled = false;
+            this.btnBack.Image = ((System.Drawing.Image)(resources.GetObject("btnBack.Image")));
+            this.btnBack.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(32, 22);
+            this.btnBack.Text = "Back";
+            this.btnBack.ButtonClick += new System.EventHandler(this.btnBack_ButtonClick);
+            this.btnBack.DropDownOpening += new System.EventHandler(this.btnBack_DropDownOpening);
+            // 
+            // btnForward
+            // 
+            this.btnForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnForward.Enabled = false;
+            this.btnForward.Image = ((System.Drawing.Image)(resources.GetObject("btnForward.Image")));
+            this.btnForward.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnForward.Name = "btnForward";
+            this.btnForward.Size = new System.Drawing.Size(23, 22);
+            this.btnForward.Text = "Forward";
+            this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
             // 
             // btnFavourites
             // 
@@ -175,13 +213,59 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnSavedCohorts.Text = "Saved Cohorts";
             this.btnSavedCohorts.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
+            // btnDeleteDash
+            // 
+            this.btnDeleteDash.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDeleteDash.Enabled = false;
+            this.btnDeleteDash.Image = ((System.Drawing.Image)(resources.GetObject("btnDeleteDash.Image")));
+            this.btnDeleteDash.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDeleteDash.Name = "btnDeleteDash";
+            this.btnDeleteDash.Size = new System.Drawing.Size(23, 22);
+            this.btnDeleteDash.Text = "Delete Dashboard";
+            this.btnDeleteDash.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // toolStripLabel2
+            // 
+            this.toolStripLabel2.Name = "toolStripLabel2";
+            this.toolStripLabel2.Size = new System.Drawing.Size(43, 22);
+            this.toolStripLabel2.Text = "Layout";
+            // 
+            // cbxLayouts
+            // 
+            this.cbxLayouts.Name = "cbxLayouts";
+            this.cbxLayouts.Size = new System.Drawing.Size(150, 25);
+            this.cbxLayouts.DropDownClosed += new System.EventHandler(this.cbx_DropDownClosed);
+            this.cbxLayouts.SelectedIndexChanged += new System.EventHandler(this.cbx_SelectedIndexChanged);
+            // 
+            // btnSaveWindowLayout
+            // 
+            this.btnSaveWindowLayout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnSaveWindowLayout.Enabled = false;
+            this.btnSaveWindowLayout.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveWindowLayout.Image")));
+            this.btnSaveWindowLayout.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSaveWindowLayout.Name = "btnSaveWindowLayout";
+            this.btnSaveWindowLayout.Size = new System.Drawing.Size(23, 22);
+            this.btnSaveWindowLayout.Text = "Save Window Layout";
+            this.btnSaveWindowLayout.Click += new System.EventHandler(this.btnSaveWindowLayout_Click);
+            // 
+            // btnDeleteLayout
+            // 
+            this.btnDeleteLayout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDeleteLayout.Enabled = false;
+            this.btnDeleteLayout.Image = ((System.Drawing.Image)(resources.GetObject("btnDeleteLayout.Image")));
+            this.btnDeleteLayout.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDeleteLayout.Name = "btnDeleteLayout";
+            this.btnDeleteLayout.Size = new System.Drawing.Size(23, 22);
+            this.btnDeleteLayout.Text = "Delete Layout";
+            this.btnDeleteLayout.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
             // RDMPTaskBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.toolStrip1);
             this.Name = "RDMPTaskBar";
-            this.Size = new System.Drawing.Size(1179, 25);
+            this.Size = new System.Drawing.Size(1319, 25);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -206,6 +290,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnSavedCohorts;
         private System.Windows.Forms.ToolStripButton btnFavourites;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
+        private System.Windows.Forms.ToolStripComboBox cbxLayouts;
+        private System.Windows.Forms.ToolStripButton btnDeleteDash;
+        private System.Windows.Forms.ToolStripButton btnDeleteLayout;
+        private System.Windows.Forms.ToolStripButton btnSaveWindowLayout;
+        private System.Windows.Forms.ToolStripButton btnForward;
+        private System.Windows.Forms.ToolStripSplitButton btnBack;
 
     }
 }

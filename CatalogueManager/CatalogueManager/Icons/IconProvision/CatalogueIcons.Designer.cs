@@ -183,6 +183,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllFreeCohortIdentificationConfigurationsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllFreeCohortIdentificationConfigurationsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllGovernanceNode {
             get {
                 object obj = ResourceManager.GetObject("AllGovernanceNode", resourceCulture);
@@ -256,6 +266,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap AllProcessTasksUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllProcessTasksUsedByLoadMetadataNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AllProjectCohortIdentificationConfigurationsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllProjectCohortIdentificationConfigurationsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1216,6 +1236,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap Lookup {
             get {
                 object obj = ResourceManager.GetObject("Lookup", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap LookupCompositeJoinInfo {
+            get {
+                object obj = ResourceManager.GetObject("LookupCompositeJoinInfo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

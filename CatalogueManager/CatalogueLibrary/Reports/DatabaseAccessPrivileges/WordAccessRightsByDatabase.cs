@@ -16,13 +16,19 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
         
         private readonly DiscoveredDatabase _dbInfo;
 
-        //constructor
+        /// <summary>
+        /// Prepares to generate a report based on the Audit recorded in the supplied Audit database <paramref name="dbInfo"/> <see cref="AccessRightsReportPrerequisites"/>
+        /// </summary>
+        /// <param name="dbInfo">The Audit database</param>
         public WordAccessRightsByDatabase(DiscoveredDatabase dbInfo)
         {
             _dbInfo = dbInfo;
             _database = _dbInfo.GetRuntimeName();
         }
 
+        /// <summary>
+        /// Creates a new word document in a temp folder which contains aggregate data about which users have access to which databases.
+        /// </summary>
         public void GenerateWordFile()
         {
             var f = GetUniqueFilenameInWorkArea("RightsByDatabase");

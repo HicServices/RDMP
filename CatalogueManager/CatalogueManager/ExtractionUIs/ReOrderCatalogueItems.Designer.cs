@@ -50,9 +50,9 @@ namespace CatalogueManager.ExtractionUIs
             this.btnSaveNewOrder = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnClear = new System.Windows.Forms.Button();
             this.rbSimple = new System.Windows.Forms.RadioButton();
             this.rbAdvanced = new System.Windows.Forms.RadioButton();
-            this.btnClear = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.olvExtractionInformations)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -72,6 +72,7 @@ namespace CatalogueManager.ExtractionUIs
             this.olvColumns,
             this.olvOrder});
             this.olvExtractionInformations.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvExtractionInformations.FullRowSelect = true;
             this.olvExtractionInformations.IsSimpleDragSource = true;
             this.olvExtractionInformations.IsSimpleDropSink = true;
             this.olvExtractionInformations.Location = new System.Drawing.Point(0, 19);
@@ -82,6 +83,7 @@ namespace CatalogueManager.ExtractionUIs
             this.olvExtractionInformations.View = System.Windows.Forms.View.Details;
             this.olvExtractionInformations.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvExtractionInformations_ModelCanDrop);
             this.olvExtractionInformations.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvExtractionInformations_ModelDropped);
+            this.olvExtractionInformations.ItemActivate += new System.EventHandler(this.olvExtractionInformations_ItemActivate);
             // 
             // olvColumns
             // 
@@ -277,6 +279,17 @@ namespace CatalogueManager.ExtractionUIs
             this.splitContainer1.SplitterDistance = 366;
             this.splitContainer1.TabIndex = 17;
             // 
+            // btnClear
+            // 
+            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnClear.Location = new System.Drawing.Point(447, 610);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(114, 23);
+            this.btnClear.TabIndex = 15;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
             // rbSimple
             // 
             this.rbSimple.AutoSize = true;
@@ -299,17 +312,6 @@ namespace CatalogueManager.ExtractionUIs
             this.rbAdvanced.TabIndex = 18;
             this.rbAdvanced.Text = "Advanced";
             this.rbAdvanced.UseVisualStyleBackColor = true;
-            // 
-            // btnClear
-            // 
-            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClear.Location = new System.Drawing.Point(447, 610);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(114, 23);
-            this.btnClear.TabIndex = 15;
-            this.btnClear.Text = "Clear";
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // ReOrderCatalogueItems
             // 

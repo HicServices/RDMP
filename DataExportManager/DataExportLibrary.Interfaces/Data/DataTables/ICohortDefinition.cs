@@ -12,5 +12,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         IExternalCohortTable LocationOfCohort { get; }
 
         bool IsAcceptableAsNewCohort(out string matchDescription);
+
+        IExtractableCohort CohortReplacedIfAny { get; set; }
     }
 }

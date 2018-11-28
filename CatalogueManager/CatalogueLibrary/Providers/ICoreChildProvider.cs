@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -6,8 +5,6 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.PerformanceImprovement;
-using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
@@ -31,6 +28,8 @@ namespace CatalogueLibrary.Providers
         
         Catalogue[] AllCatalogues { get; }
         Dictionary<int, Catalogue> AllCatalogueDictionary { get; }
+
+        ExternalDatabaseServer[] AllExternalServers { get; }
 
         AllANOTablesNode AllANOTablesNode { get; }
         ANOTable[] AllANOTables { get; }

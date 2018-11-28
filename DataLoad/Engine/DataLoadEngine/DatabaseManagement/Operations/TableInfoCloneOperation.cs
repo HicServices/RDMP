@@ -52,8 +52,7 @@ namespace DataLoadEngine.DatabaseManagement.Operations
 
             var discardedColumns = _tableInfo.PreLoadDiscardedColumns.Where(c => c.Destination == DiscardedColumnDestination.Dilute).ToArray();
 
-            DatabaseOperations.CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble], _tableInfo.GetRuntimeName(), destTableName, DropHICColumns, DropIdentityColumns, AllowNulls, discardedColumns);
-
+            DatabaseOperations.CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble], _tableInfo.Discover(DataAccessContext.DataLoad), destTableName, DropHICColumns, DropIdentityColumns, AllowNulls, discardedColumns);
             
             _operationSucceeded = true;
         }

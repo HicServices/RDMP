@@ -28,8 +28,7 @@ namespace CatalogueManager.PluginManagement.CodeGeneration
 
             try
             {
-                var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
-                var table = db.ExpectTable(serverDatabaseTableSelector1.Table);
+                var table = serverDatabaseTableSelector1.GetDiscoveredTable();
                 var generator = new MapsDirectlyToDatabaseTableClassCodeGenerator(table);
                 _codeEditor.Text = generator.GetCode();
 

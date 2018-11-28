@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus;
+﻿using CatalogueManager.Menus;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportManager.CommandExecution.AtomicCommands;
 
@@ -15,7 +7,7 @@ namespace DataExportManager.Menus
     class ProjectCohortIdentificationConfigurationAssociationsNodeMenu:RDMPContextMenuStrip
     {
         public ProjectCohortIdentificationConfigurationAssociationsNodeMenu(RDMPContextMenuStripArgs args, ProjectCohortIdentificationConfigurationAssociationsNode node)
-            : base(args, null)
+            : base(args, node)
         {
             Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(node.Project));
 

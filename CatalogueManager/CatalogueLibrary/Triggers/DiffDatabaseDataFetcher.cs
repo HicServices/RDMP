@@ -62,18 +62,19 @@ namespace CatalogueLibrary.Triggers
                 if (database.Exists())
                     checkNotifier.OnCheckPerformed(new CheckEventArgs("Verified database exists " + database, CheckResult.Success));
 
-                if (database.ExpectTable(_tableInfo.GetRuntimeName()).Exists())
+                var liveTable = _tableInfo.Discover(DataAccessContext.InternalDataProcessing);
+                var archiveTable = database.ExpectTable(_tableInfo.GetRuntimeName() + "_Archive", liveTable.Schema);
+
+                if (liveTable.Exists())
                     checkNotifier.OnCheckPerformed(new CheckEventArgs("Verified table exists " + _tableInfo, CheckResult.Success));
 
-                string archiveTable = _tableInfo.GetRuntimeName() + "_Archive";
-
-                if(database.ExpectTable(archiveTable).Exists())
+                if (archiveTable.Exists())
                     checkNotifier.OnCheckPerformed(new CheckEventArgs("Verified Archive table exists " + archiveTable, CheckResult.Success));
                 else
                     checkNotifier.OnCheckPerformed(new CheckEventArgs("Did not find an Archive table called " + archiveTable, CheckResult.Fail));
 
                 var allCols = _tableInfo.ColumnInfos.ToArray();
-                var allArchiveCols = database.ExpectTable(archiveTable).DiscoverColumns().ToArray();
+                var allArchiveCols = archiveTable.DiscoverColumns().ToArray();
 
                 _pks = allCols.Where(c => c.IsPrimaryKey).ToArray();
 
@@ -107,7 +108,7 @@ namespace CatalogueLibrary.Triggers
         {
             var sytnaxHelper = server.GetQuerySyntaxHelper();
             string tableName = _tableInfo.Name;
-            string archiveTableName = sytnaxHelper.EnsureFullyQualified(database.GetRuntimeName(),null, _tableInfo.GetRuntimeName() + "_Archive");
+            string archiveTableName = sytnaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema, _tableInfo.GetRuntimeName() + "_Archive");
 
             var whereStatement = "";
 
@@ -139,7 +140,7 @@ select 1 from {0} where {1} {2} < {3}
             var sytnaxHelper = server.GetQuerySyntaxHelper();
             
             string tableName = _tableInfo.Name;
-            string archiveTableName = sytnaxHelper.EnsureFullyQualified(database.GetRuntimeName(),null, _tableInfo.GetRuntimeName() + "_Archive");
+            string archiveTableName = sytnaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema, _tableInfo.GetRuntimeName() + "_Archive");
 
             var whereStatement = string.Join(" AND ",_pks.Select(pk=>string.Format("{0}.{1} = {2}.{1} ", tableName, pk.GetRuntimeName(),archiveTableName)));
             

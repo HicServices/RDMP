@@ -32,11 +32,10 @@
             this.tbExtractionDirectory = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnBrowse = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lblCataloguesProcessed = new System.Windows.Forms.Label();
             this.btnShowDirectory = new System.Windows.Forms.Button();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.btnCheck = new System.Windows.Forms.Button();
+            this.progressBarsUI1 = new ReusableUIComponents.Progress.ProgressBarsUI();
             this.SuspendLayout();
             // 
             // btnExtract
@@ -77,13 +76,6 @@
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(4, 77);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(753, 10);
-            this.progressBar1.TabIndex = 4;
-            // 
             // lblCataloguesProcessed
             // 
             this.lblCataloguesProcessed.AutoSize = true;
@@ -102,16 +94,6 @@
             this.btnShowDirectory.UseVisualStyleBackColor = true;
             this.btnShowDirectory.Click += new System.EventHandler(this.btnShowDirectory_Click);
             // 
-            // checksUI1
-            // 
-            this.checksUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.checksUI1.Location = new System.Drawing.Point(4, 106);
-            this.checksUI1.Name = "checksUI1";
-            this.checksUI1.Size = new System.Drawing.Size(753, 292);
-            this.checksUI1.TabIndex = 6;
-            // 
             // btnCheck
             // 
             this.btnCheck.Location = new System.Drawing.Point(108, 43);
@@ -122,21 +104,29 @@
             this.btnCheck.UseVisualStyleBackColor = true;
             this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
             // 
+            // progressBarsUI1
+            // 
+            this.progressBarsUI1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarsUI1.Location = new System.Drawing.Point(3, 72);
+            this.progressBarsUI1.Name = "progressBarsUI1";
+            this.progressBarsUI1.Size = new System.Drawing.Size(754, 100);
+            this.progressBarsUI1.TabIndex = 8;
+            // 
             // DitaExtractorUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.progressBarsUI1);
             this.Controls.Add(this.btnCheck);
-            this.Controls.Add(this.checksUI1);
             this.Controls.Add(this.lblCataloguesProcessed);
-            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbExtractionDirectory);
             this.Controls.Add(this.btnShowDirectory);
             this.Controls.Add(this.btnExtract);
             this.Name = "DitaExtractorUI";
-            this.Size = new System.Drawing.Size(760, 401);
+            this.Size = new System.Drawing.Size(760, 178);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -148,10 +138,9 @@
         private System.Windows.Forms.TextBox tbExtractionDirectory;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label lblCataloguesProcessed;
         private System.Windows.Forms.Button btnShowDirectory;
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Button btnCheck;
+        private ReusableUIComponents.Progress.ProgressBarsUI progressBarsUI1;
     }
 }

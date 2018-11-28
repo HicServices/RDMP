@@ -199,7 +199,7 @@ namespace ANOStore.ANOEngineering
 
                 if (existingImportReference != null)
                 {
-                    T existingImportInstance = m.Repository.GetObjectByID<T>(existingImportReference.LocalObjectID);
+                    T existingImportInstance = m.Repository.GetObjectByID<T>(existingImportReference.ReferencedObjectID);
                     notifier.OnCheckPerformed(new CheckEventArgs(typeof(T) + " '" + m + "' is already locally shared as '" + existingImportInstance + "'", CheckResult.Fail));
                 }
             }

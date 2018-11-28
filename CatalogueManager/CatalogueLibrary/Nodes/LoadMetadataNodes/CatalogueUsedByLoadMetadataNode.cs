@@ -1,63 +1,27 @@
 ﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Nodes.UsedByNodes;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class CatalogueUsedByLoadMetadataNode:IMasqueradeAs,IDeletableWithCustomMessage
+    public class CatalogueUsedByLoadMetadataNode:ObjectUsedByOtherObjectNode<LoadMetadata,Catalogue>,IDeletableWithCustomMessage
     {
-        public LoadMetadata LoadMetadata { get; private set; }
-        public Catalogue Catalogue { get; private set; }
 
-        public CatalogueUsedByLoadMetadataNode(LoadMetadata loadMetadata, Catalogue catalogue)
+        public CatalogueUsedByLoadMetadataNode(LoadMetadata loadMetadata, Catalogue catalogue):base(loadMetadata,catalogue)
         {
-            LoadMetadata = loadMetadata;
-            Catalogue = catalogue;
         }
 
-        public override string ToString()
-        {
-            return Catalogue.ToString();
-        }
-
-        #region Equality Members
-        protected bool Equals(CatalogueUsedByLoadMetadataNode other)
-        {
-            return Equals(LoadMetadata, other.LoadMetadata) && Equals(Catalogue, other.Catalogue);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((CatalogueUsedByLoadMetadataNode) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return ((LoadMetadata != null ? LoadMetadata.GetHashCode() : 0)*397) ^ (Catalogue != null ? Catalogue.GetHashCode() : 0);
-            }
-        }
-
-        public object MasqueradingAs()
-        {
-            return Catalogue;
-        }
-
-        #endregion
 
         public void DeleteInDatabase()
         {
-            Catalogue.LoadMetadata_ID = null;
-            Catalogue.SaveToDatabase();
+            ObjectBeingUsed.LoadMetadata_ID = null;
+            ObjectBeingUsed.SaveToDatabase();
         }
 
         public string GetDeleteMessage()
         {
-            return "disassociate Catalogue '" + Catalogue +"' from it's Load logic";
+            return "disassociate Catalogue '" + User +"' from it's Load logic";
         }
     }
 }

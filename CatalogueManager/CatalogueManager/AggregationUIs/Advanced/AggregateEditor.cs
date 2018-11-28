@@ -17,6 +17,7 @@ using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -545,6 +546,13 @@ namespace CatalogueManager.AggregationUIs.Advanced
         {
             var cmd = new ExecuteCommandExecuteAggregateGraph(_activator, _aggregate);
             cmd.Execute();
+        }
+
+        private void olvJoin_ItemActivate(object sender, EventArgs e)
+        {
+            var t = olvJoin.SelectedObject as TableInfo;
+            if(t != null)
+                _activator.RequestItemEmphasis(this,new EmphasiseRequest(t));
         }
     }
     

@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections;
+using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
@@ -74,34 +75,6 @@ namespace CatalogueManager.Menus
             return mi;
         }
 
-        /// <summary>
-        /// Adds all commands (usually plugins) that are derrived from T e.g. PluginDatabaseAtomicCommand.  This will only add Types that are exposed
-        /// via MEF Export decorations so if you define a new base Type T make sure to inherit from PluginAtomicCommand to pick up the [InheritedExport].
-        /// 
-        /// <para>All derrived classes must have either a blank constructor or one taking either an <see cref="IActivateItems"/> or <see cref="IRDMPPlatformRepositoryServiceLocator"/></para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        protected void AddAll<T>()
-        {
-            var types = _activator.RepositoryLocator.CatalogueRepository.MEF
-                .GetTypes<IAtomicCommand>().Where(t =>
-                    typeof(T).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
-
-            foreach (var type in types)
-            {
-                var constructor = new ObjectConstructor();
-
-                var instance =
-                    constructor.ConstructIfPossible(type, _activator)?? //what about one that takes an IActivateItems?
-                    constructor.ConstructIfPossible(type, _activator.RepositoryLocator)?? //maybe it takes a repo locator
-                    constructor.ConstructIfPossible(type);  //does it maybe have a blank constructor?
-
-                if(instance == null)
-                    throw new NotSupportedException("Type " + type + " did not have any valid constructors");
-
-                Add((IAtomicCommand)instance);
-            }
-        }
 
         public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)
         {
@@ -136,6 +109,18 @@ namespace CatalogueManager.Menus
                     Add(new ExecuteCommandPin(_activator, databaseEntity));
 
                 Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, _activator.GetLazyCatalogueObjectVisualisation()));
+            }
+
+            if (commonFunctionality.CheckColumnProvider != null)
+            {
+                if(databaseEntity != null)
+                    Add(new ExecuteCommandCheck(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst));
+              
+                var checkAll = new ToolStripMenuItem("Check All",null,(s,e)=>commonFunctionality.CheckColumnProvider.CheckCheckables());
+                checkAll.Image = CatalogueIcons.TinyYellow;
+                checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
+                Items.Add(checkAll);
+                
             }
             
             foreach (var plugin in _activator.PluginUserInterfaces)

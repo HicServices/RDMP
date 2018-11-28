@@ -1,8 +1,4 @@
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -13,7 +9,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
     /// <summary>
     /// See ExtractableCohort
     /// </summary>
-    public interface IExtractableCohort : IMapsDirectlyToDatabaseTable, ISaveable, IHasQuerySyntaxHelper
+    public interface IExtractableCohort :  IHasQuerySyntaxHelper, IMightBeDeprecated
     {
         int CountDistinct { get; }
         int ExternalCohortTable_ID { get; }

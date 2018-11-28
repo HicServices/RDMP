@@ -59,10 +59,12 @@ namespace CatalogueLibrary.Data
             "HIC.RDMP.Plugin.dll",
 
             "MapsDirectlyToDatabaseTable.dll",
+            "MapsDirectlyToDatabaseTableUI.dll",
             "ReusableUIComponents.dll",
             "Ticketing.dll",
 
             // Validation utilities
+            "HIC.Common.Validation.dll",
             "ValidationUtilitiesIntegrationTests.dll",
             "ValidationUtilitiesScenarioTests.dll",
             "ValidationUtilitiesTestConstants.dll",
@@ -82,6 +84,7 @@ namespace CatalogueLibrary.Data
             "ScintillaNET.dll",
             "DiffieHellman.dll",
             "Renci.SshNet.dll",
+            "Newtonsoft.Json.dll",
             "CsvHelper.dll", // CatalogueManager and others
 
             // Catalogue Manager UI refs

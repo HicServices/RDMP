@@ -95,6 +95,15 @@ namespace ReusableCodeTests
 
         }
 
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MYSQLServer)]
+        public void TestTableCreation_NullTableName(DatabaseType type)
+        {
+            var db = GetCleanedServer(type, true);
+            Assert.Throws<ArgumentNullException>(()=>db.CreateTable("", new DataTable()));
+        }
+
         [TestCase(DatabaseType.MicrosoftSQLServer, "01/01/2007 00:00:00")]
         [TestCase(DatabaseType.MYSQLServer, "1/1/2007 00:00:00")]
         [TestCase(DatabaseType.MYSQLServer, "01/01/2007 00:00:00")]

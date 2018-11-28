@@ -48,7 +48,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             if (_columnInfo == null)
-                _columnInfo = SelectOne<ColumnInfo>(Activator.RepositoryLocator.CatalogueRepository);
+                _columnInfo = SelectOne<ColumnInfo>(Activator.RepositoryLocator.CatalogueRepository,_catalogueItem.Name);
 
             if (_columnInfo == null)
                 return;

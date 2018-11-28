@@ -236,12 +236,14 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
+    <Compile Include="DublinCoreTests.cs" />
     <Compile Include="ImportTests\GatherAndShareTests.cs" />
     <Compile Include="ImportTests\PluginClassTests.cs" />
     <Compile Include="ImportTests\TestImportingAnObject.cs" />
@@ -434,6 +436,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Integration\CommitAssemblyTest.cd" />
     <None Include="packages.config" />
     <None Include="Resources\InvalidPlugin.dll" />

@@ -85,8 +85,11 @@ namespace DataExportLibrary.CohortCreationPipeline
 
         public IProject Project { get; private set; }
         public ICohortDefinition NewCohortDefinition { get; set; }
-        public ExtractableCohort CohortCreatedIfAny { get; set; }
         
+        public ExtractableCohort CohortCreatedIfAny { get; set; }
+
+        public string DescriptionForAuditLog { get; set; }
+
         public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog)
         {
             _repository = repository;
@@ -121,6 +124,8 @@ namespace DataExportLibrary.CohortCreationPipeline
                 throw new NotSupportedException("Project '" + Project  + "' does not have a ProjectNumber");
 
             var definition = new CohortDefinition(null, origCohortData.ExternalDescription, origCohortData.ExternalVersion + 1,(int) Project.ProjectNumber, origCohort.ExternalCohortTable);
+            definition.CohortReplacedIfAny = origCohort;
+
             NewCohortDefinition = definition;
             DescriptionForAuditLog = "Cohort Refresh";
 
@@ -143,8 +148,7 @@ namespace DataExportLibrary.CohortCreationPipeline
         }
 
 
-        public string DescriptionForAuditLog { get; set; }
-        
+
         public void Check(ICheckNotifier notifier)
         {
             NewCohortDefinition.LocationOfCohort.Check(notifier);
@@ -190,7 +194,7 @@ namespace DataExportLibrary.CohortCreationPipeline
             NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, connection);
         }
 
-        public int ImportAsExtractableCohort()
+        public int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess)
         {
             if(NewCohortDefinition.ID == null)
                 throw new NotSupportedException("CohortCreationRequest cannot be imported because it's ID is null, it is likely that it has not been pushed to the server yet");
@@ -199,6 +203,12 @@ namespace DataExportLibrary.CohortCreationPipeline
             cohort.AppendToAuditLog(DescriptionForAuditLog);
 
             CohortCreatedIfAny = cohort;
+
+            if (deprecateOldCohortOnSuccess && NewCohortDefinition.CohortReplacedIfAny != null)
+            {
+                NewCohortDefinition.CohortReplacedIfAny.IsDeprecated = true;
+                NewCohortDefinition.CohortReplacedIfAny.SaveToDatabase();
+            }
 
             return cohort.ID;
         }

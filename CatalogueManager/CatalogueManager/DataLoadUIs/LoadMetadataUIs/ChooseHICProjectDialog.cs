@@ -56,7 +56,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             ragSmiley1.Visible = true;
             try
             {
-                new HICProjectDirectory(tbUseExisting.Text, false);
+                new HICProjectDirectory(tbUseExisting.Text);
                 ragSmiley1.Reset();
             }
             catch (Exception ex)
@@ -77,7 +77,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
                     if(!dir.Exists)
                         dir.Create();
 
-                    Result = HICProjectDirectory.CreateDirectoryStructure(dir);
+                    Result = HICProjectDirectory.CreateDirectoryStructure(dir.Parent,dir.Name);
 
                     DialogResult = DialogResult.OK;
                     this.Close();
@@ -92,7 +92,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             {
                 try
                 {
-                    Result = new HICProjectDirectory(tbUseExisting.Text,false);
+                    Result = new HICProjectDirectory(tbUseExisting.Text);
                     DialogResult = DialogResult.OK;
                     this.Close();
                 }

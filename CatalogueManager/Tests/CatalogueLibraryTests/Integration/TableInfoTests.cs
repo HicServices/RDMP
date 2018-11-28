@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
+using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.Triggers;
+using CatalogueLibrary.Triggers.Implementations;
 using NUnit.Framework;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -92,6 +100,79 @@ namespace CatalogueLibraryTests.Integration
             {
                 c.DeleteInDatabase();
                 table.DeleteInDatabase();
+            }
+        }
+
+        [Test]
+        public void TestCreateTableInSchemaAndImportAsTableInfo()
+        {
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            using (var con = db.Server.GetConnection())
+            {
+                con.Open();
+
+                db.Server.GetCommand("CREATE SCHEMA Omg", con).ExecuteNonQuery();
+
+                var tbl = db.CreateTable("Fish", new [] {new DatabaseColumnRequest("MyCol", "int"){IsPrimaryKey = true}},schema:"Omg");
+
+                Assert.AreEqual("Fish", tbl.GetRuntimeName());
+                Assert.AreEqual( "Omg", tbl.Schema);
+                Assert.IsTrue(tbl.GetFullyQualifiedName().EndsWith("Omg.[Fish]"));
+
+                Assert.IsTrue(tbl.Exists());
+
+                TableInfo ti;
+                ColumnInfo[] cols;
+                Import(tbl,out ti,out cols);
+
+                Assert.AreEqual("Omg",ti.Schema);
+                var tbl2 = ti.Discover(DataAccessContext.InternalDataProcessing);
+                Assert.AreEqual("Omg",tbl2.Schema);
+                Assert.IsTrue(tbl2.Exists());
+
+                Assert.IsTrue(ti.Name.EndsWith("Omg.[Fish]"));
+
+                Assert.IsTrue(ti.GetFullyQualifiedName().EndsWith("Omg.[Fish]"));
+
+                var c = cols.Single();
+
+                Assert.AreEqual("MyCol",c.GetRuntimeName());
+                StringAssert.Contains("Omg.[Fish]",c.GetFullyQualifiedName());
+
+                //should be primary key
+                Assert.IsTrue(c.IsPrimaryKey);
+
+                var triggerFactory = new TriggerImplementerFactory(DatabaseType.MicrosoftSQLServer);
+                var impl = triggerFactory.Create(tbl);
+                
+                Assert.AreEqual(TriggerStatus.Missing,impl.GetTriggerStatus());
+
+                impl.CreateTrigger(new ThrowImmediatelyCheckNotifier());
+
+                Assert.AreEqual(TriggerStatus.Enabled, impl.GetTriggerStatus());
+
+                Assert.IsTrue( impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+
+                //should be synced
+                var sync = new TableInfoSynchronizer(ti);
+                sync.Synchronize(new AcceptAllCheckNotifier());
+
+                //Test importing the _Legacy table valued function that should be created in the Omg schema and test synching that too.
+                var tvf = ti.Discover(DataAccessContext.InternalDataProcessing).Database.ExpectTableValuedFunction("Fish_Legacy", "Omg");
+                Assert.IsTrue(tvf.Exists());
+
+                var importerTvf = new TableValuedFunctionImporter(CatalogueRepository, tvf);
+                TableInfo tvfTi;
+                ColumnInfo[] tvfCols;
+                importerTvf.DoImport(out tvfTi,out tvfCols);
+
+                Assert.AreEqual("Omg",tvfTi.Schema);
+
+                var syncTvf = new TableInfoSynchronizer(tvfTi);
+                syncTvf.Synchronize(new ThrowImmediatelyCheckNotifier());
+
+                StringAssert.EndsWith("Omg.Fish_Legacy(@index) AS Fish_Legacy",tvfTi.Name);
             }
         }
     }

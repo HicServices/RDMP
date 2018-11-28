@@ -43,10 +43,7 @@ namespace CohortManager.Menus
             _executeCommandClone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator).SetTarget(cic);
             Add(_executeCommandClone);
 
-            var freeze = new ToolStripMenuItem("Freeze Configuration",
-                CatalogueIcons.FrozenCohortIdentificationConfiguration, (s, e) => FreezeConfiguration());
-            freeze.Enabled = !cic.Frozen;
-            Items.Add(freeze);
+            Add(new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen));
             
             Items.Add(new ToolStripSeparator());
 
@@ -59,10 +56,5 @@ namespace CohortManager.Menus
             _executeCommandClone.SetTarget(association.Project);
         }
         
-        private void FreezeConfiguration()
-        {
-            _cic.Freeze();
-            Publish(_cic);
-        }
     }
 }

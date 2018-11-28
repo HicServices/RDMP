@@ -56,9 +56,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             return new DiscoveredTable(this, tableName, _querySyntaxHelper, schema, tableType);
         }
 
-        public DiscoveredTableValuedFunction ExpectTableValuedFunction(string tableName)
+        public DiscoveredTableValuedFunction ExpectTableValuedFunction(string tableName,string schema = null)
         {
-            return new DiscoveredTableValuedFunction(this, tableName, _querySyntaxHelper);
+            return new DiscoveredTableValuedFunction(this, tableName, _querySyntaxHelper, schema);
         }
         public DiscoveredStoredprocedure[] DiscoverStoredprocedures()
         {
@@ -71,7 +71,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         }
 
         /// <summary>
-        /// 
+        /// Connects to the server and enumerates the databases to see whether the currently described database exists.
         /// </summary>
         /// <param name="transaction">Database level operations are usually not transaction bound so be very careful about setting a parameter for this</param>
         /// <returns></returns>
@@ -114,9 +114,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             Server.CreateDatabase(GetRuntimeName());
         }
 
-        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns)
+        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns, string schema= null)
         {
-            return Helper.CreateTable(this, tableName, columns,null,false);
+            return Helper.CreateTable(this,tableName, columns,null,false,schema);
         }
         
         public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns,Dictionary<DatabaseColumnRequest,DiscoveredColumn> foreignKeyPairs,bool cascadeDelete)

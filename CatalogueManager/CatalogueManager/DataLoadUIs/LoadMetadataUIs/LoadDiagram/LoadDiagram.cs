@@ -305,10 +305,11 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 _commonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables,activator,null,null,new RDMPCollectionCommonFunctionalitySettings()
                 {
                     AddFavouriteColumn = false,
-                    AddIDColumn = true,
+                    AddIDColumn = false,
                     AllowPinning = false,
                     SuppressChildrenAdder = true,
-                    SuppressActivate = true
+                    SuppressActivate = true,
+                    AddCheckColumn = false
                 });
 
             if (_dragDropProvider == null)

@@ -106,9 +106,11 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 else
                     TableLoadInfo.Inserts = LinesWritten;
 
-                job.OnProgress(this,new ProgressEventArgs("Write to file " + OutputFile,new ProgressMeasurement(LinesWritten,ProgressType.Records), stopwatch.Elapsed));
+                if (LinesWritten % 1000 == 0)
+                    job.OnProgress(this,new ProgressEventArgs("Write to file " + OutputFile,new ProgressMeasurement(LinesWritten,ProgressType.Records), stopwatch.Elapsed));
             }
-            
+            job.OnProgress(this, new ProgressEventArgs("Write to file " + OutputFile, new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
+
             stopwatch.Stop();
             _output.Flush();
 

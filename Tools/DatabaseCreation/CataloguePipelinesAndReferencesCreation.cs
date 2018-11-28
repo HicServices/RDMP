@@ -52,6 +52,13 @@ namespace DatabaseCreation
 
             _edsLogging.Server = _logging.DataSource;
             _edsLogging.Database = _logging.InitialCatalog;
+
+            if(_logging.UserID != null)
+            {
+                _edsLogging.Username = _logging.UserID;
+                _edsLogging.Password = _logging.Password;
+            }
+
             _edsLogging.SaveToDatabase();
             defaults.SetDefault(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
             Console.WriteLine("Successfully configured default logging server");
@@ -59,6 +66,13 @@ namespace DatabaseCreation
             var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", typeof(DataQualityEngine.Database.Class1).Assembly);
             edsDQE.Server = _dqe.DataSource;
             edsDQE.Database = _dqe.InitialCatalog;
+
+            if (_logging.UserID != null)
+            {
+                edsDQE.Username = _dqe.UserID;
+                edsDQE.Password = _dqe.Password;
+            }
+
             edsDQE.SaveToDatabase();
             defaults.SetDefault(ServerDefaults.PermissableDefaults.DQE, edsDQE);
             Console.WriteLine("Successfully configured default dqe server");
@@ -93,7 +107,7 @@ namespace DatabaseCreation
 
             CreatePipeline("DATA EXPORT:To CSV", typeof (ExecuteDatasetExtractionSource), typeof (ExecuteDatasetExtractionFlatFileDestination));
 
-            CreatePipeline("RELEASE PROJECT:To Directory", null, typeof (BasicDataReleaseDestination));
+            CreatePipeline("RELEASE PROJECT:To Directory", null, typeof (BasicDataReleaseDestination),typeof(ReleaseFolderProvider));
             
             CreatePipeline("CREATE TABLE:From Aggregate Query", null, typeof(DataTableUploadDestination));
         }

@@ -94,6 +94,7 @@ namespace CatalogueManager.Icons.IconProvision
 
         AggregateDimension,
         Lookup,
+        LookupCompositeJoinInfo,
         JoinInfo,
 
         //to release a completed project extract
@@ -159,6 +160,9 @@ namespace CatalogueManager.Icons.IconProvision
 
         AllGovernanceNode,
         GovernancePeriod,
-        GovernanceDocument
+        GovernanceDocument,
+
+        AllProjectCohortIdentificationConfigurationsNode,
+        AllFreeCohortIdentificationConfigurationsNode
     }
 }

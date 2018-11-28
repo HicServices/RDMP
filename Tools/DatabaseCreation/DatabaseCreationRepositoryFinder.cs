@@ -34,10 +34,10 @@ namespace DatabaseCreation
             return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName,databaseObjectTypeName,objectID);
         }
 
-        public DatabaseCreationRepositoryFinder(string servername,string prefix)
+        public DatabaseCreationRepositoryFinder(DatabaseCreationProgramOptions options)
         {
-            var cata = DatabaseCreationProgram.GetBuilder(servername, prefix,DatabaseCreationProgram.DefaultCatalogueDatabaseName);
-            var export = DatabaseCreationProgram.GetBuilder(servername,prefix, DatabaseCreationProgram.DefaultDataExportDatabaseName);
+            var cata = options.GetBuilder(DatabaseCreationProgram.DefaultCatalogueDatabaseName);
+            var export = options.GetBuilder(DatabaseCreationProgram.DefaultDataExportDatabaseName);
 
             Exception exCatalogue;
             Exception exDataExport;

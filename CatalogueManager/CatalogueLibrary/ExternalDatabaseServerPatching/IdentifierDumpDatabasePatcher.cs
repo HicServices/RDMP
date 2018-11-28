@@ -1,9 +1,4 @@
-using System;
-using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Repositories;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
@@ -13,11 +8,13 @@ namespace CatalogueLibrary.ExternalDatabaseServerPatching
     /// </summary>
     public class IdentifierDumpDatabasePatcher : IPatcher
     {
+        /// <inheritdoc/>
         public Assembly GetHostAssembly()
         {
             return Assembly.Load("IdentifierDump");
         }
 
+        /// <inheritdoc/>
         public Assembly GetDbAssembly()
         {
             return Assembly.Load("IdentifierDump.Database");

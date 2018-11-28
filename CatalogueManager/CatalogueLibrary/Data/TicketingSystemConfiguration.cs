@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Ticketing;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data
@@ -22,7 +23,7 @@ namespace CatalogueLibrary.Data
     /// <para>There is also a reference to DataAccessCredentials record which stores optional username and encrypted password to use in the plugin for communicating with the ticketing system.</para>
     /// 
     /// </summary>
-    public class TicketingSystemConfiguration : DatabaseEntity
+    public class TicketingSystemConfiguration : DatabaseEntity, INamed
     {
         #region Database Properties
         private bool _isActive;
@@ -31,26 +32,46 @@ namespace CatalogueLibrary.Data
         private string _name;
         private int? _dataAccessCredentials_ID;
 
+        /// <summary>
+        /// True if the ticketing system should be used/consulted.  Set to false if you want to temporarily disable the ticketing system link to RDMP
+        /// without actually deleting the object. 
+        /// 
+        /// <para>See:</para><see cref="CatalogueRepository.GetTicketingSystem"/>
+        /// </summary>
         public bool IsActive
         {
             get { return _isActive; }
             set { SetField(ref _isActive, value); }
         }
+
+        /// <summary>
+        /// The Url for communicating with the <see cref="ITicketingSystem"/>
+        /// </summary>
         public string Url
         {
             get { return _url; }
             set { SetField(ref _url, value); }
         }
+
+        /// <summary>
+        /// The C# System.Type of the <see cref="ITicketingSystem"/> which should be used to interact with the ticketing service
+        /// </summary>
         public string Type
         {
             get { return _type; }
             set { SetField(ref _type, value); }
         }
+
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+
+        /// <summary>
+        /// The credentials to use to connect to the ticketing service (username/password)
+        /// </summary>
         public int? DataAccessCredentials_ID
         {
             get { return _dataAccessCredentials_ID; }
@@ -60,6 +81,11 @@ namespace CatalogueLibrary.Data
         #endregion
 
         #region Relationships
+
+        /// <summary>
+        /// Fetches the credentials to use when connecting to the ticketing service.  Returns null if no credentials have been
+        /// configured.
+        /// </summary>
         [NoMappingToDatabase]
         public DataAccessCredentials DataAccessCredentials { get
         {
@@ -69,7 +95,8 @@ namespace CatalogueLibrary.Data
         }}
         #endregion
 
-        public TicketingSystemConfiguration(ICatalogueRepository repository, string name)
+        /// <inheritdoc/>
+        public TicketingSystemConfiguration(ICatalogueRepository repository, string name):base()
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
@@ -78,8 +105,8 @@ namespace CatalogueLibrary.Data
             });
         }
 
-        internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r)
-            : base(repository, r)
+        /// <inheritdoc/>
+        internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             IsActive = (bool) r["IsActive"];
             Url = r["Url"] as string;

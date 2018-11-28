@@ -27,8 +27,13 @@ namespace CatalogueLibrary.Triggers.Implementations
     /// </summary>
     internal class MicrosoftSQLTriggerImplementer:TriggerImplementer
     {
+        private string _schema;
+        private string _triggerName;
+
         public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
+            _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo":_table.Schema;
+            _triggerName = _schema + "." + _table.GetRuntimeName() + "_OnUpdate";
         }
 
         public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
@@ -37,12 +42,10 @@ namespace CatalogueLibrary.Triggers.Implementations
             {
                 con.Open();
                 
-                string triggerName = "[dbo]." + _table.GetRuntimeName() + "_OnUpdate";
-
                 problemsDroppingTrigger = "";
                 thingsThatWorkedDroppingTrigger = "";
 
-                var cmdDropTrigger = _server.GetCommand("DROP TRIGGER " + triggerName, con);
+                var cmdDropTrigger = _server.GetCommand("DROP TRIGGER " + _triggerName, con);
                 try
                 {
                     thingsThatWorkedDroppingTrigger += "Dropped Trigger successfully" + Environment.NewLine;
@@ -100,7 +103,7 @@ namespace CatalogueLibrary.Triggers.Implementations
                 //remove trailing comma
                 idxCompositeKeyBody = idxCompositeKeyBody.TrimEnd(',');
 
-                string createIndexSQL = @"CREATE NONCLUSTERED INDEX [PKsIndex] ON [dbo].[" + _archiveTable.GetRuntimeName() + "](" +idxCompositeKeyBody + ")";
+                string createIndexSQL = @"CREATE NONCLUSTERED INDEX [PKsIndex] ON " + _archiveTable.GetFullyQualifiedName() + " (" +idxCompositeKeyBody + ")";
                 var cmdCreateIndex = _server.GetCommand(createIndexSQL, con);
 
                 try
@@ -125,8 +128,6 @@ namespace CatalogueLibrary.Triggers.Implementations
 
         private string GetCreateTriggerSQL()
         {
-            string triggerName = "[dbo]." + _table.GetRuntimeName() + "_OnUpdate";
-
             if (!_primaryKeys.Any())
                 throw new TriggerException("There must be at least 1 primary key");
 
@@ -160,7 +161,7 @@ namespace CatalogueLibrary.Triggers.Implementations
 
             return
                 @"
-CREATE TRIGGER " + triggerName + " ON [dbo].[" + _table + @"]
+CREATE TRIGGER " + _triggerName + " ON " + _table.GetFullyQualifiedName() + @"
 AFTER UPDATE, DELETE
 AS BEGIN
 
@@ -225,8 +226,8 @@ END
 
             //trim off excess crud at the end
             columnsInArchive = columnsInArchive.Trim(new[] {')', '\r', '\n'});
-            
-            string sqlToRun = string.Format("CREATE FUNCTION [dbo].[{0}_Legacy]", _table.GetRuntimeName());
+
+            string sqlToRun = string.Format("CREATE FUNCTION [" + _schema + "].[{0}_Legacy]", _table.GetRuntimeName());
             sqlToRun += Environment.NewLine;
             sqlToRun += "(" + Environment.NewLine;
             sqlToRun += "\t@index DATETIME" + Environment.NewLine;

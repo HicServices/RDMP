@@ -31,7 +31,7 @@ namespace DataLoadEngine.Job.Scheduling
 
         public override IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
         {
-            var hicProjectDirectory = new HICProjectDirectory(LoadMetadata.LocationOfFlatFiles, false);
+            var hicProjectDirectory = new HICProjectDirectory(LoadMetadata.LocationOfFlatFiles);
             return new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, hicProjectDirectory, listener,configuration)
             {
                 LoadProgress = _loadProgress,

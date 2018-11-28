@@ -9,6 +9,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTableUI;
 
@@ -112,8 +113,21 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
             
             //construct the result
-            Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (DataExportRepository)Project.Repository, tbDescription.Text); 
+            Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (DataExportRepository)Project.Repository, tbDescription.Text);
 
+
+            var replacedDef = ddExistingCohort.SelectedItem as CohortDefinition;
+            if (replacedDef != null && replacedDef.ID.HasValue)
+            {
+                var replaced =  Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>().FirstOrDefault(
+                    c=>c.OriginID == replacedDef.ID.Value &&
+                    c.ExternalCohortTable_ID == replacedDef.LocationOfCohort.ID
+                    );
+
+                Result.NewCohortDefinition.CohortReplacedIfAny = replaced;
+            }
+            
+            
             //see if it is passing checks
             ToMemoryCheckNotifier notifier = new ToMemoryCheckNotifier();
             Result.Check(notifier);
@@ -176,6 +190,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             var cohorts = ExtractableCohort.GetImportableCohortDefinitions(_target).ToArray();
             var maxVersionCohorts = cohorts.Where(c => //get cohorts where
                 !cohorts.Any(c2 => c2.Description.Equals(c.Description) //there are not any other cohorts with the same name
+                    && c2.ProjectNumber == c.ProjectNumber
                     && c2.Version > c.Version)//and a higher version
                     ).ToArray();
 

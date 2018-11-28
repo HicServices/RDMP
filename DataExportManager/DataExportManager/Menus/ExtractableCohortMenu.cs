@@ -1,4 +1,5 @@
-﻿using CatalogueManager.Menus;
+﻿using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Menus;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.DataViewing.Collections;
 
@@ -14,6 +15,8 @@ namespace DataExportManager.Menus
         {
             _cohort = cohort;
             Items.Add("View TOP 100 identifiers",null, (s, e) => ViewTop100());
+
+            Add(new ExecuteCommandDeprecate(args.ItemActivator, cohort, !cohort.IsDeprecated));
         }
         
         private void ViewTop100()

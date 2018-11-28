@@ -9,8 +9,8 @@ using System.Reflection;
 [assembly: AssemblyCulture("")]
 
 // These should be replaced with correct values by the release process
-[assembly: AssemblyVersion("2.9.6.7")]
-[assembly: AssemblyFileVersion("2.9.6.7")]
-[assembly: AssemblyInformationalVersion("2.9.6.7")]
+[assembly: AssemblyVersion("2.10.1.3")]
+[assembly: AssemblyFileVersion("2.10.1.3")]
+[assembly: AssemblyInformationalVersion("2.10.1.3")]
 
 [assembly:InternalsVisibleTo("CatalogueManager")]

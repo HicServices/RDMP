@@ -41,7 +41,7 @@ namespace DataLoadEngineTests.Integration
             var pt = MockRepository.GenerateMock<IProcessTask>();
             pt.Stub(x => x.Path).Return(f.FullName);
 
-            var dir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"ExecuteSqlFileRuntimeTaskTests")), true);
+            var dir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
             var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
@@ -79,7 +79,7 @@ namespace DataLoadEngineTests.Integration
             var pt = MockRepository.GenerateMock<IProcessTask>();
             pt.Stub(x => x.Path).Return(f.FullName);
 
-            var dir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"ExecuteSqlFileRuntimeTaskTests")), true);
+            var dir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
             var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
@@ -127,7 +127,7 @@ namespace DataLoadEngineTests.Integration
             var pt = MockRepository.GenerateMock<IProcessTask>();
             pt.Stub(x => x.Path).Return(f.FullName);
 
-            var dir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"ExecuteSqlFileRuntimeTaskTests")), true);
+            var dir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
             var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
 

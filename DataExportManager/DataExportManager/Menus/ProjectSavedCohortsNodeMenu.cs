@@ -6,7 +6,7 @@ namespace DataExportManager.Menus
 {
     class ProjectSavedCohortsNodeMenu:RDMPContextMenuStrip
     {
-        public ProjectSavedCohortsNodeMenu(RDMPContextMenuStripArgs args, ProjectSavedCohortsNode savedCohortsNode): base(args, null)
+        public ProjectSavedCohortsNodeMenu(RDMPContextMenuStripArgs args, ProjectSavedCohortsNode savedCohortsNode): base(args, savedCohortsNode)
         {
             Add(new ExecuteCommandCreateNewCohortFromFile(_activator).SetTarget(savedCohortsNode.Project));
             Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator).SetTarget(savedCohortsNode.Project));

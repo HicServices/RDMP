@@ -36,6 +36,7 @@ namespace CatalogueLibrary.Data.Cohort
         private bool _frozen;
         private string _frozenBy;
         private DateTime? _frozenDate;
+        private int? _clonedFrom_ID;
 
         /// <inheritdoc/>
         public string Name
@@ -120,6 +121,18 @@ namespace CatalogueLibrary.Data.Cohort
             set { SetField(ref  _frozenDate, value); }
         }
 
+        /// <summary>
+        /// The ID of the CohortIdentificationConfiguration that this one was cloned from (if any).
+        /// 
+        /// <para>It is possible to delete the parent, resulting in a ClonedFrom_ID which cannot be resolved to a parent object</para>
+        /// <seealso cref="Frozen"/>
+        /// </summary>
+        public int? ClonedFrom_ID
+        {
+            get { return _clonedFrom_ID; }
+            set { SetField(ref  _clonedFrom_ID, value); }
+        }
+
         #endregion
 
         #region Relationships
@@ -177,6 +190,7 @@ namespace CatalogueLibrary.Data.Cohort
             Frozen = Convert.ToBoolean(r["Frozen"]);
             FrozenBy = r["FrozenBy"] as string;
             FrozenDate = ObjectToNullableDateTime(r["FrozenDate"]);
+            ClonedFrom_ID = ObjectToNullableInt(r["ClonedFrom_ID"]);
         }
         
         /// <summary>
@@ -336,6 +350,7 @@ namespace CatalogueLibrary.Data.Cohort
                         parentToCloneJoinablesDictionary.Add(joinable,cloneJoinable);
                     }
 
+                    clone.ClonedFrom_ID = ID;
                     clone.RootCohortAggregateContainer_ID = RootCohortAggregateContainer.CloneEntireTreeRecursively(notifier, this, clone, parentToCloneJoinablesDictionary).ID;
                     clone.SaveToDatabase();
 

@@ -35,7 +35,7 @@ namespace DataExportLibrary.DataRelease.Potential
                 if (table == null)
                 { 
                     notifier.OnCheckPerformed(new CheckEventArgs("The executed Global " + GlobalResult.ExtractedName + 
-                                                                 " has a SQL script but the extracted type (" + GlobalResult.ExtractedType + 
+                                                                 " has a SQL script but the extracted type (" + GlobalResult.ReferencedObjectType + 
                                                                  ") is not a SupportingSQLTable", CheckResult.Fail));
                     Releasability = Releaseability.ExtractionSQLDesynchronisation;
                 }
@@ -47,7 +47,7 @@ namespace DataExportLibrary.DataRelease.Potential
                 }
             }
 
-            if (GlobalResult.GetExtractedType() == typeof (SupportingDocument))
+            if (GlobalResult.IsReferenceTo(typeof (SupportingDocument)))
                 CheckFileExists(notifier, GlobalResult.DestinationDescription);
             else
                 CheckDestination(notifier, GlobalResult);

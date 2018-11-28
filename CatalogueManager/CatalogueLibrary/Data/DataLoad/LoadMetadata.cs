@@ -55,7 +55,8 @@ namespace CatalogueLibrary.Data.DataLoad
         private string _name;
         private string _description;
         private CacheArchiveType _cacheArchiveType;
-        
+        private int? _overrideRawServerID;
+
         /// <inheritdoc/>
         [AdjustableLocation]
         public string LocationOfFlatFiles
@@ -99,6 +100,16 @@ namespace CatalogueLibrary.Data.DataLoad
             set { SetField(ref _cacheArchiveType, value); }
         }
 
+        /// <summary>
+        /// Optional.  Indicates that when running the Data Load Engine, the specific <see cref="ExternalDatabaseServer"/> should be used for the RAW server (instead of 
+        /// the system default - see <see cref="ServerDefaults"/>).
+        /// </summary>
+        public int? OverrideRAWServer_ID
+        {
+            get { return _overrideRawServerID; }
+            set { SetField(ref _overrideRawServerID, value); }
+        }
+
         #endregion
 
         
@@ -106,6 +117,13 @@ namespace CatalogueLibrary.Data.DataLoad
         public static int LocationOfFlatFiles_MaxLength = -1;
 
         #region Relationships
+
+        /// <inheritdoc/>
+        [NoMappingToDatabase]
+        public ExternalDatabaseServer OverrideRAWServer {
+            get { return OverrideRAWServer_ID.HasValue? Repository.GetObjectByID<ExternalDatabaseServer>(OverrideRAWServer_ID.Value): null; }
+        }
+
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public ILoadProgress[] LoadProgresses
@@ -151,6 +169,7 @@ namespace CatalogueLibrary.Data.DataLoad
             Name = r["Name"].ToString();
             Description = r["Description"] as string;//allows for nulls
             CacheArchiveType = (CacheArchiveType)r["CacheArchiveType"];
+            OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
         }
         
         /// <inheritdoc/>

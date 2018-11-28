@@ -49,11 +49,9 @@ namespace CatalogueManager.DataQualityUIs
             base.SetDatabaseObject(activator, databaseObject);
             _catalogue = databaseObject;
             checkAndExecuteUI1.SetItemActivator(activator);
-
-            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
-            rdmpObjectsRibbonUI1.Clear();
-            rdmpObjectsRibbonUI1.Add(RDMPConcept.DQE,OverlayKind.Execute,"Run Data Quality Engine");
-            rdmpObjectsRibbonUI1.Add(_catalogue);
+            
+            btnValidationRules.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Edit);
+            btnViewResults.Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph);
         }
 
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
@@ -67,16 +65,18 @@ namespace CatalogueManager.DataQualityUIs
             return "DQE Execution:" + base.GetTabName();
         }
 
+
+        private void btnValidationRules_Click(object sender, EventArgs e)
+        {
+            var cmd = new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue);
+            cmd.Execute();
+        }
+
         private void btnViewResults_Click(object sender, EventArgs e)
         {
             _activator.ActivateViewDQEResultsForCatalogue(_catalogue);
         }
 
-        private void btnConfigureValidation_Click(object sender, EventArgs e)
-        {
-            var cmd = new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue);
-            cmd.Execute();
-        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DQEExecutionControl_Design, UserControl>))]

@@ -32,6 +32,13 @@ namespace CatalogueLibrary.FilterImporting
         private ISqlParameter[] _importFromIfAny;
         private ISqlParameter[] _globals;
 
+        /// <summary>
+        /// Sets up the factory to create parameters of the appropriate type (See <see cref="IFilterFactory.CreateNewParameter"/>) while respecting any global overriding parameters
+        /// and any explicit <paramref name="importFromIfAny"/>
+        /// </summary>
+        /// <param name="factory">Decides the Type of <see cref="ISqlParameter"/> created</param>
+        /// <param name="globals">Globally overriding parameters, if a filter requires a parameter that matches a global no <see cref="ISqlParameter"/> is created</param>
+        /// <param name="importFromIfAny">Desired parameter values, if a filter requires a parameter that matches importFromIfAny then it will get the value from here</param>
         public ParameterCreator(IFilterFactory factory, IEnumerable<ISqlParameter> globals, ISqlParameter[] importFromIfAny)
         {
             if(globals != null)
@@ -41,6 +48,13 @@ namespace CatalogueLibrary.FilterImporting
             _importFromIfAny = importFromIfAny;
         }
 
+
+        /// <summary>
+        /// Creates all the <see cref="ISqlParameter"/> required for the given <paramref name="filterToCreateFor"/> (based on it's WHERE Sql).  Will perform rename operations
+        /// where there is already a conflicting <see cref="ISqlParameter"/> declared in the same scope (See <paramref name="existingParametersInScope"/>)
+        /// </summary>
+        /// <param name="filterToCreateFor"></param>
+        /// <param name="existingParametersInScope"></param>
         public void CreateAll(IFilter filterToCreateFor, ISqlParameter[] existingParametersInScope)
         {
             //get what parameter exists
@@ -134,7 +148,7 @@ namespace CatalogueLibrary.FilterImporting
         /// Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" unless 
         /// there is already a global parameter called @bob.  globals is optional, pass in null if there aren't any
         /// </summary>
-        /// <param name="filter">the SQL filter you want to determine the parameter names in, does not have to include WHERE (infact probably shouldnt)</param>
+        /// <param name="whereSql">the SQL filter WHERE section you want to determine the parameter names in, does.  Should not nclude WHERE (only the boolean logic bit)</param>
         /// <param name="globals">optional parameter, an enumerable of parameters that already exist in a superscope (i.e. global parametetrs)</param>
         /// <returns>parameter names that are required by the SQL but are not already declared in the globals</returns>
         private HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql, IEnumerable<ISqlParameter> globals)
@@ -150,6 +164,13 @@ namespace CatalogueLibrary.FilterImporting
             return toReturn;
         }
 
+        /// <summary>
+        /// Renames all references to a given parameter e.g. @myParam to the supplied <paramref name="parameterNameReplacement"/> e.g. @myParam2
+        /// </summary>
+        /// <param name="haystack">The Sql to find parameter references in</param>
+        /// <param name="parameterName">The parameter name to replace</param>
+        /// <param name="parameterNameReplacement">The new name that should replace it</param>
+        /// <returns></returns>
         public static string RenameParameterInSQL(string haystack, string parameterName, string parameterNameReplacement)
         {
             //Does a zero matching look ahead for anything that isn't a legal parameter name e.g. "@bob)" will match the bracket but will not replace the bracket since the match is zero width

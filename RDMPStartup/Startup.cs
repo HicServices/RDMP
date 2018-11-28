@@ -296,9 +296,8 @@ namespace RDMPStartup
                 if(srcFile != null)
                     files.Add(srcFile);
 
-                foreach (var lma in recordsInDatabase[i].LoadModuleAssemblies)
-                {
-                    
+                foreach (var lma in recordsInDatabase[i].LoadModuleAssemblies.Where(lma => !LoadModuleAssembly.ProhibitedDllNames.Contains(lma.Name)))
+                {   
                     try
                     {
                         lma.DownloadAssembly(subdir);

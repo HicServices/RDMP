@@ -9,5 +9,6 @@ namespace MapsDirectlyToDatabaseTable.Attributes
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
     public class UsefulPropertyAttribute : Attribute
     {
+        public string DisplayName { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace CatalogueManager.Menus
     {
         public DocumentationNode DocumentationNode { get; set; }
 
-        public DocumentationNodeMenu(RDMPContextMenuStripArgs args, DocumentationNode documentationNode):base(args,null)
+        public DocumentationNodeMenu(RDMPContextMenuStripArgs args, DocumentationNode documentationNode): base(args, documentationNode)
         {
             DocumentationNode = documentationNode;
 

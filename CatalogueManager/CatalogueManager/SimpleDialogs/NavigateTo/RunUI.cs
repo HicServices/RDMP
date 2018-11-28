@@ -116,6 +116,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     typeof(DirectoryInfo).IsAssignableFrom(p.ParameterType) ||
                     typeof(DatabaseEntity).IsAssignableFrom(p.ParameterType) ||
                     typeof(ICheckable).IsAssignableFrom(p.ParameterType) ||
+                    typeof(IMightBeDeprecated).IsAssignableFrom(p.ParameterType)||
                     p.HasDefaultValue ||
                     p.ParameterType.IsValueType
                 );
@@ -196,9 +197,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 return null;
             }
 
-            if (typeof (ICheckable).IsAssignableFrom(paramType))
-                return PickOne(parameterInfo,paramType,_activator.CoreChildProvider.GetAllSearchables().Keys.OfType<ICheckable>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
-
             if (typeof(DatabaseEntity).IsAssignableFrom(paramType))
             {
                 IMapsDirectlyToDatabaseTable[] availableObjects;
@@ -212,6 +210,16 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
                 return PickOne(parameterInfo,paramType,availableObjects);
             }
+
+            if (typeof (IMightBeDeprecated).IsAssignableFrom(paramType))
+                return PickOne(parameterInfo,paramType,
+                        _activator.CoreChildProvider.GetAllSearchables()
+                        .Keys.OfType<IMightBeDeprecated>()
+                        .Cast<IMapsDirectlyToDatabaseTable>()
+                        .ToArray());
+
+            if (typeof(ICheckable).IsAssignableFrom(paramType))
+                return PickOne(parameterInfo, paramType, _activator.CoreChildProvider.GetAllSearchables().Keys.OfType<ICheckable>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
 
             if (parameterInfo.HasDefaultValue)
                 return parameterInfo.DefaultValue;

@@ -13,6 +13,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataQualityEngine;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 
 namespace CatalogueManager.SimpleDialogs.Reports
 {
@@ -77,10 +78,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
                     report = new MetadataReport(RepositoryLocator.CatalogueRepository, new[] { (Catalogue)cbxCatalogues.SelectedItem }, _timeout, cbIncludeRowCounts.Checked, cbIncludeDistinctIdentifiers.Checked, !cbIncludeGraphs.Checked, new DatasetTimespanCalculator());
 
 
-            report.CatalogueCompleted+=report_CatalogueCompleted;
             report.RequestCatalogueImages += report_RequestCatalogueImages;
             report.MaxLookupRows = (int)nMaxLookupRows.Value;
-            report.GenerateWordFileAsync(checksUI1);
+            report.GenerateWordFileAsync(progressBarsUI1);
 
             btnGenerateReport.Enabled = false;
             btnStop.Enabled = true;
@@ -103,8 +103,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
             //only graph extractable aggregates
             foreach (AggregateConfiguration aggregate in catalogue.AggregateConfigurations.Where(config=>config.IsExtractable))
             {
-                lblCurrentCatalogue.Text = "Calculating AggregateGraphConfiguration ID=" + aggregate.ID + ")...";
-
                 if (firstTime)
                 {
                     aggregateGraph1.SetDatabaseObject(_activator, aggregate);
@@ -123,7 +121,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
                 if (aggregateGraph1.Crashed)
                 {
-                    checksUI1.OnCheckPerformed(new CheckEventArgs("Aggregate with ID " + aggregate.ID + " crashed", CheckResult.Fail,aggregateGraph1.Exception));
+                    progressBarsUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,"Aggregate with ID " + aggregate.ID + " crashed",aggregateGraph1.Exception));
                     continue;
                 }
 
@@ -138,22 +136,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             return toReturn.ToArray();
 
         }
-
-        void report_CatalogueCompleted(int progress, int target, Catalogue currentCatalogue)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(() => report_CatalogueCompleted(progress, target, currentCatalogue)));
-                return;
-            }
-
-            progressBar1.Value = progress;
-            progressBar1.Maximum = target;
-            lblCurrentCatalogue.Text = currentCatalogue.Name;
-            lblCurrentCatalogue.Update();
-
-        }
-
+        
         private void btnStop_Click(object sender, EventArgs e)
         {
             report.Abort();

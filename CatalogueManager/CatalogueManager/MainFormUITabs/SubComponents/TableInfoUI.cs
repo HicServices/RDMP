@@ -49,6 +49,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Tables;
+            objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, TableInfo databaseObject)
@@ -64,50 +65,52 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             tbTableInfoName.Text = _tableInfo.Name;
             tbTableInfoDatabaseAccess.Text = _tableInfo.Server;
             tbTableInfoDatabaseName.Text = _tableInfo.Database;
+            tbSchema.Text = _tableInfo.Schema;
 
             btnParameters.Enabled = _tableInfo.IsTableValuedFunction;
 
             objectSaverButton1.SetupFor(_tableInfo,activator.RefreshBus);
-
+            
             //if it's a Lookup table, don't let them try to make it IsPrimaryExtractionTable (but let them disable that if they have already made that mistake somehow)
             if (_tableInfo.IsLookupTable())
                 if (!cbIsPrimaryExtractionTable.Checked)
                     cbIsPrimaryExtractionTable.Enabled = false;
         }
+
         
         private void cbIsPrimaryExtractionTable_CheckedChanged(object sender, EventArgs e)
         {
             _tableInfo.IsPrimaryExtractionTable = cbIsPrimaryExtractionTable.Checked;
             _tableInfo.SaveToDatabase();
         }
-        
-        private void SaveTableInfoAndOfferRefactoring(TableInfo tableInfoInMemory)
+
+
+        bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
         {
-            try
-            {
-                var nameChange = _tableInfo.HasLocalChanges().Differences.SingleOrDefault(d => d.Property.Name.Equals("Name"));
-                if (nameChange != null)
-                {
-                    DialogResult dialogResult = MessageBox.Show("You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?", "Apply Code Refactoring?", MessageBoxButtons.YesNo);
+            //do not mess with the table name if it is a table valued function
+            if (_tableInfo.IsTableValuedFunction)
+                return true;
+            
+            var newName = _tableInfo.GetFullyQualifiedName();
 
-                    if (dialogResult == DialogResult.No)
-                        return;
+            var oldName = _tableInfo.Repository.GetObjectByID<TableInfo>(_tableInfo.ID).GetFullyQualifiedName();
 
-                    DoRefactoring(nameChange);
-                }
-            }
-            finally
+            if (oldName != newName)
             {
-                tableInfoInMemory.SaveToDatabase();
+                DialogResult dialogResult = MessageBox.Show("You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?", "Apply Code Refactoring?", MessageBoxButtons.YesNo);
+
+                if (dialogResult == DialogResult.Yes)
+                    DoRefactoring(oldName,newName);
+
             }
+
+            
+            _tableInfo.Name = newName;
+
+            return true;
         }
-
-        private void DoRefactoring(RevertablePropertyDifference nameChange)
+        private void DoRefactoring(string toReplace, string toReplaceWith)
         {
-
-            string toReplace = RDMPQuerySyntaxHelper.EnsureMultiPartValueIsWrapped(nameChange.DatabaseValue.ToString());
-            string toReplaceWith = RDMPQuerySyntaxHelper.EnsureMultiPartValueIsWrapped(nameChange.LocalValue.ToString());
-
             int updatesMade = 0;
 
             List<ExtractionInformation> unchanged = new List<ExtractionInformation>();
@@ -139,11 +142,14 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             {
                 columnInfo.Name = columnInfo.Name.Replace(toReplace + ".", toReplaceWith + ".");
                 columnInfo.SaveToDatabase();
+                updatesMade++;
             }
 
-            WideMessageBox.Show("Made " + updatesMade + " replacements in ExtractionInformations, the following ExtractionInformations could not be refactored:" +
-                                unchanged.Aggregate(Environment.NewLine,(s,n)=>s + "ID="+n.ID +Environment.NewLine + "Select SQL ="+n.SelectSQL));
-
+            if (unchanged.Any())
+                WideMessageBox.Show("Made " + updatesMade + " replacements in ExtractionInformation/ColumnInfos, the following ExtractionInformations could not be refactored:" + 
+                    string.Join(Environment.NewLine,unchanged.Select(n => "ID=" + n.ID + Environment.NewLine + "Select SQL =" + n.SelectSQL)));
+            else
+                MessageBox.Show("Made " + updatesMade + " replacements in ExtractionInformation/ColumnInfos.");
         }
 
         private void tbTableInfoName_TextChanged(object sender, EventArgs e)
@@ -161,9 +167,9 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             _tableInfo.Database = ((TextBox) sender).Text;
         }
 
-        private void btnTableInfoSave_Click(object sender, EventArgs e)
+        private void tbSchema_TextChanged(object sender, EventArgs e)
         {
-            SaveTableInfoAndOfferRefactoring(_tableInfo);
+            _tableInfo.Schema = ((TextBox) sender).Text;
         }
 
         private void btnParameters_Click(object sender, EventArgs e)
@@ -190,6 +196,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         {
             return objectSaverButton1;
         }
+
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<TableInfoUI_Design, UserControl>))]

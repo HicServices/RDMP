@@ -1,15 +1,8 @@
 using System;
-using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
-using CatalogueManager.Copying;
 using ReusableUIComponents;
-using ReusableUIComponents.SqlDialogs;
 
 namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
@@ -22,40 +15,31 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
     [TechnicalUI]
     public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgumentValueUI
     {
-        private Argument _argument;
-        private ICatalogueRepository _repository;
-        private DataTable _previewIfAny;
-
         Type _uiType;
-        private DemandsInitializationAttribute _demand;
+        private ArgumentValueUIArgs _args;
 
         public ArgumentValueCustomUIDrivenClassUI()
         {
             InitializeComponent();
         }
 
-        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
+        public void SetUp(ArgumentValueUIArgs args)
         {
-            _argument = argument;
-            _previewIfAny = previewIfAny;
-            _repository = (ICatalogueRepository) _argument.Repository;
-            _demand = requirement.Demand;
-
-            ragSmiley1.Reset();
+            _args = args;
 
             try
             {
-                Type t = _argument.GetSystemType();
+                Type t = _args.Type;
 
                 string expectedUIClassName = t.FullName + "UI";
 
-                _uiType = _repository.MEF.GetTypeByNameFromAnyLoadedAssembly(expectedUIClassName);
+                _uiType = _args.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(expectedUIClassName);
 
                 //if we did not find one with the exact name (including namespace), try getting it just by the end of it's name (omit namespace)
                 if (_uiType == null)
                 {
                     string shortUIClassName = t.Name + "UI";
-                    var candidates = _repository.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName)).ToArray();
+                    var candidates = _args.CatalogueRepository.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName)).ToArray();
 
                     if (candidates.Length > 1)
                         throw new Exception("Found " + candidates.Length + " classes called '" + shortUIClassName + "' : (" + string.Join(",", candidates.Select(c => c.Name)) + ")");
@@ -69,13 +53,9 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
     
                 btnLaunchCustomUI.Text = "Launch Custom UI (" + _uiType.Name + ")";
                 btnLaunchCustomUI.Width = btnLaunchCustomUI.PreferredSize.Width;
-                ragSmiley1.Left = btnLaunchCustomUI.Right;
-
-                BombIfMandatoryAndEmpty();
             }
             catch (Exception e)
             {
-                ragSmiley1.Fatal(e);
                 btnLaunchCustomUI.Enabled = false;
             }
         }
@@ -84,35 +64,27 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         {
             try
             {
-                var dataClassInstance = (ICustomUIDrivenClass)_argument.GetValueAsSystemType();
+                var dataClassInstance = (ICustomUIDrivenClass)_args.InitialValue;
 
                 var uiInstance = Activator.CreateInstance(_uiType);
                 
                 ICustomUI instanceAsCustomUI = (ICustomUI) uiInstance;
-                instanceAsCustomUI.CatalogueRepository = _repository;
+                instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 
-                instanceAsCustomUI.SetGenericUnderlyingObjectTo(dataClassInstance, _previewIfAny);
+                instanceAsCustomUI.SetGenericUnderlyingObjectTo(dataClassInstance, _args.PreviewIfAny);
                 var dr = ((Form)instanceAsCustomUI).ShowDialog();
 
                 if(dr != DialogResult.Cancel)
                 {
                     var result = instanceAsCustomUI.GetFinalStateOfUnderlyingObject();
 
-                    _argument.SetValue(result);
-                    _argument.SaveToDatabase();
+                    _args.Setter(result);
                 }
             }
             catch (Exception ex)
             {
                 ExceptionViewer.Show(ex);
             }
-        }
-
-        private void BombIfMandatoryAndEmpty()
-        {
-            if (_demand.Mandatory && string.IsNullOrWhiteSpace(_argument.Value))
-                ragSmiley1.Fatal(
-                    new Exception("Property is Mandatory which means it you have to Type an appropriate input in"));
         }
     }
 }

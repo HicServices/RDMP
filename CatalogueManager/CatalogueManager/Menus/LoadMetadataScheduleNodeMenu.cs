@@ -9,7 +9,7 @@ namespace CatalogueManager.Menus
 {
     internal class LoadMetadataScheduleNodeMenu : RDMPContextMenuStrip
     {
-        public LoadMetadataScheduleNodeMenu(RDMPContextMenuStripArgs args, LoadMetadataScheduleNode schedulingNode) : base(args,null)
+        public LoadMetadataScheduleNodeMenu(RDMPContextMenuStripArgs args, LoadMetadataScheduleNode schedulingNode): base(args, schedulingNode)
         {
             Add(new ExecuteCommandCreateNewLoadProgress(_activator, schedulingNode.LoadMetadata));
         }

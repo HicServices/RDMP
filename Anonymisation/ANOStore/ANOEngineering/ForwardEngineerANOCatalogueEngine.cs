@@ -368,8 +368,8 @@ namespace ANOStore.ANOEngineering
                 null,
                 col.TableInfo.GetRuntimeName(),
                 expectedName);
-
-            var columns = _catalogueRepository.GetColumnInfosWithNameExactly(expectedNewName);
+            
+            var columns = GetColumnInfosWithNameExactly(expectedNewName);
 
             bool failedANOToo = false;
 
@@ -417,6 +417,23 @@ namespace ANOStore.ANOEngineering
 
             //record in memory dictionary
             _parenthoodDictionary.Add(parent,child);
+        }
+
+
+        /// <summary>
+        /// Returns all ColumnInfos which have names exactly matching name, this must be a fully qualified string e.g. [MyDatabase]..[MyTable].[MyColumn].  You can use
+        /// IQuerySyntaxHelper.EnsureFullyQualified to get this.  Return is an array because you can have an identical table/database structure on two different servers
+        /// in each case the ColumnInfo will have the same fully qualified name (or you could have duplicate references to the same ColumnInfo/TableInfo for some reason)
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private ColumnInfo[] GetColumnInfosWithNameExactly(string name)
+        {
+            return _catalogueRepository.SelectAllWhere<ColumnInfo>("SELECT * FROM ColumnInfo WHERE LOWER(Name) = LOWER(@name)", "ID",
+                new Dictionary<string, object>
+                {
+                    {"name", name}
+                }).ToArray();
         }
     }
 }

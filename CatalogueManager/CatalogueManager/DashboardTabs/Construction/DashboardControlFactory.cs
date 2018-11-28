@@ -86,7 +86,7 @@ namespace CatalogueManager.DashboardTabs.Construction
             
             foreach (DashboardObjectUse objectUse in dbRecord.ObjectsUsed)
             {
-                var o =_repositoryLocator.GetArbitraryDatabaseObject(objectUse.RepositoryTypeName, objectUse.TypeName,objectUse.ObjectID);
+                var o =_repositoryLocator.GetArbitraryDatabaseObject(objectUse.ReferencedObjectRepositoryType, objectUse.ReferencedObjectType, objectUse.ReferencedObjectID);
                 emptyCollection.DatabaseObjects.Add(o);
             }
             try

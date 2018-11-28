@@ -32,6 +32,7 @@ using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
 using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
+using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
@@ -72,9 +73,8 @@ namespace ResearchDataManagementPlatform.Menus
     public partial class RDMPTopMenuStrip : RDMPUserControl
     {
         private IActivateItems _activator;
-        private ToolboxWindowManager _windowManager;
-        private DockContent currentTab;
-
+        private WindowManager _windowManager;
+        
         private SaveMenuItem _saveToolStripMenuItem;
         private AtomicCommandUIFactory _atomicCommandUIFactory;
 
@@ -201,17 +201,19 @@ namespace ResearchDataManagementPlatform.Menus
         
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var t = currentTab as RDMPSingleControlTab;
+            var current = _windowManager.Navigation.CurrentTab;
+
+            var t = current as RDMPSingleControlTab;
             if(t == null)
                 return;
 
             t.ShowHelp(_activator);
         }
 
-        public void SetWindowManager(ToolboxWindowManager windowManager)
+        public void SetWindowManager(WindowManager windowManager)
         {
             _windowManager = windowManager;
-            _activator = _windowManager.ContentManager;
+            _activator = _windowManager.ActivateItems;
             _atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
 
@@ -225,7 +227,7 @@ namespace ResearchDataManagementPlatform.Menus
             };
             fileToolStripMenuItem.DropDownItems.Add(_saveToolStripMenuItem);
 
-            _windowManager.ContentManager.WindowFactory.TabChanged += WindowFactory_TabChanged;
+            _windowManager.TabChanged += WindowFactory_TabChanged;
 
             var tracker = new TutorialTracker(_activator);
             foreach (Tutorial t in tracker.TutorialsAvailable)
@@ -272,12 +274,10 @@ namespace ResearchDataManagementPlatform.Menus
             newToolStripMenuItem.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(cmd));
         }
 
-        void WindowFactory_TabChanged(object sender, DockContent newTab)
+        void WindowFactory_TabChanged(object sender, IDockContent newTab)
         {
-            currentTab = newTab;
-            
-            closeToolStripMenuItem.Enabled = currentTab != null && !(currentTab is PersistableToolboxDockContent);
-            showHelpToolStripMenuItem.Enabled = currentTab is RDMPSingleControlTab;
+            closeToolStripMenuItem.Enabled = newTab != null && !(newTab is PersistableToolboxDockContent);
+            showHelpToolStripMenuItem.Enabled = newTab is RDMPSingleControlTab;
 
             var singleObjectControlTab = newTab as RDMPSingleControlTab;
             if (singleObjectControlTab == null)
@@ -294,6 +294,9 @@ namespace ResearchDataManagementPlatform.Menus
                 _activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
 
             _saveToolStripMenuItem.Saveable = saveable;
+
+            navigateBackwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanBack();
+            navigateForwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanForward();
         }
         
         private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -311,7 +314,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dialog = new RunUI(_windowManager.ContentManager);
+            var dialog = new RunUI(_windowManager.ActivateItems);
             dialog.Show();
         }
 
@@ -352,12 +355,22 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            currentTab.Close();
+            _windowManager.CloseCurrentTab();
         }
 
         private void findAndReplaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _activator.ShowWindow(new FindAndReplaceUI(_activator),true);
+        }
+
+        private void navigateBackwardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _windowManager.Navigation.Back(true);
+        }
+
+        private void navigateForwardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _windowManager.Navigation.Forward(true);
         }
     }
 }

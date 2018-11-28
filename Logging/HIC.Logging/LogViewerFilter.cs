@@ -4,8 +4,8 @@ using System.Text;
 namespace HIC.Logging
 {
     /// <summary>
-    /// Storage class that indicates a <see cref="CatalogueManager.LogViewer.Tabs.LoggingTab"/> should not show all records but only those
-    /// relating to the specified run / task etc
+    /// Decides which records to fetch from the hierarchical logging database including row filter for specific
+    /// run, table loaded etc.
     /// </summary>
     public class LogViewerFilter
     {

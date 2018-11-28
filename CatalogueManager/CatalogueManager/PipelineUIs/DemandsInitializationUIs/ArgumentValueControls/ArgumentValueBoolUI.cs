@@ -1,7 +1,4 @@
-using System.Data;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using ReusableUIComponents;
 
 namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
@@ -14,19 +11,28 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
     [TechnicalUI]
     public partial class ArgumentValueBoolUI : UserControl, IArgumentValueUI
     {
-        private Argument _argument;
         private bool _bLoading = true;
+        private ArgumentValueUIArgs _args;
 
         public ArgumentValueBoolUI()
         {
             InitializeComponent();
         }
-
-        public void SetUp(Argument argument, RequiredPropertyInfo requirement, DataTable previewIfAny)
+        
+        public void SetUp(ArgumentValueUIArgs args)
         {
+            _args = args;
             _bLoading = true;
-            _argument = argument;
-            cbValue.Checked = (bool) argument.GetValueAsSystemType();
+
+            //if no value has been selected set it to false
+            if (args.InitialValue == null)
+            {
+                cbValue.Checked = false;
+                args.Setter(false);
+            }
+            else
+                cbValue.Checked = (bool)args.InitialValue;//otherwise use the previous value
+
             _bLoading = false;
         }
 
@@ -35,8 +41,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             if(_bLoading)
                 return;
 
-            _argument.SetValue(cbValue.Checked);
-            _argument.SaveToDatabase();
+            _args.Setter(cbValue.Checked);
         }
     }
 }

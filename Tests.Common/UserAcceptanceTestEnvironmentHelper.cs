@@ -59,7 +59,6 @@ namespace Tests.Common
             // ANO
             _testEnvironment = new UserAcceptanceTestEnvironment(_scratchServerConnectionString, datasetRoot.FullName,
                 _loggingConnectionString, "Internal", _anoConnectionString, _identifierDumpConnectionString, _repositoryLocator);
-            _testEnvironment.SilentRunning = true;
             _testEnvironment.Check(new AcceptAllCheckNotifier());
 
             _isSetUp = true;

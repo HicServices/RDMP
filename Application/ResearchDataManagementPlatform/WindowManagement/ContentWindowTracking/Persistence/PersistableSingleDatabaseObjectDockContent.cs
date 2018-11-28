@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.ItemActivation;
@@ -37,7 +38,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
         protected override string GetPersistString()
         {
-            const char s = PersistenceDecisionFactory.Separator;
+            const char s = PersistStringHelper.Separator;
             return Prefix + s + _control.GetType().FullName + s + DatabaseObject.Repository.GetType().FullName + s + DatabaseObject.GetType().FullName + s + DatabaseObject.ID;
         }
 

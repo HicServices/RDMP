@@ -30,7 +30,8 @@ namespace CatalogueLibrary.Reports
             StringBuilder sb = new StringBuilder();
             
             //first line of file
-            sb.AppendLine( "Extractable Datasets,Folder,Catalogue,Current Governance,Dataset Period,Description");
+            sb.AppendLine("Extractable Datasets");
+            sb.AppendLine("Folder,Catalogue,Current Governance,Dataset Period,Description");
             
             Dictionary<GovernancePeriod, Catalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
             

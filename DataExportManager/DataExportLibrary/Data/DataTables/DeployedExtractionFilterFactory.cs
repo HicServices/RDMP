@@ -3,8 +3,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -16,26 +14,34 @@ namespace DataExportLibrary.Data.DataTables
     {
         private readonly IDataExportRepository _repository;
 
+        /// <summary>
+        /// Prepares to create extraction filters for project datasets int eh provided <paramref name="repository"/>
+        /// </summary>
+        /// <param name="repository"></param>
         public DeployedExtractionFilterFactory(IDataExportRepository repository)
         {
             _repository = repository;
         }
     
+        /// <inheritdoc/>
         public IFilter CreateNewFilter(string name)
         {
             return new DeployedExtractionFilter(_repository,name,null);
         }
 
+        /// <inheritdoc/>
         public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
         {
             return new DeployedExtractionFilterParameter(_repository,parameterSQL,filter);
         }
 
+        /// <inheritdoc/>
         public Type GetRootOwnerType()
         {
             return typeof (SelectedDataSets);
         }
 
+        /// <inheritdoc/>
         public Type GetIContainerTypeIfAny()
         {
             return typeof (FilterContainer);

@@ -95,7 +95,7 @@ namespace CatalogueLibraryTests.Integration
 
             archiveTable.AddColumn("amagad", new DatabaseTypeRequest(typeof(float), null, new DecimalSize(2, 2)), true, 30);
 
-            var checks = new TriggerChecks(tbl, true);
+            var checks = new TriggerChecks(tbl);
             checks.Check(new AcceptAllCheckNotifier());
 
             Assert.IsTrue(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());

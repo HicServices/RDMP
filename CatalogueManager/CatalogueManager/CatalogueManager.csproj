@@ -254,8 +254,8 @@
       <HintPath>..\..\packages\AutoCompleteMenu-ScintillaNET.1.5.0\lib\net40\AutocompleteMenu-ScintillaNET.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CommandLine, Version=2.2.1.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommandLineParser.2.2.1\lib\net45\CommandLine.dll</HintPath>
+    <Reference Include="CommandLine, Version=2.3.0.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommandLineParser.2.3.0\lib\net45\CommandLine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CsvHelper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
@@ -289,6 +289,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -361,6 +362,7 @@
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\OrderableComparer.cs" />
+    <Compile Include="Collections\Providers\CheckColumnProvider.cs" />
     <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
     <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
     <Compile Include="Collections\Providers\IDColumnProvider.cs" />
@@ -392,12 +394,16 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewStandardRegex.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDeprecate.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipelineWithUseCase.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFileUI.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportInDublinCoreFormat.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueItemDescription.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportDublinCoreFormat.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportShareDefinitionList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueItemExtractable.cs" />
@@ -405,6 +411,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeProjectSpecificCatalogueNormalAgain.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandManagePlugins.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOverrideRawServer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunChecksInPopupWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
@@ -413,14 +420,16 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDashboardLayout.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernancePeriod.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLookup.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsWindowLayout.cs" />
     <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
     <Compile Include="Copying\Commands\CacheProgressCommand.cs" />
     <Compile Include="Copying\Commands\CatalogueCommand.cs" />
@@ -441,6 +450,13 @@
     <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
     <Compile Include="Copying\Commands\TableInfoCommand.cs" />
     <Compile Include="Copying\RDMPCommandFactory.cs" />
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.Designer.cs">
+      <DependentUpon>LookupUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractableCohortStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemIssue.cs" />
@@ -477,7 +493,9 @@
     </Compile>
     <Compile Include="Menus\AllConnectionStringKeywordsNodeMenu.cs" />
     <Compile Include="Menus\AllGovernanceNodeMenu.cs" />
+    <Compile Include="Menus\AllServersNodeMenu.cs" />
     <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandScriptTable.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="Menus\GovernancePeriodMenu.cs" />
     <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
@@ -495,6 +513,12 @@
     </Compile>
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.Designer.cs">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.Designer.cs">
+      <DependentUpon>ArgumentValueDictionaryUI.cs</DependentUpon>
     </Compile>
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.cs">
       <SubType>UserControl</SubType>
@@ -544,6 +568,7 @@
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.Designer.cs">
       <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIArgs.cs" />
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIFactory.cs" />
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\IArgumentValueUI.cs" />
     <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.cs">
@@ -630,7 +655,6 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRename.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSelectPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowKeywordHelp.cs" />
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
@@ -787,7 +811,6 @@
     <Compile Include="CommandExecution\ExecuteCommandAddCatalogueToCohortIdentificationSetContainer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandAddCohortToExtractionConfiguration.cs" />
     <Compile Include="CommandExecution\ExecuteCommandAddDatasetsToConfiguration.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandAddFilesAsSupportingDocuments.cs" />
     <Compile Include="CommandExecution\ExecuteCommandConvertAggregateConfigurationToPatientIndexTable.cs" />
     <Compile Include="CommandExecution\ExecuteCommandImportNewCopyOfFilterIntoContainer.cs" />
     <Compile Include="CommandExecution\ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain.cs" />
@@ -1376,6 +1399,7 @@
     </Compile>
     <None Include="ExtractionUIs\FilterUIs\ParameterUIs\Parameters.cd" />
     <None Include="LogViewer\LoggingUI.cd" />
+    <None Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueUIs.cd" />
     <None Include="PipelineUIs\Pipelines\Pipelines.cd" />
     <None Include="SimpleControls\CheckAndExecuteUI.cd" />
     <None Include="TestsAndSetup\StartupUI\YellowFace.png" />
@@ -1544,6 +1568,8 @@
     <None Include="Icons\AllStandardRegexesNode.png" />
     <None Include="Icons\AllPipelinesNode.png" />
     <None Include="Icons\AllGovernanceNode.png" />
+    <None Include="Icons\AllProjectCohortIdentificationConfigurationsNode.png" />
+    <None Include="Icons\AllFreeCohortIdentificationConfigurationsNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1649,6 +1675,7 @@
     <None Include="Icons\WaitingForDatabase.png" />
     <None Include="Icons\StandardPipelineUseCaseNode.png" />
     <None Include="Icons\OtherPipelinesNode.png" />
+    <None Include="Icons\LookupCompositeJoinInfo.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1709,6 +1736,9 @@
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupUI.resx">
+      <DependentUpon>LookupUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\ConnectionStringKeywordUI.resx">
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -1720,6 +1750,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.resx">
       <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.resx">
+      <DependentUpon>ArgumentValueDictionaryUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.resx">
       <DependentUpon>ArgumentValueArrayUI.cs</DependentUpon>

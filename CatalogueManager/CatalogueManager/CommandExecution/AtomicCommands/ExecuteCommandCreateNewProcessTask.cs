@@ -1,24 +1,16 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -29,8 +21,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         private readonly LoadStage _loadStage;
         private Bitmap _image;
         private HICProjectDirectory _hicProjectDirectory;
+        private FileInfo _file;
 
-        public ExecuteCommandCreateNewProcessTask(IActivateItems activator, ProcessTaskType taskType, LoadMetadata loadMetadata, LoadStage loadStage) : base(activator)
+        public ExecuteCommandCreateNewProcessTask(IActivateItems activator, ProcessTaskType taskType, LoadMetadata loadMetadata, LoadStage loadStage, FileInfo file=null) : base(activator)
         {
             _taskType = taskType;
             _loadMetadata = loadMetadata;
@@ -38,7 +31,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             try
             {
-                _hicProjectDirectory = new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles,false);
+                _hicProjectDirectory = new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles);
             }
             catch (Exception)
             {
@@ -58,48 +51,54 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if (!ProcessTask.IsCompatibleStage(taskType, loadStage))
                 SetImpossible("You cannot run "+taskType+" in " + loadStage);
+
+            _file = file;
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            if (_taskType == ProcessTaskType.SQLFile)
+            if (_file == null)
             {
-                var dialog = new TypeTextOrCancelDialog("Enter a name for the SQL file", "File name", 100,"myscript.sql");
-                if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.ResultText))
+                if (_taskType == ProcessTaskType.SQLFile)
                 {
+                        var dialog = new TypeTextOrCancelDialog("Enter a name for the SQL file", "File name", 100, "myscript.sql");
+                        if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.ResultText))
+                        {
+                            var target = Path.Combine(_hicProjectDirectory.ExecutablesPath.FullName, dialog.ResultText);
 
-                    var target = Path.Combine(_hicProjectDirectory.ExecutablesPath.FullName, dialog.ResultText);
+                            if (!target.EndsWith(".sql"))
+                                target += ".sql";
 
-                    if (!target.EndsWith(".sql"))
-                        target += ".sql";
-                    
-                    //create it if it doesn't exist
-                    if(!File.Exists(target))
-                        File.WriteAllText(target,"/*todo Type some SQL*/");
+                            //create it if it doesn't exist
+                            if (!File.Exists(target))
+                                File.WriteAllText(target, "/*todo Type some SQL*/");
 
-                    var task = new ProcessTask((ICatalogueRepository) _loadMetadata.Repository, _loadMetadata, _loadStage);
-                    task.ProcessTaskType = ProcessTaskType.SQLFile;
-                    task.Path = target;
-                    SaveAndShow(task);
+                            _file = new FileInfo(target);
+                        }
+                        else
+                            return; //user cancelled
                 }
+                else if (_taskType == ProcessTaskType.Executable)
+                {
+                    var dialog = new OpenFileDialog();
+                    dialog.Filter = "Executables|*.exe";
+                    dialog.CheckFileExists = true;
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                        _file = new FileInfo(dialog.FileName);
+                    else
+                        return;
+                }
+                else
+                    throw new ArgumentOutOfRangeException("Unexpected _taskType:" + _taskType);
             }
 
-            if (_taskType == ProcessTaskType.Executable)
-            {
-                var dialog = new OpenFileDialog();
-                dialog.Filter = "Executables|*.exe";
-                dialog.CheckFileExists = true;
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    var task = new ProcessTask((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata, _loadStage);
-                    task.ProcessTaskType = ProcessTaskType.Executable;
-                    task.Path = dialog.FileName;
-                    SaveAndShow(task);
-                }
-            }
+            var task = new ProcessTask((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata, _loadStage);
+            task.ProcessTaskType = _taskType;
+            task.Path = _file.FullName;
+            SaveAndShow(task);
         }
 
         private void SaveAndShow(ProcessTask task)

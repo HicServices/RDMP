@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using CatalogueLibrary.Data;
 
-namespace DataExportLibrary.Providers.Nodes.UsedByNodes
+namespace CatalogueLibrary.Nodes.UsedByNodes
 {
     public class ObjectUsedByOtherObjectNode<T, T2> : IObjectUsedByOtherObjectNode<T,T2> 
         where T:class 

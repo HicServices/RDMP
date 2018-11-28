@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
@@ -319,10 +320,15 @@ namespace CatalogueManager.ExtractionUIs
 
             currentOrder.Remove(beingDragged);
 
+            var idxDrop = currentOrder.IndexOf(beingDroppedOnto);
+
+            if(idxDrop == -1)
+                return;
+            
             if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                currentOrder.Insert(currentOrder.IndexOf(beingDroppedOnto), beingDragged);
+                currentOrder.Insert(idxDrop, beingDragged);
             else if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                currentOrder.Insert(currentOrder.IndexOf(beingDroppedOnto) + 1, beingDragged);
+                currentOrder.Insert(idxDrop + 1, beingDragged);
             else
                 throw new NotSupportedException();
 
@@ -352,6 +358,13 @@ namespace CatalogueManager.ExtractionUIs
         {
             lbDesiredOrder.Items.Clear();
             lbNewOrder.Items.Clear();
+        }
+
+        private void olvExtractionInformations_ItemActivate(object sender, EventArgs e)
+        {
+            var o = olvExtractionInformations.SelectedObject as IMapsDirectlyToDatabaseTable;
+            if(o != null)
+                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
         }
     }
 

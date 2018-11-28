@@ -16,6 +16,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ContentAlignment = System.Drawing.ContentAlignment;
 
@@ -110,7 +111,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
             foreach (Control control in _valueUIs)
             {
                 control.Left = _maxValueUILeft;
-                control.Width = pArguments.Width - (_maxValueUILeft);
+                control.Width = pArguments.Width - (_maxValueUILeft + 25);
                 control.Parent.MinimumSize = new Size(_maxValueUILeft + control.MinimumSize.Width, control.Parent.Height);
             }
 
@@ -147,8 +148,41 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
             name.AutoSize = true;
             name.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
-            var valueui = (Control)_valueUisFactory.Create(parent, argument, required, Preview);
-            valueui.MinimumSize = new Size(valueui.Width/4, valueui.Height);
+            RAGSmiley ragSmiley = new RAGSmiley();
+
+            if (required.Demand.Mandatory && string.IsNullOrWhiteSpace(argument.Value))
+                ragSmiley.Fatal(new Exception("Property " + argument.Name + " is Mandatory"));
+
+            var args = new ArgumentValueUIArgs();
+            args.Parent = parent;
+            args.InitialValue = argument.GetValueAsSystemType();
+            args.Type = argument.GetSystemType();
+            args.Required = required;
+            args.PreviewIfAny = Preview;
+            args.CatalogueRepository = (CatalogueRepository) argument.Repository;
+            args.Setter = (v) =>
+            {
+                ragSmiley.Reset();
+                
+                try
+                {
+                    argument.SetValue(v);
+                    argument.SaveToDatabase();
+
+                    argument.GetValueAsSystemType();
+
+                    if(required.Demand.Mandatory && (v == null  || string.IsNullOrWhiteSpace(v.ToString())))
+                        ragSmiley.Fatal(new Exception("Property " + argument.Name + " is Mandatory"));
+                }
+                catch (Exception ex)
+                {
+                    ragSmiley.OnCheckPerformed(new CheckEventArgs("Failed to set property properly",CheckResult.Fail,ex));
+                }
+            };
+            args.Fatal = ragSmiley.Fatal;
+
+            var valueui = (Control)_valueUisFactory.Create(args);
+            
             valueui.Anchor = name.Anchor = AnchorStyles.Top |  AnchorStyles.Left | AnchorStyles.Right;
             _valueUIs.Add(valueui);
 
@@ -166,10 +200,15 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
             helpIcon.Left = name.Right;
             p.Controls.Add(helpIcon);
 
+            ragSmiley.Left = p.Width - ragSmiley.Width;
+            ragSmiley.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+            p.Controls.Add(ragSmiley);
+
             valueui.Left = helpIcon.Right;
+            valueui.Width = p.Width - (helpIcon.Right + ragSmiley.Left);
             _maxValueUILeft = Math.Max(_maxValueUILeft, valueui.Left);
             p.Controls.Add(valueui);
-            p.MinimumSize = new Size(valueui.Right,p.Height);
+            p.MinimumSize = new Size(ragSmiley.Right,p.Height);
 
             name.Height = p.Height;
 

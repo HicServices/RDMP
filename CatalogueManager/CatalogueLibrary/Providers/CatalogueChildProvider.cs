@@ -18,6 +18,7 @@ using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
+using CatalogueLibrary.Nodes.UsedByNodes;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -523,6 +524,13 @@ namespace CatalogueLibrary.Providers
         {
             List<object> childObjects = new List<object>();
 
+            if (lmd.OverrideRAWServer_ID.HasValue)
+            {
+                var server = AllExternalServers.Single(s => s.ID == lmd.OverrideRAWServer_ID.Value);
+                var usage = new OverrideRawServerNode(lmd, server);
+                childObjects.Add(usage);
+            }
+
             var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
             AddChildren(allSchedulesNode,descendancy.Add(allSchedulesNode));
             childObjects.Add(allSchedulesNode);
@@ -711,7 +719,7 @@ namespace CatalogueLibrary.Providers
         {
             var childrenObjects = new HashSet<object>();
 
-            var parameters = AllAnyTableParameters.Where(p => p.BelongsTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
+            var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
             var node = new ParametersNode(aggregateConfiguration, parameters);
             childrenObjects.Add(node);
 
@@ -816,7 +824,7 @@ namespace CatalogueLibrary.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
-            var parameters = AllAnyTableParameters.Where(p => p.BelongsTo(cic)).Cast<ISqlParameter>().ToArray();
+            var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
             var node = new ParametersNode(cic, parameters);
 
             children.Add(node);
@@ -834,7 +842,7 @@ namespace CatalogueLibrary.Providers
             AddChildren(joinableNode, new DescendancyList(cic, joinableNode).SetBetterRouteExists());
             children.Add(joinableNode);
 
-            AddToDictionaries(children, new DescendancyList(cic));
+            AddToDictionaries(children, new DescendancyList(cic).SetBetterRouteExists());
         }
 
         private void AddChildren(JoinableCollectionNode joinablesNode, DescendancyList descendancy)
@@ -1044,8 +1052,6 @@ namespace CatalogueLibrary.Providers
             foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
                 toReturn.Add((IMapsDirectlyToDatabaseTable) kvp.Key, kvp.Value);
 
-            AddToReturnSearchablesWithNoDecendancy(toReturn,AllCohortIdentificationConfigurations);
-            
             return toReturn;
         }
 

@@ -25,19 +25,22 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
                 while (r.Read())
                 {
                     //its a system table
-                    if (r["TABLE_OWNER"] as string == "sys")
+                    string schema = r["TABLE_OWNER"] as string;
+                        
+                    //its a system table
+                    if (schema == "sys")
                         continue;
 
-                    if (r["TABLE_OWNER"] as string == "INFORMATION_SCHEMA")
+                    if (schema == "INFORMATION_SCHEMA")
                         continue;
 
                     //add views if we are including them
                     if (includeViews && r["TABLE_TYPE"].Equals("VIEW"))
-                        tables.Add(new DiscoveredTable(parent,(string)r["TABLE_NAME"],querySyntaxHelper,(string) r["TABLE_OWNER"],TableType.View));
+                        tables.Add(new DiscoveredTable(parent, (string)r["TABLE_NAME"], querySyntaxHelper, schema, TableType.View));
 
                     //add tables
                     if (r["TABLE_TYPE"].Equals("TABLE"))
-                        tables.Add(new DiscoveredTable(parent, (string)r["TABLE_NAME"], querySyntaxHelper, (string)r["TABLE_OWNER"], TableType.Table));
+                        tables.Add(new DiscoveredTable(parent, (string)r["TABLE_NAME"], querySyntaxHelper, schema, TableType.Table));
                 }
             
             return tables.ToArray();
@@ -47,14 +50,23 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft
         {
             List<DiscoveredTableValuedFunction> functionsToReturn = new List<DiscoveredTableValuedFunction>();
 
-            DbCommand cmd = new SqlCommand("use [" + database + @"]; select name from sys.objects 
+            DbCommand cmd = new SqlCommand("use [" + database + @"];select name,
+ (select name from sys.schemas s where s.schema_id = o.schema_id) as schema_name
+  from sys.objects o
 WHERE type_desc = 'SQL_TABLE_VALUED_FUNCTION' OR type_desc ='CLR_TABLE_VALUED_FUNCTION'", (SqlConnection)connection);
 
             cmd.Transaction = transaction;
 
             using (DbDataReader r = cmd.ExecuteReader())
                 while (r.Read())
-                    functionsToReturn.Add(new DiscoveredTableValuedFunction(parent,r["name"].ToString(),querySyntaxHelper));
+                {
+                    string schema = r["schema_name"] as string;
+
+                    if (string.Equals("dbo", schema))
+                        schema = null;
+                    functionsToReturn.Add(new DiscoveredTableValuedFunction(parent, r["name"].ToString(), querySyntaxHelper,schema));
+
+                }
 
 
             return functionsToReturn.ToArray();

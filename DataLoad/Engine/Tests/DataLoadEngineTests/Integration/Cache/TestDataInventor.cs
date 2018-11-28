@@ -17,15 +17,12 @@ namespace DataLoadEngineTests.Integration.Cache
         [DemandsInitialization("Directory to create files into",Mandatory=true)]
         public string WorkingFolder { get; set; }
 
-        public override void DoGetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        public override TestDataWriterChunk DoGetChunk(ICacheFetchRequest request,IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             // don't load anything for today onwards
             var today = DateTime.Now.Subtract(DateTime.Now.TimeOfDay);
             if (Request.Start > today)
-            {
-                Chunk = null;
-                return;
-            }
+                return null;
 
             DateTime currentDay = Request.Start;
             
@@ -37,7 +34,7 @@ namespace DataLoadEngineTests.Integration.Cache
                 currentDay = currentDay.AddDays(1);
             }
 
-            Chunk = new TestDataWriterChunk(Request,toReturn.ToArray());
+            return new TestDataWriterChunk(Request,toReturn.ToArray());
         }
 
         private FileInfo GetFileForDay(DateTime currentDay)

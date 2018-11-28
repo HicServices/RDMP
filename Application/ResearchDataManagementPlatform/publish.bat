@@ -54,7 +54,11 @@ call "%ProgramFiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 goto build
 
 :build
-msbuild /t:Clean,Publish /p:Configuration=Release /p:ApplicationVersion=%1 /p:PublishDir=%3 /p:MinimumRequiredVersion=%2 /p:InstallUrl="%4" /p:UpdateUrl="%4"
+msbuild /t:Clean,Publish /p:Configuration=Release /p:ApplicationVersion=%1 /p:PublishDir=%3standalone/ /p:MinimumRequiredVersion=%2 /p:InstallUrl="%3" /p:UpdateUrl="%3" /p:InstallFrom=Disk /p:IsWebBootstrapper=false /p:UpdateEnabled=false /p:UpdateRequired=false
+goto buildweb
+
+:buildweb
+msbuild /t:Clean,Publish /p:Configuration=Release /p:ApplicationVersion=%1 /p:PublishDir=%3 /p:MinimumRequiredVersion=%2 /p:InstallUrl="%4" /p:UpdateUrl="%4" /p:InstallFrom=Web /p:IsWebBootstrapper=true /p:UpdateEnabled=true /p:UpdateRequired=true
 goto end
 
 :usage

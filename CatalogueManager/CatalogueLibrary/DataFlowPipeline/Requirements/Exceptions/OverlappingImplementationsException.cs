@@ -7,6 +7,10 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions
     /// </summary>
     public class OverlappingImplementationsException : Exception
     {
+        /// <summary>
+        /// Creates a new Exception with the provided message
+        /// </summary>
+        /// <param name="s"></param>
         public OverlappingImplementationsException(string s) : base (s)
         {
         }

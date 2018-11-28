@@ -64,14 +64,14 @@ namespace CatalogueLibrary
 
             if (_tableToSync.IsTableValuedFunction)
             {
-                expectedTable = expectedDatabase.ExpectTableValuedFunction(_tableToSync.GetRuntimeName());
+                expectedTable = expectedDatabase.ExpectTableValuedFunction(_tableToSync.GetRuntimeName(),_tableToSync.Schema);
                 if(!expectedTable.Exists())
                     throw new SynchronizationFailedException("Database " + expectedDatabase + " did not contain a TABLE VALUED FUNCTION called " + _tableToSync.GetRuntimeName());
             }
             else
             {
                 //table exists?
-                expectedTable = expectedDatabase.ExpectTable(_tableToSync.GetRuntimeName());
+                expectedTable = expectedDatabase.ExpectTable(_tableToSync.GetRuntimeName(),_tableToSync.Schema);
                 if(!expectedTable.Exists())
                     throw new SynchronizationFailedException("Database " + expectedDatabase + " did not contain a table called " + _tableToSync.GetRuntimeName());
             }
@@ -105,7 +105,7 @@ namespace CatalogueLibrary
             if (_tableToSync.IsTableValuedFunction)
                 importer = new TableValuedFunctionImporter(_repository, (DiscoveredTableValuedFunction) expectedTable);
             else
-                importer = new TableInfoImporter(_repository, _toSyncTo.Name, _toSyncTo.GetCurrentDatabase().GetRuntimeName(), _tableToSync.GetRuntimeName(), _tableToSync.DatabaseType, username: usr, password: pwd);
+                importer = new TableInfoImporter(_repository, _toSyncTo.Name, _toSyncTo.GetCurrentDatabase().GetRuntimeName(), _tableToSync.GetRuntimeName(), _tableToSync.DatabaseType, username: usr, password: pwd, importFromSchema: _tableToSync.Schema);
 
             DiscoveredColumn[] newColumnsInLive = 
                 liveColumns.Where(
@@ -284,7 +284,7 @@ namespace CatalogueLibrary
         
         private bool SynchronizeParameters(TableValuedFunctionImporter importer, ICheckNotifier notifier)
         {
-            var discoveredParameters = _toSyncTo.GetCurrentDatabase().ExpectTableValuedFunction(_tableToSync.GetRuntimeName()).DiscoverParameters();
+            var discoveredParameters = _toSyncTo.GetCurrentDatabase().ExpectTableValuedFunction(_tableToSync.GetRuntimeName(),_tableToSync.Schema).DiscoverParameters();
             var currentParameters = _tableToSync.GetAllParameters();
             
             //For each parameter in underlying database

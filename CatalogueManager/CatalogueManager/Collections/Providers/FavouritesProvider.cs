@@ -35,7 +35,7 @@ namespace CatalogueManager.Collections.Providers
 
         public void RemoveFavourite(object sender, IMapsDirectlyToDatabaseTable o)
         {
-            Favourite toRemove = CurrentFavourites.SingleOrDefault(f => f.IsFavourite(o));
+            Favourite toRemove = CurrentFavourites.SingleOrDefault(f => f.IsReferenceTo(o));
 
             if (toRemove != null)
             {
@@ -54,7 +54,7 @@ namespace CatalogueManager.Collections.Providers
 
         public Favourite GetFavouriteIfAny(IMapsDirectlyToDatabaseTable o)
         {
-            return CurrentFavourites.SingleOrDefault(f => f.IsFavourite(o.ID, o.GetType()));
+            return CurrentFavourites.SingleOrDefault(f => f.IsReferenceTo(o));
         }
     }
 }

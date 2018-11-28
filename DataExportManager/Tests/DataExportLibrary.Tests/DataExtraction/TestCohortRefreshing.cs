@@ -47,6 +47,8 @@ namespace DataExportLibrary.Tests.DataExtraction
             
             var oldData = oldcohort.GetExternalData();
 
+            engine.Request.NewCohortDefinition.CohortReplacedIfAny = oldcohort;
+
             Assert.AreEqual(oldData.ExternalDescription, engine.Request.NewCohortDefinition.Description);
             Assert.AreEqual(oldData.ExternalVersion + 1, engine.Request.NewCohortDefinition.Version);
         }

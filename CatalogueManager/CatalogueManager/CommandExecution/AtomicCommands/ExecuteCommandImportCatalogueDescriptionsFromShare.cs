@@ -1,28 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Copying.Commands;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandImportCatalogueDescriptionsFromShare : BasicUICommandExecution
+    internal class ExecuteCommandImportCatalogueDescriptionsFromShare : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly FileCollectionCommand _sourceFileCollection;
+        private FileInfo _shareDefinitionFile;
         private readonly Catalogue _targetCatalogue;
 
-        public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, FileCollectionCommand sourceFileCollection, Catalogue targetCatalogue): base(activator)
+        public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, FileCollectionCommand sourceFileCollection, Catalogue targetCatalogue): this(activator,targetCatalogue)
         {
             if(!sourceFileCollection.IsShareDefinition)
                 SetImpossible("Only ShareDefinition files can be imported");
 
-            _sourceFileCollection = sourceFileCollection;
+            _shareDefinitionFile = sourceFileCollection.Files.Single();
+        }
+
+        [ImportingConstructor]
+        public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, Catalogue targetCatalogue): base(activator)
+        {
             _targetCatalogue = targetCatalogue;
         }
 
@@ -30,7 +39,11 @@ namespace CatalogueManager.CommandExecution
         {
             base.Execute();
 
-            var json = File.ReadAllText(_sourceFileCollection.Files.Single().FullName);
+            //ensure file selected
+            if((_shareDefinitionFile = _shareDefinitionFile??SelectOpenFile("Share Definition|*.sd")) == null)
+                return;
+
+            var json = File.ReadAllText(_shareDefinitionFile.FullName);
             var sm = new ShareManager(Activator.RepositoryLocator);
             
             List<ShareDefinition> shareDefinitions = sm.GetShareDefinitionList(json);
@@ -67,6 +80,11 @@ namespace CatalogueManager.CommandExecution
             }
 
             Publish(_targetCatalogue);
+        }
+
+        public Image GetImage(IIconProvider iconProvider)
+        {
+            return FamFamFamIcons.page_white_get;
         }
     }
 }

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.btnLaunchCustomUI = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.SuspendLayout();
             // 
             // btnLaunchCustomUI
@@ -42,20 +41,10 @@
             this.btnLaunchCustomUI.UseVisualStyleBackColor = true;
             this.btnLaunchCustomUI.Click += new System.EventHandler(this.btnLaunchCustomUI_Click);
             // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Location = new System.Drawing.Point(177, 0);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 22;
-            // 
             // ArgumentValueCustomUIDrivenClassUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.btnLaunchCustomUI);
             this.Name = "ArgumentValueCustomUIDrivenClassUI";
             this.Size = new System.Drawing.Size(547, 28);
@@ -66,7 +55,6 @@
         #endregion
 
         private System.Windows.Forms.Button btnLaunchCustomUI;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
 
 
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Xml;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 
@@ -19,12 +21,6 @@ namespace CatalogueManager.Menus
             //create right click context menu
             Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
 
-            var collection = args.GetTreeParentControlOfType<CatalogueCollectionUI>();
-            
-            Add(collection == null
-                ? new ExecuteCommandCheck(_activator, catalogue)
-                : new ExecuteCommandCheck(_activator, catalogue, collection.RecordWorst));
-
             Items.Add(new ToolStripSeparator());
 
             var addItem = new ToolStripMenuItem("Add", null);
@@ -41,10 +37,17 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(catalogue));
             Add(new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, catalogue));
             
-
             Items.Add(new ToolStripSeparator());
 
-            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {catalogue}));
+
+            var extract = new ToolStripMenuItem("Import/Export");
+
+            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {catalogue}),Keys.None,extract);
+            Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue),Keys.None,extract);
+            Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue),Keys.None,extract);
+            Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue), Keys.None, extract);
+
+            Items.Add(extract);
 
             Add(new ExecuteCommandCreateANOVersion(_activator, catalogue));
 

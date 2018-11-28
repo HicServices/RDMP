@@ -10,9 +10,12 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Theme;
 using CohortManager.Collections;
 using DataExportManager.Collections;
+using MapsDirectlyToDatabaseTable;
+using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
@@ -26,18 +29,25 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// <summary>
     /// Handles creating and tracking the main RDMPCollectionUIs tree views
     /// </summary>
-    public class ToolboxWindowManager
+    public class WindowManager
     {
         readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new Dictionary<RDMPCollection, PersistableToolboxDockContent>();
+        readonly List<RDMPSingleControlTab>  _trackedWindows = new List<RDMPSingleControlTab>();
+        readonly List<DockContent> _trackedAdhocWindows = new List<DockContent>();
         
+        public NavigationTrack Navigation { get; private set; }
+        public event TabChangedHandler TabChanged;
+
         private readonly DockPanel _mainDockPanel;
+
+        public RDMPMainForm MainForm { get; set; }
 
         /// <summary>
         /// The location finder for the Catalogue and optionally Data Export databases
         /// </summary>
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
         
-        public ContentWindowManager ContentManager;
+        public ActivateItems ActivateItems;
         private readonly WindowFactory _windowFactory;
         
         public event RDMPCollectionCreatedEventHandler CollectionCreated;
@@ -45,18 +55,22 @@ namespace ResearchDataManagementPlatform.WindowManagement
         HomeUI _home;
         DockContent _homeContent;
 
-        public ToolboxWindowManager(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
+        public WindowManager(RDMPMainForm mainForm, RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
-            _windowFactory = new WindowFactory(repositoryLocator,mainDockPanel);
-            ContentManager = new ContentWindowManager(refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
+            _windowFactory = new WindowFactory(repositoryLocator,this);
+            ActivateItems = new ActivateItems(refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
 
             _mainDockPanel = mainDockPanel;
             _mainDockPanel.Theme = new VS2005Theme();
             _mainDockPanel.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
             
             _mainDockPanel.ShowDocumentIcon = true;
-            
+
+            MainForm = mainForm;
             RepositoryLocator = repositoryLocator;
+
+            Navigation = new NavigationTrack();
+            mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
         }
         
         /// <summary>
@@ -116,7 +130,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             toReturn.DockState = position;
 
-            collection.SetItemActivator(ContentManager);
+            collection.SetItemActivator(ActivateItems);
 
             if(CollectionCreated != null)
                 CollectionCreated(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
@@ -131,7 +145,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             BackColorProvider c = new BackColorProvider();
             image = c.DrawBottomBar(image, collection);
             
-            var content = _windowFactory.Create(ContentManager,control, label, image, collection);//these are collections so are not tracked with a window tracker.
+            var content = _windowFactory.Create(ActivateItems,control, label, image, collection);//these are collections so are not tracked with a window tracker.
             content.Closed += (s, e) => content_Closed(collection);
 
             _visibleToolboxes.Add(collection, content);
@@ -212,7 +226,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public RDMPCollection GetCollectionForRootObject(object root)
         {
-            if (FavouritesCollectionUI.IsRootObject(ContentManager,root))
+            if (FavouritesCollectionUI.IsRootObject(ActivateItems,root))
                 return RDMPCollection.Favourites;
 
             if(CatalogueCollectionUI.IsRootObject(root))
@@ -245,7 +259,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 _home = new HomeUI(this);
                 
-                _homeContent = _windowFactory.Create(ContentManager, _home, "Home", FamFamFamIcons.application_home);
+                _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", FamFamFamIcons.application_home);
                 _homeContent.Closed += (s, e) => _home = null;
                 _homeContent.Show(_mainDockPanel, DockState.Document);
             }
@@ -270,7 +284,140 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// </summary>
         public void CloseAllWindows()
         {
-            ContentManager.WindowFactory.WindowTracker.CloseAllWindows(null);
+            CloseAllWindows(null);
         }
+
+
+           /// <summary>
+        /// Closes all Tracked windows 
+        /// </summary>
+        /// <param name="tab"></param>
+        public void CloseAllWindows(RDMPSingleControlTab tab)
+        {
+            if(tab != null)
+            {
+                CloseAllButThis(tab);
+                tab.Close();
+            }
+            else
+            {
+                foreach (var trackedWindow in _trackedWindows.ToArray())
+                    trackedWindow.Close();
+
+                foreach (var adhoc in _trackedAdhocWindows.ToArray())
+                    adhoc.Close();
+            }
+        }
+
+        void mainDockPanel_ActiveDocumentChanged(object sender, EventArgs e)
+        {
+            var newTab = _mainDockPanel.ActiveDocument;
+            
+            Navigation.Append((DockContent)newTab);
+
+            if (TabChanged != null)
+                TabChanged(sender, newTab);
+
+            
+        }
+
+        /// <summary>
+        /// Records the fact that a new single object editing tab has been opened.  .
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if another instance of the Control Type is already active with the same DatabaseObject</exception>
+        /// <param name="window"></param>
+        public void AddWindow(RDMPSingleControlTab window)
+        {
+            var singleObjectUI = window as PersistableSingleDatabaseObjectDockContent;
+
+            if(singleObjectUI != null)
+                if(AlreadyActive(singleObjectUI.GetControl().GetType(),singleObjectUI.DatabaseObject))
+                    throw new ArgumentOutOfRangeException("Cannot create another window for object " + singleObjectUI.DatabaseObject + " of type " + singleObjectUI.GetControl().GetType() + " because there is already a window active for that object/window type");
+            
+            _trackedWindows.Add(window);
+
+            window.FormClosed += (s,e)=>Remove(window);
+        }
+
+        /// <summary>
+        /// Records the fact that a new impromptu/adhoc tab has been shown.  These windows are not checked for duplication.
+        /// </summary>
+        /// <param name="adhocWindow"></param>
+        public void AddAdhocWindow(DockContent adhocWindow)
+        {
+            _trackedAdhocWindows.Add(adhocWindow);
+            adhocWindow.FormClosed += (s, e) => _trackedAdhocWindows.Remove(adhocWindow);
+        }
+
+        private void Remove(RDMPSingleControlTab window)
+        {
+            _trackedWindows.Remove(window);
+        }
+
+        public PersistableSingleDatabaseObjectDockContent GetActiveWindowIfAnyFor(Type windowType, IMapsDirectlyToDatabaseTable databaseObject)
+        {
+            return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
+        }
+
+        /// <summary>
+        /// Check whether a given RDMPSingleControlTab is already showing with the given DatabaseObject (e.g. is user currently editing Catalogue bob in CatalogueTab)
+        /// </summary>
+        /// <exception cref="ArgumentException"></exception>
+        /// <param name="windowType">A Type derrived from RDMPSingleControlTab</param>
+        /// <param name="databaseObject">An instance of an object which matches the windowType</param>
+        /// <returns></returns>
+        public bool AlreadyActive(Type windowType, IMapsDirectlyToDatabaseTable databaseObject)
+        {
+            if (!typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(windowType))
+                throw new ArgumentException("windowType must be a Type derrived from RDMPSingleControlTab");
+
+            return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t => t.GetControl().GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
+        }
+        
+        /// <summary>
+        /// Closes all Tracked windows except the specified tab
+        /// </summary>
+        public void CloseAllButThis(DockContent content)
+        {
+            var trackedWindowsToClose = _trackedWindows.ToArray().Where(t => t != content);
+
+            foreach (var trackedWindow in trackedWindowsToClose)
+                CloseWindowIfInSameScope(trackedWindow, content);
+
+            foreach (var adhoc in _trackedAdhocWindows.ToArray().Where(t => t != content))
+                CloseWindowIfInSameScope(adhoc, content);
+        }
+
+        private void CloseWindowIfInSameScope(DockContent toClose, DockContent tabInSameScopeOrNull)
+        {
+            var parent = tabInSameScopeOrNull == null ? null : tabInSameScopeOrNull.Parent;
+
+            if (toClose != null && (parent == null || toClose.Parent == parent))
+                toClose.Close();
+        }
+
+        public void CloseCurrentTab()
+        {
+            //nothing to close
+            if (Navigation.CurrentTab == null)
+                return;
+
+            Navigation.Suspend();
+            try
+            {
+                Navigation.CurrentTab.Close();
+
+                if (Navigation.CurrentTab != null)
+                    Navigation.CurrentTab.Activate();
+            }
+            finally
+            {
+                Navigation.Resume();
+            }
+        }
+
+
+
+
     }
 }

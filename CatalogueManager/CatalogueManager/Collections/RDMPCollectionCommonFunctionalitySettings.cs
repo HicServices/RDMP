@@ -37,6 +37,11 @@
         /// </summary>
         public bool SuppressActivate { get; set; }
 
+        /// <summary>
+        /// True to add an extra column (Checks) to the tree which lets the user run checks on ICheckable things
+        /// </summary>
+        public bool AddCheckColumn { get; set; }
+
         public RDMPCollectionCommonFunctionalitySettings()
         {
             AddFavouriteColumn = true;
@@ -44,6 +49,7 @@
             AddIDColumn = true;
             SuppressChildrenAdder = false;
             SuppressActivate = false;
+            AddCheckColumn = true;
         }
     }
 }

@@ -4,13 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.Mutilators;
@@ -22,7 +16,7 @@ namespace CatalogueManager.Menus
         private readonly LoadStageNode _loadStageNode;
         private MEF _mef;
 
-        public LoadStageNodeMenu(RDMPContextMenuStripArgs args, LoadStageNode loadStageNode):base(args,null)
+        public LoadStageNodeMenu(RDMPContextMenuStripArgs args, LoadStageNode loadStageNode) : base(args, loadStageNode)
         {
             _loadStageNode = loadStageNode;
             _mef = _activator.RepositoryLocator.CatalogueRepository.MEF;

@@ -1,4 +1,5 @@
 ﻿using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Copying.Commands;
@@ -31,7 +32,7 @@ namespace CatalogueManager.CommandExecution.Proposals
                 if (sourceFileCollection.IsShareDefinition)
                     return new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,targetCatalogue);
                 else
-                    return new ExecuteCommandAddFilesAsSupportingDocuments(ItemActivator,sourceFileCollection, targetCatalogue);
+                    return new ExecuteCommandAddNewSupportingDocument(ItemActivator, sourceFileCollection, targetCatalogue);
 
             return null;
         }

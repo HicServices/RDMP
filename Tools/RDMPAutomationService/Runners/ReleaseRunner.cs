@@ -130,7 +130,7 @@ namespace RDMPAutomationService.Runners
             var oldLostSupplemental = configuration.CumulativeExtractionResults
                 .SelectMany(c => c.SupplementalExtractionResults)
                 .Union(configuration.SupplementalExtractionResults)
-                .Where(s => !RepositoryLocator.ArbitraryDatabaseObjectExists(s.RepositoryType, s.ExtractedType, s.ExtractedId))
+                .Where(s => !RepositoryLocator.ArbitraryDatabaseObjectExists(s.ReferencedObjectRepositoryType, s.ReferencedObjectType, s.ReferencedObjectID))
                 .ToArray();
 
             if (oldLostSupplemental.Any())
@@ -159,7 +159,7 @@ namespace RDMPAutomationService.Runners
             //create new ReleaseAssesments
             foreach (ISelectedDataSets selectedDataSet in GetSelectedDataSets(configuration))//todo only the ones user ticked
             {
-                var extractionResults = configuration.CumulativeExtractionResults.FirstOrDefault(r => r.IsFor(selectedDataSet));
+                var extractionResults = selectedDataSet.GetCumulativeExtractionResultsIfAny();
 
                 //if it has never been extracted
                 if (extractionResults == null || extractionResults.DestinationDescription == null)

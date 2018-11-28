@@ -4,24 +4,22 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Windows;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ScintillaNET;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using Point = System.Drawing.Point;
 
@@ -160,6 +158,14 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             olvLookupColumns.AddObjects(t.ColumnInfos);
 
             SetStage(LookupCreationStage.DragAPrimaryKey);
+
+            pk1.IsValidGetter = c => c.TableInfo_ID == t.ID;
+            pk2.IsValidGetter = c => c.TableInfo_ID == t.ID;
+            pk3.IsValidGetter = c => c.TableInfo_ID == t.ID;
+            
+            fk1.IsValidGetter = c => c.TableInfo_ID != t.ID;
+            fk2.IsValidGetter = c => c.TableInfo_ID != t.ID;
+            fk3.IsValidGetter = c => c.TableInfo_ID != t.ID;
         }
 
         private void btnImportNewTableInfo_Click(object sender, EventArgs e)
@@ -456,7 +462,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                     cmd.Execute();
 
                     _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
-                    SetDatabaseObject(_activator,_catalogue);
+                    SetDatabaseObject(_activator, _catalogue);
 
                     MessageBox.Show("Lookup created successfully, fields will now be cleared");
                     pk1.Clear();
@@ -468,7 +474,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                     fk3.Clear();
 
                     olvSelectedDescriptionColumns.ClearObjects();
-
+                    SetStage(LookupCreationStage.DragAPrimaryKey);
                     
                 }
                 btnCreateLookup.Enabled = true;
@@ -493,6 +499,17 @@ Only define secondary columns if you really need them! if any of the key fields 
         {
             olvExtractionInformations.UseFiltering = true;
             olvExtractionInformations.ModelFilter = new TextMatchFilter(olvExtractionInformations,tbFilter.Text);
+        }
+
+        private void olv_ItemActivate(object sender, EventArgs e)
+        {
+            var olv = (ObjectListView)sender;
+
+            var o = olv.SelectedObject as IMapsDirectlyToDatabaseTable;
+            
+            if(o != null)
+                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
+
         }
     }
 

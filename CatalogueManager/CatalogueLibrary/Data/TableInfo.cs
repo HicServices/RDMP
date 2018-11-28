@@ -55,7 +55,8 @@ namespace CatalogueLibrary.Data
         private bool _isPrimaryExtractionTable;
         private int? _identifierDumpServer_ID;
         private bool _isTableValuedFunction;
-        
+        private string _schema;
+
         /// <summary>
         /// Fully specified table name
         /// </summary>
@@ -141,6 +142,16 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _isTableValuedFunction, value); }
         }
 
+        /// <summary>
+        /// The Schema scope of the table (or blank if dbo / default / not supported by dbms).  This scope exists below Database and Above Table.  Not all database management
+        /// engines support the concept of Schema (e.g. MySql).
+        /// </summary>
+        public string Schema
+        {
+            get { return _schema; }
+            set { SetField(ref _schema, value); }
+        }
+
         #endregion
         
         // Temporary fix to remove downcasts to CatalogueRepository when using CatalogueRepository specific classes etc.
@@ -148,24 +159,17 @@ namespace CatalogueLibrary.Data
         private readonly ICatalogueRepository _catalogueRepository;
         private Lazy<ColumnInfo[]> _knownColumnInfos;
         private Lazy<bool> _knownIsLookup;
+        
 
         #region Relationships
-        /// <summary>
-        /// Fetches all the ColumnInfos associated with this TableInfo (This is refreshed every time you call this property)
-        /// </summary>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ColumnInfo[] ColumnInfos { get
         {
             return _knownColumnInfos.Value;
         }}
 
-        /// <summary>
-        /// Gets all the <see cref="PreLoadDiscardedColumn"/> declared against this table reference.  These are virtual columns which 
-        /// do not exist in the LIVE table schema (Unless <see cref="DiscardedColumnDestination.Dilute"/>) but which appear in the RAW 
-        /// stage of the data load.  
-        /// 
-        /// <para>See <see cref="PreLoadDiscardedColumn"/> for more information</para>
-        /// </summary>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public PreLoadDiscardedColumn[] PreLoadDiscardedColumns { get
         {
@@ -210,6 +214,7 @@ namespace CatalogueLibrary.Data
             Server = r["Server"].ToString();
             Database = r["Database"].ToString();
             State = r["State"].ToString();
+            Schema = r["Schema"].ToString();
             ValidationXml = r["ValidationXml"].ToString();
             
             IsTableValuedFunction = r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
@@ -264,7 +269,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public string GetFullyQualifiedName()
         {
-            return Name;
+            return GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
         }
 
         /// <summary>
@@ -494,7 +499,7 @@ select 0", con.Connection, con.Transaction);
         public DiscoveredTable Discover(DataAccessContext context)
         {
             var db = DataAccessPortal.GetInstance().ExpectDatabase(this, context);
-            return db.ExpectTable(GetRuntimeName());
+            return db.ExpectTable(GetRuntimeName(),Schema);
         }
 
         /// <summary>

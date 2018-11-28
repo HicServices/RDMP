@@ -4,6 +4,8 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Ticketing;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Comments;
@@ -15,13 +17,34 @@ namespace CatalogueLibrary.Repositories
     /// </summary>
     public interface ICatalogueRepository : ITableRepository
     {
+        /// <summary>
+        /// Allows creation/discover/deletion of <see cref="AggregateForcedJoin"/> objects
+        /// </summary>
         AggregateForcedJoin AggregateForcedJoiner { get; set; }
-        TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
-        PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
-        JoinInfoFinder JoinInfoFinder { get; set; }
-        MEF MEF { get; set; }
-        IEnumerable<CatalogueItem> GetAllCatalogueItemsNamed(string name, bool ignoreCase);
 
+        /// <summary>
+        /// Allows linking/unlinking <see cref="DataAccessCredentials"/> to <see cref="TableInfo"/>
+        /// </summary>
+        TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
+
+        /// <summary>
+        /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
+        /// </summary>
+        PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
+        
+        /// <summary>
+        /// Allows creation/discover of <see cref="JoinInfo"/> objects which describe how to join two <see cref="TableInfo"/> together in SQL
+        /// </summary>
+        JoinInfoFinder JoinInfoFinder { get; set; }
+
+        /// <summary>
+        /// Supports creation of objects using Reflection and discovery of Types based on Managed Extensibility Framework Export attributes.
+        /// </summary>
+        MEF MEF { get; set; }
+
+        /// <summary>
+        /// Stores class comments discovered at startup using NuDoq
+        /// </summary>
         CommentStore CommentStore { get; }
 
         /// <summary>
@@ -37,14 +60,36 @@ namespace CatalogueLibrary.Repositories
         /// <returns></returns>
         LogManager GetDefaultLogManager();
 
+        /// <summary>
+        /// Returns all <see cref="Catalogue"/> optionally filtered by <see cref="Catalogue.IsDeprecated"/>
+        /// </summary>
+        /// <param name="includeDeprecatedCatalogues"></param>
+        /// <returns></returns>
         Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false);
+        
+        /// <summary>
+        /// Returns all <see cref="Catalogue"/> which have at least one <see cref="CatalogueItem"/> with an <see cref="ExtractionInformation"/>
+        /// </summary>
+        /// <returns></returns>
         Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem();
-        IEnumerable<CohortIdentificationConfiguration> GetAllCohortIdentificationConfigurationsWithDependencyOn(AggregateConfiguration aggregate);
+
+        /// <summary>
+        /// Returns all sql parameters declared in the immediate scope of the <see cref="parent"/> (does not include parameters that are declared at a lower scope).
+        /// 
+        /// <para>To determine which parent types are supported see <see cref="AnyTableSqlParameter.IsSupportedType"/></para>
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent);
-        ColumnInfo[] GetColumnInfosWithNameExactly(string name);
+
+        /// <summary>
+        /// Returns the persistence object which describes which <see cref="ITicketingSystem"/> should be consulted when making governance decisions (e.g. according to
+        /// ticketing system, can I release this dataset?).  Returns null if no ticketing system has been configured.
+        /// 
+        /// <para>Use <see cref="TicketingSystemFactory"/> to instantiate an <see cref="ITicketingSystem"/> instance</para>
+        /// </summary>
+        /// <returns></returns>
         TicketingSystemConfiguration GetTicketingSystem();
-        IEnumerable<CacheProgress> GetAllCacheProgressWithoutAPermissionWindow();
-        TableInfo GetTableWithNameApproximating(string tableName, string database);
 
         /// <summary>
         /// This method is used to allow you to clone an IMapsDirectlyToDatabaseTable object into a DIFFERENT database.  You should use DbCommandBuilder
@@ -61,6 +106,8 @@ namespace CatalogueLibrary.Repositories
             where T : IMapsDirectlyToDatabaseTable;
         
         DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null);
-        
+
+        T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity;
+
     }
 }

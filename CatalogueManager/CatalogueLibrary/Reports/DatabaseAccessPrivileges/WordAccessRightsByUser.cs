@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
-using System.Threading;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Xceed.Words.NET;
 
@@ -16,24 +13,30 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
     /// </summary>
     public class WordAccessRightsByUser:RequiresMicrosoftOffice
     {
-        public string Server { get; set; }
-        
         private DiscoveredDatabase _dbInfo;
         private readonly bool _currentUsersOnly;
 
+        /// <summary>
+        /// Prepares to generate a report based on the Audit recorded in the supplied Audit database <paramref name="dbInfo"/> <see cref="AccessRightsReportPrerequisites"/>
+        /// </summary>
+        /// <param name="dbInfo">The Audit database</param>
+        /// <param name="currentUsersOnly">True to only show users who still exist, False to also include deleted users</param>
         public WordAccessRightsByUser(DiscoveredDatabase dbInfo, bool currentUsersOnly)
         {
             _dbInfo = dbInfo;
             _currentUsersOnly = currentUsersOnly;
         }
 
+        /// <summary>
+        /// Creates a new word document in a temp folder which contains aggregate data about which users have access to which databases.
+        /// </summary>
         public void GenerateWordFile()
         {
             var f = GetUniqueFilenameInWorkArea("DatabaseAccessRightsByUser");
 
             using (DocX document = DocX.Create(f.FullName))
             {
-                InsertHeader(document,"Database Access Report:" + Server);
+                InsertHeader(document,"Database Access Report:" + _dbInfo.Server.Name);
 
                 using (var con = (SqlConnection) _dbInfo.Server.GetConnection())
                 {
@@ -162,14 +165,12 @@ and
             return cmd;
         }
 
-        public void QueryToWordTable(DocX document, SqlDataReader r, bool doubleUpColumns)
+        private void QueryToWordTable(DocX document, SqlDataReader r, bool doubleUpColumns)
         {
 
             System.Data.DataTable dataTable = new DataTable();
             dataTable.Load(r);
-
             
-
             Table wordTable;
 
             //doubling up columns is for long datasets with few columns e.g. 100 rows, 2 columns (e.g. name, age).  In this case we half the dataset and duplicate the columns so that the table looks like name,age,<empty column to break up space>,name,age

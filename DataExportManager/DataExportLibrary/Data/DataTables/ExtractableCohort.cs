@@ -33,12 +33,13 @@ namespace DataExportLibrary.Data.DataTables
     /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
     /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>, IHasDependencies
+    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>, IHasDependencies, ICustomSearchString
     {
         #region Database Properties
         private int _externalCohortTable_ID;
         private string _overrideReleaseIdentifierSQL;
         private string _auditLog;
+        private bool _isDeprecated;
 
         public int ExternalCohortTable_ID
         {
@@ -69,6 +70,14 @@ namespace DataExportLibrary.Data.DataTables
             set { SetField(ref _originID, value); }
         }
 
+        /// <summary>
+        /// True if the cohort has been replaced by another cohort or otherwise should not be used
+        /// </summary>
+        public bool IsDeprecated
+        {
+            get { return _isDeprecated; }
+            set { SetField(ref _isDeprecated, value); }
+        }
 
         #endregion
 
@@ -125,8 +134,41 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
         [NoMappingToDatabase]
-        [UsefulProperty]
+        [UsefulProperty(DisplayName = "Source")]
         public string Source { get { return ExternalCohortTable.Name; } }
+
+        [NoMappingToDatabase]
+        [UsefulProperty(DisplayName = "P")]
+        public int ExternalProjectNumber
+        {
+            get { return (int?)GetFromCacheData(x => x.ExternalProjectNumber) ?? -1; }
+        }
+
+        [NoMappingToDatabase]
+        [UsefulProperty(DisplayName = "V")]
+        public int ExternalVersion
+        {
+            get { return (int?)GetFromCacheData(x => x.ExternalVersion) ?? -1; }
+        }
+
+        private object GetFromCacheData(Func<IExternalCohortDefinitionData, object> func)
+        {
+            if (_broken)
+                return null;
+
+            try
+            {
+                var v = _cacheData.Value;
+                return func(v);
+            }
+            catch (Exception)
+            {
+                _broken = true;
+                _cacheData = new Lazy<IExternalCohortDefinitionData>(() => null);
+            }
+                
+            return null;
+        }
 
         internal ExtractableCohort(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
@@ -135,6 +177,7 @@ namespace DataExportLibrary.Data.DataTables
             OriginID = Convert.ToInt32(r["OriginID"]);
             ExternalCohortTable_ID = Convert.ToInt32(r["ExternalCohortTable_ID"]);
             AuditLog = r["AuditLog"] as string;
+            IsDeprecated = (bool)r["IsDeprecated"];
 
             ClearAllInjections();
         }
@@ -167,20 +210,12 @@ namespace DataExportLibrary.Data.DataTables
 
         public override string ToString()
         {
-            IExternalCohortDefinitionData v = null;
+            return GetFromCacheData(x => x.ExternalDescription) as string ?? "Broken Cohort";
+        }
 
-            try
-            {
-                v = _cacheData.Value;
-            }
-            catch (Exception)
-            {
-                _cacheData = new Lazy<IExternalCohortDefinitionData>(()=>null);    
-            }
-            if (v == null)
-                return "Broken Cohort";
-
-            return v.ExternalProjectNumber + "_" + v.ExternalDescription + "_V" + v.ExternalVersion;
+        public string GetSearchString()
+        {
+            return ToString() + " " + ExternalProjectNumber + " " + ExternalVersion;
         }
 
         private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
@@ -384,6 +419,12 @@ namespace DataExportLibrary.Data.DataTables
         //these need to be private since ReverseAnonymiseDataTable will likely be called in batch
         private int _reverseAnonymiseProgressFetchingMap = 0;
         private int _reverseAnonymiseProgressReversing = 0;
+        
+        /// <summary>
+        /// Indicates whether the database described in ExternalCohortTable is unreachable or if the cohort has since been deleted etc.
+        /// </summary>
+        private bool _broken;
+
 
         public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
         {
@@ -491,6 +532,9 @@ namespace DataExportLibrary.Data.DataTables
 
         public void InjectKnown(IExternalCohortDefinitionData instance)
         {
+            if (instance == null)
+                _broken = true;
+
             _cacheData = new Lazy<IExternalCohortDefinitionData>(() => instance);
         }
 
@@ -515,7 +559,8 @@ namespace DataExportLibrary.Data.DataTables
             return Repository.GetAllObjects<ExtractionConfiguration>("WHERE Cohort_ID = " + ID);
         }
     }
-        public enum OneToMErrorResolutionStrategy
+
+    public enum OneToMErrorResolutionStrategy
     {
         TriggerFatalCrash,
         Top1,

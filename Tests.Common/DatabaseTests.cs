@@ -82,7 +82,15 @@ namespace Tests.Common
 
         public DatabaseTests()
         {
-            RepositoryLocator = new DatabaseCreationRepositoryFinder(TestDatabaseSettings.ServerName, TestDatabaseNames.Prefix);
+
+            var opts = new DatabaseCreationProgramOptions()
+            {
+                ServerName = TestDatabaseSettings.ServerName,
+                Prefix = TestDatabaseNames.Prefix
+            };
+
+            
+            RepositoryLocator = new DatabaseCreationRepositoryFinder(opts);
 
             Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + RepositoryLocator.CatalogueRepository.DiscoveredServer.Name + " Database=" + RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
             Assert.IsTrue(RepositoryLocator.CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
@@ -147,7 +155,13 @@ namespace Tests.Common
 
         private SqlConnectionStringBuilder CreateServerPointerInCatalogue(ServerDefaults defaults, string prefix, string databaseName, ServerDefaults.PermissableDefaults defaultToSet,Assembly creator)
         {
-            var builder = DatabaseCreationProgram.GetBuilder(TestDatabaseSettings.ServerName, prefix, databaseName);
+            var opts = new DatabaseCreationProgramOptions()
+            {
+                ServerName = TestDatabaseSettings.ServerName,
+                Prefix = prefix
+            };
+
+            var builder = opts.GetBuilder(databaseName);
 
             if (string.IsNullOrWhiteSpace(databaseName))
                 builder.InitialCatalog = "";
@@ -313,6 +327,7 @@ delete from {0}..LoadModuleAssembly
 delete from {0}..Plugin
 
 delete from {1}..ReleaseLog
+delete from {1}..SupplementalExtractionResults
 delete from {1}..CumulativeExtractionResults
 delete from {1}..ExtractableColumn
 delete from {1}..SelectedDataSets
@@ -489,7 +504,7 @@ delete from {1}..Project
             Assert.Fail("VerifyRowExist failed, did not find expected rowObjects (" + string.Join(",", rowObjects.Select(o => "'" + o + "'")) + ") in the resultTable");
         }
 
-        protected bool AreBasicallyEquals(object o, object o2)
+        public static bool AreBasicallyEquals(object o, object o2, bool handleSlashRSlashN = true)
         {
             //if they are legit equals
             if (Equals(o, o2))
@@ -503,6 +518,9 @@ delete from {1}..Project
                 return oIsNull == o2IsNull;
 
             //they are not null so tostring them deals with int vs long etc that DbDataAdapters can be a bit flaky on
+            if (handleSlashRSlashN)
+                return string.Equals(o.ToString().Replace("\r","").Replace("\n",""), o2.ToString().Replace("\r","").Replace("\n",""));
+            
             return string.Equals(o.ToString(), o2.ToString());
         }
 

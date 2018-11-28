@@ -38,7 +38,18 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
                     tbName.Text = value.Name;
 
                     serverDatabaseTableSelector1.DatabaseType = value.DatabaseType;
-                    serverDatabaseTableSelector1.SetExplicitDatabase(value.Server, value.Database, value.Username, value.GetDecryptedPassword());
+
+                    string password = null;
+                    try
+                    {
+                        password = value.GetDecryptedPassword();
+                    }
+                    catch (Exception)
+                    {
+                        password = null;
+                    }
+
+                    serverDatabaseTableSelector1.SetExplicitDatabase(value.Server, value.Database, value.Username, password);
 
                     tbTableName.Text = value.TableName;
                     tbPrivateIdentifierField.Text = value.PrivateIdentifierField;

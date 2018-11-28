@@ -25,7 +25,7 @@ namespace CatalogueLibrary.QueryBuilding
         {
             ColumnInfo = column;
             Order = -1;
-            SelectSQL = column.GetRuntimeName();
+            SelectSQL = column.GetFullyQualifiedName();
             Alias = null;
             HashOnDataRelease = false;
             IsExtractionIdentifier = false;

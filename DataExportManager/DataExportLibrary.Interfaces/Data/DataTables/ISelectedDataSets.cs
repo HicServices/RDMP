@@ -18,5 +18,12 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         IExtractionConfiguration ExtractionConfiguration { get;}
         IExtractableDataSet ExtractableDataSet { get; }
         ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins { get;}
+
+
+        /// <summary>
+        /// If this dataset has been extracted in the past this will return the last extract audit record.  Otherwise it will return null
+        /// </summary>
+        /// <returns></returns>
+        ICumulativeExtractionResults GetCumulativeExtractionResultsIfAny();
     }
 }

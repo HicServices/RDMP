@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 
@@ -17,6 +18,7 @@ namespace CatalogueLibrary.Providers
         private ICoreChildProvider _childProvider;
         private HashSet<int> _orphanCatalogueItems = new HashSet<int>();
 
+        /// <inheritdoc/>
         public void RefreshProblems(ICoreChildProvider childProvider)
         {
             _childProvider = childProvider;
@@ -34,11 +36,13 @@ namespace CatalogueLibrary.Providers
             
         }
 
+        /// <inheritdoc/>
         public bool HasProblem(object o)
         {
             return !string.IsNullOrWhiteSpace(DescribeProblem(o));
         }
 
+        /// <inheritdoc/>
         public string DescribeProblem(object o)
         {
             if (o is AllGovernanceNode)
@@ -56,7 +60,12 @@ namespace CatalogueLibrary.Providers
             return null;
         }
 
-        public string DescribeProblem(AllGovernanceNode allGovernanceNode)
+        /// <summary>
+        /// Identifies problems with dataset governance (e.g. <see cref="Catalogue"/> which have expired <see cref="GovernancePeriod"/>)
+        /// </summary>
+        /// <param name="allGovernanceNode"></param>
+        /// <returns></returns>
+        private string DescribeProblem(AllGovernanceNode allGovernanceNode)
         {
             HashSet<int> expiredCatalogueIds = new HashSet<int>();
 
@@ -89,7 +98,7 @@ namespace CatalogueLibrary.Providers
             return null;
         }
 
-        public string DescribeProblem(ExtractionInformation extractionInformation)
+        private string DescribeProblem(ExtractionInformation extractionInformation)
         {
             //Get the Catalogue that this ExtractionInformation is descended from
             var descendancy = _childProvider.GetDescendancyListIfAnyFor(extractionInformation);
@@ -116,7 +125,7 @@ namespace CatalogueLibrary.Providers
             return null;
         }
 
-        public string DescribeProblem(HICProjectDirectoryNode hicProjectDirectoryNode)
+        private string DescribeProblem(HICProjectDirectoryNode hicProjectDirectoryNode)
         {
             if (hicProjectDirectoryNode.IsEmpty)
                 return "No Project Directory has been specified for the load";

@@ -298,37 +298,9 @@ namespace Diagnostics
 
 
             //cleanup old Catalogues
-            foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllCatalogues(true)
-                    .Where(c => c.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName)))
-            {
+            foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllCatalogues(true).Where(c => c.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName)))
+                c.DeleteInDatabase();
 
-                if (SilentRunning)
-                    c.DeleteInDatabase();
-                else
-                {
-                    bool nukeIt = notifier.OnCheckPerformed(new CheckEventArgs(
-                        "Found Delete Existing Catalogue Called " + c.Name,
-                        CheckResult.Fail, null, "Delete existing catalogue"));
-
-                    if(!nukeIt)
-                        return false;
-                    
-                    c.DeleteInDatabase();
-
-                    try
-                    {
-                        var extractableDataSets = RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>().Where(e => e.Catalogue_ID == c.ID);
-                        foreach (ExtractableDataSet dataSet in extractableDataSets)
-                            dataSet.DeleteInDatabase();
-                    }
-                    catch (Exception e)
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs("Could not delete old ExtractableDataset which referenced the old Catalogue (this will likely leave a reference to 'Catalogue Deleted' in your DataExportManager application",CheckResult.Warning, e));
-                    }
-                    
-                }
-            }
-                
 
             return true;
         }

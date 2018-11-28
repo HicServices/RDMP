@@ -1,20 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Providers;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs;
-using MapsDirectlyToDatabaseTableUI;
-using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
@@ -22,7 +9,7 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     class ParametersNodeMenu : RDMPContextMenuStrip
     {
-        public ParametersNodeMenu(RDMPContextMenuStripArgs args, ParametersNode parameterNode): base(args, null)
+        public ParametersNodeMenu(RDMPContextMenuStripArgs args, ParametersNode parameterNode): base(args, parameterNode)
         {
             var filter = parameterNode.Collector as ExtractionFilter;
 

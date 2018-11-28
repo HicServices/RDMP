@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary;
@@ -8,11 +7,8 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using NUnit.Framework;
-using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.ArgumentTests
@@ -361,5 +357,44 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
                 server.DeleteInDatabase();
             }
         }
+
+        [Test]
+        public void TestArgumentThatIsDictionary()
+        {
+            var pipe = new Pipeline(CatalogueRepository, "p");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
+                "c");
+
+            try
+            {
+                var arg = new PipelineComponentArgument(CatalogueRepository, pc);
+                arg.Name = "MyNames";
+                arg.SetType(typeof(Dictionary<TableInfo,string>));
+                arg.SaveToDatabase();
+                
+                Assert.AreEqual(typeof(Dictionary<TableInfo, string>), arg.GetConcreteSystemType());
+
+                var ti1 = new TableInfo(CatalogueRepository, "test1");
+                var ti2 = new TableInfo(CatalogueRepository, "test2");
+
+                var val = new Dictionary<TableInfo, string>();
+                val.Add(ti1,"Fish");
+                val.Add(ti2,"Fish");
+            
+                arg.SetValue(val);
+            
+                arg.SaveToDatabase();
+
+                var val2 = (Dictionary<TableInfo, string>) arg.GetValueAsSystemType();
+                Assert.AreEqual(2,val2.Count);
+                Assert.AreEqual("Fish", val2[ti1]);
+                Assert.AreEqual("Fish", val2[ti2]);
+              }
+            finally
+            {
+                pipe.DeleteInDatabase();
+            }
+        }
+
     }
 }

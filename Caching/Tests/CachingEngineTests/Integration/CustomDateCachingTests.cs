@@ -54,7 +54,7 @@ namespace CachingEngineTests.Integration
             pipeline.Stub(p => p.Destination).Return(destinationComponent);
             pipeline.Stub(p => p.PipelineComponents).Return(Enumerable.Empty<IPipelineComponent>().OrderBy(p => p).ToList());
 
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"delme")),true);
+            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"delme",true);
 
             var lmd = MockRepository.GenerateStub<ILoadMetadata>();
             lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
@@ -129,10 +129,11 @@ namespace CachingEngineTests.Integration
 
     public class TestCacheSource : CacheSource<TestCacheChunk>
     {
-        public override void DoGetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        public override TestCacheChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            Chunk = new TestCacheChunk(Request.Start);
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "!!" + Chunk.Request.Start.ToString("g")));
+            var c = new TestCacheChunk(Request.Start);
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "!!" + request.Start.ToString("g")));
+            return c;
         }
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)

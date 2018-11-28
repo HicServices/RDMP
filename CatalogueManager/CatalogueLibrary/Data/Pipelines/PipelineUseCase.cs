@@ -30,11 +30,20 @@ namespace CatalogueLibrary.Data.Pipelines
             return _context;
         }
 
+        /// <summary>
+        /// Call this in your constructor 
+        /// </summary>
         protected void GenerateContext()
         {
             _context = GenerateContextImpl();
         }
 
+        /// <summary>
+        /// Implement this to generate the compatiblity definition for pipelines that will be used by you.  
+        /// 
+        /// <para>IMPORTANT: Make sure you call <see cref="GenerateContext"/> in every constructor you have</para>
+        /// </summary>
+        /// <returns></returns>
         protected abstract IDataFlowPipelineContext GenerateContextImpl();
 
         /// <inheritdoc/>
@@ -89,6 +98,10 @@ namespace CatalogueLibrary.Data.Pipelines
             return engine;
         }
 
+        /// <summary>
+        /// Mark the object instance <paramref name="o"/> as available for pipeline components to subscribe to via IPipelineRequirement.
+        /// </summary>
+        /// <param name="o"></param>
         protected void AddInitializationObject(object o)
         {
             if (o != null)

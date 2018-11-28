@@ -32,9 +32,9 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ConfirmExit", value); }
         }
 
-        public static bool LicenseAccepted
+        public static string LicenseAccepted
         {
-            get { return AppSettings.GetValueOrDefault("LicenseAccepted", false); }
+            get { return AppSettings.GetValueOrDefault("LicenseAccepted",null); }
             set { AppSettings.AddOrUpdateValue("LicenseAccepted", value); }
         }
 
@@ -100,7 +100,7 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("UseCaching", false); }
             set { AppSettings.AddOrUpdateValue("UseCaching", value); }
         }
-
+        
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

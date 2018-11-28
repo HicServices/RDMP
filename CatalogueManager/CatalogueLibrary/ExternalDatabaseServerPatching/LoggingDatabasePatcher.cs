@@ -10,11 +10,13 @@ namespace CatalogueLibrary.ExternalDatabaseServerPatching
     /// </summary>
     public class LoggingDatabasePatcher: IPatcher
     {
+        /// <inheritdoc/>
         public Assembly GetHostAssembly()
         {
             return typeof(LogManager).Assembly;
         }
 
+        /// <inheritdoc/>
         public Assembly GetDbAssembly()
         {
             return Assembly.Load("HIC.Logging.Database");

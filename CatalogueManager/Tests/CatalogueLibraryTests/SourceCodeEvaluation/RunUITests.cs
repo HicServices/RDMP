@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.CommandExecution.AtomicCommands.PluginCommands;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.SimpleDialogs.NavigateTo;
 using CohortManager.CommandExecution.AtomicCommands;
@@ -12,7 +8,6 @@ using DataExportManager.CommandExecution.AtomicCommands;
 using NUnit.Framework;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
-using Rhino.Mocks.Constraints;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
@@ -30,7 +25,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandCreateNewExternalDatabaseServer),
                 typeof(ExecuteCommandDelete),
                 typeof(ExecuteCommandRename),
-                typeof(ExecuteCommandSetPipeline),
                 typeof(ExecuteCommandShowKeywordHelp),
                 typeof(ExecuteCommandCollapseChildNodes),
                 typeof(ExecuteCommandExpandAllNodes),
@@ -42,8 +36,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandCreateNewPipeline),
                 typeof(ExecuteCommandEditPipelineWithUseCase),
 
-                typeof(ExecuteCommandCheck),
                 typeof(ExecuteCommandExportLoggedDataToCsv)
+
             });
 
         [Test]
@@ -54,8 +48,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             Console.WriteLine("Looking in" + typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandViewCohortAggregateGraph).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandUnpin).Assembly);
-            Console.WriteLine("Looking in" + typeof(PluginAtomicCommand).Assembly);
-
+            
             allowedToBeIncompatible.AddRange(RunUI.GetIgnoredCommands());
 
             var notSupported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex)

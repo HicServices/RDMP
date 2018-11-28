@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.Collections;
 using CatalogueManager.DashboardTabs.Construction;
 using CatalogueManager.DashboardTabs.Construction.Exceptions;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -52,7 +48,6 @@ namespace CatalogueManager.DashboardTabs
 
             _controlFactory = new DashboardControlFactory(activator,RepositoryLocator,new Point(5,25));
             btnAddDashboardControl.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DashboardControl, OverlayKind.Add);
-            btnDeleteDashboard.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DashboardLayout, OverlayKind.Delete);
             _layout = databaseObject;
             ReLayout();
         }
@@ -137,11 +132,6 @@ namespace CatalogueManager.DashboardTabs
             
             //add the new control and tell it with the initial edit state is (also updates all the other controls)
             _editModeFunctionality.EditMode = btnEditMode.Checked;
-        }
-
-        private void btnDeleteDashboard_Click(object sender, EventArgs e)
-        {
-            _activator.DeleteWithConfirmation(this, _layout);
         }
     }
 

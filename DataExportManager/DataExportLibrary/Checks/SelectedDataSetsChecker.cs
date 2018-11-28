@@ -86,59 +86,79 @@ namespace DataExportLibrary.Checks
 
             notifier.OnCheckPerformed(new CheckEventArgs("Server " + server + " Exists:" + serverExists,
                 serverExists ? CheckResult.Success : CheckResult.Fail));
-            try
+
+            var cohortServer = request.ExtractableCohort.ExternalCohortTable.Discover();
+
+            if (cohortServer == null || !cohortServer.Exists())
             {
-                using (var con = server.GetConnection())
+                notifier.OnCheckPerformed(new CheckEventArgs("Cohort server did not exist or was unreachable",CheckResult.Fail));
+                return;
+            }
+
+            //Make sure cohort and dataset are on same server before checking (can still get around this at runtime by using ExecuteCrossServerDatasetExtractionSource)
+            if(!cohortServer.Server.Name.Equals(server.Name) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    string.Format("Cohort is on server '{0}' ({1}) but dataset is on '{2}' ({3})",
+                    cohortServer.Server.Name,
+                    cohortServer.Server.DatabaseType,
+                    server.Name,server.DatabaseType), CheckResult.Warning));
+            else
+            {
+                //Try to fetch TOP 1 data
+                try
                 {
-                    con.Open();
-                    var transaction = con.BeginTransaction();
-                    //incase user somehow manages to write a filter/transform that nukes data or something
-
-                    var managedTransaction = new ManagedTransaction(con, transaction);
-
-                    DbCommand cmd;
-
-                    try
+                    using (var con = server.GetConnection())
                     {
-                        cmd = server.GetCommand(request.QueryBuilder.SQL, con, managedTransaction);
-                        cmd.CommandTimeout = timeout;
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs(
-                                "/*About to send Request SQL :*/" + Environment.NewLine + request.QueryBuilder.SQL,
-                                CheckResult.Success));
-                    }
-                    catch (QueryBuildingException e)
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs("Failed to assemble query for dataset " + ds,
-                            CheckResult.Fail, e));
-                        return;
-                    }
-                    
-                    try
-                    {
-                        using (var r = cmd.ExecuteReader())
+                        con.Open();
+                        var transaction = con.BeginTransaction();
+                        //incase user somehow manages to write a filter/transform that nukes data or something
+
+                        var managedTransaction = new ManagedTransaction(con, transaction);
+
+                        DbCommand cmd;
+
+                        try
                         {
-                            if (r.Read())
-                                notifier.OnCheckPerformed(new CheckEventArgs("Read at least 1 row successfully from dataset " + ds,
+                            cmd = server.GetCommand(request.QueryBuilder.SQL, con, managedTransaction);
+                            cmd.CommandTimeout = timeout;
+                            notifier.OnCheckPerformed(
+                                new CheckEventArgs(
+                                    "/*About to send Request SQL :*/" + Environment.NewLine + request.QueryBuilder.SQL,
                                     CheckResult.Success));
+                        }
+                        catch (QueryBuildingException e)
+                        {
+                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to assemble query for dataset " + ds,
+                                CheckResult.Fail, e));
+                            return;
+                        }
+                    
+                        try
+                        {
+                            using (var r = cmd.ExecuteReader())
+                            {
+                                if (r.Read())
+                                    notifier.OnCheckPerformed(new CheckEventArgs("Read at least 1 row successfully from dataset " + ds,
+                                        CheckResult.Success));
+                                else
+                                    notifier.OnCheckPerformed(new CheckEventArgs("Dataset " + ds + " is completely empty (when linked with the cohort). " +
+                                                                                 "Extraction may fail if the Source does not allow empty extractions",
+                                        CheckResult.Warning));
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            if (server.GetQuerySyntaxHelper().IsTimeout(e))
+                                notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s", CheckResult.Warning,e));
                             else
-                                notifier.OnCheckPerformed(new CheckEventArgs("Dataset " + ds + " is completely empty (when linked with the cohort). " +
-                                                                             "Extraction may fail if the Source does not allow empty extractions",
-                                    CheckResult.Warning));
+                                notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));
                         }
                     }
-                    catch (Exception e)
-                    {
-                        if (server.GetQuerySyntaxHelper().IsTimeout(e))
-                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s", CheckResult.Warning,e));
-                        else
-                            notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));
-                    }
                 }
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute Top 1 on dataset " + ds, CheckResult.Fail, e));
+                catch (Exception e)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute Top 1 on dataset " + ds, CheckResult.Fail, e));
+                }
             }
 
             var cata = _repositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>((int)ds.Catalogue_ID);

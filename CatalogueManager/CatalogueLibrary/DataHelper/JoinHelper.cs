@@ -48,6 +48,11 @@ namespace CatalogueLibrary.DataHelper
             return SQL;
         }
 
+        /// <summary>
+        /// Assembles ANSI Sql for the JOIN section of a query including any supplemental join columns (e.g. T1 LEFT JOIN T2 on T1.A = T2.A AND T1.B = T2.B)
+        /// </summary>
+        /// <param name="join"></param>
+        /// <returns></returns>
         public static string GetJoinSQL(IJoin join)
         {
             string SQL = GetJoinSQL(join.ForeignKey, join.PrimaryKey, join.ExtractionJoinType, join.Collation);

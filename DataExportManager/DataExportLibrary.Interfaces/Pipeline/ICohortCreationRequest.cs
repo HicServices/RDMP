@@ -15,7 +15,7 @@ namespace DataExportLibrary.Interfaces.Pipeline
         IProject Project { get; }
         ICohortDefinition NewCohortDefinition { get; set; }
         
-        int ImportAsExtractableCohort();
+        int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess);
         void PushToServer(IManagedConnection transaction);
     }
 }

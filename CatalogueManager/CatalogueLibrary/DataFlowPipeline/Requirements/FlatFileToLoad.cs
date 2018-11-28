@@ -9,13 +9,24 @@ namespace CatalogueLibrary.DataFlowPipeline.Requirements
     /// </summary>
     public class FlatFileToLoad
     {
+        /// <summary>
+        /// Creates a new instance pointed at the given <paramref name="file"/>
+        /// </summary>
+        /// <param name="file"></param>
         public FlatFileToLoad(FileInfo file)
         {
             File = file;
         }
 
+        /// <summary>
+        /// The file you are trying to load
+        /// </summary>
         public FileInfo File { get; set; }
         
+        /// <summary>
+        /// Returns the filename of the file you are trying to load
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             if (File == null)

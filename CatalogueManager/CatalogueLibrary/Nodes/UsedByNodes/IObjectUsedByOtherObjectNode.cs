@@ -1,6 +1,6 @@
 ﻿using CatalogueLibrary.Data;
 
-namespace DataExportLibrary.Providers.Nodes.UsedByNodes
+namespace CatalogueLibrary.Nodes.UsedByNodes
 {
     public interface IObjectUsedByOtherObjectNode:IMasqueradeAs
     {

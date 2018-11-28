@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
@@ -25,13 +27,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
     public class WindowArranger : IArrangeWindows
     {
         private readonly IActivateItems _activator;
-        private readonly ToolboxWindowManager _toolboxWindowManager;
+        private readonly WindowManager _windowManager;
         private readonly DockPanel _mainDockPanel;
 
-        public WindowArranger(IActivateItems activator, ToolboxWindowManager toolboxWindowManager, DockPanel mainDockPanel)
+        public WindowArranger(IActivateItems activator, WindowManager windowManager, DockPanel mainDockPanel)
         {
             _activator = activator;
-            _toolboxWindowManager =toolboxWindowManager;
+            _windowManager =windowManager;
             _mainDockPanel = mainDockPanel;
         }
 
@@ -39,13 +41,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
         {
             var tableInfo = catalogue.GetTableInfoList(false).FirstOrDefault();
 
-            _toolboxWindowManager.CloseAllToolboxes();
-            _toolboxWindowManager.CloseAllWindows();
+            _windowManager.CloseAllToolboxes();
+            _windowManager.CloseAllWindows();
 
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(catalogue,2));
             new ExecuteCommandActivate(_activator,catalogue).Execute();
 
-            _toolboxWindowManager.Create(RDMPCollection.Tables, DockState.DockRight);
+            _windowManager.Create(RDMPCollection.Tables, DockState.DockRight);
 
             if (tableInfo != null)
                 _activator.RequestItemEmphasis(this, new EmphasiseRequest(tableInfo,1));
@@ -53,8 +55,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
 
         public void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o)
         {
-            _toolboxWindowManager.CloseAllToolboxes();
-            _toolboxWindowManager.CloseAllWindows();
+            _windowManager.CloseAllToolboxes();
+            _windowManager.CloseAllWindows();
             
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, int.MaxValue));
 
@@ -64,12 +66,35 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
                 activate.Execute();
         }
 
+        public void Setup(WindowLayout target)
+        {
+            //Do not reload an existing layout
+            string oldXml = _windowManager.MainForm.GetCurrentLayoutXml();
+            string newXml = target.LayoutData;
+
+            if(AreBasicallyTheSameLayout(oldXml, newXml))
+                return;
+            
+            _windowManager.CloseAllToolboxes();
+            _windowManager.CloseAllWindows();
+            _windowManager.MainForm.LoadFromXml(target);
+        }
+
+        private bool AreBasicallyTheSameLayout(string oldXml, string newXml)
+        {
+            var patStripActive = @"Active.*=[""\-\d]*";
+            oldXml = Regex.Replace(oldXml, patStripActive, "");
+            newXml = Regex.Replace(newXml, patStripActive, "");
+
+            return oldXml.Equals(newXml, StringComparison.CurrentCultureIgnoreCase);
+        }
+
         public void SetupEditDataExtractionProject(object sender, Project project)
         {
-            _toolboxWindowManager.CloseAllToolboxes();
-            _toolboxWindowManager.CloseAllWindows();
+            _windowManager.CloseAllToolboxes();
+            _windowManager.CloseAllWindows();
 
-            _toolboxWindowManager.Create(RDMPCollection.DataExport, DockState.DockLeft);
+            _windowManager.Create(RDMPCollection.DataExport, DockState.DockLeft);
 
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(project, int.MaxValue));
             var activateDataExportItems = _activator as IActivateItems;
@@ -85,8 +110,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
 
         public void SetupEditLoadMetadata(object sender, LoadMetadata loadMetadata)
         {
-            if(!_toolboxWindowManager.IsVisible(RDMPCollection.DataLoad))
-                _toolboxWindowManager.Create(RDMPCollection.DataLoad, DockState.DockLeft);
+            if(!_windowManager.IsVisible(RDMPCollection.DataLoad))
+                _windowManager.Create(RDMPCollection.DataLoad, DockState.DockLeft);
 
             var diagram = (Control)_activator.ActivateViewLoadMetadataDiagram(this, loadMetadata);
             ((DockContent)diagram.Parent).DockTo(_mainDockPanel,DockStyle.Right);

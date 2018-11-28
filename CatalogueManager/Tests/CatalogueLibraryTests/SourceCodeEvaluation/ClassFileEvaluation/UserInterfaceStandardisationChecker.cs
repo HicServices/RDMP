@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
+using CatalogueLibrary.Nodes.UsedByNodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
-using DataExportLibrary.Providers.Nodes.UsedByNodes;
 using NUnit.Framework;
 using ReusableUIComponents.CommandExecution.Proposals;
 
