@@ -2,15 +2,10 @@
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Menus.MenuItems
 {
@@ -57,7 +52,7 @@ namespace CatalogueManager.Menus.MenuItems
 
                         if (helpDict != null && helpDict.ContainsKey(match.Value))
                         {
-                            ExceptionViewer.Show("Command blocked by:" + match.Value + Environment.NewLine + "Purpose:" + helpDict[match.Value], ex);
+                            WideMessageBox.Show("Rule:" + Environment.NewLine + helpDict[match.Value] + Environment.NewLine +"(" + match.Value +")" ,Environment.StackTrace,true,match.Value,"Command Blocked");
                             return;
                         }
                     }
