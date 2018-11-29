@@ -1,25 +1,18 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportManager.CohortUI.ImportCustomData;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
+using DataExportLibrary.Providers;
+using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
@@ -50,24 +43,8 @@ namespace DataExportManager.CohortUI
     {
         private ExtractableCohort _extractableCohort; 
         
-        public ExtractableCohort ExtractableCohort
-        {
-            get { return _extractableCohort; }
-            private set {
-                if (VisualStudioDesignMode)
-                    return;
-
-                _extractableCohort = value;
-
-                //if the object passed in was null we set it to "" otherwise we are going to set it to the Name property (unless that is null in which case it's still going to end up as "")
-                tbID.Text = value == null ? "" : value.ID.ToString();
-                
-                tbOverrideReleaseIdentifierSQL.Text = value == null ? "" : value.OverrideReleaseIdentifierSQL;
-                
-                auditLogEditor.Text = value != null ? value.AuditLog : "";
-                GenerateSQLPreview();
-            }
-        }
+        RDMPCollectionCommonFunctionality _commonFunctionality1 = new RDMPCollectionCommonFunctionality();
+        RDMPCollectionCommonFunctionality _commonFunctionality2 = new RDMPCollectionCommonFunctionality();
 
         private void GenerateSQLPreview()
         {
@@ -77,24 +54,18 @@ namespace DataExportManager.CohortUI
             QueryPreview.ReadOnly = false;
             try
             {
-                if (ExtractableCohort == null)
-                {
-                    QueryPreview.Text = "";
-                    return;
-                }
-
                 string toShow = "";
 
-                DiscoveredDatabase location = ExtractableCohort.GetDatabaseServer();
+                DiscoveredDatabase location = _extractableCohort.GetDatabaseServer();
                 //tell user about connection string (currently we don't support usernames/passwords so it's fine
                 toShow += "/*Cohort is stored in Server " + location.Server.Name + " Database " + location.GetRuntimeName() +"*/" + Environment.NewLine;
                 toShow += Environment.NewLine;
 
-                IExternalCohortTable externalCohortTable = ExtractableCohort.ExternalCohortTable;
+                IExternalCohortTable externalCohortTable = _extractableCohort.ExternalCohortTable;
                 
                 string sql = "SELECT * FROM " + externalCohortTable.TableName +
                              Environment.NewLine
-                             + " WHERE " + ExtractableCohort.WhereSQL();
+                             + " WHERE " + _extractableCohort.WhereSQL();
 
                 toShow += Environment.NewLine;
                 toShow += Environment.NewLine + "/*SQL to view cohort:*/" + Environment.NewLine;
@@ -128,18 +99,14 @@ namespace DataExportManager.CohortUI
             QueryPreview = new ScintillaTextEditorFactory().Create();
             QueryPreview.ReadOnly = true;
 
-            pSqlPreview.Controls.Add(QueryPreview); 
-
             AssociatedCollection = RDMPCollection.SavedCohorts;
+
+            helpIcon1.SetHelpText("Override Release Identifier","Not Recommended.  Setting this lets you change which release identifier column is extracted (for this cohort only).");
         }
 
         private void AuditLogEditorOnTextChanged(object sender, EventArgs eventArgs)
         {
-            if (ExtractableCohort != null)
-            {
-                ExtractableCohort.AuditLog = auditLogEditor.Text;
-                ExtractableCohort.SaveToDatabase();
-            }
+            _extractableCohort.AuditLog = auditLogEditor.Text;
         }
 
         [DesignerSerializationVisibilityAttribute( DesignerSerializationVisibility.Hidden)]
@@ -153,45 +120,112 @@ namespace DataExportManager.CohortUI
         public override void SetDatabaseObject(IActivateItems activator, ExtractableCohort databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            ExtractableCohort = databaseObject;
+            _extractableCohort = databaseObject;
+
+            //if the object passed in was null we set it to "" otherwise we are going to set it to the Name property (unless that is null in which case it's still going to end up as "")
+            tbID.Text = _extractableCohort.ID.ToString();
+            tbOverrideReleaseIdentifierSQL.Text = _extractableCohort.OverrideReleaseIdentifierSQL;
+            auditLogEditor.Text = _extractableCohort.AuditLog;
+
+            tbProjectNumber.Text = _extractableCohort.ExternalProjectNumber.ToString();
+            tbVersion.Text = _extractableCohort.ExternalVersion.ToString();
+
+            GenerateSQLPreview();
+
+            objectSaverButton1.SetupFor(_extractableCohort,activator.RefreshBus);
+
+            var dx = _activator.CoreChildProvider as DataExportChildProvider;
+
+            if (!_commonFunctionality1.IsSetup)
+            {
+                _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage,activator,olvUsedIn,null,
+                    new RDMPCollectionCommonFunctionalitySettings()
+                    {
+                        AddCheckColumn = false,
+                        AddFavouriteColumn = false,
+                        AddIDColumn = true,
+                        AllowPinning = false,
+                        SuppressActivate = false,
+                        SuppressChildrenAdder = true
+                    }
+                    );
+            }
+
+            if (!_commonFunctionality2.IsSetup)
+            {
+                _commonFunctionality2.SetUp(RDMPCollection.None, tlvPreviousVersions, activator, olvOtherVersions, null,
+                    new RDMPCollectionCommonFunctionalitySettings()
+                    {
+                        AddCheckColumn = false,
+                        AddFavouriteColumn = false,
+                        AddIDColumn = true,
+                        AllowPinning = false,
+                        SuppressActivate = false,
+                        SuppressChildrenAdder = true
+                    }
+                    );
+            }
+
+            if(dx != null)
+            {
+                tlvCohortUsage.ClearObjects();
+                tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e=>e.Cohort_ID == _extractableCohort.ID).ToArray());
+                
+                tlvPreviousVersions.ClearObjects();
+                tlvPreviousVersions.AddObjects(
+                    dx.Cohorts.Where(
+                        c =>
+                            c.ID != _extractableCohort.ID &&
+                            c.ExternalCohortTable_ID == _extractableCohort.ExternalCohortTable_ID && 
+                            c.GetExternalData().ExternalDescription ==
+                            _extractableCohort.GetExternalData().ExternalDescription &&
+                            c.ExternalProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray());
+            }
+            
             AssociatedCollection = RDMPCollection.SavedCohorts;
         }
 
         private void tbOverrideReleaseIdentifierSQL_TextChanged(object sender, EventArgs e)
         {
-            if (ExtractableCohort != null)
+
+            var syntax = _extractableCohort.GetQuerySyntaxHelper();
+
+            if (
+                !string.IsNullOrWhiteSpace(tbOverrideReleaseIdentifierSQL.Text)//if it has an override
+                &&
+                syntax.GetRuntimeName(tbOverrideReleaseIdentifierSQL.Text)
+                    .Equals(syntax.GetRuntimeName(_extractableCohort.GetPrivateIdentifier())))//and that ovoerride is the same as the private identifier they are trying to release identifiable data on the sly!
             {
-                var syntax = ExtractableCohort.GetQuerySyntaxHelper();
-
-                if (
-                    !string.IsNullOrWhiteSpace(tbOverrideReleaseIdentifierSQL.Text)//if it has an override
-                    &&
-                    syntax.GetRuntimeName(tbOverrideReleaseIdentifierSQL.Text)
-                        .Equals(syntax.GetRuntimeName(ExtractableCohort.GetPrivateIdentifier())))//and that ovoerride is the same as the private identifier they are trying to release identifiable data on the sly!
-                {
-                    //release identifier cannot be the same as private identififer (I AM THE LAW!)
-                    tbOverrideReleaseIdentifierSQL.ForeColor = Color.Red;
-                    return;
-                }
-
-                tbOverrideReleaseIdentifierSQL.ForeColor = Color.Black;
-                ExtractableCohort.OverrideReleaseIdentifierSQL = tbOverrideReleaseIdentifierSQL.Text;
-                ExtractableCohort.SaveToDatabase();
+                //release identifier cannot be the same as private identififer (I AM THE LAW!)
+                tbOverrideReleaseIdentifierSQL.ForeColor = Color.Red;
+                return;
             }
-        }
 
-        private void btnImportCustomDataFile_Click(object sender, EventArgs e)
-        {
-            
-        }
-        
-        private void btnImportPatientIndexTable_Click(object sender, EventArgs e)
-        {
+            tbOverrideReleaseIdentifierSQL.ForeColor = Color.Black;
+            _extractableCohort.OverrideReleaseIdentifierSQL = tbOverrideReleaseIdentifierSQL.Text;
         }
 
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
+        }
+
+        private void btnShowProject_Click(object sender, EventArgs e)
+        {
+            var dx = (DataExportChildProvider) _activator.CoreChildProvider;
+
+            var projects = dx.Projects.Where(p => p.ProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray();
+
+            if (!projects.Any())
+                MessageBox.Show("No Projects exist with ProjectNumber " + _extractableCohort.ExternalProjectNumber);
+            else if (projects.Length == 1)
+                _activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
+            else
+            {
+                SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(projects,false,false);
+                if(dialog.ShowDialog() == DialogResult.OK)
+                    _activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
+            }
         }
     }
 

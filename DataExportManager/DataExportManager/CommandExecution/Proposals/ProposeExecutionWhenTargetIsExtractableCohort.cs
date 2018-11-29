@@ -23,7 +23,7 @@ namespace DataExportManager.CommandExecution.Proposals
 
         public override bool CanActivate(ExtractableCohort target)
         {
-            return false;
+            return true;
         }
 
         public override void Activate(ExtractableCohort target)
