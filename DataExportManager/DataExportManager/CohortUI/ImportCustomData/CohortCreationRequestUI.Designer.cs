@@ -30,12 +30,12 @@ namespace DataExportManager.CohortUI.ImportCustomData
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CohortCreationRequestUI));
             this.label1 = new System.Windows.Forms.Label();
             this.ddExistingCohort = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.lblExternalCohortTable = new System.Windows.Forms.Label();
             this.gbRevisedCohort = new System.Windows.Forms.GroupBox();
-            this.cbShowEvenWhenProjectNumberDoesntMatch = new System.Windows.Forms.CheckBox();
             this.lblNewVersionNumber = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -62,6 +62,11 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.lblErrorNoProjectNumber = new System.Windows.Forms.Label();
             this.tbSetProjectNumber = new System.Windows.Forms.TextBox();
             this.btnClear = new System.Windows.Forms.Button();
+            this.tbExistingVersion = new System.Windows.Forms.TextBox();
+            this.tbExistingCohortSource = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.existingHelpIcon = new ReusableUIComponents.HelpIcon();
             this.gbRevisedCohort.SuspendLayout();
             this.gbNewCohort.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -88,7 +93,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.ddExistingCohort.FormattingEnabled = true;
             this.ddExistingCohort.Location = new System.Drawing.Point(147, 16);
             this.ddExistingCohort.Name = "ddExistingCohort";
-            this.ddExistingCohort.Size = new System.Drawing.Size(661, 21);
+            this.ddExistingCohort.Size = new System.Drawing.Size(438, 21);
             this.ddExistingCohort.Sorted = true;
             this.ddExistingCohort.TabIndex = 1;
             this.ddExistingCohort.SelectedIndexChanged += new System.EventHandler(this.ddExistingCohort_SelectedIndexChanged);
@@ -113,7 +118,13 @@ namespace DataExportManager.CohortUI.ImportCustomData
             // 
             // gbRevisedCohort
             // 
-            this.gbRevisedCohort.Controls.Add(this.cbShowEvenWhenProjectNumberDoesntMatch);
+            this.gbRevisedCohort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbRevisedCohort.Controls.Add(this.existingHelpIcon);
+            this.gbRevisedCohort.Controls.Add(this.label8);
+            this.gbRevisedCohort.Controls.Add(this.label2);
+            this.gbRevisedCohort.Controls.Add(this.tbExistingCohortSource);
+            this.gbRevisedCohort.Controls.Add(this.tbExistingVersion);
             this.gbRevisedCohort.Controls.Add(this.lblNewVersionNumber);
             this.gbRevisedCohort.Controls.Add(this.label6);
             this.gbRevisedCohort.Controls.Add(this.label5);
@@ -125,18 +136,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.gbRevisedCohort.TabIndex = 1;
             this.gbRevisedCohort.TabStop = false;
             this.gbRevisedCohort.Text = "Revised Cohort";
-            // 
-            // cbShowEvenWhenProjectNumberDoesntMatch
-            // 
-            this.cbShowEvenWhenProjectNumberDoesntMatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbShowEvenWhenProjectNumberDoesntMatch.AutoSize = true;
-            this.cbShowEvenWhenProjectNumberDoesntMatch.Location = new System.Drawing.Point(487, 41);
-            this.cbShowEvenWhenProjectNumberDoesntMatch.Name = "cbShowEvenWhenProjectNumberDoesntMatch";
-            this.cbShowEvenWhenProjectNumberDoesntMatch.Size = new System.Drawing.Size(317, 17);
-            this.cbShowEvenWhenProjectNumberDoesntMatch.TabIndex = 4;
-            this.cbShowEvenWhenProjectNumberDoesntMatch.Text = "Show All Cohorts (even when project number does not match)";
-            this.cbShowEvenWhenProjectNumberDoesntMatch.UseVisualStyleBackColor = true;
-            this.cbShowEvenWhenProjectNumberDoesntMatch.CheckedChanged += new System.EventHandler(this.cbShowEvenWhenProjectNumberDoesntMatch_CheckedChanged);
             // 
             // lblNewVersionNumber
             // 
@@ -200,6 +199,8 @@ namespace DataExportManager.CohortUI.ImportCustomData
             // 
             // gbNewCohort
             // 
+            this.gbNewCohort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbNewCohort.Controls.Add(this.label7);
             this.gbNewCohort.Controls.Add(this.tbName);
             this.gbNewCohort.Enabled = false;
@@ -271,19 +272,19 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(6, 21);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(63, 13);
+            this.label9.Size = new System.Drawing.Size(54, 13);
             this.label9.TabIndex = 2;
-            this.label9.Text = "Description:";
+            this.label9.Text = "Comment:";
             // 
             // tbDescription
             // 
             this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDescription.Location = new System.Drawing.Point(75, 21);
+            this.tbDescription.Location = new System.Drawing.Point(61, 21);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(770, 59);
+            this.tbDescription.Size = new System.Drawing.Size(784, 59);
             this.tbDescription.TabIndex = 3;
             // 
             // lblProject
@@ -407,6 +408,53 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
+            // tbExistingVersion
+            // 
+            this.tbExistingVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbExistingVersion.Location = new System.Drawing.Point(591, 16);
+            this.tbExistingVersion.Name = "tbExistingVersion";
+            this.tbExistingVersion.ReadOnly = true;
+            this.tbExistingVersion.Size = new System.Drawing.Size(85, 20);
+            this.tbExistingVersion.TabIndex = 4;
+            // 
+            // tbExistingCohortSource
+            // 
+            this.tbExistingCohortSource.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbExistingCohortSource.Location = new System.Drawing.Point(682, 16);
+            this.tbExistingCohortSource.Name = "tbExistingCohortSource";
+            this.tbExistingCohortSource.ReadOnly = true;
+            this.tbExistingCohortSource.Size = new System.Drawing.Size(100, 20);
+            this.tbExistingCohortSource.TabIndex = 4;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(591, 39);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(85, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "(Current Version)";
+            // 
+            // label8
+            // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(713, 39);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(47, 13);
+            this.label8.TabIndex = 5;
+            this.label8.Text = "(Source)";
+            // 
+            // existingHelpIcon
+            // 
+            this.existingHelpIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.existingHelpIcon.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("existingHelpIcon.BackgroundImage")));
+            this.existingHelpIcon.Location = new System.Drawing.Point(788, 17);
+            this.existingHelpIcon.Name = "existingHelpIcon";
+            this.existingHelpIcon.Size = new System.Drawing.Size(19, 19);
+            this.existingHelpIcon.TabIndex = 6;
+            // 
             // CohortCreationRequestUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -466,7 +514,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
         private System.Windows.Forms.GroupBox gbNewCohort;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbName;
-        private System.Windows.Forms.CheckBox cbShowEvenWhenProjectNumberDoesntMatch;
         private System.Windows.Forms.Button btnNewProject;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
@@ -484,5 +531,10 @@ namespace DataExportManager.CohortUI.ImportCustomData
         private System.Windows.Forms.Label lblErrorNoProjectNumber;
         private System.Windows.Forms.TextBox tbSetProjectNumber;
         private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox tbExistingCohortSource;
+        private System.Windows.Forms.TextBox tbExistingVersion;
+        private ReusableUIComponents.HelpIcon existingHelpIcon;
     }
 }

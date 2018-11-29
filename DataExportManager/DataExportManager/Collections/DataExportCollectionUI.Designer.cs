@@ -3,7 +3,7 @@ using CatalogueManager.Refreshing;
 
 namespace DataExportManager.Collections
 {
-    partial class DataExportCollectionUI : ILifetimeSubscriber
+    partial class DataExportCollectionUI
     {
         /// <summary> 
         /// Required designer variable.

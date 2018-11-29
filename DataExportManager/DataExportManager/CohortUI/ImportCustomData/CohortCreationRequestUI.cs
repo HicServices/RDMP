@@ -10,6 +10,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Providers;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTableUI;
 
@@ -95,14 +96,14 @@ namespace DataExportManager.CohortUI.ImportCustomData
             else if (rbRevisedCohort.Checked)
             {
 
-                var existing = ddExistingCohort.SelectedItem as CohortDefinition;
+                var existing = ddExistingCohort.SelectedItem as ExtractableCohort;
                 if (existing == null)
                 {
                     MessageBox.Show("You must select an existing cohort");
                     return;
                 }
 
-                name = existing.Description;
+                name = existing.GetExternalData().ExternalDescription;
                 version = int.Parse(lblNewVersionNumber.Text);
             }
             else
@@ -114,19 +115,8 @@ namespace DataExportManager.CohortUI.ImportCustomData
             
             //construct the result
             Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (DataExportRepository)Project.Repository, tbDescription.Text);
-
-
-            var replacedDef = ddExistingCohort.SelectedItem as CohortDefinition;
-            if (replacedDef != null && replacedDef.ID.HasValue)
-            {
-                var replaced =  Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>().FirstOrDefault(
-                    c=>c.OriginID == replacedDef.ID.Value &&
-                    c.ExternalCohortTable_ID == replacedDef.LocationOfCohort.ID
-                    );
-
-                Result.NewCohortDefinition.CohortReplacedIfAny = replaced;
-            }
             
+            Result.NewCohortDefinition.CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort;
             
             //see if it is passing checks
             ToMemoryCheckNotifier notifier = new ToMemoryCheckNotifier();
@@ -173,26 +163,34 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
         private void ddExistingCohort_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var def = ddExistingCohort.SelectedItem as CohortDefinition;
+            var cohort = ddExistingCohort.SelectedItem as ExtractableCohort;
 
-            if (def != null)
-                lblNewVersionNumber.Text = (def.Version + 1).ToString();
+            if (cohort != null)
+            {
+                lblNewVersionNumber.Text = (cohort.ExternalVersion + 1).ToString();
+                tbExistingCohortSource.Text = cohort.ExternalCohortTable.Name;
+                tbExistingVersion.Text = cohort.ExternalVersion.ToString();
+
+                if (!string.IsNullOrWhiteSpace(cohort.AuditLog))
+                {
+                    existingHelpIcon.SetHelpText("Comment", cohort.AuditLog);
+                    existingHelpIcon.Enabled = true;
+                }
+                else
+                    existingHelpIcon.Enabled = false;
+            }
+            else
+            {
+                lblNewVersionNumber.Text = "";
+                tbExistingCohortSource.Text = "";
+                tbExistingVersion.Text = "";
+                existingHelpIcon.Enabled = false;
+            }
         }
 
-        private void cbShowEvenWhenProjectNumberDoesntMatch_CheckedChanged(object sender, EventArgs e)
-        {
-            RefreshCohortsDropdown();
-        }
         private void RefreshCohortsDropdown()
         {
             ddExistingCohort.Items.Clear();
-
-            var cohorts = ExtractableCohort.GetImportableCohortDefinitions(_target).ToArray();
-            var maxVersionCohorts = cohorts.Where(c => //get cohorts where
-                !cohorts.Any(c2 => c2.Description.Equals(c.Description) //there are not any other cohorts with the same name
-                    && c2.ProjectNumber == c.ProjectNumber
-                    && c2.Version > c.Version)//and a higher version
-                    ).ToArray();
 
             if (Project == null)
             {
@@ -200,10 +198,10 @@ namespace DataExportManager.CohortUI.ImportCustomData
                 return;
             }
 
-            if(cbShowEvenWhenProjectNumberDoesntMatch.Checked)
-                ddExistingCohort.Items.AddRange(maxVersionCohorts);
-            else
-                ddExistingCohort.Items.AddRange(maxVersionCohorts.Where(c => c.ProjectNumber == Project.ProjectNumber).ToArray());
+            var cohorts = ((DataExportChildProvider)Activator.CoreChildProvider).Cohorts.Where(c => c.ExternalProjectNumber == Project.ProjectNumber);
+
+            var maxVersionCohorts = cohorts.GroupBy(x => x.GetExternalData().ExternalDescription, (key, g) => g.OrderByDescending(e => e.ExternalVersion).First()).ToArray();
+            ddExistingCohort.Items.AddRange(maxVersionCohorts);
         }
 
         private void btnNewProject_Click(object sender, EventArgs e)
