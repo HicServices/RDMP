@@ -40,10 +40,12 @@ namespace DataExportManager.CohortUI
             lbCohortDatabaseTable.UnfocusedSelectedBackColor = Color.FromArgb(55, 153, 255);
 
             olvViewLog.AspectGetter = ViewLogAspectGetter;
+            olvID.AspectGetter = IDAspectGetter;
             lbCohortDatabaseTable.ButtonClick += lbCohortDatabaseTable_ButtonClick;
             lbCohortDatabaseTable.RowHeight = 19;
 
         }
+
 
         void lbCohortDatabaseTable_ButtonClick(object sender, CellClickEventArgs e)
         {
@@ -63,6 +65,15 @@ namespace DataExportManager.CohortUI
             return null;
         }
 
+        private object IDAspectGetter(object rowObject)
+        {
+            var ecd = rowObject as ExtractableCohortDescription;
+
+            if (ecd != null)
+                return ecd.Cohort.ID;
+
+            return null;
+        }
 
         private bool haveSubscribed = false;
 
@@ -172,16 +183,7 @@ namespace DataExportManager.CohortUI
                 return;
 
             if (model.Exception != null)
-            {
                 e.Item.BackColor = Color.Red;
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(model.Cohort.AuditLog))
-            {
-                e.Item.BackColor = Color.FromArgb(255,235,200); 
-                return;
-            }
         }
         private void lbCohortDatabaseTable_ItemActivate(object sender, EventArgs e)
         {

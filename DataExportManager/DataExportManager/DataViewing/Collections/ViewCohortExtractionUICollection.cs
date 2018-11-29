@@ -75,7 +75,7 @@ namespace DataExportManager.DataViewing.Collections
 
         public string GetTabName()
         {
-            return "Top 100 " + Cohort;
+            return "Top 100 " + Cohort + "(V" + Cohort.ExternalVersion+")";
         }
 
         public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
