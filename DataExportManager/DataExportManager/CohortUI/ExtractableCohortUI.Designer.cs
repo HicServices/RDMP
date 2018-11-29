@@ -52,6 +52,8 @@ namespace DataExportManager.CohortUI
             this.label3 = new System.Windows.Forms.Label();
             this.tbProjectNumber = new System.Windows.Forms.TextBox();
             this.btnShowProject = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbOriginId = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCohortUsage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tlvPreviousVersions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -71,7 +73,7 @@ namespace DataExportManager.CohortUI
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(5, 19);
+            this.label5.Location = new System.Drawing.Point(134, 22);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(21, 13);
             this.label5.TabIndex = 11;
@@ -245,6 +247,23 @@ namespace DataExportManager.CohortUI
             this.btnShowProject.UseVisualStyleBackColor = true;
             this.btnShowProject.Click += new System.EventHandler(this.btnShowProject_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(268, 22);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(51, 13);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Origin ID:";
+            // 
+            // tbOriginId
+            // 
+            this.tbOriginId.Location = new System.Drawing.Point(325, 19);
+            this.tbOriginId.Name = "tbOriginId";
+            this.tbOriginId.ReadOnly = true;
+            this.tbOriginId.Size = new System.Drawing.Size(100, 20);
+            this.tbOriginId.TabIndex = 12;
+            // 
             // ExtractableCohortUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -261,6 +280,8 @@ namespace DataExportManager.CohortUI
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbOverrideReleaseIdentifierSQL);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.tbOriginId);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.tbID);
             this.Controls.Add(this.label5);
             this.Name = "ExtractableCohortUI";
@@ -297,5 +318,7 @@ namespace DataExportManager.CohortUI
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbProjectNumber;
         private System.Windows.Forms.Button btnShowProject;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbOriginId;
     }
 }

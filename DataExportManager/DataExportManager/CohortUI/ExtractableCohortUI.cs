@@ -124,6 +124,7 @@ namespace DataExportManager.CohortUI
 
             //if the object passed in was null we set it to "" otherwise we are going to set it to the Name property (unless that is null in which case it's still going to end up as "")
             tbID.Text = _extractableCohort.ID.ToString();
+            tbOriginId.Text = _extractableCohort.OriginID.ToString();
             tbOverrideReleaseIdentifierSQL.Text = _extractableCohort.OverrideReleaseIdentifierSQL;
             auditLogEditor.Text = _extractableCohort.AuditLog;
 
@@ -226,6 +227,11 @@ namespace DataExportManager.CohortUI
                 if(dialog.ShowDialog() == DialogResult.OK)
                     _activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
             }
+        }
+
+        public override string GetTabName()
+        {
+            return _extractableCohort + " (V" + _extractableCohort.ExternalVersion +")";
         }
     }
 
