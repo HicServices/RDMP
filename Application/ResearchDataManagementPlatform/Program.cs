@@ -32,8 +32,7 @@ namespace ResearchDataManagementPlatform
 
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
-            RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>(arg.CatalogueConnectionString, arg.DataExportConnectionString);
-            bootStrapper.Show(false);
+            RDMPBootStrapper<RDMPMainForm>.Boostrap(arg.CatalogueConnectionString, arg.DataExportConnectionString, requiresDataExportDatabaseToo: false);
             return 0;
         }
     }

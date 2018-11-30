@@ -152,6 +152,7 @@
     <Compile Include="PluginRepository.cs" />
     <Compile Include="PluginRepositoryFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepositoryFactory.cs" />
     <Compile Include="UserSettingsRepositoryFinder.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

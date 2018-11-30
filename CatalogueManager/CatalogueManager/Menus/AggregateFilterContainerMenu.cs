@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -77,9 +78,10 @@ namespace CatalogueManager.Menus
 
         private void AddBlankFilter()
         {
-            var newFilter = new AggregateFilter(RepositoryLocator.CatalogueRepository, "New Filter " + Guid.NewGuid(),_filterContainer);
-            Publish(newFilter);
-            Activate(newFilter);
+            var newFilter = new AggregateFilterFactory(RepositoryLocator.CatalogueRepository).CreateNewFilter("New Filter " + Guid.NewGuid());
+            newFilter.FilterContainer_ID = _filterContainer.ID;
+            Publish((DatabaseEntity) newFilter);
+            Activate((DatabaseEntity) newFilter);
         }
     }
 }

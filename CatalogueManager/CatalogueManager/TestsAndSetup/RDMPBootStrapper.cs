@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
+using HIC.Logging;
 using RDMPStartup;
 using ReusableUIComponents;
 
@@ -11,19 +12,9 @@ namespace CatalogueManager.TestsAndSetup
 {
     public class RDMPBootStrapper<T> where T : RDMPForm, new()
     {
-        private readonly string catalogueConnection;
-        private readonly string dataExportConnection;
-        private T _mainForm;
+        public static IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
-        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-
-        public RDMPBootStrapper(string catalogueConnection, string dataExportConnection)
-        {
-            this.catalogueConnection = catalogueConnection;
-            this.dataExportConnection = dataExportConnection;
-        }
-
-        public void Show(bool requiresDataExportDatabaseToo)
+        public static void Boostrap(string catalogueConnection, string dataExportConnection, bool requiresDataExportDatabaseToo)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -46,18 +37,26 @@ namespace CatalogueManager.TestsAndSetup
                 var startupUI = new StartupUIMainForm(startup);
                 startupUI.ShowDialog();
 
-                _repositoryLocator = startup.RepositoryLocator;
+                RepositoryLocator = startup.RepositoryLocator;
                 
                 //launch the main application form T
-                _mainForm = new T();
-                _mainForm.RepositoryLocator = _repositoryLocator;
-                Application.Run(_mainForm);
+                var mainForm = new T();
+                mainForm.RepositoryLocator = RepositoryLocator;
+
+                InitializeAllAspects();
+
+                Application.Run(mainForm);
             }
             catch (Exception e)
             {
-                DiagnosticsScreen.OfferLaunchingDiagnosticsScreenOrEnvironmentExit(_repositoryLocator, null, e);
+                DiagnosticsScreen.OfferLaunchingDiagnosticsScreenOrEnvironmentExit(RepositoryLocator, null, e);
                 MessageBox.Show("Diagnostics has been closed, application will now exit");
             }
+        }
+
+        private static void InitializeAllAspects()
+        {
+            LoggingAspect.DoInit = () => RepositoryLocator.CatalogueRepository.GetDefaultLogManager();
         }
     }
 }

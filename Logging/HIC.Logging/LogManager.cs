@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using HIC.Logging.PastEvents;
 using ReusableLibraryCode.DataAccess;
@@ -389,6 +390,25 @@ tbl.ID tableID
                 return null;
 
             return int.Parse(o.ToString());
+        }
+
+        public void AuditConfigChange(string message, string method, IEnumerable<Tuple<string, object>> args)
+        {
+            using (var con = Server.GetConnection())
+            {
+                con.Open();
+                var arguments = new StringBuilder();
+                var tuples = args as IList<Tuple<string, object>> ?? args.ToList();
+                if (tuples.Any())
+                    arguments.Append("with arguments: " + "\r\n" + String.Join("\r\n", tuples.Select(o => o.Item1 + " - " + o.Item2)));
+                
+                DbCommand cmd = Server.GetCommand(
+                                      String.Format("INSERT INTO AuditTrail VALUES ('{0}','{1}')", 
+                                                    message + " - " + method + " - " + arguments, 
+                                                    System.Security.Principal.WindowsIdentity.GetCurrent().Name)
+                                      , con);
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }

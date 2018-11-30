@@ -8,7 +8,7 @@ namespace CatalogueLibrary.FilterImporting.Construction
     /// <summary>
     /// Constructs IFilters etc for AggregateConfigurations (See IFilterFactory)
     /// </summary>
-    public class AggregateFilterFactory :IFilterFactory
+    public class AggregateFilterFactory : IFilterFactory
     {
         private readonly ICatalogueRepository _repository;
 

@@ -7,11 +7,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using HIC.Logging;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.Proxies;
 
 namespace MapsDirectlyToDatabaseTable
 {
@@ -762,6 +765,7 @@ namespace MapsDirectlyToDatabaseTable
 
         #endregion
         
+        [LoggingAspect]
         public void InsertAndHydrate<T>(T toCreate, Dictionary<string,object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
         {
             int id = InsertAndReturnID<T>(constructorParameters);
@@ -773,7 +777,6 @@ namespace MapsDirectlyToDatabaseTable
                 prop.SetValue(toCreate, prop.GetValue(actual));
 
             toCreate.Repository = actual.Repository;
-
         }
 
         private object ongoingConnectionsLock = new object();

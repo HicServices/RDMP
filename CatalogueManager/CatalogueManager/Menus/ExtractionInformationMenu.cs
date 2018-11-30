@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.PerformanceImprovement;
+using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
@@ -13,9 +14,12 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using HIC.Logging;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableLibraryCode.Icons.IconProvision;
+using ReusableLibraryCode.Proxies;
 
 namespace CatalogueManager.Menus
 {
@@ -32,12 +36,13 @@ namespace CatalogueManager.Menus
             var addFilter = new ToolStripMenuItem("Add New Extraction Filter", _activator.CoreIconProvider.GetImage(RDMPConcept.Filter,OverlayKind.Add), (s, e) => AddFilter());
             Items.Add(addFilter);
         }
-        
+
+        [LoggingAspect]
         private void AddFilter()
         {
-            var newFilter = new ExtractionFilter(RepositoryLocator.CatalogueRepository, "New Filter " + Guid.NewGuid(),_extractionInformation);
-            Publish(newFilter);
-            Activate(newFilter);
+            var newFilter = new ExtractionFilterFactory(_extractionInformation).CreateNewFilter("New Filter " + Guid.NewGuid());
+            Publish((DatabaseEntity) newFilter);
+            Activate((DatabaseEntity) newFilter);
         }
     }
 }

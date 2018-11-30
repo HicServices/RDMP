@@ -65,7 +65,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -132,6 +131,7 @@
   <ItemGroup>
     <EmbeddedResource Include="db\runAfterCreateDatabase\CreateLogging.sql" />
     <EmbeddedResource Include="db\up\001_IncreaseLengthOfDataSetIDColumn.sql" />
+    <EmbeddedResource Include="db\up\002_Create_AuditTrail.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

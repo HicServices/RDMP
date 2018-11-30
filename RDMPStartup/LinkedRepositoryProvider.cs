@@ -10,6 +10,7 @@ using DataExportLibrary;
 using DataExportLibrary.Repositories;
 using HIC.Common.Validation.Dependency;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Proxies;
 using Sharing.Dependency;
 
 namespace RDMPStartup
@@ -33,7 +34,7 @@ namespace RDMPStartup
             {
                 CatalogueRepository = string.IsNullOrWhiteSpace(catalogueConnectionString)
                     ? null
-                    : new CatalogueRepository(new SqlConnectionStringBuilder(catalogueConnectionString));
+                    : RepositoryFactory.CreateCatalogueRepository(new SqlConnectionStringBuilder(catalogueConnectionString));
             }
             catch (SourceCodeNotFoundException)
             {
@@ -66,7 +67,9 @@ namespace RDMPStartup
 
             try
             {
-                CatalogueRepository = string.IsNullOrWhiteSpace(catalogueConnectionString) ? null : new CatalogueRepository(new SqlConnectionStringBuilder(catalogueConnectionString));
+                CatalogueRepository = string.IsNullOrWhiteSpace(catalogueConnectionString) 
+                                        ? null
+                                        : RepositoryFactory.CreateCatalogueRepository(new SqlConnectionStringBuilder(catalogueConnectionString));
             }
             catch (Exception e)
             {
@@ -106,8 +109,6 @@ namespace RDMPStartup
                 if(!(DataExportRepository.ObscureDependencyFinder is ObjectSharingObscureDependencyFinder))
                     throw new Exception("Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
         }
-
-        
 
         public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)
         {
