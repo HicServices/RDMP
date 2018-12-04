@@ -72,6 +72,17 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
+            if (_firstTime)
+            {
+                if (CleanExtractionFolderBeforeExtraction)
+                {
+                    var rootDir = _request.GetExtractionDirectory();
+                    rootDir.Delete(true);
+                    rootDir.Create();
+                }
+                _firstTime = false;
+            }
+
             _request.ElevateState(ExtractCommandState.WritingToFile);
 
             if (!haveWrittenBundleContents && _request is ExtractDatasetCommand)
@@ -216,10 +227,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private IExtractCommand _request ;
         private DataLoadInfo _dataLoadInfo;
+        private bool _firstTime;
 
         public void PreInitialize(IExtractCommand request, IDataLoadEventListener listener)
         {
             _request = request;
+            _firstTime = true;
             
             if (_request == ExtractDatasetCommand.EmptyCommand)
             {
@@ -234,12 +247,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             }
 
-            if (CleanExtractionFolderBeforeExtraction)
-            {
-                var rootDir = _request.GetExtractionDirectory();
-                rootDir.Delete(true);
-                rootDir.Create();
-            }
             LinesWritten = 0;
 
             DirectoryPopulated = request.GetExtractionDirectory();
