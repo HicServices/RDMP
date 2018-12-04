@@ -392,15 +392,19 @@ tbl.ID tableID
             return int.Parse(o.ToString());
         }
 
-        public void AuditConfigChange(string message, string method, IEnumerable<Tuple<string, object>> args)
+        public void AuditConfigChange(string message, string method, IEnumerable<Tuple<string, object>> args = null)
         {
             using (var con = Server.GetConnection())
             {
                 con.Open();
                 var arguments = new StringBuilder();
-                var tuples = args as IList<Tuple<string, object>> ?? args.ToList();
-                if (tuples.Any())
-                    arguments.Append("with arguments: " + "\r\n" + String.Join("\r\n", tuples.Select(o => o.Item1 + " - " + o.Item2)));
+                if (args != null)
+                {
+                    var tuples = args as IList<Tuple<string, object>> ?? args.ToList();
+                    if (tuples.Any())
+                        arguments.Append("with arguments: " + "\r\n" + String.Join("\r\n", tuples.Select(o => o.Item1 + " - " + o.Item2)));
+                        
+                }
                 
                 DbCommand cmd = Server.GetCommand(
                                       String.Format("INSERT INTO AuditTrail VALUES ('{0}','{1}')", 

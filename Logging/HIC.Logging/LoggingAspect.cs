@@ -32,7 +32,7 @@ namespace HIC.Logging
                 logManager = DoInit();
 
             Console.WriteLine("The {0} method executed successfully.", args.Method.Name);
-            logManager.AuditConfigChange("Success: ", args.Method.Name, args.GetArguments(parameterNames));
+            logManager.AuditConfigChange("Success: ", args.Method.Name, null);
         }
 
         public override void OnExit(MethodExecutionArgs args)
