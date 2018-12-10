@@ -100,6 +100,14 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 
             var argumentType = args.Type;
 
+            //if it is an interface e.g. IExternalDatabaseServer look for ExternalDatabaseServer
+            if (argumentType.IsInterface)
+            {
+                var implmenetationType = args.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(args.Type.Name.Substring(1));
+                if (implmenetationType != null)
+                    argumentType = implmenetationType;
+            }
+
             //Populate dropdown with the appropriate types
             if (argumentType == typeof(TableInfo))
                 array = GetAllTableInfosAssociatedWithLoadMetadata(args.CatalogueRepository, args.Parent).ToArray(); //explicit cases where selection is constrained somehow
