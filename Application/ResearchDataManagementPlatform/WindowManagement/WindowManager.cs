@@ -413,6 +413,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             finally
             {
                 Navigation.Resume();
+                Navigation.Append(_mainDockPanel.ActiveDocument as DockContent);
             }
         }
 
