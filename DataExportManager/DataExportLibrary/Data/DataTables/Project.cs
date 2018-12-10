@@ -29,16 +29,20 @@ namespace DataExportLibrary.Data.DataTables
         private string _extractionDirectory;
         private int? _projectNumber;
 
+        /// <inheritdoc/>
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+        /// <inheritdoc/>
         public string MasterTicket
         {
             get { return _masterTicket; }
             set { SetField(ref _masterTicket, value); }
         }
+
+        /// <inheritdoc/>
         [AdjustableLocation]
         public string ExtractionDirectory
         {
@@ -46,6 +50,7 @@ namespace DataExportLibrary.Data.DataTables
             set { SetField(ref _extractionDirectory, value); }
         }
 
+        /// <inheritdoc/>
         [UsefulProperty]
         public int? ProjectNumber
         {
@@ -72,6 +77,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IExtractionConfiguration[] ExtractionConfigurations
         {

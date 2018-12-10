@@ -20,15 +20,32 @@ namespace DataExportLibrary.Checks
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private IExtractionConfiguration _config;
+        
+        /// <summary>
+        /// True to fetch all <see cref="ISelectedDataSets"/> and check with <see cref="SelectedDataSetsChecker"/>
+        /// </summary>
         public bool CheckDatasets { get; set; }
+
+        /// <summary>
+        /// True to also check all globals with a <see cref="GlobalExtractionChecker"/>
+        /// </summary>
         public bool CheckGlobals { get; set; }
 
+        /// <summary>
+        /// Prepares checking of the given <paramref name="config"/>
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <param name="config"></param>
         public ExtractionConfigurationChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IExtractionConfiguration config)
         {
             _repositoryLocator = repositoryLocator;
             _config = config;
         }
 
+        /// <summary>
+        /// Checks that the configuration is in a valid state.  Supports both released (frozen) <see cref="ExtractionConfiguration"/> and unreleased ones.
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             if (_config.IsReleased)

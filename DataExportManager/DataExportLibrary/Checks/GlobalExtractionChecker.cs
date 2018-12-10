@@ -21,9 +21,15 @@ namespace DataExportLibrary.Checks
         private readonly ExtractGlobalsCommand _command;
         private readonly IPipeline _alsoCheckPipeline;
 
+        /// <summary>
+        /// Prepares to check the globals extractable artifacts that should be fetched when extracting the <paramref name="configuration"/>
+        /// </summary>
+        /// <param name="configuration"></param>
         public GlobalExtractionChecker(ExtractionConfiguration configuration) : this (configuration, null, null)
         { }
-        
+
+
+        /// <inheritdoc cref="GlobalExtractionChecker(ExtractionConfiguration)"/>
         public GlobalExtractionChecker(ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
         {
             this._configuration = configuration;
@@ -31,6 +37,11 @@ namespace DataExportLibrary.Checks
             this._alsoCheckPipeline = alsoCheckPipeline;
         }
 
+        /// <summary>
+        /// Checks that all globals pass thier respective checkers (<see cref="SupportingSQLTableChecker"/> and <see cref="SupportingDocumentsFetcher"/>) and that
+        /// the <see cref="Pipeline"/> (if any) is capable of extracting the globals.
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             foreach (SupportingSQLTable table in _configuration.GetGlobals().OfType<SupportingSQLTable>())

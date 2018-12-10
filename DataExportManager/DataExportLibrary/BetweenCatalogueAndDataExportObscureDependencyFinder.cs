@@ -19,11 +19,16 @@ namespace DataExportLibrary
     {
         private readonly IDataExportRepositoryServiceLocator _serviceLocator;
 
+        /// <summary>
+        /// Sets up class to fobid deleting <see cref="Catalogue"/> that are in project extractions etc.
+        /// </summary>
+        /// <param name="serviceLocator"></param>
         public BetweenCatalogueAndDataExportObscureDependencyFinder(IDataExportRepositoryServiceLocator serviceLocator)
         {
             _serviceLocator = serviceLocator;
         }
 
+        /// <inheritdoc/>
         public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             var cata = oTableWrapperObject as Catalogue;
@@ -44,6 +49,7 @@ namespace DataExportLibrary
             }
         }
 
+        /// <inheritdoc/>
         public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             var cic = oTableWrapperObject as CohortIdentificationConfiguration;
