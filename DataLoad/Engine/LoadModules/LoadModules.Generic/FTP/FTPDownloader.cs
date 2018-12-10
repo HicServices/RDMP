@@ -87,11 +87,10 @@ namespace LoadModules.Generic.FTP
         {
             _host = FTPServer.Server;
             _username = FTPServer.Username ?? "anonymous";
-            _password = FTPServer.Password ?? "guest";
+            _password = String.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
 
             if(string.IsNullOrWhiteSpace(_host))
                 throw new NullReferenceException("FTPServer is not set up correctly it must have Server property filled in" + FTPServer);
-
         }
 
         private ExitCodeType DownloadFilesOnFTP(IHICProjectDirectory destination, IDataLoadEventListener listener)
