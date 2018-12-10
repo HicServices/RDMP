@@ -138,7 +138,7 @@ namespace CatalogueLibrary.DataHelper
         /// Gets the suffix for a given lookup table number
         /// </summary>
         /// <param name="aliasNumber">the lookup number e.g. 1 gives lookup_1</param>
-        /// <param name="requirePrefix">pass in true if you require the prefix " AS " (may vary depending on database context in future e.g. perhaps MySQL refers to tables by different alias syntax)</param>
+        /// <param name="requirePrefix">pass in true if you require the prefix " AS " (may vary depending on database context in future e.g. perhaps MySql refers to tables by different alias syntax)</param>
         /// <returns></returns>
         public static string GetLookupTableAlias(int aliasNumber, bool requirePrefix = false)
         {

@@ -378,6 +378,7 @@
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAnonymiseColumnInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkImportTableInfos.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkProcessCatalogueItems.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCheck.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandClonePipeline.cs" />
@@ -420,6 +421,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemsNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDashboardLayout.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
@@ -1127,7 +1129,7 @@
       <DependentUpon>ObjectSaverButton.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.Designer.cs">
       <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>

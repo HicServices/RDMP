@@ -202,6 +202,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
             "GPCode",
             "RepoType",
+            "LoadingBiochem",
 
         };
 

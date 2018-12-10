@@ -5,7 +5,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.SimpleDialogs;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -18,8 +17,9 @@ namespace CatalogueManager.Menus
         {
             var iconProvider = _activator.CoreIconProvider;
 
+            ReBrandActivateAs("Bulk Process Catalogue Items...",RDMPConcept.CatalogueItem,OverlayKind.Edit);
+
             Add(new ExecuteCommandAddNewCatalogueItem(_activator, node.Catalogue));
-            Items.Add("Bulk Process Catalogue Items...", null, (s, e) => BulkProcessCatalogueItems(node.Catalogue));
             Items.Add("Paste Clipboard as new Catalogue Items", iconProvider.GetImage(RDMPConcept.Clipboard,OverlayKind.Import), (s, e) => PasteClipboardAsNewCatalogueItems(node.Catalogue));
             Items.Add("Re-Order Columns", iconProvider.GetImage(RDMPConcept.ReOrder),(s, e) => ReOrderCatalogueItems(node.Catalogue));
             Items.Add("Guess Associated Columns From TableInfo...", iconProvider.GetImage(RDMPConcept.ExtractionInformation,OverlayKind.Problem), (s, e) => GuessAssociatedColumns(node.Catalogue));
@@ -115,14 +115,6 @@ namespace CatalogueManager.Menus
 
                     Publish(c);
                 }
-        }
-
-        private void BulkProcessCatalogueItems(Catalogue c)
-        {
-            BulkProcessCatalogueItems bulkProcess = new BulkProcessCatalogueItems(c);
-            bulkProcess.ShowDialog();
-
-            Publish(c);
         }
     }
 }

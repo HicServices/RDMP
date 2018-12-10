@@ -1,4 +1,6 @@
-﻿namespace CatalogueManager.SimpleDialogs
+﻿using BrightIdeasSoftware;
+
+namespace CatalogueManager.SimpleDialogs
 {
     partial class BulkProcessCatalogueItems
     {
@@ -34,8 +36,12 @@
             this.btnClear = new System.Windows.Forms.Button();
             this.lbPastedColumns = new System.Windows.Forms.ListBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.lbCatalogueItems = new System.Windows.Forms.ListBox();
+            this.tbFilter = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.olvCatalogueItems = new BrightIdeasSoftware.ObjectListView();
+            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.cbRecategorise = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.ddExtractionCategory = new System.Windows.Forms.ComboBox();
             this.btnApplyTransform = new System.Windows.Forms.Button();
@@ -46,10 +52,6 @@
             this.rbDelete = new System.Windows.Forms.RadioButton();
             this.label4 = new System.Windows.Forms.Label();
             this.cbTableInfos = new System.Windows.Forms.ComboBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rbApplyToMatching = new System.Windows.Forms.RadioButton();
-            this.rbApplyToAll = new System.Windows.Forms.RadioButton();
-            this.cbRecategorise = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -58,8 +60,8 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.olvCatalogueItems)).BeginInit();
             this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -130,29 +132,61 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.lbCatalogueItems);
+            this.splitContainer2.Panel1.Controls.Add(this.tbFilter);
+            this.splitContainer2.Panel1.Controls.Add(this.label3);
+            this.splitContainer2.Panel1.Controls.Add(this.olvCatalogueItems);
             this.splitContainer2.Panel1.Controls.Add(this.label2);
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.groupBox2);
-            this.splitContainer2.Panel2.Controls.Add(this.groupBox1);
             this.splitContainer2.Size = new System.Drawing.Size(684, 601);
             this.splitContainer2.SplitterDistance = 279;
             this.splitContainer2.TabIndex = 3;
             // 
-            // lbCatalogueItems
+            // tbFilter
             // 
-            this.lbCatalogueItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbFilter.Location = new System.Drawing.Point(43, 578);
+            this.tbFilter.Name = "tbFilter";
+            this.tbFilter.Size = new System.Drawing.Size(233, 20);
+            this.tbFilter.TabIndex = 3;
+            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(5, 581);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(32, 13);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Filter:";
+            // 
+            // olvCatalogueItems
+            // 
+            this.olvCatalogueItems.AllColumns.Add(this.olvName);
+            this.olvCatalogueItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbCatalogueItems.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.lbCatalogueItems.FormattingEnabled = true;
-            this.lbCatalogueItems.Location = new System.Drawing.Point(6, 25);
-            this.lbCatalogueItems.Name = "lbCatalogueItems";
-            this.lbCatalogueItems.Size = new System.Drawing.Size(270, 563);
-            this.lbCatalogueItems.TabIndex = 1;
-            this.lbCatalogueItems.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbCatalogueItems_DrawItem);
+            this.olvCatalogueItems.CellEditUseWholeCell = false;
+            this.olvCatalogueItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvName});
+            this.olvCatalogueItems.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvCatalogueItems.Location = new System.Drawing.Point(6, 25);
+            this.olvCatalogueItems.Name = "olvCatalogueItems";
+            this.olvCatalogueItems.RowHeight = 19;
+            this.olvCatalogueItems.ShowGroups = false;
+            this.olvCatalogueItems.Size = new System.Drawing.Size(270, 550);
+            this.olvCatalogueItems.TabIndex = 1;
+            this.olvCatalogueItems.UseCompatibleStateImageBehavior = false;
+            this.olvCatalogueItems.View = System.Windows.Forms.View.Details;
+            // 
+            // olvName
+            // 
+            this.olvName.AspectName = "ToString";
+            this.olvName.FillsFreeSpace = true;
             // 
             // groupBox2
             // 
@@ -170,13 +204,23 @@
             this.groupBox2.Controls.Add(this.rbDelete);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.cbTableInfos);
-            this.groupBox2.Location = new System.Drawing.Point(17, 79);
+            this.groupBox2.Location = new System.Drawing.Point(17, 9);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(372, 509);
+            this.groupBox2.Size = new System.Drawing.Size(372, 579);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Transform to Apply:";
+            this.groupBox2.Text = "Transform:";
             this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+            // 
+            // cbRecategorise
+            // 
+            this.cbRecategorise.AutoSize = true;
+            this.cbRecategorise.Location = new System.Drawing.Point(17, 70);
+            this.cbRecategorise.Name = "cbRecategorise";
+            this.cbRecategorise.Size = new System.Drawing.Size(349, 17);
+            this.cbRecategorise.TabIndex = 7;
+            this.cbRecategorise.Text = "Recategorise Matching CatalogueItems (that are already extractable)";
+            this.cbRecategorise.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
@@ -288,57 +332,13 @@
             this.cbTableInfos.TabIndex = 2;
             this.cbTableInfos.SelectedIndexChanged += new System.EventHandler(this.cbTableInfos_SelectedIndexChanged);
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.rbApplyToMatching);
-            this.groupBox1.Controls.Add(this.rbApplyToAll);
-            this.groupBox1.Location = new System.Drawing.Point(17, 13);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(353, 60);
-            this.groupBox1.TabIndex = 4;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Apply Transform To:";
-            // 
-            // rbApplyToMatching
-            // 
-            this.rbApplyToMatching.AutoSize = true;
-            this.rbApplyToMatching.Location = new System.Drawing.Point(124, 28);
-            this.rbApplyToMatching.Name = "rbApplyToMatching";
-            this.rbApplyToMatching.Size = new System.Drawing.Size(165, 17);
-            this.rbApplyToMatching.TabIndex = 0;
-            this.rbApplyToMatching.TabStop = true;
-            this.rbApplyToMatching.Text = "Only those matching paste list";
-            this.rbApplyToMatching.UseVisualStyleBackColor = true;
-            // 
-            // rbApplyToAll
-            // 
-            this.rbApplyToAll.AutoSize = true;
-            this.rbApplyToAll.Location = new System.Drawing.Point(6, 28);
-            this.rbApplyToAll.Name = "rbApplyToAll";
-            this.rbApplyToAll.Size = new System.Drawing.Size(112, 17);
-            this.rbApplyToAll.TabIndex = 0;
-            this.rbApplyToAll.TabStop = true;
-            this.rbApplyToAll.Text = "All CatalogueItems";
-            this.rbApplyToAll.UseVisualStyleBackColor = true;
-            // 
-            // cbRecategorise
-            // 
-            this.cbRecategorise.AutoSize = true;
-            this.cbRecategorise.Location = new System.Drawing.Point(17, 70);
-            this.cbRecategorise.Name = "cbRecategorise";
-            this.cbRecategorise.Size = new System.Drawing.Size(349, 17);
-            this.cbRecategorise.TabIndex = 7;
-            this.cbRecategorise.Text = "Recategorise Matching CatalogueItems (that are already extractable)";
-            this.cbRecategorise.UseVisualStyleBackColor = true;
-            // 
             // BulkProcessCatalogueItems
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(940, 601);
             this.Controls.Add(this.splitContainer1);
             this.Name = "BulkProcessCatalogueItems";
-            this.Text = "BulkProcessCatalogueItems";
+            this.Size = new System.Drawing.Size(940, 601);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -349,10 +349,9 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.olvCatalogueItems)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -362,9 +361,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ListBox lbPastedColumns;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.ListBox lbCatalogueItems;
+        private ObjectListView olvCatalogueItems;
         private System.Windows.Forms.RadioButton rbDeleteAssociatedColumnInfos;
         private System.Windows.Forms.RadioButton rbDelete;
         private System.Windows.Forms.ComboBox cbTableInfos;
@@ -372,14 +370,15 @@
         private System.Windows.Forms.RadioButton rbGuessNewAssociatedColumns;
         private System.Windows.Forms.RadioButton rbMarkExtractable;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton rbApplyToMatching;
-        private System.Windows.Forms.RadioButton rbApplyToAll;
         private System.Windows.Forms.Button btnApplyTransform;
         private System.Windows.Forms.RadioButton rbDeleteExtrctionInformation;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox ddExtractionCategory;
         private System.Windows.Forms.CheckBox cbRecategorise;
+        private System.Windows.Forms.ListBox lbPastedColumns;
+        private System.Windows.Forms.TextBox tbFilter;
+        private System.Windows.Forms.Label label3;
+        private OLVColumn olvName;
     }
 }
