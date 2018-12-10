@@ -19,11 +19,14 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     public class RDMPForm : Form, IRepositoryUser, IKnowIfImHostedByVisualStudio
     {
         private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        
+        public bool CloseOnEscape { get; set; } 
+
         public RDMPForm()
         {
             KeyPreview = true;
+            CloseOnEscape = true;
             VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+            this.KeyPress += RDMPForm_KeyPress;
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -62,6 +65,12 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         public void SetVisualStudioDesignMode(bool visualStudioDesignMode)
         {
             VisualStudioDesignMode = visualStudioDesignMode;
+        }
+
+        private void RDMPForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char) Keys.Escape && CloseOnEscape)
+                Close();
         }
     }
 

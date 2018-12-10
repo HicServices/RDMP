@@ -35,6 +35,7 @@ namespace ResearchDataManagementPlatform
 
             dockPanel1.DocumentStyle = DocumentStyle.DockingWindow;
             WindowState = FormWindowState.Maximized;
+            CloseOnEscape = false;
 
             if (UserSettings.LicenseAccepted != new License("LIBRARYLICENSES").GetMd5OfLicense())
                 new LicenseUI().ShowDialog();
