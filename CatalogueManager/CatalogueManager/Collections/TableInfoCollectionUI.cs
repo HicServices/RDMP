@@ -28,6 +28,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using CatalogueManager.Copying;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
@@ -54,7 +55,10 @@ namespace CatalogueManager.Collections
             tlvTableInfos.KeyUp += olvTableInfos_KeyUp;
 
             tlvTableInfos.ItemActivate += tlvTableInfos_ItemActivate;
-            olvColumn2.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
+            olvDataType.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
+            olvDataType.IsVisible = UserSettings.ShowColumnDataType;
+            olvDataType.VisibilityChanged += (s, e) => UserSettings.ShowColumnDataType = ((OLVColumn)s).IsVisible;
+
         }
 
 

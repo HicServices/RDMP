@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Settings;
 
 namespace CatalogueManager.Collections.Providers
 {
@@ -44,8 +45,9 @@ namespace CatalogueManager.Collections.Providers
             _tlv.AllColumns.Add(_olvFavourite);
             _tlv.RebuildColumns();
 
+            _olvFavourite.IsVisible = UserSettings.ShowColumnFavourite;
+            _olvFavourite.VisibilityChanged += (s, e) => UserSettings.ShowColumnFavourite = ((OLVColumn)s).IsVisible;
             
-
             return _olvFavourite;
         }
 

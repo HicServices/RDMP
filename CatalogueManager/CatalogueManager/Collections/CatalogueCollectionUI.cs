@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Governance;
@@ -57,6 +58,9 @@ namespace CatalogueManager.Collections
             cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
 
             olvFilters.AspectGetter += FilterAspectGetter;
+            olvFilters.IsVisible = UserSettings.ShowColumnFilters;
+            olvFilters.VisibilityChanged += (s, e) => UserSettings.ShowColumnFilters = ((OLVColumn)s).IsVisible;
+            
             
             bLoading = false;
         }

@@ -100,7 +100,49 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("UseCaching", false); }
             set { AppSettings.AddOrUpdateValue("UseCaching", value); }
         }
-        
+
+        public static bool ShowColumnProjectNumber
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnProjectNumber", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnProjectNumber", value); }
+        }
+
+        public static bool ShowColumnCohortSource
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnCohortSource", false); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnCohortSource", value); }
+        }
+
+        public static bool ShowColumnCohortVersion
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnCohortVersion", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnCohortVersion", value); }
+        }
+
+        public static bool ShowColumnFavourite
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnFavourite", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnFavourite", value); }
+        }
+
+        public static bool ShowColumnCheck
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnCheck", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnCheck", value); }
+        }
+
+        public static bool ShowColumnFilters
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnFilters", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnFilters", value); }
+        }
+
+        public static bool ShowColumnDataType
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnDataType", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnDataType", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueManager.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Settings;
 
 namespace CatalogueManager.Collections.Providers
 {
@@ -29,6 +30,9 @@ namespace CatalogueManager.Collections.Providers
             toReturn.Text = "Checks";
             toReturn.ImageGetter = CheckImageGetter;
             toReturn.IsEditable = false;
+            toReturn.IsVisible = UserSettings.ShowColumnCheck;
+            toReturn.VisibilityChanged += (s, e) => UserSettings.ShowColumnCheck = ((OLVColumn)s).IsVisible;
+
             return toReturn;
         }
         
