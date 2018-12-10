@@ -156,6 +156,7 @@
             // 
             // btnCheckState
             // 
+            this.btnCheckState.Enabled = false;
             this.btnCheckState.Location = new System.Drawing.Point(176, 231);
             this.btnCheckState.Name = "btnCheckState";
             this.btnCheckState.Size = new System.Drawing.Size(82, 23);

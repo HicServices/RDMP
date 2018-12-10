@@ -88,6 +88,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
         private void tbServerName_TextChanged(object sender, EventArgs e)
         {
+            btnCheckState.Enabled = !string.IsNullOrWhiteSpace(tbDatabaseName.Text) && !string.IsNullOrWhiteSpace(tbServerName.Text);
             _server.Server = tbServerName.Text;
         }
 
@@ -98,6 +99,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
         private void tbDatabaseName_TextChanged(object sender, EventArgs e)
         {
+            btnCheckState.Enabled = !string.IsNullOrWhiteSpace(tbDatabaseName.Text) && !string.IsNullOrWhiteSpace(tbServerName.Text);
             _server.Database = tbDatabaseName.Text;
         }
 
@@ -126,6 +128,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             {
                 ragSmiley1.Reset();
                 ragSmiley1.Visible = true;
+                lblState.Text = "State:";
 
                 DataAccessPortal.GetInstance().ExpectServer(_server, DataAccessContext.InternalDataProcessing).TestConnection();
                 lblState.Text = "State:OK";
@@ -133,7 +136,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             }
             catch (Exception exception)
             {
-                lblState.Text = "State" + exception.Message;
+                lblState.Text = "State:" + exception.Message;
                 lblState.ForeColor = Color.Red;
                 ragSmiley1.Fatal(exception);
             }
