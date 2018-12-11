@@ -117,6 +117,10 @@
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
       <Name>DataExportLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
+      <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
+      <Name>LoadModules.Generic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
       <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
       <Name>DataQualityEngine</Name>
