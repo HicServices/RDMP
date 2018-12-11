@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
@@ -31,6 +32,10 @@ namespace Sharing.Dependency.Gathering
             _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
             _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
             _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
+
+            _functions.Add(typeof(ExtractionFilter), o => GatherDependencies((IFilter)o));
+            _functions.Add(typeof(DeployedExtractionFilter), o => GatherDependencies((IFilter)o));
+            _functions.Add(typeof(AggregateFilter), o => GatherDependencies((IFilter)o));
         }
 
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
@@ -79,6 +84,16 @@ namespace Sharing.Dependency.Gathering
 
             foreach (var cis in catalogue.CatalogueItems)
                 root.Children.Add(new GatheredObject(cis));
+            
+            return root;
+        }
+        
+        public GatheredObject GatherDependencies(IFilter filter)
+        {
+            var root = new GatheredObject(filter);
+            
+            foreach (var param in filter.GetAllParameters())
+                root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable) param));
             
             return root;
         }

@@ -5,6 +5,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
@@ -31,8 +32,11 @@ namespace CatalogueManager.Menus
                 //create right click context menu
                 Items.Add("View Aggreggate (of " + columnInfo.GetRuntimeName() + ")", GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.Aggregate, filter)));
 
+                Items.Add(new ToolStripSeparator());
             }
-            
+
+            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {filter}));
+           
             if (cata != null)
             { 
                 //compatible graphs are those that are not part of a cic (i.e. they are proper aggregate graphs)
