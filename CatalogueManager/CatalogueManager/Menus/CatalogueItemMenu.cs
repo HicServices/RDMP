@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 

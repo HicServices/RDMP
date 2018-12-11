@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -8,7 +7,6 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -16,7 +14,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
 {
     public class ExecuteCommandImportShareDefinitionList : BasicUICommandExecution,IAtomicCommand
     {

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -11,7 +10,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using Sharing.CommandExecution;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
 {
     internal class ExecuteCommandExportObjectsToFileUI : BasicUICommandExecution, IAtomicCommand
     {

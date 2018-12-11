@@ -6,6 +6,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
@@ -13,6 +14,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using RDMPStartup;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
@@ -36,6 +38,7 @@ namespace CatalogueManager.Menus
             }
 
             Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {filter}));
+            Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
            
             if (cata != null)
             { 

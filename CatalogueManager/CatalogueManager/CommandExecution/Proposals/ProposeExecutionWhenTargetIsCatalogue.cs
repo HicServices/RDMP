@@ -1,5 +1,6 @@
 ﻿using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Copying.Commands;

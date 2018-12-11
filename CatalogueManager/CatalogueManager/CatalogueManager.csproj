@@ -399,13 +399,8 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipelineWithUseCase.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFileUI.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportInDublinCoreFormat.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueItemDescription.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportDublinCoreFormat.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportShareDefinitionList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueItemExtractable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueProjectSpecific.cs" />
@@ -421,6 +416,13 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportInDublinCoreFormat.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportObjectsToFileUI.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportDublinCoreFormat.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportFilterDescriptionsFromShare.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportShare.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportShareDefinitionList.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemsNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDashboardLayout.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode.cs" />

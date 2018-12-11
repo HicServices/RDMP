@@ -34,8 +34,8 @@ namespace CatalogueLibrary.Data.Serialization
         public Type Type { get; set; }
 
         /// <summary>
-        /// The values of all non public properties on the <see cref="DatabaseEntity"/>.  This does not include any foreign key ID properties e.g. <see cref="CatalogueItem.Catalogue_ID"/>
-        /// which will instead be stored in <see cref="RelationshipProperties"/>
+        /// The values of all public properties on the <see cref="DatabaseEntity"/> (except ID, Relationship and NoMappingToDatabase properties).  This does not include
+        /// any foreign key ID properties e.g. <see cref="CatalogueItem.Catalogue_ID"/> which will instead be stored in <see cref="RelationshipProperties"/>
         /// </summary>
         public Dictionary<string, object> Properties { get; set; }
 

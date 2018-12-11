@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.ImportExport;
+﻿using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Nodes.SharingNodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 
 namespace CatalogueManager.Menus
 {

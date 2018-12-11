@@ -56,6 +56,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// The filter which requires this parameter belongs e.g. an <see cref="ExtractionFilter"/>'Healthboard X' could have a required property (<see cref="ExtractionFilterParameter"/>) @Hb 
         /// </summary>
+        [Relationship(typeof(ExtractionFilter), RelationshipType.LocalReference)]
         public int ExtractionFilter_ID
         {
             get { return _extractionFilterID; }

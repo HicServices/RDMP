@@ -5,6 +5,7 @@ using System.Linq;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
@@ -35,6 +36,7 @@ namespace CatalogueLibrary.Data
         /// The column in the <see cref="Catalogue"/> which is best/most associated with this filter.  A filter can query any column in any of the table(s) under
         /// the <see cref="Catalogue"/> but must always be associated with only one specific extractable column (<see cref="ExtractionInformation"/>)
         /// </summary>
+        [Relationship(typeof(ExtractionInformation),RelationshipType.LocalReference)]
         public int ExtractionInformation_ID
         {
             get { return _extractionInformationID; }

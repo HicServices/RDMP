@@ -6,7 +6,7 @@ using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
 {
     internal class ExecuteCommandExportInDublinCoreFormat : BasicUICommandExecution,IAtomicCommand
     {

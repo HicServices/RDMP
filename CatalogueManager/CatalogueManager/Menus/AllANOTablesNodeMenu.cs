@@ -1,6 +1,7 @@
 ﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 
 namespace CatalogueManager.Menus
 {

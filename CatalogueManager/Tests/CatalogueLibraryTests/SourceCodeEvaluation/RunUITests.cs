@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.SimpleDialogs.NavigateTo;
 using CohortManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands;

@@ -1,6 +1,5 @@
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DublinCore;
@@ -8,7 +7,7 @@ using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
 {
     internal class ExecuteCommandImportDublinCoreFormat : BasicUICommandExecution,IAtomicCommand
     {

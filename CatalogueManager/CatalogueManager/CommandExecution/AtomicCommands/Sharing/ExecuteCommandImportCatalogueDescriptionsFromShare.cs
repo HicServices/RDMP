@@ -1,64 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueManager.Copying.Commands;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
 {
-    internal class ExecuteCommandImportCatalogueDescriptionsFromShare : BasicUICommandExecution, IAtomicCommand
+    internal class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommandImportShare, IAtomicCommand
     {
-        private FileInfo _shareDefinitionFile;
         private readonly Catalogue _targetCatalogue;
 
-        public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, FileCollectionCommand sourceFileCollection, Catalogue targetCatalogue): this(activator,targetCatalogue)
-        {
-            if(!sourceFileCollection.IsShareDefinition)
-                SetImpossible("Only ShareDefinition files can be imported");
-
-            _shareDefinitionFile = sourceFileCollection.Files.Single();
-        }
-
-        [ImportingConstructor]
-        public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, Catalogue targetCatalogue): base(activator)
+        public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, FileCollectionCommand sourceFileCollection, Catalogue targetCatalogue): base(activator, sourceFileCollection)
         {
             _targetCatalogue = targetCatalogue;
         }
 
-        public override void Execute()
+        [ImportingConstructor]
+        public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, Catalogue targetCatalogue): base(activator,null)
         {
-            base.Execute();
+            _targetCatalogue = targetCatalogue;
+        }
 
-            //ensure file selected
-            if((_shareDefinitionFile = _shareDefinitionFile??SelectOpenFile("Share Definition|*.sd")) == null)
-                return;
-
-            var json = File.ReadAllText(_shareDefinitionFile.FullName);
-            var sm = new ShareManager(Activator.RepositoryLocator);
-            
-            List<ShareDefinition> shareDefinitions = sm.GetShareDefinitionList(json);
-
+        protected override void ExecuteImpl(ShareManager shareManager, List<ShareDefinition> shareDefinitions)
+        {
             var first = shareDefinitions.First();
 
             if(first.Type != typeof(Catalogue))
                 throw new Exception("ShareDefinition was not for a Catalogue");
-
-
+            
             if(_targetCatalogue.Name != (string) first.Properties["Name"])
                 if(MessageBox.Show("Catalogue Name is '"+_targetCatalogue.Name + "' but ShareDefinition is for, '" + first.Properties["Name"] +"'.  Import Anyway?","Import Anyway?",MessageBoxButtons.YesNo) == DialogResult.No)
                     return;
 
-            sm.ImportPropertiesOnly(_targetCatalogue, first,true);
+            shareManager.ImportPropertiesOnly(_targetCatalogue, first,true);
             _targetCatalogue.SaveToDatabase();
 
             var liveCatalogueItems = _targetCatalogue.CatalogueItems;
@@ -75,16 +55,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 if(existingMatch == null)
                     existingMatch = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository,_targetCatalogue,shareName);
 
-                sm.ImportPropertiesOnly(existingMatch, sd, true);
+                shareManager.ImportPropertiesOnly(existingMatch, sd, true);
                 existingMatch.SaveToDatabase();
             }
 
             Publish(_targetCatalogue);
-        }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return FamFamFamIcons.page_white_get;
         }
     }
 }

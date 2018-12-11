@@ -5,6 +5,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 
 namespace CatalogueManager.Menus
 {
