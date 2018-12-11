@@ -28,8 +28,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
             if (!typeof (IFilter).IsAssignableFrom(definitionToImport.Type)) 
                 throw new Exception("ShareDefinition was not for an IFilter");
 
-            shareManager.ImportPropertiesOnly(_toPopulate, definitionToImport,false);
+            var props = definitionToImport.GetDictionaryForImport();
 
+            //We could be crossing Type boundaries here e.g. importing an ExtractionFilter to overwrite an AggregateFilter so we don't want to use ImportPropertiesOnly
+            _toPopulate.Name = props["Name"].ToString();
+            _toPopulate.Description = (string) props["Description"];
+            _toPopulate.WhereSQL = (string) props["WhereSQL"];
+            _toPopulate.IsMandatory = (bool) props["IsMandatory"];
+            
             var factory = _toPopulate.GetFilterFactory();
 
             foreach (var param in shareDefinitions.Skip(1))
@@ -37,8 +43,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
                 if(!typeof(ISqlParameter).IsAssignableFrom(param.Type))
                     throw new Exception("Expected ShareDefinition to start with 1 IFilter then have 0+ ISqlParameters instead we found a " + param.Type);
 
-                var newParam = factory.CreateNewParameter(_toPopulate, (string) param.Properties["ParameterSQL"]);
-                shareManager.ImportPropertiesOnly((IMapsDirectlyToDatabaseTable)newParam,param,true);
+                var paramProps = param.GetDictionaryForImport();
+
+                var newParam = factory.CreateNewParameter(_toPopulate, (string) paramProps["ParameterSQL"]);
+                newParam.Comment = (string)paramProps["Comment"];
+                newParam.Value = (string)paramProps["Value"];
                 
                 newParam.SaveToDatabase();
             }
