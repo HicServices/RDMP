@@ -417,6 +417,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowRelatedObject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportInDublinCoreFormat.cs" />
     <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportObjectsToFileUI.cs" />
@@ -513,6 +514,9 @@
     <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\GovernancePeriodMenu.cs" />
     <Compile Include="Menus\LookupMenu.cs" />
+    <Compile Include="Menus\MenuItems\AtomicCommandToolStripItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
     <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.cs">
       <SubType>UserControl</SubType>

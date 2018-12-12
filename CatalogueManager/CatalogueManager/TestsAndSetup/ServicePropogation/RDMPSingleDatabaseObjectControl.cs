@@ -5,12 +5,14 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 
 namespace CatalogueManager.TestsAndSetup.ServicePropogation
@@ -27,6 +29,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     {
         private Control _colorIndicator;
         protected IActivateItems _activator;
+        private AtomicCommandUIFactory atomicCommandUIFactory;
         
         public DatabaseEntity DatabaseObject { get; private set; }
         protected RDMPCollection AssociatedCollection = RDMPCollection.None;
@@ -80,5 +83,15 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         }
 
         public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
+
+        protected void Add(ToolStrip toolStrip, IAtomicCommand cmd)
+        {
+            if (atomicCommandUIFactory == null)
+                atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
+
+            toolStrip.Items.Add(atomicCommandUIFactory.CreateToolStripItem(cmd));
+
+
+        }
     }
 }

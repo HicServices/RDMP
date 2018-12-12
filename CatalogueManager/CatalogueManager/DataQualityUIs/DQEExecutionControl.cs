@@ -1,20 +1,15 @@
 using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Triggers;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataLoadEngine.Migration;
-using DataQualityEngine.Reports;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataQualityUIs
@@ -30,6 +25,7 @@ namespace CatalogueManager.DataQualityUIs
     public partial class DQEExecutionControl : DQEExecutionControl_Design
     {
         private Catalogue _catalogue;
+        private bool _firstTime=true;
 
         public DQEExecutionControl()
         {
@@ -50,9 +46,14 @@ namespace CatalogueManager.DataQualityUIs
             _catalogue = databaseObject;
             checkAndExecuteUI1.SetItemActivator(activator);
             
-            btnValidationRules.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Edit);
-            btnViewResults.Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph);
+            if(_firstTime)
+            {
+                Add(toolStrip1, new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue));
+                btnViewResults.Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph);
+            }
+            _firstTime = false;
         }
+
 
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
@@ -63,13 +64,6 @@ namespace CatalogueManager.DataQualityUIs
         public override string GetTabName()
         {
             return "DQE Execution:" + base.GetTabName();
-        }
-
-
-        private void btnValidationRules_Click(object sender, EventArgs e)
-        {
-            var cmd = new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue);
-            cmd.Execute();
         }
 
         private void btnViewResults_Click(object sender, EventArgs e)

@@ -1,20 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.DataViewing;
-using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using RDMPStartup;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
@@ -25,17 +17,10 @@ namespace CatalogueManager.Menus
         {
             var cata = filter.GetCatalogue();
 
-            var columnInfo = filter.GetColumnInfoIfExists();
+            Add(new ExecuteCommandViewFilterMatchData(args.ItemActivator, filter, ViewType.TOP_100));
+            Add(new ExecuteCommandViewFilterMatchData(args.ItemActivator, filter, ViewType.Aggregate));
 
-            if (columnInfo != null)
-            {
-                Items.Add("View Extract", GetImage(RDMPConcept.TableInfo,OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewTableInfoExtractUICollection(columnInfo.TableInfo, ViewType.TOP_100, filter)));
-                Items.Add("View Extract (" + columnInfo.GetRuntimeName() + ")", GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.TOP_100, filter)));
-                //create right click context menu
-                Items.Add("View Aggreggate (of " + columnInfo.GetRuntimeName() + ")", GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.Aggregate, filter)));
-
-                Items.Add(new ToolStripSeparator());
-            }
+            Items.Add(new ToolStripSeparator());
 
             Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {filter}));
             Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));

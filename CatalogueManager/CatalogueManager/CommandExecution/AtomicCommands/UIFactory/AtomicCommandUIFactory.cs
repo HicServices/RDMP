@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.RightsManagement;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Menus.MenuItems;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 {
@@ -55,5 +47,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 
             return toReturn;
         }
+
+        public ToolStripItem CreateToolStripItem(IAtomicCommand command)
+        {
+            return new AtomicCommandToolStripItem(command, _activator);
+        }
     }
+
 }

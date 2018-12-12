@@ -8,8 +8,11 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.AutoComplete;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.DataViewing;
 using CatalogueManager.ExtractionUIs.FilterUIs.Options;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
@@ -47,8 +50,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
     /// </summary>
     public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSubscriber, ISaveableUI
     {
-        private IQuerySyntaxHelper _querySyntaxHelper;
-
         private IFilter _extractionFilter;
         public IFilter ExtractionFilter
         {
@@ -75,6 +76,10 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             }
         }
 
+        /// <summary>
+        /// Is it the first time SetDatabaseObject has been called
+        /// </summary>
+        private bool _firstTime = true;
 
         private void RefreshParameters()
         {
@@ -249,14 +254,18 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
         public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
         {
-            _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
-
             base.SetDatabaseObject(activator,databaseObject);
             Catalogue = databaseObject.GetCatalogue();
             ExtractionFilter = databaseObject;
 
             objectSaverButton1.SetupFor((DatabaseEntity)ExtractionFilter,_activator.RefreshBus);
-            
+
+            if (_firstTime)
+            {
+                Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
+                Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
+            }
+            _firstTime = false;
         }
        
         
