@@ -76,11 +76,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             }
         }
 
-        /// <summary>
-        /// Is it the first time SetDatabaseObject has been called
-        /// </summary>
-        private bool _firstTime = true;
-
         private void RefreshParameters()
         {
             var options = new ParameterCollectionUIOptionsFactory().Create(ExtractionFilter, GlobalFilterParameters ?? new ISqlParameter[0]);
@@ -260,12 +255,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
             objectSaverButton1.SetupFor((DatabaseEntity)ExtractionFilter,_activator.RefreshBus);
 
-            if (_firstTime)
-            {
-                Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
-                Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
-            }
-            _firstTime = false;
+            toolStrip1.Items.Clear();
+            Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
+            Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
         }
        
         

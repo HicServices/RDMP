@@ -1,15 +1,12 @@
-using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
-using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataQualityUIs
@@ -25,8 +22,7 @@ namespace CatalogueManager.DataQualityUIs
     public partial class DQEExecutionControl : DQEExecutionControl_Design
     {
         private Catalogue _catalogue;
-        private bool _firstTime=true;
-
+        
         public DQEExecutionControl()
         {
             InitializeComponent();
@@ -46,12 +42,9 @@ namespace CatalogueManager.DataQualityUIs
             _catalogue = databaseObject;
             checkAndExecuteUI1.SetItemActivator(activator);
             
-            if(_firstTime)
-            {
-                Add(toolStrip1, new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue));
-                AddPluginCommands(toolStrip1, this,_catalogue);
-            }
-            _firstTime = false;
+            toolStrip1.Items.Clear();
+            Add(toolStrip1, new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue));
+            AddPluginCommands(toolStrip1, this,_catalogue);
         }
         
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
