@@ -118,7 +118,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     typeof(ICheckable).IsAssignableFrom(p.ParameterType) ||
                     typeof(IMightBeDeprecated).IsAssignableFrom(p.ParameterType)||
                     p.HasDefaultValue ||
-                    p.ParameterType.IsValueType
+                    (p.ParameterType.IsValueType && !typeof(Enum).IsAssignableFrom(p.ParameterType))
                 );
         }
 
@@ -219,12 +219,18 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                         .ToArray());
 
             if (typeof(ICheckable).IsAssignableFrom(paramType))
-                return PickOne(parameterInfo, paramType, _activator.CoreChildProvider.GetAllSearchables().Keys.OfType<ICheckable>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+            {
+                return PickOne(parameterInfo, paramType, _activator.CoreChildProvider.GetAllSearchables()
+                    .Keys.OfType<ICheckable>()
+                    .Cast<IMapsDirectlyToDatabaseTable>()
+                    .Where(paramType.IsInstanceOfType)
+                    .ToArray());
+            }
 
             if (parameterInfo.HasDefaultValue)
                 return parameterInfo.DefaultValue;
 
-            if (paramType.IsValueType)
+            if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
             {
                 var typeTextDialog = new TypeTextOrCancelDialog("Enter Value","Enter value for '" + parameterInfo.Name + "' (" + paramType.Name + ")",1000);
 

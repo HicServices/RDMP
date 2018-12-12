@@ -16,7 +16,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         private readonly ViewType _viewType;
         private ColumnInfo _columnInfo;
 
-        public ExecuteCommandViewFilterMatchData(IActivateItems activator, IFilter filter, ViewType viewType) :base(activator)
+        public ExecuteCommandViewFilterMatchData(IActivateItems activator, IFilter filter, ViewType viewType = ViewType.TOP_100) :base(activator)
         {
             _filter = filter;
             _viewType = viewType;
