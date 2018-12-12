@@ -391,6 +391,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewFilter.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewFilterFromCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewGovernancePeriod.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
@@ -507,7 +508,9 @@
     <Compile Include="Menus\AllServersNodeMenu.cs" />
     <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandScriptTable.cs" />
+    <Compile Include="Menus\ContainerMenu.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
+    <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\GovernancePeriodMenu.cs" />
     <Compile Include="Menus\LookupMenu.cs" />
     <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />

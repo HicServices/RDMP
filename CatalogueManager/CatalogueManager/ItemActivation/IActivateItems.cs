@@ -117,8 +117,6 @@ namespace CatalogueManager.ItemActivation
 
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
 
-        IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
-
         void ViewDataSample(IViewSQLAndResultsCollection collection);
 
         event EmphasiseItemHandler Emphasise;

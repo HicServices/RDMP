@@ -352,7 +352,6 @@
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationsNodeMenu.cs" />
     <Compile Include="Menus\ExtractionDirectoryNodeMenu.cs" />
-    <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\ProjectCohortIdentificationConfigurationAssociationsNodeMenu.cs" />
     <Compile Include="Menus\ProjectSavedCohortsNodeMenu.cs" />
     <Compile Include="Menus\SelectedDataSetsMenu.cs" />

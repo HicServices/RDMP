@@ -252,12 +252,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
         
-        public IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
-        {
-            var wizard = new FilterImportWizard();
-            return wizard.ImportOneFromSelection(containerToImportOneInto, filtersThatCouldBeImported);
-        }
-        
         public void ViewDataSample(IViewSQLAndResultsCollection collection)
         {
             Activate<ViewSQLAndResultsWithDataGridUI>(collection);
