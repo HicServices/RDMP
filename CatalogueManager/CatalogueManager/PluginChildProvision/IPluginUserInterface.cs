@@ -10,6 +10,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPStartup;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.PluginChildProvision
@@ -28,5 +29,15 @@ namespace CatalogueManager.PluginChildProvision
         /// <param name="treeObject"></param>
         /// <returns></returns>
         ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object treeObject);
+        
+        /// <summary>
+        /// Return a list of commands that should be exposed on the given user interface tab control (<paramref name="control"/>) when displaying the
+        /// given <see cref="databaseEntity"/> object.  These will be shown as buttons on the control (where the control invokes
+        ///  <see cref="RDMPSingleDatabaseObjectControl{T}.AddPluginCommands"/>)
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="databaseEntity"></param>
+        /// <returns></returns>
+        IEnumerable<IAtomicCommand> GetAdditionalCommandsForControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity databaseEntity);
     }
 }

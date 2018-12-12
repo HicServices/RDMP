@@ -28,31 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DQEExecutionControl));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnViewResults = new System.Windows.Forms.ToolStripButton();
             this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
-            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnViewResults});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1376, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btnViewResults
-            // 
-            this.btnViewResults.Image = ((System.Drawing.Image)(resources.GetObject("btnViewResults.Image")));
-            this.btnViewResults.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnViewResults.Name = "btnViewResults";
-            this.btnViewResults.Size = new System.Drawing.Size(73, 22);
-            this.btnViewResults.Text = "Results...";
-            this.btnViewResults.Click += new System.EventHandler(this.btnViewResults_Click);
             // 
             // checkAndExecuteUI1
             // 
@@ -71,8 +57,6 @@
             this.Controls.Add(this.toolStrip1);
             this.Name = "DQEExecutionControl";
             this.Size = new System.Drawing.Size(1376, 716);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -82,7 +66,6 @@
 
         private SimpleControls.CheckAndExecuteUI checkAndExecuteUI1;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton btnViewResults;
 
 
     }

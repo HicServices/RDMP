@@ -142,6 +142,6 @@ namespace CatalogueManager.ItemActivation
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);
         object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
-        void ActivateViewDQEResultsForCatalogue(Catalogue catalogue);
+        
     }
 }

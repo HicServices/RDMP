@@ -1,10 +1,15 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.DataQualityUIs;
+using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.PluginChildProvision;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Dashboard.CommandExecution.AtomicCommands;
 using Dashboard.Menus.MenuItems;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace Dashboard
 {
@@ -31,6 +36,19 @@ namespace Dashboard
                     );
 
             return null;
+        }
+
+        public override IEnumerable<IAtomicCommand> GetAdditionalCommandsForControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity databaseEntity)
+        {
+            if(control is DQEExecutionControl)
+                return new[] {new ExecuteCommandViewDQEResultsForCatalogue(ItemActivator).SetTarget(databaseEntity)};
+
+            if (control is ExtractionFilterUI)
+            {
+                
+            }
+
+            return base.GetAdditionalCommandsForControl(control, databaseEntity);
         }
     }
 }

@@ -90,8 +90,19 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
 
             toolStrip.Items.Add(atomicCommandUIFactory.CreateToolStripItem(cmd));
-
-
         }
+
+        protected void AddPluginCommands(ToolStrip toolStrip, IRDMPSingleDatabaseObjectControl control, DatabaseEntity o)
+        {
+            foreach (var p in _activator.PluginUserInterfaces)
+            {
+                var toAdd = p.GetAdditionalCommandsForControl(control, o);
+
+                if(toAdd != null)
+                    foreach (IAtomicCommand cmd in toAdd)
+                        Add(toolStrip, cmd);
+            }
+        }
+
     }
 }

@@ -385,16 +385,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return objectToEmphasise;
         }
-
-        public void ActivateViewDQEResultsForCatalogue(Catalogue catalogue)
-        {
-            var cmd = new ExecuteCommandViewDQEResultsForCatalogue(this).SetTarget(catalogue);
-            if(cmd.IsImpossible)
-                MessageBox.Show(cmd.ReasonCommandImpossible);
-            else
-                cmd.Execute();
-        }
-
+        
         ///<inheritdoc/>
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
         {

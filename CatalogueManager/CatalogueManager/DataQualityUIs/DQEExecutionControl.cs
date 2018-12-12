@@ -49,12 +49,11 @@ namespace CatalogueManager.DataQualityUIs
             if(_firstTime)
             {
                 Add(toolStrip1, new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue));
-                btnViewResults.Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph);
+                AddPluginCommands(toolStrip1, this,_catalogue);
             }
             _firstTime = false;
         }
-
-
+        
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             base.ConsultAboutClosing(sender,e);
@@ -65,12 +64,6 @@ namespace CatalogueManager.DataQualityUIs
         {
             return "DQE Execution:" + base.GetTabName();
         }
-
-        private void btnViewResults_Click(object sender, EventArgs e)
-        {
-            _activator.ActivateViewDQEResultsForCatalogue(_catalogue);
-        }
-
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DQEExecutionControl_Design, UserControl>))]

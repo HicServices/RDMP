@@ -8,6 +8,7 @@ using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.CommandExecution.AtomicCommands;
@@ -29,6 +30,11 @@ namespace CatalogueManager.PluginChildProvision
         }
 
         public virtual ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
+        {
+            return null;
+        }
+
+        public virtual IEnumerable<IAtomicCommand> GetAdditionalCommandsForControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity databaseEntity)
         {
             return null;
         }
