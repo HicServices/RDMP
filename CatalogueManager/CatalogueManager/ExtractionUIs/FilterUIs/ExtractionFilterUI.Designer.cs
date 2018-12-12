@@ -41,19 +41,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.tbFilterDescription = new System.Windows.Forms.TextBox();
             this.lblWhere = new System.Windows.Forms.Label();
             this.pQueryEditor = new System.Windows.Forms.Panel();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.autocompleteReminder = new ReusableUIComponents.KeyboardReminder();
-            this.parameterCollectionUI1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterCollectionUI();
-            this.btnParametersExpand = new System.Windows.Forms.Button();
-            this.lblParams = new System.Windows.Forms.Label();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            this.autocompleteReminder = new ReusableUIComponents.KeyboardReminder();
+            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.SuspendLayout();
             // 
             // label1
@@ -67,9 +59,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // 
             // cbIsMandatory
             // 
-            this.cbIsMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cbIsMandatory.AutoSize = true;
-            this.cbIsMandatory.Location = new System.Drawing.Point(1044, 282);
+            this.cbIsMandatory.Location = new System.Drawing.Point(1, 196);
             this.cbIsMandatory.Name = "cbIsMandatory";
             this.cbIsMandatory.Size = new System.Drawing.Size(84, 17);
             this.cbIsMandatory.TabIndex = 9;
@@ -91,9 +82,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // 
             // btnPublishToCatalogue
             // 
-            this.btnPublishToCatalogue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPublishToCatalogue.Enabled = false;
-            this.btnPublishToCatalogue.Location = new System.Drawing.Point(1134, 278);
+            this.btnPublishToCatalogue.Location = new System.Drawing.Point(0, 216);
             this.btnPublishToCatalogue.Name = "btnPublishToCatalogue";
             this.btnPublishToCatalogue.Size = new System.Drawing.Size(56, 23);
             this.btnPublishToCatalogue.TabIndex = 11;
@@ -140,71 +130,10 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.pQueryEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pQueryEditor.Location = new System.Drawing.Point(0, 0);
+            this.pQueryEditor.Location = new System.Drawing.Point(81, 149);
             this.pQueryEditor.Name = "pQueryEditor";
-            this.pQueryEditor.Size = new System.Drawing.Size(1193, 275);
+            this.pQueryEditor.Size = new System.Drawing.Size(1193, 331);
             this.pQueryEditor.TabIndex = 0;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.splitContainer1.Location = new System.Drawing.Point(79, 146);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.autocompleteReminder);
-            this.splitContainer1.Panel1.Controls.Add(this.pQueryEditor);
-            this.splitContainer1.Panel1.Controls.Add(this.btnPublishToCatalogue);
-            this.splitContainer1.Panel1.Controls.Add(this.cbIsMandatory);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.parameterCollectionUI1);
-            this.splitContainer1.Size = new System.Drawing.Size(1195, 700);
-            this.splitContainer1.SplitterDistance = 306;
-            this.splitContainer1.TabIndex = 26;
-            // 
-            // autocompleteReminder
-            // 
-            this.autocompleteReminder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.autocompleteReminder.Location = new System.Drawing.Point(3, 281);
-            this.autocompleteReminder.Name = "autocompleteReminder";
-            this.autocompleteReminder.Size = new System.Drawing.Size(10, 20);
-            this.autocompleteReminder.TabIndex = 27;
-            // 
-            // parameterCollectionUI1
-            // 
-            this.parameterCollectionUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.parameterCollectionUI1.Location = new System.Drawing.Point(0, 0);
-            this.parameterCollectionUI1.Name = "parameterCollectionUI1";
-            this.parameterCollectionUI1.Size = new System.Drawing.Size(1193, 388);
-            this.parameterCollectionUI1.TabIndex = 0;
-            // 
-            // btnParametersExpand
-            // 
-            this.btnParametersExpand.Location = new System.Drawing.Point(56, 451);
-            this.btnParametersExpand.Name = "btnParametersExpand";
-            this.btnParametersExpand.Size = new System.Drawing.Size(17, 23);
-            this.btnParametersExpand.TabIndex = 7;
-            this.btnParametersExpand.Text = "-";
-            this.btnParametersExpand.UseVisualStyleBackColor = true;
-            this.btnParametersExpand.Click += new System.EventHandler(this.btnParametersExpand_Click);
-            // 
-            // lblParams
-            // 
-            this.lblParams.AutoSize = true;
-            this.lblParams.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblParams.ForeColor = System.Drawing.Color.Blue;
-            this.lblParams.Location = new System.Drawing.Point(3, 456);
-            this.lblParams.Name = "lblParams";
-            this.lblParams.Size = new System.Drawing.Size(48, 13);
-            this.lblParams.TabIndex = 6;
-            this.lblParams.Text = "Params";
             // 
             // ragSmiley1
             // 
@@ -216,14 +145,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 27;
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(11, 112);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(57, 29);
-            this.objectSaverButton1.TabIndex = 4;
-            // 
             // toolStrip1
             // 
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
@@ -232,29 +153,40 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.toolStrip1.TabIndex = 28;
             this.toolStrip1.Text = "toolStrip1";
             // 
+            // autocompleteReminder
+            // 
+            this.autocompleteReminder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.autocompleteReminder.Location = new System.Drawing.Point(81, 486);
+            this.autocompleteReminder.Name = "autocompleteReminder";
+            this.autocompleteReminder.Size = new System.Drawing.Size(64, 20);
+            this.autocompleteReminder.TabIndex = 29;
+            // 
+            // objectSaverButton1
+            // 
+            this.objectSaverButton1.Location = new System.Drawing.Point(11, 112);
+            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
+            this.objectSaverButton1.Name = "objectSaverButton1";
+            this.objectSaverButton1.Size = new System.Drawing.Size(57, 29);
+            this.objectSaverButton1.TabIndex = 4;
+            // 
             // ExtractionFilterUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pQueryEditor);
+            this.Controls.Add(this.autocompleteReminder);
+            this.Controls.Add(this.btnPublishToCatalogue);
+            this.Controls.Add(this.cbIsMandatory);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.objectSaverButton1);
-            this.Controls.Add(this.btnParametersExpand);
-            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbFilterName);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbFilterDescription);
-            this.Controls.Add(this.lblParams);
             this.Controls.Add(this.lblWhere);
             this.Name = "ExtractionFilterUI";
-            this.Size = new System.Drawing.Size(1274, 849);
-            this.SizeChanged += new System.EventHandler(this.ExtractionFilterUI_SizeChanged);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            this.Size = new System.Drawing.Size(1274, 506);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -270,15 +202,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         private System.Windows.Forms.TextBox tbFilterDescription;
         private System.Windows.Forms.Label lblWhere;
         private System.Windows.Forms.Panel pQueryEditor;
-        private ParameterCollectionUI parameterCollectionUI1;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Button btnParametersExpand;
-        private System.Windows.Forms.Label lblParams;
         private SimpleControls.ObjectSaverButton objectSaverButton1;
-        private KeyboardReminder autocompleteReminder;
         private RAGSmiley ragSmiley1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStrip toolStrip1;
+        private KeyboardReminder autocompleteReminder;
 
     }
 }

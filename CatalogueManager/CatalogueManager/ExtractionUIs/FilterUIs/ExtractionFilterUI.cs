@@ -4,15 +4,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing;
 using CatalogueManager.ExtractionUIs.FilterUIs.Options;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
@@ -20,12 +17,9 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
-using ReusableUIComponents.SingleControlForms;
 using ScintillaNET;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs
@@ -71,17 +65,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                 btnPublishToCatalogue.Enabled = !(value is ExtractionFilter) && Catalogue != null;
 
                 RunChecksIfFilterIsICheckable();
-                
-                RefreshParameters();
             }
         }
-
-        private void RefreshParameters()
-        {
-            var options = new ParameterCollectionUIOptionsFactory().Create(ExtractionFilter, GlobalFilterParameters ?? new ISqlParameter[0]);
-            parameterCollectionUI1.SetUp(options);
-        }
-
+        
         private AutoCompleteProvider _autoCompleteProvider;
 
         public ISqlParameter[] GlobalFilterParameters { get; private set; }
@@ -202,7 +188,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         private void AfterSave()
         {
             RunChecksIfFilterIsICheckable();
-            RefreshParameters();
         }
 
         private void OfferWrappingIfUserIncludesANDOrOR()
@@ -258,6 +243,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             toolStrip1.Items.Clear();
             Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
             Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
+            Add(toolStrip1,new ExecuteCommandViewSqlParameters(_activator,databaseObject));
         }
        
         
@@ -362,29 +348,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                     ExtractionFilter = (IFilter) e.Object;
         }
 
-        private bool expand = false;
-        
-
-
-        private void btnParametersExpand_Click(object sender, EventArgs e)
-        {
-            splitContainer1.Panel2Collapsed = !expand;
-            expand = !expand;
-            btnParametersExpand.Text = expand ? "+" : "-";
-        }
-
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
-        }
-
-        private void ExtractionFilterUI_SizeChanged(object sender, EventArgs e)
-        {
-            if(splitContainer1.Panel2Collapsed)
-                lblParams.Top = lblWhere.Bottom + splitContainer1.Height/2;
-            else
-                lblParams.Top = lblWhere.Bottom + splitContainer1.SplitterDistance;
-            btnParametersExpand.Top = lblParams.Top;
         }
     }
 

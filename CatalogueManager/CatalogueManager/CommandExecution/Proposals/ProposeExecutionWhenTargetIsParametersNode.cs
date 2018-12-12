@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Nodes;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+﻿using CatalogueLibrary.Nodes;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
@@ -25,13 +19,10 @@ namespace CatalogueManager.CommandExecution.Proposals
 
         public override void Activate(ParametersNode target)
         {
-            var parameterCollectionUI = new ParameterCollectionUI();
-
-            ParameterCollectionUIOptionsFactory factory = new ParameterCollectionUIOptionsFactory();
-            var options = factory.Create(target.Collector);
-            parameterCollectionUI.SetUp(options);
-
-            ItemActivator.ShowWindow(parameterCollectionUI, true);
+            var cmd = new ExecuteCommandViewSqlParameters(ItemActivator,target.Collector);
+            
+            if(!cmd.IsImpossible)
+                cmd.Execute();
         }
 
         public override ICommandExecution ProposeExecution(ICommand cmd, ParametersNode target, InsertOption insertOption = InsertOption.Default)
