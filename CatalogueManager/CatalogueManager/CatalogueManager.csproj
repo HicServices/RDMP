@@ -419,6 +419,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchData.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSqlParameters.cs" />
     <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportInDublinCoreFormat.cs" />

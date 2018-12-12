@@ -243,6 +243,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             toolStrip1.Items.Clear();
             Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
             Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
+            Add(toolStrip1,new ExecuteCommandViewFilterMatchGraph(_activator,databaseObject));
             Add(toolStrip1,new ExecuteCommandViewSqlParameters(_activator,databaseObject));
         }
        
