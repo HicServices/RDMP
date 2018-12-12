@@ -3,24 +3,16 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup;
-using CatalogueManager.Tutorials;
-using CommandLine;
 using DatabaseCreation;
 using Diagnostics;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
-using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.TransparentHelpSystem;
-using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
 namespace CatalogueManager.LocationsMenu
 {

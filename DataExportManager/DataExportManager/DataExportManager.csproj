@@ -372,9 +372,6 @@
     <Compile Include="ProjectUI\Datasets\ConfigureDatasetUI.Designer.cs">
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProjectUI\DataGridViewWithBackgroundImage.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="ProjectUI\Datasets\Node\AvailableForceJoinNode.cs" />
     <Compile Include="ProjectUI\DataUsers\DataUserManagement.cs">
       <SubType>Form</SubType>

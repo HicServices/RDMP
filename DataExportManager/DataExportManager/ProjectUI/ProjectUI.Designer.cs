@@ -1,4 +1,5 @@
-﻿using CatalogueManager.LocationsMenu.Ticketing;
+﻿using System.Windows.Forms;
+using CatalogueManager.LocationsMenu.Ticketing;
 using CatalogueManager.SimpleControls;
 
 namespace DataExportManager.ProjectUI
@@ -43,7 +44,7 @@ namespace DataExportManager.ProjectUI
             this.tbProjectNumber = new System.Windows.Forms.TextBox();
             this.btnConfigureDataUsers = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.dataGridView1 = new DataExportManager.ProjectUI.DataGridViewWithBackgroundImage();
+            this.dataGridView1 = new DataGridView();
             this.extractableCohortCollection1 = new DataExportManager.CohortUI.ExtractableCohortCollection();
             this.tcMasterTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
@@ -184,9 +185,6 @@ namespace DataExportManager.ProjectUI
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToOrderColumns = true;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.dataGridView1.BackgroundText = null;
-            this.dataGridView1.BackgroundTextColor = System.Drawing.Color.Empty;
-            this.dataGridView1.BackgroundTextFont = null;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
@@ -271,7 +269,7 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label label1;
-        private DataGridViewWithBackgroundImage dataGridView1;
+        private DataGridView dataGridView1;
         private System.Windows.Forms.Label lblExtractions;
         private System.Windows.Forms.TextBox tbExtractionDirectory;
         private System.Windows.Forms.Label label4;

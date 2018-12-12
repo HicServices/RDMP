@@ -390,6 +390,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueFromTableInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewFilter.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewGovernancePeriod.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
@@ -454,6 +455,12 @@
     <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
     <Compile Include="Copying\Commands\TableInfoCommand.cs" />
     <Compile Include="Copying\RDMPCommandFactory.cs" />
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.Designer.cs">
+      <DependentUpon>LookupBrowserUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -502,6 +509,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandScriptTable.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="Menus\GovernancePeriodMenu.cs" />
+    <Compile Include="Menus\LookupMenu.cs" />
     <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
     <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.cs">
       <SubType>UserControl</SubType>
@@ -1739,6 +1747,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.resx">
+      <DependentUpon>LookupBrowserUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupUI.resx">
       <DependentUpon>LookupUI.cs</DependentUpon>

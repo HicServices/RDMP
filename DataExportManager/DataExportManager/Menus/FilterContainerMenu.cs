@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -30,16 +31,14 @@ namespace DataExportManager.Menus
             string operationTarget = filterContainer.Operation == FilterContainerOperation.AND ? "OR" : "AND";
 
             Items.Add("Set Operation to " + operationTarget, null, (s, e) => FlipContainerOperation());
-            
-            var addFilter = new ToolStripMenuItem("Add New Filter", _activator.CoreIconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add));
-            addFilter.DropDownItems.Add("Blank", null, (s, e) => AddBlankFilter());
-            
-            var import = new ToolStripMenuItem("From Catalogue", null, (s, e) => ImportFilter());
-            import.Enabled = _importableFilters.Any();
-            addFilter.DropDownItems.Add(import);
 
-            Items.Add(addFilter);
+            Items.Add(new ToolStripSeparator());
 
+            Add(new ExecuteCommandCreateNewFilter(args.ItemActivator,new DeployedExtractionFilterFactory(args.ItemActivator.RepositoryLocator.DataExportRepository),filterContainer));
+
+            Items.Add(new ToolStripMenuItem("Import Filter From Catalogue", null, (s, e) => ImportFilter()));
+
+            Items.Add(new ToolStripSeparator());
             Items.Add("Add SubContainer", _activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add), (s, e) => AddSubcontainer());
 
         }
@@ -71,15 +70,6 @@ namespace DataExportManager.Menus
                 Publish(_filterContainer);
             }
 
-        }
-
-        
-
-        private void AddBlankFilter()
-        {
-            var newFilter = new DeployedExtractionFilter(RepositoryLocator.DataExportRepository, "New Filter " + Guid.NewGuid(),_filterContainer);
-            Activate(newFilter);
-            Publish(_filterContainer);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -34,14 +35,13 @@ namespace CatalogueManager.Menus
 
             Items.Add("Set Operation to " + operationTarget, null, (s, e) => FlipContainerOperation());
 
-            var addFilter = new ToolStripMenuItem("Add New Filter", GetImage(RDMPConcept.Filter, OverlayKind.Add));
-            addFilter.DropDownItems.Add("Blank", null, (s, e) => AddBlankFilter());
+            Items.Add(new ToolStripSeparator());
 
-            var import = new ToolStripMenuItem("From Catalogue", null, (s, e) => ImportFilter());
-            import.Enabled = _importableFilters.Any();
-            addFilter.DropDownItems.Add(import);
-            
-            Items.Add(addFilter);
+            Add(new ExecuteCommandCreateNewFilter(args.ItemActivator, new AggregateFilterFactory(args.ItemActivator.RepositoryLocator.CatalogueRepository), filterContainer));
+
+            Items.Add(new ToolStripMenuItem("Import Filter From Catalogue", null, (s, e) => ImportFilter()));
+
+            Items.Add(new ToolStripSeparator());
 
             Items.Add("Add SubContainer", GetImage(RDMPConcept.FilterContainer,OverlayKind.Add), (s, e) => AddSubcontainer());
 
@@ -73,13 +73,6 @@ namespace CatalogueManager.Menus
                 _filterContainer.AddChild((AggregateFilter) newFilter);
                 Publish(_filterContainer);
             }
-        }
-
-        private void AddBlankFilter()
-        {
-            var newFilter = new AggregateFilter(RepositoryLocator.CatalogueRepository, "New Filter " + Guid.NewGuid(),_filterContainer);
-            Publish(newFilter);
-            Activate(newFilter);
         }
     }
 }

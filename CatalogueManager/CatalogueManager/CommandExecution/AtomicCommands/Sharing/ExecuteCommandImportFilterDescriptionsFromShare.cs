@@ -28,7 +28,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
             if (!typeof (IFilter).IsAssignableFrom(definitionToImport.Type)) 
                 throw new Exception("ShareDefinition was not for an IFilter");
 
-            var props = definitionToImport.GetDictionaryForImport();
+            var props = definitionToImport.Properties;
 
             //We could be crossing Type boundaries here e.g. importing an ExtractionFilter to overwrite an AggregateFilter so we don't want to use ImportPropertiesOnly
             _toPopulate.Name = props["Name"].ToString();
@@ -43,7 +43,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
                 if(!typeof(ISqlParameter).IsAssignableFrom(param.Type))
                     throw new Exception("Expected ShareDefinition to start with 1 IFilter then have 0+ ISqlParameters instead we found a " + param.Type);
 
-                var paramProps = param.GetDictionaryForImport();
+                var paramProps = param.Properties;
 
                 var newParam = factory.CreateNewParameter(_toPopulate, (string) paramProps["ParameterSQL"]);
                 newParam.Comment = (string)paramProps["Comment"];
