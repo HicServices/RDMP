@@ -181,49 +181,9 @@ namespace CatalogueManager.LocationsMenu
         private void btnSaveAndClose_Click(object sender, EventArgs e)
         {
             //if save is successful
-            if(SaveConnectionStrings())
-            {
-                try
-                {
-                    CreateMissingFieldsChecker(MissingFieldsChecker.ThingToCheck.Catalogue)
-                        .Check(new ThrowImmediatelyCheckNotifier());
-                }
-                catch (Exception exception)
-                {
-                    bool launchDiagnostics = checksUI1.OnCheckPerformed(new CheckEventArgs("Catalogue database did not pass silent integrity checks, press the Check button to see the full check output",CheckResult.Fail,exception,"Launch diagnostics screen?"));
-                    
-                    if(launchDiagnostics)
-                    {
-                        var dialog = new DiagnosticsScreen(exception);
-                        dialog.RepositoryLocator = _repositoryLocator;
-                        dialog.ShowDialog(this);
-                    }
-
-                    return;
-                }
-
-                if(!string.IsNullOrWhiteSpace(tbDataExportManagerConnectionString.Text))
-                    try
-                    {
-                        CreateMissingFieldsChecker(MissingFieldsChecker.ThingToCheck.DataExportManager).Check(new ThrowImmediatelyCheckNotifier());
-                    }
-                    catch (Exception exception)
-                    {
-                        bool launchDiagnostics = checksUI1.OnCheckPerformed(new CheckEventArgs("Data Export Manager database did not pass silent integrity checks, press the Check button to see the full check output", CheckResult.Fail, exception,"Launch diagnostics screen"));
-                        
-                        if (launchDiagnostics)
-                        {
-                            var dialog = new DiagnosticsScreen(exception);
-                            dialog.RepositoryLocator = _repositoryLocator;
-                            dialog.ShowDialog(this);
-                        }
-
-                        return;
-                    }
-
+            if (SaveConnectionStrings())
                 //integrity checks passed
                 RestartApplication();
-            }
         }
 
         private void btnCheckDataExportManager_Click(object sender, EventArgs e)
