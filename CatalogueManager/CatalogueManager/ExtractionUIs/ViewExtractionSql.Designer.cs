@@ -34,13 +34,13 @@ namespace CatalogueManager.ExtractionUIs
             this.scFiltersAndColumns = new System.Windows.Forms.SplitContainer();
             this.olvExtractionInformations = new BrightIdeasSoftware.ObjectListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.btnAdvancedReorder = new System.Windows.Forms.Button();
             this.clbFilters = new System.Windows.Forms.CheckedListBox();
             this.scRadioButtonsSqlSplit = new System.Windows.Forms.SplitContainer();
             this.rbCoreSupplementalAndSpecialApproval = new System.Windows.Forms.RadioButton();
             this.rbInternal = new System.Windows.Forms.RadioButton();
             this.rbSupplemental = new System.Windows.Forms.RadioButton();
             this.rbCoreOnly = new System.Windows.Forms.RadioButton();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             ((System.ComponentModel.ISupportInitialize)(this.scMainLeftRightSplit)).BeginInit();
             this.scMainLeftRightSplit.Panel1.SuspendLayout();
             this.scMainLeftRightSplit.Panel2.SuspendLayout();
@@ -59,7 +59,7 @@ namespace CatalogueManager.ExtractionUIs
             // 
             this.scMainLeftRightSplit.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.scMainLeftRightSplit.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scMainLeftRightSplit.Location = new System.Drawing.Point(0, 0);
+            this.scMainLeftRightSplit.Location = new System.Drawing.Point(0, 25);
             this.scMainLeftRightSplit.Name = "scMainLeftRightSplit";
             // 
             // scMainLeftRightSplit.Panel1
@@ -69,7 +69,7 @@ namespace CatalogueManager.ExtractionUIs
             // scMainLeftRightSplit.Panel2
             // 
             this.scMainLeftRightSplit.Panel2.Controls.Add(this.scRadioButtonsSqlSplit);
-            this.scMainLeftRightSplit.Size = new System.Drawing.Size(1150, 828);
+            this.scMainLeftRightSplit.Size = new System.Drawing.Size(1150, 803);
             this.scMainLeftRightSplit.SplitterDistance = 211;
             this.scMainLeftRightSplit.TabIndex = 0;
             // 
@@ -84,30 +84,27 @@ namespace CatalogueManager.ExtractionUIs
             // scFiltersAndColumns.Panel1
             // 
             this.scFiltersAndColumns.Panel1.Controls.Add(this.olvExtractionInformations);
-            this.scFiltersAndColumns.Panel1.Controls.Add(this.btnAdvancedReorder);
             // 
             // scFiltersAndColumns.Panel2
             // 
             this.scFiltersAndColumns.Panel2.Controls.Add(this.clbFilters);
-            this.scFiltersAndColumns.Size = new System.Drawing.Size(211, 828);
-            this.scFiltersAndColumns.SplitterDistance = 464;
+            this.scFiltersAndColumns.Size = new System.Drawing.Size(211, 803);
+            this.scFiltersAndColumns.SplitterDistance = 449;
             this.scFiltersAndColumns.TabIndex = 1;
             // 
             // olvExtractionInformations
             // 
             this.olvExtractionInformations.AllColumns.Add(this.olvColumn1);
-            this.olvExtractionInformations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.olvExtractionInformations.CellEditUseWholeCell = false;
             this.olvExtractionInformations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1});
             this.olvExtractionInformations.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvExtractionInformations.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvExtractionInformations.FullRowSelect = true;
-            this.olvExtractionInformations.Location = new System.Drawing.Point(3, 1);
+            this.olvExtractionInformations.Location = new System.Drawing.Point(0, 0);
             this.olvExtractionInformations.Name = "olvExtractionInformations";
             this.olvExtractionInformations.RowHeight = 19;
-            this.olvExtractionInformations.Size = new System.Drawing.Size(204, 433);
+            this.olvExtractionInformations.Size = new System.Drawing.Size(207, 445);
             this.olvExtractionInformations.TabIndex = 3;
             this.olvExtractionInformations.UseCompatibleStateImageBehavior = false;
             this.olvExtractionInformations.View = System.Windows.Forms.View.Details;
@@ -120,17 +117,6 @@ namespace CatalogueManager.ExtractionUIs
             this.olvColumn1.Groupable = false;
             this.olvColumn1.Text = "ExtractionInformation(s)";
             // 
-            // btnAdvancedReorder
-            // 
-            this.btnAdvancedReorder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAdvancedReorder.Location = new System.Drawing.Point(144, 434);
-            this.btnAdvancedReorder.Name = "btnAdvancedReorder";
-            this.btnAdvancedReorder.Size = new System.Drawing.Size(63, 23);
-            this.btnAdvancedReorder.TabIndex = 2;
-            this.btnAdvancedReorder.Text = "Re-Order";
-            this.btnAdvancedReorder.UseVisualStyleBackColor = true;
-            this.btnAdvancedReorder.Click += new System.EventHandler(this.btnAdvancedReorder_Click);
-            // 
             // clbFilters
             // 
             this.clbFilters.CheckOnClick = true;
@@ -139,7 +125,7 @@ namespace CatalogueManager.ExtractionUIs
             this.clbFilters.FormattingEnabled = true;
             this.clbFilters.Location = new System.Drawing.Point(0, 0);
             this.clbFilters.Name = "clbFilters";
-            this.clbFilters.Size = new System.Drawing.Size(207, 356);
+            this.clbFilters.Size = new System.Drawing.Size(207, 346);
             this.clbFilters.TabIndex = 0;
             this.clbFilters.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.clbFilters_ItemCheck);
             // 
@@ -162,7 +148,7 @@ namespace CatalogueManager.ExtractionUIs
             // scRadioButtonsSqlSplit.Panel2
             // 
             this.scRadioButtonsSqlSplit.Panel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.scRadioButtonsSqlSplit.Size = new System.Drawing.Size(931, 824);
+            this.scRadioButtonsSqlSplit.Size = new System.Drawing.Size(931, 799);
             this.scRadioButtonsSqlSplit.SplitterDistance = 36;
             this.scRadioButtonsSqlSplit.TabIndex = 0;
             // 
@@ -212,11 +198,20 @@ namespace CatalogueManager.ExtractionUIs
             this.rbCoreOnly.UseVisualStyleBackColor = true;
             this.rbCoreOnly.CheckedChanged += new System.EventHandler(this.RadioButtons_CheckedChanged);
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(1150, 25);
+            this.toolStrip1.TabIndex = 4;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
             // ViewExtractionSql
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.scMainLeftRightSplit);
+            this.Controls.Add(this.toolStrip1);
             this.Name = "ViewExtractionSql";
             this.Size = new System.Drawing.Size(1150, 828);
             this.scMainLeftRightSplit.Panel1.ResumeLayout(false);
@@ -233,6 +228,7 @@ namespace CatalogueManager.ExtractionUIs
             ((System.ComponentModel.ISupportInitialize)(this.scRadioButtonsSqlSplit)).EndInit();
             this.scRadioButtonsSqlSplit.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -245,9 +241,9 @@ namespace CatalogueManager.ExtractionUIs
         private System.Windows.Forms.SplitContainer scFiltersAndColumns;
         private System.Windows.Forms.CheckedListBox clbFilters;
         private System.Windows.Forms.RadioButton rbInternal;
-        private System.Windows.Forms.Button btnAdvancedReorder;
         private System.Windows.Forms.RadioButton rbCoreSupplementalAndSpecialApproval;
         private ObjectListView olvExtractionInformations;
         private OLVColumn olvColumn1;
+        private System.Windows.Forms.ToolStrip toolStrip1;
     }
 }

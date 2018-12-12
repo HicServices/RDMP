@@ -411,6 +411,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOverrideRawServer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReOrderColumns.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunChecksInPopupWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />

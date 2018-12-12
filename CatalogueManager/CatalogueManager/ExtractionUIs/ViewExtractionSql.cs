@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
@@ -148,6 +143,7 @@ namespace CatalogueManager.ExtractionUIs
         #region methods for reselecting / checking the listbox after database refresh
         private List<int> _wasCheckedFilterIDs = new List<int>();
         private int _wasSelectedFilterID;
+        private bool _firstTime=true;
 
         private void AttemptToRestoreListboxState()
         {
@@ -192,43 +188,18 @@ namespace CatalogueManager.ExtractionUIs
 
             this.BeginInvoke((MethodInvoker)RefreshUIFromDatabase);
         }
-        private int _collapseCounter = 0;
-        
-        private void btnCollapse_Click(object sender, EventArgs e)
-        {
-            if (_collapseCounter == 0)
-            {
-                scFiltersAndColumns.Panel1Collapsed = false;
-                scFiltersAndColumns.Panel2Collapsed = true;
-            }
-            if (_collapseCounter == 1)
-            {
-                scFiltersAndColumns.Panel1Collapsed = true;
-                scFiltersAndColumns.Panel2Collapsed = false;
-            }
-            if (_collapseCounter == 2)
-            {
-                scFiltersAndColumns.Panel1Collapsed = false;
-                scFiltersAndColumns.Panel2Collapsed = false;
-            }
-
-            _collapseCounter = (_collapseCounter + 1) %3;
-        }
-
-   
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
             _catalogue = databaseObject;
-            RefreshUIFromDatabase();
-        }
+            RefreshUIFromDatabase(); 
 
-        private void btnAdvancedReorder_Click(object sender, EventArgs e)
-        {
-            _activator.ActivateReOrderCatalogueItems(_catalogue);
+            if(_firstTime)
+                Add(toolStrip1,new ExecuteCommandReOrderColumns(_activator, _catalogue));
+            _firstTime = false;
         }
-
+        
         public override string GetTabName()
         {
             return base.GetTabName() + "(SQL)";

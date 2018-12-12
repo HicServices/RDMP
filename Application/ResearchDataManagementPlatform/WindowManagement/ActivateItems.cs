@@ -292,12 +292,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if(optionalLookupTableInfo != null)
                 t.SetLookupTableInfo(optionalLookupTableInfo);
         }
-
-        public void ActivateReOrderCatalogueItems(Catalogue catalogue)
-        {
-            Activate<ReOrderCatalogueItems, Catalogue>(catalogue);
-        }
-
+        
         public void ViewFilterGraph(object sender,FilterGraphObjectCollection collection)
         {
             var aggFilter = collection.GetFilter() as AggregateFilter;

@@ -128,8 +128,6 @@ namespace CatalogueManager.ItemActivation
 
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
 
-        void ActivateReOrderCatalogueItems(Catalogue catalogue);
-
         void ViewFilterGraph(object sender,FilterGraphObjectCollection collection);
 
         void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic);

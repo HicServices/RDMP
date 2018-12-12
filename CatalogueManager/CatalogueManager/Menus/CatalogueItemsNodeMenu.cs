@@ -21,16 +21,12 @@ namespace CatalogueManager.Menus
 
             Add(new ExecuteCommandAddNewCatalogueItem(_activator, node.Catalogue));
             Items.Add("Paste Clipboard as new Catalogue Items", iconProvider.GetImage(RDMPConcept.Clipboard,OverlayKind.Import), (s, e) => PasteClipboardAsNewCatalogueItems(node.Catalogue));
-            Items.Add("Re-Order Columns", iconProvider.GetImage(RDMPConcept.ReOrder),(s, e) => ReOrderCatalogueItems(node.Catalogue));
+
+            Add(new ExecuteCommandReOrderColumns(_activator, node.Catalogue));
+            
             Items.Add("Guess Associated Columns From TableInfo...", iconProvider.GetImage(RDMPConcept.ExtractionInformation,OverlayKind.Problem), (s, e) => GuessAssociatedColumns(node.Catalogue));
         }
-
-        private void ReOrderCatalogueItems(Catalogue catalogue)
-        {
-            _activator.ActivateReOrderCatalogueItems(catalogue);
-        }
-
-
+         
         private void GuessAssociatedColumns(Catalogue c)
         {
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>(), false, false);
