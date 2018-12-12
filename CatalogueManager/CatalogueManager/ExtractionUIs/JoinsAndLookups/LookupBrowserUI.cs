@@ -7,10 +7,13 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
+using CatalogueManager.Copying;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
+using ReusableUIComponents.ScintillaHelper;
+using ScintillaNET;
 
 namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 {
@@ -24,6 +27,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         private ColumnInfo _keyColumn;
         private ColumnInfo _descriptionColumn;
         private TableInfo _tableInfo;
+        private Scintilla _scintilla;
 
         public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)
         {
@@ -35,11 +39,18 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
             lblCode.Text = _keyColumn.GetRuntimeName();
             lblDescription.Text = _descriptionColumn.GetRuntimeName();
+
+            ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
+            _scintilla = factory.Create();
+
+            gbScintilla.Controls.Add(_scintilla);
+
+            SendQuery();
         }
 
         public string GetCommand()
         {
-            var qb = new QueryBuilder(null, null);
+            var qb = new QueryBuilder("distinct", null);
             qb.AddColumn(new ColumnInfoToIColumn(_keyColumn){Order = 0});
             qb.AddColumn(new ColumnInfoToIColumn(_descriptionColumn){Order = 1});
             qb.TopX = 100;
@@ -65,12 +76,22 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
         private void tb_TextChanged(object sender, System.EventArgs e)
         {
+            SendQuery();
+        }
+
+        private void SendQuery()
+        {
             var tbl = _tableInfo.Discover(DataAccessContext.InternalDataProcessing);
             var server = tbl.Database.Server;
             using (var con = server.GetConnection())
             {
                 con.Open();
                 var sql = GetCommand();
+
+                _scintilla.ReadOnly = false;
+                _scintilla.Text = sql;
+                _scintilla.ReadOnly = true;
+
                 var da = server.GetDataAdapter(sql, con);
 
                 var dt = new DataTable();

@@ -377,6 +377,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAnonymiseColumnInfo.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBrowseLookup.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkImportTableInfos.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkProcessCatalogueItems.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />

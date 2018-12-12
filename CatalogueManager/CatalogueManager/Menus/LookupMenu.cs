@@ -1,5 +1,5 @@
 ﻿using CatalogueLibrary.Data;
-using CatalogueManager.ExtractionUIs.JoinsAndLookups;
+using CatalogueManager.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Menus
 {
@@ -8,7 +8,7 @@ namespace CatalogueManager.Menus
     {
         public LookupMenu(RDMPContextMenuStripArgs args, Lookup lookup) : base(args, lookup)
         {
-            Items.Add("Lookup Browser", null, (s, e) => args.ItemActivator.Activate<LookupBrowserUI, Lookup>(lookup));
+            Add(new ExecuteCommandBrowseLookup(args.ItemActivator, lookup));
         }
     }
 }

@@ -245,6 +245,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
             Add(toolStrip1,new ExecuteCommandViewFilterMatchGraph(_activator,databaseObject));
             Add(toolStrip1,new ExecuteCommandViewSqlParameters(_activator,databaseObject));
+            Add(toolStrip1,new ExecuteCommandBrowseLookup(_activator,databaseObject));
         }
        
         
