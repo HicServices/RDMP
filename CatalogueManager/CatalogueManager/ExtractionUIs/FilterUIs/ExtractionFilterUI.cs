@@ -240,12 +240,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
             objectSaverButton1.SetupFor((DatabaseEntity)ExtractionFilter,_activator.RefreshBus);
 
-            toolStrip1.Items.Clear();
-            Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
-            Add(toolStrip1, new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
-            Add(toolStrip1,new ExecuteCommandViewFilterMatchGraph(_activator,databaseObject));
-            Add(toolStrip1,new ExecuteCommandViewSqlParameters(_activator,databaseObject));
-            Add(toolStrip1,new ExecuteCommandBrowseLookup(_activator,databaseObject));
+            Add(new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
+            Add(new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
+            Add(new ExecuteCommandViewFilterMatchGraph(_activator,databaseObject));
+            Add(new ExecuteCommandViewSqlParameters(_activator,databaseObject));
+            Add(new ExecuteCommandBrowseLookup(_activator,databaseObject));
         }
        
         

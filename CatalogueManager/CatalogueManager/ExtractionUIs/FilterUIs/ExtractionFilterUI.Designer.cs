@@ -43,15 +43,16 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.pQueryEditor = new System.Windows.Forms.Panel();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.autocompleteReminder = new ReusableUIComponents.KeyboardReminder();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 32);
+            this.label1.Location = new System.Drawing.Point(29, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(63, 13);
             this.label1.TabIndex = 0;
@@ -60,7 +61,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // cbIsMandatory
             // 
             this.cbIsMandatory.AutoSize = true;
-            this.cbIsMandatory.Location = new System.Drawing.Point(1, 196);
+            this.cbIsMandatory.Location = new System.Drawing.Point(11, 167);
             this.cbIsMandatory.Name = "cbIsMandatory";
             this.cbIsMandatory.Size = new System.Drawing.Size(84, 17);
             this.cbIsMandatory.TabIndex = 9;
@@ -74,16 +75,16 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // 
             this.tbFilterName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilterName.Location = new System.Drawing.Point(76, 29);
+            this.tbFilterName.Location = new System.Drawing.Point(98, 3);
             this.tbFilterName.Name = "tbFilterName";
-            this.tbFilterName.Size = new System.Drawing.Size(1194, 20);
+            this.tbFilterName.Size = new System.Drawing.Size(695, 20);
             this.tbFilterName.TabIndex = 1;
             this.tbFilterName.TextChanged += new System.EventHandler(this.tbFilterName_TextChanged);
             // 
             // btnPublishToCatalogue
             // 
             this.btnPublishToCatalogue.Enabled = false;
-            this.btnPublishToCatalogue.Location = new System.Drawing.Point(0, 216);
+            this.btnPublishToCatalogue.Location = new System.Drawing.Point(10, 187);
             this.btnPublishToCatalogue.Name = "btnPublishToCatalogue";
             this.btnPublishToCatalogue.Size = new System.Drawing.Size(56, 23);
             this.btnPublishToCatalogue.TabIndex = 11;
@@ -96,7 +97,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 55);
+            this.label2.Location = new System.Drawing.Point(29, 28);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 13);
             this.label2.TabIndex = 2;
@@ -107,10 +108,10 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.tbFilterDescription.AcceptsReturn = true;
             this.tbFilterDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilterDescription.Location = new System.Drawing.Point(76, 52);
+            this.tbFilterDescription.Location = new System.Drawing.Point(98, 25);
             this.tbFilterDescription.Multiline = true;
             this.tbFilterDescription.Name = "tbFilterDescription";
-            this.tbFilterDescription.Size = new System.Drawing.Size(1195, 89);
+            this.tbFilterDescription.Size = new System.Drawing.Size(1173, 89);
             this.tbFilterDescription.TabIndex = 3;
             this.tbFilterDescription.TextChanged += new System.EventHandler(this.tbFilterDescription_TextChanged);
             // 
@@ -119,7 +120,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.lblWhere.AutoSize = true;
             this.lblWhere.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWhere.ForeColor = System.Drawing.Color.Blue;
-            this.lblWhere.Location = new System.Drawing.Point(17, 149);
+            this.lblWhere.Location = new System.Drawing.Point(39, 120);
             this.lblWhere.Name = "lblWhere";
             this.lblWhere.Size = new System.Drawing.Size(53, 13);
             this.lblWhere.TabIndex = 5;
@@ -130,9 +131,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.pQueryEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pQueryEditor.Location = new System.Drawing.Point(81, 149);
+            this.pQueryEditor.Location = new System.Drawing.Point(98, 120);
             this.pQueryEditor.Name = "pQueryEditor";
-            this.pQueryEditor.Size = new System.Drawing.Size(1193, 331);
+            this.pQueryEditor.Size = new System.Drawing.Size(1173, 361);
             this.pQueryEditor.TabIndex = 0;
             // 
             // ragSmiley1
@@ -140,55 +141,56 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(43, 165);
+            this.ragSmiley1.Location = new System.Drawing.Point(67, 136);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 27;
             // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1274, 25);
-            this.toolStrip1.TabIndex = 28;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
             // autocompleteReminder
             // 
             this.autocompleteReminder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.autocompleteReminder.Location = new System.Drawing.Point(81, 486);
+            this.autocompleteReminder.Location = new System.Drawing.Point(98, 483);
             this.autocompleteReminder.Name = "autocompleteReminder";
             this.autocompleteReminder.Size = new System.Drawing.Size(64, 20);
             this.autocompleteReminder.TabIndex = 29;
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(11, 112);
+            this.objectSaverButton1.Location = new System.Drawing.Point(38, 85);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(57, 29);
             this.objectSaverButton1.TabIndex = 4;
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tbFilterName);
+            this.panel1.Controls.Add(this.autocompleteReminder);
+            this.panel1.Controls.Add(this.pQueryEditor);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.tbFilterDescription);
+            this.panel1.Controls.Add(this.btnPublishToCatalogue);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.cbIsMandatory);
+            this.panel1.Controls.Add(this.objectSaverButton1);
+            this.panel1.Controls.Add(this.ragSmiley1);
+            this.panel1.Controls.Add(this.lblWhere);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1274, 506);
+            this.panel1.TabIndex = 30;
+            // 
             // ExtractionFilterUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.pQueryEditor);
-            this.Controls.Add(this.autocompleteReminder);
-            this.Controls.Add(this.btnPublishToCatalogue);
-            this.Controls.Add(this.cbIsMandatory);
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.objectSaverButton1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.tbFilterName);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbFilterDescription);
-            this.Controls.Add(this.lblWhere);
+            this.Controls.Add(this.panel1);
             this.Name = "ExtractionFilterUI";
             this.Size = new System.Drawing.Size(1274, 506);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -205,8 +207,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         private SimpleControls.ObjectSaverButton objectSaverButton1;
         private RAGSmiley ragSmiley1;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
         private KeyboardReminder autocompleteReminder;
+        private System.Windows.Forms.Panel panel1;
 
     }
 }

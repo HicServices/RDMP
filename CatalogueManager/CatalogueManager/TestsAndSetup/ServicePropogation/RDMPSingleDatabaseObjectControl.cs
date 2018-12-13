@@ -28,6 +28,8 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
     {
         private Control _colorIndicator;
+        private ToolStrip _toolStrip;
+
         protected IActivateItems _activator;
         private AtomicCommandUIFactory atomicCommandUIFactory;
         
@@ -51,6 +53,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
                 this.Controls.Add(this._colorIndicator);
             }
+
+            //Clear the tool strip 
+            if(_toolStrip != null)
+                _toolStrip.Items.Clear();
         }
 
         public void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject)
@@ -84,15 +90,31 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
         public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
 
-        protected void Add(ToolStrip toolStrip, IAtomicCommand cmd)
+        /// <summary>
+        /// Adds the given <paramref name="cmd"/> to the menu bar at the top of the control
+        /// </summary>
+        /// <param name="cmd"></param>
+        protected void Add(IAtomicCommand cmd)
         {
             if (atomicCommandUIFactory == null)
                 atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
 
-            toolStrip.Items.Add(atomicCommandUIFactory.CreateToolStripItem(cmd));
+            if (_toolStrip == null)
+            {
+                _toolStrip = new ToolStrip();
+                _toolStrip.Location = new Point(0, 0);
+                _toolStrip.TabIndex = 1;
+                this.Controls.Add(this._toolStrip);
+            }
+
+            _toolStrip.Items.Add(atomicCommandUIFactory.CreateToolStripItem(cmd));
         }
 
-        protected void AddPluginCommands(ToolStrip toolStrip, IRDMPSingleDatabaseObjectControl control, DatabaseEntity o)
+        /// <summary>
+        /// Adds the all <see cref="IAtomicCommand"/> specified by <see cref="IActivateItems.PluginUserInterfaces"/> for the current control.  Commands
+        /// will appear in the menu bar at the top of the control
+        /// </summary>
+        protected void AddPluginCommands(IRDMPSingleDatabaseObjectControl control, DatabaseEntity o)
         {
             foreach (var p in _activator.PluginUserInterfaces)
             {
@@ -100,7 +122,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
                 if(toAdd != null)
                     foreach (IAtomicCommand cmd in toAdd)
-                        Add(toolStrip, cmd);
+                        Add(cmd);
             }
         }
 

@@ -195,8 +195,7 @@ namespace CatalogueManager.ExtractionUIs
             _catalogue = databaseObject;
             RefreshUIFromDatabase(); 
 
-            toolStrip1.Items.Clear();
-            Add(toolStrip1,new ExecuteCommandReOrderColumns(_activator, _catalogue));
+            Add(new ExecuteCommandReOrderColumns(_activator, _catalogue));
         }
         
         public override string GetTabName()

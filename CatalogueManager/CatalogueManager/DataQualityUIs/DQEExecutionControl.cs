@@ -42,9 +42,8 @@ namespace CatalogueManager.DataQualityUIs
             _catalogue = databaseObject;
             checkAndExecuteUI1.SetItemActivator(activator);
             
-            toolStrip1.Items.Clear();
-            Add(toolStrip1, new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue));
-            AddPluginCommands(toolStrip1, this,_catalogue);
+            Add(new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue));
+            AddPluginCommands(this,_catalogue);
         }
         
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
