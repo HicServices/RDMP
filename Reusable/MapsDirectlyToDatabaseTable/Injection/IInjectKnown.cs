@@ -2,6 +2,14 @@ using System;
 
 namespace MapsDirectlyToDatabaseTable.Injection
 {
+    public interface IInjectKnown
+    {
+        /// <summary>
+        /// Informs the implementing class that it should forget about all values provided by any InjectKnown calls
+        /// </summary>
+        void ClearAllInjections();
+    }
+
     /// <summary>
     /// Defines that the implementing class has an expensive operation for fetching a T but that a known instance might already be
     /// available (e.g. in a cache) which can be injected into it. 
@@ -35,17 +43,12 @@ namespace MapsDirectlyToDatabaseTable.Injection
     /// 
     /// </code></example>
     /// <typeparam name="T"></typeparam>
-    public interface IInjectKnown<T>
+    public interface IInjectKnown<T>:IInjectKnown
     {
         /// <summary>
         /// Records the known state of T so that it doesn't have to be fetched by an expensive operation e.g. going to the database and fetching it.
         /// </summary>
         /// <param name="instance"></param>
         void InjectKnown(T instance);
-
-        /// <summary>
-        /// Informs the implementing class that it should forget about all values provided by any InjectKnown calls
-        /// </summary>
-        void ClearAllInjections();
     }
 }

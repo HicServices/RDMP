@@ -513,6 +513,11 @@ namespace MapsDirectlyToDatabaseTable
 
                 propertyInfo.SetValue(localCopy, propertyInfo.GetValue(databaseState));
             }
+            
+            //Mark any cached data as out of date
+            var inject = localCopy as IInjectKnown;
+            if(inject != null) 
+                inject.ClearAllInjections();
         }
 
         /// <inheritdoc/>

@@ -1,29 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
-using CatalogueManager.ExtractionUIs;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.Revertable;
-using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Common.Validation;
-using HIC.Logging;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
 using ReusableUIComponents;
 
 
@@ -204,6 +192,11 @@ namespace CatalogueManager.MainFormUITabs
             base.SetDatabaseObject(activator,databaseObject);
             CatalogueItem = databaseObject;
             objectSaverButton1.SetupFor(databaseObject,_activator.RefreshBus);
+
+            if (CatalogueItem.ExtractionInformation != null)
+                Add(new ExecuteCommandActivate(activator, CatalogueItem.ExtractionInformation), "Extraction Information");
+            else
+                Add(new ExecuteCommandMakeCatalogueItemExtractable(activator, CatalogueItem));
         }
         
         #region Helper Methods for setting string and Uri properties

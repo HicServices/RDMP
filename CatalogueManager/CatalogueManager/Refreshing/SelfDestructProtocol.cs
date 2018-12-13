@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace CatalogueManager.Refreshing
 {
@@ -44,8 +45,15 @@ namespace CatalogueManager.Refreshing
 
                 return;
             }
+            
             if (o != null && o.ID == OriginalObject.ID && o.GetType() == OriginalObject.GetType())//object was refreshed, probably an update to some fields in it
+            {
+                //make sure the object is up-to-date with the database saved state.
+                if (o.Exists())
+                    o.RevertToDatabaseState();
+
                 User.SetDatabaseObject(_activator, o); //give it the new object
+            }
         }
 
     }
