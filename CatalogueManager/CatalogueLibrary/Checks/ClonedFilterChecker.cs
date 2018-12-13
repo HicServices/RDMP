@@ -55,7 +55,7 @@ namespace CatalogueLibrary.Checks
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     "Catalogue reports that the original filter we were cloned from " +
-                    (exist ? " still exists " : " no longer exists"), exist ? CheckResult.Success : CheckResult.Fail));
+                    (exist ? " still exists " : " no longer exists"), exist ? CheckResult.Success : CheckResult.Warning));
 
             //it hasn't been nuked
             if (exist)

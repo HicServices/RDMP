@@ -155,7 +155,6 @@ namespace CatalogueManager.SimpleControls
         }
 
         private RevertableObjectReport _undoneChanges;
-        private readonly string[] _ignoreChangesToTheseProperties = new[] { "Lifeline", "LockHeldBy", "LockedBecauseRunning" };
 
         private void btnUndoRedo_Click(object sender, EventArgs e)
         {
@@ -230,8 +229,7 @@ namespace CatalogueManager.SimpleControls
             var changes = _o.HasLocalChanges();
             //are there changes
             if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                return changes.Differences.Any(d => !_ignoreChangesToTheseProperties.Contains(d.Property.Name)); //are the changes to properties we care about
-
+                return changes.Differences.Any(); //are the changes to properties
 
             return false;
         }

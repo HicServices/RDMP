@@ -34,18 +34,7 @@ namespace CatalogueLibrary.Spontaneous
             Name = "Spontaneous Permission Window";
         }
 
-        public bool LockedBecauseRunning { get; set; }
-        public string LockHeldBy { get; set; }
-        public void Lock()
-        {
-            
-        }
-
-        public void Unlock()
-        {
-            
-        }
-
+        
         public void RefreshLockPropertiesFromDatabase()
         {
             

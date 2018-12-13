@@ -152,13 +152,6 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion
 
-        public override void RevertToDatabaseState()
-        {
-            base.RevertToDatabaseState();
-            //clear the cached knowledge
-            ClearAllInjections();
-        }
-
         public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus()
         {
             return new CatalogueExtractabilityStatus(true, Project_ID != null);
