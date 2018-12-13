@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,6 +12,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
@@ -33,7 +35,13 @@ namespace ResearchDataManagementPlatform
         {
             InitializeComponent();
 
+            PatchController.EnableAll = true;
+            dockPanel1.Theme = new VS2015LightTheme();
+            dockPanel1.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
+            dockPanel1.DefaultFloatWindowSize = new Size(640, 520);
+            dockPanel1.ShowDocumentIcon = true;
             dockPanel1.DocumentStyle = DocumentStyle.DockingWindow;
+
             WindowState = FormWindowState.Maximized;
             CloseOnEscape = false;
 

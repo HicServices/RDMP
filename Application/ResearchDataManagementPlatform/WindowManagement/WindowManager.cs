@@ -63,17 +63,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
             ActivateItems = new ActivateItems(refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
 
             _mainDockPanel = mainDockPanel;
-            _mainDockPanel.Theme = new VS2005Theme();
-            _mainDockPanel.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
-            _mainDockPanel.DefaultFloatWindowSize = new Size(640,520);
-            _mainDockPanel.ShowDocumentIcon = true;
-
+            
             MainForm = mainForm;
             RepositoryLocator = repositoryLocator;
 
             Navigation = new NavigationTrack();
             mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
+            
         }
+
         /// <summary>
         /// Creates a new instance of the given RDMPCollectionUI specified by the Enum collectionToCreate at the specified dock position
         /// </summary>

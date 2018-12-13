@@ -63,6 +63,9 @@ namespace CatalogueLibrary.Checks
                 //get it
                 var parent = _catalogueDatabaseRepository.GetObjectByID<ExtractionFilter>((int) _allegedParent);
 
+                if (string.IsNullOrWhiteSpace(parent.WhereSQL) || string.IsNullOrWhiteSpace(_child.WhereSQL))
+                    return;
+
                 //see if someone has been monkeying with the parent (or the child) in which case warn them about the disparity
                 if (parent.WhereSQL.Equals(_child.WhereSQL))
                     notifier.OnCheckPerformed(new CheckEventArgs(
