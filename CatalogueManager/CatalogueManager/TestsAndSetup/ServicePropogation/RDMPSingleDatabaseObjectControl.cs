@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.Refreshing;
@@ -13,6 +14,7 @@ using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
 namespace CatalogueManager.TestsAndSetup.ServicePropogation
@@ -116,6 +118,16 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             _toolStrip.Items.Add(button);
         }
+
+        /// <summary>
+        /// Adds the given <paramref name="cmd"/> to the menu bar at the top of the control
+        /// </summary>
+        /// <param name="cmd"></param>
+        protected void Add(IAtomicCommand cmd, string overrideCommandName, RDMPConcept overrideImage,OverlayKind overlayKind = OverlayKind.None)
+        {
+            Add(cmd,overrideCommandName,_activator.CoreIconProvider.GetImage(overrideImage,overlayKind));
+        }
+
 
         /// <summary>
         /// Adds the all <see cref="IAtomicCommand"/> specified by <see cref="IActivateItems.PluginUserInterfaces"/> for the current control.  Commands

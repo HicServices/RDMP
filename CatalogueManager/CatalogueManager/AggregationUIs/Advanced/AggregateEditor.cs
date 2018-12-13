@@ -508,9 +508,18 @@ namespace CatalogueManager.AggregationUIs.Advanced
             _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
             SetAggregate(activator, databaseObject);
 
-            Add(new ExecuteCommandViewSqlParameters(activator,databaseObject));
+            if (databaseObject.IsCohortIdentificationAggregate)
+            {
+                var cic = databaseObject.GetCohortIdentificationConfigurationIfAny();
+                if (cic != null)
+                    Add(new ExecuteCommandActivate(activator, cic), "Cohort Query");
+            }
+            else
+                Add(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0),"Show Catalogue",RDMPConcept.Catalogue);
+
             Add(new ExecuteCommandViewSample(activator, databaseObject));
             Add(new ExecuteCommandExecuteAggregateGraph(activator,databaseObject));
+            Add(new ExecuteCommandViewSqlParameters(activator, databaseObject));
         }
 
         public ObjectSaverButton GetObjectSaverButton()
