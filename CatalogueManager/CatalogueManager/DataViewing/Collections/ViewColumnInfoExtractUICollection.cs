@@ -73,7 +73,7 @@ namespace CatalogueManager.DataViewing.Collections
             qb.AddColumn(new ColumnInfoToIColumn(ColumnInfo));
             
             var filter = GetFilterIfAny();
-            if (filter != null)
+            if (filter != null && !string.IsNullOrWhiteSpace(filter.WhereSQL))
                 qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null, new[] { filter }, FilterContainerOperation.AND);
 
             if (ViewType == ViewType.Aggregate)
