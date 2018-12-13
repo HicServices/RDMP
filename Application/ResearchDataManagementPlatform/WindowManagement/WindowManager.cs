@@ -71,8 +71,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             Navigation = new NavigationTrack();
             mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
+            mainDockPanel.DocumentDragged += MainDockPanelOnDocumentDragged;
+
         }
-        
+
         /// <summary>
         /// Creates a new instance of the given RDMPCollectionUI specified by the Enum collectionToCreate at the specified dock position
         /// </summary>
@@ -317,9 +319,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if (TabChanged != null)
                 TabChanged(sender, newTab);
-
-            
         }
+
 
         /// <summary>
         /// Records the fact that a new single object editing tab has been opened.  .
@@ -417,8 +418,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
         }
 
-
-
-
+        private void MainDockPanelOnDocumentDragged(object sender, EventArgs eventArgs)
+        {
+            //When dragging a window make sure the current tab is activated again
+            if (Navigation != null && Navigation.CanBack())
+                Navigation.Back(true);
+        }
     }
 }
