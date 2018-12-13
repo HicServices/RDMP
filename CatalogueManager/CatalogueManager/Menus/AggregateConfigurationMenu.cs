@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,14 +9,12 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using RDMPStartup;
 using ReusableLibraryCode;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.ChecksUI;
 
@@ -31,8 +28,8 @@ namespace CatalogueManager.Menus
         public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate): base(args, aggregate)
         {
             _aggregate = aggregate;
-            
-            Items.Add("View Sample", GetImage(RDMPConcept.SQL,OverlayKind.Execute), ViewDatasetSample);
+
+            Add(new ExecuteCommandViewSample(args.ItemActivator, aggregate));
 
             //only allow them to execute graph if it is normal aggregate graph
             if (!aggregate.IsCohortIdentificationAggregate)
@@ -60,32 +57,6 @@ namespace CatalogueManager.Menus
             Items.Add(clearShortcutFilterContainer);
 
             Add(new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator).SetTarget(aggregate));
-        }
-
-        private void ViewDatasetSample(object sender,EventArgs e)
-        {
-            var cic = _aggregate.GetCohortIdentificationConfigurationIfAny();
-            
-            var collection = new ViewAggregateExtractUICollection(_aggregate);
-
-            //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
-            if (cic != null && cic.QueryCachingServer_ID != null && _aggregate.PatientIndexJoinablesUsed.Any())
-            {
-                switch (MessageBox.Show("Use Query Cache when building query?", "Use Configured Cache", MessageBoxButtons.YesNoCancel))
-                {
-                    case DialogResult.Cancel:
-                        return;
-                    case DialogResult.Yes:
-                        collection.UseQueryCache = true;
-                        break;
-                    case DialogResult.No:
-                        collection.UseQueryCache = false;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            _activator.ViewDataSample(collection);
         }
 
         private void ClearShortcut()

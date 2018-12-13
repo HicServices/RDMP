@@ -90,8 +90,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             olvJoinTableName.ImageGetter += ImageGetter;
 
             olvJoin.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
-
-            btnGraph.Image = CatalogueIcons.BigGraph;
         }
 
         private object ImageGetter(object rowObject)
@@ -182,10 +180,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             _activator = activator;
             _aggregate = configuration;
             _options = options ?? new AggregateBuilderOptionsFactory().Create(configuration);
-
-            //can graph it if it isn't a cohort one or patient index table
-            btnGraph.Enabled = !_aggregate.IsCohortIdentificationAggregate;
-
+            
             ReloadUIFromDatabase();
         }
 
@@ -280,14 +275,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             tbName.Text = _aggregate.ToString();
         }
 
-        
-        private void btnParameters_Click(object sender, EventArgs e)
-        {
-
-            var options = new ParameterCollectionUIOptionsFactory().Create(_aggregate);
-            ParameterCollectionUI.ShowAsDialog(options);
-        }
-        
         private void OnListboxKeyUp(object sender, KeyEventArgs e)
         {
             var s = (ObjectListView) sender;
@@ -520,13 +507,12 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
             SetAggregate(activator, databaseObject);
+
+            Add(new ExecuteCommandViewSqlParameters(activator,databaseObject));
+            Add(new ExecuteCommandViewSample(activator, databaseObject));
+            Add(new ExecuteCommandExecuteAggregateGraph(activator,databaseObject));
         }
 
-        private void btnViewQuery_Click(object sender, EventArgs e)
-        {
-            _activator.ViewDataSample(new ViewAggregateExtractUICollection(_aggregate));
-        }
-        
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
@@ -540,12 +526,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             if (cic != null)
                 cic.EnsureNamingConvention(_aggregate);
-        }
-
-        private void btnGraph_Click(object sender, EventArgs e)
-        {
-            var cmd = new ExecuteCommandExecuteAggregateGraph(_activator, _aggregate);
-            cmd.Execute();
         }
 
         private void olvJoin_ItemActivate(object sender, EventArgs e)

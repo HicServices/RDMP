@@ -36,7 +36,7 @@ namespace ResearchDataManagementPlatform
             InitializeComponent();
 
             PatchController.EnableAll = true;
-            dockPanel1.Theme = new VS2015LightTheme();
+            dockPanel1.Theme = new VS2015BlueTheme();
             dockPanel1.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
             dockPanel1.DefaultFloatWindowSize = new Size(640, 520);
             dockPanel1.ShowDocumentIcon = true;
