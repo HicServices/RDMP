@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Providers;
@@ -64,7 +65,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _mainDockPanel = mainDockPanel;
             _mainDockPanel.Theme = new VS2005Theme();
             _mainDockPanel.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
-            
+            _mainDockPanel.DefaultFloatWindowSize = new Size(640,520);
             _mainDockPanel.ShowDocumentIcon = true;
 
             MainForm = mainForm;
@@ -72,9 +73,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             Navigation = new NavigationTrack();
             mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
-            mainDockPanel.DocumentDragged += MainDockPanelOnDocumentDragged;
         }
-
         /// <summary>
         /// Creates a new instance of the given RDMPCollectionUI specified by the Enum collectionToCreate at the specified dock position
         /// </summary>
@@ -421,13 +420,5 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 Navigation.Append(_mainDockPanel.ActiveDocument as DockContent);
             }
         }
-
-        private void MainDockPanelOnDocumentDragged(object sender, EventArgs eventArgs)
-        {
-            //When dragging a window make sure the current tab is activated again
-            if (Navigation != null && Navigation.CanBack())
-                Navigation.Back(true);
-        }
-
     }
 }
