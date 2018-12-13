@@ -26,9 +26,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
         private readonly IObjectCollectionControl _control;
         
         public const string Prefix = "RDMPObjectCollection";
-
-
+        
         private PersistStringHelper persistStringHelper = new PersistStringHelper();
+
+        public IPersistableObjectCollection Collection { get { return _control.GetCollection(); } }
 
         public PersistableObjectCollectionDockContent(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection collection):base(activator.RefreshBus)
         {

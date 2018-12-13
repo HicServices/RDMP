@@ -1,28 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using MapsDirectlyToDatabaseTable;
 
 namespace Dashboard.Raceway
 {
-    public class DatasetRacewayObjectCollection : IPersistableObjectCollection
+    public class DatasetRacewayObjectCollection : PersistableObjectCollection
     {
         public DatasetRaceway.RacewayShowPeriod ShowPeriod { get; set; }
         public bool IgnoreRows { get; set; }
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
 
         public DatasetRacewayObjectCollection()
         {
             //default
             ShowPeriod = DatasetRaceway.RacewayShowPeriod.AllTime;
             IgnoreRows = false;
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
         }
 
         public Catalogue[] GetCatalogues()
@@ -30,7 +24,7 @@ namespace Dashboard.Raceway
             return DatabaseObjects.Cast<Catalogue>().ToArray();
         }
 
-        public string SaveExtraText()
+        public override string SaveExtraText()
         {
             return Helper.SaveDictionaryToString(new Dictionary<string, string>
             {
@@ -39,7 +33,7 @@ namespace Dashboard.Raceway
             });
         }
 
-        public void LoadExtraText(string s)
+        public override void LoadExtraText(string s)
         {
             var dict = Helper.LoadDictionaryFromString(s);
 

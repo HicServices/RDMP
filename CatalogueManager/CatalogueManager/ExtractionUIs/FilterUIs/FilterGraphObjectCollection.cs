@@ -10,14 +10,10 @@ using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs
 {
-    public class FilterGraphObjectCollection : IPersistableObjectCollection
+    public class FilterGraphObjectCollection : PersistableObjectCollection
     {
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
-
         public FilterGraphObjectCollection()
         {
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
         }
 
         public FilterGraphObjectCollection(AggregateConfiguration graph, ConcreteFilter filter):this()
@@ -35,16 +31,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         public IFilter GetFilter()
         {
             return (IFilter)DatabaseObjects.Single(o => o is IFilter);
-        }
-
-        public string SaveExtraText()
-        {
-            return null;
-        }
-
-        public void LoadExtraText(string s)
-        {
-            //no extra text required
         }
 
         public void HandleRefreshObject(RefreshObjectEventArgs e)

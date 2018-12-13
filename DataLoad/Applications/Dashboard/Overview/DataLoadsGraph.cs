@@ -1,14 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DashboardTabs.Construction;
@@ -20,7 +16,6 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Dashboard.CommandExecution.AtomicCommands;
 using HIC.Logging;
 using HIC.Logging.PastEvents;
-using ReusableUIComponents;
 
 namespace Dashboard.Overview
 {

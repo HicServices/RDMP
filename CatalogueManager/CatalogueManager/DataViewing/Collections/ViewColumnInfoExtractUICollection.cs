@@ -14,10 +14,8 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections
 {
-    public class ViewColumnInfoExtractUICollection : IViewSQLAndResultsCollection
+    public class ViewColumnInfoExtractUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
     {
-        public PersistStringHelper Helper { get; private set;}
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
         public ViewType ViewType { get; private set; }
 
         /// <summary>
@@ -25,8 +23,6 @@ namespace CatalogueManager.DataViewing.Collections
         /// </summary>
         public ViewColumnInfoExtractUICollection()
         {
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
         }
 
         public ViewColumnInfoExtractUICollection(ColumnInfo c, ViewType viewType, IFilter filter = null): this()
@@ -37,12 +33,12 @@ namespace CatalogueManager.DataViewing.Collections
             ViewType = viewType;
         }
 
-        public string SaveExtraText()
+        public override string SaveExtraText()
         {
             return Helper.SaveDictionaryToString(new Dictionary<string, string>() {{"ViewType", ViewType.ToString()}});
         }
 
-        public void LoadExtraText(string s)
+        public override void LoadExtraText(string s)
         {
             string value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
             ViewType = (ViewType) Enum.Parse(typeof (ViewType), value);

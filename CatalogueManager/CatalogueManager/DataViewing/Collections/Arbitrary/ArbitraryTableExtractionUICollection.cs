@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers;
@@ -14,7 +11,7 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections.Arbitrary
 {
-    internal class ArbitraryTableExtractionUICollection : IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
+    internal class ArbitraryTableExtractionUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
     {
         private DiscoveredTable _table;
         
@@ -34,12 +31,11 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
         }
 
         /// <summary>
-        /// probably needed for deserialization or something
+        /// Needed for deserialization
         /// </summary>
         public ArbitraryTableExtractionUICollection()
         {
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
+            
         }
 
         public ArbitraryTableExtractionUICollection(DiscoveredTable table) :this()
@@ -56,20 +52,13 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
             Username = table.Database.Server.ExplicitUsernameIfAny;
             Password = table.Database.Server.ExplicitPasswordIfAny;
         }
-        
-        /// <inheritdoc/>
-        public PersistStringHelper Helper { get; private set; }
-
-        /// <inheritdoc/>
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
-
         /// <nheritdoc/>
-        public string SaveExtraText()
+        public override string SaveExtraText()
         {
             return Helper.SaveDictionaryToString(_arguments);
         }
 
-        public void LoadExtraText(string s)
+        public override void LoadExtraText(string s)
         {
             _arguments = Helper.LoadDictionaryFromString(s);
 

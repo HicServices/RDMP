@@ -395,13 +395,18 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         
         public T Activate<T>(IPersistableObjectCollection collection)
-            where T: IObjectCollectionControl,new()
+            where T: Control,IObjectCollectionControl,new()
 
         {
+            Control existingHostedControlInstance;
+            if (PopExisting(typeof(T), collection, out existingHostedControlInstance))
+                return (T)existingHostedControlInstance;
+
             var uiInstance = new T();
             Activate(uiInstance, collection);
             return uiInstance;
         }
+
 
         private T Activate<T, T2>(T2 databaseObject, Bitmap tabImage)
             where T : RDMPSingleDatabaseObjectControl<T2>, new()
@@ -435,6 +440,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return existing != null;
         }
 
+        private bool PopExisting(Type windowType, IPersistableObjectCollection collection, out Control existingHostedControlInstance)
+        {
+            var existing = _windowManager.GetActiveWindowIfAnyFor(windowType, collection);
+            existingHostedControlInstance = null;
+
+            if (existing != null)
+            {
+                existingHostedControlInstance = existing.GetControl();
+                existing.Activate();
+                existing.HandleUserRequestingTabRefresh(this);
+            }
+
+            return existing != null;
+        }
         public DockContent Activate(DeserializeInstruction instruction)
         {
             if (instruction.DatabaseObject != null && instruction.ObjectCollection != null)

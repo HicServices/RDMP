@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CohortManagerLibrary.QueryBuilding;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace CohortManager.SubComponents.Graphs
 {
-    public class CohortSummaryAggregateGraphObjectCollection:IPersistableObjectCollection
+    public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollection
     {
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
         public CohortSummaryAdjustment Adjustment;
         public AggregateFilter SingleFilterOnly { get { return DatabaseObjects.OfType<AggregateFilter>().SingleOrDefault(); } }
 
@@ -29,8 +24,6 @@ namespace CohortManager.SubComponents.Graphs
         /// </summary>
         public CohortSummaryAggregateGraphObjectCollection()
         {
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
         }
 
         /// <summary>
@@ -71,12 +64,12 @@ namespace CohortManager.SubComponents.Graphs
             DatabaseObjects.Add(singleFilterOnly);
         }
 
-        public string SaveExtraText()
+        public override string SaveExtraText()
         {
             return Adjustment.ToString();
         }
 
-        public void LoadExtraText(string s)
+        public override void LoadExtraText(string s)
         {
             CohortSummaryAdjustment a;
             

@@ -10,11 +10,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace Dashboard.PieCharts
 {
-    public class GoodBadCataloguePieChartObjectCollection : IPersistableObjectCollection
+    public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollection
     {
         public CataloguePieChartType PieChartType { get; set; }
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
         public bool ShowLabels { get; set; }
 
 
@@ -29,11 +27,9 @@ namespace Dashboard.PieCharts
         {
             //default
             PieChartType = CataloguePieChartType.EmptyDescriptions;
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
         }
 
-        public string SaveExtraText()
+        public override string SaveExtraText()
         {
             return Helper.SaveDictionaryToString(new Dictionary<string, string>()
             {
@@ -42,7 +38,7 @@ namespace Dashboard.PieCharts
             });
         }
 
-        public void LoadExtraText(string s)
+        public override void LoadExtraText(string s)
         {
             var dict = Helper.LoadDictionaryFromString(s);
 

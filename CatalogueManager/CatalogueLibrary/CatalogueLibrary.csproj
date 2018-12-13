@@ -265,6 +265,7 @@
     <Compile Include="Data\Dashboarding\DashboardLayout.cs" />
     <Compile Include="Data\Dashboarding\DashboardObjectUse.cs" />
     <Compile Include="Data\Dashboarding\IPersistableObjectCollection.cs" />
+    <Compile Include="Data\Dashboarding\PersistableObjectCollection.cs" />
     <Compile Include="Data\Dashboarding\PersistenceException.cs" />
     <Compile Include="Data\Dashboarding\PersistStringHelper.cs" />
     <Compile Include="Data\DataLoad\Extensions\LoadStageExtensions.cs" />

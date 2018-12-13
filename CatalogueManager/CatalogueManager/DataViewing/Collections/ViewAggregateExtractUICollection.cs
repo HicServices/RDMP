@@ -1,31 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
 using CohortManagerLibrary.QueryBuilding;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections
 {
-    public class ViewAggregateExtractUICollection : IViewSQLAndResultsCollection
+    public class ViewAggregateExtractUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
     {
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
         public bool UseQueryCache { get; set; }
 
         public ViewAggregateExtractUICollection()
         {
-            Helper = new PersistStringHelper();
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
         }
 
         public ViewAggregateExtractUICollection(AggregateConfiguration config):this()
@@ -33,15 +24,6 @@ namespace CatalogueManager.DataViewing.Collections
             DatabaseObjects.Add(config);
         }
 
-        public string SaveExtraText()
-        {
-            return "";
-        }
-
-        public void LoadExtraText(string s)
-        {
-            
-        }
 
         public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
         {

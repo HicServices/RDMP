@@ -113,7 +113,7 @@ namespace CatalogueManager.ItemActivation
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
         /// <returns></returns>
-        T Activate<T>(IPersistableObjectCollection collection) where T : IObjectCollectionControl, new();
+        T Activate<T>(IPersistableObjectCollection collection) where T : Control,IObjectCollectionControl, new();
 
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
 

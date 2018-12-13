@@ -1,42 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ObjectVisualisation;
 using DataExportLibrary.Data.DataTables;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportManager.DataViewing.Collections
 {
-    internal class ViewCohortExtractionUICollection : IViewSQLAndResultsCollection
+    internal class ViewCohortExtractionUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
     {
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
-
         public ViewCohortExtractionUICollection()
         {
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
         }
 
         public ViewCohortExtractionUICollection(ExtractableCohort cohort):this()
         {
             DatabaseObjects.Add(cohort);
-        }
-
-        public string SaveExtraText()
-        {
-            return null;
-        }
-
-        public void LoadExtraText(string s)
-        {
-            
         }
         
         public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }

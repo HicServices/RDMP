@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -72,7 +73,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Navigation = new NavigationTrack();
             mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
             mainDockPanel.DocumentDragged += MainDockPanelOnDocumentDragged;
-
         }
 
         /// <summary>
@@ -360,6 +360,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
         }
 
+        public PersistableObjectCollectionDockContent GetActiveWindowIfAnyFor(Type windowType, IPersistableObjectCollection collection)
+        {
+            return _trackedWindows.OfType<PersistableObjectCollectionDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.Collection.Equals(collection));
+        }
         /// <summary>
         /// Check whether a given RDMPSingleControlTab is already showing with the given DatabaseObject (e.g. is user currently editing Catalogue bob in CatalogueTab)
         /// </summary>
@@ -424,5 +428,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if (Navigation != null && Navigation.CanBack())
                 Navigation.Back(true);
         }
+
     }
 }
