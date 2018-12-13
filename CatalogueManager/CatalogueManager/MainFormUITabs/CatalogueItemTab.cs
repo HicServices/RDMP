@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
@@ -197,6 +198,9 @@ namespace CatalogueManager.MainFormUITabs
                 Add(new ExecuteCommandActivate(activator, CatalogueItem.ExtractionInformation), "Extraction Information");
             else
                 Add(new ExecuteCommandMakeCatalogueItemExtractable(activator, CatalogueItem));
+
+            if(CatalogueItem.ColumnInfo_ID != null)
+                Add(new ExecuteCommandShow(activator,CatalogueItem.ColumnInfo,0),"Show Column",activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo));
         }
         
         #region Helper Methods for setting string and Uri properties

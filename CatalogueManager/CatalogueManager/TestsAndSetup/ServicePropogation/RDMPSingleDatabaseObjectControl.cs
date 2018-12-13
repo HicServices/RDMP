@@ -94,7 +94,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// Adds the given <paramref name="cmd"/> to the menu bar at the top of the control
         /// </summary>
         /// <param name="cmd"></param>
-        protected void Add(IAtomicCommand cmd,string overrideCommandName=null)
+        protected void Add(IAtomicCommand cmd,string overrideCommandName=null,Image overrideImage = null)
         {
             if (atomicCommandUIFactory == null)
                 atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
@@ -110,6 +110,9 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             var button = atomicCommandUIFactory.CreateToolStripItem(cmd);
             if (!string.IsNullOrWhiteSpace(overrideCommandName))
                 button.Text = overrideCommandName;
+
+            if (overrideImage != null)
+                button.Image = overrideImage;
 
             _toolStrip.Items.Add(button);
         }
