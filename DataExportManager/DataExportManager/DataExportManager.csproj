@@ -244,12 +244,6 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CohortUI\CohortSourceDiagram.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CohortUI\CohortSourceDiagram.Designer.cs">
-      <DependentUpon>CohortSourceDiagram.cs</DependentUpon>
-    </Compile>
     <Compile Include="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -438,9 +432,6 @@
     <Compile Include="Wizard\CreateNewDataExtractionProjectUI.Designer.cs">
       <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="CohortUI\CohortSourceDiagram.resx">
-      <DependentUpon>CohortSourceDiagram.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">
       <DependentUpon>CreateNewCohortDatabaseWizardUI.cs</DependentUpon>
     </EmbeddedResource>
