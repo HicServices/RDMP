@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using ADOX;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
@@ -95,8 +96,11 @@ namespace DataExportLibrary.Checks
                 return;
             }
 
+            foreach (IGrouping<string, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.GetRuntimeName()).Where(g=>g.Count()>1))
+                notifier.OnCheckPerformed(new CheckEventArgs("There are " + grouping.Count() + " columns in the extract called '" +grouping.Key + "'",CheckResult.Fail));
+            
             //Make sure cohort and dataset are on same server before checking (can still get around this at runtime by using ExecuteCrossServerDatasetExtractionSource)
-            if(!cohortServer.Server.Name.Equals(server.Name) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
+            if(!cohortServer.Server.Name.Equals(server.Name,StringComparison.CurrentCultureIgnoreCase) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     string.Format("Cohort is on server '{0}' ({1}) but dataset is on '{2}' ({3})",
                     cohortServer.Server.Name,
