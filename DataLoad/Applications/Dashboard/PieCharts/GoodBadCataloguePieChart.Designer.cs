@@ -34,6 +34,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GoodBadCataloguePieChart));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.gbWhatThisIs = new System.Windows.Forms.GroupBox();
+            this.btnViewDataTable = new System.Windows.Forms.Button();
             this.pbLoading = new System.Windows.Forms.PictureBox();
             this.lblNoIssues = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -43,7 +44,6 @@
             this.btnSingleCatalogue = new System.Windows.Forms.ToolStripButton();
             this.btnShowLabels = new System.Windows.Forms.ToolStripButton();
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
-            this.btnViewDataTable = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.gbWhatThisIs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
@@ -100,6 +100,17 @@
             this.gbWhatThisIs.TabStop = false;
             this.gbWhatThisIs.Text = "What This Is";
             // 
+            // btnViewDataTable
+            // 
+            this.btnViewDataTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnViewDataTable.Image = ((System.Drawing.Image)(resources.GetObject("btnViewDataTable.Image")));
+            this.btnViewDataTable.Location = new System.Drawing.Point(360, 193);
+            this.btnViewDataTable.Name = "btnViewDataTable";
+            this.btnViewDataTable.Size = new System.Drawing.Size(27, 23);
+            this.btnViewDataTable.TabIndex = 4;
+            this.btnViewDataTable.UseVisualStyleBackColor = true;
+            this.btnViewDataTable.Click += new System.EventHandler(this.btnViewDataTable_Click);
+            // 
             // pbLoading
             // 
             this.pbLoading.BackColor = System.Drawing.SystemColors.ButtonHighlight;
@@ -153,33 +164,30 @@
             // 
             // btnAllCatalogues
             // 
-            this.btnAllCatalogues.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnAllCatalogues.Image = ((System.Drawing.Image)(resources.GetObject("btnAllCatalogues.Image")));
             this.btnAllCatalogues.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAllCatalogues.Name = "btnAllCatalogues";
-            this.btnAllCatalogues.Size = new System.Drawing.Size(23, 22);
-            this.btnAllCatalogues.Text = "All Catalogues Mode";
+            this.btnAllCatalogues.Size = new System.Drawing.Size(41, 22);
+            this.btnAllCatalogues.Text = "All";
             this.btnAllCatalogues.Click += new System.EventHandler(this.btnAllCatalogues_Click);
             // 
             // btnSingleCatalogue
             // 
-            this.btnSingleCatalogue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnSingleCatalogue.Image = ((System.Drawing.Image)(resources.GetObject("btnSingleCatalogue.Image")));
             this.btnSingleCatalogue.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSingleCatalogue.Name = "btnSingleCatalogue";
-            this.btnSingleCatalogue.Size = new System.Drawing.Size(23, 22);
-            this.btnSingleCatalogue.Text = "Single Catalogue Mode";
+            this.btnSingleCatalogue.Size = new System.Drawing.Size(59, 22);
+            this.btnSingleCatalogue.Text = "Single";
             this.btnSingleCatalogue.Click += new System.EventHandler(this.btnSingleCatalogue_Click);
             // 
             // btnShowLabels
             // 
             this.btnShowLabels.CheckOnClick = true;
-            this.btnShowLabels.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnShowLabels.Image = ((System.Drawing.Image)(resources.GetObject("btnShowLabels.Image")));
             this.btnShowLabels.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnShowLabels.Name = "btnShowLabels";
-            this.btnShowLabels.Size = new System.Drawing.Size(23, 22);
-            this.btnShowLabels.Text = "Show Labels";
+            this.btnShowLabels.Size = new System.Drawing.Size(60, 22);
+            this.btnShowLabels.Text = "Labels";
             this.btnShowLabels.CheckStateChanged += new System.EventHandler(this.btnShowLabels_CheckStateChanged);
             // 
             // btnRefresh
@@ -191,17 +199,6 @@
             this.btnRefresh.Size = new System.Drawing.Size(23, 22);
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
-            // btnViewDataTable
-            // 
-            this.btnViewDataTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnViewDataTable.Image = ((System.Drawing.Image)(resources.GetObject("btnViewDataTable.Image")));
-            this.btnViewDataTable.Location = new System.Drawing.Point(360, 193);
-            this.btnViewDataTable.Name = "btnViewDataTable";
-            this.btnViewDataTable.Size = new System.Drawing.Size(27, 23);
-            this.btnViewDataTable.TabIndex = 4;
-            this.btnViewDataTable.UseVisualStyleBackColor = true;
-            this.btnViewDataTable.Click += new System.EventHandler(this.btnViewDataTable_Click);
             // 
             // GoodBadCataloguePieChart
             // 

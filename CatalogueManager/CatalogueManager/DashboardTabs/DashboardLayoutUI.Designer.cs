@@ -79,8 +79,8 @@ namespace CatalogueManager.DashboardTabs
             // toolStripLabel2
             // 
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(54, 22);
-            this.toolStripLabel2.Text = "Add/Edit";
+            this.toolStripLabel2.Size = new System.Drawing.Size(50, 22);
+            this.toolStripLabel2.Text = "Control:";
             // 
             // cbxAvailableControls
             // 
@@ -89,23 +89,21 @@ namespace CatalogueManager.DashboardTabs
             // 
             // btnAddDashboardControl
             // 
-            this.btnAddDashboardControl.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnAddDashboardControl.Image = ((System.Drawing.Image)(resources.GetObject("btnAddDashboardControl.Image")));
             this.btnAddDashboardControl.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAddDashboardControl.Name = "btnAddDashboardControl";
-            this.btnAddDashboardControl.Size = new System.Drawing.Size(23, 22);
-            this.btnAddDashboardControl.Text = "Add Control To Dashboard";
+            this.btnAddDashboardControl.Size = new System.Drawing.Size(49, 22);
+            this.btnAddDashboardControl.Text = "Add";
             this.btnAddDashboardControl.Click += new System.EventHandler(this.btnAddDashboardControl_Click);
             // 
             // btnEditMode
             // 
             this.btnEditMode.CheckOnClick = true;
-            this.btnEditMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnEditMode.Image = ((System.Drawing.Image)(resources.GetObject("btnEditMode.Image")));
             this.btnEditMode.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnEditMode.Name = "btnEditMode";
-            this.btnEditMode.Size = new System.Drawing.Size(23, 22);
-            this.btnEditMode.Text = "Move Or Delete Controls";
+            this.btnEditMode.Size = new System.Drawing.Size(47, 22);
+            this.btnEditMode.Text = "Edit";
             this.btnEditMode.CheckedChanged += new System.EventHandler(this.btnEditMode_CheckedChanged);
             // 
             // DashboardLayoutUI

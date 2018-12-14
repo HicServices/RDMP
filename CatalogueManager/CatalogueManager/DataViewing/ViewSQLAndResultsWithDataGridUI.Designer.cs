@@ -90,21 +90,20 @@
             // 
             // btnExecuteSql
             // 
-            this.btnExecuteSql.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnExecuteSql.Image = ((System.Drawing.Image)(resources.GetObject("btnExecuteSql.Image")));
             this.btnExecuteSql.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnExecuteSql.Name = "btnExecuteSql";
-            this.btnExecuteSql.Size = new System.Drawing.Size(23, 22);
-            this.btnExecuteSql.Text = "Execute Query (F5)";
+            this.btnExecuteSql.Size = new System.Drawing.Size(71, 22);
+            this.btnExecuteSql.Text = "Run (F5)";
             this.btnExecuteSql.Click += new System.EventHandler(this.btnExecuteSql_Click);
             // 
             // btnResetSql
             // 
-            this.btnResetSql.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnResetSql.Image = ((System.Drawing.Image)(resources.GetObject("btnResetSql.Image")));
             this.btnResetSql.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnResetSql.Name = "btnResetSql";
-            this.btnResetSql.Size = new System.Drawing.Size(23, 22);
+            this.btnResetSql.Size = new System.Drawing.Size(55, 22);
+            this.btnResetSql.Text = "Reset";
             this.btnResetSql.Click += new System.EventHandler(this.btnResetSql_Click);
             // 
             // ragSmiley1

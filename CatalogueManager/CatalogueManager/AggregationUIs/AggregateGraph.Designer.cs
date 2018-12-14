@@ -30,9 +30,9 @@ namespace CatalogueManager.AggregationUIs
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AggregateGraph));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label1 = new System.Windows.Forms.Label();
@@ -71,18 +71,18 @@ namespace CatalogueManager.AggregationUIs
             this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea6.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.chart1.Legends.Add(legend6);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
-            series1.Legend = "Legend1";
-            series1.MarkerSize = 1;
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series6.Legend = "Legend1";
+            series6.MarkerSize = 1;
+            series6.Name = "Series1";
+            this.chart1.Series.Add(series6);
             this.chart1.Size = new System.Drawing.Size(686, 432);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -184,7 +184,7 @@ namespace CatalogueManager.AggregationUIs
             this.tpCode.Location = new System.Drawing.Point(4, 4);
             this.tpCode.Name = "tpCode";
             this.tpCode.Padding = new System.Windows.Forms.Padding(3);
-            this.tpCode.Size = new System.Drawing.Size(665, 447);
+            this.tpCode.Size = new System.Drawing.Size(671, 475);
             this.tpCode.TabIndex = 1;
             this.tpCode.Text = "SQL Code";
             this.tpCode.UseVisualStyleBackColor = true;
@@ -197,7 +197,7 @@ namespace CatalogueManager.AggregationUIs
             this.tpDataTable.Location = new System.Drawing.Point(4, 4);
             this.tpDataTable.Name = "tpDataTable";
             this.tpDataTable.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDataTable.Size = new System.Drawing.Size(665, 447);
+            this.tpDataTable.Size = new System.Drawing.Size(671, 475);
             this.tpDataTable.TabIndex = 2;
             this.tpDataTable.Text = "Data";
             this.tpDataTable.UseVisualStyleBackColor = true;
@@ -232,7 +232,7 @@ namespace CatalogueManager.AggregationUIs
             this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(659, 441);
+            this.dataGridView1.Size = new System.Drawing.Size(665, 469);
             this.dataGridView1.TabIndex = 0;
             // 
             // tpHeatmap
@@ -242,7 +242,7 @@ namespace CatalogueManager.AggregationUIs
             this.tpHeatmap.Location = new System.Drawing.Point(4, 4);
             this.tpHeatmap.Name = "tpHeatmap";
             this.tpHeatmap.Padding = new System.Windows.Forms.Padding(3);
-            this.tpHeatmap.Size = new System.Drawing.Size(665, 447);
+            this.tpHeatmap.Size = new System.Drawing.Size(671, 475);
             this.tpHeatmap.TabIndex = 3;
             this.tpHeatmap.Text = "Heat Map";
             this.tpHeatmap.UseVisualStyleBackColor = true;
@@ -279,27 +279,26 @@ namespace CatalogueManager.AggregationUIs
             this.btnSaveImages.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSaveImages.Name = "btnSaveImages";
             this.btnSaveImages.Size = new System.Drawing.Size(23, 22);
-            this.btnSaveImages.Text = "Save Chart";
+            this.btnSaveImages.Text = "Save Chart Image";
             this.btnSaveImages.Click += new System.EventHandler(this.btnSaveImages_Click);
             // 
             // btnClipboard
             // 
-            this.btnClipboard.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnClipboard.Image = ((System.Drawing.Image)(resources.GetObject("btnClipboard.Image")));
             this.btnClipboard.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnClipboard.Name = "btnClipboard";
-            this.btnClipboard.Size = new System.Drawing.Size(23, 22);
-            this.btnClipboard.Text = "Copy Data Table";
+            this.btnClipboard.Size = new System.Drawing.Size(82, 22);
+            this.btnClipboard.Text = "Copy Data";
+            this.btnClipboard.ToolTipText = "Copies Data as HTML formatted (for pasting into Word / Excel etc)";
             this.btnClipboard.Click += new System.EventHandler(this.btnClipboard_Click);
             // 
             // btnResendQuery
             // 
-            this.btnResendQuery.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnResendQuery.Image = ((System.Drawing.Image)(resources.GetObject("btnResendQuery.Image")));
             this.btnResendQuery.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnResendQuery.Name = "btnResendQuery";
-            this.btnResendQuery.Size = new System.Drawing.Size(23, 22);
-            this.btnResendQuery.Text = "Re Send Query";
+            this.btnResendQuery.Size = new System.Drawing.Size(88, 22);
+            this.btnResendQuery.Text = "Send Query";
             this.btnResendQuery.Click += new System.EventHandler(this.btnResendQuery_Click);
             // 
             // toolStripLabel1

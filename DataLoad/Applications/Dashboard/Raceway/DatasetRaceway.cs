@@ -296,7 +296,6 @@ namespace Dashboard.Raceway
         private void UpdateIgnoreRowCountCheckBoxIconAndText()
         {
             cbIgnoreRowCounts.Image = cbIgnoreRowCounts.Checked ? _ignoreRowCounts : _respectRowCounts;
-            cbIgnoreRowCounts.Text = cbIgnoreRowCounts.Checked ? "Respect Row Counts":"Ignore Row Counts";
         }
     }
 }
