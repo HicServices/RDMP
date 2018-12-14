@@ -1,40 +1,21 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using CatalogueLibrary.Checks;
-using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Providers;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.MainFormUITabs;
-using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable;
 using CatalogueManager.Copying;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;
-using ReusableUIComponents.SingleControlForms;
 using ScintillaNET;
 
 
@@ -145,6 +126,9 @@ namespace CatalogueManager.ExtractionUIs
             Setup(databaseObject);
             objectSaverButton1.SetupFor(databaseObject,_activator.RefreshBus);
             objectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
+
+            Add(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Catalogue Item");
+            Add(new ExecuteCommandShow(activator, databaseObject.ColumnInfo,0,true));
         }
 
         private bool objectSaverButton1OnBeforeSave(DatabaseEntity databaseEntity)
