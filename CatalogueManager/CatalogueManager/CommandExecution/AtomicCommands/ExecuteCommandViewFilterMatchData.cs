@@ -48,10 +48,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if (_columnInfo == null)
-                _columnInfo = SelectOne(_candidates);
+            _columnInfo = SelectOne(_candidates, _columnInfo != null ? _columnInfo.Name : "");
 
-            if(_columnInfo == null)
+            if (_columnInfo == null)
                 return;
 
             Activator.ViewDataSample(new ViewColumnInfoExtractUICollection(_columnInfo, _viewType, _filter));
