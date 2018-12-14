@@ -1,6 +1,6 @@
+using System.Windows.Forms;
 using CatalogueLibrary.Data.Cache;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using CatalogueManager.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -11,7 +11,7 @@ namespace CatalogueManager.Menus
         public CacheProgressMenu(RDMPContextMenuStripArgs args, CacheProgress cacheProgress)
             : base(args, cacheProgress)
         {
-            Items.Add("Edit", null, (s, e) => _activator.Activate<CacheProgressUI, CacheProgress>(cacheProgress));
+            Add(new ExecuteCommandEditCacheProgress(args.ItemActivator, cacheProgress));
 
             Add(new ExecuteCommandSetPermissionWindow(_activator,cacheProgress));
             

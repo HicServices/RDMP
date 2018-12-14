@@ -50,9 +50,7 @@ namespace CatalogueManager.LoadExecutionUIs
             _loadMetadata = databaseObject;
 
             checkAndExecuteUI1.SetItemActivator(activator);
-
-            Add(new ExecuteCommandShow(activator,_loadMetadata,0,true));
-
+            
             SetButtonStates(null,null);
 
             SetLoadProgressGroupBoxState();

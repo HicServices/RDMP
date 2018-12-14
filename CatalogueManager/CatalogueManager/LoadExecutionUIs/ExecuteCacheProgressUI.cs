@@ -1,7 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -12,7 +10,6 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
-using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.LoadExecutionUIs
@@ -49,13 +46,12 @@ namespace CatalogueManager.LoadExecutionUIs
 
             _cacheProgress = databaseObject;
 
-            Add(new ExecuteCommandShow(activator,_cacheProgress.LoadProgress,0,true));
-            Add(new ExecuteCommandShow(activator, _cacheProgress, 0, true));
+            Add(new ExecuteCommandEditCacheProgress(activator, databaseObject),"Edit");
 
             bool failures = _cacheProgress.CacheFetchFailures.Any(f => f.ResolvedOn == null);
-            btnViewFailures.Enabled = failures;
             cbFailures.Enabled = failures;
-
+            Add(new ExecuteCommandShowCacheFetchFailures(activator,databaseObject));
+            
             checkAndExecuteUI1.SetItemActivator(activator);
         }
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
@@ -63,25 +59,8 @@ namespace CatalogueManager.LoadExecutionUIs
             base.ConsultAboutClosing(sender, e);
             checkAndExecuteUI1.ConsultAboutClosing(sender, e);
         }
-        private void btnViewFailures_Click(object sender, EventArgs e)
-        {
-            // for now just show a modal dialog with a data grid view of all the failure rows
-            var dt = new DataTable("CacheFetchFailure");
-            
-            using (var con = RepositoryLocator.CatalogueRepository.GetConnection())
-            {
-                var cmd = (SqlCommand)DatabaseCommandHelper.GetCommand("SELECT * FROM CacheFetchFailure WHERE CacheProgress_ID=@CacheProgressID AND ResolvedOn IS NULL", con.Connection);
-                cmd.Parameters.AddWithValue("@CacheProgressID", _cacheProgress.ID);
-                var reader = cmd.ExecuteReader();
-                dt.Load(reader);
-            }
-
-            var dgv = new DataGridView {DataSource = dt, Dock = DockStyle.Fill};
-            var form = new Form {Text = "Cache Fetch Failures for " + _cacheProgress.LoadProgress.Name};
-            form.Controls.Add(dgv);
-            form.Show();
-        }
     }
+
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CachingEngineUI_Design, UserControl>))]
     public abstract class CachingEngineUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>
     {

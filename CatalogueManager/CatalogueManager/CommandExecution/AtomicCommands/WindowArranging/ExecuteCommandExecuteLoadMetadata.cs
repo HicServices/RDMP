@@ -28,7 +28,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.ExecuteArrow;
+            return iconProvider.GetImage(RDMPConcept.LoadMetadata);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -39,14 +39,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 
         public override string GetCommandHelp()
         {
-            return "This will take you to the Data Load Configurations list and allow you to Edit the Load (change which modules execute, which Catalogues are loaded etc)." +
-                   "\r\n" +
-                   "You must choose a Load from the list before proceeding.";
+            return "Run the data load configuration through RAW=>STAGING=>LIVE";
         }
 
         public override string GetCommandName()
         {
-            return "Execute Data Load Configuration";
+            return "Execute Load";
         }
 
         public override void Execute()

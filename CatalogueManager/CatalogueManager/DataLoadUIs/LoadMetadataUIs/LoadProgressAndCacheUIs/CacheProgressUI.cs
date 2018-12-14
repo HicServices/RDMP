@@ -12,6 +12,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
@@ -61,6 +62,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             _cacheProgress = databaseObject;
             
+            Add(new ExecuteCommandExecuteCacheProgress(activator,databaseObject),"Execute");
+
             ragSmiley1.Reset();
 
             try

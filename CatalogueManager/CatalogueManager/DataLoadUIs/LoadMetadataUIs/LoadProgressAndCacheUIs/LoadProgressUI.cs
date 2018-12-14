@@ -7,6 +7,9 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -129,6 +132,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             objectSaverButton1.SetupFor(_loadProgress, activator.RefreshBus);
 
             ReloadUIFromDatabase();
+
+            Add(new ExecuteCommandActivate(activator,databaseObject.LoadMetadata),"Execute Load",RDMPConcept.LoadMetadata);
         }
 
         public ObjectSaverButton GetObjectSaverButton()

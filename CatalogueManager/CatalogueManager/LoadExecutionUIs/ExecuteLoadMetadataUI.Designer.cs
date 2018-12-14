@@ -52,11 +52,13 @@ namespace CatalogueManager.LoadExecutionUIs
             this.btnViewLogs = new System.Windows.Forms.Button();
             this.btnLoadDiagram = new System.Windows.Forms.Button();
             this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.gbDebugOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDaysPerJob)).BeginInit();
             this.gbLoadProgresses.SuspendLayout();
             this.flpControls.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbSkipArchiving
@@ -236,9 +238,9 @@ namespace CatalogueManager.LoadExecutionUIs
             this.flpControls.Controls.Add(this.panel1);
             this.flpControls.Controls.Add(this.gbLoadProgresses);
             this.flpControls.Controls.Add(this.gbDebugOptions);
-            this.flpControls.Location = new System.Drawing.Point(195, 25);
+            this.flpControls.Location = new System.Drawing.Point(198, 3);
             this.flpControls.Name = "flpControls";
-            this.flpControls.Size = new System.Drawing.Size(724, 110);
+            this.flpControls.Size = new System.Drawing.Size(727, 110);
             this.flpControls.TabIndex = 59;
             // 
             // panel1
@@ -282,12 +284,21 @@ namespace CatalogueManager.LoadExecutionUIs
             this.checkAndExecuteUI1.Size = new System.Drawing.Size(922, 733);
             this.checkAndExecuteUI1.TabIndex = 58;
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.flpControls);
+            this.panel2.Controls.Add(this.checkAndExecuteUI1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(922, 733);
+            this.panel2.TabIndex = 60;
+            // 
             // ExecuteLoadMetadataUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.flpControls);
-            this.Controls.Add(this.checkAndExecuteUI1);
+            this.Controls.Add(this.panel2);
             this.Name = "ExecuteLoadMetadataUI";
             this.Size = new System.Drawing.Size(922, 733);
             this.gbDebugOptions.ResumeLayout(false);
@@ -297,6 +308,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbLoadProgresses.PerformLayout();
             this.flpControls.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -322,6 +334,7 @@ namespace CatalogueManager.LoadExecutionUIs
         private System.Windows.Forms.Button btnViewLogs;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnLoadDiagram;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

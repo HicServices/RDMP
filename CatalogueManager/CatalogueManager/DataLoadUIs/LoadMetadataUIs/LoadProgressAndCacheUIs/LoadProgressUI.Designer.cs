@@ -42,13 +42,16 @@
             this.label11 = new System.Windows.Forms.Label();
             this.loadProgressDiagram1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams.LoadProgressDiagram();
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nDefaultNumberOfDaysToLoadEachTime)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.nDefaultNumberOfDaysToLoadEachTime);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.tbOriginDate);
@@ -60,9 +63,9 @@
             this.groupBox1.Controls.Add(this.tbName);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Location = new System.Drawing.Point(3, 719);
+            this.groupBox1.Location = new System.Drawing.Point(3, 722);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(929, 67);
+            this.groupBox1.Size = new System.Drawing.Size(933, 67);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Load Progress To Date:";
@@ -185,32 +188,42 @@
             this.loadProgressDiagram1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadProgressDiagram1.Location = new System.Drawing.Point(0, 4);
+            this.loadProgressDiagram1.Location = new System.Drawing.Point(3, 3);
             this.loadProgressDiagram1.Name = "loadProgressDiagram1";
-            this.loadProgressDiagram1.Size = new System.Drawing.Size(936, 709);
+            this.loadProgressDiagram1.Size = new System.Drawing.Size(933, 713);
             this.loadProgressDiagram1.TabIndex = 26;
             // 
             // objectSaverButton1
             // 
             this.objectSaverButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.objectSaverButton1.Location = new System.Drawing.Point(9, 789);
+            this.objectSaverButton1.Location = new System.Drawing.Point(3, 792);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(55, 26);
             this.objectSaverButton1.TabIndex = 27;
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.loadProgressDiagram1);
+            this.panel1.Controls.Add(this.objectSaverButton1);
+            this.panel1.Controls.Add(this.groupBox1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(939, 818);
+            this.panel1.TabIndex = 28;
+            // 
             // LoadProgressUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.objectSaverButton1);
-            this.Controls.Add(this.loadProgressDiagram1);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.panel1);
             this.Name = "LoadProgressUI";
             this.Size = new System.Drawing.Size(939, 818);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nDefaultNumberOfDaysToLoadEachTime)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -231,5 +244,6 @@
         private Diagrams.LoadProgressDiagram loadProgressDiagram1;
         private System.Windows.Forms.Label label3;
         private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private System.Windows.Forms.Panel panel1;
     }
 }

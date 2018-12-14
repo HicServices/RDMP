@@ -19,6 +19,7 @@ using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI.Datasets.Node;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTableUI;
@@ -301,7 +302,11 @@ namespace DataExportManager.ProjectUI.Datasets
 
             SortSelectedByOrder();
 
+            Add(new ExecuteCommandShow(activator, databaseObject.ExtractableDataSet.Catalogue, 0, true),"Show Catalogue");
+            Add(new ExecuteCommandExecuteExtractionConfiguration(activator, databaseObject));
+            
             RunChecks();
+            
         }
 
         private void RunChecks()
