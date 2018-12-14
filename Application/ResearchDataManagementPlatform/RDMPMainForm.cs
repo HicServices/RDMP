@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -18,6 +19,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using ReusableUIComponents.Settings;
+using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform
@@ -30,13 +32,16 @@ namespace ResearchDataManagementPlatform
     public partial class RDMPMainForm : RDMPForm
     {
         private readonly PersistenceDecisionFactory _persistenceFactory = new PersistenceDecisionFactory();
+        private ITheme _theme;
 
         public RDMPMainForm()
         {
             InitializeComponent();
 
             PatchController.EnableAll = true;
-            dockPanel1.Theme = new VS2015BlueTheme();
+            _theme = new MyVS2015BlueTheme();
+
+            dockPanel1.Theme = (ThemeBase)_theme;
             dockPanel1.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
             dockPanel1.DefaultFloatWindowSize = new Size(640, 520);
             dockPanel1.ShowDocumentIcon = true;
@@ -53,6 +58,7 @@ namespace ResearchDataManagementPlatform
         readonly RefreshBus _refreshBus = new RefreshBus();
         private FileInfo _persistenceFile;
         private ICheckNotifier _globalErrorCheckNotifier;
+        
 
         private void RDMPMainForm_Load(object sender, EventArgs e)
         {
@@ -63,7 +69,7 @@ namespace ResearchDataManagementPlatform
             _globalErrorCheckNotifier = exceptionCounter;
             _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
-            _windowManager = new WindowManager(this,_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
+            _windowManager = new WindowManager(_theme,this,_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
             _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
@@ -227,5 +233,9 @@ namespace ResearchDataManagementPlatform
         {
             SqlDependencyTableMonitor.Stop();
         }
+    }
+
+    public class MyVS2015BlueTheme : VS2015BlueTheme, ITheme
+    {
     }
 }

@@ -177,6 +177,8 @@ namespace Dashboard.Raceway
             }
                 
             GenerateChart();
+
+            activator.Theme.ApplyTo(toolStrip1);
         }
 
         public IPersistableObjectCollection GetCollection()

@@ -66,6 +66,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             ReCreateDropDowns();
             
             SetupToolTipText();
+
+            _manager.ActivateItems.Theme.ApplyTo(toolStrip1);
         }
 
         void _manager_TabChanged(object sender, IDockContent newTab)

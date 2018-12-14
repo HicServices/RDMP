@@ -22,6 +22,7 @@ using CatalogueManager.SimpleDialogs.NavigateTo;
 using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CatalogueManager.Theme;
 using CatalogueManager.Tutorials;
 using CohortManager.CommandExecution.AtomicCommands;
 using DataExportLibrary.Data.DataTables;
@@ -267,6 +268,8 @@ namespace ResearchDataManagementPlatform.Menus
 
             // Location menu
             LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(RepositoryLocator)));
+
+            _activator.Theme.ApplyTo(menuStrip1);
         }
 
         private void AddToNew(IAtomicCommand cmd)

@@ -139,6 +139,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             _magnifier = FamFamFamIcons.magnifier;
             InitializeComponent();
 
+            activator.Theme.ApplyTo(toolStrip1);
+
             _searchables = _activator.CoreChildProvider.GetAllSearchables();
             
             _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);

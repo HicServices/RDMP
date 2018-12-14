@@ -28,6 +28,7 @@ using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CatalogueManager.Theme;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
@@ -46,6 +47,7 @@ using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dependencies.Models;
+using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -56,6 +58,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// </summary>
     public class ActivateItems : IActivateItems, IRefreshBusSubscriber
     {
+
         public event EmphasiseItemHandler Emphasise;
 
         private readonly DockPanel _mainDockPanel;
@@ -66,6 +69,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
+        public ITheme Theme { get; private set; }
         public ServerDefaults ServerDefaults { get; private set; }
         public RefreshBus RefreshBus { get; private set; }
         public FavouritesProvider FavouritesProvider { get; private set; }
@@ -84,8 +88,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public List<IProblemProvider> ProblemProviders { get; private set; }
 
-        public ActivateItems(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier)
+        public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier)
         {
+            Theme = theme;
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
             _windowManager = windowManager;

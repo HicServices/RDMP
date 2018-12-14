@@ -18,10 +18,12 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dependencies.Models;
+using ReusableUIComponents.Theme;
 
 namespace CatalogueManager.ItemActivation
 {
@@ -33,6 +35,8 @@ namespace CatalogueManager.ItemActivation
     /// </summary>
     public interface IActivateItems
     {
+        ITheme Theme { get; }
+
         ServerDefaults ServerDefaults { get; }
 
         /// <summary>

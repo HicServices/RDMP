@@ -377,6 +377,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TechnicalUI.cs" />
+    <Compile Include="Theme\ITheme.cs" />
     <Compile Include="TransparentHelpSystem\HelpBox.cs">
       <SubType>UserControl</SubType>
     </Compile>

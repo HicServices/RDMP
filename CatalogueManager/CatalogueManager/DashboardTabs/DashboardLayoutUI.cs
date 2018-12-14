@@ -50,6 +50,8 @@ namespace CatalogueManager.DashboardTabs
             btnAddDashboardControl.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DashboardControl, OverlayKind.Add);
             _layout = databaseObject;
             ReLayout();
+
+            activator.Theme.ApplyTo(toolStrip1);
         }
 
         private void ReLayout()

@@ -650,6 +650,8 @@ namespace CatalogueManager.AggregationUIs
             }
 
             SetAggregate(activator,databaseObject);
+
+            activator.Theme.ApplyTo(toolStrip1);
         }
 
         /// <summary>

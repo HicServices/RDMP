@@ -46,6 +46,8 @@ namespace CatalogueManager.SimpleControls
             executeInAutomationServerUI1.SetItemActivator(activator);
             
             executeInAutomationServerUI1.CommandGetter = Detatch_CommandGetter;
+
+            loadProgressUI1.ApplyTheme(activator.Theme);
         }
 
         private RDMPCommandLineOptions Detatch_CommandGetter()

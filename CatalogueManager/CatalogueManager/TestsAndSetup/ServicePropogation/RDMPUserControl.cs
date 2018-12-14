@@ -132,6 +132,8 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 _toolStrip.TabIndex = 1;
                 this.Controls.Add(this._toolStrip);
             }
+
+            _activator.Theme.ApplyTo(_toolStrip);
         }
 
     }

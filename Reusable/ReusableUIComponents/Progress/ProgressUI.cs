@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents.Icons;
+using ReusableUIComponents.Theme;
 
 namespace ReusableUIComponents.Progress
 {
@@ -78,6 +79,10 @@ namespace ReusableUIComponents.Progress
             ddGroupBy.Items.Add(olvSender.Text);
         }
 
+        public void ApplyTheme(ITheme theme)
+        {
+            theme.ApplyTo(toolStrip1);
+        }
 
         private object ImageGetter(object rowObject)
         {

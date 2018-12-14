@@ -64,6 +64,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                return;
 
             SetItemActivator(activator);
+            progressUI1.ApplyTheme(activator.Theme);
 
             pipelineDiagram1 = new PipelineDiagram();
 

@@ -256,7 +256,9 @@ namespace Dashboard.PieCharts
             btnAllCatalogues.Checked = !_collection.IsSingleCatalogueMode;
             btnSingleCatalogue.Checked = _collection.IsSingleCatalogueMode;
             btnShowLabels.Checked = _collection.ShowLabels;
-            
+
+            activator.Theme.ApplyTo(toolStrip1);
+
             GenerateChart();
             _bLoading = false;
         }

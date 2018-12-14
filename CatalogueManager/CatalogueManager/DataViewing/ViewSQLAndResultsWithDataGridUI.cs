@@ -101,6 +101,8 @@ namespace CatalogueManager.DataViewing
                 Add(s);
 
             RefreshUIFromDatabase();
+
+            activator.Theme.ApplyTo(toolStrip1);
         }
 
         private void RefreshUIFromDatabase()
