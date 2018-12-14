@@ -345,11 +345,10 @@ namespace CatalogueManager.ANOEngineeringUIs
                 //don't display anything below ColumnInfo
                 tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] {typeof (ColumnInfo)};
                 
-                rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
-                rdmpObjectsRibbonUI1.Add(databaseObject);
-
                 _setup = true;
             }
+
+            Add(new ExecuteCommandShow(activator,databaseObject,0),databaseObject.Name,RDMPConcept.Catalogue);
 
             //Add them and expand them
             tlvTableInfoMigrations.ClearObjects();

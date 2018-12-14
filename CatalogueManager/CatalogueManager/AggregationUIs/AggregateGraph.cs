@@ -15,6 +15,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Reports;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CsvHelper;
@@ -652,32 +653,35 @@ namespace CatalogueManager.AggregationUIs
         }
 
         /// <summary>
-        /// Loads the Graph without establishing a lifetime subscription to refresh events (use if you are a base class who has it's own subscription or if you plan to load multiple
-        /// different graphs into this control one after the other).
+        /// Loads the Graph without establishing a lifetime subscription to refresh events (use if you are a derrived class who has it's own subscription or if you plan
+        /// to load multiple different graphs into this control one after the other).
         /// </summary>
         /// <param name="graph"></param>
+        /// <param name="b"></param>
         public void SetAggregate(AggregateConfiguration graph)
         {
             //graphs cant edit so no need to even record refresher/activator
             _aggregateConfiguration = graph;
+            
             SetupRibbon();
         }
 
         private void SetupRibbon()
         {
-            rdmpObjectsRibbonUI1.Clear();
-            rdmpObjectsRibbonUI1.SetIconProvider(_activator.CoreIconProvider);
+            ClearToolStrip();
+
             foreach (var o in GetRibbonObjects())
             {
                 if(o is string)
-                    rdmpObjectsRibbonUI1.Add((string)o);
+                    Add((string)o);
                 else
                 if (o is DatabaseEntity)
-                    rdmpObjectsRibbonUI1.Add((DatabaseEntity)o);
+                    Add(new ExecuteCommandShow(_activator,(DatabaseEntity)o,0),o.ToString(),_activator.CoreIconProvider.GetImage(o));
                 else
                     throw new NotSupportedException("GetRibbonObjects can only return strings or DatabaseEntity objects, object '" + o + "' is not valid because it is a '" + o.GetType().Name + "'");
             }
         }
+
 
         protected virtual object[] GetRibbonObjects()
         {

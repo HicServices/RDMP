@@ -1,30 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AggregationUIs;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportManager.Icons.IconProvision;
-using MapsDirectlyToDatabaseTable;
-using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportManager.ProjectUI.Graphs
@@ -104,7 +90,7 @@ namespace DataExportManager.ProjectUI.Graphs
             if (_collection == null)
                 return base.GetRibbonObjects();
 
-            return new object[] { Request.Configuration ,Request.DatasetBundle.DataSet,AggregateConfiguration};
+            return new object[] { Request.Configuration ,Request.SelectedDataSets,AggregateConfiguration,"Graphing Extraction Query"};
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

@@ -33,6 +33,14 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ForwardEngineerANOCatalogueUI));
             this.gbTables = new System.Windows.Forms.GroupBox();
+            this.tlvTableInfoMigrations = new BrightIdeasSoftware.TreeListView();
+            this.olvTableInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvDestinationExtractionCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvMigrationPlan = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvPickedANOTable = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvDilution = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvDestinationType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.label6 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
@@ -45,14 +53,6 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.label5 = new System.Windows.Forms.Label();
             this.cbDateBasedLoad = new System.Windows.Forms.CheckBox();
             this.lblPlanIsSuggestion = new System.Windows.Forms.Label();
-            this.tlvTableInfoMigrations = new BrightIdeasSoftware.TreeListView();
-            this.olvTableInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvDestinationExtractionCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvMigrationPlan = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvPickedANOTable = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvDilution = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvDestinationType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnLoadPlan = new System.Windows.Forms.Button();
@@ -69,11 +69,10 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.olvSuffix = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvNumberOfDigits = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvNumberOfCharacters = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             this.gbTables.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gbANOTransforms.SuspendLayout();
@@ -85,144 +84,13 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.gbTables.Controls.Add(this.tlvTableInfoMigrations);
             this.gbTables.Controls.Add(this.panel2);
             this.gbTables.Controls.Add(this.panel1);
-            this.gbTables.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbTables.Location = new System.Drawing.Point(0, 410);
+            this.gbTables.Dock = System.Windows.Forms.DockStyle.Top;
+            this.gbTables.Location = new System.Drawing.Point(0, 388);
             this.gbTables.Name = "gbTables";
-            this.gbTables.Size = new System.Drawing.Size(968, 310);
+            this.gbTables.Size = new System.Drawing.Size(909, 364);
             this.gbTables.TabIndex = 6;
             this.gbTables.TabStop = false;
             this.gbTables.Text = "Table Migration";
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.label6);
-            this.panel2.Controls.Add(this.tbFilter);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(3, 248);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(962, 27);
-            this.panel2.TabIndex = 2;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(5, 6);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(32, 13);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "Filter:";
-            // 
-            // tbFilter
-            // 
-            this.tbFilter.Location = new System.Drawing.Point(43, 3);
-            this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(351, 20);
-            this.tbFilter.TabIndex = 0;
-            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.tbStartDate);
-            this.panel1.Controls.Add(this.lblMandatory);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.ddDateColumn);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.cbDateBasedLoad);
-            this.panel1.Controls.Add(this.lblPlanIsSuggestion);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(3, 275);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(962, 32);
-            this.panel1.TabIndex = 1;
-            // 
-            // tbStartDate
-            // 
-            this.tbStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbStartDate.Enabled = false;
-            this.tbStartDate.Location = new System.Drawing.Point(829, 7);
-            this.tbStartDate.Name = "tbStartDate";
-            this.tbStartDate.Size = new System.Drawing.Size(130, 20);
-            this.tbStartDate.TabIndex = 6;
-            this.tbStartDate.Text = "2001-01-01";
-            this.tbStartDate.TextChanged += new System.EventHandler(this.tbStartDate_TextChanged);
-            // 
-            // lblMandatory
-            // 
-            this.lblMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblMandatory.BackColor = System.Drawing.Color.Turquoise;
-            this.lblMandatory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblMandatory.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblMandatory.Location = new System.Drawing.Point(3, 6);
-            this.lblMandatory.Name = "lblMandatory";
-            this.lblMandatory.Size = new System.Drawing.Size(20, 20);
-            this.lblMandatory.TabIndex = 1;
-            // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(767, 10);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(56, 13);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Starting At";
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(24, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(57, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Mandatory";
-            // 
-            // ddDateColumn
-            // 
-            this.ddDateColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddDateColumn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddDateColumn.Enabled = false;
-            this.ddDateColumn.FormattingEnabled = true;
-            this.ddDateColumn.Location = new System.Drawing.Point(355, 6);
-            this.ddDateColumn.Name = "ddDateColumn";
-            this.ddDateColumn.Size = new System.Drawing.Size(401, 21);
-            this.ddDateColumn.TabIndex = 4;
-            this.ddDateColumn.SelectedIndexChanged += new System.EventHandler(this.ddDateColumn_SelectedIndexChanged);
-            // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(104, 10);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 13);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Plan Is Suggestion";
-            // 
-            // cbDateBasedLoad
-            // 
-            this.cbDateBasedLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbDateBasedLoad.AutoSize = true;
-            this.cbDateBasedLoad.Location = new System.Drawing.Point(201, 9);
-            this.cbDateBasedLoad.Name = "cbDateBasedLoad";
-            this.cbDateBasedLoad.Size = new System.Drawing.Size(159, 17);
-            this.cbDateBasedLoad.TabIndex = 3;
-            this.cbDateBasedLoad.Text = "Load Data In Date Batches:";
-            this.cbDateBasedLoad.UseVisualStyleBackColor = true;
-            this.cbDateBasedLoad.CheckedChanged += new System.EventHandler(this.cbDateBasedLoad_CheckedChanged);
-            // 
-            // lblPlanIsSuggestion
-            // 
-            this.lblPlanIsSuggestion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblPlanIsSuggestion.BackColor = System.Drawing.Color.LightCyan;
-            this.lblPlanIsSuggestion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblPlanIsSuggestion.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblPlanIsSuggestion.Location = new System.Drawing.Point(83, 6);
-            this.lblPlanIsSuggestion.Name = "lblPlanIsSuggestion";
-            this.lblPlanIsSuggestion.Size = new System.Drawing.Size(20, 20);
-            this.lblPlanIsSuggestion.TabIndex = 1;
             // 
             // tlvTableInfoMigrations
             // 
@@ -245,7 +113,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvTableInfoMigrations.Location = new System.Drawing.Point(3, 16);
             this.tlvTableInfoMigrations.Name = "tlvTableInfoMigrations";
             this.tlvTableInfoMigrations.ShowGroups = false;
-            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(962, 232);
+            this.tlvTableInfoMigrations.Size = new System.Drawing.Size(903, 286);
             this.tlvTableInfoMigrations.SmallImageList = this.imageList1;
             this.tlvTableInfoMigrations.TabIndex = 0;
             this.tlvTableInfoMigrations.UseCellFormatEvents = true;
@@ -295,18 +163,149 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.imageList1.Images.SetKeyName(0, "ANOTable");
             this.imageList1.Images.SetKeyName(1, "PreLoadDiscardedColumn");
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.label6);
+            this.panel2.Controls.Add(this.tbFilter);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(3, 302);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(903, 27);
+            this.panel2.TabIndex = 2;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(5, 6);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(32, 13);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Filter:";
+            // 
+            // tbFilter
+            // 
+            this.tbFilter.Location = new System.Drawing.Point(43, 3);
+            this.tbFilter.Name = "tbFilter";
+            this.tbFilter.Size = new System.Drawing.Size(351, 20);
+            this.tbFilter.TabIndex = 0;
+            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tbStartDate);
+            this.panel1.Controls.Add(this.lblMandatory);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.ddDateColumn);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.cbDateBasedLoad);
+            this.panel1.Controls.Add(this.lblPlanIsSuggestion);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(3, 329);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(903, 32);
+            this.panel1.TabIndex = 1;
+            // 
+            // tbStartDate
+            // 
+            this.tbStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbStartDate.Enabled = false;
+            this.tbStartDate.Location = new System.Drawing.Point(770, 7);
+            this.tbStartDate.Name = "tbStartDate";
+            this.tbStartDate.Size = new System.Drawing.Size(130, 20);
+            this.tbStartDate.TabIndex = 6;
+            this.tbStartDate.Text = "2001-01-01";
+            this.tbStartDate.TextChanged += new System.EventHandler(this.tbStartDate_TextChanged);
+            // 
+            // lblMandatory
+            // 
+            this.lblMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblMandatory.BackColor = System.Drawing.Color.Turquoise;
+            this.lblMandatory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblMandatory.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblMandatory.Location = new System.Drawing.Point(3, 6);
+            this.lblMandatory.Name = "lblMandatory";
+            this.lblMandatory.Size = new System.Drawing.Size(20, 20);
+            this.lblMandatory.TabIndex = 1;
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(708, 10);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(56, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "Starting At";
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(24, 10);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(57, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Mandatory";
+            // 
+            // ddDateColumn
+            // 
+            this.ddDateColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ddDateColumn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddDateColumn.Enabled = false;
+            this.ddDateColumn.FormattingEnabled = true;
+            this.ddDateColumn.Location = new System.Drawing.Point(355, 6);
+            this.ddDateColumn.Name = "ddDateColumn";
+            this.ddDateColumn.Size = new System.Drawing.Size(342, 21);
+            this.ddDateColumn.TabIndex = 4;
+            this.ddDateColumn.SelectedIndexChanged += new System.EventHandler(this.ddDateColumn_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(104, 10);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(95, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Plan Is Suggestion";
+            // 
+            // cbDateBasedLoad
+            // 
+            this.cbDateBasedLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbDateBasedLoad.AutoSize = true;
+            this.cbDateBasedLoad.Location = new System.Drawing.Point(201, 9);
+            this.cbDateBasedLoad.Name = "cbDateBasedLoad";
+            this.cbDateBasedLoad.Size = new System.Drawing.Size(159, 17);
+            this.cbDateBasedLoad.TabIndex = 3;
+            this.cbDateBasedLoad.Text = "Load Data In Date Batches:";
+            this.cbDateBasedLoad.UseVisualStyleBackColor = true;
+            this.cbDateBasedLoad.CheckedChanged += new System.EventHandler(this.cbDateBasedLoad_CheckedChanged);
+            // 
+            // lblPlanIsSuggestion
+            // 
+            this.lblPlanIsSuggestion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblPlanIsSuggestion.BackColor = System.Drawing.Color.LightCyan;
+            this.lblPlanIsSuggestion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblPlanIsSuggestion.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblPlanIsSuggestion.Location = new System.Drawing.Point(83, 6);
+            this.lblPlanIsSuggestion.Name = "lblPlanIsSuggestion";
+            this.lblPlanIsSuggestion.Size = new System.Drawing.Size(20, 20);
+            this.lblPlanIsSuggestion.TabIndex = 1;
+            // 
             // serverDatabaseTableSelector1
             // 
             this.serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = false;
             this.serverDatabaseTableSelector1.AutoSize = true;
             this.serverDatabaseTableSelector1.Database = "";
+            this.serverDatabaseTableSelector1.DatabaseType = ReusableLibraryCode.DatabaseType.MicrosoftSQLServer;
             this.serverDatabaseTableSelector1.Location = new System.Drawing.Point(6, 19);
             this.serverDatabaseTableSelector1.Name = "serverDatabaseTableSelector1";
             this.serverDatabaseTableSelector1.Password = "";
             this.serverDatabaseTableSelector1.Server = "";
-            this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(581, 146);
+            this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(623, 146);
             this.serverDatabaseTableSelector1.TabIndex = 0;
-            this.serverDatabaseTableSelector1.Table = "";
             this.serverDatabaseTableSelector1.Username = "";
             this.serverDatabaseTableSelector1.SelectionChanged += new System.Action(this.serverDatabaseTableSelector1_SelectionChanged);
             // 
@@ -317,9 +316,9 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.groupBox1.Controls.Add(this.serverDatabaseTableSelector1);
             this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox1.Location = new System.Drawing.Point(0, 244);
+            this.groupBox1.Location = new System.Drawing.Point(0, 222);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(968, 166);
+            this.groupBox1.Size = new System.Drawing.Size(909, 166);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Destination Server";
@@ -349,9 +348,9 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.groupBox2.Controls.Add(this.btnRefreshChecks);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(593, 61);
+            this.groupBox2.Location = new System.Drawing.Point(623, 61);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(347, 65);
+            this.groupBox2.Size = new System.Drawing.Size(280, 65);
             this.groupBox2.TabIndex = 70;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Execute ANO Configuration";
@@ -408,9 +407,9 @@ namespace CatalogueManager.ANOEngineeringUIs
             // 
             this.gbANOTransforms.Controls.Add(this.tlvANOTables);
             this.gbANOTransforms.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbANOTransforms.Location = new System.Drawing.Point(0, 22);
+            this.gbANOTransforms.Location = new System.Drawing.Point(0, 0);
             this.gbANOTransforms.Name = "gbANOTransforms";
-            this.gbANOTransforms.Size = new System.Drawing.Size(968, 222);
+            this.gbANOTransforms.Size = new System.Drawing.Size(909, 222);
             this.gbANOTransforms.TabIndex = 1;
             this.gbANOTransforms.TabStop = false;
             this.gbANOTransforms.Text = "ANO Concepts";
@@ -432,7 +431,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.tlvANOTables.Location = new System.Drawing.Point(3, 16);
             this.tlvANOTables.Name = "tlvANOTables";
             this.tlvANOTables.ShowGroups = false;
-            this.tlvANOTables.Size = new System.Drawing.Size(962, 203);
+            this.tlvANOTables.Size = new System.Drawing.Size(903, 203);
             this.tlvANOTables.TabIndex = 0;
             this.tlvANOTables.Text = "label1";
             this.tlvANOTables.UseCompatibleStateImageBehavior = false;
@@ -462,31 +461,22 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.olvNumberOfCharacters.Text = "Number of characters";
             this.olvNumberOfCharacters.Width = 120;
             // 
-            // rdmpObjectsRibbonUI1
-            // 
-            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
-            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
-            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
-            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(968, 22);
-            this.rdmpObjectsRibbonUI1.TabIndex = 0;
-            // 
             // ForwardEngineerANOCatalogueUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.Controls.Add(this.gbTables);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.gbANOTransforms);
-            this.Controls.Add(this.rdmpObjectsRibbonUI1);
             this.Name = "ForwardEngineerANOCatalogueUI";
-            this.Size = new System.Drawing.Size(968, 720);
+            this.Size = new System.Drawing.Size(909, 758);
             this.gbTables.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfoMigrations)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -507,7 +497,6 @@ namespace CatalogueManager.ANOEngineeringUIs
         private TreeListView tlvANOTables;
         private OLVColumn olvTableInfoName;
         private OLVColumn olvANOTablesName;
-        private ObjectVisualisation.RDMPObjectsRibbonUI rdmpObjectsRibbonUI1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblMandatory;
         private OLVColumn olvMigrationPlan;

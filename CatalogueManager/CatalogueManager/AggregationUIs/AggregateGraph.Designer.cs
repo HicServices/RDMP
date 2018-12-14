@@ -56,7 +56,6 @@ namespace CatalogueManager.AggregationUIs
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.tbTimeout = new System.Windows.Forms.ToolStripTextBox();
             this.btnCache = new System.Windows.Forms.ToolStripButton();
-            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -84,7 +83,7 @@ namespace CatalogueManager.AggregationUIs
             series1.MarkerSize = 1;
             series1.Name = "Series1";
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(680, 404);
+            this.chart1.Size = new System.Drawing.Size(686, 432);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             // 
@@ -92,7 +91,7 @@ namespace CatalogueManager.AggregationUIs
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 405);
+            this.label1.Location = new System.Drawing.Point(3, 433);
             this.label1.MaximumSize = new System.Drawing.Size(710, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 39);
@@ -106,7 +105,7 @@ namespace CatalogueManager.AggregationUIs
             this.pbLoading.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.pbLoading.Image = ((System.Drawing.Image)(resources.GetObject("pbLoading.Image")));
             this.pbLoading.InitialImage = null;
-            this.pbLoading.Location = new System.Drawing.Point(283, 166);
+            this.pbLoading.Location = new System.Drawing.Point(286, 166);
             this.pbLoading.Name = "pbLoading";
             this.pbLoading.Size = new System.Drawing.Size(105, 102);
             this.pbLoading.TabIndex = 2;
@@ -116,18 +115,16 @@ namespace CatalogueManager.AggregationUIs
             // tabControl1
             // 
             this.tabControl1.Alignment = System.Windows.Forms.TabAlignment.Right;
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tpGraph);
             this.tabControl1.Controls.Add(this.tpCode);
             this.tabControl1.Controls.Add(this.tpDataTable);
             this.tabControl1.Controls.Add(this.tpHeatmap);
-            this.tabControl1.Location = new System.Drawing.Point(3, 50);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 25);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(692, 455);
+            this.tabControl1.Size = new System.Drawing.Size(698, 483);
             this.tabControl1.TabIndex = 3;
             // 
             // tpGraph
@@ -141,7 +138,7 @@ namespace CatalogueManager.AggregationUIs
             this.tpGraph.Location = new System.Drawing.Point(4, 4);
             this.tpGraph.Name = "tpGraph";
             this.tpGraph.Padding = new System.Windows.Forms.Padding(3);
-            this.tpGraph.Size = new System.Drawing.Size(665, 447);
+            this.tpGraph.Size = new System.Drawing.Size(671, 475);
             this.tpGraph.TabIndex = 0;
             this.tpGraph.Text = "Graph";
             this.tpGraph.UseVisualStyleBackColor = true;
@@ -152,7 +149,7 @@ namespace CatalogueManager.AggregationUIs
             this.ragSmiley1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(313, 175);
+            this.ragSmiley1.Location = new System.Drawing.Point(316, 189);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(37, 38);
             this.ragSmiley1.TabIndex = 6;
@@ -164,7 +161,7 @@ namespace CatalogueManager.AggregationUIs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLoadStage.Location = new System.Drawing.Point(6, 107);
             this.lblLoadStage.Name = "lblLoadStage";
-            this.lblLoadStage.Size = new System.Drawing.Size(653, 17);
+            this.lblLoadStage.Size = new System.Drawing.Size(659, 17);
             this.lblLoadStage.TabIndex = 5;
             this.lblLoadStage.Text = "label2";
             this.lblLoadStage.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -174,7 +171,7 @@ namespace CatalogueManager.AggregationUIs
             // 
             this.llCancel.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.llCancel.AutoSize = true;
-            this.llCancel.Location = new System.Drawing.Point(310, 266);
+            this.llCancel.Location = new System.Drawing.Point(313, 266);
             this.llCancel.Name = "llCancel";
             this.llCancel.Size = new System.Drawing.Size(40, 13);
             this.llCancel.TabIndex = 4;
@@ -269,7 +266,7 @@ namespace CatalogueManager.AggregationUIs
             this.toolStripLabel1,
             this.tbTimeout,
             this.btnCache});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 22);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(698, 25);
             this.toolStrip1.TabIndex = 0;
@@ -327,23 +324,13 @@ namespace CatalogueManager.AggregationUIs
             this.btnCache.Text = "Cache";
             this.btnCache.Click += new System.EventHandler(this.btnCache_Click);
             // 
-            // rdmpObjectsRibbonUI1
-            // 
-            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
-            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
-            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
-            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(698, 22);
-            this.rdmpObjectsRibbonUI1.TabIndex = 4;
-            // 
             // AggregateGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.rdmpObjectsRibbonUI1);
             this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.toolStrip1);
             this.Name = "AggregateGraph";
             this.Size = new System.Drawing.Size(698, 508);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
@@ -380,7 +367,6 @@ namespace CatalogueManager.AggregationUIs
         private System.Windows.Forms.TabPage tpHeatmap;
         public HeatmapUI heatmapUI;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
-        private ObjectVisualisation.RDMPObjectsRibbonUI rdmpObjectsRibbonUI1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnSaveImages;
         private System.Windows.Forms.ToolStripButton btnClipboard;

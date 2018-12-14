@@ -98,6 +98,38 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="cmd"></param>
         protected void Add(IAtomicCommand cmd,string overrideCommandName=null,Image overrideImage = null)
         {
+            InitializeToolStrip();
+
+            var button = atomicCommandUIFactory.CreateToolStripItem(cmd);
+            if (!string.IsNullOrWhiteSpace(overrideCommandName))
+                button.Text = overrideCommandName;
+
+            if (overrideImage != null)
+                button.Image = overrideImage;
+
+            _toolStrip.Items.Add(button);
+        }
+
+        protected void ClearToolStrip()
+        {
+            InitializeToolStrip();
+            _toolStrip.Items.Clear();
+        }
+
+        /// <summary>
+        /// Adds a new ToolStripLabel with the supplied <paramref name="label"/> text to the menu bar at the top of the control
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="showIcon">True to add the text icon next to the text</param>
+        protected void Add(string label,bool showIcon = true)
+        {
+            InitializeToolStrip();
+
+            _toolStrip.Items.Add(new ToolStripLabel(label, showIcon?FamFamFamIcons.text_align_left:null));
+        }
+
+        private void InitializeToolStrip()
+        {
             if (atomicCommandUIFactory == null)
                 atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
 
@@ -108,15 +140,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 _toolStrip.TabIndex = 1;
                 this.Controls.Add(this._toolStrip);
             }
-
-            var button = atomicCommandUIFactory.CreateToolStripItem(cmd);
-            if (!string.IsNullOrWhiteSpace(overrideCommandName))
-                button.Text = overrideCommandName;
-
-            if (overrideImage != null)
-                button.Image = overrideImage;
-
-            _toolStrip.Items.Add(button);
         }
 
         /// <summary>
