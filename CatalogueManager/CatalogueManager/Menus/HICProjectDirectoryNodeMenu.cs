@@ -1,5 +1,6 @@
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
@@ -7,7 +8,7 @@ namespace CatalogueManager.Menus
     {
         public HICProjectDirectoryNodeMenu(RDMPContextMenuStripArgs args,HICProjectDirectoryNode node) : base(args, node)
         {
-            Add(new ExecuteCommandOpenInExplorer(_activator, node.GetDirectoryInfoIfAny()));
+            ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
             Add(new ExecuteCommandChooseHICProjectDirectory(_activator, node.LoadMetadata));
         }
     }
