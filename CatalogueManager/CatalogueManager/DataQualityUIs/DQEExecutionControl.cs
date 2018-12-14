@@ -43,7 +43,7 @@ namespace CatalogueManager.DataQualityUIs
             checkAndExecuteUI1.SetItemActivator(activator);
             
             Add(new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue));
-            AddPluginCommands(this,_catalogue);
+            AddPluginCommands();
         }
         
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)

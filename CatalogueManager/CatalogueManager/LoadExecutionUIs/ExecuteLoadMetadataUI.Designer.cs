@@ -48,16 +48,12 @@ namespace CatalogueManager.LoadExecutionUIs
             this.cbRunIteratively = new System.Windows.Forms.CheckBox();
             this.cbAbortShouldActuallyCancelInstead = new System.Windows.Forms.CheckBox();
             this.flpControls = new System.Windows.Forms.FlowLayoutPanel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.btnViewLogs = new System.Windows.Forms.Button();
-            this.btnLoadDiagram = new System.Windows.Forms.Button();
-            this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
             this.gbDebugOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDaysPerJob)).BeginInit();
             this.gbLoadProgresses.SuspendLayout();
             this.flpControls.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,7 +74,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbDebugOptions.Controls.Add(this.cbMigrateStagingToLive);
             this.gbDebugOptions.Controls.Add(this.cbMigrateRAWToStaging);
             this.gbDebugOptions.Controls.Add(this.cbSkipArchiving);
-            this.gbDebugOptions.Location = new System.Drawing.Point(537, 3);
+            this.gbDebugOptions.Location = new System.Drawing.Point(466, 3);
             this.gbDebugOptions.Name = "gbDebugOptions";
             this.gbDebugOptions.Size = new System.Drawing.Size(166, 90);
             this.gbDebugOptions.TabIndex = 16;
@@ -171,7 +167,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbLoadProgresses.Controls.Add(this.udDaysPerJob);
             this.gbLoadProgresses.Controls.Add(this.label3);
             this.gbLoadProgresses.Controls.Add(this.label4);
-            this.gbLoadProgresses.Location = new System.Drawing.Point(74, 3);
+            this.gbLoadProgresses.Location = new System.Drawing.Point(3, 3);
             this.gbLoadProgresses.Name = "gbLoadProgresses";
             this.gbLoadProgresses.Size = new System.Drawing.Size(457, 90);
             this.gbLoadProgresses.TabIndex = 57;
@@ -235,54 +231,12 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             this.flpControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.flpControls.Controls.Add(this.panel1);
             this.flpControls.Controls.Add(this.gbLoadProgresses);
             this.flpControls.Controls.Add(this.gbDebugOptions);
             this.flpControls.Location = new System.Drawing.Point(198, 3);
             this.flpControls.Name = "flpControls";
             this.flpControls.Size = new System.Drawing.Size(727, 110);
             this.flpControls.TabIndex = 59;
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.panel1.Controls.Add(this.btnViewLogs);
-            this.panel1.Controls.Add(this.btnLoadDiagram);
-            this.panel1.Location = new System.Drawing.Point(3, 7);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(65, 82);
-            this.panel1.TabIndex = 59;
-            // 
-            // btnViewLogs
-            // 
-            this.btnViewLogs.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.btnViewLogs.Location = new System.Drawing.Point(3, 5);
-            this.btnViewLogs.Name = "btnViewLogs";
-            this.btnViewLogs.Size = new System.Drawing.Size(59, 36);
-            this.btnViewLogs.TabIndex = 58;
-            this.btnViewLogs.Text = "View Logs";
-            this.btnViewLogs.UseVisualStyleBackColor = true;
-            this.btnViewLogs.Click += new System.EventHandler(this.btnViewLogs_Click);
-            // 
-            // btnLoadDiagram
-            // 
-            this.btnLoadDiagram.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.btnLoadDiagram.Location = new System.Drawing.Point(3, 42);
-            this.btnLoadDiagram.Name = "btnLoadDiagram";
-            this.btnLoadDiagram.Size = new System.Drawing.Size(59, 36);
-            this.btnLoadDiagram.TabIndex = 58;
-            this.btnLoadDiagram.Text = "Load Diagram";
-            this.btnLoadDiagram.UseVisualStyleBackColor = true;
-            this.btnLoadDiagram.Click += new System.EventHandler(this.btnLoadDiagram_Click);
-            // 
-            // checkAndExecuteUI1
-            // 
-            this.checkAndExecuteUI1.AllowsYesNoToAll = true;
-            this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 0);
-            this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
-            this.checkAndExecuteUI1.Size = new System.Drawing.Size(922, 733);
-            this.checkAndExecuteUI1.TabIndex = 58;
             // 
             // panel2
             // 
@@ -293,6 +247,15 @@ namespace CatalogueManager.LoadExecutionUIs
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(922, 733);
             this.panel2.TabIndex = 60;
+            // 
+            // checkAndExecuteUI1
+            // 
+            this.checkAndExecuteUI1.AllowsYesNoToAll = true;
+            this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 0);
+            this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(922, 733);
+            this.checkAndExecuteUI1.TabIndex = 58;
             // 
             // ExecuteLoadMetadataUI
             // 
@@ -307,7 +270,6 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbLoadProgresses.ResumeLayout(false);
             this.gbLoadProgresses.PerformLayout();
             this.flpControls.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -331,9 +293,6 @@ namespace CatalogueManager.LoadExecutionUIs
         private System.Windows.Forms.Button btnRefreshLoadProgresses;
         private CheckAndExecuteUI checkAndExecuteUI1;
         private System.Windows.Forms.FlowLayoutPanel flpControls;
-        private System.Windows.Forms.Button btnViewLogs;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnLoadDiagram;
         private System.Windows.Forms.Panel panel2;
     }
 }

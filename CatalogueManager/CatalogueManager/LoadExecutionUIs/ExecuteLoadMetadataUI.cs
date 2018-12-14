@@ -54,6 +54,10 @@ namespace CatalogueManager.LoadExecutionUIs
             SetButtonStates(null,null);
 
             SetLoadProgressGroupBoxState();
+
+            Add(new ExecuteCommandViewLoadDiagram(activator,_loadMetadata));
+
+            AddPluginCommands();
         }
         
         private void SetLoadProgressGroupBoxState()
@@ -158,17 +162,6 @@ namespace CatalogueManager.LoadExecutionUIs
         {
             SetLoadProgressGroupBoxState();
         }
-
-        private void btnViewLogs_Click(object sender, EventArgs e)
-        {
-            _activator.ActivateViewLog(_loadMetadata);
-        }
-
-        private void btnLoadDiagram_Click(object sender, EventArgs e)
-        {
-            _activator.ActivateViewLoadMetadataDiagram(this, _loadMetadata);
-        }
-
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DatasetLoadControl_Design, UserControl>))]

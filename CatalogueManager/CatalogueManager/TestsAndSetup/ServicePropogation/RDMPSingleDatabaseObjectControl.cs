@@ -104,11 +104,11 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// Adds the all <see cref="IAtomicCommand"/> specified by <see cref="IActivateItems.PluginUserInterfaces"/> for the current control.  Commands
         /// will appear in the menu bar at the top of the control
         /// </summary>
-        protected void AddPluginCommands(IRDMPSingleDatabaseObjectControl control, DatabaseEntity o)
+        protected void AddPluginCommands()
         {
             foreach (var p in _activator.PluginUserInterfaces)
             {
-                var toAdd = p.GetAdditionalCommandsForControl(control, o);
+                var toAdd = p.GetAdditionalCommandsForControl(this, DatabaseObject);
 
                 if(toAdd != null)
                     foreach (IAtomicCommand cmd in toAdd)

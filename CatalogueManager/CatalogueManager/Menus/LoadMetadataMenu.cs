@@ -12,7 +12,7 @@ namespace CatalogueManager.Menus
     {
         public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata) : base(args, loadMetadata)
         {
-            Items.Add("View Load Diagram", CatalogueIcons.LoadBubble, (s, e) => _activator.ActivateViewLoadMetadataDiagram(this, loadMetadata));
+            Add(new ExecuteCommandViewLoadDiagram(_activator,loadMetadata));
 
             Items.Add("Edit description", null,(s, e) => _activator.Activate<LoadMetadataUI, LoadMetadata>(loadMetadata));
             

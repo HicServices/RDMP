@@ -423,6 +423,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchGraph.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadDiagram.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSample.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSqlParameters.cs" />

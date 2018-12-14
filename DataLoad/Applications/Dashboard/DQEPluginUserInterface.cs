@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DataQualityUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Dashboard.CommandExecution.AtomicCommands;
@@ -43,10 +44,8 @@ namespace Dashboard
             if(control is DQEExecutionControl)
                 return new[] {new ExecuteCommandViewDQEResultsForCatalogue(ItemActivator).SetTarget(databaseEntity)};
 
-            if (control is ExtractionFilterUI)
-            {
-                
-            }
+            if (control is ExecuteLoadMetadataUI)
+                return new[] {new ExecuteCommandViewLoadMetadataLogs(ItemActivator, (LoadMetadata) databaseEntity)};
 
             return base.GetAdditionalCommandsForControl(control, databaseEntity);
         }
