@@ -63,7 +63,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         {
             _collection = (FilterGraphObjectCollection)collection;
             _activator = activator;
-            SetAggregate(_collection.GetGraph());
+            SetAggregate(_activator,_collection.GetGraph());
             LoadGraphAsync();
         }
 

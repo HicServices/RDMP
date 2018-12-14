@@ -109,7 +109,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
                     firstTime = false;
                 }
                 else
-                    aggregateGraph1.SetAggregate(aggregate);
+                    aggregateGraph1.SetAggregate(_activator,aggregate);
 
                 aggregateGraph1.LoadGraphAsync();
                 

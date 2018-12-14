@@ -137,7 +137,7 @@ namespace DataExportManager.ProjectUI.Graphs
             Request = new ExtractDatasetCommand(RepositoryLocator,config, new ExtractableDatasetBundle(ds));
             Request.GenerateQueryBuilder();
 
-            SetAggregate(_collection.Graph);
+            SetAggregate(activator,_collection.Graph);
             LoadGraphAsync();
         }
 

@@ -648,8 +648,8 @@ namespace CatalogueManager.AggregationUIs
                 base.SetDatabaseObject(activator,databaseObject);
                 initialized = true;
             }
-            
-            SetAggregate(databaseObject);
+
+            SetAggregate(activator,databaseObject);
         }
 
         /// <summary>
@@ -658,11 +658,13 @@ namespace CatalogueManager.AggregationUIs
         /// </summary>
         /// <param name="graph"></param>
         /// <param name="b"></param>
-        public void SetAggregate(AggregateConfiguration graph)
+        public void SetAggregate(IActivateItems activator,AggregateConfiguration graph)
         {
             //graphs cant edit so no need to even record refresher/activator
             _aggregateConfiguration = graph;
             
+            SetItemActivator(activator);
+
             SetupRibbon();
         }
 
