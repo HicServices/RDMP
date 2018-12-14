@@ -29,27 +29,18 @@
         private void InitializeComponent()
         {
             this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
-            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             this.cbFailures = new System.Windows.Forms.CheckBox();
             this.btnViewFailures = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // checkAndExecuteUI1
             // 
+            this.checkAndExecuteUI1.AllowsYesNoToAll = true;
             this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 22);
+            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 0);
             this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
-            this.checkAndExecuteUI1.Size = new System.Drawing.Size(900, 725);
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(900, 747);
             this.checkAndExecuteUI1.TabIndex = 0;
-            // 
-            // rdmpObjectsRibbonUI1
-            // 
-            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
-            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
-            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
-            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(900, 22);
-            this.rdmpObjectsRibbonUI1.TabIndex = 1;
             // 
             // cbFailures
             // 
@@ -78,7 +69,6 @@
             this.Controls.Add(this.btnViewFailures);
             this.Controls.Add(this.cbFailures);
             this.Controls.Add(this.checkAndExecuteUI1);
-            this.Controls.Add(this.rdmpObjectsRibbonUI1);
             this.Name = "ExecuteCacheProgressUI";
             this.Size = new System.Drawing.Size(900, 747);
             this.ResumeLayout(false);
@@ -89,7 +79,6 @@
         #endregion
 
         private SimpleControls.CheckAndExecuteUI checkAndExecuteUI1;
-        private ObjectVisualisation.RDMPObjectsRibbonUI rdmpObjectsRibbonUI1;
         private System.Windows.Forms.CheckBox cbFailures;
         private System.Windows.Forms.Button btnViewFailures;
 

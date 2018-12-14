@@ -515,7 +515,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     Add(new ExecuteCommandActivate(activator, cic), "Cohort Query");
             }
             else
-                Add(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0),"Show Catalogue",RDMPConcept.Catalogue);
+                Add(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0,true));
 
             Add(new ExecuteCommandViewSample(activator, databaseObject));
             Add(new ExecuteCommandExecuteAggregateGraph(activator,databaseObject));

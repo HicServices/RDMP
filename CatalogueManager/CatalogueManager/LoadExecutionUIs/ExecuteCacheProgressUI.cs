@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPAutomationService.Options;
@@ -48,10 +49,8 @@ namespace CatalogueManager.LoadExecutionUIs
 
             _cacheProgress = databaseObject;
 
-            rdmpObjectsRibbonUI1.Clear();
-            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
-            rdmpObjectsRibbonUI1.Add((DatabaseEntity) _cacheProgress.LoadProgress);
-            rdmpObjectsRibbonUI1.Add((DatabaseEntity) _cacheProgress);
+            Add(new ExecuteCommandShow(activator,_cacheProgress.LoadProgress,0,true));
+            Add(new ExecuteCommandShow(activator, _cacheProgress, 0, true));
 
             bool failures = _cacheProgress.CacheFetchFailures.Any(f => f.ResolvedOn == null);
             btnViewFailures.Enabled = failures;

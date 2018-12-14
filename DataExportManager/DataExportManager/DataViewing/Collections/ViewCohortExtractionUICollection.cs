@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.DataViewing.Collections;
@@ -22,10 +24,15 @@ namespace DataExportManager.DataViewing.Collections
         }
         
         public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
-
-        public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
+        
+        public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            ribbon.Add(Cohort);
+            yield return Cohort;
+        }
+
+        public IEnumerable<string> GetToolStripStrings()
+        {
+            yield break;
         }
 
         public IDataAccessPoint GetDataAccessPoint()

@@ -44,15 +44,19 @@ namespace CatalogueManager.DataViewing.Collections
             ViewType = (ViewType) Enum.Parse(typeof (ViewType), value);
         }
         
-        public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
+        public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            ribbon.Add(ColumnInfo);
-            ribbon.Add(ViewType.ToString());
+            yield return ColumnInfo;
 
-            var filter = GetFilterIfAny();
+            var filter = GetFilterIfAny() as ConcreteFilter;
 
-            if(filter != null)
-                ribbon.Add(filter as ConcreteFilter);
+            if (filter != null)
+                yield return filter;
+        }
+
+        public IEnumerable<string> GetToolStripStrings()
+        {
+            yield return ViewType.ToString();
         }
 
         public IDataAccessPoint GetDataAccessPoint()

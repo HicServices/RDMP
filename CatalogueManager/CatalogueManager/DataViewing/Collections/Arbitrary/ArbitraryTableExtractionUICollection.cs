@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
@@ -70,9 +71,14 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
             _table = server.ExpectDatabase(Database).ExpectTable(_arguments[TableKey]);
         }
         
-        public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
+        public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            ribbon.Add( _table.GetRuntimeName() + " ("+_arguments[ServerKey] +")");
+            yield break;
+        }
+
+        public IEnumerable<string> GetToolStripStrings()
+        {
+            yield return _table.GetRuntimeName() + " (" + _arguments[ServerKey] + ")";
         }
 
         public IDataAccessPoint GetDataAccessPoint()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -24,17 +25,21 @@ namespace CatalogueManager.DataViewing.Collections
             DatabaseObjects.Add(config);
         }
 
-
-        public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
+        public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            ribbon.Add(AggregateConfiguration);
-            
-            if(UseQueryCache)
+            yield return AggregateConfiguration;
+
+            if (UseQueryCache)
             {
                 var cache = GetCacheServer();
                 if (cache != null)
-                    ribbon.Add(cache);
+                   yield return cache;
             }
+        }
+
+        public IEnumerable<string> GetToolStripStrings()
+        {
+            yield break;
         }
 
         private ExternalDatabaseServer GetCacheServer()
@@ -46,6 +51,7 @@ namespace CatalogueManager.DataViewing.Collections
 
             return null;
         }
+
 
         public IDataAccessPoint GetDataAccessPoint()
         {

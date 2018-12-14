@@ -1015,12 +1015,6 @@
     <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
     <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
     <Compile Include="Menus\RDMPContextMenuStripArgs.cs" />
-    <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.Designer.cs">
-      <DependentUpon>RDMPObjectsRibbonUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="PluginChildProvision\IPluginUserInterface.cs" />
     <Compile Include="PluginChildProvision\PluginChildProvider.cs" />
     <Compile Include="PluginManagement\CodeGeneration\CodeGenerationException.cs" />
@@ -1936,9 +1930,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.resx">
       <DependentUpon>ExternalDatabaseServerUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ObjectVisualisation\RDMPObjectsRibbonUI.resx">
-      <DependentUpon>RDMPObjectsRibbonUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTable.resx">
       <DependentUpon>GenerateClassCodeFromTable.cs</DependentUpon>

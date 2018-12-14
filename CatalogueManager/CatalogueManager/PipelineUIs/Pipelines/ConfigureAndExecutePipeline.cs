@@ -9,7 +9,9 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Events;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.SingleControlForms;
@@ -31,7 +33,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     /// like cohort committing, data extraction etc.</para>
     /// 
     /// </summary>
-    public partial class ConfigureAndExecutePipeline : UserControl
+    public partial class ConfigureAndExecutePipeline : RDMPUserControl
     {
         private readonly PipelineUseCase _useCase;
         private PipelineSelectionUI _pipelineSelectionUI;
@@ -61,7 +63,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
            if(useCase == null && activator == null)
                return;
 
-            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
+            SetItemActivator(activator);
 
             pipelineDiagram1 = new PipelineDiagram();
 
@@ -76,23 +78,21 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                 throw new NotSupportedException("Only DataTable flow contexts can be used with this class");
 
             foreach (var o in useCase.GetInitializationObjects())
-                AddInitializationObject(o);
+            {
+                var de = o as DatabaseEntity;
+                if (o is DatabaseEntity)
+                    Add(new ExecuteCommandShow(activator,de,0,true));
+                else
+                    Add(o.ToString());
+
+                _initializationObjects.Add(o);
+            }
 
             SetPipelineOptions( activator.RepositoryLocator.CatalogueRepository);
 
            lblTask.Text = "Task:" + useCase.GetType().Name;
         }
         
-        private void AddInitializationObject(object o)
-        {
-            if(o is DatabaseEntity)
-                rdmpObjectsRibbonUI1.Add((DatabaseEntity)o);
-            else
-                rdmpObjectsRibbonUI1.Add(o);
-
-            _initializationObjects.Add(o);
-        }
-
         private bool _pipelineOptionsSet = false;
 
         

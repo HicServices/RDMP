@@ -348,7 +348,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                 _setup = true;
             }
 
-            Add(new ExecuteCommandShow(activator,databaseObject,0),databaseObject.Name,RDMPConcept.Catalogue);
+            Add(new ExecuteCommandShow(activator,databaseObject,0,true));
 
             //Add them and expand them
             tlvTableInfoMigrations.ClearObjects();

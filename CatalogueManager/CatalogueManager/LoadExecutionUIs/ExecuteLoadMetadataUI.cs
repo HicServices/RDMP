@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPAutomationService.Options;
@@ -50,9 +51,7 @@ namespace CatalogueManager.LoadExecutionUIs
 
             checkAndExecuteUI1.SetItemActivator(activator);
 
-            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
-            rdmpObjectsRibbonUI1.Clear();
-            rdmpObjectsRibbonUI1.Add(_loadMetadata);
+            Add(new ExecuteCommandShow(activator,_loadMetadata,0,true));
 
             SetButtonStates(null,null);
 

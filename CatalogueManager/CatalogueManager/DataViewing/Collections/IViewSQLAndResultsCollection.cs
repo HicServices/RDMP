@@ -1,15 +1,17 @@
-﻿using CatalogueLibrary.Data.Dashboarding;
+﻿using System.Collections.Generic;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
-using CatalogueManager.ObjectVisualisation;
-using ReusableLibraryCode;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections
 {
     public interface IViewSQLAndResultsCollection:IPersistableObjectCollection, IHasQuerySyntaxHelper
     {
-        void SetupRibbon(RDMPObjectsRibbonUI ribbon);
+        IEnumerable<DatabaseEntity> GetToolStripObjects();
+        IEnumerable<string> GetToolStripStrings();
+
         IDataAccessPoint GetDataAccessPoint();
         string GetSql();
         string GetTabName();

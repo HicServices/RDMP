@@ -6,9 +6,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.AutoComplete;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
@@ -41,8 +43,7 @@ namespace CatalogueManager.DataViewing
         private string _originalSql;
         private DiscoveredServer _server;
         private AutoCompleteProvider _autoComplete;
-        private bool _isRibbonSetup = false;
-
+        
         public ViewSQLAndResultsWithDataGridUI()
         {
             InitializeComponent();
@@ -90,13 +91,14 @@ namespace CatalogueManager.DataViewing
 
                 _autoComplete.RegisterForEvents(_scintilla);
             }
-            
-            if(!_isRibbonSetup)
-            {
-                ribbon.SetIconProvider(activator.CoreIconProvider);
-                _collection.SetupRibbon(ribbon);
-                _isRibbonSetup = true;
-            }
+
+            SetItemActivator(activator);
+            ClearToolStrip();
+            foreach (DatabaseEntity d in _collection.GetToolStripObjects())
+                Add(new ExecuteCommandShow(activator, d, 0,true));
+
+            foreach (string s in _collection.GetToolStripStrings())
+                Add(s);
 
             RefreshUIFromDatabase();
         }

@@ -53,16 +53,19 @@ namespace CatalogueManager.DataViewing.Collections
         {
             return (IFilter) DatabaseObjects.SingleOrDefault(o => o is IFilter);
         }
-
-        public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
+        public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            ribbon.Add(TableInfo);
-            ribbon.Add(ViewType.ToString());
-
-            var filter = GetFilterIfAny();
+            yield return TableInfo;
+            
+            var filter = GetFilterIfAny() as ConcreteFilter;
 
             if (filter != null)
-                ribbon.Add(filter as ConcreteFilter);
+                yield return filter;
+        }
+
+        public IEnumerable<string> GetToolStripStrings()
+        {
+            yield return ViewType.ToString();
         }
 
         public IDataAccessPoint GetDataAccessPoint()

@@ -678,7 +678,7 @@ namespace CatalogueManager.AggregationUIs
                     Add((string)o);
                 else
                 if (o is DatabaseEntity)
-                    Add(new ExecuteCommandShow(_activator,(DatabaseEntity)o,0),o.ToString(),_activator.CoreIconProvider.GetImage(o));
+                    Add(new ExecuteCommandShow(_activator,(DatabaseEntity)o,0,true));
                 else
                     throw new NotSupportedException("GetRibbonObjects can only return strings or DatabaseEntity objects, object '" + o + "' is not valid because it is a '" + o.GetType().Name + "'");
             }

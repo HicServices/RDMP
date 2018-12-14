@@ -37,7 +37,6 @@
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.llCancel = new System.Windows.Forms.LinkLabel();
             this.pbLoading = new System.Windows.Forms.PictureBox();
-            this.ribbon = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -55,17 +54,15 @@
             this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dataGridView1.Location = new System.Drawing.Point(0, 28);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(1245, 535);
+            this.dataGridView1.Size = new System.Drawing.Size(1245, 560);
             this.dataGridView1.TabIndex = 0;
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 25);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -76,7 +73,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.llCancel);
             this.splitContainer1.Panel2.Controls.Add(this.pbLoading);
             this.splitContainer1.Panel2.Controls.Add(this.dataGridView1);
-            this.splitContainer1.Size = new System.Drawing.Size(1249, 780);
+            this.splitContainer1.Size = new System.Drawing.Size(1249, 805);
             this.splitContainer1.SplitterDistance = 209;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -116,7 +113,7 @@
             this.ragSmiley1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(590, 201);
+            this.ragSmiley1.Location = new System.Drawing.Point(590, 214);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(37, 38);
             this.ragSmiley1.TabIndex = 9;
@@ -126,7 +123,7 @@
             // 
             this.llCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.llCancel.AutoSize = true;
-            this.llCancel.Location = new System.Drawing.Point(587, 279);
+            this.llCancel.Location = new System.Drawing.Point(587, 292);
             this.llCancel.Name = "llCancel";
             this.llCancel.Size = new System.Drawing.Size(40, 13);
             this.llCancel.TabIndex = 8;
@@ -141,7 +138,7 @@
             this.pbLoading.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.pbLoading.Image = ((System.Drawing.Image)(resources.GetObject("pbLoading.Image")));
             this.pbLoading.InitialImage = null;
-            this.pbLoading.Location = new System.Drawing.Point(590, 245);
+            this.pbLoading.Location = new System.Drawing.Point(590, 258);
             this.pbLoading.Name = "pbLoading";
             this.pbLoading.Size = new System.Drawing.Size(38, 31);
             this.pbLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -149,21 +146,10 @@
             this.pbLoading.TabStop = false;
             this.pbLoading.Visible = false;
             // 
-            // ribbon
-            // 
-            this.ribbon.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ribbon.Location = new System.Drawing.Point(0, 0);
-            this.ribbon.Margin = new System.Windows.Forms.Padding(0);
-            this.ribbon.Name = "ribbon";
-            this.ribbon.Size = new System.Drawing.Size(1249, 22);
-            this.ribbon.TabIndex = 0;
-            // 
             // ViewSQLAndResultsWithDataGridUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.ribbon);
             this.Controls.Add(this.splitContainer1);
             this.Name = "ViewSQLAndResultsWithDataGridUI";
             this.Size = new System.Drawing.Size(1249, 805);
@@ -189,6 +175,5 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnExecuteSql;
         private System.Windows.Forms.ToolStripButton btnResetSql;
-        private ObjectVisualisation.RDMPObjectsRibbonUI ribbon;
     }
 }

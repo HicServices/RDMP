@@ -200,7 +200,7 @@ namespace CatalogueManager.MainFormUITabs
                 Add(new ExecuteCommandMakeCatalogueItemExtractable(activator, CatalogueItem));
 
             if(CatalogueItem.ColumnInfo_ID != null)
-                Add(new ExecuteCommandShow(activator,CatalogueItem.ColumnInfo,0),"Show Column",activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo));
+                Add(new ExecuteCommandShow(activator,CatalogueItem.ColumnInfo,0,true));
         }
         
         #region Helper Methods for setting string and Uri properties

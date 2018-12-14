@@ -76,6 +76,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         protected void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
+            RepositoryLocator = _activator.RepositoryLocator;
         }
 
         protected void ClearToolStrip()
