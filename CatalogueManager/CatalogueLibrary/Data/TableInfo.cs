@@ -133,19 +133,14 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _identifierDumpServer_ID, value); }
         }
 
-        /// <summary>
-        /// True if the table referenced is an sql server table valued function (which probably takes parameters)
-        /// </summary>
+        /// <inheritdoc/>
         public bool IsTableValuedFunction
         {
             get { return _isTableValuedFunction; }
             set { SetField(ref _isTableValuedFunction, value); }
         }
 
-        /// <summary>
-        /// The Schema scope of the table (or blank if dbo / default / not supported by dbms).  This scope exists below Database and Above Table.  Not all database management
-        /// engines support the concept of Schema (e.g. MySql).
-        /// </summary>
+        /// <inheritdoc/>
         public string Schema
         {
             get { return _schema; }
@@ -282,12 +277,7 @@ namespace CatalogueLibrary.Data
         }
 
 
-        /// <summary>
-        /// Returns the <see cref="Database"/> name at the given <paramref name="loadStage"/> of a DLE run (RAW=>STAGING=>LIVE)
-        /// </summary>
-        /// <param name="loadStage"></param>
-        /// <param name="namer"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public string GetDatabaseRuntimeName(LoadStage loadStage,INameDatabasesAndTablesDuringLoads namer = null)
         {
             var baseName = GetDatabaseRuntimeName();
@@ -397,10 +387,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        /// <summary>
-        /// True if the <see cref="TableInfo"/> has <see cref="Lookup"/> relationships declared which make it a linkable lookup table in queries.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public bool IsLookupTable()
         {
             return _knownIsLookup.Value;
@@ -439,11 +426,7 @@ select 0", con.Connection, con.Transaction);
 
         }
 
-        /// <summary>
-        /// Returns all column names for the given <see cref="LoadStage"/> (RAW=>STAGING=>LIVE) of a data load
-        /// </summary>
-        /// <param name="loadStage"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public IEnumerable<IHasStageSpecificRuntimeName> GetColumnsAtStage(LoadStage loadStage)
         {
             //if it is AdjustRaw then it will also have the pre load discarded columns
@@ -489,13 +472,7 @@ select 0", con.Connection, con.Transaction);
             return Repository.GetAllObjectsWithParent<ColumnInfo,TableInfo>(this);
         }
 
-        /// <summary>
-        /// Creates an object for interacting with the table as it exists on the live server referenced by this <see cref="TableInfo"/>
-        /// <para>This will not throw if the table doesn't exist, instead you should use <see cref="DiscoveredTable.Exists"/> on the
-        /// returned value</para>
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public DiscoveredTable Discover(DataAccessContext context)
         {
             var db = DataAccessPortal.GetInstance().ExpectDatabase(this, context);

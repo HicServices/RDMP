@@ -9,7 +9,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
     public class DeployedExtractionFilterUIOptions : FilterUIOptions
     {
         private ISqlParameter[] _globals;
-        private TableInfo[] _tables;
+        private ITableInfo[] _tables;
         private IColumn[] _columns;
 
         public DeployedExtractionFilterUIOptions(DeployedExtractionFilter deployedExtractionFilter) : base(deployedExtractionFilter)
@@ -31,7 +31,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
             _columns = columns.ToArray();
         }
 
-        public override TableInfo[] GetTableInfos()
+        public override ITableInfo[] GetTableInfos()
         {
             return _tables;
         }

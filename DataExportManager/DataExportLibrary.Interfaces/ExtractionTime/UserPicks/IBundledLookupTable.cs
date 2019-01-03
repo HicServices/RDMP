@@ -7,6 +7,6 @@ namespace DataExportLibrary.Interfaces.ExtractionTime.UserPicks
     /// </summary>
     public interface IBundledLookupTable
     {
-        TableInfo TableInfo { get; set; }
+        ITableInfo TableInfo { get; set; }
     }
 }

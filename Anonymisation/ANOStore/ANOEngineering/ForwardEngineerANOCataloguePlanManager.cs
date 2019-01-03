@@ -44,7 +44,7 @@ namespace ANOStore.ANOEngineering
         [JsonIgnore]
         public List<IDilutionOperation>  DilutionOperations { get; private set; }
 
-        public TableInfo[] TableInfos { get; private set; }
+        public ITableInfo[] TableInfos { get; private set; }
 
         [JsonIgnore]
         public DiscoveredDatabase TargetDatabase { get; set; }
@@ -53,7 +53,7 @@ namespace ANOStore.ANOEngineering
         public DateTime? StartDate { get; set; }
 
         [JsonIgnore]
-        public HashSet<TableInfo> SkippedTables = new HashSet<TableInfo>();
+        public HashSet<ITableInfo> SkippedTables = new HashSet<ITableInfo>();
         private Catalogue _catalogue;
 
         /// <summary>

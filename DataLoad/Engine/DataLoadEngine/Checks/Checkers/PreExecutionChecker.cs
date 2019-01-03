@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CachingEngine.DataRetrievers;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
@@ -9,6 +10,7 @@ using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Migration;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Checks.Checkers
@@ -62,7 +64,7 @@ namespace DataLoadEngine.Checks.Checkers
                 _notifier.OnCheckPerformed(new CheckEventArgs(successMessage + ": " + dbInfo, CheckResult.Success, null));
         }
 
-        private void CheckTablesDoNotExistOnStaging(IEnumerable<TableInfo> allTableInfos)
+        private void CheckTablesDoNotExistOnStaging(IEnumerable<ITableInfo> allTableInfos)
         {
             DiscoveredDatabase stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
             var alreadyExistingTableInfosThatShouldntBeThere = new List<string>();
@@ -108,7 +110,7 @@ namespace DataLoadEngine.Checks.Checkers
         }
 
         // Check that the column infos from the catalogue match up with what is actually in the staging databases
-        private void CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(IEnumerable<TableInfo> allTableInfos, LoadBubble deploymentStage)
+        private void CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(IEnumerable<ITableInfo> allTableInfos, LoadBubble deploymentStage)
         {
             var dbInfo = _databaseConfiguration.DeployInfo[deploymentStage];
             foreach (var tableInfo in allTableInfos)
@@ -126,20 +128,20 @@ namespace DataLoadEngine.Checks.Checkers
             }
         }
 
-        private void CheckStandardColumnsArePresentInStaging(IEnumerable<TableInfo> allTableInfos)
+        private void CheckStandardColumnsArePresentInStaging(IEnumerable<ITableInfo> allTableInfos)
         {
             // check standard columns are present in staging database
             var standardColumnNames = new List<string>();
             CheckStandardColumnsArePresentForStage(allTableInfos, standardColumnNames, LoadBubble.Staging, LoadBubble.Staging);
         }
-        private void CheckStandardColumnsArePresentInLive(IEnumerable<TableInfo> allTableInfos)
+        private void CheckStandardColumnsArePresentInLive(IEnumerable<ITableInfo> allTableInfos)
         {
             // check standard columns are present in live database
             var standardColumnNames = MigrationColumnSet.GetStandardColumnNames();
             CheckStandardColumnsArePresentForStage(allTableInfos, standardColumnNames, LoadBubble.Live, LoadBubble.Live);
         }
 
-        private void CheckStandardColumnsArePresentForStage(IEnumerable<TableInfo> allTableInfos, List<string> columnNames, LoadBubble deploymentStage, LoadBubble tableNamingConvention)
+        private void CheckStandardColumnsArePresentForStage(IEnumerable<ITableInfo> allTableInfos, List<string> columnNames, LoadBubble deploymentStage, LoadBubble tableNamingConvention)
         {
             var dbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Live];
             foreach (var tableInfo in allTableInfos)
@@ -205,7 +207,7 @@ namespace DataLoadEngine.Checks.Checkers
             }
         }
 
-        private void CheckUpdateTriggers(IEnumerable<TableInfo> allTableInfos)
+        private void CheckUpdateTriggers(IEnumerable<ITableInfo> allTableInfos)
         {
             // Check that the update triggers are present/enabled
             foreach (var tableInfo in allTableInfos)
@@ -221,9 +223,29 @@ namespace DataLoadEngine.Checks.Checkers
  
         public void Check(ICheckNotifier notifier)
         {
-            //extra super not threadsafe eh?
             _notifier = notifier;
 
+            //For each table in load can we reach it and is it a valid table type
+            foreach (ITableInfo ti in _loadMetadata.GetAllCatalogues().SelectMany(c => c.GetTableInfoList(true)).Distinct())
+            {
+                DiscoveredTable tbl;
+                try
+                {
+                    tbl = ti.Discover(DataAccessContext.DataLoad);
+                }
+                catch (Exception e)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Could not reach table in load '" + ti.Name +"'",CheckResult.Fail,e));
+                    return;
+                }
+
+                if (!tbl.Exists())
+                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti.Name + "' does not exist", CheckResult.Fail));
+
+                if (tbl.TableType != TableType.Table)
+                    notifier.OnCheckPerformed(new CheckEventArgs("Table in load '" + ti + "' is a " + tbl.TableType,CheckResult.Fail));
+            }
+            
             AtLeastOneTaskCheck();
 
             PreExecutionStagingDatabaseCheck(false);

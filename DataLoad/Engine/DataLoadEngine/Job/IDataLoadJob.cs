@@ -30,8 +30,8 @@ namespace DataLoadEngine.Job
         /// </summary>
         object Payload { get; set; }
 
-        List<TableInfo> RegularTablesToLoad { get; }
-        List<TableInfo> LookupTablesToLoad { get; }
+        List<ITableInfo> RegularTablesToLoad { get; }
+        List<ITableInfo> LookupTablesToLoad { get; }
         
         IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 

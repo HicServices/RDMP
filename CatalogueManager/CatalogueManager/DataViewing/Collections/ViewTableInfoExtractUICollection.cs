@@ -23,7 +23,7 @@ namespace CatalogueManager.DataViewing.Collections
         {
         }
 
-        public ViewTableInfoExtractUICollection(TableInfo t, ViewType viewType, IFilter filter = null)
+        public ViewTableInfoExtractUICollection(ITableInfo t, ViewType viewType, IFilter filter = null)
             : this()
         {
             DatabaseObjects.Add(t);

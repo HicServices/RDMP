@@ -36,8 +36,8 @@ namespace DataExportLibrary.ExtractionTime.Commands
             var sqls = catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals);
             
             //Now find all the lookups and include them into the bundle
-            List<TableInfo> lookupsFound;
-            List<TableInfo> normalTablesFound;
+            List<ITableInfo> lookupsFound;
+            List<ITableInfo> normalTablesFound;
             catalogue.GetTableInfos(out normalTablesFound, out lookupsFound);
 
             //bundle consists of:

@@ -959,7 +959,7 @@ namespace CatalogueLibrary.Data
             else
                 notifier.OnCheckPerformed(new CheckEventArgs("Catalogue name " + Name + " follows naming conventions ",CheckResult.Success));
             
-            TableInfo[] tables = GetTableInfoList(true);
+            ITableInfo[] tables = GetTableInfoList(true);
             foreach (TableInfo t in tables)
                 t.Check(notifier);
 
@@ -1045,9 +1045,9 @@ namespace CatalogueLibrary.Data
         }
 
         /// <inheritdoc/>
-        public TableInfo[] GetTableInfoList(bool includeLookupTables)
+        public ITableInfo[] GetTableInfoList(bool includeLookupTables)
         {
-            List<TableInfo> normalTables, lookupTables;
+            List<ITableInfo> normalTables, lookupTables;
             GetTableInfos(out normalTables, out lookupTables);
 
             if (includeLookupTables)
@@ -1057,21 +1057,21 @@ namespace CatalogueLibrary.Data
         }
 
         /// <inheritdoc/>
-        public TableInfo[] GetLookupTableInfoList()
+        public ITableInfo[] GetLookupTableInfoList()
         {
-            List<TableInfo> normalTables, lookupTables;
+            List<ITableInfo> normalTables, lookupTables;
             GetTableInfos(out normalTables, out lookupTables);
 
             return lookupTables.ToArray();
         }
         
         /// <inheritdoc/>
-        public void GetTableInfos(out List<TableInfo> normalTables, out List<TableInfo> lookupTables)
+        public void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
         {
             var tables = GetColumnInfos().GroupBy(c=>c.TableInfo_ID).Select(c => c.First().TableInfo).ToArray();
 
-            normalTables = new List<TableInfo>(tables.Where(t=>!t.IsLookupTable()));
-            lookupTables = new List<TableInfo>(tables.Where(t=>t.IsLookupTable()));
+            normalTables = new List<ITableInfo>(tables.Where(t=>!t.IsLookupTable()));
+            lookupTables = new List<ITableInfo>(tables.Where(t=>t.IsLookupTable()));
         }
 
         private IEnumerable<ColumnInfo> GetColumnInfos()
@@ -1120,7 +1120,7 @@ namespace CatalogueLibrary.Data
             return DataAccessPortal.GetInstance().ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
         }
 
-        private TableInfo[] GetTableInfosIdeallyJustFromMainTables()
+        private ITableInfo[] GetTableInfosIdeallyJustFromMainTables()
         {
 
             //try with only the normal tables

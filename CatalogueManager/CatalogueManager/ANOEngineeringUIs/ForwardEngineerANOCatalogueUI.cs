@@ -441,7 +441,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
                 if(engine.NewCatalogue != null && engine.LoadMetadata != null)
                 {
-                    foreach (KeyValuePair<TableInfo, QueryBuilder> sqls in engine.SelectSQLForMigrations)
+                    foreach (KeyValuePair<ITableInfo, QueryBuilder> sqls in engine.SelectSQLForMigrations)
                         CreateAttacher(sqls.Key, sqls.Value, engine.LoadMetadata, sqls.Key.IsLookupTable()? null:engine.LoadProgressIfAny);
 
                     foreach (KeyValuePair<PreLoadDiscardedColumn, IDilutionOperation> dilutionOps in engine.DilutionOperationsForMigrations)
@@ -462,7 +462,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             }
         }
 
-        private void CreateAttacher(TableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
+        private void CreateAttacher(ITableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
         {
             var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
             pt.ProcessTaskType = ProcessTaskType.Attacher;
@@ -474,7 +474,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
 
             pt.SetArgumentValue("RemoteServer", t.Server);
-            pt.SetArgumentValue("RemoteDatabaseName", t.GetDatabaseRuntimeName());
+            pt.SetArgumentValue("RemoteDatabaseName", t.GetDatabaseRuntimeName(LoadStage.PostLoad));
             pt.SetArgumentValue("RemoteTableName", t.GetRuntimeName());
             pt.SetArgumentValue("DatabaseType", DatabaseType.MicrosoftSQLServer);
             pt.SetArgumentValue("RemoteSelectSQL", qb.SQL);

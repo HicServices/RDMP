@@ -8,7 +8,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
     public class AggregateFilterUIOptions : FilterUIOptions
     {
         private ISqlParameter[] _globals;
-        private TableInfo[] _tables;
+        private ITableInfo[] _tables;
         private IColumn[] _columns;
 
         public AggregateFilterUIOptions(AggregateFilter aggregateFilter):base(aggregateFilter)
@@ -29,7 +29,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
             _columns = options.GetAvailableWHEREColumns(aggregateConfiguration);
         }
 
-        public override TableInfo[] GetTableInfos()
+        public override ITableInfo[] GetTableInfos()
         {
             return _tables;
         }

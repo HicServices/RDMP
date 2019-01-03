@@ -25,7 +25,7 @@ namespace DataExportLibrary.ExtractionTime.UserPicks
         public List<IBundledLookupTable> LookupTables { get; private set; }
         
 
-        public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents, SupportingSQLTable[] supportingSQL, TableInfo[] lookupTables) : 
+        public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents, SupportingSQLTable[] supportingSQL, ITableInfo[] lookupTables) : 
             base(
                 new [] {(object)dataSet}.Union(documents).Union(supportingSQL).Union(lookupTables).ToArray() //pass all the objects to the base class so it can allocate initial States
             )

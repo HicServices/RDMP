@@ -281,6 +281,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
     public enum TableType
     {
         View,
-        Table
+        Table,
+        TableValuedFunction
     }
 }

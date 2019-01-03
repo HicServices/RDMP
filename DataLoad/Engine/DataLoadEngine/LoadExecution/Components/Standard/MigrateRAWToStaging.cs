@@ -66,7 +66,7 @@ namespace DataLoadEngine.LoadExecution.Components.Standard
         }
 
 
-        private void MigrateRAWTableToStaging(IDataLoadJob job, TableInfo tableInfo, bool isLookupTable, GracefulCancellationToken cancellationToken)
+        private void MigrateRAWTableToStaging(IDataLoadJob job, ITableInfo tableInfo, bool isLookupTable, GracefulCancellationToken cancellationToken)
         {
             var component = new MigrateRAWTableToStaging(tableInfo, isLookupTable, _databaseConfiguration);
             _tableMigrations.Add(component);

@@ -31,7 +31,7 @@ namespace ANOStore.ANOEngineering
         public LoadMetadata LoadMetadata { get; private set; }
         public LoadProgress LoadProgressIfAny { get; set; }
 
-        public Dictionary<TableInfo, QueryBuilder> SelectSQLForMigrations = new Dictionary<TableInfo, QueryBuilder>();
+        public Dictionary<ITableInfo, QueryBuilder> SelectSQLForMigrations = new Dictionary<ITableInfo, QueryBuilder>();
         public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new Dictionary<PreLoadDiscardedColumn, IDilutionOperation>();
 
         private ShareManager _shareManager;

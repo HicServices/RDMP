@@ -32,11 +32,11 @@ namespace DataLoadEngine.LoadExecution.Components.Standard
     /// </summary>
     public class MigrateRAWTableToStaging : DataLoadComponent
     {
-        private readonly TableInfo _tableInfo;
+        private readonly ITableInfo _tableInfo;
         private readonly bool _isLookupTable;
         private readonly HICDatabaseConfiguration _databaseConfiguration;
 
-        public MigrateRAWTableToStaging(TableInfo tableInfo, bool isLookupTable, HICDatabaseConfiguration databaseConfiguration)
+        public MigrateRAWTableToStaging(ITableInfo tableInfo, bool isLookupTable, HICDatabaseConfiguration databaseConfiguration)
         {
             _tableInfo = tableInfo;
             _isLookupTable = isLookupTable;

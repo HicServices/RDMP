@@ -2,10 +2,9 @@
 using System.Data;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
+using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
-using DataLoadEngineTests.Integration.Mocks;
 using LoadModules.Generic.Mutilators.Dilution;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
 using NUnit.Framework;

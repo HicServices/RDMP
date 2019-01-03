@@ -69,7 +69,7 @@ namespace LoadModules.Generic.Mutilators
             return ExitCodeType.Success;
         }
 
-        private void FireMutilate(TableInfo tableInfo, IDataLoadJob job)
+        private void FireMutilate(ITableInfo tableInfo, IDataLoadJob job)
         {
             var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage, job.Configuration.DatabaseNamer));
 
@@ -86,7 +86,7 @@ namespace LoadModules.Generic.Mutilators
             }
         }
 
-        protected abstract void MutilateTable(IDataLoadEventListener job, TableInfo tableInfo, DiscoveredTable table);
+        protected abstract void MutilateTable(IDataLoadEventListener job, ITableInfo tableInfo, DiscoveredTable table);
 
         public virtual void Check(ICheckNotifier notifier)
         {

@@ -33,8 +33,8 @@ namespace DataLoadEngine.Job
         private readonly ILogManager _logManager;
         public ILoadMetadata LoadMetadata { get; private set; }
 
-        public List<TableInfo> RegularTablesToLoad { get; private set; }
-        public List<TableInfo> LookupTablesToLoad { get; private set; }
+        public List<ITableInfo> RegularTablesToLoad { get; private set; }
+        public List<ITableInfo> LookupTablesToLoad { get; private set; }
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
         private Stack<IDisposeAfterDataLoad> _disposalStack = new Stack<IDisposeAfterDataLoad>();

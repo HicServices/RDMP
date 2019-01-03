@@ -277,7 +277,6 @@
     <Compile Include="Integration\ImportFilesDataProviderTests.cs" />
     <Compile Include="Integration\JobDateGenerationStrategyFactoryTestsIntegration.cs" />
     <Compile Include="Integration\KVPAttacherTest.cs" />
-    <Compile Include="Integration\Mocks\RdmpMockFactory.cs" />
     <Compile Include="Integration\PayloadTest.cs" />
     <Compile Include="Integration\PipelineTests\Components\AliasHandlerTests.cs" />
     <Compile Include="Integration\PipelineTests\Components\RemoveDuplicatesTests.cs" />
@@ -383,6 +382,10 @@
     <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\CatalogueManager\Tests\CatalogueLibraryTests\CatalogueLibraryTests.csproj">
+      <Project>{E733ACCF-3610-4F90-A240-8B9A757270C4}</Project>
+      <Name>CatalogueLibraryTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>

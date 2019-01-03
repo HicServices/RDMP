@@ -31,7 +31,7 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
         {
             foreach (Catalogue remnant in CatalogueRepository.GetAllCatalogues().Where(c => c.Name.Equals("CIATestEvent")))
             {
-                List<TableInfo> normalTables, lookupTables;
+                List<ITableInfo> normalTables, lookupTables;
                 remnant.GetTableInfos(out normalTables, out lookupTables);
 
                 foreach (TableInfo normalTable in normalTables)

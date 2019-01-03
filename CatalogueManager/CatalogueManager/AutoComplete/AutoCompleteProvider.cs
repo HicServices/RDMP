@@ -38,13 +38,13 @@ namespace CatalogueManager.AutoComplete
             _autocomplete.TargetControlWrapper = new ScintillaWrapper(queryEditor);
         }
         
-        public void Add(TableInfo tableInfo)
+        public void Add(ITableInfo tableInfo)
         {
             Add(tableInfo,LoadStage.PostLoad);
         }
 
 
-        public void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName, LoadStage stage, IQuerySyntaxHelper syntaxHelper)
+        public void Add(ColumnInfo columnInfo, ITableInfo tableInfo, string databaseName, LoadStage stage, IQuerySyntaxHelper syntaxHelper)
         {
             var col = columnInfo.GetRuntimeName(stage);
             var table = tableInfo.GetRuntimeName(stage);
@@ -73,7 +73,7 @@ namespace CatalogueManager.AutoComplete
             AddUnlessDuplicate(snip);
         }
 
-        private void Add(PreLoadDiscardedColumn discardedColumn, TableInfo tableInfo, string rawDbName)
+        private void Add(PreLoadDiscardedColumn discardedColumn, ITableInfo tableInfo, string rawDbName)
         {
             var snip = new SubstringAutocompleteItem(discardedColumn.GetRuntimeName());
             var colName = discardedColumn.GetRuntimeName();
@@ -173,7 +173,7 @@ namespace CatalogueManager.AutoComplete
             AddUnlessDuplicate(snip);
         }
         
-        public void Add(TableInfo tableInfo, LoadStage loadStage)
+        public void Add(ITableInfo tableInfo, LoadStage loadStage)
         {
             //we already have it
             if(items.Any(i=>i.Tag.Equals(tableInfo)))

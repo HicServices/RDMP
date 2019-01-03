@@ -26,7 +26,7 @@ namespace LoadModules.Generic.Mutilators
             
         }
         
-        protected override void MutilateTable(IDataLoadEventListener job, TableInfo tableInfo, DiscoveredTable table)
+        protected override void MutilateTable(IDataLoadEventListener job, ITableInfo tableInfo, DiscoveredTable table)
         {
             var server = table.Database.Server;
 

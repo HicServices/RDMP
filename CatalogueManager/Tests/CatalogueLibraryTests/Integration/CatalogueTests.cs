@@ -307,7 +307,7 @@ namespace CatalogueLibraryTests.Integration
                 Assert.AreEqual(1,lookupTablesOnly.Length);
                 Assert.Contains(t3,lookupTablesOnly);
 
-                List<TableInfo> normalTables, lookupTables;
+                List<ITableInfo> normalTables, lookupTables;
                 cata.GetTableInfos(out normalTables, out lookupTables);
                 Assert.AreEqual(2,normalTables.Count);
                 Assert.AreEqual(1, lookupTables.Count);

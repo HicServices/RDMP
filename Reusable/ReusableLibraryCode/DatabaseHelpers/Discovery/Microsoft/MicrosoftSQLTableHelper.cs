@@ -103,6 +103,9 @@ where object_id =OBJECT_ID('" + GetObjectName(discoveredTable) + "')", connectio
                 case TableType.Table:
                     cmd = new SqlCommand("DROP TABLE " + tableToDrop.GetFullyQualifiedName(), (SqlConnection)connection);
                     break;
+                case TableType.TableValuedFunction :
+                    DropFunction(connection,(DiscoveredTableValuedFunction) tableToDrop);
+                    return;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

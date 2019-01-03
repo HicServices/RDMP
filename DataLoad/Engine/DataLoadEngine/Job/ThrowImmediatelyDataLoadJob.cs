@@ -37,7 +37,7 @@ namespace DataLoadEngine.Job
         public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params TableInfo[] regularTablesToLoad)
         {
             _listener = new ThrowImmediatelyDataLoadEventListener();
-            RegularTablesToLoad = new List<TableInfo>(regularTablesToLoad);
+            RegularTablesToLoad = new List<ITableInfo>(regularTablesToLoad);
             Configuration = configuration;
         }
 
@@ -48,8 +48,8 @@ namespace DataLoadEngine.Job
         public ILoadMetadata LoadMetadata { get; private set; }
         public bool DisposeImmediately { get; private set; }
         public string ArchiveFilepath { get; private set; }
-        public List<TableInfo> RegularTablesToLoad { get; set; }
-        public List<TableInfo> LookupTablesToLoad { get; private set; }
+        public List<ITableInfo> RegularTablesToLoad { get; set; }
+        public List<ITableInfo> LookupTablesToLoad { get; private set; }
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get { return null; }}
 
         public void StartLogging()

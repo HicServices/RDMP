@@ -47,7 +47,7 @@ namespace DataLoadEngineTests.Integration
 
             var job = MockRepository.GenerateMock<IDataLoadJob>();
 
-            job.Stub(x => x.RegularTablesToLoad).Return(new List<TableInfo>(){ti});
+            job.Stub(x => x.RegularTablesToLoad).Return(new List<ITableInfo>(){ti});
             job.Expect(p => p.Configuration).Return(new HICDatabaseConfiguration(db.Server));
 
             maxer.Mutilate(job);

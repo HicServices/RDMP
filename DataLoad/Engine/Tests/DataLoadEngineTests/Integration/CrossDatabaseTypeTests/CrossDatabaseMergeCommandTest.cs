@@ -88,7 +88,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 
             var job = new ThrowImmediatelyDataLoadJob();
             job.DataLoadInfo = dli;
-            job.RegularTablesToLoad = new List<TableInfo>(new[]{ti});
+            job.RegularTablesToLoad = new List<ITableInfo>(new[]{ti});
             
             migrationHost.Migrate(job, new GracefulCancellationToken());
             

@@ -163,7 +163,7 @@ namespace LoadModules.Generic.Mutilators
         /// <param name="tiCurrent"></param>
         /// <param name="joinPathToTimeTable">Chain of JoinInfos back to the TimePeriodicity table so we can join to it and recover the effective date of a particular row</param>
         /// <param name="childJoins"></param>
-        private void ProcessTable(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> childJoins)
+        private void ProcessTable(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> childJoins)
         {
             var columnSetsToMigrate = _migrationConfiguration.CreateMigrationColumnSetFromTableInfos(new[] {tiCurrent}.ToList(),null, new BackfillMigrationFieldProcessor());
             var columnSet = columnSetsToMigrate.Single();
@@ -177,7 +177,7 @@ namespace LoadModules.Generic.Mutilators
             UpdateOldParentsThatHaveNewChildren(tiCurrent, joinPathToTimeTable, queryHelper, mcsQueryHelper);
         }
 
-        private void UpdateOldParentsThatHaveNewChildren(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
+        private void UpdateOldParentsThatHaveNewChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
         {
             var update = string.Format(@"WITH 
 {0}
@@ -198,7 +198,7 @@ LiveDataForUpdating LEFT JOIN {2} AS CurrentTable {3}",
             }
         }
 
-        private void DeleteEntriesHavingNoChildren(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> joinsToProcess, MigrationColumnSetQueryHelper mcsQueryHelper)
+        private void DeleteEntriesHavingNoChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> joinsToProcess, MigrationColumnSetQueryHelper mcsQueryHelper)
         {
             // If there are no joins then we should delete any old updates at this level
             string deleteSql;
@@ -253,7 +253,7 @@ RIGHT JOIN EntriesToDelete {1}",
         /// <param name="tiCurrent"></param>
         /// <param name="joinPathToTimeTable"></param>
         /// <returns></returns>
-        private string GetCurrentOldEntriesSQL(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+        private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
         {
             return string.Format(@"
 CurrentOldEntries AS (
@@ -270,7 +270,7 @@ SELECT ToLoadWithTime.* FROM
         /// <param name="tiCurrent"></param>
         /// <param name="joinPathToTimeTable"></param>
         /// <returns></returns>
-        private string GetLiveDataToUpdateStaging(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+        private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
         {
             return string.Format(@"
 LiveDataForUpdating AS (

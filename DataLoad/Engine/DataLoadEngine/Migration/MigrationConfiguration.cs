@@ -26,11 +26,11 @@ namespace DataLoadEngine.Migration
             _namer = namer;
         }
 
-        public IList<MigrationColumnSet> CreateMigrationColumnSetFromTableInfos(List<TableInfo> tableInfos, List<TableInfo> lookupTableInfos, IMigrationFieldProcessor migrationFieldProcessor)
+        public IList<MigrationColumnSet> CreateMigrationColumnSetFromTableInfos(List<ITableInfo> tableInfos, List<ITableInfo> lookupTableInfos, IMigrationFieldProcessor migrationFieldProcessor)
         {
             //treat null values as empty
-            tableInfos = tableInfos ?? new List<TableInfo>();
-            lookupTableInfos = lookupTableInfos ?? new List<TableInfo>();
+            tableInfos = tableInfos ?? new List<ITableInfo>();
+            lookupTableInfos = lookupTableInfos ?? new List<ITableInfo>();
 
             var columnSet = new List<MigrationColumnSet>();
 

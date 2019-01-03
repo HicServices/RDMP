@@ -57,8 +57,8 @@ namespace DataLoadEngineTests.Integration
             attacher.RemoteSource = externalServer;
 
             var job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Stub(p => p.RegularTablesToLoad).Return(new List<TableInfo> {ti});
-            job.Stub(p => p.LookupTablesToLoad).Return(new List<TableInfo>());
+            job.Stub(p => p.RegularTablesToLoad).Return(new List<ITableInfo> {ti});
+            job.Stub(p => p.LookupTablesToLoad).Return(new List<ITableInfo>());
             
             var lm = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
             lm.CreateNewLoggingTaskIfNotExists("amagad");

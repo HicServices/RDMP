@@ -10,9 +10,9 @@ namespace DataExportLibrary.ExtractionTime.UserPicks
     /// </summary>
     public class BundledLookupTable : IBundledLookupTable
     {
-        public TableInfo TableInfo { get; set; }
+        public ITableInfo TableInfo { get; set; }
 
-        public BundledLookupTable(TableInfo tableInfo)
+        public BundledLookupTable(ITableInfo tableInfo)
         {
             if(!tableInfo.IsLookupTable())
                 throw new Exception("TableInfo " + tableInfo + " is not a lookup table");

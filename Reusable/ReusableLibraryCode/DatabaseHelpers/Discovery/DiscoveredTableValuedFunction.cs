@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
@@ -16,7 +12,7 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         private string _functionName;
         
         //constructor
-        public DiscoveredTableValuedFunction(DiscoveredDatabase database, string functionName, IQuerySyntaxHelper querySyntaxHelper,string schema = null):base(database,functionName,querySyntaxHelper,schema)
+        public DiscoveredTableValuedFunction(DiscoveredDatabase database, string functionName, IQuerySyntaxHelper querySyntaxHelper,string schema = null):base(database,functionName,querySyntaxHelper,schema,TableType.TableValuedFunction)
         {
             _functionName = functionName;
         }

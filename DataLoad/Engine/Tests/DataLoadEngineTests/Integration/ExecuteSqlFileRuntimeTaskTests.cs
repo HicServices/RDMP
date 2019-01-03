@@ -6,11 +6,11 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
-using DataLoadEngineTests.Integration.Mocks;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -86,8 +86,8 @@ namespace DataLoadEngineTests.Integration
             task.Check(new ThrowImmediatelyCheckNotifier());
 
             IDataLoadJob job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Stub(x => x.RegularTablesToLoad).Return(new List<TableInfo> {ti});
-            job.Stub(x => x.LookupTablesToLoad).Return(new List<TableInfo>());
+            job.Stub(x => x.RegularTablesToLoad).Return(new List<ITableInfo> {ti});
+            job.Stub(x => x.LookupTablesToLoad).Return(new List<ITableInfo>());
 
             HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server);
             job.Stub(x => x.Configuration).Return(configuration);
@@ -134,8 +134,8 @@ namespace DataLoadEngineTests.Integration
             task.Check(new ThrowImmediatelyCheckNotifier());
 
             IDataLoadJob job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Stub(x => x.RegularTablesToLoad).Return(new List<TableInfo> { ti });
-            job.Stub(x => x.LookupTablesToLoad).Return(new List<TableInfo>());
+            job.Stub(x => x.RegularTablesToLoad).Return(new List<ITableInfo> { ti });
+            job.Stub(x => x.LookupTablesToLoad).Return(new List<ITableInfo>());
 
             //create a namer that tells the user 
             var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);

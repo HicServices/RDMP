@@ -294,6 +294,7 @@
     <Compile Include="Integration\VersioningTests.cs" />
     <Compile Include="JsonSerializationTests\JsonSerializationTests.cs" />
     <Compile Include="LazyTest.cs" />
+    <Compile Include="Mocks\RdmpMockFactory.cs" />
     <Compile Include="RefactoringTests\SelectSQLRefactorerTests.cs" />
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\AllImportantClassesDocumented.cs" />

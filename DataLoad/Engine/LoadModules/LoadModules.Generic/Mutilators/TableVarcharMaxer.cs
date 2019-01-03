@@ -54,7 +54,7 @@ namespace LoadModules.Generic.Mutilators
             }
         }
 
-        protected override void MutilateTable(IDataLoadEventListener job, TableInfo tableInfo, DiscoveredTable table)
+        protected override void MutilateTable(IDataLoadEventListener job, ITableInfo tableInfo, DiscoveredTable table)
         {
             foreach (var col in table.DiscoverColumns())
             {

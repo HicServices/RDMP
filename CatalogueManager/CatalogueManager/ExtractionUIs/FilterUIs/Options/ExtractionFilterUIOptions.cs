@@ -5,7 +5,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
     public class ExtractionFilterUIOptions : FilterUIOptions
     {
         private ISqlParameter[] _globals;
-        private TableInfo[] _tables;
+        private ITableInfo[] _tables;
         private IColumn[] _columns;
 
         public ExtractionFilterUIOptions(ExtractionFilter masterCatalogueFilter) : base(masterCatalogueFilter)
@@ -18,7 +18,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
 
         }
 
-        public override TableInfo[] GetTableInfos()
+        public override ITableInfo[] GetTableInfos()
         {
             return _tables;
         }

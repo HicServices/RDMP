@@ -53,6 +53,9 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
 
         public DiscoveredTable ExpectTable(string tableName, string schema = null, TableType tableType = TableType.Table)
         {
+            if (tableType == TableType.TableValuedFunction)
+                return ExpectTableValuedFunction(tableName, schema);
+
             return new DiscoveredTable(this, tableName, _querySyntaxHelper, schema, tableType);
         }
 

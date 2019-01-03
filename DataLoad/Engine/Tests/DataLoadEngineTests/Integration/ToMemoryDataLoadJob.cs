@@ -26,8 +26,8 @@ namespace DataLoadEngineTests.Integration
         public ILoadMetadata LoadMetadata { get; private set; }
         public bool DisposeImmediately { get; private set; }
         public string ArchiveFilepath { get; private set; }
-        public List<TableInfo> RegularTablesToLoad { get; private set; }
-        public List<TableInfo> LookupTablesToLoad { get; private set; }
+        public List<ITableInfo> RegularTablesToLoad { get; private set; }
+        public List<ITableInfo> LookupTablesToLoad { get; private set; }
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get { return null; }}
 
         public void StartLogging()

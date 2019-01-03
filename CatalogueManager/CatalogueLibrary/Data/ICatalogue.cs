@@ -110,13 +110,13 @@ namespace CatalogueLibrary.Data
         /// </summary>
         /// <param name="includeLookupTables"></param>
         /// <returns></returns>
-        TableInfo[] GetTableInfoList(bool includeLookupTables);
+        ITableInfo[] GetTableInfoList(bool includeLookupTables);
 
         /// <summary>
         /// Retrieves all the TableInfo objects associated with a particular catalogue
         /// </summary>
         /// <returns></returns>
-        TableInfo[] GetLookupTableInfoList();
+        ITableInfo[] GetLookupTableInfoList();
 
         /// <summary>
         /// Gets all distinct underlying <see cref="TableInfo"/> that are referenced by the <see cref="CatalogueItem"/>s of the Catalogue.  The tables are divided into
@@ -127,7 +127,7 @@ namespace CatalogueLibrary.Data
         /// <param name="normalTables">Unique TableInfos amongst all CatalogueItems in the Catalogue</param>
         /// <param name="lookupTables">Unique TableInfos amongst all CatalogueItems in the Catalogue where there is at least
         ///  one <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on the referencing ColumnInfo.</param>
-        void GetTableInfos(out List<TableInfo> normalTables, out List<TableInfo> lookupTables);
+        void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables);
 
         /// <summary>
         /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is 

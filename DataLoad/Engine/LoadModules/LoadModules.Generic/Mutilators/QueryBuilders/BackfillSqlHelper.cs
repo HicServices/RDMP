@@ -34,7 +34,7 @@ namespace LoadModules.Generic.Mutilators.QueryBuilders
         /// <param name="dbInfo"></param>
         /// <param name="joinPath"></param>
         /// <returns></returns>
-        public string CreateSqlForJoinToTimePeriodicityTable(string tableAlias, TableInfo tableInfo, string timePeriodTableAlias, DiscoveredDatabase dbInfo, List<JoinInfo> joinPath)
+        public string CreateSqlForJoinToTimePeriodicityTable(string tableAlias, ITableInfo tableInfo, string timePeriodTableAlias, DiscoveredDatabase dbInfo, List<JoinInfo> joinPath)
         {
             if (tableInfo.ID == _timePeriodicityField.TableInfo_ID && joinPath.Count > 0)
                 throw new InvalidOperationException("You have asked for a join where the original table *is* the TimePeriodicityTable but a non-empty join path has been provided. There should be no path when dealing directly with the TimePeriodicity table");
@@ -100,7 +100,7 @@ LEFT JOIN {0} {1} ON {2}.{3} = {1}.{4}",
         }
 
 
-        public string GetSQLComparingStagingAndLiveTables(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+        public string GetSQLComparingStagingAndLiveTables(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
         {
             // All rows in STAGING tiCurrent + the time from the TimePeriodicity table
             var toLoadWithTimeSQL =

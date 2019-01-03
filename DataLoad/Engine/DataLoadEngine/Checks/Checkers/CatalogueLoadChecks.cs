@@ -52,14 +52,14 @@ namespace DataLoadEngine.Checks.Checkers
                 notifier.OnCheckPerformed(new CheckEventArgs( "There are no Catalogues associated with this metadata",
                     CheckResult.Fail, null));
 
-            List<TableInfo> tablesFound  = new List<TableInfo>();
+            List<ITableInfo> tablesFound  = new List<ITableInfo>();
 
             //check each catalogue is sufficiently configured to perform a migration
             foreach (Catalogue catalogue in catalogueMetadatas)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs( "Found Catalogue:" + catalogue, CheckResult.Success, null));
 
-                TableInfo[] tableInfos = catalogue.GetTableInfoList(true).Distinct().ToArray();
+                ITableInfo[] tableInfos = catalogue.GetTableInfoList(true).Distinct().ToArray();
 
                 if (tableInfos.Length == 0)
                     notifier.OnCheckPerformed(new CheckEventArgs(
