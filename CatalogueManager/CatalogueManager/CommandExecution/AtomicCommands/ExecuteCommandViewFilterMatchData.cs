@@ -48,7 +48,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            _columnInfo = SelectOne(_candidates, _columnInfo != null ? _columnInfo.Name : "");
+            if (_columnInfo == null)
+                _columnInfo = SelectOne(_candidates, _columnInfo != null ? _columnInfo.Name : "");
 
             if (_columnInfo == null)
                 return;

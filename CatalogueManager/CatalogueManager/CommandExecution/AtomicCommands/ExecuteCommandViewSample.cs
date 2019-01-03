@@ -18,6 +18,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandViewSample(IActivateItems activator, AggregateConfiguration aggregate):base(activator)
         {
             _aggregate = aggregate;
+
+            if(_aggregate.IsCohortIdentificationAggregate && _aggregate.GetCohortIdentificationConfigurationIfAny() == null)
+                SetImpossible("Cohort Identification Aggregate is an orphan (it's cic has been deleted)");
         }
 
         public override void Execute()
