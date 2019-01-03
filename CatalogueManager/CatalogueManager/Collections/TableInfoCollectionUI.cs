@@ -148,11 +148,13 @@ namespace CatalogueManager.Collections
             return
                 root is AllRDMPRemotesNode ||
                 root is AllObjectSharingNode ||
+                root is AllPipelinesNode ||
                 root is AllExternalServersNode ||
                 root is AllDataAccessCredentialsNode ||
                 root is AllANOTablesNode ||
-                root is AllServersNode || 
-                root is AllPipelinesNode;
+                root is AllServersNode ||
+                root is AllConnectionStringKeywordsNode || 
+                root is AllStandardRegexesNode;
 
         }
     }
