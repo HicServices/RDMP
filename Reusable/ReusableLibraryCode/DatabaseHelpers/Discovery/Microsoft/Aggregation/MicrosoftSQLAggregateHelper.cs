@@ -293,7 +293,7 @@ SELECT
     (
         {2}
     )ds
-    on {5} = ds.joinDt
+    on {5} = ds.{6}
 ) s
 PIVOT
 (
@@ -314,7 +314,8 @@ EXECUTE(@Query)
 
      syntaxHelper.Escape(countAlias),
      syntaxHelper.Escape(pivotAlias),
-     syntaxHelper.Escape(GetDatePartOfColumn(axis.AxisIncrement,"axis.dt"))
+     syntaxHelper.Escape(GetDatePartOfColumn(axis.AxisIncrement,"axis.dt")),
+     axisColumnAlias
  );
            
            return part1 + part2;
