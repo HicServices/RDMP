@@ -29,7 +29,7 @@ namespace RDMPAutomationService.Options.Abstracts
         [Option(Required = false, HelpText = "Full connection string to the DataExport database, this overrides DataExportDatabaseName and allows custom ports, username/password etc")]
         public string DataExportConnectionString { get; set; }
         
-        [Value(0, HelpText = @"Command to run on the engine: 'run' or 'check' ", Required = true)]
+        [Option(Required = true, HelpText = @"Command to run on the engine: 'run' or 'check' ")]
         public CommandLineActivity Command { get; set; }
 
         [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
