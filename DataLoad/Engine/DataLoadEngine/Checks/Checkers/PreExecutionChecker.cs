@@ -243,7 +243,7 @@ namespace DataLoadEngine.Checks.Checkers
                     notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti.Name + "' does not exist", CheckResult.Fail));
 
                 if (tbl.TableType != TableType.Table)
-                    notifier.OnCheckPerformed(new CheckEventArgs("Table in load '" + ti + "' is a " + tbl.TableType,CheckResult.Fail));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti + "' is a " + tbl.TableType,CheckResult.Fail));
             }
             
             AtLeastOneTaskCheck();

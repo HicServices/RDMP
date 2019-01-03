@@ -26,14 +26,18 @@ namespace CatalogueLibraryTests.Mocks
 
         public static ILoadMetadata Mock_LoadMetadataLoadingTable(DiscoveredTable table)
         {
+            return Mock_LoadMetadataLoadingTable(Mock_TableInfo(table));
+        }
+
+        public static ILoadMetadata Mock_LoadMetadataLoadingTable(ITableInfo tableInfo)
+        {
             var lmd = MockRepository.GenerateMock<ILoadMetadata>();
             var cata = MockRepository.GenerateMock<ICatalogue>();
-            var ti = Mock_TableInfo(table);
 
-            lmd.Stub(m => m.GetDistinctLiveDatabaseServer()).Return(table.Database.Server);
-            lmd.Stub(m => m.GetAllCatalogues()).Return(new[] {cata});
+            lmd.Stub(m => m.GetDistinctLiveDatabaseServer()).Return(tableInfo.Discover(DataAccessContext.DataLoad).Database.Server);
+            lmd.Stub(m => m.GetAllCatalogues()).Return(new[] { cata });
 
-            cata.Stub(m => m.GetTableInfoList(true)).IgnoreArguments().Return(new[] {ti});
+            cata.Stub(m => m.GetTableInfoList(true)).IgnoreArguments().Return(new[] { tableInfo });
 
             return lmd;
         }

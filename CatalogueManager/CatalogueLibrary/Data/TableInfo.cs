@@ -476,6 +476,10 @@ select 0", con.Connection, con.Transaction);
         public DiscoveredTable Discover(DataAccessContext context)
         {
             var db = DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+
+            if (IsTableValuedFunction)
+                return db.ExpectTableValuedFunction(GetRuntimeName(), Schema);
+
             return db.ExpectTable(GetRuntimeName(),Schema);
         }
 

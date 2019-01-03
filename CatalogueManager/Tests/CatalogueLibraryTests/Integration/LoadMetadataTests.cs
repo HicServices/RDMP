@@ -6,6 +6,7 @@ using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using Rhino.Mocks;
 using Tests.Common;
 
@@ -44,6 +45,21 @@ namespace CatalogueLibraryTests.Integration
             var ex = Assert.Throws<Exception>(()=>checker.Check(new ThrowImmediatelyCheckNotifier()));
 
             StringAssert.IsMatch("Table '.*Imaginary.*' does not exist", ex.Message);
+        }
+        [Test]
+        public void TestPreExecutionChecker_TableIsTableValuedFunction()
+        {
+            TestableTableValuedFunction f = new TestableTableValuedFunction();
+            f.Create(DiscoveredDatabaseICanCreateRandomTablesIn,CatalogueRepository);
+
+            var tbl = f.TableInfoCreated.Discover(DataAccessContext.DataLoad);
+            Assert.IsTrue(tbl.Exists());
+
+            var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(f.TableInfoCreated);
+            var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(DiscoveredDatabaseICanCreateRandomTablesIn.Server));
+            var ex = Assert.Throws<Exception>(() => checker.Check(new ThrowImmediatelyCheckNotifier()));
+
+            StringAssert.IsMatch("Table '.*MyAwesomeFunction.*' is a TableValuedFunction", ex.Message);
         }
      }
 }
