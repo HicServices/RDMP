@@ -65,9 +65,11 @@ namespace DataLoadEngine.Checks
             try
             {
                 _metadataLoggingConfigurationChecks.Check(_notifier);
-                _catalogueLoadChecks.Check(_notifier);
 
                 _preExecutionChecks.Check(_notifier);
+                
+                if(!_preExecutionChecks.HardFail)
+                    _catalogueLoadChecks.Check(_notifier);
 
             }
             catch (Exception e)

@@ -288,14 +288,28 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <inheritdoc/>
         public DiscoveredServer GetDistinctLiveDatabaseServer()
         {
-            var tableInfos = this.GetAllCatalogues().SelectMany(c => c.GetTableInfoList(false)).Distinct().ToArray();
+            HashSet<ITableInfo> normalTables = new HashSet<ITableInfo>();
+            HashSet<ITableInfo> lookupTables = new HashSet<ITableInfo>();
 
-            if (!tableInfos.Any())
-                throw new Exception("LoadMetadata " + this + " has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");
+            foreach (ICatalogue catalogue in this.GetAllCatalogues())
+            {
+                List<ITableInfo> normal;
+                List<ITableInfo> lookup;
+                catalogue.GetTableInfos(out normal, out lookup);
 
-            var toReturn = DataAccessPortal.GetInstance().ExpectDistinctServer(tableInfos, DataAccessContext.DataLoad,true);
+                foreach (ITableInfo n in normal)
+                    normalTables.Add(n);
+                foreach (ITableInfo l in lookup)
+                    lookupTables.Add(l);
+            }
 
-            return toReturn;
+            if (normalTables.Any())
+                return DataAccessPortal.GetInstance().ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad,true);
+            
+            if(lookupTables.Any())
+                return DataAccessPortal.GetInstance().ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true);
+            
+            throw new Exception("LoadMetadata " + this + " has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");
         }
 
         /// <inheritdoc/>

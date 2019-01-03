@@ -23,7 +23,13 @@ namespace DataLoadEngine.Checks.Checkers
         private readonly ILoadMetadata _loadMetadata;
         private readonly IList<ICatalogue> _cataloguesToLoad;
         private readonly HICDatabaseConfiguration _databaseConfiguration;
-        
+
+        /// <summary>
+        /// True if when running <see cref="Check"/> there was a catastrophic problem e.g. unable to reach tables which means you shouldn't bother
+        /// running any other kinds of checks
+        /// </summary>
+        public bool HardFail { get; private set; }
+
         public PreExecutionChecker(ILoadMetadata loadMetadata, HICDatabaseConfiguration overrideDatabaseConfiguration) 
         {
             _loadMetadata = loadMetadata;
@@ -235,16 +241,26 @@ namespace DataLoadEngine.Checks.Checkers
                 }
                 catch (Exception e)
                 {
+                    HardFail = true;
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not reach table in load '" + ti.Name +"'",CheckResult.Fail,e));
                     return;
                 }
 
                 if (!tbl.Exists())
+                {
+                    HardFail = true;
                     notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti.Name + "' does not exist", CheckResult.Fail));
+                }
 
                 if (tbl.TableType != TableType.Table)
+                {
+                    HardFail = true;
                     notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti + "' is a " + tbl.TableType,CheckResult.Fail));
+                }
             }
+
+            if(HardFail)
+                return;
             
             AtLeastOneTaskCheck();
 
@@ -252,6 +268,8 @@ namespace DataLoadEngine.Checks.Checkers
             PreExecutionDatabaseCheck();
             
         }
+
+        
 
         private void AtLeastOneTaskCheck()
         {
