@@ -115,9 +115,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             switch (_taskType)
             {
                 case ProcessTaskType.Executable:
-                    return "Add New Run .exe File Task";
+                    return "Add Run .exe File Task";
                 case ProcessTaskType.SQLFile:
-                    return "Add New Run SQL Script Task";
+                    return "Add Run SQL Script Task";
                 default:
                     throw new ArgumentOutOfRangeException();
             }

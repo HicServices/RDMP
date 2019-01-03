@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
+using DataLoadEngine.Factories;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess;
 using ReusableLibraryCode.Checks;
@@ -49,6 +51,23 @@ namespace DataLoadEngine.Checks
             _notifier = notifier;
 
             _mef.CheckForVersionMismatches(_notifier);
+
+            foreach (ILoadProgress loadProgress in LoadMetadata.LoadProgresses)
+            {
+                var cp = loadProgress.CacheProgress;
+                if(cp != null)
+                {
+                    try
+                    {
+                        var f = new CacheLayoutFactory();
+                        f.CreateCacheLayout(loadProgress,LoadMetadata);
+                    }
+                    catch (Exception e)
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs("Load contains a CacheProgress '" + cp + "' but we were unable to generate an ICacheLayout, see Inner Exception for details",CheckResult.Fail,e));
+                    }
+                }
+            }
 
             try
             {

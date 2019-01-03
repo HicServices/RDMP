@@ -235,6 +235,7 @@
     <Compile Include="DataProvider\FromCache\ICachedDataProvider.cs" />
     <Compile Include="DataProvider\IPluginDataProvider.cs" />
     <Compile Include="DataProvider\FromCache\BasicCacheDataProvider.cs" />
+    <Compile Include="Factories\CacheLayoutFactory.cs" />
     <Compile Include="IDisposeAfterDataLoad.cs" />
     <Compile Include="Job\IDataLoadJob.cs" />
     <Compile Include="Job\Scheduling\DataLoadProgressUpdateException.cs" />

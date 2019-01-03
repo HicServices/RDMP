@@ -7,6 +7,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.DataProvider;
+using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngine.Mutilators;
 
 namespace CatalogueManager.Menus
@@ -21,31 +22,33 @@ namespace CatalogueManager.Menus
             _loadStageNode = loadStageNode;
             _mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
             
-           AddMenu<IDataProvider>("Add New Data Provider");
-           AddMenu<IAttacher>("Add New Attacher");
-           AddMenu<IMutilateDataTables>("Add New Mutilator");
+           AddMenu<IDataProvider>("Add Cached Data Provider",t=>typeof(ICachedDataProvider).IsAssignableFrom(t));
+           AddMenu<IDataProvider>("Add Data Provider", t=> !typeof(ICachedDataProvider).IsAssignableFrom(t));
+
+           AddMenu<IAttacher>("Add Attacher");
+           AddMenu<IMutilateDataTables>("Add Mutilator");
 
            Add(new ExecuteCommandCreateNewProcessTask(_activator, ProcessTaskType.SQLFile,loadStageNode.LoadMetadata, loadStageNode.LoadStage));
            Add(new ExecuteCommandCreateNewProcessTask(_activator, ProcessTaskType.Executable, loadStageNode.LoadMetadata, loadStageNode.LoadStage));
         }
-        
-        private void AddMenu<T>(string menuName)
+
+        private void AddMenu<T>(string menuName, Func<Type, bool> filterTypes)
         {
-            var types = _mef.GetTypes<T>().ToArray();
+            var types = _mef.GetTypes<T>().Where(filterTypes).ToArray();
             var menu = new ToolStripMenuItem(menuName);
 
             ProcessTaskType taskType;
 
-            if(typeof(T) == typeof(IDataProvider))
+            if (typeof(T) == typeof(IDataProvider))
                 taskType = ProcessTaskType.DataProvider;
             else
                 if (typeof(T) == typeof(IAttacher))
                     taskType = ProcessTaskType.Attacher;
-                else if (typeof (T) == typeof (IMutilateDataTables))
+                else if (typeof(T) == typeof(IMutilateDataTables))
                     taskType = ProcessTaskType.MutilateDataTable;
                 else
-                    throw new ArgumentException("Type '" + typeof (T) + "' was not expected", "T");
-            
+                    throw new ArgumentException("Type '" + typeof(T) + "' was not expected", "T");
+
             foreach (Type type in types)
             {
                 Type toAdd = type;
@@ -55,6 +58,11 @@ namespace CatalogueManager.Menus
             menu.Enabled = ProcessTask.IsCompatibleStage(taskType, _loadStageNode.LoadStage) && types.Any();
 
             Items.Add(menu);
+        }
+
+        private void AddMenu<T>(string menuName)
+        {
+            AddMenu<T>(menuName, t => true);
         }
 
 
