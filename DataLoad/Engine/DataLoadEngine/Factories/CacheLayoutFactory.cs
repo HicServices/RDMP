@@ -11,6 +11,11 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Factories
 {
+    /// <summary>
+    /// Creates <see cref="ICacheLayout"/> instances based on the <see cref="ICachedDataProvider"/>s declared in the load <see cref="ILoadMetadata"/>.  There
+    /// can be multiple <see cref="ILoadProgress"/> in a load (e.g. Tayside / Fife) so you will also need to provide which <see cref="ILoadProgress"/> you are 
+    /// trying to execute.
+    /// </summary>
     public class CacheLayoutFactory
     {
         public ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata)

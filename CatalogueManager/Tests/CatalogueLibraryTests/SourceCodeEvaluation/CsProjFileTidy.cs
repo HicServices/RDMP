@@ -22,7 +22,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         private string[] Whitelist = new[]
         {
             "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs","MapsDirectlyToDatabaseTableStatelessDefinition.cs",
-            "IObjectUsedByOtherObjectNode.cs"
+            "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs"
         };
 
         public CsProjFileTidy(FileInfo csProjFile)

@@ -4,6 +4,10 @@ using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery.TableCreation
 {
+    /// <summary>
+    /// Determines the behaviour of <see cref="IDiscoveredDatabaseHelper.CreateTable"/>.  This includes how columns are assigned data types, whether foreign keys
+    /// are created etc.
+    /// </summary>
     public class CreateTableArgs
     {
         /// <summary>

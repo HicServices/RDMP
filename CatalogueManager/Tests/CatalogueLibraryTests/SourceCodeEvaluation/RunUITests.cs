@@ -33,6 +33,12 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandViewCohortAggregateGraph),
                 typeof(ExecuteCommandExecuteExtractionAggregateGraph),
                 
+                typeof(ExecuteCommandAddNewCatalogueItem),
+
+                typeof(ExecuteCommandCreateNewFilter),
+                typeof(ExecuteCommandCreateNewFilterFromCatalogue),
+                typeof(ExecuteCommandViewSqlParameters),
+
                 //requires a use case
                 typeof(ExecuteCommandCreateNewPipeline),
                 typeof(ExecuteCommandEditPipelineWithUseCase),

@@ -149,7 +149,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                 }
 
 
-                if (constructor.Contains("RepositoryLocator") || constructor.Contains("_repositoryLocator"))
+                if (Regex.IsMatch(constructor,"[^.]RepositoryLocator") || constructor.Contains("_repositoryLocator"))
                     Assert.Fail("Constructor of class " + className +
                                 " contains a reference to RepositoryLocator, this property cannot be used until OnLoad is called");
             }
