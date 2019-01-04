@@ -413,7 +413,7 @@
             this.Controls.Add(this.rdmpTaskBar1);
             this.Controls.Add(this.menuStrip1);
             this.Name = "RDMPTopMenuStrip";
-            this.Size = new System.Drawing.Size(1160, 52);
+            this.Size = new System.Drawing.Size(1160, 48);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

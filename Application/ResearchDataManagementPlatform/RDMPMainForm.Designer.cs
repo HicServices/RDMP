@@ -32,27 +32,28 @@ namespace ResearchDataManagementPlatform
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RDMPMainForm));
-            this._rdmpTopMenuStrip1 = new ResearchDataManagementPlatform.Menus.RDMPTopMenuStrip();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this._rdmpTopMenuStrip1 = new ResearchDataManagementPlatform.Menus.RDMPTopMenuStrip();
             this.SuspendLayout();
+            // 
+            // dockPanel1
+            // 
+            this.dockPanel1.AutoSize = true;
+            this.dockPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dockPanel1.Location = new System.Drawing.Point(0, 47);
+            this.dockPanel1.Name = "dockPanel1";
+            this.dockPanel1.Size = new System.Drawing.Size(1300, 738);
+            this.dockPanel1.TabIndex = 4;
+            this.dockPanel1.Text = "label1";
+            this.dockPanel1.Theme = null;
             // 
             // _rdmpTopMenuStrip1
             // 
             this._rdmpTopMenuStrip1.Dock = System.Windows.Forms.DockStyle.Top;
             this._rdmpTopMenuStrip1.Location = new System.Drawing.Point(0, 0);
             this._rdmpTopMenuStrip1.Name = "_rdmpTopMenuStrip1";
-            this._rdmpTopMenuStrip1.Size = new System.Drawing.Size(1300, 53);
+            this._rdmpTopMenuStrip1.Size = new System.Drawing.Size(1300, 47);
             this._rdmpTopMenuStrip1.TabIndex = 3;
-            // 
-            // dockPanel1
-            // 
-            this.dockPanel1.AutoSize = true;
-            this.dockPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dockPanel1.Location = new System.Drawing.Point(0, 53);
-            this.dockPanel1.Name = "dockPanel1";
-            this.dockPanel1.Size = new System.Drawing.Size(1300, 732);
-            this.dockPanel1.TabIndex = 4;
-            this.dockPanel1.Text = "label1";
             // 
             // RDMPMainForm
             // 
