@@ -143,6 +143,18 @@
     <Compile Include="..\..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AdjustColumnDataTypesUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdjustColumnDataTypesUI.Designer.cs">
+      <DependentUpon>AdjustColumnDataTypesUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseColumnRequestUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DatabaseColumnRequestUI.Designer.cs">
+      <DependentUpon>DatabaseColumnRequestUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadProgressUpdating\DataLoadProgressUpdateInfoUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -168,6 +180,12 @@
       <DependentUpon>WebServiceConfigurationUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AdjustColumnDataTypesUI.resx">
+      <DependentUpon>AdjustColumnDataTypesUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DatabaseColumnRequestUI.resx">
+      <DependentUpon>DatabaseColumnRequestUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DataFlowSources\ExplicitColumnTypeUI.resx">
       <DependentUpon>ExplicitColumnTypeUI.cs</DependentUpon>
     </EmbeddedResource>

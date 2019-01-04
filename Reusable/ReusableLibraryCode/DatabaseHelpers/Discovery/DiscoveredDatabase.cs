@@ -137,11 +137,12 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             
         }
         
-        public DiscoveredTable CreateTable(string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty = false)
+        public DiscoveredTable CreateTable(string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty = false,IDatabaseColumnRequestAdjuster adjuster = null)
         {
             return CreateTable(new CreateTableArgs(this, tableName, null,dt,createEmpty)
             {
-                ExplicitColumnDefinitions = explicitColumnDefinitions
+                ExplicitColumnDefinitions = explicitColumnDefinitions,
+                Adjuster = adjuster
             });
         }
 
@@ -158,10 +159,15 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <param name="dt"></param>
         /// <param name="explicitColumnDefinitions"></param>
         /// <param name="createEmpty"></param>
+        /// <param name="adjuster"></param>
         /// <returns></returns>
-        public DiscoveredTable CreateTable(out Dictionary<string,DataTypeComputer> typeDictionary,string tableName, DataTable dt,DatabaseColumnRequest[] explicitColumnDefinitions=null, bool createEmpty=false)
+        public DiscoveredTable CreateTable(out Dictionary<string, DataTypeComputer> typeDictionary, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty = false, IDatabaseColumnRequestAdjuster adjuster = null)
         {
-            var args = new CreateTableArgs(this, tableName, null, dt, createEmpty) { ExplicitColumnDefinitions = explicitColumnDefinitions };
+            var args = new CreateTableArgs(this, tableName, null, dt, createEmpty)
+            {
+                Adjuster = adjuster,
+                ExplicitColumnDefinitions = explicitColumnDefinitions
+            };
             var table = Helper.CreateTable(args);
 
             if(!args.TableCreated)

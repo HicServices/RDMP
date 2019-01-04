@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
 using HIC.Logging;
 using HIC.Logging.Listeners;
 using ReusableLibraryCode;
@@ -16,6 +17,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.Exceptions;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TableCreation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using ReusableLibraryCode.Progress;
@@ -51,6 +53,9 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         [DemandsInitialization(AlterTimeout_Description, DefaultValue = 300)]
         public int AlterTimeout { get; set; }
 
+        [DemandsInitialization("Optional - Change system behaviour when a new table is being created by the component", TypeOf = typeof(IDatabaseColumnRequestAdjuster))]
+        public Type Adjuster { get; set; }
+
         public string TargetTableName { get; private set; }
         
         private IBulkCopy _bulkcopy;
@@ -85,6 +90,13 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         {
             if (toProcess == null)
                 return null;
+
+            IDatabaseColumnRequestAdjuster adjuster = null;
+            if (Adjuster != null)
+            {
+                var constructor = new ObjectConstructor();
+                adjuster = (IDatabaseColumnRequestAdjuster) constructor.Construct(Adjuster);
+            }
 
             //work out the table name for the table we are going to create
             if (TargetTableName == null)
@@ -138,9 +150,9 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                    createdTable = true;
 
                    if (AllowResizingColumnsAtUploadTime)
-                       _database.CreateTable(out _dataTypeDictionary, TargetTableName, toProcess,ExplicitTypes.ToArray(), true);
+                       _database.CreateTable(out _dataTypeDictionary, TargetTableName, toProcess, ExplicitTypes.ToArray(), true, adjuster);
                    else
-                       _database.CreateTable(TargetTableName, toProcess, ExplicitTypes.ToArray(), true);
+                       _database.CreateTable(TargetTableName, toProcess, ExplicitTypes.ToArray(), true, adjuster);
 
                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Created table " + TargetTableName + " successfully."));
                 }
