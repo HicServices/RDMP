@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -18,7 +17,6 @@ using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
-using ReusableUIComponents.Settings;
 using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -39,7 +37,24 @@ namespace ResearchDataManagementPlatform
             InitializeComponent();
 
             PatchController.EnableAll = true;
-            _theme = new MyVS2015BlueTheme();
+
+            try
+            {
+                var t = UserSettings.Theme;
+                if (!string.IsNullOrWhiteSpace(t))
+                {
+                    var type = Type.GetType(t);
+                    _theme = type == null ? new MyVS2015BlueTheme() : (ITheme) Activator.CreateInstance(type);
+                }
+                else
+                    _theme = new MyVS2015BlueTheme();
+            }
+            catch (Exception)
+            {
+                _theme = new MyVS2015BlueTheme();
+            }
+
+            _theme.ApplyThemeToMenus = UserSettings.ApplyThemeToMenus;
 
             dockPanel1.Theme = (ThemeBase)_theme;
             dockPanel1.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
@@ -233,9 +248,5 @@ namespace ResearchDataManagementPlatform
         {
             SqlDependencyTableMonitor.Stop();
         }
-    }
-
-    public class MyVS2015BlueTheme : VS2015BlueTheme, ITheme
-    {
     }
 }

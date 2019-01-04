@@ -11,7 +11,8 @@ namespace ReusableUIComponents.Settings
     /// </summary>
     public partial class UserSettingsFileUI : Form
     {
-        
+        private bool _bLoaded;
+
         public UserSettingsFileUI()
         {
             InitializeComponent();
@@ -19,10 +20,25 @@ namespace ReusableUIComponents.Settings
             cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
             cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
             cbUseCaching.Checked = UserSettings.UseCaching;
+            cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
+
+            ddTheme.DataSource = new []
+            {
+                "ResearchDataManagementPlatform.MyVS2015BlueTheme",
+                "ResearchDataManagementPlatform.MyVS2015DarkTheme",
+                "ResearchDataManagementPlatform.MyVS2015LightTheme"
+            };
+
+            ddTheme.SelectedItem = UserSettings.Theme;
+
+            _bLoaded = true;
         }
 
         private void cb_CheckedChanged(object sender, EventArgs e)
         {
+            if (!_bLoaded)
+                return;
+            
             var cb = (CheckBox)sender;
 
             if (cb == cbShowHomeOnStartup)
@@ -36,6 +52,21 @@ namespace ReusableUIComponents.Settings
 
             if (cb == cbUseCaching)
                 UserSettings.UseCaching = cb.Checked;
+
+            if (cb == cbThemeMenus)
+                UserSettings.ApplyThemeToMenus = cb.Checked;
         }
+
+        private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(!_bLoaded)
+                return;
+            
+            var t = ddTheme.SelectedItem as string;
+            
+            if(t != null)
+                UserSettings.Theme = t;
+        }
+
     }
 }

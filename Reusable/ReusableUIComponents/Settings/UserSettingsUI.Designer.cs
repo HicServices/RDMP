@@ -33,6 +33,10 @@
             this.cbEmphasiseOnTabChanged = new System.Windows.Forms.CheckBox();
             this.cbConfirmExit = new System.Windows.Forms.CheckBox();
             this.cbUseCaching = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbThemeMenus = new System.Windows.Forms.CheckBox();
+            this.ddTheme = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -88,11 +92,55 @@
             this.cbUseCaching.UseVisualStyleBackColor = true;
             this.cbUseCaching.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(24, 160);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(47, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Theme*:";
+            // 
+            // cbThemeMenus
+            // 
+            this.cbThemeMenus.AutoSize = true;
+            this.cbThemeMenus.Location = new System.Drawing.Point(76, 184);
+            this.cbThemeMenus.Name = "cbThemeMenus";
+            this.cbThemeMenus.Size = new System.Drawing.Size(139, 17);
+            this.cbThemeMenus.TabIndex = 4;
+            this.cbThemeMenus.Text = "Apply Theme To Menus";
+            this.cbThemeMenus.UseVisualStyleBackColor = true;
+            this.cbThemeMenus.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
+            // ddTheme
+            // 
+            this.ddTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddTheme.FormattingEnabled = true;
+            this.ddTheme.Location = new System.Drawing.Point(76, 157);
+            this.ddTheme.Name = "ddTheme";
+            this.ddTheme.Size = new System.Drawing.Size(371, 21);
+            this.ddTheme.TabIndex = 5;
+            this.ddTheme.SelectedIndexChanged += new System.EventHandler(this.ddTheme_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(13, 543);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(85, 13);
+            this.label3.TabIndex = 3;
+            this.label3.Text = "*Requires restart";
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 565);
+            this.Controls.Add(this.ddTheme);
+            this.Controls.Add(this.cbThemeMenus);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.cbUseCaching);
             this.Controls.Add(this.cbConfirmExit);
             this.Controls.Add(this.cbEmphasiseOnTabChanged);
@@ -112,5 +160,9 @@
         private System.Windows.Forms.CheckBox cbEmphasiseOnTabChanged;
         private System.Windows.Forms.CheckBox cbConfirmExit;
         private System.Windows.Forms.CheckBox cbUseCaching;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox cbThemeMenus;
+        private System.Windows.Forms.ComboBox ddTheme;
+        private System.Windows.Forms.Label label3;
     }
 }

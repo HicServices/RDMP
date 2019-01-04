@@ -144,6 +144,9 @@
     <Reference Include="System.Runtime">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Compile Include="Themes.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WindowManagement\Licenses\License.cs" />
     <Compile Include="Menus\MenuItems\DataExportMenu.cs" />
     <Compile Include="Menus\MenuItems\SaveMenuItem.cs" />

@@ -68,6 +68,12 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("DataExportConnectionString", value); }
         }
 
+        public static string Theme
+        {
+            get { return AppSettings.GetValueOrDefault("Theme", "ResearchDataManagementPlatform.MyVS2015BlueTheme"); }
+            set { AppSettings.AddOrUpdateValue("Theme", value); }
+        }
+
         #region Catalogue flag visibility settings
         public static bool ShowInternalCatalogues
         {
@@ -141,6 +147,12 @@ namespace ReusableLibraryCode.Settings
         {
             get { return AppSettings.GetValueOrDefault("ShowColumnDataType", true); }
             set { AppSettings.AddOrUpdateValue("ShowColumnDataType", value); }
+        }
+
+        public static bool ApplyThemeToMenus
+        {
+            get { return AppSettings.GetValueOrDefault("ApplyThemeToMenus", true); }
+            set { AppSettings.AddOrUpdateValue("ApplyThemeToMenus", value); }
         }
 
         #endregion
