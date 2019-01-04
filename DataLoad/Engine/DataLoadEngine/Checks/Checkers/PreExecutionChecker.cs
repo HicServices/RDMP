@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CachingEngine.DataRetrievers;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Migration;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
@@ -50,7 +47,6 @@ namespace DataLoadEngine.Checks.Checkers
             {
                 CheckTablesAreEmptyInDatabaseOnServer();
                 CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(allTableInfos, LoadBubble.Staging);
-                CheckStandardColumnsArePresentInStaging(allTableInfos);
             }
         }
 
@@ -134,57 +130,12 @@ namespace DataLoadEngine.Checks.Checkers
             }
         }
 
-        private void CheckStandardColumnsArePresentInStaging(IEnumerable<ITableInfo> allTableInfos)
-        {
-            // check standard columns are present in staging database
-            var standardColumnNames = new List<string>();
-            CheckStandardColumnsArePresentForStage(allTableInfos, standardColumnNames, LoadBubble.Staging, LoadBubble.Staging);
-        }
-        private void CheckStandardColumnsArePresentInLive(IEnumerable<ITableInfo> allTableInfos)
-        {
-            // check standard columns are present in live database
-            var standardColumnNames = MigrationColumnSet.GetStandardColumnNames();
-            CheckStandardColumnsArePresentForStage(allTableInfos, standardColumnNames, LoadBubble.Live, LoadBubble.Live);
-        }
-
-        private void CheckStandardColumnsArePresentForStage(IEnumerable<ITableInfo> allTableInfos, List<string> columnNames, LoadBubble deploymentStage, LoadBubble tableNamingConvention)
-        {
-            var dbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Live];
-            foreach (var tableInfo in allTableInfos)
-            {
-                var tableName = tableInfo.GetRuntimeName(tableNamingConvention, _databaseConfiguration.DatabaseNamer);
-                try
-                {
-                    //only supply the schema if it is live/archive (RAW / STAGING never have schema name)
-                    string schema = deploymentStage >= LoadBubble.Live ? tableInfo.Schema : null;
-
-                    var cols = dbInfo.ExpectTable(tableName, schema).DiscoverColumns().ToArray();
-                    
-                    string missing = string.Join(",",
-                        columnNames.Where(
-                            req =>
-                                !cols.Any(c => c.GetRuntimeName().Equals(req, StringComparison.CurrentCultureIgnoreCase))));
-                    
-                    if (!string.IsNullOrWhiteSpace(missing))
-                        throw new Exception(dbInfo + " does not contain columns: " + missing);
-
-                }
-                catch (Exception e)
-                {
-                    _notifier.OnCheckPerformed(new CheckEventArgs("Standard columns (" + string.Join(",", columnNames) + ") not included in database structure for table '" + tableName + "'", CheckResult.Fail, e));
-                }
-            }
-
-            _notifier.OnCheckPerformed(new CheckEventArgs(deploymentStage + " database '" + dbInfo + "' is correctly configured", CheckResult.Success, null));
-        }
-
         private void PreExecutionDatabaseCheck()
         {
             var allNonLookups = _cataloguesToLoad.SelectMany(catalogue => catalogue.GetTableInfoList(false)).Distinct().ToList();
             CheckDatabaseExistsForStage(LoadBubble.Live, "LIVE database found", "LIVE database not found");
             CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(allNonLookups, LoadBubble.Live);
             
-            CheckStandardColumnsArePresentInLive(allNonLookups);
             CheckUpdateTriggers(allNonLookups);
             CheckRAWDatabaseIsNotPresent();
         }
