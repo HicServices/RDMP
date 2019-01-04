@@ -24,6 +24,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TableCreation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
@@ -299,13 +300,24 @@ MrMurder,2001-01-01,Yella");
             //forward declare this column as part of pk (will be used to specify foreign key
             var fkParentID = new DatabaseColumnRequest("Parent_ID", "int"){IsPrimaryKey = true};
 
-            var childTbl = db.CreateTable("Child", dtChild, new[]
+            var args = new CreateTableArgs(
+                db,
+                "Child",
+                null,
+                dtChild,
+                false,
+                new Dictionary<DatabaseColumnRequest, DiscoveredColumn>()
+                {
+                    {fkParentID, pkParentID}
+                },
+                true);
+
+            args.ExplicitColumnDefinitions = new[]
             {
                 fkParentID
-            }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>()
-            {
-                {fkParentID, pkParentID}
-            }, true);
+            };
+
+            var childTbl = db.CreateTable(args);
 
             Assert.AreEqual(1, parentTbl.GetRowCount());
             Assert.AreEqual(2, childTbl.GetRowCount());

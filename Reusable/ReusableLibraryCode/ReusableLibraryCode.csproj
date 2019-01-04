@@ -257,6 +257,8 @@
     <Compile Include="DataAccess\IEncryptedPasswordHost.cs" />
     <Compile Include="DataAccess\IHasQuerySyntaxHelper.cs" />
     <Compile Include="DatabaseCommandHelper.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TableCreation\CreateTableArgs.cs" />
+    <Compile Include="DatabaseHelpers\Discovery\TableCreation\IDatabaseColumnRequestAdjuster.cs" />
     <Compile Include="DatabaseHelpers\Discovery\Exceptions\AlterFailedException.cs" />
     <Compile Include="DatabaseHelpers\Discovery\ConnectionStringDefaults\ConnectionStringKeywordAccumulator.cs" />
     <Compile Include="DatabaseHelpers\Discovery\DatabaseColumnRequest.cs" />

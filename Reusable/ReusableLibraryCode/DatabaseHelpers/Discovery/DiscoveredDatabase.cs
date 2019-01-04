@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TableCreation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
@@ -117,19 +118,36 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
             Server.CreateDatabase(GetRuntimeName());
         }
 
-        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns, string schema= null)
+        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns, string schema = null, IDatabaseColumnRequestAdjuster adjuster = null)
         {
-            return Helper.CreateTable(this,tableName, columns,null,false,schema);
-        }
-        
-        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns,Dictionary<DatabaseColumnRequest,DiscoveredColumn> foreignKeyPairs,bool cascadeDelete)
-        {
-            return Helper.CreateTable(this, tableName, columns, foreignKeyPairs,cascadeDelete);
+            return CreateTable(new CreateTableArgs(this,tableName, schema)
+            {
+                Adjuster = adjuster,
+                ExplicitColumnDefinitions = columns
+            });
         }
 
+        public DiscoveredTable CreateTable(string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, IDatabaseColumnRequestAdjuster adjuster = null)
+        {
+            return CreateTable(new CreateTableArgs(this, tableName, null, foreignKeyPairs, cascadeDelete)
+            {
+                Adjuster = adjuster,
+                ExplicitColumnDefinitions = columns
+            });
+            
+        }
+        
         public DiscoveredTable CreateTable(string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions = null, bool createEmpty = false)
         {
-            return Helper.CreateTable(this, tableName, dt, explicitColumnDefinitions, null, false, createEmpty);
+            return CreateTable(new CreateTableArgs(this, tableName, null,dt,createEmpty)
+            {
+                ExplicitColumnDefinitions = explicitColumnDefinitions
+            });
+        }
+
+        public DiscoveredTable CreateTable(CreateTableArgs args)
+        {
+            return Helper.CreateTable(args);
         }
 
         /// <summary>
@@ -143,14 +161,17 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         /// <returns></returns>
         public DiscoveredTable CreateTable(out Dictionary<string,DataTypeComputer> typeDictionary,string tableName, DataTable dt,DatabaseColumnRequest[] explicitColumnDefinitions=null, bool createEmpty=false)
         {
-            return Helper.CreateTable(out typeDictionary,this, tableName, dt, explicitColumnDefinitions, null, false, createEmpty);
-        }
+            var args = new CreateTableArgs(this, tableName, null, dt, createEmpty) { ExplicitColumnDefinitions = explicitColumnDefinitions };
+            var table = Helper.CreateTable(args);
 
-        public DiscoveredTable CreateTable(string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions,Dictionary<DatabaseColumnRequest,DiscoveredColumn> foreignKeyPairs,bool cascadeDelete, bool createEmpty = false)
-        {
-            return Helper.CreateTable(this, tableName, dt, explicitColumnDefinitions, foreignKeyPairs, cascadeDelete, createEmpty);
-        }
+            if(!args.TableCreated)
+                throw new Exception("CreateTable completed but arguments were not Consumed");
 
+            typeDictionary = args.ColumnCreationLogic;
+
+            return table;
+        }
+        
         /// <summary>
         /// Detach this DiscoveredDatabase and returns the data path where the files are stored.
         /// NOTE: you must know how to map this data path to a shared path you can access!

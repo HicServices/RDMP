@@ -51,6 +51,7 @@
     </Compile>
     <Compile Include="CreatePrimaryKeyTest.cs" />
     <Compile Include="CrossPlatformTests.cs" />
+    <Compile Include="DataTypeAdjusterTests.cs" />
     <Compile Include="ExpectedIdenticalStringsExceptionTests.cs" />
     <Compile Include="ParameterNameExtractionTests.cs" />
     <Compile Include="RecentHistoryOfControlsTests.cs" />

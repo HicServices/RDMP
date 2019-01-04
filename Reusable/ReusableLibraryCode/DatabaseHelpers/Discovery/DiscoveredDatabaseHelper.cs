@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TableCreation;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode.DatabaseHelpers.Discovery
@@ -23,86 +24,92 @@ namespace ReusableLibraryCode.DatabaseHelpers.Discovery
         public abstract void DropDatabase(DiscoveredDatabase database);
         public abstract Dictionary<string, string> DescribeDatabase(DbConnectionStringBuilder builder, string database);
 
-        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, bool createEmpty = false, string schema = null)
+        public DiscoveredTable CreateTable(CreateTableArgs args)
         {
-            Dictionary<string, DataTypeComputer> whoCares;
-            return CreateTable(out whoCares,database,tableName,dt,explicitColumnDefinitions,foreignKeyPairs,cascadeDelete,createEmpty,schema);
-        }
-
-        public DiscoveredTable CreateTable(out Dictionary<string, DataTypeComputer> typeDictionary, DiscoveredDatabase database, string tableName, DataTable dt, DatabaseColumnRequest[] explicitColumnDefinitions, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, bool createEmpty = false,string schema=null)
-        {
-            typeDictionary = new Dictionary<string, DataTypeComputer>(StringComparer.CurrentCultureIgnoreCase);
+            var typeDictionary = new Dictionary<string, DataTypeComputer>(StringComparer.CurrentCultureIgnoreCase);
 
             List<DatabaseColumnRequest> columns = new List<DatabaseColumnRequest>();
-            List<DatabaseColumnRequest> customRequests = explicitColumnDefinitions != null
-                ? explicitColumnDefinitions.ToList()
+            List<DatabaseColumnRequest> customRequests = args.ExplicitColumnDefinitions != null
+                ? args.ExplicitColumnDefinitions.ToList()
                 : new List<DatabaseColumnRequest>();
 
-            foreach (DataColumn column in dt.Columns)
+            if(args.DataTable != null)
             {
-                //do we have an explicit overriding column definition?
-                DatabaseColumnRequest overriding = customRequests.SingleOrDefault(c => c.ColumnName.Equals(column.ColumnName,StringComparison.CurrentCultureIgnoreCase));
-
-                //yes
-                if (overriding != null)
+//If we have a data table from which to create the table from
+                foreach (DataColumn column in args.DataTable.Columns)
                 {
-                    columns.Add(overriding);
-                    customRequests.Remove(overriding);
+                    //do we have an explicit overriding column definition?
+                    DatabaseColumnRequest overriding = customRequests.SingleOrDefault(c => c.ColumnName.Equals(column.ColumnName,StringComparison.CurrentCultureIgnoreCase));
 
-                    //Type reqeuested 
-                    var request = overriding.TypeRequested;
+                    //yes
+                    if (overriding != null)
+                    {
+                        columns.Add(overriding);
+                        customRequests.Remove(overriding);
 
-                    //Type is for an explicit Type e.g. datetime
-                    if(request == null)
-                        if(!string.IsNullOrWhiteSpace(overriding.ExplicitDbType))
-                        {
-                            var tt = database.Server.GetQuerySyntaxHelper().TypeTranslater;
+                        //Type reqeuested 
+                        var request = overriding.TypeRequested;
+
+                        //Type is for an explicit Type e.g. datetime
+                        if(request == null)
+                            if(!string.IsNullOrWhiteSpace(overriding.ExplicitDbType))
+                            {
+                                var tt = args.Database.Server.GetQuerySyntaxHelper().TypeTranslater;
                         
-                            request = new DatabaseTypeRequest(
-                                tt.GetCSharpTypeForSQLDBType(overriding.ExplicitDbType),
-                                tt.GetLengthIfString(overriding.ExplicitDbType),
-                                tt.GetDigitsBeforeAndAfterDecimalPointIfDecimal(overriding.ExplicitDbType));
-                        }
-                        else
-                            throw new Exception("explicitColumnDefinitions for column " + column + " did not contain either a TypeRequested or ExplicitDbType");
+                                request = new DatabaseTypeRequest(
+                                    tt.GetCSharpTypeForSQLDBType(overriding.ExplicitDbType),
+                                    tt.GetLengthIfString(overriding.ExplicitDbType),
+                                    tt.GetDigitsBeforeAndAfterDecimalPointIfDecimal(overriding.ExplicitDbType));
+                            }
+                            else
+                                throw new Exception("explicitColumnDefinitions for column " + column + " did not contain either a TypeRequested or ExplicitDbType");
                     
-                    typeDictionary.Add(overriding.ColumnName, new DataTypeComputer(request));
-                }
-                else
-                {
-                    //no, work out the column definition using a datatype computer
-                    DataTypeComputer computer = new DataTypeComputer(column);
-                    typeDictionary.Add(column.ColumnName,computer);
+                        typeDictionary.Add(overriding.ColumnName, new DataTypeComputer(request));
+                    }
+                    else
+                    {
+                        //no, work out the column definition using a datatype computer
+                        DataTypeComputer computer = new DataTypeComputer(column);
+                        typeDictionary.Add(column.ColumnName,computer);
 
-                    columns.Add(new DatabaseColumnRequest(column.ColumnName, computer.GetTypeRequest(), column.AllowDBNull) { IsPrimaryKey = dt.PrimaryKey.Contains(column)});
+                        columns.Add(new DatabaseColumnRequest(column.ColumnName, computer.GetTypeRequest(), column.AllowDBNull) { IsPrimaryKey = args.DataTable.PrimaryKey.Contains(column)});
+                    }
                 }
             }
+            else
+            {
+                //If no DataTable is provided just use the explicitly requested columns
+                columns = customRequests;
+            }
 
-            var tbl = CreateTable(database, tableName, columns.ToArray(), foreignKeyPairs, cascadeDelete,schema);
+            if(args.Adjuster != null)
+                args.Adjuster.AdjustColumns(columns);
 
-            //unless we are being asked to create it empty then upload the DataTable to it
-            if(!createEmpty)
-                tbl.BeginBulkInsert().Upload(dt);
-            
-            return tbl;
-        }
-        
-        public DiscoveredTable CreateTable(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs,bool cascadeDelete, string schema)
-        {
-            string bodySql = GetCreateTableSql(database, tableName, columns, foreignKeyPairs, cascadeDelete,schema);
+            //Get the table creation SQL
+            string bodySql = GetCreateTableSql(args.Database, args.TableName, columns.ToArray(), args.ForeignKeyPairs, args.CascadeDelete, args.Schema);
 
-            var server = database.Server;
+            //connect to the server and send it
+            var server = args.Database.Server;
 
-            using(var con = server.GetConnection())
+            using (var con = server.GetConnection())
             {
                 con.Open();
 
-                UsefulStuff.ExecuteBatchNonQuery(bodySql,con);
+                UsefulStuff.ExecuteBatchNonQuery(bodySql, con);
             }
-            
-            return database.ExpectTable(tableName,schema);
-        }
 
+            //Get reference to the newly created table
+            var tbl = args.Database.ExpectTable(args.TableName, args.Schema);
+
+            //unless we are being asked to create it empty then upload the DataTable to it
+            if(args.DataTable != null && !args.CreateEmpty)
+                tbl.BeginBulkInsert().Upload(args.DataTable);
+
+            args.OnTableCreated(typeDictionary);
+
+            return tbl;
+        }
+        
         public virtual string GetCreateTableSql(DiscoveredDatabase database, string tableName, DatabaseColumnRequest[] columns, Dictionary<DatabaseColumnRequest, DiscoveredColumn> foreignKeyPairs, bool cascadeDelete, string schema)
         {
             if (string.IsNullOrWhiteSpace(tableName))

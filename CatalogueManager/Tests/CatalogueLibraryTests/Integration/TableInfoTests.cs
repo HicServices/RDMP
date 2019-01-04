@@ -114,7 +114,7 @@ namespace CatalogueLibraryTests.Integration
 
                 db.Server.GetCommand("CREATE SCHEMA Omg", con).ExecuteNonQuery();
 
-                var tbl = db.CreateTable("Fish", new [] {new DatabaseColumnRequest("MyCol", "int"){IsPrimaryKey = true}},schema:"Omg");
+                var tbl = db.CreateTable("Fish", new [] {new DatabaseColumnRequest("MyCol", "int"){IsPrimaryKey = true}},schema: "Omg");
 
                 Assert.AreEqual("Fish", tbl.GetRuntimeName());
                 Assert.AreEqual( "Omg", tbl.Schema);
