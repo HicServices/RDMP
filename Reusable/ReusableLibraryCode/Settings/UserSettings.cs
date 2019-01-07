@@ -70,7 +70,7 @@ namespace ReusableLibraryCode.Settings
 
         public static string Theme
         {
-            get { return AppSettings.GetValueOrDefault("Theme", "ResearchDataManagementPlatform.MyVS2015BlueTheme"); }
+            get { return AppSettings.GetValueOrDefault("Theme", "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme"); }
             set { AppSettings.AddOrUpdateValue("Theme", value); }
         }
 

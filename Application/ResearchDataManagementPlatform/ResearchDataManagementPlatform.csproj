@@ -125,6 +125,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DockPanelSuite.3.1.0-beta2\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
       <Private>True</Private>
@@ -144,9 +145,8 @@
     <Reference Include="System.Runtime">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Compile Include="Themes.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Theme\ThemeExtender.cs" />
+    <Compile Include="Theme\Themes.cs" />
     <Compile Include="WindowManagement\Licenses\License.cs" />
     <Compile Include="Menus\MenuItems\DataExportMenu.cs" />
     <Compile Include="Menus\MenuItems\SaveMenuItem.cs" />

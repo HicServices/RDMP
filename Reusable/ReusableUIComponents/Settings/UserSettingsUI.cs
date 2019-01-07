@@ -24,9 +24,9 @@ namespace ReusableUIComponents.Settings
 
             ddTheme.DataSource = new []
             {
-                "ResearchDataManagementPlatform.MyVS2015BlueTheme",
-                "ResearchDataManagementPlatform.MyVS2015DarkTheme",
-                "ResearchDataManagementPlatform.MyVS2015LightTheme"
+                "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme",
+                "ResearchDataManagementPlatform.Theme.MyVS2015DarkTheme",
+                "ResearchDataManagementPlatform.Theme.MyVS2015LightTheme"
             };
 
             ddTheme.SelectedItem = UserSettings.Theme;
