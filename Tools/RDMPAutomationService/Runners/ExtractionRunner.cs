@@ -72,8 +72,6 @@ namespace RDMPAutomationService.Runners
 
             var commands = new List<IExtractCommand>();
 
-            _dataLoadInfo = StartAudit();
-
             //if we are extracting globals
             if (_options.ExtractGlobals)
             {
@@ -99,6 +97,8 @@ namespace RDMPAutomationService.Runners
 
         protected override void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener)
         {
+            _dataLoadInfo = StartAudit();
+
             var globalCommand = runnable as ExtractGlobalsCommand;
             var datasetCommand = runnable as ExtractDatasetCommand;
 
@@ -233,7 +233,7 @@ namespace RDMPAutomationService.Runners
                 //populate DataLoadInfo object (Audit)
                 dataLoadInfo = new DataLoadInfo(ExecuteDatasetExtractionSource.AuditTaskName,
                                                      Process.GetCurrentProcess().ProcessName,
-                                                     _project.Name + "(ExtractionConfiguration ID=" +
+                                                     _project.Name + " (ExtractionConfiguration ID=" +
                                                      _configuration.ID + ")",
                                                      "", false, _logManager.Server);
             }
