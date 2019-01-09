@@ -70,8 +70,7 @@ namespace RDMPAutomationService.Runners
                                 if (semaphore != null)
                                     semaphore.Release();
                             }
-                        }
-                            ));
+                        }));
                     }
 
                     break;

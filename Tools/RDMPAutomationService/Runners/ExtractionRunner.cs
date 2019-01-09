@@ -61,8 +61,6 @@ namespace RDMPAutomationService.Runners
 
         protected override void AfterRun()
         {
-            if(_dataLoadInfo != null && !_dataLoadInfo.IsClosed)
-                _dataLoadInfo.CloseAndMarkComplete();
         }
 
         protected override object[] GetRunnables()
@@ -97,27 +95,28 @@ namespace RDMPAutomationService.Runners
 
         protected override void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener)
         {
-            _dataLoadInfo = StartAudit();
+            var dataLoadInfo = StartAudit();
 
             var globalCommand = runnable as ExtractGlobalsCommand;
             var datasetCommand = runnable as ExtractDatasetCommand;
 
-            var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, _dataLoadInfo);
+            var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, dataLoadInfo);
             var fork = new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand));
 
             if(globalCommand != null)
             {
-                var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, _pipeline, _dataLoadInfo) { Token = Token };
+                var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, _pipeline, dataLoadInfo) { Token = Token };
                 useCase.Execute(fork);
             }
 
             if (datasetCommand != null)
             {
-                var executeUseCase = new ExtractionPipelineUseCase(_project,datasetCommand, _pipeline, _dataLoadInfo) { Token = Token };
+                var executeUseCase = new ExtractionPipelineUseCase(_project, datasetCommand, _pipeline, dataLoadInfo) { Token = Token };
                 executeUseCase.Execute(fork);
             }
 
             logging.FinalizeTableLoadInfos();
+            dataLoadInfo.CloseAndMarkComplete();
         }
 
         protected override ICheckable[] GetCheckables(ICheckNotifier checkNotifier)

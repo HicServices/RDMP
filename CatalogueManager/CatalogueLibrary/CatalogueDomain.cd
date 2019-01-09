@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CatalogueLibrary.Data.Catalogue" Collapsed="true">
+    <Position X="0.75" Y="1.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>Pf6DeIk4hEclEewW7jRJS0xYLATLwon2aY1cYHyYNGE=</HashCode>
+      <FileName>Data\Catalogue.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="LoadMetadata" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="CatalogueItems" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.CatalogueItem">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>JEYAgoIAAAAgEiSECBBCKAwIRACsAAAEUAAaQGAAJAA=</HashCode>
+      <FileName>Data\CatalogueItem.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ColumnInfo" />
+      <Property Name="Catalogue" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.DataLoad.LoadMetadata" Collapsed="true">
+    <Position X="2.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BCAQOKAAAEAhAgAEBCQgAAQIIAAAAAQBAAAAQAICgAI=</HashCode>
+      <FileName>Data\DataLoad\LoadMetadata.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.ColumnInfo">
+    <Position X="9" Y="1.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="CatalogueLibrary.Data.ColumnInfo.ColumnStatus" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Data\ColumnInfo.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BUYAIIgEAkykAAQUADBDBEwIIRwAAAOCIABIUQAKEEg=</HashCode>
+      <FileName>Data\ColumnInfo.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="TableInfo" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="CatalogueItems" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Data.TableInfo">
+    <Position X="12.5" Y="1.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AIcBoChABEEAAIQESDCBCQwchARAVIWAAKAA1ggCEIA=</HashCode>
+      <FileName>Data\TableInfo.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ColumnInfos" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>
