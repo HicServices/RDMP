@@ -85,6 +85,18 @@ namespace MapsDirectlyToDatabaseTableUI
             olvObjects.RebuildColumns();
             
             MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>();
+
+            olvSelected.GroupWithItemCountFormat = "{0} ({1} objects)";
+            olvSelected.GroupWithItemCountSingularFormat = "{0} (1 objects)";
+            olvSelected.GroupKeyGetter += GroupKeyGetter;
+        }
+
+        private object GroupKeyGetter(object rowObject)
+        {
+            if (MultiSelected == null)
+                return false;
+
+            return MultiSelected.Contains(rowObject)? "Selected": "Not Selected";
         }
 
         private bool buildGroupsRequired = false;
@@ -168,7 +180,7 @@ namespace MapsDirectlyToDatabaseTableUI
                     olvObjects.ShowGroups = true;
                     olvObjects.AlwaysGroupByColumn = olvSelected;
                     olvObjects.AlwaysGroupBySortOrder = SortOrder.Descending;
-                    
+                    olvObjects.ShowItemCountOnGroups = true;   
                 }
                 else
                 {
