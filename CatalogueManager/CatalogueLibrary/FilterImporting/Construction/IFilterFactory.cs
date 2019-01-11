@@ -1,6 +1,5 @@
 ﻿using System;
 using CatalogueLibrary.Data;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.FilterImporting.Construction
 {

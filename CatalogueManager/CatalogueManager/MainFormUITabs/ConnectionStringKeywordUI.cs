@@ -6,8 +6,8 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
 using ReusableUIComponents;
 
 namespace CatalogueManager.MainFormUITabs

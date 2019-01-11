@@ -6,12 +6,9 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using FAnsi;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -19,9 +16,9 @@ namespace DataLoadEngineTests.Integration
     public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer,true)]
-        [TestCase(DatabaseType.MYSQLServer,true)]
+        [TestCase(DatabaseType.MySql,true)]
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql, false)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_NoDifference_NoRecordsDeleted(DatabaseType dbType,bool bothNull)
         {
             var db = GetCleanedServer(dbType, true);
@@ -60,9 +57,9 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(4,tbl.GetRowCount());
         }
         [TestCase(DatabaseType.MicrosoftSQLServer,false)]
-        [TestCase(DatabaseType.MYSQLServer,false)]
+        [TestCase(DatabaseType.MySql,false)]
         [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MYSQLServer, true)]
+        [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferNull_RecordsDeleted(DatabaseType dbType,bool preferNulls)
         {
             var db = GetCleanedServer(dbType, true);
@@ -108,7 +105,7 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(preferNulls ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
         }
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_WithDatabaseNamer_RecordsDeleted(DatabaseType dbType)
         {
             var db = GetCleanedServer(dbType, true);
@@ -159,9 +156,9 @@ namespace DataLoadEngineTests.Integration
 
 
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql, false)]
         [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MYSQLServer, true)]
+        [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
             var db = GetCleanedServer(dbType, true);
@@ -212,9 +209,9 @@ namespace DataLoadEngineTests.Integration
 
 
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql, false)]
         [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MYSQLServer, true)]
+        [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_Dates_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
             var db = GetCleanedServer(dbType, true);
@@ -263,9 +260,9 @@ namespace DataLoadEngineTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql, false)]
         [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MYSQLServer, true)]
+        [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_ComboKey_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
             var db = GetCleanedServer(dbType, true);

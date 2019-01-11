@@ -8,7 +8,6 @@ using CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.DataFlowPipeline.Sources;
 using DataLoadEngine.Job;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 using Rhino.Mocks;

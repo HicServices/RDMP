@@ -7,11 +7,10 @@ using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using Sharing.Refactoring;
 
 namespace ANOStore.ANOEngineering

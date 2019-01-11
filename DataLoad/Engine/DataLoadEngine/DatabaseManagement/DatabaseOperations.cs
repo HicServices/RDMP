@@ -5,8 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Triggers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using FAnsi.Discovery;
 
 namespace DataLoadEngine.DatabaseManagement
 {

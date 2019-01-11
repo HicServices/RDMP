@@ -5,7 +5,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderTests
 {

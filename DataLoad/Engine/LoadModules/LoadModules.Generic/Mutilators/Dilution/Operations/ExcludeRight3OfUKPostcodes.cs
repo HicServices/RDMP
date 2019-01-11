@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
+using FAnsi.Discovery.TypeTranslation;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace LoadModules.Generic.Mutilators.Dilution.Operations
 {

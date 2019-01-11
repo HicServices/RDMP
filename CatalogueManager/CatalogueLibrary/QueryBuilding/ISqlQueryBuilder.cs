@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding.Parameters;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using FAnsi.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {

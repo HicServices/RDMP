@@ -1,4 +1,5 @@
 ﻿using CatalogueLibrary.Data;
+using FAnsi;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using Tests.Common;

@@ -13,11 +13,11 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using Diagnostics.TestData;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace AnonymisationTests

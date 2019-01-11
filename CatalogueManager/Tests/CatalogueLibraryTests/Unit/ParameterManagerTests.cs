@@ -2,8 +2,8 @@
 using System.Reflection.Emit;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using Fansi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibraryTests.Unit
 {

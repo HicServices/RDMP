@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,10 +9,9 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using FAnsi;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -22,8 +20,8 @@ namespace DataLoadEngineTests.Integration
     {
         [TestCase(DatabaseType.MicrosoftSQLServer,true)]
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer,true)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql,true)]
+        [TestCase(DatabaseType.MySql, false)]
         public void TestCoalescer_RampantNullness(DatabaseType type,bool useCustomNamer)
         {
             var db = GetCleanedServer(type, "TestCoalescer");

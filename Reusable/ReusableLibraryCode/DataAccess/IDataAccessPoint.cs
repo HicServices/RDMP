@@ -1,3 +1,6 @@
+using FAnsi;
+using FAnsi.Discovery.QuerySyntax;
+
 namespace ReusableLibraryCode.DataAccess
 {
     /// <summary>

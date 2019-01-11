@@ -17,17 +17,15 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TableCreation;
+using FAnsi.Discovery.TypeTranslation;
 using HIC.Logging;
 using LoadModules.Generic.Attachers;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TableCreation;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
@@ -71,13 +69,13 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.AllPrimaryKeys)]
-        [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
-        //[TestCase(DatabaseType.MYSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)] //Not supported by MySql:Incorrect table definition; there can be only one auto column and it must be defined as a key
-        [TestCase(DatabaseType.MYSQLServer, TestCase.DodgyCollation)]
-        [TestCase(DatabaseType.MYSQLServer, TestCase.WithCustomTableNamer)]
-        [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
-        [TestCase(DatabaseType.MYSQLServer, TestCase.AllPrimaryKeys)]
-        [TestCase(DatabaseType.MYSQLServer, TestCase.WithDiffColumnIgnoreRegex)]
+        [TestCase(DatabaseType.MySql,TestCase.Normal)]
+        //[TestCase(DatabaseType.MySql, TestCase.WithNonPrimaryKeyIdentityColumn)] //Not supported by MySql:Incorrect table definition; there can be only one auto column and it must be defined as a key
+        [TestCase(DatabaseType.MySql, TestCase.DodgyCollation)]
+        [TestCase(DatabaseType.MySql, TestCase.WithCustomTableNamer)]
+        [TestCase(DatabaseType.MySql, TestCase.LowPrivilegeLoaderAccount)]
+        [TestCase(DatabaseType.MySql, TestCase.AllPrimaryKeys)]
+        [TestCase(DatabaseType.MySql, TestCase.WithDiffColumnIgnoreRegex)]
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
             var defaults = new ServerDefaults(CatalogueRepository);
@@ -102,7 +100,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             if (testCase == TestCase.DodgyCollation)
                 if(databaseType == DatabaseType.MicrosoftSQLServer)
                     nameCol.Collation = "Latin1_General_CS_AS_KS_WS";
-                else if (databaseType == DatabaseType.MYSQLServer)
+                else if (databaseType == DatabaseType.MySql)
                     nameCol.Collation = "latin1_german1_ci";
 
 
@@ -234,7 +232,7 @@ MrMurder,2001-01-01,Yella");
                 Assert.AreEqual(DBNull.Value,bob[SpecialFieldNames.DataLoadRunID]);
 
                 //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
-                if(databaseType != DatabaseType.MYSQLServer)
+                if(databaseType != DatabaseType.MySql)
                     Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
             }
             finally
@@ -260,7 +258,7 @@ MrMurder,2001-01-01,Yella");
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void DLELoadTwoTables(DatabaseType databaseType)
         {
             //setup the data tables

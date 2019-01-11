@@ -7,10 +7,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

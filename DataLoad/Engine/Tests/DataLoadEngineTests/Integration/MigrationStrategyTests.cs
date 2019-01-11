@@ -1,13 +1,10 @@
 ﻿using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration;
 using DataLoadEngine.Migration.QueryBuilding;
-using HIC.Logging;
+using FAnsi.Connections;
+using FAnsi.Discovery;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Rhino.Mocks;
 using Tests.Common;
 

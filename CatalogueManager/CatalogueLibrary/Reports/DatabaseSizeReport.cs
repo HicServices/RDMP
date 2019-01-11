@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using System.Web.ModelBinding;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Reports
 {

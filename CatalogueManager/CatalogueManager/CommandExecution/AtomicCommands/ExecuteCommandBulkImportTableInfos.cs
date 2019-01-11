@@ -13,9 +13,9 @@ using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.DataHelper;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 

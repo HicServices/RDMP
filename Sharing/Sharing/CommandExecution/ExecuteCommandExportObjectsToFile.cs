@@ -4,9 +4,9 @@ using System.Linq;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Sharing.Dependency.Gathering;
 
 namespace Sharing.CommandExecution

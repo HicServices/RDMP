@@ -6,7 +6,6 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 
 namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 {

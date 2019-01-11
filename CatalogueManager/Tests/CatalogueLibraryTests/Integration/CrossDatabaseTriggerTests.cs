@@ -4,12 +4,12 @@ using System.Linq;
 using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Exceptions;
 using CatalogueLibrary.Triggers.Implementations;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -17,7 +17,7 @@ namespace CatalogueLibraryTests.Integration
     public class CrossDatabaseTriggerTests : DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TriggerImplementationTest(DatabaseType type)
         {
             var db = GetCleanedServer(type);

@@ -5,9 +5,9 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
+using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Discovery.TypeTranslation;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace ANOStore.ANOEngineering
 {

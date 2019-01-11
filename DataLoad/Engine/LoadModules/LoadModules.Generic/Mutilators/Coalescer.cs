@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Mutilators

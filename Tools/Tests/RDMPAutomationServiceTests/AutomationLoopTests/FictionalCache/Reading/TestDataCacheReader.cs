@@ -13,8 +13,8 @@ using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngine.Job;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache.Reading

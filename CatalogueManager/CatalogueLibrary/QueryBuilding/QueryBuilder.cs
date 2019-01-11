@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace CatalogueLibrary.QueryBuilding

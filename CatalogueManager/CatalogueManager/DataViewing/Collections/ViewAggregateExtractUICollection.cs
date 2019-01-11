@@ -7,8 +7,8 @@ using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
 using CohortManagerLibrary.QueryBuilding;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections
 {

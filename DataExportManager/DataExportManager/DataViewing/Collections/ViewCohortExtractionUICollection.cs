@@ -7,8 +7,8 @@ using CatalogueManager.AutoComplete;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ObjectVisualisation;
 using DataExportLibrary.Data.DataTables;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportManager.DataViewing.Collections
 {

@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Data.SqlClient;
 using System.Linq;
 using AnonymisationTests;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
-using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
-using MapsDirectlyToDatabaseTable;
+using FAnsi.Discovery;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

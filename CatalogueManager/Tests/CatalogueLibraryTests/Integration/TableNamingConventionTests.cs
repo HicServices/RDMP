@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
+using FAnsi;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using Tests.Common;

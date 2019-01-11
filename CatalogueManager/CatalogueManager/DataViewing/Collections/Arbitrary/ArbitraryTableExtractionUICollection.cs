@@ -4,11 +4,11 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections.Arbitrary
 {
@@ -65,7 +65,7 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
 
             DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), _arguments[DatabaseTypeKey]);
 
-            var builder = new DatabaseHelperFactory(DatabaseType).CreateInstance().GetConnectionStringBuilder(Server,Database,null,null);
+            var builder = DatabaseCommandHelper.For(DatabaseType).GetConnectionStringBuilder(Server,Database,null,null);
 
             var server = new DiscoveredServer(builder);
             _table = server.ExpectDatabase(Database).ExpectTable(_arguments[TableKey]);

@@ -5,10 +5,6 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
-using MapsDirectlyToDatabaseTable;
-
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibrary.QueryBuilding
 {
@@ -23,7 +19,6 @@ namespace CatalogueLibrary.QueryBuilding
     public class PrimaryKeyCollisionResolver
     {
         private readonly ITableInfo _tableInfo;
-        private MicrosoftQuerySyntaxHelper _syntaxHelper;
 
         private const string WithCTE = "WITH CTE (DuplicateCount)";
         private const string SelectRownum = "\t SELECT ROW_NUMBER()";
@@ -39,7 +34,6 @@ WHERE DuplicateCount > 1";
         public PrimaryKeyCollisionResolver(ITableInfo tableInfo)
         {
             _tableInfo = tableInfo;
-            _syntaxHelper = new MicrosoftQuerySyntaxHelper();
         }
 
         /// <summary>

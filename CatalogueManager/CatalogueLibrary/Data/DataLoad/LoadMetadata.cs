@@ -4,14 +4,14 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Repositories;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.DataLoad
 {

@@ -1,4 +1,5 @@
-﻿using ReusableLibraryCode.DatabaseHelpers.Discovery;
+﻿
+using FAnsi.Discovery;
 
 namespace HIC.Logging
 {

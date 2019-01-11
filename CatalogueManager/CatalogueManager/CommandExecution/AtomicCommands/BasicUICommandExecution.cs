@@ -6,10 +6,10 @@ using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

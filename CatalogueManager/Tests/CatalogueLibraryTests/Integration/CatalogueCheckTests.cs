@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
+using FAnsi;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -26,7 +27,7 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void CatalogueCheck_FetchData(DatabaseType databaseType)
         {
             DataTable dt = new DataTable();

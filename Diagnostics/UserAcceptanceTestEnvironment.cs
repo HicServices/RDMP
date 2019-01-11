@@ -15,6 +15,8 @@ using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess;
+using FAnsi;
+using FAnsi.Discovery;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Mutilators;
 using Diagnostics.TestData;
@@ -22,7 +24,6 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Diagnostics
 {

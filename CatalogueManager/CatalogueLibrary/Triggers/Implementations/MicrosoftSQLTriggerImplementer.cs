@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Triggers.Exceptions;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Exceptions;
 
 namespace CatalogueLibrary.Triggers.Implementations

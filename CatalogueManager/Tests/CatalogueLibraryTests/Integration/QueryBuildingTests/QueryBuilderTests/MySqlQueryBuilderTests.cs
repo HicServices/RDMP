@@ -1,5 +1,6 @@
 ﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
+using FAnsi;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using Tests.Common;
@@ -12,7 +13,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.QueryBuilderTests
         public void TestQueryBuilder_MySql_Normal()
         {
             var t = new TableInfo(CatalogueRepository, "`db`.`tbl`");
-            t.DatabaseType = DatabaseType.MYSQLServer;
+            t.DatabaseType = DatabaseType.MySql;
             t.SaveToDatabase();
 
             var col = new ColumnInfo(CatalogueRepository, "`db`.`tbl`.`col`","varchar(10)",t);
@@ -36,7 +37,7 @@ FROM
         public void TestQueryBuilder_MySql_Top35()
         {
             var t = new TableInfo(CatalogueRepository, "`db`.`tbl`");
-            t.DatabaseType = DatabaseType.MYSQLServer;
+            t.DatabaseType = DatabaseType.MySql;
             t.SaveToDatabase();
 
             var col = new ColumnInfo(CatalogueRepository, "`db`.`tbl`.`col`", "varchar(10)", t);

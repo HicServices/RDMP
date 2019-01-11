@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
+using FAnsi.Implementation;
 using ReusableLibraryCode.Exceptions;
 
 namespace ReusableLibraryCode.DataAccess
@@ -53,8 +53,8 @@ namespace ReusableLibraryCode.DataAccess
         private DbConnectionStringBuilder GetConnectionStringBuilder(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase=true)
         {
             IDataAccessCredentials credentials = dataAccessPoint.GetCredentialsIfExists(context);
-
-            return new DatabaseHelperFactory(dataAccessPoint.DatabaseType).CreateInstance().GetConnectionStringBuilder(
+            
+            return DatabaseCommandHelper.For(dataAccessPoint.DatabaseType).GetConnectionStringBuilder(
                 dataAccessPoint.Server,
                 setInitialDatabase ? dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database) : "",
                 credentials != null?credentials.Username:null,

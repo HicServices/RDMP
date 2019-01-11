@@ -7,8 +7,8 @@ using CatalogueLibrary.Data.DataLoad.Extensions;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using CatalogueManager.Copying.Commands;
+using FAnsi.Discovery;
 using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {

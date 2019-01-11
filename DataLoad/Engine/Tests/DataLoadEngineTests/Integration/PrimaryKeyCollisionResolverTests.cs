@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Data.SqlClient;
-using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using LoadModules.Generic.Mutilators;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration

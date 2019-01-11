@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using FAnsi;
+using FAnsi.Discovery.ConnectionStringDefaults;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
+
 
 namespace CatalogueLibrary.Data
 {

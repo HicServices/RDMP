@@ -9,11 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using FAnsi;
+using FAnsi.Discovery.QuerySyntax;
+using Fansi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.DataAccess

@@ -7,7 +7,6 @@ using CatalogueLibrary;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.Job;
-using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadExecution.Components.Standard;
 using DataLoadEngine.LoadProcess;
 using HIC.Logging;

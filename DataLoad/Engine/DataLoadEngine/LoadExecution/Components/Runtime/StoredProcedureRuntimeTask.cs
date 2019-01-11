@@ -12,7 +12,6 @@ using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.LoadExecution.Components.Runtime

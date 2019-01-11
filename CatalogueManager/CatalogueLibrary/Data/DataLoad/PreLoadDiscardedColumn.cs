@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
+using Fansi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibrary.Data.DataLoad
 {

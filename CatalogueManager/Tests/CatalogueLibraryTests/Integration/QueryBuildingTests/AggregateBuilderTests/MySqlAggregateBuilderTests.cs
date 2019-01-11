@@ -1,4 +1,5 @@
 ﻿using CatalogueLibrary.Data;
+using FAnsi;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using Tests.Common;
@@ -10,7 +11,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         [Test]
         public void Test_AggregateBuilder_MySql_Top32()
         {
-            _ti.DatabaseType = DatabaseType.MYSQLServer;
+            _ti.DatabaseType = DatabaseType.MySql;
             _ti.SaveToDatabase();
 
             var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null);
@@ -41,7 +42,7 @@ LIMIT 32"),CollapseWhitespace(builder.SQL.Trim()));
         [Test]
         public void Test_AggregateBuilder_MySql_Top31OrderByCountAsc()
         {
-            _ti.DatabaseType = DatabaseType.MYSQLServer;
+            _ti.DatabaseType = DatabaseType.MySql;
             _ti.SaveToDatabase();
 
             var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null);

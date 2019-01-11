@@ -3,13 +3,13 @@ using System.Data;
 using System.Data.SqlClient;
 using CatalogueLibrary.Data;
 using CohortManagerLibrary.QueryBuilding;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using QueryCaching.Database;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CohortManagerTests.QueryTests

@@ -14,7 +14,7 @@ using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.CohortCreationPipeline.UseCases;
 using DataExportLibrary.Data.DataTables;
 using CatalogueManager.PipelineUIs.Pipelines;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 

@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using Diagnostics.TestData;
 using NUnit.Framework;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace ReusableCodeTests

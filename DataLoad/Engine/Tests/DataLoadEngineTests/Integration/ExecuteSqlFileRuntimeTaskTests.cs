@@ -4,15 +4,14 @@ using System.IO;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
+using FAnsi;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using Rhino.Mocks;
@@ -22,7 +21,7 @@ namespace DataLoadEngineTests.Integration
 {
     class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
     {
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void ExecuteSqlFileRuntimeTask_BasicScript(DatabaseType dbType)
         {
@@ -56,7 +55,7 @@ namespace DataLoadEngineTests.Integration
             tbl.Drop();
         }
 
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void ExecuteSqlFileRuntimeTask_InvalidID(DatabaseType dbType)
         {
@@ -97,7 +96,7 @@ namespace DataLoadEngineTests.Integration
             StringAssert.Contains("Bob.sql",ex.Message);
         }
 
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void ExecuteSqlFileRuntimeTask_ValidID_CustomNamer(DatabaseType dbType)
         {

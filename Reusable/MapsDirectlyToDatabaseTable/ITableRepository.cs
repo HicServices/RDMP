@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Security.Permissions;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Connections;
+using FAnsi.Discovery;
 
 namespace MapsDirectlyToDatabaseTable
 {

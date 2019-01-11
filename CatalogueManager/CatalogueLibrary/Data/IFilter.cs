@@ -1,4 +1,5 @@
 ﻿using CatalogueLibrary.FilterImporting.Construction;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;

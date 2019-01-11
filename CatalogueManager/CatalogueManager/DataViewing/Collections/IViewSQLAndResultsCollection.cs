@@ -2,6 +2,7 @@
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.DataAccess;
 

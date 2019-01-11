@@ -9,6 +9,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngine.Job;
+using FAnsi.Discovery;
 using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
 using RDMPAutomationService.Options;
@@ -16,7 +17,6 @@ using RDMPAutomationService.Runners;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

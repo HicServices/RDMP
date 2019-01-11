@@ -12,6 +12,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;

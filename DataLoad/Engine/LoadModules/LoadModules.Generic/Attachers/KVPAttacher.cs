@@ -18,7 +18,6 @@ using DataLoadEngine.Job;
 using Renci.SshNet.Security;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers

@@ -11,9 +11,9 @@ using CatalogueLibrary.Triggers.Implementations;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration;
+using FAnsi;
 using HIC.Logging;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
@@ -22,7 +22,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
     public class CrossDatabaseMergeCommandTest:DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestMerge(DatabaseType databaseType)
         {
             var dbFrom = GetCleanedServer(databaseType, "CrossDatabaseMergeCommandFrom");

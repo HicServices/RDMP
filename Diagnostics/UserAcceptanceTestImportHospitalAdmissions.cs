@@ -9,11 +9,12 @@ using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using Diagnostics.TestData;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
 namespace Diagnostics
 {

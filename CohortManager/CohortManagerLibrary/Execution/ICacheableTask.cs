@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data.Aggregation;
+using FAnsi.Discovery;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {

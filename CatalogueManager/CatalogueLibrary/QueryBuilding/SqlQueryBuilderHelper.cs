@@ -9,12 +9,9 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
-
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {
@@ -534,8 +531,7 @@ namespace CatalogueLibrary.QueryBuilding
                 throw new QueryBuildingException("Cannot build query because there are multiple DatabaseTypes involved in the query:" + string.Join(",",
                     tablesUsedInQuery.Select(t=>t.GetRuntimeName() + "(" + t.DatabaseType + ")")));
 
-            var helper = new DatabaseHelperFactory(databaseTypes.Single()).CreateInstance();
-            return helper.GetQuerySyntaxHelper();
+            return DatabaseCommandHelper.For(databaseTypes.Single()).GetQuerySyntaxHelper();
         }
 
         /// <summary>

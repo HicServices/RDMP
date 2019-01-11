@@ -10,9 +10,9 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Xceed.Words.NET;
 

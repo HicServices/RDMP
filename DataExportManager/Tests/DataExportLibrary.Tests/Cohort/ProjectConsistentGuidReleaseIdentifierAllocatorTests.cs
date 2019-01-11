@@ -8,11 +8,11 @@ using DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation
 using DataExportLibrary.CohortDatabaseWizard;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Interfaces.Pipeline;
+using FAnsi;
+using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using Rhino.Mocks;
 using Tests.Common;
 
@@ -21,7 +21,7 @@ namespace DataExportLibrary.Tests.Cohort
     class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestPreserveHistoricalReleaseIdentifiers(DatabaseType databaseType)
         {
             var db = GetCleanedServer(databaseType);

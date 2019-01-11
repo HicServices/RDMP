@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine;
 using DataLoadEngine.DatabaseManagement.EntityNaming;

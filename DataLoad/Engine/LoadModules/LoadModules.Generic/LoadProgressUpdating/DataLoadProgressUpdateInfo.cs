@@ -6,10 +6,10 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine;
 using DataLoadEngine.Job.Scheduling;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.LoadProgressUpdating

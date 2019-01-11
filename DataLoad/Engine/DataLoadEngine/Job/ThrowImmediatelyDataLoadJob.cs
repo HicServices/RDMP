@@ -6,8 +6,8 @@ using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DatabaseManagement.Operations;
+using FAnsi.Discovery;
 using HIC.Logging;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Job

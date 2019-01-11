@@ -299,7 +299,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             this.serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = false;
             this.serverDatabaseTableSelector1.AutoSize = true;
             this.serverDatabaseTableSelector1.Database = "";
-            this.serverDatabaseTableSelector1.DatabaseType = ReusableLibraryCode.DatabaseType.MicrosoftSQLServer;
+            this.serverDatabaseTableSelector1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
             this.serverDatabaseTableSelector1.Location = new System.Drawing.Point(6, 19);
             this.serverDatabaseTableSelector1.Name = "serverDatabaseTableSelector1";
             this.serverDatabaseTableSelector1.Password = "";

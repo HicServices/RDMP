@@ -1,8 +1,8 @@
 using CatalogueLibrary;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Attachers

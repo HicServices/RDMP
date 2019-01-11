@@ -2,8 +2,8 @@
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
+using FAnsi.Discovery;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Rhino.Mocks;
 
 namespace CatalogueLibraryTests.Mocks

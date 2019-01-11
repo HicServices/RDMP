@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
@@ -14,22 +10,22 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
     public class CrossDatabaseInsertTests : DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer,"Dave")]
-        [TestCase(DatabaseType.MYSQLServer,"Dave")]
+        [TestCase(DatabaseType.MySql,"Dave")]
         [TestCase(DatabaseType.Oracle, "Dave")]
         
         [TestCase(DatabaseType.MicrosoftSQLServer, @"].;\""ffff 
 [")]
 
-        [TestCase(DatabaseType.MYSQLServer, @"].;\""ffff 
+        [TestCase(DatabaseType.MySql, @"].;\""ffff 
 [")]
 
         [TestCase(DatabaseType.Oracle, @"].;\""ffff 
 [")]
 
-        [TestCase(DatabaseType.MYSQLServer, "Dave")]
+        [TestCase(DatabaseType.MySql, "Dave")]
         [TestCase(DatabaseType.Oracle, "Dave")]
         [TestCase(DatabaseType.MicrosoftSQLServer, 1.5)]
-        [TestCase(DatabaseType.MYSQLServer, 1.5)]
+        [TestCase(DatabaseType.MySql, 1.5)]
         [TestCase(DatabaseType.Oracle, 1.5)]
         public void CreateTableAndInsertAValue_ColumnOverload(DatabaseType type, object value)
         {
@@ -55,7 +51,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer, 1.5)]
-        [TestCase(DatabaseType.MYSQLServer, 1.5)]
+        [TestCase(DatabaseType.MySql, 1.5)]
         [TestCase(DatabaseType.Oracle, 1.5)]
         public void CreateTableAndInsertAValue_StringOverload(DatabaseType type, object value)
         {
@@ -79,7 +75,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.Oracle)]
         public void CreateTableAndInsertAValue_ReturnsIdentity(DatabaseType type)
         {

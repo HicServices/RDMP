@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
@@ -9,11 +7,11 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using FAnsi;
+using FAnsi.Discovery;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

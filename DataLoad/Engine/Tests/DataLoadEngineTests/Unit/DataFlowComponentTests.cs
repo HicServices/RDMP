@@ -3,7 +3,6 @@ using System.Data;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
-using DataLoadEngineTests.Integration;
 using LoadModules.Generic.DataFlowOperations;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;

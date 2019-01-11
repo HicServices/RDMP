@@ -4,8 +4,8 @@ using System.Data.SqlClient;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration.QueryBuilding;
+using FAnsi.Connections;
 using HIC.Logging;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Migration
 {

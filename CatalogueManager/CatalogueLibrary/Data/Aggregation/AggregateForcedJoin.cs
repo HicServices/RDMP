@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers;
 
 namespace CatalogueLibrary.Data.Aggregation
 {

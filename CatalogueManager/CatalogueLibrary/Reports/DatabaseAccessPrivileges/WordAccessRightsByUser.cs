@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 using Xceed.Words.NET;
 
 namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges

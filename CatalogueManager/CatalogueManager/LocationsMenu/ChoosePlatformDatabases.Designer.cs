@@ -83,7 +83,7 @@ namespace CatalogueManager.LocationsMenu
             // 
             this.tbCatalogueConnectionString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbCatalogueConnectionString.DatabaseType = ReusableLibraryCode.DatabaseType.MicrosoftSQLServer;
+            this.tbCatalogueConnectionString.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
             this.tbCatalogueConnectionString.ForeColor = System.Drawing.Color.Black;
             this.tbCatalogueConnectionString.Location = new System.Drawing.Point(72, 7);
             this.tbCatalogueConnectionString.Name = "tbCatalogueConnectionString";
@@ -156,7 +156,7 @@ namespace CatalogueManager.LocationsMenu
             // 
             this.tbDataExportManagerConnectionString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDataExportManagerConnectionString.DatabaseType = ReusableLibraryCode.DatabaseType.MicrosoftSQLServer;
+            this.tbDataExportManagerConnectionString.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
             this.tbDataExportManagerConnectionString.ForeColor = System.Drawing.Color.Black;
             this.tbDataExportManagerConnectionString.Location = new System.Drawing.Point(72, 3);
             this.tbDataExportManagerConnectionString.Name = "tbDataExportManagerConnectionString";

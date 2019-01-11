@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using CommandLine;
+using FAnsi.Discovery;
+using Fansi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace DatabaseCreation
 {

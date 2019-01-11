@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
+using FAnsi;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
@@ -10,7 +10,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
     {
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestMd5String(DatabaseType type)
         {
             DataTable dt = new DataTable();
@@ -42,7 +42,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestMd5Date(DatabaseType type)
         {
             DataTable dt = new DataTable();

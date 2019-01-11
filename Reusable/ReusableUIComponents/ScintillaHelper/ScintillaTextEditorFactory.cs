@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableUIComponents.CommandExecution;
 using ScintillaNET;
 

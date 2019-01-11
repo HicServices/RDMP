@@ -7,11 +7,12 @@ using System.Text.RegularExpressions;
 using System.Xml.XPath;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using FAnsi.Discovery;
+using FAnsi.Naming;
 using QueryCaching.Aggregation.Arguments;
 using QueryCaching.Database;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace QueryCaching.Aggregation
 {

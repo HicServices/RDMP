@@ -6,9 +6,10 @@ using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
+using FAnsi;
+using Fansi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibrary.DataHelper
 {
@@ -150,7 +151,7 @@ namespace CatalogueLibrary.DataHelper
                 string stripped = s.Trim(new char[] { '[', ']' });
                 return '[' + stripped + ']';
             }
-            else if (type == DatabaseType.MYSQLServer)
+            else if (type == DatabaseType.MySql)
             {
 
                 string stripped = s.Trim(new char[] { '[', ']' }).Trim('`');

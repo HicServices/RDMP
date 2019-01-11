@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ScintillaNET;
+using FAnsi.Discovery.QuerySyntax;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 {

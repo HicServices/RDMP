@@ -1,6 +1,7 @@
 using System;
+using FAnsi;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Triggers.Implementations
 {
@@ -22,7 +23,7 @@ namespace CatalogueLibrary.Triggers.Implementations
             {
                 case DatabaseType.MicrosoftSQLServer:
                     return new MicrosoftSQLTriggerImplementer(table, createDataLoadRunIDAlso);
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     return new MySqlTriggerImplementer(table, createDataLoadRunIDAlso);
                 case DatabaseType.Oracle:
                     return new MySqlTriggerImplementer(table, createDataLoadRunIDAlso);

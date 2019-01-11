@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FAnsi;
 using ReusableLibraryCode;
 
 namespace Tests.Common
@@ -29,7 +30,7 @@ namespace Tests.Common
             {
                 case DatabaseType.MicrosoftSQLServer:
                     return SqlServerLowPrivilegeUsername;
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     return MySqlLowPrivilegeUsername;
                 case DatabaseType.Oracle:
                     return OracleLowPrivilegeUsername;
@@ -44,7 +45,7 @@ namespace Tests.Common
             {
                 case DatabaseType.MicrosoftSQLServer:
                     return SqlServerLowPrivilegePassword;
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     return MySqlLowPrivilegePassword;
                 case DatabaseType.Oracle:
                     return OracleLowPrivilegePassword;

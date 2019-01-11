@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ScintillaNET;
+﻿using CatalogueManager.ItemActivation;
+using FAnsi.Discovery.QuerySyntax;
 
 namespace CatalogueManager.AutoComplete
 {

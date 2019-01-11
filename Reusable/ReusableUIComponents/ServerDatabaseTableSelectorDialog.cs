@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
+using FAnsi;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace ReusableUIComponents
 {

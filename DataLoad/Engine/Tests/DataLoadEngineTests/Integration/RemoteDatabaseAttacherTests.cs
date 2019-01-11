@@ -6,11 +6,10 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
+using FAnsi;
 using HIC.Logging;
 using LoadModules.Generic.Attachers;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 using Tests.Common;
@@ -20,7 +19,7 @@ namespace DataLoadEngineTests.Integration
     public class RemoteDatabaseAttacherTests:DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns)]
-        [TestCase(DatabaseType.MYSQLServer, Scenario.AllRawColumns)]
+        [TestCase(DatabaseType.MySql, Scenario.AllRawColumns)]
         [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns)]
         [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn)]
         [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar)]
