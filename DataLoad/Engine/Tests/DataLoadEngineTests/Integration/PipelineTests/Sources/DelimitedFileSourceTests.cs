@@ -187,6 +187,100 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DelimitedFlatFileDataFlowSource_LoadDataWithQuotesInMiddle_IgnoreQuotes(bool ignoreQuotes)
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
+            sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
+            sb.AppendLine("0101010101,Dave,Dave is \"over\" 1000 years old,2001-01-05");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+            source.IgnoreQuotes = ignoreQuotes;
+            source.MaxBatchSize = 10000;
+
+            source.StronglyTypeInput = true; //makes the source interpret the file types properly
+            source.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
+            try
+            {
+                if(!ignoreQuotes)
+                    Assert.Throws<ParserException>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                else
+                {
+                    var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                    Assert.AreEqual(2,chunk.Rows.Count);
+                    Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
+                }
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }
+        }
+
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DelimitedFlatFileDataFlowSource_LoadDataWithQuotesInMiddle_WithMultiLineRecords(bool ignoreQuotes)
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
+            sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
+            sb.AppendLine("0101010101,Dave,Dave is \"over\" 1000 years old,2001-01-05");
+            sb.AppendLine(@"0101010101,Dave,""Dave is
+""over"" 1000 years 
+
+old"",2001-01-05");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+            source.IgnoreQuotes = ignoreQuotes;
+            source.MaxBatchSize = 10000;
+            source.AttemptToResolveNewLinesInRecords = true;
+
+            source.StronglyTypeInput = true; //makes the source interpret the file types properly
+            source.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
+            try
+            {
+                if (!ignoreQuotes)
+                    Assert.Throws<ParserException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                else
+                {
+                    var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                    Assert.AreEqual(3, chunk.Rows.Count);
+                    Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
+                    Assert.AreEqual(@"""Dave is
+""over"" 1000 years 
+
+old""", chunk.Rows[2][2]);
+
+                }
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }
+        }
+
+
         [TestCase(BadDataHandlingStrategy.DivertRows)]
         [TestCase(BadDataHandlingStrategy.IgnoreRows)]
         [TestCase(BadDataHandlingStrategy.ThrowException)]
