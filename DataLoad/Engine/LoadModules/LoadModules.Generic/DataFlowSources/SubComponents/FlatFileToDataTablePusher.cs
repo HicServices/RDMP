@@ -215,7 +215,10 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
 
                 //add the peeked line to the current cells
                 //add the first record as an extension of the last cell in current row
-                newCells[newCells.Count - 1] += Environment.NewLine + peekedLine.Cells[0];
+                if (peekedLine.Cells.Length != 0)
+                    newCells[newCells.Count - 1] += Environment.NewLine + peekedLine.Cells[0];
+                else
+                    newCells[newCells.Count - 1] += Environment.NewLine; //the next line was completely blank! just add a new line
 
                 //add any further cells on after that
                 newCells.AddRange(peekedLine.Cells.Skip(1));
