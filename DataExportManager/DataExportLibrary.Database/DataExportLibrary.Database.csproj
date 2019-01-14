@@ -148,6 +148,7 @@
     <EmbeddedResource Include="db\up\016_CustomDataRefactoring.sql" />
     <EmbeddedResource Include="db\up\017_NewSupplementalExtractionresults.sql" />
     <EmbeddedResource Include="db\up\018_ObjectReferenceSupportDataExport.sql" />
+    <EmbeddedResource Include="db\up\019_FAnsiSupport.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>
