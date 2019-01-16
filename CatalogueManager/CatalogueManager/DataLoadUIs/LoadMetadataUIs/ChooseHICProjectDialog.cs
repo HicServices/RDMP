@@ -1,15 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
@@ -32,6 +25,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
         /// The users final choice of project directory, also check DialogResult for Ok / Cancel
         /// </summary>
         public HICProjectDirectory Result { get; private set; }
+
+        Regex _endsWithDataFolder = new Regex(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
 
         public ChooseHICProjectDialog()
         {
@@ -127,6 +122,16 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
                 tbUseExisting.Text = fbd.SelectedPath;
                 CheckExistingProjectDirectory();
             }
+        }
+
+        private void tbUseExisting_TextChanged(object sender, EventArgs e)
+        {
+            lblDataIsReservedWordExisting.Visible = _endsWithDataFolder.IsMatch(tbUseExisting.Text);
+        }
+
+        private void tbCreateNew_TextChanged(object sender, EventArgs e)
+        {
+            lblDataIsReservedWordNew.Visible = _endsWithDataFolder.IsMatch(tbCreateNew.Text);
         }
     }
 }
