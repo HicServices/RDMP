@@ -187,9 +187,8 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void DelimitedFlatFileDataFlowSource_LoadDataWithQuotesInMiddle_IgnoreQuotes(bool ignoreQuotes)
+        [Test]
+        public void DelimitedFlatFileDataFlowSource_ProperQuoteEscaping()
         {
             if (File.Exists(filename))
                 File.Delete(filename);
@@ -197,7 +196,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
             sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
-            sb.AppendLine("0101010101,Dave,Dave is \"over\" 1000 years old,2001-01-05");
+            sb.AppendLine("0101010101,Dave,\"Dave is \"\"over\"\" 1000 years old\",2001-01-05"); //https://tools.ietf.org/html/rfc4180 (to properly include quotes in escaped text you need to use "")
 
             File.WriteAllText(filename, sb.ToString());
 
@@ -206,21 +205,110 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
-            source.IgnoreQuotes = ignoreQuotes;
             source.MaxBatchSize = 10000;
 
             source.StronglyTypeInput = true; //makes the source interpret the file types properly
             source.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
+            source.IgnoreQuotes = false;
+            source.IgnoreBadReads = false;
+
             try
             {
-                if(!ignoreQuotes)
-                    Assert.Throws<ParserException>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
-                else
-                {
-                    var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-                    Assert.AreEqual(2,chunk.Rows.Count);
-                    Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
-                }
+                var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                Assert.AreEqual(2, chunk.Rows.Count);
+                Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }
+        }
+
+        /// <summary>
+        /// Test checks that IgnoreBadReads lets you load quotes in the middle of free text without having to set IgnoreQuotes to true:
+        /// 1. There is a row (2) with quotes in the middle which should get loaded correctly
+        /// 2. Theres a row (4) with quotes in the middle of the text and the cell itself is quoted.  This loads but drops some quotes.
+        /// 
+        /// The proper way to express row 4 is by escaping the quote with another quote i.e. "" (See test DelimitedFlatFileDataFlowSource_ProperQuoteEscaping) 
+        /// </summary>
+        [Test]
+        public void DelimitedFlatFileDataFlowSource_LoadDataWithQuotesInMiddle_IgnoreBadReads()
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
+            sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
+            sb.AppendLine("0101010101,Dave,Dave is \"over\" 1000 years old,2001-01-05");
+            sb.AppendLine("0101010101,Dave,\"Dave is \r\nover 1000 years old\",2001-01-05");
+            sb.AppendLine("0101010101,Dave,\"Dave is \"over\" 1000 years old\",2001-01-05");
+            sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+            source.IgnoreQuotes = false;
+            source.MaxBatchSize = 10000;
+
+            source.StronglyTypeInput = true; //makes the source interpret the file types properly
+            source.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
+            source.IgnoreBadReads = true;
+
+            try
+            {
+                var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                Assert.AreEqual(5,chunk.Rows.Count);
+                Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
+                Assert.AreEqual("Dave is \r\nover 1000 years old", chunk.Rows[2][2]);
+                Assert.AreEqual("Dave is over\" 1000 years old\"", chunk.Rows[3][2]); //notice this line drops some of the quotes, we just have to live with that
+            }
+            finally
+            {
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }
+        }
+
+
+        /// <summary>
+        /// Test checks that IgnoreBadReads doesn't cause serious errors (too many cells in row) to be ignored/swallowed
+        /// </summary>
+        [Test]
+        public void DelimitedFlatFileDataFlowSource_TrashFile_IgnoreBadReads()
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
+            sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
+            sb.AppendLine("0101010101,Dave,Da,,ve is \"over\" 1000 years old,2001-01-05");
+            sb.AppendLine("0101010101\"Dave is \"over\" 1000 years old\",2001-01-05");
+            sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+            source.IgnoreQuotes = false;
+            source.MaxBatchSize = 10000;
+
+            source.StronglyTypeInput = true; //makes the source interpret the file types properly
+            source.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
+            source.IgnoreBadReads = true;
+
+            try
+            {
+                var ex = Assert.Throws<FlatFileLoadException>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                Assert.AreEqual("Bad data found on line 3", ex.Message);
+
             }
             finally
             {

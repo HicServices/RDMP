@@ -49,6 +49,13 @@ namespace LoadModules.Generic.Attachers
             set { _source.BadDataHandlingStrategy = value; }
         }
 
+        [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreBadReads_DemandDescription)]
+        public bool IgnoreBadReads
+        {
+            get { return _source.IgnoreBadReads; }
+            set { _source.IgnoreBadReads = value; }
+        }
+        
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription,DefaultValue = true)]
         public bool ThrowOnEmptyFiles
         {
