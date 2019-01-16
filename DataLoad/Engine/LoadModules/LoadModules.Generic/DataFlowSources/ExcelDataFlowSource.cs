@@ -33,15 +33,19 @@ namespace LoadModules.Generic.DataFlowSources
     /// </summary>
     public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<FlatFileToLoad>
     {
-
         public const string WorkSheetName_DemandDescription =
             "Name of the worksheet to load data from (single sheet name only).  If this is empty then the first sheet in the spreadsheet will be loaded instead";
+
+        public const string AddFilenameColumnNamed_DemandDescription = "Optional - Set to the name of a column in your RAW database (e.g. Filename).  If set this named column will be populated with the path to the file being read (e.g. c:\\myproj\\Data\\ForLoading\\MyFile.csv)";
 
         [DemandsInitialization(WorkSheetName_DemandDescription)]
         public string WorkSheetName { get; set; }
         
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
         public bool MakeHeaderNamesSane { get; set; }
+
+        [DemandsInitialization(AddFilenameColumnNamed_DemandDescription)]
+        public string AddFilenameColumnNamed { get; set; }
 
         private FlatFileToLoad _fileToLoad;
         private int successfullyRead = 0;
@@ -299,6 +303,14 @@ namespace LoadModules.Generic.DataFlowSources
             }
             
             s.Stop();
+
+            //if the user wants a column in the DataTable storing the filename loaded add it
+            if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
+            {
+                toReturn.Columns.Add(AddFilenameColumnNamed);
+                foreach (DataRow dataRow in toReturn.Rows)
+                    dataRow[AddFilenameColumnNamed] = _fileToLoad.File.FullName;
+            }
 
             
             return toReturn;

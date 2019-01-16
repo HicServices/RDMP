@@ -1,10 +1,12 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.IO;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataLoadEngine.Job;
 using LoadModules.Generic.DataFlowSources;
+using LoadModules.Generic.Exceptions;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
@@ -76,6 +78,9 @@ namespace LoadModules.Generic.Attachers
             get { return _source.MaximumErrorsToReport; }
             set { _source.MaximumErrorsToReport = value; }
         }
+
+        [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
+        public string AddFilenameColumnNamed { get; set; }
         
         private GracefulCancellationToken cancellationToken = new GracefulCancellationToken();
 
@@ -94,6 +99,7 @@ namespace LoadModules.Generic.Attachers
         }
 
         private IDataLoadEventListener _listener;
+        private FileInfo _currentFile;
 
         protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize)
         {
@@ -101,6 +107,17 @@ namespace LoadModules.Generic.Attachers
             _source.SetDataTable(dt);
             _source.GetChunk(_listener, cancellationToken);
 
+            //if we are adding a column to the data read which contains the file path
+            if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
+            {
+                if(!dt.Columns.Contains(AddFilenameColumnNamed))
+                    throw new FlatFileLoadException("AddFilenameColumnNamed is set to '" + AddFilenameColumnNamed + "' but the column did not exist in RAW");
+
+                foreach (DataRow row in dt.Rows)
+                    if (row[AddFilenameColumnNamed] == DBNull.Value)
+                        row[AddFilenameColumnNamed] = _currentFile.FullName;
+                
+            }
             return dt.Rows.Count;
         }
 
@@ -110,6 +127,7 @@ namespace LoadModules.Generic.Attachers
             _source.StronglyTypeInputBatchSize = 0;
             _listener = listener;
             _source.PreInitialize(new FlatFileToLoad(fileToLoad), listener);
+            _currentFile = fileToLoad;
         }
 
         protected override void ConfirmFlatFileHeadersAgainstDataTable(DataTable loadTarget, IDataLoadJob job)
