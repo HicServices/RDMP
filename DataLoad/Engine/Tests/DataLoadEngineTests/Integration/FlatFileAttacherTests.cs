@@ -14,6 +14,7 @@ using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -180,6 +181,65 @@ namespace DataLoadEngineTests.Integration
 
 
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TabTestWithOverrideHeaders_IncludePath(bool columnExistsInRaw)
+        {
+            string filename = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob.csv");
+            var sw = new StreamWriter(filename);
+
+            sw.WriteLine("Face\tBasher");
+            sw.WriteLine("Candy\tCrusher");
+
+            sw.Flush();
+            sw.Close();
+            sw.Dispose();
+
+            if (columnExistsInRaw)
+                _table.AddColumn("FilePath",new DatabaseTypeRequest(typeof(string),500),true,30);
+
+            var attacher = new AnySeparatorFileAttacher();
+            attacher.Initialize(hicProjectDirectory, _database);
+            attacher.Separator = "\\t";
+            attacher.FilePattern = "bob*";
+            attacher.TableName = "Bob";
+            attacher.ForceHeaders = "name\tname2";
+            attacher.AddFilenameColumnNamed = "FilePath";
+
+            if (!columnExistsInRaw)
+            {
+                var ex = Assert.Throws<FlatFileLoadException>(()=>attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
+                Assert.AreEqual("AddFilenameColumnNamed is set to 'FilePath' but the column did not exist in RAW",ex.InnerException.Message);
+                return;
+            }
+
+
+            var exitCode = attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
+            Assert.AreEqual(ExitCodeType.Success, exitCode);
+
+            using (var con = _database.Server.GetConnection())
+            {
+
+                con.Open();
+                var r = _database.Server.GetCommand("Select name,name2,FilePath from Bob", con).ExecuteReader();
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Face", r["name"]);
+                Assert.AreEqual("Basher", r["name2"]);
+                Assert.AreEqual(filename, r["FilePath"]);
+
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Candy", r["name"]);
+                Assert.AreEqual("Crusher", r["name2"]);
+            }
+
+            attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+
+            File.Delete(filename);
+
+
+        }
+
 
         [TestCase(true)]
         [TestCase(false)]

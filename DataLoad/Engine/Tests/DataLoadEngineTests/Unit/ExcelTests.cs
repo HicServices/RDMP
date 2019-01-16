@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using CatalogueLibrary;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Reports;
 using DataLoadEngine.Job;
-using DataLoadEngineTests.Integration;
-using LoadModules.Generic.Attachers;
 using LoadModules.Generic.DataFlowSources;
 using LoadModules.Generic.DataProvider.FlatFileManipulation;
 using LoadModules.Generic.Exceptions;
@@ -91,6 +86,39 @@ namespace DataLoadEngineTests.Unit
             Assert.AreEqual("3", dt.Rows[0][1]);
             Assert.AreEqual("yes", dt.Rows[0][2]);
         }
+
+
+        [Test]
+        [TestCase(TestFile)]
+        [TestCase(FreakyTestFile)]
+        public void NormalBook_FirstRowCorrect_AddFilenameColumnNamed(string versionOfTestFile)
+        {
+            if (!officeInstalled)
+                Assert.Inconclusive();
+
+            ExcelDataFlowSource source = new ExcelDataFlowSource();
+            source.AddFilenameColumnNamed = "Path";
+
+            source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ThrowImmediatelyDataLoadEventListener());
+            DataTable dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+            Assert.AreEqual(7, dt.Columns.Count);
+            Assert.AreEqual("Participant", dt.Columns[0].ColumnName);
+            Assert.AreEqual("Score", dt.Columns[1].ColumnName);
+            Assert.AreEqual("IsEvil", dt.Columns[2].ColumnName);
+
+            Assert.AreEqual("DateField", dt.Columns[3].ColumnName);
+            Assert.AreEqual("DoubleField", dt.Columns[4].ColumnName);
+            Assert.AreEqual("MixedField", dt.Columns[5].ColumnName);
+            Assert.AreEqual("Path", dt.Columns[6].ColumnName);
+
+            Assert.AreEqual("Bob", dt.Rows[0][0]);
+            Assert.AreEqual("3", dt.Rows[0][1]);
+            Assert.AreEqual("yes", dt.Rows[0][2]);
+
+            Assert.AreEqual(_fileLocations[versionOfTestFile], dt.Rows[0][6]);
+        }
+
 
         [Test]
         [TestCase(TestFile)]
