@@ -39,6 +39,8 @@
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.btnBrowseForExisting = new System.Windows.Forms.Button();
             this.btnCreateNewBrowse = new System.Windows.Forms.Button();
+            this.lblDataIsReservedWordExisting = new System.Windows.Forms.Label();
+            this.lblDataIsReservedWordNew = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // rbCreateNew
@@ -73,6 +75,7 @@
             this.tbCreateNew.Name = "tbCreateNew";
             this.tbCreateNew.Size = new System.Drawing.Size(630, 20);
             this.tbCreateNew.TabIndex = 1;
+            this.tbCreateNew.TextChanged += new System.EventHandler(this.tbCreateNew_TextChanged);
             // 
             // label1
             // 
@@ -91,6 +94,7 @@
             this.tbUseExisting.Name = "tbUseExisting";
             this.tbUseExisting.Size = new System.Drawing.Size(630, 20);
             this.tbUseExisting.TabIndex = 1;
+            this.tbUseExisting.TextChanged += new System.EventHandler(this.tbUseExisting_TextChanged);
             this.tbUseExisting.Leave += new System.EventHandler(this.tbUseExisting_Leave);
             // 
             // label2
@@ -154,11 +158,35 @@
             this.btnCreateNewBrowse.UseVisualStyleBackColor = true;
             this.btnCreateNewBrowse.Click += new System.EventHandler(this.btnCreateNewBrowse_Click);
             // 
+            // lblDataIsReservedWordExisting
+            // 
+            this.lblDataIsReservedWordExisting.AutoSize = true;
+            this.lblDataIsReservedWordExisting.ForeColor = System.Drawing.Color.Red;
+            this.lblDataIsReservedWordExisting.Location = new System.Drawing.Point(72, 124);
+            this.lblDataIsReservedWordExisting.Name = "lblDataIsReservedWordExisting";
+            this.lblDataIsReservedWordExisting.Size = new System.Drawing.Size(206, 13);
+            this.lblDataIsReservedWordExisting.TabIndex = 6;
+            this.lblDataIsReservedWordExisting.Text = "Project directories cannot end with \"Data\"";
+            this.lblDataIsReservedWordExisting.Visible = false;
+            // 
+            // lblDataIsReservedWordNew
+            // 
+            this.lblDataIsReservedWordNew.AutoSize = true;
+            this.lblDataIsReservedWordNew.ForeColor = System.Drawing.Color.Red;
+            this.lblDataIsReservedWordNew.Location = new System.Drawing.Point(72, 58);
+            this.lblDataIsReservedWordNew.Name = "lblDataIsReservedWordNew";
+            this.lblDataIsReservedWordNew.Size = new System.Drawing.Size(206, 13);
+            this.lblDataIsReservedWordNew.TabIndex = 6;
+            this.lblDataIsReservedWordNew.Text = "Project directories cannot end with \"Data\"";
+            this.lblDataIsReservedWordNew.Visible = false;
+            // 
             // ChooseHICProjectDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(831, 174);
+            this.Controls.Add(this.lblDataIsReservedWordNew);
+            this.Controls.Add(this.lblDataIsReservedWordExisting);
             this.Controls.Add(this.btnCreateNewBrowse);
             this.Controls.Add(this.btnBrowseForExisting);
             this.Controls.Add(this.ragSmiley1);
@@ -171,7 +199,7 @@
             this.Controls.Add(this.rbUseExisting);
             this.Controls.Add(this.rbCreateNew);
             this.Name = "ChooseHICProjectDialog";
-            this.Text = "ChangeHICProjectDirectoryUI";
+            this.Text = "ChooseHICProjectDialog";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -190,6 +218,8 @@
         private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnBrowseForExisting;
         private System.Windows.Forms.Button btnCreateNewBrowse;
+        private System.Windows.Forms.Label lblDataIsReservedWordExisting;
+        private System.Windows.Forms.Label lblDataIsReservedWordNew;
 
     }
 }
