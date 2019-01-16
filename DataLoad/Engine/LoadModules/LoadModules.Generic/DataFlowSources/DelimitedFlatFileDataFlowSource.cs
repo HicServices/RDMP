@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -9,11 +8,9 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using CsvHelper.Configuration;
 using LoadModules.Generic.DataFlowSources.SubComponents;
-using LoadModules.Generic.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
-using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataFlowSources
@@ -44,6 +41,10 @@ namespace LoadModules.Generic.DataFlowSources
 ThrowException - Stop the loading process with an error
 IgnoreRows - Step over the line in the file and carry on loading
 DivertRows - As IgnoreRows but write all unloadable lines to X_Errors.txt where X is the file name being loaded";
+
+        public const string IgnoreBadReads_DemandDescription =
+@"True - Ignore read warnings from CSVHelper (e.g. when a quote appears in the middle of a cell)
+False - Treat read warnings from CSVHelper according to the BadDataHandlingStrategy";
 
         public const string ThrowOnEmptyFiles_DemandDescription = @"Determines system behaviour when a file is empty or has only a header row";
 
@@ -92,6 +93,9 @@ False - Treat the line as bad data (See BadDataHandlingStrategy)";
         [DemandsInitialization(BadDataHandlingStrategy_DemandDescription, DefaultValue=BadDataHandlingStrategy.ThrowException)]
         public BadDataHandlingStrategy BadDataHandlingStrategy { get; set; }
 
+        [DemandsInitialization(IgnoreBadReads_DemandDescription, DefaultValue = true)]
+        public bool IgnoreBadReads { get; set; }
+
         [DemandsInitialization(ThrowOnEmptyFiles_DemandDescription, DefaultValue = true)]
         public bool ThrowOnEmptyFiles { get; set; }
 
@@ -135,7 +139,7 @@ False - Treat the line as bad data (See BadDataHandlingStrategy)";
         {
             Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders, ForceHeadersReplacesFirstLineInFile);
             DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewLinesInRecords);
-            EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener, MaximumErrorsToReport <= 0 ? int.MaxValue:MaximumErrorsToReport);
+            EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener, MaximumErrorsToReport <= 0 ? int.MaxValue:MaximumErrorsToReport,IgnoreBadReads);
         }
 
 

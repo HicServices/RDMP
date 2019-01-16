@@ -21,13 +21,14 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         private readonly BadDataHandlingStrategy _strategy;
         private readonly IDataLoadEventListener _listener;
         private int _maximumErrorsToReport;
+        private readonly bool _ignoreBadDataEvents;
 
         /// <summary>
         /// File where we put error rows
         /// </summary>
         public FileInfo DivertErrorsFile;
 
-        public FlatFileEventHandlers(FlatFileToLoad fileToLoad, FlatFileToDataTablePusher dataPusher, bool throwOnEmptyFiles, BadDataHandlingStrategy strategy, IDataLoadEventListener listener, int maximumErrorsToReport)
+        public FlatFileEventHandlers(FlatFileToLoad fileToLoad, FlatFileToDataTablePusher dataPusher, bool throwOnEmptyFiles, BadDataHandlingStrategy strategy, IDataLoadEventListener listener, int maximumErrorsToReport, bool ignoreBadDataEvents)
         {
             _fileToLoad = fileToLoad;
             _dataPusher = dataPusher;
@@ -35,6 +36,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             _strategy = strategy;
             _listener = listener;
             _maximumErrorsToReport = maximumErrorsToReport;
+            _ignoreBadDataEvents = ignoreBadDataEvents;
         }
 
         public void FileIsEmpty()
@@ -72,8 +74,15 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             }
         }
 
-        public void BadDataFound(FlatFileLine line)
+        public void BadDataFound(FlatFileLine line, bool isFromCsvHelper=false)
         {
+            if (_ignoreBadDataEvents && isFromCsvHelper)
+                if (_maximumErrorsToReport-- > 0)
+                {
+                    _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignorring CSVHelper internal bad data warning:" + line.GetLineDescription()));
+                    return;
+                }
+
             switch (_strategy)
             {
                 case BadDataHandlingStrategy.IgnoreRows:
@@ -120,8 +129,9 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
 
         public void RegisterEvents(IReaderConfiguration configuration)
         {
-            configuration.BadDataFound = s=>BadDataFound(new FlatFileLine(s));
+            configuration.BadDataFound = s=>BadDataFound(new FlatFileLine(s),true);
             configuration.ReadingExceptionOccurred = ReadingExceptionOccurred;
         }
+
     }
 }

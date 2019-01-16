@@ -25,14 +25,22 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         /// </summary>
         public string RawRecord { get; set; }
 
+        /// <summary>
+        /// The state of the CSVReader when the line was read
+        /// </summary>
+        public ReadingContext ReadingContext { get; set; }
+
         public FlatFileLine(ReadingContext context)
         {
             LineNumber = context.RawRow;
             Cells = context.Record;
             RawRecord = context.RawRecord;
+            ReadingContext = context;
 
             //Doesn't seem to be correct:  StartPosition = context.RawRecordStartPosition;
         }
+
+        
 
         public string this[int i]
         {
