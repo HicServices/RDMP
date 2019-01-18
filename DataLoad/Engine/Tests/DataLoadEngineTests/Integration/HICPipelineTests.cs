@@ -186,12 +186,12 @@ namespace DataLoadEngineTests.Integration
                     return;
                 
                 if (DatabaseToLoad.Exists())
-                    DatabaseToLoad.ForceDrop();
+                    DatabaseToLoad.Drop();
 
                 // check if RAW has been created and remove it
                 var raw = _server.ExpectDatabase(DatabaseToLoad.GetRuntimeName() + "_RAW");
                 if (raw.Exists())
-                    raw.ForceDrop();
+                    raw.Drop();
             }
         }
 

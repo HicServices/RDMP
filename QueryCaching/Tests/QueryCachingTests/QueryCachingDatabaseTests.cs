@@ -19,7 +19,7 @@ namespace QueryCachingTests
             DiscoveredQueryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(QueryCachingDatabaseName);
 
             if(DiscoveredQueryCachingDatabase.Exists())
-                DiscoveredQueryCachingDatabase.ForceDrop();
+                DiscoveredQueryCachingDatabase.Drop();
 
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
             scripter.CreateAndPatchDatabaseWithDotDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly, new ThrowImmediatelyCheckNotifier());
@@ -34,7 +34,7 @@ namespace QueryCachingTests
             QueryCachingDatabaseServer.DeleteInDatabase();
 
             if (DiscoveredQueryCachingDatabase.Exists())
-                DiscoveredQueryCachingDatabase.ForceDrop();
+                DiscoveredQueryCachingDatabase.Drop();
         }
     }
 }

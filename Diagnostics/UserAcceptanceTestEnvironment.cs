@@ -1229,11 +1229,11 @@ namespace Diagnostics
         {
             //drop the endpoint database
             var liveServer = DataAccessPortal.GetInstance().ExpectDatabase(DemographyTableInfo, DataAccessContext.InternalDataProcessing);
-            liveServer.ForceDrop();
+            liveServer.Drop();
 
             var staging = liveServer.Server.ExpectDatabase("DLE_STAGING");
             if(staging.Exists())
-                staging.ForceDrop();
+                staging.Drop();
 
             //drop the catalogue entities
             var lmd = DemographyCatalogue.LoadMetadata;

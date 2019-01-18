@@ -86,7 +86,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 
             var raw = db.Server.ExpectDatabase(db.GetRuntimeName() + "_RAW");
             if(raw.Exists())
-                raw.ForceDrop();
+                raw.Drop();
             
             var dt = new DataTable("MyTable");
             dt.Columns.Add("Name");
@@ -253,7 +253,7 @@ MrMurder,2001-01-01,Yella");
             {
                 var db2 = db.Server.ExpectDatabase("BB_STAGING");
                 if(db.Exists())
-                    db2.ForceDrop();
+                    db2.Drop();
             }
         }
 

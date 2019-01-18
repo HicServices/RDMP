@@ -105,7 +105,7 @@ namespace CatalogueLibraryTests.CrossPlatformParameterTests
             }
             finally
             {
-                db.ForceDrop();
+                db.Drop();
             }
         }
     }

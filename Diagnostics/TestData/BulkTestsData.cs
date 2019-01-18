@@ -143,7 +143,7 @@ CREATE VIEW vSlowView As Select * from " + BulkDataTable + " boss where date_of_
 
         public void Destroy()
         {
-            BulkDataDatabase.ForceDrop();
+            BulkDataDatabase.Drop();
         }
 
         private void GenerateColumns(DataTable dt)

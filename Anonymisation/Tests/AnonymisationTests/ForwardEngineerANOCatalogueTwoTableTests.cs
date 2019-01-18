@@ -196,7 +196,7 @@ GO";
         public void DropDatabases()
         {
             if(_destinationDatabase.Exists())
-                _destinationDatabase.ForceDrop();
+                _destinationDatabase.Drop();
         }
     }
 }

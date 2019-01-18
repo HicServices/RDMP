@@ -33,7 +33,7 @@ namespace AnonymisationTests
         private void DropANODatabase()
         {
             if(ANOStore_Database.Exists())
-                ANOStore_Database.ForceDrop();
+                ANOStore_Database.Drop();
         }
 
         [OneTimeTearDown]

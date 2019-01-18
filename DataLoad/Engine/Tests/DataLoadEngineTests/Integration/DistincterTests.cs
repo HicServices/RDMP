@@ -72,7 +72,7 @@ namespace DataLoadEngineTests.Integration
 
             Assert.AreEqual(rowsBefore/2,rowsAfter);
 
-            db.ForceDrop();
+            db.Drop();
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace DataLoadEngineTests.Integration
 
             Assert.AreEqual(rowsBefore, rowsAfter);
 
-            db.ForceDrop();
+            db.Drop();
         }
     }
 }

@@ -114,7 +114,7 @@ namespace DataLoadEngineTests.Integration
                 Assert.AreNotEqual(DBNull.Value, row["f4"]);
             }
 
-            db.ForceDrop();
+            db.Drop();
         }
 
     }

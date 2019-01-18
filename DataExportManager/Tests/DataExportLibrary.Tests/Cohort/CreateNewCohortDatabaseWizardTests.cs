@@ -117,7 +117,7 @@ namespace DataExportLibrary.Tests.Cohort
             var db = GetCleanedServer(type);
 
             //drop it
-            db.ForceDrop();
+            db.Drop();
 
             CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
 

@@ -175,7 +175,7 @@ namespace Diagnostics
                 var database = new DiscoveredServer(_liveDataServer.Builder).ExpectDatabase(_cohortDatabaseName);
 
                 if(database.Exists())
-                    database.ForceDrop();
+                    database.Drop();
 
                 string sql = string.Format(
 @"

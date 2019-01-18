@@ -69,8 +69,8 @@ namespace DataLoadEngineTests.Integration
         [TearDown]
         public void AfterEachTest()
         {
-            _stagingDatabase.ForceDrop();
-            _liveDatabase.ForceDrop();
+            _stagingDatabase.Drop();
+            _liveDatabase.Drop();
 
             CleanCatalogueDatabase();
         }

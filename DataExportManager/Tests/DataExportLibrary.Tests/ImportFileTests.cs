@@ -101,7 +101,7 @@ namespace DataExportLibrary.Tests
                     con.Close();
                 }
 
-                server.ExpectDatabase(databaseName).ForceDrop();
+                server.ExpectDatabase(databaseName).Drop();
                 Assert.IsFalse(server.ExpectDatabase(databaseName).Exists());
             }
             finally 

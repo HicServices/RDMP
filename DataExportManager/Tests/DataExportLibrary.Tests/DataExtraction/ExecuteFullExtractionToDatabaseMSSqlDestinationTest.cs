@@ -61,7 +61,7 @@ namespace DataExportLibrary.Tests.DataExtraction
                 var dbname = TestDatabaseNames.GetConsistentName(_project.Name + "_" + _project.ProjectNumber);
                 dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
                 if (dbToExtractTo.Exists())
-                    dbToExtractTo.ForceDrop();
+                    dbToExtractTo.Drop();
 
                 base.Execute(out execute, out result);
 
@@ -85,7 +85,7 @@ namespace DataExportLibrary.Tests.DataExtraction
                     _extractionServer.DeleteInDatabase();
 
                 if(dbToExtractTo != null)
-                    dbToExtractTo.ForceDrop();
+                    dbToExtractTo.Drop();
             }
         }
         

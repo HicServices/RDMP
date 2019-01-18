@@ -18,7 +18,7 @@ namespace CatalogueLibraryTests.Integration
             string dbName = "CreateANewCatalogueDatabaseWithMasterDatabaseScriptExecutor";
 
             var database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbName);
-            database.ForceDrop();
+            database.Drop();
 
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(database);
             executor.CreateDatabase(@"
@@ -34,7 +34,7 @@ GO", "1.0.0.0", new ThrowImmediatelyCheckNotifier());
             Assert.IsTrue(versionTable.Exists());
             Assert.IsTrue(bobTable.Exists());
 
-            database.ForceDrop();
+            database.Drop();
         }
 
     }

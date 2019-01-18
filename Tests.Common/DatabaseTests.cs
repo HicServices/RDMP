@@ -231,7 +231,7 @@ namespace Tests.Common
         {
             foreach (DiscoveredDatabase db in forCleanup)
                 if (db.Exists())
-                    db.ForceDrop();
+                    db.Drop();
         }
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         { 
@@ -269,7 +269,7 @@ namespace Tests.Common
 
             //if it already exists drop it
             if(DiscoveredDatabaseICanCreateRandomTablesIn.Exists())
-                DiscoveredDatabaseICanCreateRandomTablesIn.ForceDrop();
+                DiscoveredDatabaseICanCreateRandomTablesIn.Drop();
 
             //create it
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(scratchDatabaseName);

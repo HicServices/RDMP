@@ -53,7 +53,7 @@ namespace DataExportLibrary.Tests.TableValuedFunctionTests
 
             //cleanup
             if(_discoveredCohortDatabase.Exists())
-                _discoveredCohortDatabase.ForceDrop();
+                _discoveredCohortDatabase.Drop();
 
             //create a normal catalogue
             CreateANormalCatalogue();
@@ -106,7 +106,7 @@ namespace DataExportLibrary.Tests.TableValuedFunctionTests
             _pipe.DeleteInDatabase();
             
             //get rid of the cohort database
-            _discoveredCohortDatabase.ForceDrop();
+            _discoveredCohortDatabase.Drop();
             
             _nonTvfCatalogue.DeleteInDatabase();
             _nonTvfTableInfo.DeleteInDatabase();

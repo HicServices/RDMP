@@ -38,7 +38,7 @@ namespace CohortManagerTests.QueryTests
         [OneTimeTearDown]
         public void DropDatabases()
         {
-            queryCacheDatabase.ForceDrop();
+            queryCacheDatabase.Drop();
             externalDatabaseServer.DeleteInDatabase();
         }
 

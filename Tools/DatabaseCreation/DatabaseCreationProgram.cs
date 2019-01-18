@@ -68,12 +68,13 @@ namespace DatabaseCreation
             SqlConnection.ClearAllPools();
 
             var builder = options.GetBuilder(databaseName);
-            DiscoveredDatabase db = new DiscoveredDatabase(new DiscoveredServer(builder), builder.InitialCatalog,new MicrosoftQuerySyntaxHelper());
+
+            DiscoveredDatabase db = new DiscoveredServer(builder).ExpectDatabase(builder.InitialCatalog);
 
             if (options.DropDatabases && db.Exists())
             {
                 Console.WriteLine("Dropping Database:" + builder.InitialCatalog);
-                db.ForceDrop();
+                db.Drop();
             }
             
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(builder.ConnectionString);

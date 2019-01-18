@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CsvHelper;
 using DataLoadEngine.Job;
 using FAnsi.Discovery;
 using LoadModules.Generic.DataFlowSources;

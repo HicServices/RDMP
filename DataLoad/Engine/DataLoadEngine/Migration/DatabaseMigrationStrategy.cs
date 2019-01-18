@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration.QueryBuilding;
@@ -30,7 +31,7 @@ namespace DataLoadEngine.Migration
         public void Execute(IDataLoadJob job, IEnumerable<MigrationColumnSet> toMigrate, IDataLoadInfo dataLoadInfo, GracefulCancellationToken cancellationToken)
         {
             _dataLoadInfo = dataLoadInfo;
-
+            
             // Column set for each table we are migrating
             foreach (var columnsToMigrate in toMigrate)
             {

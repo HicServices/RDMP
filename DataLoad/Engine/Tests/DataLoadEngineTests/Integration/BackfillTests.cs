@@ -69,7 +69,7 @@ namespace DataLoadEngineTests.Integration
                 if (live.ExpectTable("Headers").Exists())
                     live.ExpectTable("Headers").Drop();
 
-                live.ForceDrop();
+                live.Drop();
             }
 
             if (staging.Exists())
@@ -83,7 +83,7 @@ namespace DataLoadEngineTests.Integration
                 if (staging.ExpectTable("Headers").Exists())
                     staging.ExpectTable("Headers").Drop();
 
-                staging.ForceDrop();
+                staging.Drop();
             }
         }
 

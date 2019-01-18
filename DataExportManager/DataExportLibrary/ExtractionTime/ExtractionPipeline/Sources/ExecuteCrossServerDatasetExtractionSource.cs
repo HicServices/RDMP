@@ -211,7 +211,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             {
                 //we created the db in the first place
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to drop database '" + _tempDb + "'"));
-                _tempDb.ForceDrop();
+                _tempDb.Drop();
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Dropped database '" + _tempDb +"' Successfully"));
             }
             else

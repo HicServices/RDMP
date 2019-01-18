@@ -741,7 +741,7 @@ CREATE TABLE [dbo].[TestResizing](
                 Assert.AreEqual(DBNull.Value, r["mynullcol"]);
             }
 
-            db.ForceDrop();
+            db.Drop();
         }
 
         [Test]

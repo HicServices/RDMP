@@ -106,7 +106,7 @@ namespace CatalogueLibraryTests.Integration
 
     ,"Should not be able to drop primary key column");
 
-            db.ForceDrop();
+            db.Drop();
         }
 
 
@@ -138,7 +138,7 @@ namespace CatalogueLibraryTests.Integration
             var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
             Assert.IsTrue(anoCatalogue.Exists());
 
-            db.ForceDrop();
+            db.Drop();
 
             var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
             var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
@@ -190,7 +190,7 @@ namespace CatalogueLibraryTests.Integration
             var idColInAnoDatabase = anoCatalogue.CatalogueItems[0].ColumnInfo;
             Assert.AreEqual("int", idColInAnoDatabase.Data_type);
             
-            db.ForceDrop();
+            db.Drop();
 
             var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
             var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
@@ -337,8 +337,8 @@ namespace CatalogueLibraryTests.Integration
             }
             finally
             {
-                dbFrom.ForceDrop();
-                dbTo.ForceDrop();
+                dbFrom.Drop();
+                dbTo.Drop();
             }
         }
         
@@ -504,7 +504,7 @@ namespace CatalogueLibraryTests.Integration
             Assert.AreEqual(1, qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins().Count(),"The new Lookup did not have the composite join key (sex/hb_extract)");
             Assert.AreNotEqual(compositeLookup, qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins(), "New query builder for ano catalogue identified the OLD LookupCompositeJoinInfo!");
 
-            db.ForceDrop();
+            db.Drop();
 
             var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
             var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
