@@ -94,7 +94,17 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     }
                     else
                     {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Column mismatch on line " + reader.Context.RawRow + " of file '" + dt.TableName + "', it has too many columns (expected " + _headers.Length + " columns but line had " + lineToPush.Cells.Length + ")." + (_bufferOverrunsWhereColumnValueWasBlank > 0 ? "( " + _bufferOverrunsWhereColumnValueWasBlank + " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)" : "")));
+                        string errorMessage = string.Format("Column mismatch on line {0} of file '{1}', it has too many columns (expected {2} columns but line had  {3})",
+                             reader.Context.RawRow,
+                             dt.TableName, 
+                             _headers.Length,
+                             lineToPush.Cells.Length);
+
+                        if (_bufferOverrunsWhereColumnValueWasBlank > 0)
+                            errorMessage += " ( " + _bufferOverrunsWhereColumnValueWasBlank +
+                                            " Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)";
+                        
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, errorMessage));
                         eventHandlers.BadDataFound(lineToPush);
                         break;
                     }
@@ -215,7 +225,10 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
 
                 //add the peeked line to the current cells
                 //add the first record as an extension of the last cell in current row
-                newCells[newCells.Count - 1] += Environment.NewLine + peekedLine.Cells[0];
+                if (peekedLine.Cells.Length != 0)
+                    newCells[newCells.Count - 1] += Environment.NewLine + peekedLine.Cells[0];
+                else
+                    newCells[newCells.Count - 1] += Environment.NewLine; //the next line was completely blank! just add a new line
 
                 //add any further cells on after that
                 newCells.AddRange(peekedLine.Cells.Skip(1));

@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Data;
-using System.Data.OleDb;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
 using LoadModules.Generic.Checks;
 using LoadModules.Generic.DataFlowSources;
@@ -33,11 +29,15 @@ namespace LoadModules.Generic.Attachers
         [DemandsInitialization(ExcelDataFlowSource.WorkSheetName_DemandDescription)]
         public string WorkSheetName { get; set; }
 
+        [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
+        public string AddFilenameColumnNamed { get; set; }
+        
         [DemandsInitialization("Forces specific overridden headers to be for columns, this is a comma separated string that will effectively replace the column headers found in the excel file.  The number of headers MUST match the number in the original file.  This option should be used when you have a excel file with stupid names that you want to rationalise into sensible database column names")]
         public string ForceReplacementHeaders { get; set; }
 
         [DemandsInitialization("By default ALL columns in the source MUST match exactly (by name) the set of all columns in the destination table.  If you enable this option then it is allowable for there to be extra columns in the destination that are not populated (because they are not found in the flat file).  This does not let you discard columns from the source! (all source columns must have mappings but destination columns with no matching source are left null)")]
         public bool AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch { get; set; }
+
 
         bool _haveServedData = false;
 
@@ -47,6 +47,7 @@ namespace LoadModules.Generic.Attachers
             _fileToLoad = fileToLoad;
             _hostedSource = new ExcelDataFlowSource();
             _hostedSource.WorkSheetName = WorkSheetName;
+            _hostedSource.AddFilenameColumnNamed = AddFilenameColumnNamed;
 
             _hostedSource.PreInitialize(new FlatFileToLoad(fileToLoad),listener);
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,  "About to start processing " + fileToLoad.FullName));
@@ -55,11 +56,11 @@ namespace LoadModules.Generic.Attachers
 
             if (!string.IsNullOrEmpty(ForceReplacementHeaders))
             {
-                string[] replacementHeadersSplit = ForceReplacementHeaders.Split(',');
+                //split headers by , (and trim leading/trailing whitespace).
+                string[] replacementHeadersSplit = ForceReplacementHeaders.Split(',').Select(h=>string.IsNullOrWhiteSpace(h)?h:h.Trim()).ToArray();
 
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Force headers will make the following header changes:" + GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)));
-
-
+                
                 if (replacementHeadersSplit.Length != _dataTable.Columns.Count)
                     listener.OnNotify(this,
                         new NotifyEventArgs(ProgressEventType.Error,
@@ -70,7 +71,7 @@ namespace LoadModules.Generic.Attachers
                     for (int i = 0; i < replacementHeadersSplit.Length; i++)
                         _dataTable.Columns[i].ColumnName = replacementHeadersSplit[i];//rename the columns to match the forced replacments
             }
-            
+
             //all data should now be exhausted
             if(_hostedSource.GetChunk(listener,new GracefulCancellationToken())!= null)
                 throw new Exception("Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
