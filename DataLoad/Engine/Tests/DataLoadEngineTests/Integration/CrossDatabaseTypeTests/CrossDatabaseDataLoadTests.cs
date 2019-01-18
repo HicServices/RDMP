@@ -322,9 +322,9 @@ MrMurder,2001-01-01,Yella");
 
             //create a new load
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoading2");
-
+            
+            TableInfo childTableInfo = Import(childTbl, lmd, logManager);
             TableInfo parentTableInfo = Import(parentTbl,lmd,logManager);
-            TableInfo childTableInfo = Import(childTbl, lmd,logManager);
 
             var projectDirectory = SetupLoadDirectory(lmd);
 
