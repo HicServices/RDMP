@@ -54,8 +54,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             var docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(modelType);
 
+            if (!string.IsNullOrWhiteSpace(_args.ExtraKeywordHelpText))
+                docs += Environment.NewLine + _args.ExtraKeywordHelpText;
+
             if (docs != null)
-                KeywordHelpTextListbox.ShowKeywordHelp(modelType.Name, docs);
+                WideMessageBox.ShowKeywordHelp(modelType.Name, docs);
             else
                 MessageBox.Show(MEF.GetCSharpNameForType(modelType));
         }

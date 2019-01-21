@@ -289,6 +289,7 @@
     <Compile Include="CommandExecution\ExecuteCommandCreateLookup.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\OverlappingImplementationsException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\Exceptions\MultipleMatchingImplmentationException.cs" />
+    <Compile Include="DataFlowPipeline\Requirements\Exceptions\PropertyDemandNotMetException.cs" />
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowPipelineContext.cs" />
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
@@ -638,6 +639,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\DataLoad\Exceptions\" />
+    <Folder Include="Exceptions\" />
     <Folder Include="Remoting\" />
   </ItemGroup>
   <ItemGroup>

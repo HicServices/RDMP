@@ -52,7 +52,7 @@ namespace CatalogueManager.Menus.MenuItems
 
                         if (helpDict != null && helpDict.ContainsKey(match.Value))
                         {
-                            WideMessageBox.Show("Rule:" + Environment.NewLine + helpDict[match.Value] + Environment.NewLine +"(" + match.Value +")" ,Environment.StackTrace,true,match.Value,"Command Blocked");
+                            WideMessageBox.Show("Command impossible", "Rule:" + Environment.NewLine + helpDict[match.Value] + Environment.NewLine + "(" + match.Value + ")", Environment.StackTrace, true, match.Value);
                             return;
                         }
                     }

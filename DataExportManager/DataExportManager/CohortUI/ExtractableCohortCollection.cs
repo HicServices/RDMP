@@ -52,7 +52,7 @@ namespace DataExportManager.CohortUI
             var ecd = e.Model as ExtractableCohortDescription;
 
             if (e.Column == olvViewLog && ecd != null)
-                WideMessageBox.Show(ecd.Cohort.AuditLog);
+                WideMessageBox.Show("Cohort audit log",ecd.Cohort.AuditLog,WideMessageBoxTheme.Help);
         }
 
         private object ViewLogAspectGetter(object rowObject)

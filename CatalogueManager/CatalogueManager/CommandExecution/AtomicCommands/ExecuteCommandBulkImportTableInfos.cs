@@ -137,7 +137,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 }
 
             if(ignoredTables.Any())
-                WideMessageBox.Show("Ignored " + ignoredTables.Count + " tables because they already existed as TableInfos:" + string.Join(Environment.NewLine,ignoredTables.Select(ti=>ti.GetRuntimeName())));
+                WideMessageBox.Show("Ignored some tables","Ignored " + ignoredTables.Count + " tables because they already existed as TableInfos:" + string.Join(Environment.NewLine,ignoredTables.Select(ti=>ti.GetRuntimeName())));
 
             if (anyNewTable != null)
             {

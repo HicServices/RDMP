@@ -12,6 +12,13 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
+    /// <summary>
+    /// Describes the use case in which a <see cref="Pipeline"/> takes artifacts produced as part of one or more <see cref="ExtractionConfiguration"/> for a <see cref="Project"/>.  
+    /// The artifacts may be CSV files, tables in an extraction database etc.  The artifacts should be gathered and sent to the recipient (e.g. zipped up and moved to FTP
+    /// server / output folder).  
+    /// 
+    /// <para>The configurations should be marked as released.</para>
+    /// </summary>
     public sealed class ReleaseUseCase : PipelineUseCase
     {
         public ReleaseUseCase(IProject project, ReleaseData releaseData, ICatalogueRepository catalogueRepository)

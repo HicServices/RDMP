@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using ReusableLibraryCode;
-
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 
 namespace ReusableUIComponents
 {
@@ -16,48 +16,68 @@ namespace ReusableUIComponents
     {
         private readonly string _environmentDotStackTrace;
 
-        public WideMessageBox(string message, string environmentDotStackTrace = null, string keywordNotToAdd=null)
+
+        #region Static setup of dictionary of keywords
+        public static CommentStore CommentStore;
+        #endregion
+
+        public WideMessageBox(string title, string message, string environmentDotStackTrace = null, string keywordNotToAdd = null, WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
         {
             _environmentDotStackTrace = environmentDotStackTrace;
             InitializeComponent();
             
-            richTextBox1.Text = message;
+            richTextBox1.Font = new Font(FontFamily.GenericMonospace, richTextBox1.Font.Size);
             richTextBox1.Select(0, 0);
-
-            keywordHelpTextListbox1.Setup(richTextBox1, keywordNotToAdd);
-            splitContainer1.Panel2Collapsed = !keywordHelpTextListbox1.HasEntries;
+            richTextBox1.WordWrap = true;
             
-            //try to resize form to fit bounds
-            this.Size = FormsHelper.GetPreferredSizeOfTextControl(richTextBox1);
-            this.Size = new Size(this.Size.Width + 10, this.Size.Height + 150);//leave a bit of padding
-
             //can only write to clipboard in STA threads
             btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
             btnViewStackTrace.Visible = _environmentDotStackTrace != null;
 
-            var theScreen = Screen.FromControl(this);
-            if (this.Width > theScreen.Bounds.Width)
+            //todo hack:if theres a long title and no message
+            if (!string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(message) && title.Length > 100)
             {
-                this.Width = theScreen.Bounds.Width - 100;
-                richTextBox1.WordWrap = true;
+                message = title;
+                title = null;
             }
 
+            //if there is a title
+            if(!string.IsNullOrWhiteSpace(title))
+            {
+                lblMainMessage.Text = title;
+            }
+            else
+            {
+                richTextBox1.Top = lblMainMessage.Top;
+                richTextBox1.Height += lblMainMessage.Top;
+                lblMainMessage.Visible = false;
+            }
+
+            Setup(message, keywordNotToAdd);
+
+            ApplyTheme(theme);
+            
+
+            //try to resize form to fit bounds
+            this.Size = FormsHelper.GetPreferredSizeOfTextControl(richTextBox1);
+            this.Size = new Size(this.Size.Width + 10, this.Size.Height + 150);//leave a bit of padding
+
+            var theScreen = Screen.FromControl(this);
+            
+            //enforce sensible max/min sizes
+            Width = Math.Min(Math.Max(600, Width),theScreen.Bounds.Width - 400);
+
+            //if the text is too long vertically just maximise the message box
             if (this.Height > theScreen.Bounds.Height)
                 this.WindowState = FormWindowState.Maximized;
+
+            richTextBox1.LinkClicked += richTextBox1_LinkClicked;
         }
-
-        public static void Show(string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null, string title = null, Bitmap icon=null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
+        
+        public static void Show(string mainMessage, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
         {
-            WideMessageBox wmb = new WideMessageBox(message, environmentDotStackTrace, keywordNotToAdd);
-
-            if (icon != null)
-                wmb.Icon = new IconFactory().GetIcon(icon);
-
-            if(title != null)
-                wmb.Text = title;
-
-            ApplyTheme(wmb, theme);
+            WideMessageBox wmb = new WideMessageBox(mainMessage,message, environmentDotStackTrace, keywordNotToAdd, theme);
 
             if (isModalDialog)
                 wmb.ShowDialog();
@@ -66,18 +86,31 @@ namespace ReusableUIComponents
             
         }
 
-        private static void ApplyTheme(WideMessageBox wmb, WideMessageBoxTheme theme)
+        public static void Show(string mainMessage, string message, WideMessageBoxTheme theme)
         {
+            Show(mainMessage, message,null,theme:theme);
+        }
+        private void ApplyTheme(WideMessageBoxTheme theme)
+        {
+            
             switch (theme)
             {
                 case WideMessageBoxTheme.Exception:
+                    pbIcon.Image = Images.ErrorIcon;
+                    break;
+                case WideMessageBoxTheme.Warning:
+                    pbIcon.Image = Images.WarningIcon;
                     break;
                 case WideMessageBoxTheme.Help:
-                    wmb.richTextBox1.BackColor = Color.White;
+                    pbIcon.Image =Images.InformationIcon;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("theme");
             }
+
+            var f = new IconFactory();
+
+            Icon = f.GetIcon((Bitmap)pbIcon.Image);
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -101,8 +134,87 @@ namespace ReusableUIComponents
 
         private void btnViewStackTrace_Click(object sender, EventArgs e)
         {
+            OnViewStackTrace();
+        }
+
+        protected virtual void OnViewStackTrace()
+        {
             var dialog = new ExceptionViewerStackTraceWithHyperlinks(_environmentDotStackTrace);
             dialog.Show();
+        }
+
+        void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            if(e.LinkText.Contains("#"))
+            {
+                var split = e.LinkText.Split('#');
+                if(split.Length >=2 && CommentStore.ContainsKey(split[1]))
+                    ShowKeywordHelp(split[1], CommentStore[split[1]]);
+            }
+        }
+
+        public void Setup(string message, string keywordNotToAdd = null)
+        {
+            //unless the text is unreasonably long or we don't have help documentation available
+            if (message.Length > 100000 || CommentStore == null)
+            {
+                richTextBox1.Text = message;
+                return;
+            }
+
+            foreach (string word in message.Split(' '))
+            {
+                if (CommentStore.ContainsKey(word) && !word.Equals(keywordNotToAdd,StringComparison.CurrentCultureIgnoreCase))
+                    richTextBox1.InsertLink(word, word);
+                else
+                    if (CommentStore.ContainsKey(word.Trim('s')) && !word.Trim('s').Equals(keywordNotToAdd,StringComparison.CurrentCultureIgnoreCase))
+                        richTextBox1.InsertLink(word, word.Trim('s'));
+                else
+                    richTextBox1.SelectedText = word;
+
+                richTextBox1.SelectedText = " ";
+            }
+        }
+        
+        public static void HighlightText(RichTextBox myRtb, string word, Color color)
+        {
+            if (word == string.Empty)
+                return;
+            var reg = new Regex(@"\b" + word + @"(\b|s\b)", RegexOptions.IgnoreCase);
+
+            foreach (Match match in reg.Matches(myRtb.Text))
+            {
+                myRtb.Select(match.Index, match.Length);
+                myRtb.SelectionColor = color;
+            }
+
+            myRtb.SelectionLength = 0;
+            myRtb.SelectionColor = Color.Black;
+        }
+        
+        private static void ShowHelpSection(HelpSection hs)
+        {
+            WideMessageBox.Show(hs.Keyword, hs.HelpText, Environment.StackTrace, false, hs.Keyword, WideMessageBoxTheme.Help);
+        }
+
+        public static void ShowKeywordHelp(string key, string docs)
+        {
+            ShowHelpSection(new HelpSection(key, docs));
+        }
+
+        public static WideMessageBoxTheme GetTheme(CheckResult result)
+        {
+            switch (result)
+            {
+                case CheckResult.Success:
+                    return WideMessageBoxTheme.Help;
+                case CheckResult.Warning:
+                    return WideMessageBoxTheme.Warning;
+                case CheckResult.Fail:
+                    return WideMessageBoxTheme.Exception;
+                default:
+                    throw new ArgumentOutOfRangeException("result");
+            }
         }
     }
 }

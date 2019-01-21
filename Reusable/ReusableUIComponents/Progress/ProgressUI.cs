@@ -316,7 +316,7 @@ namespace ReusableUIComponents.Progress
                 if (model.Exception != null)
                     ExceptionViewer.Show(model.Message, model.Exception, false);
                 else
-                    WideMessageBox.Show(model.Message, environmentDotStackTrace: model.Args.StackTrace, isModalDialog: false);
+                    WideMessageBox.Show(model.Message,"", environmentDotStackTrace: model.Args.StackTrace, isModalDialog: false);
             }
         }
 

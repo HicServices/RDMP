@@ -1,17 +1,12 @@
 ﻿using System.Windows.Forms;
-using BrightIdeasSoftware;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Menus;
-using CohortManager.Collections.Providers;
 using CohortManager.CommandExecution.AtomicCommands;
 using DataExportLibrary.Data;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
-using ReusableUIComponents.ChecksUI;
 
 namespace CohortManager.Menus
 {

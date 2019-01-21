@@ -107,7 +107,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             if (model != null)
             {
                 if(!model.IsCompatible())
-                    RightClickMenu.Items.Add("Explain Why Component Incompatible",null, (s,v) => WideMessageBox.Show(model.GetReasonIncompatible()));
+                    RightClickMenu.Items.Add("Component incompatible",null, (s,v) => WideMessageBox.Show(model.ToString(),model.GetReasonIncompatible(),WideMessageBoxTheme.Help));
             }
 
             //show it

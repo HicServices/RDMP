@@ -148,7 +148,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         {
             if(t.IsTableValuedFunction)
             {
-                WideMessageBox.Show("Table '" + t + "' is a TableValuedFunction, you cannot use it as a lookup table");
+                WideMessageBox.Show("Lookup table not valid","Table '" + t + "' is a TableValuedFunction, you cannot use it as a lookup table");
                 return;
             }
 
@@ -328,14 +328,14 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
         private void btnPrimaryKeyCompositeHelp_Click(object sender, EventArgs e)
         {
-            WideMessageBox.Show(
+            WideMessageBox.Show("Lookup help",
 @"Usually you only need one primary key/foreign key relationship e.g. M=Male, F=Female in which z_GenderLookup..Sex is the primary key and Demography..PatientGender is the foreign key.  However sometimes you need additional lookup joins.
 
 For example:
 if the Drug Code 'TIB' is reused in Tayside and Fife healthboard with different meanings then the primary key/foreign key would of the Lookup table would have to be both the 'Code' (TIB) and the 'Prescribing Healthboard' (T or F).
 
 Only define secondary columns if you really need them! if any of the key fields do not match between the Lookup table and the Dataset table then no lookup description will be recorded",
-                                                                                                                                                                                        null, true, null, null,CatalogueIcons.Help, WideMessageBoxTheme.Help);
+                                                                                                                                                                                        null, true, null, WideMessageBoxTheme.Help);
         }
 
         private void olvLookupColumns_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)

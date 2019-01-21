@@ -91,7 +91,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     if (countColumn != null)
                         if (_options.GetCountColumnRequirement(_aggregate) == CountColumnRequirement.CannotHaveOne)
                         {
-                            WideMessageBox.Show("Cohort Sets cannot have Count columns");
+                            WideMessageBox.Show("Cohort Sets cannot have count columns","A count column is a SELECT column with an aggregate function (count(*), sum(x) etc).  The SELECT component for cohort identification must be the patient id column only.");
                         }
                         else
                             Save(countColumn);
@@ -103,7 +103,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                         //if it's a normal aggregate then don't let the user have more than 2 columns
                         if (!_aggregate.IsCohortIdentificationAggregate && _includedColumns.OfType<AggregateDimension>().Count() >= 2)
                         {
-                            WideMessageBox.Show("You can only have a maximum of 2 columns in any graph (plus a count)");
+                            WideMessageBox.Show("Too many columns","You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
                             return;
                         }
 

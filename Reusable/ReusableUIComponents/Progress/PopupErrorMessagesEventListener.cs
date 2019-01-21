@@ -15,7 +15,7 @@ namespace ReusableUIComponents.Progress
                 ExceptionViewer.Show(e.Exception);
 
             if(e.ProgressEventType == ProgressEventType.Error)
-                WideMessageBox.Show(e.Message,environmentDotStackTrace: Environment.StackTrace);
+                WideMessageBox.Show(e.Message,"", Environment.StackTrace);
         }
 
         public void OnProgress(object sender, ProgressEventArgs e)

@@ -6,6 +6,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using ReusableLibraryCode.Checks;
@@ -202,10 +203,14 @@ namespace CatalogueLibrary.DataFlowPipeline
 
                     //if there is no matching argument and no default value
                     if (argument == null)
-                        if (initialization.DefaultValue == null)
+                        if (initialization.DefaultValue == null && initialization.Mandatory)
                         {
-                            throw new Exception("Class " + toReturn.GetType().Name + " has a property " + propertyInfo.Name +
-                                                " marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called " + toBuild.Name);
+                            string msg = string.Format("Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}", 
+                                toReturn.GetType().Name ,
+                                propertyInfo.Name ,
+                                toBuild.Name);
+
+                            throw new PropertyDemandNotMetException(msg, toBuild,propertyInfo);
                         }
                         else
                         {

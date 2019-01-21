@@ -110,7 +110,7 @@ namespace CatalogueManager.LogViewer.Tabs
                 if(menu.Items.Count != 0)
                     menu.Items.Add(new ToolStripSeparator());
 
-                menu.Items.Add("View as Text", null, (s, ex) => WideMessageBox.Show(sb.ToString()));
+                menu.Items.Add("View as text", null, (s, ex) => WideMessageBox.Show("Full Text",sb.ToString(),WideMessageBoxTheme.Help));
 
                 menu.Show(Cursor.Position.X, Cursor.Position.Y);
             }

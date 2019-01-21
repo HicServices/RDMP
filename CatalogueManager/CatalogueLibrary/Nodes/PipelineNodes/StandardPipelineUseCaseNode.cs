@@ -2,6 +2,9 @@
 
 namespace CatalogueLibrary.Nodes.PipelineNodes
 {
+    /// <summary>
+    /// Collection of all the Pipelines compatible with a given use case. 
+    /// </summary>
     class StandardPipelineUseCaseNode : SingletonNode
     {
         public PipelineUseCase UseCase { get; set; }
