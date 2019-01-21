@@ -47,7 +47,12 @@ namespace ReusableUIComponents
             var longMessage = "";
 
             //if the API user is not being silly and passing a message that is the exception anyway!
-            if (!message.Contains(exception.Message))
+            if (message.StartsWith(exception.Message))
+            {
+                if(exception.InnerException != null)
+                    longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception.InnerException);
+            }
+            else
                 longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
 
             ExceptionViewer ev = new ExceptionViewer(message,longMessage,exception);
