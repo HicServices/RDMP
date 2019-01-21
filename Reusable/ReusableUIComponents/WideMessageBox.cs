@@ -29,21 +29,32 @@ namespace ReusableUIComponents
             richTextBox1.Font = new Font(FontFamily.GenericMonospace, richTextBox1.Font.Size);
             richTextBox1.Select(0, 0);
             richTextBox1.WordWrap = true;
-            Setup(message,keywordNotToAdd);
             
             //can only write to clipboard in STA threads
             btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
             btnViewStackTrace.Visible = _environmentDotStackTrace != null;
-            
-            if (title != null)
+
+            //todo hack:if theres a long title and no message
+            if (!string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(message) && title.Length > 100)
+            {
+                message = title;
+                title = null;
+            }
+
+            //if there is a title
+            if(!string.IsNullOrWhiteSpace(title))
+            {
                 lblMainMessage.Text = title;
+            }
             else
             {
                 richTextBox1.Top = lblMainMessage.Top;
                 richTextBox1.Height += lblMainMessage.Top;
                 lblMainMessage.Visible = false;
             }
+
+            Setup(message, keywordNotToAdd);
 
             ApplyTheme(theme);
             
