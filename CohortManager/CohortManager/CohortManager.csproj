@@ -168,6 +168,8 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCohortAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortIdentificationConfiguration.cs" />
+    <Compile Include="Menus\AllFreeCohortIdentificationConfigurationsNodeMenu.cs" />
+    <Compile Include="Menus\AllProjectCohortIdentificationConfigurationsNodeMenu.cs" />
     <Compile Include="Menus\CohortAggregateContainerMenu.cs" />
     <Compile Include="Menus\CohortIdentificationConfigurationMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFreezeCohortIdentificationConfiguration.cs" />
