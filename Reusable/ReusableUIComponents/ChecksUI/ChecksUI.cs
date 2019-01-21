@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Markup;
 using BrightIdeasSoftware;
 using QuickGraph;
 using ReusableLibraryCode;
@@ -203,9 +204,9 @@ namespace ReusableUIComponents.ChecksUI
             var args = olvChecks.SelectedObject as CheckEventArgs;
             if (args != null)
                 if (args.Ex != null)
-                    ExceptionViewer.Show(args.Message+ Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(args.Ex), args.Ex);
+                    ExceptionViewer.Show(args.Message, args.Ex);
                 else
-                    WideMessageBox.Show(args.Message,"", environmentDotStackTrace: args.StackTrace);
+                    WideMessageBox.Show(null,args.Message, args.StackTrace, false, null, WideMessageBox.GetTheme(args.Result));
         }
 
         public void TerminateWithExtremePrejudice()

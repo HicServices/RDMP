@@ -13,7 +13,7 @@ namespace ReusableUIComponents
     {
         private readonly Exception _exception;
         
-        private ExceptionViewer(string message, Exception exception):base(message,exception.StackTrace)
+        private ExceptionViewer(string title, string message, Exception exception):base(title,message,exception.StackTrace)
         {
             _exception = exception;
 
@@ -30,9 +30,12 @@ namespace ReusableUIComponents
         
         public static void Show(Exception exception, bool isModalDialog = true)
         {
-            var message = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
+            var longMessage = "";
 
-            ExceptionViewer ev = new ExceptionViewer(message, exception);
+            if(exception.InnerException != null)
+                longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception.InnerException );
+            
+            ExceptionViewer ev = new ExceptionViewer(exception.Message,longMessage, exception);
 
             if (isModalDialog)
                 ev.ShowDialog();
@@ -41,11 +44,13 @@ namespace ReusableUIComponents
         }
         public static void Show(string message, Exception exception, bool isModalDialog = true)
         {
+            var longMessage = "";
+
             //if the API user is not being silly and passing a message that is the exception anyway!
             if (!message.Contains(exception.Message))
-                message = message + Environment.NewLine + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception);
+                longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
 
-            ExceptionViewer ev = new ExceptionViewer(message,exception);
+            ExceptionViewer ev = new ExceptionViewer(message,longMessage,exception);
 
             if(isModalDialog)
                 ev.ShowDialog();

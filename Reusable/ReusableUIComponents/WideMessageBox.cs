@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
-using ReusableLibraryCode.Icons.IconProvision;
 
 namespace ReusableUIComponents
 {
@@ -22,7 +21,7 @@ namespace ReusableUIComponents
         public static CommentStore CommentStore;
         #endregion
 
-        public WideMessageBox(string message, string environmentDotStackTrace = null, string keywordNotToAdd=null, string title = null, WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
+        public WideMessageBox(string title, string message, string environmentDotStackTrace = null, string keywordNotToAdd = null, WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
         {
             _environmentDotStackTrace = environmentDotStackTrace;
             InitializeComponent();
@@ -39,6 +38,12 @@ namespace ReusableUIComponents
             
             if (title != null)
                 lblMainMessage.Text = title;
+            else
+            {
+                richTextBox1.Top = lblMainMessage.Top;
+                richTextBox1.Height += lblMainMessage.Top;
+                lblMainMessage.Visible = false;
+            }
 
             ApplyTheme(theme);
             
@@ -48,9 +53,11 @@ namespace ReusableUIComponents
             this.Size = new Size(this.Size.Width + 10, this.Size.Height + 150);//leave a bit of padding
 
             var theScreen = Screen.FromControl(this);
-            if (this.Width > theScreen.Bounds.Width)
-                this.Width = theScreen.Bounds.Width - 400;
+            
+            //enforce sensible max/min sizes
+            Width = Math.Min(Math.Max(600, Width),theScreen.Bounds.Width - 400);
 
+            //if the text is too long vertically just maximise the message box
             if (this.Height > theScreen.Bounds.Height)
                 this.WindowState = FormWindowState.Maximized;
 
@@ -59,7 +66,7 @@ namespace ReusableUIComponents
         
         public static void Show(string mainMessage, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
         {
-            WideMessageBox wmb = new WideMessageBox(message, environmentDotStackTrace, keywordNotToAdd,mainMessage,theme);
+            WideMessageBox wmb = new WideMessageBox(mainMessage,message, environmentDotStackTrace, keywordNotToAdd, theme);
 
             if (isModalDialog)
                 wmb.ShowDialog();
@@ -184,5 +191,19 @@ namespace ReusableUIComponents
             ShowHelpSection(new HelpSection(key, docs));
         }
 
+        public static WideMessageBoxTheme GetTheme(CheckResult result)
+        {
+            switch (result)
+            {
+                case CheckResult.Success:
+                    return WideMessageBoxTheme.Help;
+                case CheckResult.Warning:
+                    return WideMessageBoxTheme.Warning;
+                case CheckResult.Fail:
+                    return WideMessageBoxTheme.Exception;
+                default:
+                    throw new ArgumentOutOfRangeException("result");
+            }
+        }
     }
 }
