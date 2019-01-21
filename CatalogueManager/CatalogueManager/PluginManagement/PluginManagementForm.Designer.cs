@@ -33,6 +33,7 @@ namespace CatalogueManager.PluginManagement
             this.components = new System.ComponentModel.Container();
             this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.pluginDependencyVisualisation1 = new CatalogueManager.PluginManagement.PluginDependencyVisualisation();
             this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.pbAnalysing = new System.Windows.Forms.ProgressBar();
@@ -46,10 +47,12 @@ namespace CatalogueManager.PluginManagement
             // treeListView
             // 
             this.treeListView.AllColumns.Add(this.olvName);
+            this.treeListView.AllColumns.Add(this.olvVersion);
             this.treeListView.AllowDrop = true;
             this.treeListView.CellEditUseWholeCell = false;
             this.treeListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
+            this.olvName,
+            this.olvVersion});
             this.treeListView.Location = new System.Drawing.Point(12, 48);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
@@ -69,6 +72,11 @@ namespace CatalogueManager.PluginManagement
             this.olvName.Text = "Plugin Name";
             this.olvName.Width = 201;
             // 
+            // olvVersion
+            // 
+            this.olvVersion.AspectName = "PluginVersion";
+            this.olvVersion.Text = "Version";
+            // 
             // pluginDependencyVisualisation1
             // 
             this.pluginDependencyVisualisation1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -82,6 +90,7 @@ namespace CatalogueManager.PluginManagement
             // 
             // checksUI1
             // 
+            this.checksUI1.AllowsYesNoToAll = true;
             this.checksUI1.Location = new System.Drawing.Point(12, 492);
             this.checksUI1.Name = "checksUI1";
             this.checksUI1.Size = new System.Drawing.Size(655, 228);
@@ -168,5 +177,6 @@ namespace CatalogueManager.PluginManagement
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnSaveToRemote;
         private System.Windows.Forms.Button btnExportToDisk;
+        private OLVColumn olvVersion;
     }
 }

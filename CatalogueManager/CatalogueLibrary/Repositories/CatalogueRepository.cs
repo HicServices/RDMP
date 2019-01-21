@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
@@ -17,6 +18,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Comments;
+using ReusableLibraryCode.Extensions;
 
 namespace CatalogueLibrary.Repositories
 {
@@ -219,7 +221,7 @@ namespace CatalogueLibrary.Repositories
 
             return servers.Where(s => s.CreatedByAssembly == assembly).ToArray();
         }
-
+        
         public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
         {
             //Make a dictionary of the normal properties we are supposed to be importing
@@ -312,6 +314,15 @@ namespace CatalogueLibrary.Repositories
                 //document that a local import of the share now exists and should be updated/reused from now on when that same GUID comes in / gets used by child objects
                 shareManager.GetImportAs(shareDefinition.SharingGuid.ToString(), toCreate);
             }
+        }
+
+        public Plugin[] GetCompatiblePlugins()
+        {
+            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            var plugins = GetAllObjects<Plugin>().Where(p => p.PluginVersion.IsCompatibleWith(new Version(version), 3));
+            var uniquePlugins = plugins.GroupBy(p => new { name = p.Name, ver = new Version(p.PluginVersion.Major, p.PluginVersion.Minor, p.PluginVersion.Build) })
+                                       .ToDictionary(g => g.Key, p => p.OrderByDescending(pv => pv.PluginVersion).First());
+            return uniquePlugins.Values.ToArray();
         }
 
         public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)

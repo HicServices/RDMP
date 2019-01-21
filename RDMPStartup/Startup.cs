@@ -279,7 +279,7 @@ namespace RDMPStartup
             if(!downloadDirectory.Exists)
                 downloadDirectory.Create();
 
-            var recordsInDatabase = catalogueRepository.GetAllObjects<Plugin>();
+            var recordsInDatabase = catalogueRepository.GetCompatiblePlugins();
 
             List<DirectoryInfo> dirs = new List<DirectoryInfo>();
 

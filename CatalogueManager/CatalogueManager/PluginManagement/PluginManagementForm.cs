@@ -5,10 +5,12 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Composition.Primitives;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,7 +70,6 @@ namespace CatalogueManager.PluginManagement
             treeListView.FormatRow += TreeListViewOnFormatRow;
 
             treeListView.SetNativeBackgroundWatermark(CatalogueIcons.DropHere);
-
         }
 
         private IEnumerable ChildrenGetter(object model)
@@ -108,7 +109,10 @@ namespace CatalogueManager.PluginManagement
             if(plugin != null)
             {
                 if (!analysers.ContainsKey(plugin))
+                {
+                    formatRowEventArgs.Item.ForeColor = Color.DimGray;
                     return;
+                }
 
                 if (analysers[plugin].Reports.Any())
                 {
@@ -124,7 +128,10 @@ namespace CatalogueManager.PluginManagement
             if (lma != null)
             {
                 if (!analysers.ContainsKey(lma.Plugin))
+                {
+                    formatRowEventArgs.Item.ForeColor = Color.DimGray;
                     return;
+                }
 
                 var report = analysers[lma.Plugin].Reports[lma];
                 formatRowEventArgs.Item.ForeColor = report.Status == PluginAssemblyStatus.Healthy? Color.Green: Color.Red;
@@ -218,9 +225,12 @@ namespace CatalogueManager.PluginManagement
                 Application.Restart();
         }
 
+        private string _version;
+
         #endregion
 
         Plugin[] plugins;
+        private Plugin[] compatiblePlugins;
         BackgroundWorker analyser;
 
         private void RefreshUIFromDatabase()
@@ -232,8 +242,9 @@ namespace CatalogueManager.PluginManagement
             }
 
             treeListView.ClearObjects();
-            
+
             plugins = RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().ToArray();
+            compatiblePlugins = RepositoryLocator.CatalogueRepository.GetCompatiblePlugins();
             analyser = new BackgroundWorker();
             analyser.DoWork += analyser_DoWork;
             analyser.RunWorkerCompleted += analyser_RunWorkerCompleted;
@@ -254,13 +265,16 @@ namespace CatalogueManager.PluginManagement
 
             foreach (Plugin plugin in plugins)
             {
-                var pluginDir = plugin.GetPluginDirectoryName(mef.DownloadDirectory);
-                var pa = new PluginAnalyser(plugin, new DirectoryInfo(pluginDir), mef.SafeDirectoryCatalog);
+                if (compatiblePlugins.Any(p => p.Name == plugin.Name && p.PluginVersion == plugin.PluginVersion))
+                {
+                    var pluginDir = plugin.GetPluginDirectoryName(mef.DownloadDirectory);
+                    var pa = new PluginAnalyser(plugin, new DirectoryInfo(pluginDir), mef.SafeDirectoryCatalog);
 
-                pa.ProgressMade += pa_ProgressMade;
+                    pa.ProgressMade += pa_ProgressMade;
 
-                pa.Analyse();
-                analysers.Add(plugin, pa);
+                    pa.Analyse();
+                    analysers.Add(plugin, pa);
+                }
             }
         }
 

@@ -42,8 +42,18 @@ namespace RDMPStartup.PluginManagement
 
             ZipFile.ExtractToDirectory(toCommit.FullName, workingDirectory);
 
-            //delete old versions of the file
-            var oldVersion = _repository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name));
+            string pluginVersion;
+            try
+            {
+                pluginVersion = File.ReadLines(Path.Combine(workingDirectory, "PluginManifest.txt")).First().Split(':')[1];
+            }
+            catch
+            {
+                throw new NotSupportedException("Could not find a valid PluginManifest.txt in the zip package");
+            }
+
+            //don't delete old versions of the file
+            var oldVersion = _repository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == new Version(pluginVersion));
 
             List<LoadModuleAssembly> legacyDlls = new List<LoadModuleAssembly>();
             Plugin plugin = null;
@@ -54,22 +64,22 @@ namespace RDMPStartup.PluginManagement
                 toReturn = true;
                 plugin = oldVersion;
             }
-            else           
-                plugin = new Plugin(_repository, toCommit);
+            else
+                plugin = new Plugin(_repository, toCommit, pluginVersion);
 
             try
             {
                 foreach (var file in Directory.GetFiles(workingDirectory, "*.dll"))
                     ProcessFile(plugin, new FileInfo(file), legacyDlls);
 
-                foreach (var srcZipFile in Directory.GetFiles(workingDirectory,"src.zip"))
+                foreach (var srcZipFile in Directory.GetFiles(workingDirectory, "src.zip"))
                     ProcessFile(plugin, new FileInfo(srcZipFile), legacyDlls);
 
                 //For assemblies that have less dll dependencies now than before (i.e. redundant assemblies)
                 foreach (LoadModuleAssembly unused in legacyDlls)
                 {
                     var export = _repository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsReferenceTo(unused));
-                    if(export != null)
+                    if (export != null)
                         export.DeleteInDatabase();
 
                     unused.DeleteInDatabase();
