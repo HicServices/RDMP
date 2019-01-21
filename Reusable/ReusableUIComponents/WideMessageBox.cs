@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using ReusableLibraryCode;
-
 
 namespace ReusableUIComponents
 {
@@ -16,12 +13,13 @@ namespace ReusableUIComponents
     {
         private readonly string _environmentDotStackTrace;
 
-        public WideMessageBox(string message, string environmentDotStackTrace = null, string keywordNotToAdd=null)
+        public WideMessageBox(string message, string environmentDotStackTrace = null, string keywordNotToAdd=null, string title = null, WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
         {
             _environmentDotStackTrace = environmentDotStackTrace;
             InitializeComponent();
             
             richTextBox1.Text = message;
+            richTextBox1.Font = new Font(FontFamily.GenericMonospace, richTextBox1.Font.Size);
             richTextBox1.Select(0, 0);
 
             keywordHelpTextListbox1.Setup(richTextBox1, keywordNotToAdd);
@@ -35,6 +33,11 @@ namespace ReusableUIComponents
             btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
             btnViewStackTrace.Visible = _environmentDotStackTrace != null;
+            
+            if (title != null)
+                lblMainMessage.Text = title;
+
+            ApplyTheme(theme);
 
             var theScreen = Screen.FromControl(this);
             if (this.Width > theScreen.Bounds.Width)
@@ -47,17 +50,9 @@ namespace ReusableUIComponents
                 this.WindowState = FormWindowState.Maximized;
         }
 
-        public static void Show(string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null, string title = null, Bitmap icon=null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
+        public static void Show(string mainMessage, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
         {
-            WideMessageBox wmb = new WideMessageBox(message, environmentDotStackTrace, keywordNotToAdd);
-
-            if (icon != null)
-                wmb.Icon = new IconFactory().GetIcon(icon);
-
-            if(title != null)
-                wmb.Text = title;
-
-            ApplyTheme(wmb, theme);
+            WideMessageBox wmb = new WideMessageBox(message, environmentDotStackTrace, keywordNotToAdd,mainMessage,theme);
 
             if (isModalDialog)
                 wmb.ShowDialog();
@@ -65,15 +60,22 @@ namespace ReusableUIComponents
                 wmb.Show();
             
         }
-
-        private static void ApplyTheme(WideMessageBox wmb, WideMessageBoxTheme theme)
+        public static void Show(string mainMessage, string message, WideMessageBoxTheme theme)
+        {
+            Show(mainMessage, message,null,theme:theme);
+        }
+        private void ApplyTheme(WideMessageBoxTheme theme)
         {
             switch (theme)
             {
                 case WideMessageBoxTheme.Exception:
+                    pbIcon.Image = Images.ErrorIcon;
+                    break;
+                case WideMessageBoxTheme.Warning:
+                    pbIcon.Image = Images.WarningIcon;
                     break;
                 case WideMessageBoxTheme.Help:
-                    wmb.richTextBox1.BackColor = Color.White;
+                    pbIcon.Image =Images.InformationIcon;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("theme");
@@ -101,8 +103,15 @@ namespace ReusableUIComponents
 
         private void btnViewStackTrace_Click(object sender, EventArgs e)
         {
+            OnViewStackTrace();
+        }
+
+        protected virtual void OnViewStackTrace()
+        {
             var dialog = new ExceptionViewerStackTraceWithHyperlinks(_environmentDotStackTrace);
             dialog.Show();
         }
+
+        
     }
 }

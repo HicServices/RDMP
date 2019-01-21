@@ -271,12 +271,12 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         {
             if(Catalogue == null)
             {
-                WideMessageBox.Show("Unsure how you manged to click this button when Catalogue was null!");
+                WideMessageBox.Show("Unexpected system state","Unsure how you manged to click this button when Catalogue was null!");
                 return;
             } 
             if (ExtractionFilter == null)
             {
-                WideMessageBox.Show("Unsure how you managed to click this button when ExtractionFilter was null!");
+                WideMessageBox.Show("Unexpected system state", "Unsure how you managed to click this button when ExtractionFilter was null!");
                 return;
             }
             
@@ -284,15 +284,15 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             
             if (!allExtractionInformations.Any())
             {
-                WideMessageBox.Show("Cannot publish filter because Catalogue " + Catalogue +
-                                    " does not have any ExtractionInformations we could hang it off off");
+                WideMessageBox.Show("Cannot publish filter", "Cannot publish filter because Catalogue " + Catalogue +
+                                    " does not have any ExtractionInformations (extractable columns) we could associate it with");
                 return;
             }
             
             string reason;
             if (!FilterImporter.IsProperlyDocumented(ExtractionFilter,out reason))
             {
-                WideMessageBox.Show("Filter is not properly documented:"+reason);
+                WideMessageBox.Show("Cannot publish filter", "Filter is not properly documented:" + reason);
                 return;
             }
             

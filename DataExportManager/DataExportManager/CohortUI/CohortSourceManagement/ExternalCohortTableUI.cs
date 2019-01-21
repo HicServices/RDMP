@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
@@ -17,7 +11,7 @@ using ReusableUIComponents;
 namespace DataExportManager.CohortUI.CohortSourceManagement
 {
     /// <summary>
-    /// Allows you to edit an external cohort reference.  This is the location of a cohort database and includes the names of the Cohort table, the custom data table and the names of 
+    /// Allows you to edit an external cohort reference.  This is the location of a cohort database and includes the names of the Cohort table and the names of 
     /// private/release identifiers in the database
     /// </summary>
     public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design

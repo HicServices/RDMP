@@ -103,7 +103,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             //we didn't see any errors so probably everything was fine
             if(fetchDataResultedInNoErrors)
-                WideMessageBox.Show("Data ready for you to view in the Inserts / Updates tabs");
+                WideMessageBox.Show("Data Ready","Data ready for you to view in the Inserts / Updates tabs",WideMessageBoxTheme.Help);
 
         }
 

@@ -38,7 +38,7 @@ namespace ReusableUIComponents.ChecksUI
                 ExceptionViewer.Show(args.Ex);
             else
             if(args.Result == CheckResult.Fail)
-                WideMessageBox.Show(args.Message,environmentDotStackTrace: Environment.StackTrace);
+                WideMessageBox.Show(args.Message,"",environmentDotStackTrace: Environment.StackTrace);
 
             return false;
         }

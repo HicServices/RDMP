@@ -234,6 +234,9 @@
     <Compile Include="Dependencies\Models\WPFBitmapConverter.cs" />
     <Compile Include="DoTransparencyProperly.cs" />
     <Compile Include="ExceptionCounterUI.cs" />
+    <Compile Include="ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
+      <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
+    </Compile>
     <Compile Include="ServerDatabaseTableSelectorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -280,14 +283,8 @@
     <Compile Include="ExceptionViewer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ExceptionViewer.Designer.cs">
-      <DependentUpon>ExceptionViewer.cs</DependentUpon>
-    </Compile>
     <Compile Include="ExceptionViewerStackTraceWithHyperlinks.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
-      <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHelper.cs" />
     <Compile Include="Images.Designer.cs">
@@ -539,6 +536,9 @@
     <Resource Include="Images\DependencyGraphToolbarInformation.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\WarningIcon.png" />
+    <None Include="Resources\InformationIcon.png" />
+    <None Include="Resources\ErrorIcon.png" />
     <None Include="Resources\Information.png" />
     <None Include="Resources\WarningEx.png" />
     <None Include="Resources\Warning.png" />

@@ -96,7 +96,7 @@ namespace ReusableUIComponents
 
         private static void ShowHelpSection(HelpSection hs)
         {
-            WideMessageBox.Show(hs.Keyword + ":" + Environment.NewLine + hs.HelpText, Environment.StackTrace, false, hs.Keyword, "Help Keyword:" + hs.Keyword, (Bitmap)ImageGetter(hs),WideMessageBoxTheme.Help);
+            WideMessageBox.Show(hs.Keyword,hs.HelpText, Environment.StackTrace, false, hs.Keyword,WideMessageBoxTheme.Help);
         }
 
         public static void ShowKeywordHelp(string key, string docs)

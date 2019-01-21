@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -41,14 +42,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
                     if (firstMatch == null)
                         firstMatch = c.GetType().Name;
 
-                    sb.AppendLine(c.GetType().Name);
                     sb.AppendLine(typeDocs[c.GetType().Name]);
                     sb.AppendLine();
                 }
 
             if (sb.Length > 0)
-                WideMessageBox.Show(sb.ToString(), environmentDotStackTrace: null, isModalDialog: true, keywordNotToAdd: firstMatch, title: "Help");
-        
+                WideMessageBox.Show(firstMatch, sb.ToString(),Environment.StackTrace,  true,  firstMatch,WideMessageBoxTheme.Help);
         }
     }
 }

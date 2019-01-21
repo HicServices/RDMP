@@ -299,7 +299,6 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             this.serverDatabaseTableSelector1.Server = "";
             this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(623, 181);
             this.serverDatabaseTableSelector1.TabIndex = 10;
-            this.serverDatabaseTableSelector1.Table = "";
             this.serverDatabaseTableSelector1.Username = "";
             // 
             // ExternalCohortTableUI

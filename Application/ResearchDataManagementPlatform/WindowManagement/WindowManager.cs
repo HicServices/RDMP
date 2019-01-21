@@ -104,7 +104,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 case RDMPCollection.DataExport:
                     if (RepositoryLocator.DataExportRepository == null)
                     {
-                        WideMessageBox.Show("Cannot create DataExport Toolbox because DataExportRepository has not been set/created yet");
+                        WideMessageBox.Show("Data export database unavailable","Cannot create DataExport Toolbox because DataExportRepository has not been set/created yet");
                         return null;
                     }
 

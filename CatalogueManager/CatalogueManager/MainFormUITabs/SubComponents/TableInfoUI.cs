@@ -146,8 +146,8 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             }
 
             if (unchanged.Any())
-                WideMessageBox.Show("Made " + updatesMade + " replacements in ExtractionInformation/ColumnInfos, the following ExtractionInformations could not be refactored:" + 
-                    string.Join(Environment.NewLine,unchanged.Select(n => "ID=" + n.ID + Environment.NewLine + "Select SQL =" + n.SelectSQL)));
+                WideMessageBox.Show("Updates made","Made " + updatesMade + " replacements in ExtractionInformation/ColumnInfos, the following ExtractionInformations could not be refactored:" + 
+                    string.Join(Environment.NewLine,unchanged.Select(n => "ID=" + n.ID + Environment.NewLine + "Select SQL =" + n.SelectSQL)),WideMessageBoxTheme.Help);
             else
                 MessageBox.Show("Made " + updatesMade + " replacements in ExtractionInformation/ColumnInfos.");
         }
