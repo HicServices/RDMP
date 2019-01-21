@@ -178,7 +178,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             }
             
             if (_startup != null && _startup.RepositoryLocator != null && _startup.RepositoryLocator.CatalogueRepository != null)
-                KeywordHelpTextListbox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
+                WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
 
             if (pbRed.Visible || pbRedDead.Visible)
                 return;

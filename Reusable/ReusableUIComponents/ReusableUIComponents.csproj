@@ -237,6 +237,9 @@
     <Compile Include="ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
       <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
     </Compile>
+    <Compile Include="RichTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ServerDatabaseTableSelectorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -270,12 +273,6 @@
     </Compile>
     <Compile Include="KeyboardReminder.Designer.cs">
       <DependentUpon>KeyboardReminder.cs</DependentUpon>
-    </Compile>
-    <Compile Include="KeywordHelpTextListbox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="KeywordHelpTextListbox.Designer.cs">
-      <DependentUpon>KeywordHelpTextListbox.cs</DependentUpon>
     </Compile>
     <Compile Include="LinkLabels\ExceptionLinkLabel.cs">
       <SubType>Component</SubType>
@@ -454,9 +451,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KeyboardReminder.resx">
       <DependentUpon>KeyboardReminder.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="KeywordHelpTextListbox.resx">
-      <DependentUpon>KeywordHelpTextListbox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Performance\PerformanceCounterResultsUI.resx">
       <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>

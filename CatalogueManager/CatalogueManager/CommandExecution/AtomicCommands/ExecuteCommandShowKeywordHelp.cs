@@ -58,7 +58,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 docs += Environment.NewLine + _args.ExtraKeywordHelpText;
 
             if (docs != null)
-                KeywordHelpTextListbox.ShowKeywordHelp(modelType.Name, docs);
+                WideMessageBox.ShowKeywordHelp(modelType.Name, docs);
             else
                 MessageBox.Show(MEF.GetCSharpNameForType(modelType));
         }

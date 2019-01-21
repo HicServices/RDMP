@@ -1,4 +1,6 @@
-﻿namespace ReusableUIComponents
+﻿using RichTextBoxLinks;
+
+namespace ReusableUIComponents
 {
     partial class WideMessageBox
     {
@@ -32,17 +34,11 @@
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCopyToClipboard = new System.Windows.Forms.Button();
             this.btnViewStackTrace = new System.Windows.Forms.Button();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.keywordHelpTextListbox1 = new ReusableUIComponents.KeywordHelpTextListbox();
+            this.richTextBox1 = new RichTextBoxLinks.RichTextBoxEx();
             this.pbIcon = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.lblMainMessage = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            this.panel2 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -83,44 +79,18 @@
             // 
             // richTextBox1
             // 
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox1.Location = new System.Drawing.Point(53, 38);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(706, 128);
+            this.richTextBox1.Size = new System.Drawing.Size(694, 259);
             this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = "";
             this.richTextBox1.WordWrap = false;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(50, 38);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.richTextBox1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.keywordHelpTextListbox1);
-            this.splitContainer1.Size = new System.Drawing.Size(706, 259);
-            this.splitContainer1.SplitterDistance = 128;
-            this.splitContainer1.TabIndex = 4;
-            // 
-            // keywordHelpTextListbox1
-            // 
-            this.keywordHelpTextListbox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.keywordHelpTextListbox1.Location = new System.Drawing.Point(0, 0);
-            this.keywordHelpTextListbox1.Name = "keywordHelpTextListbox1";
-            this.keywordHelpTextListbox1.Size = new System.Drawing.Size(706, 127);
-            this.keywordHelpTextListbox1.TabIndex = 5;
             // 
             // pbIcon
             // 
@@ -134,25 +104,14 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.panel1.Controls.Add(this.richTextBox1);
             this.panel1.Controls.Add(this.lblMainMessage);
             this.panel1.Controls.Add(this.pbIcon);
-            this.panel1.Controls.Add(this.splitContainer1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(759, 340);
             this.panel1.TabIndex = 6;
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.btnOk);
-            this.panel2.Controls.Add(this.btnViewStackTrace);
-            this.panel2.Controls.Add(this.btnCopyToClipboard);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 303);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(759, 37);
-            this.panel2.TabIndex = 7;
             // 
             // lblMainMessage
             // 
@@ -165,6 +124,17 @@
             this.lblMainMessage.TabIndex = 6;
             this.lblMainMessage.Text = "Main Message";
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.btnOk);
+            this.panel2.Controls.Add(this.btnViewStackTrace);
+            this.panel2.Controls.Add(this.btnCopyToClipboard);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 303);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(759, 37);
+            this.panel2.TabIndex = 7;
+            // 
             // WideMessageBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -174,14 +144,11 @@
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Name = "WideMessageBox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "WideMessageBox";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.WideMessageBox_KeyUp);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -195,9 +162,7 @@
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCopyToClipboard;
         private System.Windows.Forms.Button btnViewStackTrace;
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private KeywordHelpTextListbox keywordHelpTextListbox1;
+        private RichTextBoxEx richTextBox1;
         private System.Windows.Forms.PictureBox pbIcon;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
