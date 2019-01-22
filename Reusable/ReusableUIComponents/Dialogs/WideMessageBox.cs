@@ -86,7 +86,8 @@ namespace ReusableUIComponents.Dialogs
             }
 
             //Replace single newlines with double new lines 
-            message = Regex.Replace(message, "\r\n\\s*","\r\n\r\n");
+            if(Args.DoubleUpNewlines)
+                message = Regex.Replace(message, "\r\n\\s*","\r\n\r\n");
 
             //if there is a title
             if (!string.IsNullOrWhiteSpace(title))
@@ -190,7 +191,7 @@ namespace ReusableUIComponents.Dialogs
         {
             _navigationStack.Push(Args);
             
-            Setup(new WideMessageBoxArgs(keyword,CommentStore[keyword],null,keyword,WideMessageBoxTheme.Help));
+            Setup(new WideMessageBoxArgs(keyword,CommentStore[keyword],null,keyword,WideMessageBoxTheme.Help){DoubleUpNewlines = true});
         }
 
         private void SetMessage(string message, string keywordNotToAdd = null)
@@ -244,7 +245,10 @@ namespace ReusableUIComponents.Dialogs
 
         private static void ShowHelpSection(HelpSection hs)
         {
-            WideMessageBox.Show(hs.Keyword, hs.HelpText, Environment.StackTrace, false, hs.Keyword, WideMessageBoxTheme.Help);
+            new WideMessageBox(new WideMessageBoxArgs(hs.Keyword, hs.HelpText, Environment.StackTrace, hs.Keyword, WideMessageBoxTheme.Help)
+            {
+                DoubleUpNewlines = true
+            }).Show();
         }
 
         public static void ShowKeywordHelp(string key, string docs)

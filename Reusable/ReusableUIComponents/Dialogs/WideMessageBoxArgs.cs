@@ -7,6 +7,7 @@ namespace ReusableUIComponents.Dialogs
         public string EnvironmentDotStackTrace { get; set; }
         public string KeywordNotToAdd { get; set; }
         public WideMessageBoxTheme Theme { get; set; }
+        public bool DoubleUpNewlines { get; set; }
 
         public WideMessageBoxArgs(string title, string message,string environmentDotStackTrace,string keywordNotToAdd,WideMessageBoxTheme theme)
         {
