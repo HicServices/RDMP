@@ -55,13 +55,13 @@ namespace CatalogueLibrary.Data
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="pluginZipFile"></param>
-        public Plugin(ICatalogueRepository repository, FileInfo pluginZipFile, string version = "0.0.0.0")
+        public Plugin(ICatalogueRepository repository, FileInfo pluginZipFile, Version version = null)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
                 {"Name", pluginZipFile.Name},
                 {"UploadedFromDirectory", pluginZipFile.DirectoryName},
-                {"PluginVersion", version}
+                {"PluginVersion", (version ?? new Version(0,0,0,0))}
             });
             
         }

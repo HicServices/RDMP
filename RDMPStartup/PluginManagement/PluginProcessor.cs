@@ -8,6 +8,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Extensions;
 
 namespace RDMPStartup.PluginManagement
 {
@@ -42,18 +43,22 @@ namespace RDMPStartup.PluginManagement
 
             ZipFile.ExtractToDirectory(toCommit.FullName, workingDirectory);
 
-            string pluginVersion;
+            Version pluginVersion;
             try
             {
-                pluginVersion = File.ReadLines(Path.Combine(workingDirectory, "PluginManifest.txt")).First().Split(':')[1];
+                pluginVersion = new Version(File.ReadLines(Path.Combine(workingDirectory, "PluginManifest.txt")).First().Split(':')[1]);
             }
             catch
             {
-                throw new NotSupportedException("Could not find a valid PluginManifest.txt in the zip package");
+                throw new NotSupportedException("Could not find a valid version inside the PluginManifest.txt in the zip package");
             }
 
-            //don't delete old versions of the file
-            var oldVersion = _repository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == new Version(pluginVersion));
+            // reject if it's not compatible with running version
+            if (!pluginVersion.IsCompatibleWith(_repository.GetVersion(), 3))
+                throw new NotSupportedException(String.Format("Plugin version {0} is incompatible with current running version of RDMP.", pluginVersion));
+            
+            // delete EXACT old versions of the Plugin
+            var oldVersion = _repository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
 
             List<LoadModuleAssembly> legacyDlls = new List<LoadModuleAssembly>();
             Plugin plugin = null;
