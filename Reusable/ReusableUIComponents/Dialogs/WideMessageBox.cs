@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Input;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
@@ -86,8 +84,11 @@ namespace ReusableUIComponents.Dialogs
             }
 
             //Replace single newlines with double new lines 
-            if(Args.DoubleUpNewlines)
+            if(Args.FormatAsParagraphs)
+            {
                 message = Regex.Replace(message, "\r\n\\s*","\r\n\r\n");
+                message = Regex.Replace(message, @"(\.?[A-z]+\.)+([A-z]+)", (m) => m.Groups[2].Value);
+            }
 
             //if there is a title
             if (!string.IsNullOrWhiteSpace(title))
@@ -156,13 +157,10 @@ namespace ReusableUIComponents.Dialogs
 
         private void WideMessageBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Escape)
+            if (e.KeyCode == Keys.Escape || (e.KeyCode == Keys.W && e.Control))
                 this.Close();
 
-            if(e.KeyCode == Keys.W && e.Control)
-                this.Close();
-
-            if(e.KeyCode == Keys.Back)
+            if (e.KeyCode == Keys.Back)
                 Back();
         }
 
@@ -191,7 +189,7 @@ namespace ReusableUIComponents.Dialogs
         {
             _navigationStack.Push(Args);
             
-            Setup(new WideMessageBoxArgs(keyword,CommentStore[keyword],null,keyword,WideMessageBoxTheme.Help){DoubleUpNewlines = true});
+            Setup(new WideMessageBoxArgs(keyword,CommentStore[keyword],null,keyword,WideMessageBoxTheme.Help){FormatAsParagraphs = true});
         }
 
         private void SetMessage(string message, string keywordNotToAdd = null)
@@ -207,6 +205,8 @@ namespace ReusableUIComponents.Dialogs
             
             foreach (string word in Regex.Split(message, @"(?<=[. ,;)(<>-])"))
             {
+                if(string.IsNullOrWhiteSpace(word))
+                    continue;
 
                 //Try to match the trimmed keyword or the trimmed keyword without an s
                 var keyword = GetDocumentationKeyword(keywordNotToAdd, word.Trim('.', ' ', ',', ';', '(', ')','<','>','-'));
@@ -220,7 +220,6 @@ namespace ReusableUIComponents.Dialogs
             //scroll back to the top
             richTextBox1.Visible = true;
             richTextBox1.Select(0, 0);
-            
         }
 
         /// <summary>
@@ -247,7 +246,7 @@ namespace ReusableUIComponents.Dialogs
         {
             new WideMessageBox(new WideMessageBoxArgs(hs.Keyword, hs.HelpText, Environment.StackTrace, hs.Keyword, WideMessageBoxTheme.Help)
             {
-                DoubleUpNewlines = true
+                FormatAsParagraphs = true
             }).Show();
         }
 
@@ -287,6 +286,19 @@ namespace ReusableUIComponents.Dialogs
                 return;
 
             Setup(_navigationStack.Pop());
+        }
+
+        private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (
+       richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == 0 && e.KeyData == Keys.Up ||
+       richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == richTextBox1.GetLineFromCharIndex(richTextBox1.TextLength) && e.KeyData == Keys.Down ||
+       richTextBox1.SelectionStart == richTextBox1.TextLength && e.KeyData == Keys.Right ||
+       richTextBox1.SelectionStart == 0 && e.KeyData == Keys.Left
+   ) e.Handled = true;
+
+            if(e.KeyData == Keys.Back || e.KeyData == Keys.Escape || (e.KeyData == Keys.W && e.Control))
+                e.Handled = true;
         }
     }
 }

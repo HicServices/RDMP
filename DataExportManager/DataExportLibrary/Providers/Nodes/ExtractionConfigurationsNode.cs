@@ -3,6 +3,9 @@ using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.Providers.Nodes
 {
+    /// <summary>
+    /// Collection of all <see cref="ExtractionConfiguration"/> in a given <see cref="Project"/>
+    /// </summary>
     public class ExtractionConfigurationsNode:IOrderable
     {
         public Project Project { get; set; }

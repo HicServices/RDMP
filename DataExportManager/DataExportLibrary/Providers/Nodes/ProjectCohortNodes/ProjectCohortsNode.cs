@@ -3,9 +3,6 @@ using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.Providers.Nodes.ProjectCohortNodes
 {
-    /// <summary>
-    /// Container folder immediately under a Project which contains subnodes 'ProjectSavedCohortsNode' and 'ProjectCohortIdentificationConfigurationAssociationsNode'
-    /// </summary>
     public class ProjectCohortsNode:IOrderable
     {
         public Project Project { get; set; }

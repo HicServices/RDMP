@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.Providers.Nodes
 {
+    /// <summary>
+    /// Collection of all project specific datasets (<see cref="Catalogue"/>s which can only be used with this <see cref="Project"/>).
+    /// </summary>
     public class ProjectCataloguesNode
     {
         public Project Project { get; set; }

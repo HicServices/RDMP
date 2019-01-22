@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
+    /// <summary>
+    /// Collection of all the <see cref="Catalogue"/>s which are currently associated with a given <see cref="Data.DataLoad.LoadMetadata"/>.  This governs
+    /// which tables are created in RAW=>STAGING=>LIVE.
+    /// </summary>
     public class AllCataloguesUsedByLoadMetadataNode : IOrderable
     {
         public LoadMetadata LoadMetadata { get; private set; }
