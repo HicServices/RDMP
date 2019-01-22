@@ -3,6 +3,7 @@ using CatalogueLibrary.Ticketing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using Color = System.Drawing.Color;
 
 namespace CatalogueManager.LocationsMenu.Ticketing

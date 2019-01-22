@@ -13,11 +13,9 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
-using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.ExtractionUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ExtractionUIs.JoinsAndLookups;
 using CatalogueManager.Icons.IconProvision;
@@ -28,7 +26,6 @@ using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Theme;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
@@ -47,6 +44,7 @@ using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dependencies.Models;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -384,7 +382,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return objectToEmphasise;
         }
-        
+
+        public string GetDocumentation(Type type)
+        {
+            if (RepositoryLocator.CatalogueRepository.CommentStore.ContainsKey(type.Name))
+                return RepositoryLocator.CatalogueRepository.CommentStore[type.Name];
+
+            return null;
+        }
+
         ///<inheritdoc/>
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
         {

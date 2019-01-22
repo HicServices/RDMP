@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using ReusableLibraryCode.Progress;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Icons;
 using ReusableUIComponents.Theme;
 

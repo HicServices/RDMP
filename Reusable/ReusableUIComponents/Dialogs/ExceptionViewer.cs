@@ -1,8 +1,7 @@
 ﻿using System;
 using ReusableLibraryCode;
 
-
-namespace ReusableUIComponents
+namespace ReusableUIComponents.Dialogs
 {
     /// <summary>
     /// Used by the RDMP to tell you about something that went wrong.  You can select bits of the message text and copy them with Ctrl+C or select 'Copy to Clipboard' to copy all the
@@ -13,7 +12,7 @@ namespace ReusableUIComponents
     {
         private readonly Exception _exception;
         
-        private ExceptionViewer(string title, string message, Exception exception):base(title,message,exception.StackTrace)
+        private ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,exception.StackTrace,null,WideMessageBoxTheme.Exception))
         {
             _exception = exception;
 

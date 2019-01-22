@@ -12,6 +12,9 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CohortManager.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Creates a new persistent database query configuration for identifying cohort sets of patients.
+    /// </summary>
     public class ExecuteCommandCreateNewCohortIdentificationConfiguration: BasicUICommandExecution,IAtomicCommandWithTarget
     {
         private Project _associateWithProject;

@@ -15,6 +15,7 @@ using DataExportLibrary.CohortDescribing;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace DataExportManager.CohortUI
 {

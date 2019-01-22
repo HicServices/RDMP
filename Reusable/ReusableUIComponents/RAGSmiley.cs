@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 
 namespace ReusableUIComponents
 {

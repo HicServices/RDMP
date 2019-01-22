@@ -9,7 +9,6 @@ using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
-using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.Icons.IconProvision;
@@ -18,7 +17,6 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.CommandExecution;
@@ -144,6 +142,12 @@ namespace CatalogueManager.ItemActivation
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);
         object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
-        
+
+        /// <summary>
+        /// Returns xml doc comments from the CommentStore for the given class (or null if it is undocumented)
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        string GetDocumentation(Type type);
     }
 }

@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using RDMPStartup.PluginManagement;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.PluginManagement
 {

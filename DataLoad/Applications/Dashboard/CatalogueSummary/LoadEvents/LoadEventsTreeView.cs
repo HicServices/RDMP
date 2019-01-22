@@ -21,6 +21,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
 using HIC.Logging.PastEvents;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace Dashboard.CatalogueSummary.LoadEvents
 {

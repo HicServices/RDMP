@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 

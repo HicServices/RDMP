@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Input;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
+using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 
-namespace ReusableUIComponents
+namespace ReusableUIComponents.Dialogs
 {
     /// <summary>
     /// Used to display a message to the user including selectable text and resizing.  Basically improves on System.Windows.Forms.MessageBox
@@ -14,50 +19,27 @@ namespace ReusableUIComponents
     [TechnicalUI]
     public partial class WideMessageBox : Form
     {
-        private readonly string _environmentDotStackTrace;
+        /// <summary>
+        /// The currently displayed message
+        /// </summary>
+        public WideMessageBoxArgs Args { get; set; }
 
+        readonly Stack<WideMessageBoxArgs> _navigationStack = new Stack<WideMessageBoxArgs>();
 
         #region Static setup of dictionary of keywords
         public static CommentStore CommentStore;
         #endregion
-
-        public WideMessageBox(string title, string message, string environmentDotStackTrace = null, string keywordNotToAdd = null, WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
+        
+        public WideMessageBox(WideMessageBoxArgs args)
         {
-            _environmentDotStackTrace = environmentDotStackTrace;
             InitializeComponent();
             
-            richTextBox1.Font = new Font(FontFamily.GenericMonospace, richTextBox1.Font.Size);
-            richTextBox1.Select(0, 0);
-            richTextBox1.WordWrap = true;
+            Setup(args);
             
             //can only write to clipboard in STA threads
             btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
-            btnViewStackTrace.Visible = _environmentDotStackTrace != null;
-
-            //todo hack:if theres a long title and no message
-            if (!string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(message) && title.Length > 100)
-            {
-                message = title;
-                title = null;
-            }
-
-            //if there is a title
-            if(!string.IsNullOrWhiteSpace(title))
-            {
-                lblMainMessage.Text = title;
-            }
-            else
-            {
-                richTextBox1.Top = lblMainMessage.Top;
-                richTextBox1.Height += lblMainMessage.Top;
-                lblMainMessage.Visible = false;
-            }
-
-            Setup(message, keywordNotToAdd);
-
-            ApplyTheme(theme);
-            
+            btnViewStackTrace.Visible = Args.EnvironmentDotStackTrace != null;
 
             //try to resize form to fit bounds
             this.Size = FormsHelper.GetPreferredSizeOfTextControl(richTextBox1);
@@ -74,10 +56,51 @@ namespace ReusableUIComponents
 
             richTextBox1.LinkClicked += richTextBox1_LinkClicked;
         }
-        
+
+        private void Setup(WideMessageBoxArgs args)
+        {
+            Args = args;
+
+            btnBack.Enabled = _navigationStack.Any();
+
+            richTextBox1.Font = new Font(FontFamily.GenericMonospace, richTextBox1.Font.Size);
+            richTextBox1.Select(0, 0);
+            richTextBox1.WordWrap = true;
+            richTextBox1.Text = "";
+
+            var message = args.Message;
+            var title = args.Title;
+
+            //todo hack:if theres a long title and no message
+            if (!string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(message) && title.Length > 100)
+            {
+                message = title;
+                title = null;
+            }
+
+            //Replace single newlines with double new lines 
+            message = Regex.Replace(message, "\r\n\\s*","\r\n\r\n");
+
+            //if there is a title
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                lblMainMessage.Text = title;
+            }
+            else
+            {
+                richTextBox1.Top = lblMainMessage.Top;
+                richTextBox1.Height += lblMainMessage.Top;
+                lblMainMessage.Visible = false;
+            }
+
+            SetMessage(message, args.KeywordNotToAdd);
+
+            ApplyTheme(args.Theme);
+        }
+
         public static void Show(string mainMessage, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
         {
-            WideMessageBox wmb = new WideMessageBox(mainMessage,message, environmentDotStackTrace, keywordNotToAdd, theme);
+            WideMessageBox wmb = new WideMessageBox(new WideMessageBoxArgs(mainMessage,message, environmentDotStackTrace, keywordNotToAdd, theme));
 
             if (isModalDialog)
                 wmb.ShowDialog();
@@ -130,6 +153,9 @@ namespace ReusableUIComponents
 
             if(e.KeyCode == Keys.W && e.Control)
                 this.Close();
+
+            if(e.KeyCode == Keys.Back)
+                Back();
         }
 
         private void btnViewStackTrace_Click(object sender, EventArgs e)
@@ -139,7 +165,7 @@ namespace ReusableUIComponents
 
         protected virtual void OnViewStackTrace()
         {
-            var dialog = new ExceptionViewerStackTraceWithHyperlinks(_environmentDotStackTrace);
+            var dialog = new ExceptionViewerStackTraceWithHyperlinks(Args.EnvironmentDotStackTrace);
             dialog.Show();
         }
 
@@ -149,11 +175,18 @@ namespace ReusableUIComponents
             {
                 var split = e.LinkText.Split('#');
                 if(split.Length >=2 && CommentStore.ContainsKey(split[1]))
-                    ShowKeywordHelp(split[1], CommentStore[split[1]]);
+                    NavigateTo(split[1]);
             }
         }
 
-        public void Setup(string message, string keywordNotToAdd = null)
+        private void NavigateTo(string keyword)
+        {
+            _navigationStack.Push(Args);
+            
+            Setup(new WideMessageBoxArgs(keyword,CommentStore[keyword],null,keyword,WideMessageBoxTheme.Help));
+        }
+
+        private void SetMessage(string message, string keywordNotToAdd = null)
         {
             //unless the text is unreasonably long or we don't have help documentation available
             if (message.Length > 100000 || CommentStore == null)
@@ -161,37 +194,39 @@ namespace ReusableUIComponents
                 richTextBox1.Text = message;
                 return;
             }
-
-            foreach (string word in message.Split(' '))
+            
+            foreach (string word in Regex.Split(message, @"(?<=[. ,;)(])"))
             {
-                if (CommentStore.ContainsKey(word) && !word.Equals(keywordNotToAdd,StringComparison.CurrentCultureIgnoreCase))
-                    richTextBox1.InsertLink(word, word);
-                else
-                    if (CommentStore.ContainsKey(word.Trim('s')) && !word.Trim('s').Equals(keywordNotToAdd,StringComparison.CurrentCultureIgnoreCase))
-                        richTextBox1.InsertLink(word, word.Trim('s'));
+
+                //Try to match the trimmed keyword or the trimmed keyword without an s
+                var keyword = GetDocumentationKeyword(keywordNotToAdd, word.Trim('.', ' ', ',', ';', '(', ')'));
+
+                if (keyword != null)
+                    richTextBox1.InsertLink(word, keyword);
                 else
                     richTextBox1.SelectedText = word;
-
-                richTextBox1.SelectedText = " ";
             }
         }
-        
-        public static void HighlightText(RichTextBox myRtb, string word, Color color)
+
+        /// <summary>
+        /// Returns <paramref name="word"/> if <see cref="CommentStore"/> contains an entry for it.
+        /// </summary>
+        /// <param name="keywordNotToAdd"></param>
+        /// <param name="word"></param>
+        /// <returns></returns>
+        private string GetDocumentationKeyword(string keywordNotToAdd, string word)
         {
-            if (word == string.Empty)
-                return;
-            var reg = new Regex(@"\b" + word + @"(\b|s\b)", RegexOptions.IgnoreCase);
+            if (CommentStore.ContainsKey(word) && !word.Equals(keywordNotToAdd, StringComparison.CurrentCultureIgnoreCase))
+                return word;
 
-            foreach (Match match in reg.Matches(myRtb.Text))
-            {
-                myRtb.Select(match.Index, match.Length);
-                myRtb.SelectionColor = color;
-            }
+            //try the plural if we didnt match the basic word
+            if (word.EndsWith("s"))
+                return GetDocumentationKeyword(keywordNotToAdd, word.TrimEnd('s'));
 
-            myRtb.SelectionLength = 0;
-            myRtb.SelectionColor = Color.Black;
+
+            return null;
         }
-        
+
         private static void ShowHelpSection(HelpSection hs)
         {
             WideMessageBox.Show(hs.Keyword, hs.HelpText, Environment.StackTrace, false, hs.Keyword, WideMessageBoxTheme.Help);
@@ -215,6 +250,24 @@ namespace ReusableUIComponents
                 default:
                     throw new ArgumentOutOfRangeException("result");
             }
+        }
+
+        private void WideMessageBox_Load(object sender, EventArgs e)
+        {
+            Back();
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            Back();
+        }
+
+        private void Back()
+        {
+            if(!_navigationStack.Any())
+                return;
+
+            Setup(_navigationStack.Pop());
         }
     }
 }

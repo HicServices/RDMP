@@ -16,6 +16,7 @@ using MapsDirectlyToDatabaseTableUI;
 
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using Point = System.Drawing.Point;
 
 namespace DataExportManager.CohortUI.ImportCustomData

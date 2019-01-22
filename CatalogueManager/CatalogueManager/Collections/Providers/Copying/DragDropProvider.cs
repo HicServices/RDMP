@@ -16,6 +16,7 @@ using CatalogueManager.Copying;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.Collections.Providers.Copying
 {

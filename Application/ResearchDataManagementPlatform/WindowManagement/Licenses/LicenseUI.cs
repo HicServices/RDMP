@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace ResearchDataManagementPlatform.WindowManagement.Licenses
 {

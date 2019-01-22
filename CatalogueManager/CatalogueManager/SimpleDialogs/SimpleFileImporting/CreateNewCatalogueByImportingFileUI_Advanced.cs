@@ -14,6 +14,7 @@ using DataLoadEngine.DataFlowPipeline.Destinations;
 using DataLoadEngine.PipelineUseCases;
 using FAnsi.Discovery;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 {

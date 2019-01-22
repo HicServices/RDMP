@@ -10,6 +10,7 @@ using QuickGraph;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Icons;
 
 namespace ReusableUIComponents.ChecksUI

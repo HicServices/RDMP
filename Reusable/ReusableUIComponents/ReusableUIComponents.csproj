@@ -267,6 +267,16 @@
     <Compile Include="Dependencies\Models\GraphExample.cs" />
     <Compile Include="Dependencies\Models\StringToVisibilityConverter.cs" />
     <Compile Include="Dependencies\Models\WPFBitmapConverter.cs" />
+    <Compile Include="Dialogs\ExceptionViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\WideMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\WideMessageBox.Designer.cs">
+      <DependentUpon>WideMessageBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\WideMessageBoxArgs.cs" />
     <Compile Include="DoTransparencyProperly.cs" />
     <Compile Include="ExceptionCounterUI.cs" />
     <Compile Include="ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
@@ -311,9 +321,6 @@
     </Compile>
     <Compile Include="LinkLabels\ExceptionLinkLabel.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ExceptionViewer.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="ExceptionViewerStackTraceWithHyperlinks.cs">
       <SubType>Form</SubType>
@@ -433,12 +440,6 @@
       <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ViewSourceCodeToolTip.cs" />
-    <Compile Include="WideMessageBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WideMessageBox.Designer.cs">
-      <DependentUpon>WideMessageBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="WideMessageBoxTheme.cs" />
     <Compile Include="YesNoYesToAllDialog.cs">
       <SubType>Form</SubType>
@@ -463,8 +464,11 @@
     <EmbeddedResource Include="Dependencies\DependencyGraph.resx">
       <DependentUpon>DependencyGraph.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExceptionViewer.resx">
+    <EmbeddedResource Include="Dialogs\ExceptionViewer.resx">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\WideMessageBox.resx">
+      <DependentUpon>WideMessageBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExceptionViewerStackTraceWithHyperlinks.resx">
       <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
@@ -528,9 +532,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ViewSourceCodeDialog.resx">
       <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WideMessageBox.resx">
-      <DependentUpon>WideMessageBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="YesNoYesToAllDialog.resx">
       <DependentUpon>YesNoYesToAllDialog.cs</DependentUpon>

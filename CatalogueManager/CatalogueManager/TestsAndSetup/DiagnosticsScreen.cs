@@ -9,6 +9,7 @@ using Diagnostics;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.TestsAndSetup
 {

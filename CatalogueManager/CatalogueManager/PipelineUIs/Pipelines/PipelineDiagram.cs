@@ -23,6 +23,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.PipelineUIs.Pipelines
 {

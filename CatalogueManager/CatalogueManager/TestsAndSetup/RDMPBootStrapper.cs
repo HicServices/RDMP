@@ -5,6 +5,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using RDMPStartup;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 
 namespace CatalogueManager.TestsAndSetup

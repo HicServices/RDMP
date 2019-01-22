@@ -21,6 +21,7 @@ using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SqlDialogs;
 
 namespace CatalogueManager.AggregationUIs.Advanced

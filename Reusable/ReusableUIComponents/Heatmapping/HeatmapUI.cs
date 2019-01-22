@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
+using ReusableUIComponents.Dialogs;
 using Brushes = System.Drawing.Brushes;
 using Color = System.Drawing.Color;
 using FontFamily = System.Drawing.FontFamily;

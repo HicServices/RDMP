@@ -6,6 +6,7 @@ using CatalogueManager.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.Menus.MenuItems
 {
@@ -27,7 +28,7 @@ namespace CatalogueManager.Menus.MenuItems
             //disable if impossible command
             Enabled = !command.IsImpossible;
 
-            ToolTipText = command.IsImpossible ? command.ReasonCommandImpossible : command.GetCommandHelp();
+            ToolTipText = command.IsImpossible ? command.ReasonCommandImpossible : command.GetCommandHelp() ?? activator.GetDocumentation(command.GetType());
         }
 
         protected override void OnClick(EventArgs e)

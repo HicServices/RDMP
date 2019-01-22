@@ -7,7 +7,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using ReusableUIComponents;
-
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Progress;
 
 namespace CatalogueManager.PipelineUIs.Pipelines

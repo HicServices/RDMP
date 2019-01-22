@@ -14,6 +14,7 @@ using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.SimpleDialogs.NavigateTo
 {

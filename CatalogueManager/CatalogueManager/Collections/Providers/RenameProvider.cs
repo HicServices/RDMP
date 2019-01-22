@@ -9,6 +9,7 @@ using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.Collections.Providers
 {

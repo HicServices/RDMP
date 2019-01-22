@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using ReusableLibraryCode;
+using ReusableUIComponents.Dialogs;
 using Cursors = System.Windows.Forms.Cursors;
 
 namespace ReusableUIComponents.LinkLabels

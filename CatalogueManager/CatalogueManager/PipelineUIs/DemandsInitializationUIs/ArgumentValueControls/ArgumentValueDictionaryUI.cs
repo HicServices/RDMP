@@ -9,6 +9,7 @@ using System.Windows.Input;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {

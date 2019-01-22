@@ -14,6 +14,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.PipelineUIs.Pipelines

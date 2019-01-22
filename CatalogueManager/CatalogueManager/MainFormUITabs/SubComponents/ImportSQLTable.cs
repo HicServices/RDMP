@@ -12,6 +12,7 @@ using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using FAnsi.Discovery;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.MainFormUITabs.SubComponents
 {

@@ -9,6 +9,7 @@ using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.LocationsMenu.Ticketing
 {

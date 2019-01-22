@@ -1,6 +1,6 @@
 ﻿using RichTextBoxLinks;
 
-namespace ReusableUIComponents
+namespace ReusableUIComponents.Dialogs
 {
     partial class WideMessageBox
     {
@@ -39,6 +39,7 @@ namespace ReusableUIComponents
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblMainMessage = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnBack = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -126,6 +127,7 @@ namespace ReusableUIComponents
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.btnBack);
             this.panel2.Controls.Add(this.btnOk);
             this.panel2.Controls.Add(this.btnViewStackTrace);
             this.panel2.Controls.Add(this.btnCopyToClipboard);
@@ -134,6 +136,20 @@ namespace ReusableUIComponents
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(759, 37);
             this.panel2.TabIndex = 7;
+            // 
+            // btnBack
+            // 
+            this.btnBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnBack.Image = ((System.Drawing.Image)(resources.GetObject("btnBack.Image")));
+            this.btnBack.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnBack.Location = new System.Drawing.Point(3, 8);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(57, 26);
+            this.btnBack.TabIndex = 3;
+            this.btnBack.Text = "Back";
+            this.btnBack.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // WideMessageBox
             // 
@@ -148,6 +164,7 @@ namespace ReusableUIComponents
             this.Name = "WideMessageBox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "WideMessageBox";
+            this.Load += new System.EventHandler(this.WideMessageBox_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.WideMessageBox_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).EndInit();
             this.panel1.ResumeLayout(false);
@@ -167,5 +184,6 @@ namespace ReusableUIComponents
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label lblMainMessage;
+        private System.Windows.Forms.Button btnBack;
     }
 }

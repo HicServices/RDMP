@@ -18,6 +18,7 @@ using HIC.Common.Validation.Constraints.Primary;
 using HIC.Common.Validation.Constraints.Secondary;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.Validation

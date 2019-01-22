@@ -24,6 +24,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using CatalogueManager.Copying.Commands;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 
 namespace CatalogueManager.MainFormUITabs

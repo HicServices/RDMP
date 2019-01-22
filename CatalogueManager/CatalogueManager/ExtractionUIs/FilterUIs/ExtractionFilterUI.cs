@@ -19,6 +19,7 @@ using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 

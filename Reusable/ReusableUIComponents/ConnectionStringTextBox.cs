@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using FAnsi;
+using ReusableUIComponents.Dialogs;
 
 namespace ReusableUIComponents
 {
