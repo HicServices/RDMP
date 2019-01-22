@@ -385,10 +385,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public string GetDocumentation(Type type)
         {
-            if (RepositoryLocator.CatalogueRepository.CommentStore.ContainsKey(type.Name))
-                return RepositoryLocator.CatalogueRepository.CommentStore[type.Name];
-
-            return null;
+            return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
         }
 
         ///<inheritdoc/>

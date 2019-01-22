@@ -26,6 +26,13 @@ namespace ReusableUIComponents.Dialogs
 
         readonly Stack<WideMessageBoxArgs> _navigationStack = new Stack<WideMessageBoxArgs>();
 
+        private static readonly HashSet<string> KeywordBlacklist = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
+        {
+            "date",
+            "example",
+            "column"
+        };
+
         #region Static setup of dictionary of keywords
         public static CommentStore CommentStore;
         #endregion
@@ -188,6 +195,8 @@ namespace ReusableUIComponents.Dialogs
 
         private void SetMessage(string message, string keywordNotToAdd = null)
         {
+            richTextBox1.Visible = false;
+
             //unless the text is unreasonably long or we don't have help documentation available
             if (message.Length > 100000 || CommentStore == null)
             {
@@ -195,17 +204,22 @@ namespace ReusableUIComponents.Dialogs
                 return;
             }
             
-            foreach (string word in Regex.Split(message, @"(?<=[. ,;)(])"))
+            foreach (string word in Regex.Split(message, @"(?<=[. ,;)(<>-])"))
             {
 
                 //Try to match the trimmed keyword or the trimmed keyword without an s
-                var keyword = GetDocumentationKeyword(keywordNotToAdd, word.Trim('.', ' ', ',', ';', '(', ')'));
+                var keyword = GetDocumentationKeyword(keywordNotToAdd, word.Trim('.', ' ', ',', ';', '(', ')','<','>','-'));
 
                 if (keyword != null)
                     richTextBox1.InsertLink(word, keyword);
                 else
                     richTextBox1.SelectedText = word;
             }
+
+            //scroll back to the top
+            richTextBox1.Visible = true;
+            richTextBox1.Select(0, 0);
+            
         }
 
         /// <summary>
@@ -216,15 +230,16 @@ namespace ReusableUIComponents.Dialogs
         /// <returns></returns>
         private string GetDocumentationKeyword(string keywordNotToAdd, string word)
         {
-            if (CommentStore.ContainsKey(word) && !word.Equals(keywordNotToAdd, StringComparison.CurrentCultureIgnoreCase))
-                return word;
+            //do not highlight common words like "example"
+            if (KeywordBlacklist.Contains(word) || KeywordBlacklist.Contains(word.TrimEnd('s')))
+                return null;
 
-            //try the plural if we didnt match the basic word
-            if (word.EndsWith("s"))
-                return GetDocumentationKeyword(keywordNotToAdd, word.TrimEnd('s'));
+            var keyword = CommentStore.GetDocumentationKeywordIfExists(word, true);
+            
+            if (keyword == keywordNotToAdd)
+                return null;
 
-
-            return null;
+            return keyword;
         }
 
         private static void ShowHelpSection(HelpSection hs)

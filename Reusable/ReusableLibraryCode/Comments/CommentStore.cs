@@ -134,5 +134,42 @@ namespace ReusableLibraryCode.Comments
         {
             return GetTypeDocumentationIfExists(int.MaxValue, type, allowInterfaceInstead);
         }
+
+        /// <summary>
+        /// Searches the CommentStore for variations of the <paramref name="word"/> and returns the documentation if found (or null)
+        /// </summary>
+        /// <param name="word"></param>
+        /// <param name="fuzzyMatch"></param>
+        /// <returns></returns>
+        public string GetDocumentationIfExists(string word, bool fuzzyMatch)
+        {
+            var match = GetDocumentationKeywordIfExists(word,fuzzyMatch);
+                
+            return match != null ? this[match]:null;
+        }
+
+        /// <summary>
+        /// Searches the CommentStore for variations of the <paramref name="word"/> and returns the key that matches (which might be word verbatim).
+        /// 
+        /// <para>This does not return the actual documentation, use <see cref="GetDocumentationIfExists"/> for that</para>
+        /// </summary>
+        /// <param name="word"></param>
+        /// <param name="fuzzyMatch"></param>
+        /// <returns></returns>
+        public string GetDocumentationKeywordIfExists(string word, bool fuzzyMatch)
+        {
+            if (ContainsKey(word))
+                return word;
+
+            //try the plural if we didnt match the basic word
+            if (word.EndsWith("s") && fuzzyMatch)
+                return GetDocumentationKeywordIfExists(word.TrimEnd('s'), true);
+
+            //try the interface
+            if (fuzzyMatch)
+                return GetDocumentationKeywordIfExists("I" + word, false);
+
+            return null;
+        }
     }
 }
