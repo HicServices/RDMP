@@ -10,6 +10,7 @@ using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Injection;
 
 namespace CatalogueLibrary.Data
 {
@@ -23,7 +24,7 @@ namespace CatalogueLibrary.Data
     /// requires specific code to execute.  You would make a class for dealing with the file format and make it implement IPluginAttacher.  Upload your dll along with any
     /// dependency dlls and the next time a DataAnalyst is building a load configuration your attacher will be displayed along with all the 'out of the box' attachers (CSV, Excel etc)</para>
     /// </summary>
-    public class LoadModuleAssembly : VersionedDatabaseEntity
+    public class LoadModuleAssembly : VersionedDatabaseEntity, IInjectKnown<Plugin>
     {
         /// <summary>
         /// List of dlls which will not be packaged up if present in your plugins bin directory since they already form part of the RDMP core architecture
@@ -140,6 +141,7 @@ namespace CatalogueLibrary.Data
         private DateTime _uploadDate;
         private string _dllFileVersion;
         private int _plugin_ID;
+        private Lazy<Plugin> _knownPlugin;
 
         /// <summary>
         /// The name of the dll or src file within the <see cref="Plugin"/>
@@ -221,7 +223,7 @@ namespace CatalogueLibrary.Data
         
         /// <inheritdoc cref="Plugin_ID"/>
         [NoMappingToDatabase]
-        public Plugin Plugin { get { return Repository.GetObjectByID<Plugin>(Plugin_ID); }}
+        public Plugin Plugin { get { return _knownPlugin.Value; }}
 
         #endregion
 
@@ -238,6 +240,7 @@ namespace CatalogueLibrary.Data
             Repository = repository;
 
             Repository.InsertAndHydrate(this,dictionaryParameters);
+            ClearAllInjections();
         }
 
         internal LoadModuleAssembly(ICatalogueRepository repository, DbDataReader r)
@@ -251,11 +254,13 @@ namespace CatalogueLibrary.Data
             UploadDate = Convert.ToDateTime(r["UploadDate"]);
             DllFileVersion = r["DllFileVersion"] as string;
             Plugin_ID = Convert.ToInt32(r["Plugin_ID"]);
+            ClearAllInjections();
         }
         
         internal LoadModuleAssembly(ShareManager shareManager, ShareDefinition shareDefinition)
         {
             shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this, shareManager, shareDefinition);
+            ClearAllInjections();
         }
 
         /// <summary>
@@ -394,10 +399,20 @@ namespace CatalogueLibrary.Data
             return true;
         }
 
+        public void InjectKnown(Plugin instance)
+        {
+            _knownPlugin = new Lazy<Plugin>(() => instance);
+        }
+
         /// <inheritdoc/>
         public override string ToString()
         {
             return Name;
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownPlugin = new Lazy<Plugin>(() => Repository.GetObjectByID<Plugin>(Plugin_ID));
         }
     }
 }

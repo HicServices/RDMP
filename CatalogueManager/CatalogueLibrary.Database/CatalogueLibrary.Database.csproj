@@ -258,6 +258,7 @@
     <EmbeddedResource Include="db\up\060_MappedDataPathForExternalDbServer.sql" />
     <EmbeddedResource Include="db\up\061_CacheProgess INamed.sql" />
     <EmbeddedResource Include="db\up\062_ObjectReferenceSupportCatalogue.sql" />
+    <EmbeddedResource Include="db\up\063_PluginNameAndVersionMustBeUnique.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

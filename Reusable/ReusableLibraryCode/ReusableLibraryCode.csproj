@@ -339,6 +339,7 @@
     <Compile Include="DirectoryInfoComparer.cs" />
     <Compile Include="DoNotExtractProperty.cs" />
     <Compile Include="Exceptions\ExpectedIdenticalStringsException.cs" />
+    <Compile Include="Extensions\VersionExtensions.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Icons\DatabaseProviderIcons.Designer.cs">
       <AutoGen>True</AutoGen>

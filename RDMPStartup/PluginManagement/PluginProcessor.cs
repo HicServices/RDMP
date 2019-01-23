@@ -8,6 +8,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Extensions;
 
 namespace RDMPStartup.PluginManagement
 {
@@ -42,8 +43,22 @@ namespace RDMPStartup.PluginManagement
 
             ZipFile.ExtractToDirectory(toCommit.FullName, workingDirectory);
 
-            //delete old versions of the file
-            var oldVersion = _repository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name));
+            Version pluginVersion;
+            try
+            {
+                pluginVersion = new Version(File.ReadLines(Path.Combine(workingDirectory, "PluginManifest.txt")).First().Split(':')[1]);
+            }
+            catch
+            {
+                throw new NotSupportedException("Could not find a valid version inside the PluginManifest.txt in the zip package");
+            }
+
+            // reject if it's not compatible with running version
+            if (!pluginVersion.IsCompatibleWith(_repository.GetVersion(), 3))
+                throw new NotSupportedException(String.Format("Plugin version {0} is incompatible with current running version of RDMP.", pluginVersion));
+            
+            // delete EXACT old versions of the Plugin
+            var oldVersion = _repository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
 
             List<LoadModuleAssembly> legacyDlls = new List<LoadModuleAssembly>();
             Plugin plugin = null;
@@ -54,22 +69,22 @@ namespace RDMPStartup.PluginManagement
                 toReturn = true;
                 plugin = oldVersion;
             }
-            else           
-                plugin = new Plugin(_repository, toCommit);
+            else
+                plugin = new Plugin(_repository, toCommit, pluginVersion);
 
             try
             {
                 foreach (var file in Directory.GetFiles(workingDirectory, "*.dll"))
                     ProcessFile(plugin, new FileInfo(file), legacyDlls);
 
-                foreach (var srcZipFile in Directory.GetFiles(workingDirectory,"src.zip"))
+                foreach (var srcZipFile in Directory.GetFiles(workingDirectory, "src.zip"))
                     ProcessFile(plugin, new FileInfo(srcZipFile), legacyDlls);
 
                 //For assemblies that have less dll dependencies now than before (i.e. redundant assemblies)
                 foreach (LoadModuleAssembly unused in legacyDlls)
                 {
                     var export = _repository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsReferenceTo(unused));
-                    if(export != null)
+                    if (export != null)
                         export.DeleteInDatabase();
 
                     unused.DeleteInDatabase();

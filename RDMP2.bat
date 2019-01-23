@@ -1,1 +1,0 @@
-Application\ResearchDataManagementPlatform\bin\Debug\ResearchDataManagementPlatform.exe -c "Data Source=CHILTERN8564;Initial Catalog=RDMP_2_Catalogue;Integrated Security=True" -d "Data Source=CHILTERN8564;Initial Catalog=RDMP_2_DataExport;Integrated Security=True"

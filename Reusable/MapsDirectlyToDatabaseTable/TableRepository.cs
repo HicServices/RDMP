@@ -180,6 +180,8 @@ namespace MapsDirectlyToDatabaseTable
                 p.Value = propValue.ToString();
             else if (propValue is TimeSpan)
                 p.Value = propValue.ToString();
+            else if (propValue is Version)
+                p.Value = propValue.ToString();
             else
                 p.Value = propValue;
         }

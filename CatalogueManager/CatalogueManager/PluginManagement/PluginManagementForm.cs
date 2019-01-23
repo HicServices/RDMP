@@ -5,10 +5,12 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Composition.Primitives;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,18 +65,25 @@ namespace CatalogueManager.PluginManagement
             
             treeListView.DropSink = sink;
 
-            treeListView.CanExpandGetter += (m) => (m is Plugin || m is LoadModuleAssembly) && !m.ToString().Equals("src.zip");
-            treeListView.ChildrenGetter+= ChildrenGetter;
+            treeListView.CanExpandGetter += (m) => (m is Plugin || m is LoadModuleAssembly || m is String) && !m.ToString().Equals("src.zip");
+            treeListView.ChildrenGetter += ChildrenGetter;
             treeListView.FormatRow += TreeListViewOnFormatRow;
 
+            olvVersion.AspectGetter = (m) => (m is Plugin ? ((Plugin)m).PluginVersion : null);
+            
             treeListView.SetNativeBackgroundWatermark(CatalogueIcons.DropHere);
-
         }
 
         private IEnumerable ChildrenGetter(object model)
         {
+            var root = model as String;
             var plugin = model as Plugin;
             var lma = model as LoadModuleAssembly;
+
+            if (root == "Loaded")
+                return compatiblePlugins;
+            if (root == "Not loaded")
+                return wrongPlugins;
 
             if (plugin != null)
                 return plugin.LoadModuleAssemblies;
@@ -108,7 +117,10 @@ namespace CatalogueManager.PluginManagement
             if(plugin != null)
             {
                 if (!analysers.ContainsKey(plugin))
+                {
+                    formatRowEventArgs.Item.ForeColor = Color.DimGray;
                     return;
+                }
 
                 if (analysers[plugin].Reports.Any())
                 {
@@ -123,8 +135,11 @@ namespace CatalogueManager.PluginManagement
             
             if (lma != null)
             {
-                if (!analysers.ContainsKey(lma.Plugin))
+                if (!analysers.Keys.Any(p => p.ID == lma.Plugin_ID))
+                {
+                    formatRowEventArgs.Item.ForeColor = Color.DimGray;
                     return;
+                }
 
                 var report = analysers[lma.Plugin].Reports[lma];
                 formatRowEventArgs.Item.ForeColor = report.Status == PluginAssemblyStatus.Healthy? Color.Green: Color.Red;
@@ -218,9 +233,12 @@ namespace CatalogueManager.PluginManagement
                 Application.Restart();
         }
 
+        private string _version;
+
         #endregion
 
-        Plugin[] plugins;
+        private IList<Plugin> wrongPlugins;
+        private IList<Plugin> compatiblePlugins;
         BackgroundWorker analyser;
 
         private void RefreshUIFromDatabase()
@@ -232,8 +250,9 @@ namespace CatalogueManager.PluginManagement
             }
 
             treeListView.ClearObjects();
-            
-            plugins = RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().ToArray();
+
+            compatiblePlugins = RepositoryLocator.CatalogueRepository.GetCompatiblePlugins().ToList();
+            wrongPlugins = RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().Except(compatiblePlugins).ToList();
             analyser = new BackgroundWorker();
             analyser.DoWork += analyser_DoWork;
             analyser.RunWorkerCompleted += analyser_RunWorkerCompleted;
@@ -242,7 +261,7 @@ namespace CatalogueManager.PluginManagement
 
         void analyser_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            treeListView.AddObjects(plugins);
+            treeListView.AddObjects(new[] { "Loaded", "Not loaded" });
             analyser = null;
         }
 
@@ -252,7 +271,7 @@ namespace CatalogueManager.PluginManagement
             
             var mef = RepositoryLocator.CatalogueRepository.MEF;
 
-            foreach (Plugin plugin in plugins)
+            foreach (Plugin plugin in compatiblePlugins)
             {
                 var pluginDir = plugin.GetPluginDirectoryName(mef.DownloadDirectory);
                 var pa = new PluginAnalyser(plugin, new DirectoryInfo(pluginDir), mef.SafeDirectoryCatalog);
@@ -298,11 +317,15 @@ namespace CatalogueManager.PluginManagement
             {
                 var deleteable = treeListView.SelectedObject as IDeleteable;
 
-                if(deleteable != null)
+                if(deleteable is Plugin)
                     if(MessageBox.Show("Are you sure you want to delete '"+deleteable+"'?"+Environment.NewLine + Environment.NewLine +" NOTE:It is likely this assembly/plugin is currently ReadLocked since the application is running, deleting will remove it from the Database and remove it locally the next time you restart the application.","Confirm Deleting", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         deleteable.DeleteInDatabase();
-                        treeListView.RemoveObject(deleteable);
+                        if (wrongPlugins.Contains((Plugin)deleteable))
+                            wrongPlugins.Remove((Plugin) deleteable);
+                        else
+                            compatiblePlugins.ToList().Remove((Plugin)deleteable);
+                        RefreshUIFromDatabase();
                     }
             }
         }
@@ -325,7 +348,7 @@ namespace CatalogueManager.PluginManagement
             if(cpa != null)
                 pluginDependencyVisualisation1.Select(cpa);
             else
-            pluginDependencyVisualisation1.ClearSelection();
+                pluginDependencyVisualisation1.ClearSelection();
 
         }
 
@@ -351,9 +374,9 @@ namespace CatalogueManager.PluginManagement
 
         private void btnSaveToRemote_Click(object sender, EventArgs e)
         {
-            if (!plugins.Any())
+            if (!compatiblePlugins.Any())
             {
-                MessageBox.Show(this, "There are no plugins in the system...", "Error");
+                MessageBox.Show(this, "There are no compatible plugins in the system...", "Error");
                 return;
             }
 
@@ -362,12 +385,12 @@ namespace CatalogueManager.PluginManagement
             var f = new SingleControlForm(barsUI);
             f.Show();
 
-            service.SendToAllRemotes(plugins, barsUI.Done);
+            service.SendToAllRemotes(compatiblePlugins.ToArray(), barsUI.Done);
         }
 
         private void btnExportToDisk_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandExportObjectsToFileUI(_activator, plugins);
+            var cmd = new ExecuteCommandExportObjectsToFileUI(_activator, compatiblePlugins.ToArray());
             cmd.Execute();
         }
     }
