@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.TransparentHelpSystem;
 
 namespace ReusableUIComponents
@@ -36,7 +30,7 @@ namespace ReusableUIComponents
             Regex rgx = new Regex("(.{150}\\s)");
             _hoverText = rgx.Replace(hoverText, "$1\n");
 
-            Cursor = _workFlow != null? Cursors.Hand : Cursors.Default;
+            Cursor = Cursors.Hand;
         }
 
         private void HelpIcon_MouseHover(object sender, EventArgs e)
@@ -59,10 +53,10 @@ namespace ReusableUIComponents
 
         private void HelpIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            if(_workFlow != null)
+            if (_workFlow != null)
                 _workFlow.Start(true);
+            else
+                WideMessageBox.Show(_title, _hoverText, WideMessageBoxTheme.Help);
         }
     }
-
-  
 }

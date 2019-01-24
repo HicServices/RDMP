@@ -1,20 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 {
@@ -34,10 +22,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
             pbCommandIcon.Image = command.GetImage(iconProvider);
             var name = command.GetCommandName();
             lblName.Text = name;
-            lblName.Width = TextRenderer.MeasureText(name, lblName.Font).Width;
-
-            helpIcon1.Left = lblName.Right;
-            Width = helpIcon1.Right + 3;
 
             helpIcon1.SetHelpText(_command.GetCommandName(),command.GetCommandHelp());
         }

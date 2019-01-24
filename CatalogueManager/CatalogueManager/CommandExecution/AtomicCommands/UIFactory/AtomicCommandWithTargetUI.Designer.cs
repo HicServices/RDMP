@@ -49,20 +49,23 @@
             // 
             // lblName
             // 
+            this.lblName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblName.ForeColor = System.Drawing.Color.Black;
             this.lblName.Location = new System.Drawing.Point(25, 0);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(215, 19);
+            this.lblName.Size = new System.Drawing.Size(350, 19);
             this.lblName.TabIndex = 1;
             this.lblName.Text = "lblName";
             this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblGo
             // 
+            this.lblGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblGo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblGo.ForeColor = System.Drawing.Color.CornflowerBlue;
-            this.lblGo.Location = new System.Drawing.Point(457, 0);
+            this.lblGo.Location = new System.Drawing.Point(372, 20);
             this.lblGo.Name = "lblGo";
             this.lblGo.Size = new System.Drawing.Size(28, 19);
             this.lblGo.TabIndex = 3;
@@ -74,12 +77,13 @@
             // 
             // suggestComboBox1
             // 
+            this.suggestComboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.suggestComboBox1.FilterRule = null;
             this.suggestComboBox1.FormattingEnabled = true;
-            this.suggestComboBox1.Location = new System.Drawing.Point(246, 0);
+            this.suggestComboBox1.Location = new System.Drawing.Point(28, 20);
             this.suggestComboBox1.Name = "suggestComboBox1";
             this.suggestComboBox1.PropertySelector = null;
-            this.suggestComboBox1.Size = new System.Drawing.Size(205, 21);
+            this.suggestComboBox1.Size = new System.Drawing.Size(322, 21);
             this.suggestComboBox1.SuggestBoxHeight = 96;
             this.suggestComboBox1.SuggestListOrderRule = null;
             this.suggestComboBox1.TabIndex = 4;
@@ -87,16 +91,18 @@
             // 
             // helpIcon1
             // 
-            this.helpIcon1.Location = new System.Drawing.Point(536, -1);
+            this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpIcon1.Location = new System.Drawing.Point(381, 3);
             this.helpIcon1.Name = "helpIcon1";
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
             this.helpIcon1.TabIndex = 6;
             // 
             // lPick
             // 
+            this.lPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lPick.BackColor = System.Drawing.Color.White;
             this.lPick.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lPick.Location = new System.Drawing.Point(452, 0);
+            this.lPick.Location = new System.Drawing.Point(351, 20);
             this.lPick.Margin = new System.Windows.Forms.Padding(0);
             this.lPick.Name = "lPick";
             this.lPick.Size = new System.Drawing.Size(18, 21);
@@ -115,7 +121,7 @@
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.pbCommandIcon);
             this.Name = "AtomicCommandWithTargetUI";
-            this.Size = new System.Drawing.Size(567, 22);
+            this.Size = new System.Drawing.Size(400, 44);
             ((System.ComponentModel.ISupportInitialize)(this.pbCommandIcon)).EndInit();
             this.ResumeLayout(false);
 

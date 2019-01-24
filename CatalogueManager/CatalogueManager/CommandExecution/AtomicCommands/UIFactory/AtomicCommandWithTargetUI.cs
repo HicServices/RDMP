@@ -39,13 +39,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 
             string name = command.GetCommandName();
             lblName.Text = name;
-            lblName.Width = TextRenderer.MeasureText(name, lblName.Font).Width;
-            suggestComboBox1.Left = lblName.Right;
-            lPick.Left = suggestComboBox1.Right;
-            lblGo.Left = lPick.Right;
-            helpIcon1.Left = lblGo.Right;
-            Width = helpIcon1.Right + 3;
-
+            
             helpIcon1.SetHelpText(_command.GetCommandName(),_command.GetCommandHelp());
             
             suggestComboBox1.DataSource = selection;

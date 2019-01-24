@@ -1,32 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Providers;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Refreshing;
-using CatalogueManager.Tutorials;
 using CohortManager.CommandExecution.AtomicCommands;
 using DataExportLibrary.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 {
@@ -54,13 +40,16 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             tlpCohortCreation.Controls.Clear();
             tlpDataExport.Controls.Clear();
             tlpDataLoad.Controls.Clear();
+            tlpAdvanced.Controls.Clear();
 
             var activator = _windowManager.ActivateItems;
             
             /////////////////////////////////////Data Management/////////////////////////////////
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(activator),tlpDataManagement);
+            //AddLabel("New Catalogue", tlpDataManagement);
             
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, true),tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(activator){OverrideCommandName = "New Catalogue From File"},tlpDataManagement);
+
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, true) { OverrideCommandName = "New Catalogue From Existing Database Table" }, tlpDataManagement);
 
             AddCommand(new ExecuteCommandEditExistingCatalogue(activator),
                 activator.CoreChildProvider.AllCatalogues,
@@ -127,24 +116,58 @@ tlpCohortCreation);
             AddCommand(new ExecuteCommandManagePlugins(activator),tlpAdvanced);
         }
 
+        private void AddLabel(string text,TableLayoutPanel tableLayoutPanel)
+        {
+            var label = new Label();
+            label.BackColor = Color.LightBlue;
+            label.ForeColor = Color.Black;
+
+            label.Dock = DockStyle.Top;
+            label.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label.Location = new System.Drawing.Point(3, 0);
+            label.Name = "label5";
+            label.Size = new System.Drawing.Size(294, 18);
+            label.TabIndex = 0;
+            label.Text = text;
+            label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+
+            tableLayoutPanel.Controls.Add(label);
+        }
+
         private void AddCommand<T>(IAtomicCommandWithTarget command, IEnumerable<T> selection, Func<T, string> propertySelector, TableLayoutPanel tableLayoutPanel)
         {
             var control = _uiFactory.CreateLinkLabelWithSelection(command, selection, propertySelector);
+
+            SetBackgroundColor(tableLayoutPanel, control);
+            
             tableLayoutPanel.Controls.Add(control, 0, tableLayoutPanel.Controls.Count);
 
             //extend the size to match
             var panel = (Panel)tableLayoutPanel.Parent;
             panel.Width = Math.Max(panel.Width, control.Width + 10);
         }
-
+        
         private void AddCommand(IAtomicCommand command, TableLayoutPanel tableLayoutPanel)
         {
             var control = _uiFactory.CreateLinkLabel(command);
-            tableLayoutPanel.Controls.Add(control, 0, tableLayoutPanel.Controls.Count);
 
+            SetBackgroundColor(tableLayoutPanel, control);
+
+            tableLayoutPanel.Controls.Add(control, 0, tableLayoutPanel.Controls.Count);
+            
             //extend the size to match
             var panel = (Panel)tableLayoutPanel.Parent;
             panel.Width = Math.Max(panel.Width, control.Width + 10);
+        }
+
+        readonly Dictionary<TableLayoutPanel, int> _alternateBackgroundColours = new Dictionary<TableLayoutPanel, int>();
+
+        private void SetBackgroundColor(TableLayoutPanel tableLayoutPanel, Control control)
+        {
+            if (!_alternateBackgroundColours.ContainsKey(tableLayoutPanel))
+                _alternateBackgroundColours.Add(tableLayoutPanel, 0);
+
+            control.BackColor = _alternateBackgroundColours[tableLayoutPanel]++ % 2 == 0 ? Color.AliceBlue : Color.White;
         }
 
         private void FixSizingOfTableLayoutPanel(TableLayoutPanel tableLayoutPanel)
