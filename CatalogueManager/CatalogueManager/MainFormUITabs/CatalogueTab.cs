@@ -427,14 +427,13 @@ namespace CatalogueManager.MainFormUITabs
 
             rules.EnsureAcronymUnique(c_tbAcronym, databaseObject);
             rules.EnsureNameUnique(c_tbName, databaseObject);
+
+            c_tbAcronym.DataBindings.Clear();
+            c_tbAcronym.DataBindings.Add("Text", databaseObject, "Acronym",false,DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void RefreshUIFromDatabase()
         {
-            if(RepositoryLocator == null)
-                return;
-
-            
             try
             {
                 ticketingControl1.ReCheckTicketingSystemInCatalogue();
@@ -463,7 +462,6 @@ namespace CatalogueManager.MainFormUITabs
             c_tbID.Text = _catalogue.ID.ToString();
             ticketingControl1.TicketText = _catalogue.Ticket;
             c_tbName.Text = _catalogue.Name;
-            c_tbAcronym.Text = _catalogue.Acronym;
             c_tbDescription.Text = _catalogue.Description;
             c_tbDetailPageURL.Text = _catalogue.Detail_Page_URL != null ? _catalogue.Detail_Page_URL.ToString() : "";
 

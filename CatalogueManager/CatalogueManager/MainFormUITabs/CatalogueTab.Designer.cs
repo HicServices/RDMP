@@ -264,7 +264,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbAcronym.Name = "c_tbAcronym";
             this.c_tbAcronym.Size = new System.Drawing.Size(263, 20);
             this.c_tbAcronym.TabIndex = 2;
-            this.c_tbAcronym.TextChanged += new System.EventHandler(this.tbAcronym_TextChanged);
             // 
             // c_ddGranularity
             // 

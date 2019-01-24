@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -17,50 +17,57 @@ namespace CatalogueManager.Rules
             _activator = activator;
         }
 
-        public void EnsureNameUnique(TextBox tbName, INamed named)
+        public void EnsureNameUnique(Control control, INamed named)
         {
-            var rule = new Rule<INamed>(
-                _activator,
-                named,
-                (o) => o.Name.Equals(tbName.Text,StringComparison.CurrentCultureIgnoreCase) && named.GetType() == o.GetType(),
-                "There is already a "+named.GetType().Name+" with that Name");
-
-            tbName.TextChanged += rule.EventHandler;
+            new UniqueRule<INamed>( _activator, named, (o)=>o.Name, control);
         }
 
-        public void EnsureAcronymUnique(TextBox tbAcronym, ICatalogue catalogue)
+        public void EnsureAcronymUnique(Control control, ICatalogue catalogue)
         {
-            var rule = new Rule<ICatalogue>(
-                _activator, 
-                catalogue,
-                (o) => o.Acronym.Equals(tbAcronym.Text, StringComparison.CurrentCultureIgnoreCase),
-                "There is already a Catlogue with that Acronym");
-
-            tbAcronym.TextChanged += rule.EventHandler;
+            new UniqueRule<ICatalogue>(_activator, catalogue, (o)=>o.Acronym,control);
         }
 
-        private class Rule<T> where T : IMapsDirectlyToDatabaseTable
+        private class UniqueRule<T> where T : IMapsDirectlyToDatabaseTable
         {
-            protected readonly IActivateItems Activator;
+            private readonly IActivateItems _activator;
             private readonly T _toTest;
             private readonly string _problemDescription;
             readonly ErrorProvider _errorProvider = new ErrorProvider();
-            private Func<T, bool> _func;
+            private readonly Func<T, object> _propertyToCheck;
+            private readonly Control _control;
 
-            public Rule(IActivateItems activator, T toTest, Func<T, bool> func, string problemDescription)
+            public UniqueRule(IActivateItems activator, T toTest, Func<T,object> propertyToCheck,Control control)
             {
-                Activator = activator;
+                _activator = activator;
                 _toTest = toTest;
-                _problemDescription = problemDescription;
-                _func = func;
+                _propertyToCheck = propertyToCheck;
+                _control = control;
+                _problemDescription = "Must be unique amongst all " + toTest.GetType().Name  +"s";
+
+                toTest.PropertyChanged += toTest_PropertyChanged;
             }
 
-            public void EventHandler(object sender, EventArgs e)
+            void toTest_PropertyChanged(object sender, PropertyChangedEventArgs e)
             {
-                if (Activator.CoreChildProvider.GetAllSearchables().Keys.OfType<T>().Except(new[] { _toTest }).Any(_func))
-                    _errorProvider.SetError(((Control)sender), _problemDescription);
+                _currentValue = _propertyToCheck(_toTest);
+
+                //get all other objects which share our Type and contain equal values
+                if (_activator.CoreChildProvider.GetAllSearchables().Keys.OfType<T>().Except(new[] { _toTest }).Any(AreEqual))
+                    _errorProvider.SetError(_control, _problemDescription);
                 else
-                    _errorProvider.Clear();
+                    _errorProvider.Clear(); //No error
+            }
+
+            private object _currentValue;
+
+            private bool AreEqual(T arg)
+            {
+                string s = _currentValue as string;
+                
+                if (s != null)
+                    return string.Equals(s, _propertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase);
+
+                return Equals(_currentValue, _propertyToCheck(arg));
             }
         }
     }
