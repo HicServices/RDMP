@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigureCatalogueExtractabilityUI));
             this.olvColumnExtractability = new BrightIdeasSoftware.ObjectListView();
             this.olvColumnInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -59,6 +60,8 @@
             this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.label7 = new System.Windows.Forms.Label();
             this.ddIsExtractionIdentifier = new System.Windows.Forms.ComboBox();
+            this.tbAcronym = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
             this.pChangeAll.SuspendLayout();
             this.pFilter.SuspendLayout();
@@ -81,11 +84,11 @@
             this.olvExtractionCategory});
             this.olvColumnExtractability.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvColumnExtractability.FullRowSelect = true;
-            this.olvColumnExtractability.Location = new System.Drawing.Point(6, 138);
+            this.olvColumnExtractability.Location = new System.Drawing.Point(6, 164);
             this.olvColumnExtractability.Name = "olvColumnExtractability";
             this.olvColumnExtractability.RowHeight = 19;
             this.olvColumnExtractability.ShowGroups = false;
-            this.olvColumnExtractability.Size = new System.Drawing.Size(758, 382);
+            this.olvColumnExtractability.Size = new System.Drawing.Size(758, 454);
             this.olvColumnExtractability.TabIndex = 7;
             this.olvColumnExtractability.UseCompatibleStateImageBehavior = false;
             this.olvColumnExtractability.UseFiltering = true;
@@ -114,7 +117,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancel.Location = new System.Drawing.Point(273, 586);
+            this.btnCancel.Location = new System.Drawing.Point(273, 684);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(207, 23);
             this.btnCancel.TabIndex = 7;
@@ -125,7 +128,7 @@
             // btnAddToExisting
             // 
             this.btnAddToExisting.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnAddToExisting.Location = new System.Drawing.Point(486, 586);
+            this.btnAddToExisting.Location = new System.Drawing.Point(486, 684);
             this.btnAddToExisting.Name = "btnAddToExisting";
             this.btnAddToExisting.Size = new System.Drawing.Size(161, 23);
             this.btnAddToExisting.TabIndex = 7;
@@ -136,7 +139,7 @@
             // btnOk
             // 
             this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnOk.Location = new System.Drawing.Point(148, 586);
+            this.btnOk.Location = new System.Drawing.Point(148, 684);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(119, 23);
             this.btnOk.TabIndex = 7;
@@ -187,7 +190,7 @@
             // helpIcon1
             // 
             this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
-            this.helpIcon1.Location = new System.Drawing.Point(203, 118);
+            this.helpIcon1.Location = new System.Drawing.Point(203, 144);
             this.helpIcon1.Name = "helpIcon1";
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
             this.helpIcon1.TabIndex = 8;
@@ -197,7 +200,7 @@
             this.pChangeAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pChangeAll.Controls.Add(this.ddCategoriseMany);
             this.pChangeAll.Controls.Add(this.label3);
-            this.pChangeAll.Location = new System.Drawing.Point(504, 553);
+            this.pChangeAll.Location = new System.Drawing.Point(504, 651);
             this.pChangeAll.Name = "pChangeAll";
             this.pChangeAll.Size = new System.Drawing.Size(260, 26);
             this.pChangeAll.TabIndex = 8;
@@ -208,7 +211,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pFilter.Controls.Add(this.label6);
             this.pFilter.Controls.Add(this.tbFilter);
-            this.pFilter.Location = new System.Drawing.Point(6, 553);
+            this.pFilter.Location = new System.Drawing.Point(6, 651);
             this.pFilter.Name = "pFilter";
             this.pFilter.Size = new System.Drawing.Size(492, 27);
             this.pFilter.TabIndex = 9;
@@ -216,7 +219,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 122);
+            this.label1.Location = new System.Drawing.Point(12, 148);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(189, 13);
             this.label1.TabIndex = 10;
@@ -234,7 +237,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(38, 34);
+            this.label4.Location = new System.Drawing.Point(38, 60);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(63, 13);
             this.label4.TabIndex = 11;
@@ -271,7 +274,7 @@
             // 
             this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDescription.Location = new System.Drawing.Point(107, 31);
+            this.tbDescription.Location = new System.Drawing.Point(107, 57);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
             this.tbDescription.Size = new System.Drawing.Size(657, 48);
@@ -320,7 +323,7 @@
             // gbProjectSpecific
             // 
             this.gbProjectSpecific.Controls.Add(this.flowLayoutPanel1);
-            this.gbProjectSpecific.Location = new System.Drawing.Point(258, 82);
+            this.gbProjectSpecific.Location = new System.Drawing.Point(258, 108);
             this.gbProjectSpecific.Name = "gbProjectSpecific";
             this.gbProjectSpecific.Size = new System.Drawing.Size(506, 52);
             this.gbProjectSpecific.TabIndex = 22;
@@ -341,7 +344,7 @@
             // 
             // objectSaverButton1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(107, 82);
+            this.objectSaverButton1.Location = new System.Drawing.Point(107, 108);
             this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
             this.objectSaverButton1.Name = "objectSaverButton1";
             this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
@@ -351,7 +354,7 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 523);
+            this.label7.Location = new System.Drawing.Point(3, 621);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(124, 26);
             this.label7.TabIndex = 23;
@@ -362,17 +365,35 @@
             this.ddIsExtractionIdentifier.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ddIsExtractionIdentifier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddIsExtractionIdentifier.FormattingEnabled = true;
-            this.ddIsExtractionIdentifier.Location = new System.Drawing.Point(133, 526);
+            this.ddIsExtractionIdentifier.Location = new System.Drawing.Point(133, 624);
             this.ddIsExtractionIdentifier.Name = "ddIsExtractionIdentifier";
             this.ddIsExtractionIdentifier.Size = new System.Drawing.Size(362, 21);
             this.ddIsExtractionIdentifier.TabIndex = 24;
             this.ddIsExtractionIdentifier.SelectedIndexChanged += new System.EventHandler(this.ddIsExtractionIdentifier_SelectedIndexChanged);
             // 
+            // tbAcronym
+            // 
+            this.tbAcronym.Location = new System.Drawing.Point(107, 32);
+            this.tbAcronym.Name = "tbAcronym";
+            this.tbAcronym.Size = new System.Drawing.Size(160, 20);
+            this.tbAcronym.TabIndex = 26;
+            this.tbAcronym.TextChanged += new System.EventHandler(this.tbAcronym_TextChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(50, 35);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(51, 13);
+            this.label8.TabIndex = 25;
+            this.label8.Text = "Acronym:";
             // ConfigureCatalogueExtractabilityUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(774, 611);
+            this.ClientSize = new System.Drawing.Size(774, 709);
+            this.Controls.Add(this.tbAcronym);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.ddIsExtractionIdentifier);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.gbProjectSpecific);
@@ -441,5 +462,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox ddIsExtractionIdentifier;
+        private System.Windows.Forms.TextBox tbAcronym;
+        private System.Windows.Forms.Label label8;
     }
 }

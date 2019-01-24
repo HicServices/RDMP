@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary;
@@ -10,17 +8,15 @@ using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
 using DataExportLibrary.Data.DataTables;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode;
-using ReusableUIComponents;
 using ReusableUIComponents.TransparentHelpSystem;
 
 namespace CatalogueManager.SimpleDialogs.ForwardEngineering
@@ -44,7 +40,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// table(s) that underlie the selected Catalogue (e.g. if you are importing a Results table which joins to a Header table in the dataset Biochemistry on primary/foreign key LabNumber).
     /// If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)</para>
     /// </summary>
-    public partial class ConfigureCatalogueExtractabilityUI : Form
+    public partial class ConfigureCatalogueExtractabilityUI : RDMPForm
     {
         private object[] _extractionCategories;
         
@@ -62,6 +58,8 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
         /// </summary>
         private Project _projectSpecific;
+
+        private RuleBasedErrorProvider _rules;
 
         public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
@@ -84,6 +82,8 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         {
             InitializeComponent();
 
+            RepositoryLocator = activator.RepositoryLocator;
+
             _activator = activator;
             
             var cols = _tableInfo.ColumnInfos;
@@ -96,6 +96,13 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
             tbTableName.Text = _tableInfo.Name;
             _catalogue.SaveToDatabase();
+            
+            if (_rules == null)
+            {
+                _rules = new RuleBasedErrorProvider(activator);
+                _rules.EnsureAcronymUnique(tbAcronym,_catalogue);
+                _rules.EnsureNameUnique(tbCatalogueName,_catalogue);
+            }
 
             //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
             foreach (CatalogueItem ci in _catalogueItems)
@@ -455,6 +462,11 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         private void tbCatalogueName_TextChanged(object sender, EventArgs e)
         {
             _catalogue.Name = tbCatalogueName.Text;
+        }
+
+        private void tbAcronym_TextChanged(object sender, EventArgs e)
+        {
+            _catalogue.Acronym = tbAcronym.Text;
         }
 
         private void tbDescription_TextChanged(object sender, EventArgs e)

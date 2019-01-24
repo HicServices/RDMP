@@ -8,6 +8,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
@@ -31,7 +32,8 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     {
         private Control _colorIndicator;
         protected IActivateItems _activator;
-        
+
+        private RuleBasedErrorProvider _rules;
         
         public DatabaseEntity DatabaseObject { get; private set; }
         protected RDMPCollection AssociatedCollection = RDMPCollection.None;
@@ -54,10 +56,23 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 this.Controls.Add(this._colorIndicator);
             }
 
+
+            if (_rules == null)
+            {
+                _rules = new RuleBasedErrorProvider(activator);
+                SetRules(_rules,databaseObject);
+            }
+
             SetItemActivator(activator);
 
             ClearToolStrip();
         }
+
+        protected virtual void SetRules(RuleBasedErrorProvider rules, T databaseObject)
+        {
+            
+        }
+
 
         public void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject)
         {

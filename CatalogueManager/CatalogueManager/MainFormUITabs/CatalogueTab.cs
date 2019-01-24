@@ -1,28 +1,16 @@
 using System;
-using System.CodeDom;
-using System.Collections;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.Revertable;
-using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using HIC.Logging;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using CatalogueManager.Copying.Commands;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
@@ -54,12 +42,12 @@ namespace CatalogueManager.MainFormUITabs
             AssociatedCollection = RDMPCollection.Catalogue;
         }
 
-        public Catalogue Catalogue { get; private set; }
+        private Catalogue _catalogue;
         
         void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
         {
-            if (Catalogue != null)
-                Catalogue.Ticket = ticketingControl1.TicketText;
+            if (_catalogue != null)
+                _catalogue.Ticket = ticketingControl1.TicketText;
         }
 
         private void ClearFormComponents()
@@ -82,15 +70,15 @@ namespace CatalogueManager.MainFormUITabs
         
         private void c_ddOverrideChildren_Click(object sender, EventArgs e)
         {
-            if (Catalogue != null)
+            if (_catalogue != null)
                 if (MessageBox.Show("Are you sure?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
-                    var catalogueItems = Catalogue.CatalogueItems.ToArray();
+                    var catalogueItems = _catalogue.CatalogueItems.ToArray();
                     foreach (var catalogueItem in catalogueItems)
                     {
-                        catalogueItem.Periodicity = Catalogue.Periodicity;
-                        catalogueItem.Topic = Catalogue.Search_keywords;
+                        catalogueItem.Periodicity = _catalogue.Periodicity;
+                        catalogueItem.Topic = _catalogue.Search_keywords;
                         catalogueItem.SaveToDatabase();
                     }
                 }
@@ -196,13 +184,13 @@ namespace CatalogueManager.MainFormUITabs
             
             
             if (ddExplicitConsent.Text.Equals("Yes"))
-                Catalogue.Explicit_consent = true;
+                _catalogue.Explicit_consent = true;
                 
             if (ddExplicitConsent.Text.Equals("No"))
-                Catalogue.Explicit_consent = false;
+                _catalogue.Explicit_consent = false;
 
             if (string.IsNullOrWhiteSpace(ddExplicitConsent.Text))
-                Catalogue.Explicit_consent = null;
+                _catalogue.Explicit_consent = null;
 
         }
 
@@ -267,11 +255,11 @@ namespace CatalogueManager.MainFormUITabs
             TextBox senderAsTextBox = (TextBox)sender;
             try
             {
-                if (Catalogue != null)
+                if (_catalogue != null)
                 {
                     DateTime answer = DateTime.Parse(senderAsTextBox.Text);
 
-                    Catalogue.Last_revision_date = answer;
+                    _catalogue.Last_revision_date = answer;
                     senderAsTextBox.ForeColor = Color.Black;
                 }
             }
@@ -286,7 +274,7 @@ namespace CatalogueManager.MainFormUITabs
             if (_loadingUI)
                 return;
 
-            Catalogue.Type = (Catalogue.CatalogueType)c_ddType.SelectedItem;
+            _catalogue.Type = (Catalogue.CatalogueType)c_ddType.SelectedItem;
         }
 
         private void ddPeriodicity_SelectedIndexChanged(object sender, EventArgs e)
@@ -294,7 +282,7 @@ namespace CatalogueManager.MainFormUITabs
             if (_loadingUI)
                 return;
 
-            Catalogue.Periodicity = (Catalogue.CataloguePeriodicity)c_ddPeriodicity.SelectedItem;
+            _catalogue.Periodicity = (Catalogue.CataloguePeriodicity)c_ddPeriodicity.SelectedItem;
 
         }
 
@@ -303,7 +291,7 @@ namespace CatalogueManager.MainFormUITabs
             if (_loadingUI)
                 return;
 
-            Catalogue.Granularity = (Catalogue.CatalogueGranularity)c_ddGranularity.SelectedItem;
+            _catalogue.Granularity = (Catalogue.CatalogueGranularity)c_ddGranularity.SelectedItem;
 
         }
         #endregion
@@ -313,7 +301,7 @@ namespace CatalogueManager.MainFormUITabs
             if (_loadingUI)
                 return;
             
-            if (Catalogue != null)
+            if (_catalogue != null)
             {
                 try
                 {
@@ -321,16 +309,16 @@ namespace CatalogueManager.MainFormUITabs
 
                     tb.ForeColor = Color.Black;
 
-                    PropertyInfo target = Catalogue.GetType().GetProperty(property);
-                    FieldInfo targetMaxLength = Catalogue.GetType().GetField(property + "_MaxLength");
+                    PropertyInfo target = _catalogue.GetType().GetProperty(property);
+                    FieldInfo targetMaxLength = _catalogue.GetType().GetField(property + "_MaxLength");
 
                     if (target == null || targetMaxLength == null)
                         throw new Exception("Could not find property " + property + " or it did not have a specified _MaxLength");
 
-                    if (tb.TextLength > (int)targetMaxLength.GetValue(Catalogue))
+                    if (tb.TextLength > (int)targetMaxLength.GetValue(_catalogue))
                         throw new UriFormatException("Uri is too long to fit in database");
 
-                    target.SetValue(Catalogue, new Uri(tb.Text), null);
+                    target.SetValue(_catalogue, new Uri(tb.Text), null);
                     tb.ForeColor = Color.Black;
 
                 }
@@ -345,7 +333,7 @@ namespace CatalogueManager.MainFormUITabs
         {
             if (_loadingUI)
                 return;
-            SetStringProperty(tb, property, Catalogue);
+            SetStringProperty(tb, property, _catalogue);
         }
 
         private void SetStringProperty(TextBox tb, string property, object toSetOn)
@@ -377,17 +365,17 @@ namespace CatalogueManager.MainFormUITabs
         {
             try
             {
-                if (Catalogue == null)
+                if (_catalogue == null)
                     return;
 
                 if (string.IsNullOrWhiteSpace(tbDatasetStartDate.Text))
                 {
-                    Catalogue.DatasetStartDate = null;
+                    _catalogue.DatasetStartDate = null;
                     return;
                 }
 
                 DateTime dateTime = DateTime.Parse(tbDatasetStartDate.Text);
-                Catalogue.DatasetStartDate = dateTime;
+                _catalogue.DatasetStartDate = dateTime;
 
                 tbDatasetStartDate.ForeColor = Color.Black;
                 
@@ -402,7 +390,7 @@ namespace CatalogueManager.MainFormUITabs
         {
             try
             {
-                Catalogue.Folder = new CatalogueFolder(Catalogue, tbFolder.Text);
+                _catalogue.Folder = new CatalogueFolder(_catalogue, tbFolder.Text);
                 tbFolder.ForeColor = Color.Black;
             }
             catch (Exception )
@@ -413,8 +401,8 @@ namespace CatalogueManager.MainFormUITabs
 
         public void ClearIfNoLongerExists()
         {
-            if (Catalogue != null && Catalogue.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted)
-                Catalogue = null;
+            if (_catalogue != null && _catalogue.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted)
+                _catalogue = null;
         }
         
         protected override void OnRepositoryLocatorAvailable()
@@ -427,11 +415,18 @@ namespace CatalogueManager.MainFormUITabs
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            Catalogue = databaseObject;
+            _catalogue = databaseObject;
             
             objectSaverButton1.SetupFor(databaseObject,_activator.RefreshBus);
             RefreshUIFromDatabase();
+        }
 
+        protected override void SetRules(RuleBasedErrorProvider rules, Catalogue databaseObject)
+        {
+            base.SetRules(rules,databaseObject);
+
+            rules.EnsureAcronymUnique(c_tbAcronym, databaseObject);
+            rules.EnsureNameUnique(c_tbName, databaseObject);
         }
 
         private void RefreshUIFromDatabase()
@@ -451,7 +446,7 @@ namespace CatalogueManager.MainFormUITabs
 
             _loadingUI = true;
 
-            if (Catalogue == null)
+            if (_catalogue == null)
             {
                 ClearFormComponents();
                 splitContainer1.Enabled = false;
@@ -461,64 +456,64 @@ namespace CatalogueManager.MainFormUITabs
             splitContainer1.Enabled = true;
             ticketingControl1.Enabled = true;
 
-            cbColdStorage.Checked = Catalogue.IsColdStorageDataset;
-            cbDeprecated.Checked = Catalogue.IsDeprecated;
-            cbInternal.Checked = Catalogue.IsInternalDataset;
+            cbColdStorage.Checked = _catalogue.IsColdStorageDataset;
+            cbDeprecated.Checked = _catalogue.IsDeprecated;
+            cbInternal.Checked = _catalogue.IsInternalDataset;
 
-            c_tbID.Text = Catalogue.ID.ToString();
-            ticketingControl1.TicketText = Catalogue.Ticket;
-            c_tbName.Text = Catalogue.Name;
-            c_tbAcronym.Text = Catalogue.Acronym;
-            c_tbDescription.Text = Catalogue.Description;
-            c_tbDetailPageURL.Text = Catalogue.Detail_Page_URL != null ? Catalogue.Detail_Page_URL.ToString() : "";
+            c_tbID.Text = _catalogue.ID.ToString();
+            ticketingControl1.TicketText = _catalogue.Ticket;
+            c_tbName.Text = _catalogue.Name;
+            c_tbAcronym.Text = _catalogue.Acronym;
+            c_tbDescription.Text = _catalogue.Description;
+            c_tbDetailPageURL.Text = _catalogue.Detail_Page_URL != null ? _catalogue.Detail_Page_URL.ToString() : "";
 
             c_ddType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
-            c_ddType.SelectedItem = Catalogue.Type;
+            c_ddType.SelectedItem = _catalogue.Type;
 
             c_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
-            c_ddPeriodicity.SelectedItem = Catalogue.Periodicity;
+            c_ddPeriodicity.SelectedItem = _catalogue.Periodicity;
 
             c_ddGranularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
-            c_ddGranularity.SelectedItem = Catalogue.Granularity;
+            c_ddGranularity.SelectedItem = _catalogue.Granularity;
 
-            c_tbGeographicalCoverage.Text = Catalogue.Geographical_coverage;
-            c_tbBackgroundSummary.Text = Catalogue.Background_summary;
-            c_tbTopics.Text = Catalogue.Search_keywords;
-            c_tbUpdateFrequency.Text = Catalogue.Update_freq;
-            c_tbUpdateSchedule.Text = Catalogue.Update_sched;
-            c_tbTimeCoverage.Text = Catalogue.Time_coverage;
-            c_tbLastRevisionDate.Text = Catalogue.Last_revision_date.ToString();
-            tbAdministrativeContactName.Text = Catalogue.Contact_details;
-            c_tbResourceOwner.Text = Catalogue.Resource_owner;
-            c_tbAttributionCitation.Text = Catalogue.Attribution_citation;
-            c_tbAccessOptions.Text = Catalogue.Access_options;
+            c_tbGeographicalCoverage.Text = _catalogue.Geographical_coverage;
+            c_tbBackgroundSummary.Text = _catalogue.Background_summary;
+            c_tbTopics.Text = _catalogue.Search_keywords;
+            c_tbUpdateFrequency.Text = _catalogue.Update_freq;
+            c_tbUpdateSchedule.Text = _catalogue.Update_sched;
+            c_tbTimeCoverage.Text = _catalogue.Time_coverage;
+            c_tbLastRevisionDate.Text = _catalogue.Last_revision_date.ToString();
+            tbAdministrativeContactName.Text = _catalogue.Contact_details;
+            c_tbResourceOwner.Text = _catalogue.Resource_owner;
+            c_tbAttributionCitation.Text = _catalogue.Attribution_citation;
+            c_tbAccessOptions.Text = _catalogue.Access_options;
 
-            c_tbAPIAccessURL.Text = Catalogue.API_access_URL != null ? Catalogue.API_access_URL.ToString() : "";
-            c_tbBrowseUrl.Text = Catalogue.Browse_URL != null ? Catalogue.Browse_URL.ToString() : "";
-            c_tbBulkDownloadUrl.Text = Catalogue.Bulk_Download_URL != null ? Catalogue.Bulk_Download_URL.ToString() : "";
-            c_tbQueryToolUrl.Text = Catalogue.Query_tool_URL != null ? Catalogue.Query_tool_URL.ToString() : "";
-            c_tbSourceUrl.Text = Catalogue.Source_URL != null ? Catalogue.Source_URL.ToString() : "";
+            c_tbAPIAccessURL.Text = _catalogue.API_access_URL != null ? _catalogue.API_access_URL.ToString() : "";
+            c_tbBrowseUrl.Text = _catalogue.Browse_URL != null ? _catalogue.Browse_URL.ToString() : "";
+            c_tbBulkDownloadUrl.Text = _catalogue.Bulk_Download_URL != null ? _catalogue.Bulk_Download_URL.ToString() : "";
+            c_tbQueryToolUrl.Text = _catalogue.Query_tool_URL != null ? _catalogue.Query_tool_URL.ToString() : "";
+            c_tbSourceUrl.Text = _catalogue.Source_URL != null ? _catalogue.Source_URL.ToString() : "";
 
-            tbCountryOfOrigin.Text = Catalogue.Country_of_origin ?? "";
-            tbDataStandards.Text = Catalogue.Data_standards ?? "";
-            tbAdministrativeContactName.Text = Catalogue.Administrative_contact_name ?? "";
-            tbAdministrativeContactEmail.Text = Catalogue.Administrative_contact_email ?? "";
-            tbAdministrativeContactTelephone.Text = Catalogue.Administrative_contact_telephone ?? "";
-            tbAdministrativeContactAddress.Text = Catalogue.Administrative_contact_address ?? "";
-            tbEthicsApprover.Text = Catalogue.Ethics_approver ?? "";
-            tbSourceOfDataCollection.Text = Catalogue.Source_of_data_collection ?? "";
-            c_tbSubjectNumbers.Text = Catalogue.SubjectNumbers ?? "";
+            tbCountryOfOrigin.Text = _catalogue.Country_of_origin ?? "";
+            tbDataStandards.Text = _catalogue.Data_standards ?? "";
+            tbAdministrativeContactName.Text = _catalogue.Administrative_contact_name ?? "";
+            tbAdministrativeContactEmail.Text = _catalogue.Administrative_contact_email ?? "";
+            tbAdministrativeContactTelephone.Text = _catalogue.Administrative_contact_telephone ?? "";
+            tbAdministrativeContactAddress.Text = _catalogue.Administrative_contact_address ?? "";
+            tbEthicsApprover.Text = _catalogue.Ethics_approver ?? "";
+            tbSourceOfDataCollection.Text = _catalogue.Source_of_data_collection ?? "";
+            c_tbSubjectNumbers.Text = _catalogue.SubjectNumbers ?? "";
 
-            tbFolder.Text = Catalogue.Folder.Path;
+            tbFolder.Text = _catalogue.Folder.Path;
 
-            if (Catalogue.Explicit_consent == null)
+            if (_catalogue.Explicit_consent == null)
                 ddExplicitConsent.Text = "";
-            else if (Catalogue.Explicit_consent == true)
+            else if (_catalogue.Explicit_consent == true)
                 ddExplicitConsent.Text = "Yes";
             else
                 ddExplicitConsent.Text = "No";
 
-            tbDatasetStartDate.Text = Catalogue.DatasetStartDate.ToString();
+            tbDatasetStartDate.Text = _catalogue.DatasetStartDate.ToString();
 
             _loadingUI = false;
         }
@@ -540,17 +535,17 @@ namespace CatalogueManager.MainFormUITabs
         private void cbFlag_CheckedChanged(object sender, EventArgs e)
         {
             if (sender == cbDeprecated)
-                Catalogue.IsDeprecated = cbDeprecated.Checked;
+                _catalogue.IsDeprecated = cbDeprecated.Checked;
             if (sender == cbColdStorage)
-                Catalogue.IsColdStorageDataset = cbColdStorage.Checked;
+                _catalogue.IsColdStorageDataset = cbColdStorage.Checked;
             if (sender == cbInternal)
-                Catalogue.IsInternalDataset = cbInternal.Checked;
+                _catalogue.IsInternalDataset = cbInternal.Checked;
         }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueTab_Design, UserControl>))]
     public abstract class CatalogueTab_Design : RDMPSingleDatabaseObjectControl<Catalogue>
     {
-
+        
     }
 }

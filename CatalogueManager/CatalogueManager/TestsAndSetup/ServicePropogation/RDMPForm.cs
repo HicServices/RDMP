@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.SimpleDialogs.Reports;
+using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
 using ReusableUIComponents;
 
@@ -19,6 +21,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     public class RDMPForm : Form, IRepositoryUser, IKnowIfImHostedByVisualStudio
     {
         private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        
+        /// <summary>
+        /// Whether escape keystrokes should trigger form closing (defaults to true).
+        /// </summary>
         public bool CloseOnEscape { get; set; } 
 
         public RDMPForm()
@@ -26,7 +32,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             KeyPreview = true;
             CloseOnEscape = true;
             VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-            this.KeyPress += RDMPForm_KeyPress;
+            KeyDown += RDMPForm_KeyDown;
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -66,10 +72,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         {
             VisualStudioDesignMode = visualStudioDesignMode;
         }
-
-        private void RDMPForm_KeyPress(object sender, KeyPressEventArgs e)
+        
+        private void RDMPForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyChar == (char) Keys.Escape && CloseOnEscape)
+            if (((e.KeyData == Keys.W && e.Control) || e.KeyData == Keys.Escape) && CloseOnEscape)
                 Close();
         }
     }
