@@ -5,6 +5,10 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Nodes
 {
+    /// <summary>
+    /// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6 
+    /// months of a prescription for drug X).  See <see cref="JoinableCohortAggregateConfiguration"/>.
+    /// </summary>
     public class JoinableCollectionNode:IOrderable
     {
         public CohortIdentificationConfiguration Configuration { get; set; }

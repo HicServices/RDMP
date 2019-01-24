@@ -44,8 +44,6 @@ namespace ReusableUIComponents.Dialogs
             //can only write to clipboard in STA threads
             btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
-            btnViewStackTrace.Visible = Args.EnvironmentDotStackTrace != null;
-
             //try to resize form to fit bounds
             this.Size = FormsHelper.GetPreferredSizeOfTextControl(richTextBox1);
             this.Size = new Size(this.Size.Width + 10, this.Size.Height + 150);//leave a bit of padding
@@ -68,6 +66,8 @@ namespace ReusableUIComponents.Dialogs
 
             btnBack.Enabled = _navigationStack.Any();
 
+            btnViewStackTrace.Visible = args.EnvironmentDotStackTrace != null;
+            
             richTextBox1.Font = new Font(FontFamily.GenericMonospace, richTextBox1.Font.Size);
             richTextBox1.Select(0, 0);
             richTextBox1.WordWrap = true;
@@ -87,7 +87,7 @@ namespace ReusableUIComponents.Dialogs
             if(Args.FormatAsParagraphs)
             {
                 message = Regex.Replace(message, "\r\n\\s*","\r\n\r\n");
-                message = Regex.Replace(message, @"(\.?[A-z]+\.)+([A-z]+)", (m) => m.Groups[2].Value);
+                message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", (m) => m.Groups[2].Value);
             }
 
             //if there is a title
@@ -202,7 +202,9 @@ namespace ReusableUIComponents.Dialogs
                 richTextBox1.Text = message;
                 return;
             }
-            
+
+            bool lastWordWasALink = false;
+
             foreach (string word in Regex.Split(message, @"(?<=[. ,;)(<>-])"))
             {
                 if(string.IsNullOrWhiteSpace(word))
@@ -212,9 +214,20 @@ namespace ReusableUIComponents.Dialogs
                 var keyword = GetDocumentationKeyword(keywordNotToAdd, word.Trim('.', ' ', ',', ';', '(', ')','<','>','-'));
 
                 if (keyword != null)
+                {
+                    if (lastWordWasALink)
+                        richTextBox1.SelectedText = " ";
+                    
                     richTextBox1.InsertLink(word, keyword);
+
+                    lastWordWasALink = true;
+
+                }
                 else
+                {
                     richTextBox1.SelectedText = word;
+                    lastWordWasALink = false;
+                }
             }
 
             //scroll back to the top
