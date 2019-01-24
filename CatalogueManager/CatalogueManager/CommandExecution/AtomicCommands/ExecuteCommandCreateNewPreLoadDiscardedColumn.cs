@@ -6,6 +6,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Copying.Commands;
+using FAnsi.Discovery.TypeTranslation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
@@ -51,6 +52,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if(_prototypes == null)
             {
+                var varcharMaxDataType = _tableInfo.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (string), int.MaxValue));
 
                 var textDialog = new TypeTextOrCancelDialog("Column Name","Enter name for column (this should NOT include any qualifiers e.g. database name)", 300);
                 if (textDialog.ShowDialog() == DialogResult.OK)
@@ -58,7 +60,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 else
                     return;
 
-                textDialog = new TypeTextOrCancelDialog("Column DataType", "Enter data type for column (e.g. 'varchar(10)')", 300);
+                textDialog = new TypeTextOrCancelDialog("Column DataType", "Enter data type for column (e.g. 'varchar(10)')", 300, varcharMaxDataType);
                 if (textDialog.ShowDialog() == DialogResult.OK)
                     dataType = textDialog.ResultText;
                 else
