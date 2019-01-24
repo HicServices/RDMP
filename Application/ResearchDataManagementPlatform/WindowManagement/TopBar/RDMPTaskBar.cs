@@ -55,6 +55,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnLoad.BackgroundImage = provider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
             
             btnFavourites.Image = CatalogueIcons.Favourite;
+
+            btnDeleteDash.Image = FamFamFamIcons.delete;
+            btnDeleteLayout.Image = FamFamFamIcons.delete;
         }
 
         public void SetWindowManager(WindowManager manager)
