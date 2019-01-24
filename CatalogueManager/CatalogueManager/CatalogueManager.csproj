@@ -725,7 +725,7 @@
       <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
     </Compile>
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandUIFactory.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditAndRunExistingDataExtractionProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditDataExtractionProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandExecuteLoadMetadata.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />

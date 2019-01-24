@@ -63,22 +63,34 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
             /////////////////////////////////////Cohort Creation/////////////////////////////////
 
-            AddCommand(new ExecuteCommandCreateNewCohortFromFile(activator),
-                tlpCohortCreation);
+            AddCommand(new ExecuteCommandCreateNewCohortFromFile(activator),tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator),tlpCohortCreation);
+            AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)
+            {
+                OverrideCommandName = "Create New Cohort Identification Query"
+            },tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(activator),
+            AddCommand(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator)
+            {
+                OverrideCommandName = "Create New Cohort From Cohort Identification Query"
+            },
                     activator.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
-            
-            AddCommand(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator), 
+
+            AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(activator)
+            {
+                OverrideCommandName = "Edit Cohort Identification Query"
+            },
                     activator.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandCreateNewCohortFromCatalogue(activator),
+
+            AddCommand(new ExecuteCommandCreateNewCohortFromCatalogue(activator)
+            {
+                OverrideCommandName = "Create New Cohort From Dataset"
+            },
                 activator.CoreChildProvider.AllCatalogues,
                 c=>c.Name,
 tlpCohortCreation);
@@ -89,7 +101,7 @@ tlpCohortCreation);
             if (dataExportChildProvider != null)
             {
                 AddCommand(new ExecuteCommandCreateNewDataExtractionProject(activator), tlpDataExport);
-                AddCommand(new ExecuteCommandEditAndRunExistingDataExtractionProject(activator),
+                AddCommand(new ExecuteCommandEditDataExtractionProject(activator),
                         dataExportChildProvider.Projects,
                         cic => cic.Name,
                         tlpDataExport);

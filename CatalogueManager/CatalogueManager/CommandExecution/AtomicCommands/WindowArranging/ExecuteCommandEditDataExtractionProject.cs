@@ -11,17 +11,17 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 {
-    public class ExecuteCommandEditAndRunExistingDataExtractionProject : BasicUICommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandEditDataExtractionProject : BasicUICommandExecution, IAtomicCommandWithTarget
     {
         public Project Project { get; set; }
 
         [ImportingConstructor]
-        public ExecuteCommandEditAndRunExistingDataExtractionProject(IActivateItems activator, Project project) : base(activator)
+        public ExecuteCommandEditDataExtractionProject(IActivateItems activator, Project project) : base(activator)
         {
             Project = project;
         }
 
-        public ExecuteCommandEditAndRunExistingDataExtractionProject(IActivateItems activator) : base(activator)
+        public ExecuteCommandEditDataExtractionProject(IActivateItems activator) : base(activator)
         {
         }
 
