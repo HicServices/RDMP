@@ -14,11 +14,13 @@ using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Google.Protobuf.WellKnownTypes;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ScintillaNET;
+using Enum = System.Enum;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 {
@@ -191,11 +193,17 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
         private void btnAddParameter_Click(object sender, EventArgs e)
         {
-            var newParameter = Options.CreateNewParameter();
-            Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
+            Random r = new Random();
 
-            RefreshParametersFromDatabase();
-            
+            var dialog  = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, "@MyParam" + r.Next());
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var newParameter = Options.CreateNewParameter(dialog.ResultText.Trim());
+                
+                Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
+                
+                RefreshParametersFromDatabase();   
+            }
         }
 
         private void olvParameters_KeyDown(object sender, KeyEventArgs e)

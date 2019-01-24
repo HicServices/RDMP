@@ -177,12 +177,13 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             return new ParameterCollectionUIOptions(UseCaseExtractionConfigurationGlobals, extractionConfiguration,ParameterLevel.Global, paramManager, CreateNewParameterForExtractionConfiguration);
         }
 
-        private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector)
+        private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector,string parameterName)
         {
-            Random r = new Random();
+            if (!parameterName.StartsWith("@"))
+                parameterName = "@" + parameterName;
 
             var ec = (ExtractionConfiguration)collector;
-            return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec, "DECLARE @" + r.Next(100) + " as varchar(10)");
+            return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec, "DECLARE " + parameterName + " as varchar(10)");
         }
     }
 }

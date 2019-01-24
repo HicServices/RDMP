@@ -30,7 +30,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.RequestItemEmphasis(this, new EmphasiseRequest(_databaseEntity,int.MaxValue){Pin = true});
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(_databaseEntity,1){Pin = true});
         }
     }
 }
