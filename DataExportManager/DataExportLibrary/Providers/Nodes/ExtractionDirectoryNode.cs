@@ -2,9 +2,14 @@
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 
 namespace DataExportLibrary.Providers.Nodes
 {
+    /// <summary>
+    /// Location on disk in which linked project extracts are generated for a given <see cref="Project"/> (assuming you are extracting to disk
+    /// e.g. with an <see cref="ExecuteDatasetExtractionFlatFileDestination"/>).
+    /// </summary>
     public class ExtractionDirectoryNode : IDirectoryInfoNode, IOrderable
     {
         public Project Project { get; private set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using FAnsi;
 
 namespace ReusableLibraryCode.Icons.IconProvision
 {
@@ -35,7 +36,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
             {
                 case DatabaseType.MicrosoftSQLServer:
                     return _msOverlay;
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     return _mysOverlay;
                 case DatabaseType.Oracle:
                     return _oraOverlay;
@@ -50,7 +51,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
             {
                 case DatabaseType.MicrosoftSQLServer:
                     return _msBig;
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     return _mysBig;
                 case DatabaseType.Oracle:
                     return _oraBig;

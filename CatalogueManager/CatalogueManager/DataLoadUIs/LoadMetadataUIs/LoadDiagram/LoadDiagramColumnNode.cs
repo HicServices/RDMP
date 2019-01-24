@@ -11,9 +11,9 @@ using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Copying;
 using CatalogueManager.Copying.Commands;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram

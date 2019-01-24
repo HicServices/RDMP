@@ -1,8 +1,8 @@
 ﻿using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using Fansi.Implementations.MicrosoftSQL;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 
 namespace CatalogueLibraryTests.Unit
 {

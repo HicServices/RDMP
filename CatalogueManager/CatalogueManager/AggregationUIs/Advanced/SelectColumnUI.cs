@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
@@ -13,20 +9,19 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueManager.AutoComplete;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
+using Fansi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SqlDialogs;
 
 namespace CatalogueManager.AggregationUIs.Advanced

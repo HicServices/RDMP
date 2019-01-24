@@ -4,10 +4,11 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Exceptions;
 using CatalogueLibrary.Triggers.Implementations;
+using FAnsi;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Exceptions;
 using Tests.Common;
 
@@ -35,7 +36,7 @@ namespace CatalogueLibraryTests.Integration
             return new TriggerImplementerFactory(_database.Server.DatabaseType).Create(_table);
         }
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void NoTriggerExists(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -43,7 +44,7 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void CreateWithNoPks_Complain(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -53,7 +54,7 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void CreateWithPks_Valid(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -66,7 +67,7 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void AlterTest_InvalidThenRecreateItAndItsValidAgain(DatabaseType dbType)
         {
             CreateWithPks_Valid(dbType);
@@ -87,7 +88,7 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void NowTestDataInsertion(DatabaseType dbType)
         {
             AlterTest_InvalidThenRecreateItAndItsValidAgain(dbType);
@@ -116,7 +117,7 @@ namespace CatalogueLibraryTests.Integration
             }
         }
 
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void DiffDatabaseDataFetcherTest(DatabaseType dbType)
         {

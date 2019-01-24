@@ -1,18 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding.Parameters;
-using MapsDirectlyToDatabaseTable;
-
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
+using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueLibrary.QueryBuilding
 {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Repositories;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {

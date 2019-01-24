@@ -1,9 +1,9 @@
 using CatalogueLibrary.Repositories;
+using FAnsi;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {

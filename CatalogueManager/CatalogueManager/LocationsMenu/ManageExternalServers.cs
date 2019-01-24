@@ -7,6 +7,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.LocationsMenu
 {

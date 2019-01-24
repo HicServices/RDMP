@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
+using FAnsi;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Triggers
 {
@@ -173,7 +174,7 @@ where
                     break;
 
                 case DatabaseType.Oracle:
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
 
                     
                     sql = @"

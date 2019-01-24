@@ -11,6 +11,12 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MySql;
+using FAnsi.Implementations.Oracle;
 using MapsDirectlyToDatabaseTable;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
@@ -19,7 +25,6 @@ using RDMPStartup.Events;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Tests.Common
 {
@@ -55,6 +60,12 @@ namespace Tests.Common
         {
             CatalogueRepository.SuppressHelpLoading = true;
             
+            ImplementationManager.Load(
+                typeof(MicrosoftSQLImplementation).Assembly,
+                typeof(OracleImplementation).Assembly,
+                typeof(MySqlImplementation).Assembly
+                );
+
             ReadSettingsFile();
         }
 
@@ -121,7 +132,7 @@ namespace Tests.Common
                     if (k == "server" || k == "database" || k== "user id" || k =="password")
                         continue;
 
-                    new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MYSQLServer, k, builder[k].ToString());
+                    new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
                 }
                 _discoveredMySqlServer = new DiscoveredServer(builder);
             }
@@ -220,7 +231,7 @@ namespace Tests.Common
         {
             foreach (DiscoveredDatabase db in forCleanup)
                 if (db.Exists())
-                    db.ForceDrop();
+                    db.Drop();
         }
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         { 
@@ -258,7 +269,7 @@ namespace Tests.Common
 
             //if it already exists drop it
             if(DiscoveredDatabaseICanCreateRandomTablesIn.Exists())
-                DiscoveredDatabaseICanCreateRandomTablesIn.ForceDrop();
+                DiscoveredDatabaseICanCreateRandomTablesIn.Drop();
 
             //create it
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(scratchDatabaseName);
@@ -413,7 +424,7 @@ delete from {1}..Project
                 case DatabaseType.MicrosoftSQLServer:
                     server = new DiscoveredServer(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder);
                     break;
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     server = _discoveredMySqlServer == null ? null : new DiscoveredServer(_discoveredMySqlServer.Builder);
                     break;
                 case DatabaseType.Oracle:
@@ -596,7 +607,7 @@ GO
  permissions.HasFlag(TestLowPrivilegePermissions.Reader) ? "" : "--",
  permissions.HasFlag(TestLowPrivilegePermissions.Reader) ? "" : "--",
  permissions.HasFlag(TestLowPrivilegePermissions.CreateAndDropTables) ? "" : "--");
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     break;
                 case DatabaseType.Oracle:
                     break;

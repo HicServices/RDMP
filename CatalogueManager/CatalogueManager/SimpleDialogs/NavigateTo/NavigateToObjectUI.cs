@@ -312,7 +312,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     return;
 
                 Close();
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[indexToSelect], int.MaxValue) { Pin = true });
+                _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[indexToSelect], 1) { Pin = true });
             }
             
         }

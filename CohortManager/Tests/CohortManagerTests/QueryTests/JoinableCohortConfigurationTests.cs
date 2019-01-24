@@ -8,13 +8,13 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CohortManagerLibrary.QueryBuilding;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CohortManagerTests.QueryTests
@@ -419,7 +419,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             aggregate2.AddDimension(anotherCol);
 
             _queryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName);
-            _queryCachingDatabase.ForceDrop(); //make sure it doesn't exist
+            _queryCachingDatabase.Drop(); //make sure it doesn't exist
 
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
             scripter.CreateAndPatchDatabaseWithDotDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly, new AcceptAllCheckNotifier());
@@ -489,7 +489,7 @@ on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi", expe
             {
 
                 queryCachingDatabaseServer.DeleteInDatabase();
-                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName).ForceDrop();
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName).Drop();
                 
             }
             

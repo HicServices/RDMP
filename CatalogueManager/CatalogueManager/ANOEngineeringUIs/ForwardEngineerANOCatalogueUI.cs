@@ -21,12 +21,14 @@ using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.LoadProgressUpdating;
 using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.ANOEngineeringUIs
 {

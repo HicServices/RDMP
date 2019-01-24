@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using CatalogueLibrary.Reports.DatabaseAccessPrivileges;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 
 namespace CatalogueManager.SimpleDialogs.Reports

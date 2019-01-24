@@ -25,6 +25,7 @@ using DataLoadEngine.LoadExecution.Components.Runtime;
 using HIC.Logging;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 {

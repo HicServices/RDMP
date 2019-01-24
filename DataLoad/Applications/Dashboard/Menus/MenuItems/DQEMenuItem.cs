@@ -8,6 +8,7 @@ using CatalogueManager.Menus.MenuItems;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace Dashboard.Menus.MenuItems
 {

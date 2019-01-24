@@ -6,9 +6,9 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Checks.Checkers
 {

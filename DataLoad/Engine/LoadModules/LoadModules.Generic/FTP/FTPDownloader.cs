@@ -14,8 +14,8 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.Job;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.FTP

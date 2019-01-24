@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace MapsDirectlyToDatabaseTable
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 
 namespace LoadModules.GenericUIs
 {

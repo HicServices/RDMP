@@ -188,7 +188,7 @@ namespace LoadModules.Generic.Attachers
                  if(!dbToDropName.EndsWith("_RAW"))
                      throw new Exception("We were in the cleanup phase and were about to drop the database that was created by MDFAttacher when we noticed it's name didn't end with _RAW!, it's name was:" + dbToDropName + " were we about to nuke your live database?");
 
-                 _dbInfo.ForceDrop();
+                 _dbInfo.Drop();
 
                  DeleteFilesIfExist();
              }

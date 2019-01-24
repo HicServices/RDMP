@@ -15,6 +15,7 @@ using QuickGraph;
 using ReusableLibraryCode;
 
 using ReusableUIComponents.Dependencies.Models;
+using ReusableUIComponents.Dialogs;
 
 namespace ReusableUIComponents.Dependencies
 {

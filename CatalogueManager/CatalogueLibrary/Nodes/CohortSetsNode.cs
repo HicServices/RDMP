@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cohort;
 
 namespace CatalogueLibrary.Nodes
 {
     /// <summary>
-    /// Container tree node for all the AggregateConfigurations in a Catalogue that ARE involved in cohort creation (IsCohortIdentificationAggregate).
+    /// Collection of all <see cref="AggregateConfiguration"/> in a <see cref="Catalogue"/> that are involved in cohort creation (See <see cref="CohortIdentificationConfiguration"/>).
     /// </summary>
     public class CohortSetsNode
     {

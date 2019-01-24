@@ -7,6 +7,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using DatabaseCreation;
 using Diagnostics;
+using FAnsi;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;

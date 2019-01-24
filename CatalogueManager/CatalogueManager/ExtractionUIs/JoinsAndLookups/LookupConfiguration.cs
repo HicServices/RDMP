@@ -20,6 +20,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using Point = System.Drawing.Point;
 

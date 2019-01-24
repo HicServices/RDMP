@@ -8,11 +8,11 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Checks.Checkers;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
 {

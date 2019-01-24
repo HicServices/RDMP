@@ -15,11 +15,11 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CohortManagerLibrary.Execution.Joinables;
 using CohortManagerLibrary.QueryBuilding;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {

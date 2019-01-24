@@ -5,6 +5,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using FAnsi;
 using LoadModules.Generic.Mutilators.Dilution;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
 using NUnit.Framework;

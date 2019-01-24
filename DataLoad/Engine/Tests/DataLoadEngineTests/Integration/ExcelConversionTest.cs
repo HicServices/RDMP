@@ -7,12 +7,10 @@ using CatalogueLibrary;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using LoadModules.Generic.DataProvider.FlatFileManipulation;
-using LoadModules.Generic.FileOperations;
 using DataLoadEngineTests.Resources;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 
 namespace DataLoadEngineTests.Integration
 {

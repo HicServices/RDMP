@@ -6,10 +6,10 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
+using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using Sharing.Dependency.Gathering;
 using Tests.Common;
 

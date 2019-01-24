@@ -4,6 +4,10 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Providers.Nodes
 {
+    /// <summary>
+    /// Collection of all datasets in a given <see cref="Package"/>.  This lets you define template sets of datasets which all get extracted together
+    /// e.g. 'Core Datasets'.
+    /// </summary>
     public class PackageContentNode:IDeleteable
     {
         private readonly ExtractableDataSetPackageContents _contents;

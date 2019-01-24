@@ -4,10 +4,10 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.DatabaseManagement.Operations;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace AnonymisationTests
@@ -27,7 +27,7 @@ namespace AnonymisationTests
             IdentifierDump_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(IdentifierDump_DatabaseName);
 
             if (IdentifierDump_Database.Exists())
-                IdentifierDump_Database.ForceDrop();
+                IdentifierDump_Database.Drop();
 
             var scriptCreate = new MasterDatabaseScriptExecutor(IdentifierDump_Database);
             scriptCreate.CreateAndPatchDatabase(typeof(IdentifierDump.Class1).Assembly, new ThrowImmediatelyCheckNotifier());
@@ -44,7 +44,7 @@ namespace AnonymisationTests
         public override void FixtureTearDown()
         {
             if (IdentifierDump_Database.Exists())
-                IdentifierDump_Database.ForceDrop();
+                IdentifierDump_Database.Drop();
 
             base.FixtureTearDown();
         }

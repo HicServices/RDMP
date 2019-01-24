@@ -1,4 +1,5 @@
 ﻿using CatalogueManager.Menus;
+using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Providers.Nodes;
 using DataExportManager.CommandExecution.AtomicCommands;
 

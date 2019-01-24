@@ -9,12 +9,12 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
+using FAnsi.Discovery;
 using HIC.Common.Validation;
 using HIC.Common.Validation.Constraints;
 using HIC.Common.Validation.Constraints.Primary;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Diagnostics.TestData
 {
@@ -143,7 +143,7 @@ CREATE VIEW vSlowView As Select * from " + BulkDataTable + " boss where date_of_
 
         public void Destroy()
         {
-            BulkDataDatabase.ForceDrop();
+            BulkDataDatabase.Drop();
         }
 
         private void GenerateColumns(DataTable dt)

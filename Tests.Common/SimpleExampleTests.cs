@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Linq;
 using CatalogueLibrary.Data;
+using FAnsi;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
@@ -19,7 +20,7 @@ namespace Tests.Common
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void Test2(DatabaseType type)
         {
             var database = GetCleanedServer(type);
@@ -31,7 +32,7 @@ namespace Tests.Common
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestReadDataLowPrivileges(DatabaseType type)
         {
             var database = GetCleanedServer(type);

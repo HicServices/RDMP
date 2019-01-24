@@ -7,6 +7,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.CredentialsUIs
 {

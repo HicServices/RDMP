@@ -10,11 +10,11 @@ using DataExportLibrary.CohortCreationPipeline.Destinations;
 using DataExportLibrary.CohortCreationPipeline.Sources;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Tests.DataExtraction
@@ -102,7 +102,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
             DiscoveredDatabase cachedb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("TestCohortRefreshing_CacheTest");
             if (cachedb.Exists())
-                cachedb.ForceDrop();
+                cachedb.Drop();
 
             new MasterDatabaseScriptExecutor(cachedb).CreateAndPatchDatabase(p.GetHostAssembly(), new ThrowImmediatelyCheckNotifier());
             queryCacheServer.SetProperties(cachedb);
@@ -174,7 +174,7 @@ namespace DataExportLibrary.Tests.DataExtraction
 
                 //delete the caching database
                 queryCacheServer.DeleteInDatabase();
-                cachedb.ForceDrop();
+                cachedb.Drop();
             }
         }
     }

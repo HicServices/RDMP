@@ -10,11 +10,11 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess;
 using DataLoadEngine.Migration;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Checks.Checkers
 {

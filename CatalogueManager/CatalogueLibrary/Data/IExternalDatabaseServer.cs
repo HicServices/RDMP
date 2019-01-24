@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data
 {

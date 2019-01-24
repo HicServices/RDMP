@@ -10,9 +10,9 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Migration;
+using FAnsi.Discovery;
 using HIC.Logging;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Destinations

@@ -8,9 +8,9 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using FAnsi;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using Rhino.Mocks;
 using Tests.Common;
 
@@ -20,7 +20,7 @@ namespace DataLoadEngineTests.Integration
     {
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestDistincter_Duplicates(DatabaseType type)
         {
             var db = GetCleanedServer(type, "TestCoalescer",true);
@@ -72,12 +72,12 @@ namespace DataLoadEngineTests.Integration
 
             Assert.AreEqual(rowsBefore/2,rowsAfter);
 
-            db.ForceDrop();
+            db.Drop();
         }
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestDistincter_NoDuplicates(DatabaseType type)
         {
             var db = GetCleanedServer(type, "TestCoalescer",true);
@@ -129,7 +129,7 @@ namespace DataLoadEngineTests.Integration
 
             Assert.AreEqual(rowsBefore, rowsAfter);
 
-            db.ForceDrop();
+            db.Drop();
         }
     }
 }

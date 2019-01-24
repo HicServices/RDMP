@@ -7,11 +7,11 @@ using CatalogueLibrary;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.Job;
+using FAnsi.Discovery;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

@@ -7,10 +7,10 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using CsvHelper.Configuration;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using LoadModules.Generic.DataFlowSources.SubComponents;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataFlowSources

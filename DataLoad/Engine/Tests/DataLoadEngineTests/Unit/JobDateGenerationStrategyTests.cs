@@ -1,8 +1,5 @@
 ﻿using System;
-using System.IO;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.Job.Scheduling;
 using NUnit.Framework;
 using Rhino.Mocks;

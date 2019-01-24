@@ -1,5 +1,5 @@
 ﻿using CatalogueLibrary.Data;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 
 namespace CatalogueLibrary.DataHelper
 {

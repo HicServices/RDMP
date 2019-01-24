@@ -5,7 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 
 namespace Diagnostics.TestData.Relational
 {

@@ -5,6 +5,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Providers.Nodes
 {
+    /// <summary>
+    /// The saved cohort (list of patient identifiers) which will be linked with the datasets in the associated <see cref="ExtractionConfiguration"/>
+    /// </summary>
     public class LinkedCohortNode : IMasqueradeAs, IDeletableWithCustomMessage
     {
         public ExtractionConfiguration Configuration { get; set; }

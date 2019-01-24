@@ -3,7 +3,7 @@ using System.IO;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataLoadEngine.DataFlowPipeline.Destinations;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 
 namespace DataLoadEngine.PipelineUseCases
 {

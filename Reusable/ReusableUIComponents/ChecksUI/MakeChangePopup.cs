@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents.Dialogs;
 
 namespace ReusableUIComponents.ChecksUI
 {

@@ -41,6 +41,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 

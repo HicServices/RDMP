@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Security.Cryptography;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataFlowPipeline.Destinations;
+using FAnsi;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -697,7 +697,7 @@ CREATE TABLE [dbo].[TestResizing](
         {
             var token = new GracefulCancellationToken();
             
-            var db = GetCleanedServer(DatabaseType.MYSQLServer,true);
+            var db = GetCleanedServer(DatabaseType.MySql,true);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
@@ -741,7 +741,7 @@ CREATE TABLE [dbo].[TestResizing](
                 Assert.AreEqual(DBNull.Value, r["mynullcol"]);
             }
 
-            db.ForceDrop();
+            db.Drop();
         }
 
         [Test]
@@ -749,7 +749,7 @@ CREATE TABLE [dbo].[TestResizing](
         {
             var token = new GracefulCancellationToken();
 
-            var db = GetCleanedServer(DatabaseType.MYSQLServer, true);
+            var db = GetCleanedServer(DatabaseType.MySql, true);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
@@ -843,7 +843,7 @@ CREATE TABLE [dbo].[TestResizing](
             }
         }
 
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void DataTableUploadDestinationTests_PrimaryKeyDataTableWithAlterSizeLater(DatabaseType dbtype)
         {
@@ -937,8 +937,8 @@ CREATE TABLE [dbo].[TestResizing](
         }
 
         #region Two Batch Tests
-        [TestCase(DatabaseType.MYSQLServer, true)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql, true)]
+        [TestCase(DatabaseType.MySql, false)]
         [TestCase(DatabaseType.MicrosoftSQLServer, true)]
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
         public void TwoBatch_BooleanResizingTest(DatabaseType dbType, bool giveNullValuesOnly)
@@ -1000,10 +1000,10 @@ CREATE TABLE [dbo].[TestResizing](
         /// <param name="v2">The row value to send in batch 2 (after table creation)</param>
         /// <param name="expectedTypeForBatch1">The Type you expect to be used to store the v1</param>
         /// <param name="expectedTypeForBatch2">The Type you expect after ALTER to support all values seen up till now (i.e. v1) AND v2</param>
-        [TestCase(DatabaseType.MYSQLServer,null,"235", typeof(bool),typeof(int))]
-        [TestCase(DatabaseType.MYSQLServer, "123", "2001-01-01 12:00:00" ,typeof(int), typeof(string))] //123 cannot be converted to date so it becomes string
-        [TestCase(DatabaseType.MYSQLServer, "2001-01-01", "2001-01-01 12:00:00" ,  typeof(DateTime), typeof(DateTime) )]
-        [TestCase(DatabaseType.MYSQLServer, "2001-01-01", "omg", typeof(DateTime), typeof(string))]
+        [TestCase(DatabaseType.MySql,null,"235", typeof(bool),typeof(int))]
+        [TestCase(DatabaseType.MySql, "123", "2001-01-01 12:00:00" ,typeof(int), typeof(string))] //123 cannot be converted to date so it becomes string
+        [TestCase(DatabaseType.MySql, "2001-01-01", "2001-01-01 12:00:00" ,  typeof(DateTime), typeof(DateTime) )]
+        [TestCase(DatabaseType.MySql, "2001-01-01", "omg", typeof(DateTime), typeof(string))]
 
         [TestCase(DatabaseType.MicrosoftSQLServer, null, "235", typeof(bool), typeof(int))]
         [TestCase(DatabaseType.MicrosoftSQLServer, "123", "2001-01-01 12:00:00", typeof(int), typeof(string))] //123 cannot be converted to date so it becomes string

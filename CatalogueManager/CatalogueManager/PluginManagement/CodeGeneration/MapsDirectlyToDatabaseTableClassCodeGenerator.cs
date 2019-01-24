@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 using ScintillaNET;
 
 namespace CatalogueManager.PluginManagement.CodeGeneration

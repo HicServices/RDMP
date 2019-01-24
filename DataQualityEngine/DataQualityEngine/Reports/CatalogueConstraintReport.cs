@@ -10,6 +10,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataQualityEngine.Data;
 using DataQualityEngine.Reports.PeriodicityHelpers;
+using FAnsi.Discovery;
 using HIC.Common.Validation;
 using HIC.Common.Validation.Constraints;
 using HIC.Common.Validation.Constraints.Secondary.Predictor;
@@ -17,7 +18,6 @@ using HIC.Logging;
 using HIC.Logging.Listeners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataQualityEngine.Reports

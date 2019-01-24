@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
+using FAnsi.Discovery;
+using FAnsi.Discovery.Constraints;
+using MySqlX.XDevAPI.Relational;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Migration
 {
@@ -53,8 +56,13 @@ namespace DataLoadEngine.Migration
 
                 columnSet.Add(new MigrationColumnSet(fromTable,toTable, migrationFieldProcessor));
             }
+            
+            var sorter = new RelationshipTopologicalSort(columnSet.Select(c => c.DestinationTable));
+            columnSet = columnSet.OrderBy(s => ((ReadOnlyCollection<DiscoveredTable>)sorter.Order).IndexOf(s.DestinationTable)).ToList();
 
             return columnSet;
         }
     }
+
+    
 }

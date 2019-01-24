@@ -10,12 +10,12 @@ using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration.QueryBuilding;
+using FAnsi.Discovery;
 using LoadModules.Generic.Mutilators.QueryBuilders;
 using DataLoadEngine.Migration;
 using DataLoadEngine.Mutilators;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Mutilators

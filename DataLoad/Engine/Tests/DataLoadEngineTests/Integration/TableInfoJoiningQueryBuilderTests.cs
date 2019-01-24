@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
-using LoadModules.Generic.Mutilators.QueryBuilders;
 using NUnit.Framework;
-using Rhino.Mocks.Constraints;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration

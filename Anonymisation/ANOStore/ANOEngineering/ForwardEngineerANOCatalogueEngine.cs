@@ -8,9 +8,9 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using Sharing.Refactoring;
 
 namespace ANOStore.ANOEngineering

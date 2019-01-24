@@ -5,10 +5,10 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.Tests.DataExtraction;
 using DataExportLibrary;
+using FAnsi.Discovery;
 using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 using Tests.Common;
@@ -101,7 +101,7 @@ namespace DataExportLibrary.Tests
                     con.Close();
                 }
 
-                server.ExpectDatabase(databaseName).ForceDrop();
+                server.ExpectDatabase(databaseName).Drop();
                 Assert.IsFalse(server.ExpectDatabase(databaseName).Exists());
             }
             finally 

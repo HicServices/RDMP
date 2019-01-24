@@ -5,6 +5,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence

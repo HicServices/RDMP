@@ -31,7 +31,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase");
 
             if(db.Exists())
-                db.ForceDrop();
+                db.Drop();
         }
 
         [TearDown]
@@ -40,7 +40,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase");
 
             if (db.Exists())
-                db.ForceDrop();
+                db.Drop();
         }
     
         [Test]

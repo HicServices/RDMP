@@ -11,8 +11,8 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using FAnsi.Discovery;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace DataExportLibrary.Tests.DataExtraction
@@ -61,7 +61,7 @@ namespace DataExportLibrary.Tests.DataExtraction
                 var dbname = TestDatabaseNames.GetConsistentName(_project.Name + "_" + _project.ProjectNumber);
                 dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
                 if (dbToExtractTo.Exists())
-                    dbToExtractTo.ForceDrop();
+                    dbToExtractTo.Drop();
 
                 base.Execute(out execute, out result);
 
@@ -85,7 +85,7 @@ namespace DataExportLibrary.Tests.DataExtraction
                     _extractionServer.DeleteInDatabase();
 
                 if(dbToExtractTo != null)
-                    dbToExtractTo.ForceDrop();
+                    dbToExtractTo.Drop();
             }
         }
         

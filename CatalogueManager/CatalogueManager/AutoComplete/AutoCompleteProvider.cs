@@ -10,9 +10,9 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ScintillaNET;
 
 namespace CatalogueManager.AutoComplete

@@ -9,7 +9,6 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.DatabaseManagement.Operations
 {

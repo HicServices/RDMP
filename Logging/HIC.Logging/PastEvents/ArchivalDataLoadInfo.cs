@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 
 namespace HIC.Logging.PastEvents
 {

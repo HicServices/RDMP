@@ -21,6 +21,7 @@ using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.Menus
 {

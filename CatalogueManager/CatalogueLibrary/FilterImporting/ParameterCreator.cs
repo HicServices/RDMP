@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.FilterImporting.Construction;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace CatalogueLibrary.FilterImporting

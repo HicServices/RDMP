@@ -10,11 +10,11 @@ using DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation
 using DataExportLibrary.CohortDatabaseWizard;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
+using FAnsi;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -110,14 +110,14 @@ namespace DataExportLibrary.Tests.Cohort
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.Oracle)]
         public void TestActuallyCreatingIt(DatabaseType type)
         {
             var db = GetCleanedServer(type);
 
             //drop it
-            db.ForceDrop();
+            db.Drop();
 
             CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
 

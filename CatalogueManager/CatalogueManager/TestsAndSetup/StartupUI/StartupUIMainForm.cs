@@ -16,7 +16,7 @@ using RDMPStartup;
 using RDMPStartup.Events;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-
+using ReusableUIComponents.Dialogs;
 using Timer = System.Windows.Forms.Timer;
 
 namespace CatalogueManager.TestsAndSetup.StartupUI

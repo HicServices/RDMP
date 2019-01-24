@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
+using FAnsi.Discovery;
 using LoadModules.Generic.Exceptions;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Extensions;
 

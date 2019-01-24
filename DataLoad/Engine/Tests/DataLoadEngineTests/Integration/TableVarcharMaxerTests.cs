@@ -5,13 +5,12 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
-using ReusableLibraryCode.Progress;
 using Rhino.Mocks;
 using Tests.Common;
 
@@ -19,8 +18,8 @@ namespace DataLoadEngineTests.Integration
 {
     public class TableVarcharMaxerTests : DatabaseTests
     {
-        [TestCase(DatabaseType.MYSQLServer,true)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql,true)]
+        [TestCase(DatabaseType.MySql, false)]
         [TestCase(DatabaseType.MicrosoftSQLServer,true)]
         [TestCase(DatabaseType.MicrosoftSQLServer,false)]
         public void TestTableVarcharMaxer(DatabaseType dbType,bool allDataTypes)
@@ -58,7 +57,7 @@ namespace DataLoadEngineTests.Integration
                     Assert.AreEqual("varchar(max)",tbl.DiscoverColumn("Dave").DataType.SQLType);
                     Assert.AreEqual(allDataTypes ? "varchar(max)" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
                     break;
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     Assert.AreEqual("text",tbl.DiscoverColumn("Dave").DataType.SQLType);
                     Assert.AreEqual(allDataTypes ? "text" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
                     break;

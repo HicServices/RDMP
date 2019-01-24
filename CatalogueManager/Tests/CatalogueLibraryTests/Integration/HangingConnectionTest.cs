@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FAnsi.Discovery;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -24,7 +24,7 @@ namespace CatalogueLibraryTests.Integration
         {
             //drop it if it existed
             if (DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName).Exists())
-                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName).ForceDrop();
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName).Drop();
             
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(testDbName);
             Thread.Sleep(500);
@@ -56,7 +56,7 @@ namespace CatalogueLibraryTests.Integration
                 Assert.Throws<Exception>(ThrowIfDatabaseLock);//despite us closing the connection and using the 'using' block .net still keeps a connection in sleep state to the server ><
             }
             
-            db.ForceDrop();
+            db.Drop();
         }
 
         void ThrowIfDatabaseLock()

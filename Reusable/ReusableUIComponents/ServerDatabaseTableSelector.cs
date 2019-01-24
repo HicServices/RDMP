@@ -5,10 +5,9 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using FAnsi;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace ReusableUIComponents
@@ -85,7 +84,7 @@ namespace ReusableUIComponents
             var r2 = new RecentHistoryOfControls(cbxDatabase, new Guid("e1a4e7a8-3f7a-4018-8ff5-2fd661ee06a3"));
             r2.AddHistoryAsItemsToComboBox(cbxDatabase);
 
-            _helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
+            _helper = DatabaseCommandHelper.For(DatabaseType);
         }
 
         
@@ -101,7 +100,7 @@ namespace ReusableUIComponents
 
             _workerRefreshTablesToken = new CancellationTokenSource();
 
-            var syntaxHelper = new MicrosoftQuerySyntaxHelper();
+            var syntaxHelper = discoveredDatabase.Server.GetQuerySyntaxHelper();
             try
             {
                 using (var con = discoveredDatabase.Server.GetConnection())
@@ -471,7 +470,7 @@ namespace ReusableUIComponents
 
         private void databaseTypeUI1_DatabaseTypeChanged(object sender, EventArgs e)
         {
-            _helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
+            _helper = DatabaseCommandHelper.For(DatabaseType);
             UpdateDatabaseList();
         }
 

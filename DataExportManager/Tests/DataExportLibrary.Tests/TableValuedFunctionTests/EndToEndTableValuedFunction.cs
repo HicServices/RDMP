@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -25,15 +19,12 @@ using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Repositories;
-using DataExportLibrary.Tests.DataExtraction;
-using LoadModules.Generic.Attachers;
+using FAnsi;
+using FAnsi.Discovery;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataExportLibrary.Tests.TableValuedFunctionTests
@@ -62,7 +53,7 @@ namespace DataExportLibrary.Tests.TableValuedFunctionTests
 
             //cleanup
             if(_discoveredCohortDatabase.Exists())
-                _discoveredCohortDatabase.ForceDrop();
+                _discoveredCohortDatabase.Drop();
 
             //create a normal catalogue
             CreateANormalCatalogue();
@@ -115,7 +106,7 @@ namespace DataExportLibrary.Tests.TableValuedFunctionTests
             _pipe.DeleteInDatabase();
             
             //get rid of the cohort database
-            _discoveredCohortDatabase.ForceDrop();
+            _discoveredCohortDatabase.Drop();
             
             _nonTvfCatalogue.DeleteInDatabase();
             _nonTvfTableInfo.DeleteInDatabase();

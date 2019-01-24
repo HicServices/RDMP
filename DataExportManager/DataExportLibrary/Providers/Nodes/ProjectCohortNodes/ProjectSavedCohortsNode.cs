@@ -3,6 +3,10 @@ using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.Providers.Nodes.ProjectCohortNodes
 {
+    /// <summary>
+    /// Collection of all saved cohort lists (<see cref="ExtractableCohort"/>) which were saved against a <see cref="Project"/>.  Cohorts are 
+    /// associated with the <see cref="Project"/> via the project number.
+    /// </summary>
     public class ProjectSavedCohortsNode:IOrderable
     {
         public Project Project { get; set; }

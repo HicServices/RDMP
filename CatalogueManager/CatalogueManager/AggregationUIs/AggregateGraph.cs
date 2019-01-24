@@ -19,13 +19,14 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CsvHelper;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 

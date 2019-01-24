@@ -11,6 +11,8 @@ using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.Data.DataTables;
 using DataQualityEngine.Data;
+using FAnsi.Discovery;
+using FAnsi.Discovery.ConnectionStringDefaults;
 using HIC.Common.Validation;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
@@ -18,8 +20,6 @@ using MapsDirectlyToDatabaseTable.Versioning;
 using RDMPStartup.Events;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.ConnectionStringDefaults;
 
 
 namespace RDMPStartup

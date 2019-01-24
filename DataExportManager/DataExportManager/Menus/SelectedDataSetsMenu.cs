@@ -12,6 +12,7 @@ using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI.Graphs;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace DataExportManager.Menus
 {

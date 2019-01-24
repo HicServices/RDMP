@@ -21,6 +21,7 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 
 
 namespace CatalogueManager.MainFormUITabs.SubComponents

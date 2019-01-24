@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Data;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
+using FAnsi.Discovery;
 using LoadModules.Generic.DataFlowSources;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataFlowOperations

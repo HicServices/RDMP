@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TableCreation;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TableCreation;
 
 namespace LoadModules.GenericUIs
 {

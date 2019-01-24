@@ -8,7 +8,7 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.CohortCreationPipeline.Sources;
 using DataExportLibrary.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.CohortCreationPipeline.UseCases

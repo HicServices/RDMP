@@ -11,7 +11,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
-    public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector);
+    public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector,string parameterName);
 
     public class ParameterCollectionUIOptions
     {
@@ -53,20 +53,25 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             _createNewParameterDelegate = createNewParameterDelegate;
 
             if (_createNewParameterDelegate == null)
-            {
                 if (AnyTableSqlParameter.IsSupportedType(collector.GetType()))
-                {
-                    _createNewParameterDelegate = delegate
-                    {
-                        Random r = new Random();
-                        var entity = (IMapsDirectlyToDatabaseTable) collector;
-                        var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity,"DECLARE @" + r.Next(100) + " as varchar(10)");
-                        newParam.Value = "'todo'";
-                        newParam.SaveToDatabase();
-                        return newParam;
-                    };
-                }
-            }
+                    _createNewParameterDelegate = CreateNewParameterDefaultImplementation;
+        }
+
+
+        /// <summary>
+        /// Method called when creating new parameters if no CreateNewSqlParameterHandler was provided during construction
+        /// </summary>
+        /// <returns></returns>
+        private ISqlParameter CreateNewParameterDefaultImplementation(ICollectSqlParameters collector, string parameterName)
+        {
+            if (!parameterName.StartsWith("@"))
+                parameterName = "@" + parameterName;
+
+            var entity = (IMapsDirectlyToDatabaseTable) collector;
+            var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, "DECLARE " + parameterName + " as varchar(10)");
+            newParam.Value = "'todo'";
+            newParam.SaveToDatabase();
+            return newParam;
         }
 
         public bool CanNewParameters()
@@ -74,12 +79,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             return _createNewParameterDelegate != null;
         }
 
-        public ISqlParameter CreateNewParameter()
+        public ISqlParameter CreateNewParameter(string parameterName = null)
         {
-            return _createNewParameterDelegate(Collector);
+            return _createNewParameterDelegate(Collector,parameterName);
         }
-
-
+        
         public bool IsHigherLevel(ISqlParameter parameter)
         {
             return ParameterManager.GetLevelForParameter(parameter) > CurrentLevel;

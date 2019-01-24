@@ -10,7 +10,6 @@ using CatalogueLibrary.Data.Cohort;
 using CohortManagerLibrary.Execution.Joinables;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {

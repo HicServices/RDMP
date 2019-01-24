@@ -13,8 +13,9 @@ using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using DataExportLibrary.CohortCreationPipeline;
+using FAnsi;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Icons.IconProvision

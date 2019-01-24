@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
 {

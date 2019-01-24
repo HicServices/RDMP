@@ -3,6 +3,9 @@ using CatalogueLibrary.Data;
 
 namespace CatalogueLibrary.Nodes
 {
+    /// <summary>
+    /// Collection of all the virtual columns (<see cref="CatalogueItem"/>) in a dataset (<see cref="Catalogue"/>)
+    /// </summary>
     public class CatalogueItemsNode
     {
         public Catalogue Catalogue { get; set; }

@@ -2,8 +2,8 @@
 using System.Linq;
 using CatalogueLibrary.Triggers.Exceptions;
 using CatalogueLibrary.Triggers.Implementations;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Triggers
 {

@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 
 namespace DataLoadEngine.Migration.QueryBuilding
 {

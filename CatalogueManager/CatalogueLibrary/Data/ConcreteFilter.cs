@@ -4,11 +4,12 @@ using System.Data.Common;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
+using FAnsi;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {

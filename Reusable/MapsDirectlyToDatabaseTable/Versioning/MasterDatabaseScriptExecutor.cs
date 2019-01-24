@@ -8,9 +8,9 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Version = System.Version;
 
 namespace MapsDirectlyToDatabaseTable.Versioning

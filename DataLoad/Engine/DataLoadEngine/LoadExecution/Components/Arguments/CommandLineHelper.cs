@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 
 namespace DataLoadEngine.LoadExecution.Components.Arguments
 {

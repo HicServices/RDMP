@@ -13,12 +13,12 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.Job;
+using FAnsi.Discovery;
+using Fansi.Implementations.MicrosoftSQL;
 using LoadModules.Generic.Checks;
 using Microsoft.Office.Interop.Excel;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataProvider.FlatFileManipulation

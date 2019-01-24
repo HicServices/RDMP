@@ -12,7 +12,7 @@ using CatalogueLibrary.Checks;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.DataHelper;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueManager.AggregationUIs
 {

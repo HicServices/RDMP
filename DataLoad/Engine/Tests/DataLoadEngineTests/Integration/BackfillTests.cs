@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
@@ -10,16 +9,12 @@ using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using FAnsi.Discovery;
 using LoadModules.Generic.Mutilators;
-using DataLoadEngine.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -74,7 +69,7 @@ namespace DataLoadEngineTests.Integration
                 if (live.ExpectTable("Headers").Exists())
                     live.ExpectTable("Headers").Drop();
 
-                live.ForceDrop();
+                live.Drop();
             }
 
             if (staging.Exists())
@@ -88,7 +83,7 @@ namespace DataLoadEngineTests.Integration
                 if (staging.ExpectTable("Headers").Exists())
                     staging.ExpectTable("Headers").Drop();
 
-                staging.ForceDrop();
+                staging.Drop();
             }
         }
 

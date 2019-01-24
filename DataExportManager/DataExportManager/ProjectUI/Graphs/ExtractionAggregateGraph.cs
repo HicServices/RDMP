@@ -11,7 +11,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using FAnsi.Discovery.QuerySyntax;
 
 namespace DataExportManager.ProjectUI.Graphs
 {

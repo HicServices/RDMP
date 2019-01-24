@@ -1,12 +1,8 @@
-﻿using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
+﻿using System.Data.Common;
 using System.IO;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.FileOutputFormats;
+using FAnsi.Discovery;
 
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.ExtractionTime
 {

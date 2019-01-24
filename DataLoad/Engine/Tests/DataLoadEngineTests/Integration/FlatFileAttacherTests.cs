@@ -9,12 +9,12 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

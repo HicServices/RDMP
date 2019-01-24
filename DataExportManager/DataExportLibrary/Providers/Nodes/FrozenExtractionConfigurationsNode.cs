@@ -2,6 +2,9 @@
 
 namespace DataExportLibrary.Providers.Nodes
 {
+    /// <summary>
+    /// Collection of all previously extracted (and now readonly) <see cref="ExtractionConfiguration"/>s in a given <see cref="Project"/>
+    /// </summary>
     class FrozenExtractionConfigurationsNode
     {
         public Project Project { get; set; }

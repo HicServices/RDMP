@@ -242,7 +242,7 @@
             // 
             // databaseTypeUI1
             // 
-            this.databaseTypeUI1.DatabaseType = ReusableLibraryCode.DatabaseType.MicrosoftSQLServer;
+            this.databaseTypeUI1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
             this.databaseTypeUI1.Location = new System.Drawing.Point(470, 50);
             this.databaseTypeUI1.Name = "databaseTypeUI1";
             this.databaseTypeUI1.Size = new System.Drawing.Size(150, 28);

@@ -4,7 +4,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration.QueryBuilding;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Migration

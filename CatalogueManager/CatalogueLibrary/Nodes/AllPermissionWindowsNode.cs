@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 
 namespace CatalogueLibrary.Nodes
 {
+    /// <summary>
+    /// Collection of all <see cref="PermissionWindow"/> objects.  These are windows of time in which operations are permitted / forbidden.
+    /// </summary>
     public class AllPermissionWindowsNode:SingletonNode,IOrderable
     {
         public AllPermissionWindowsNode() : base("Permission Windows")

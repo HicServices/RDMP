@@ -21,12 +21,13 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using CatalogueManager.Copying;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 

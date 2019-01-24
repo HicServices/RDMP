@@ -6,12 +6,9 @@ using System.Linq;
 using AnonymisationTests;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Checks;
 using DataLoadEngine.Checks.Checkers;
-using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess;
@@ -22,7 +19,6 @@ using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration

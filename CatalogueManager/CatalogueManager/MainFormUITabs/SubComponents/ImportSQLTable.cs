@@ -9,9 +9,10 @@ using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
+using FAnsi.Discovery;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.MainFormUITabs.SubComponents
 {

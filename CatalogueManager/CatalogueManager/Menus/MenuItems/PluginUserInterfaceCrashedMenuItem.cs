@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.PluginChildProvision;
-using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.Menus.MenuItems
 {

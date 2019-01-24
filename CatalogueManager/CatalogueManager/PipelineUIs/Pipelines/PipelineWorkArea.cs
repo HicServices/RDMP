@@ -13,6 +13,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
 using CatalogueManager.PipelineUIs.Pipelines.Models;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.PipelineUIs.Pipelines
 {

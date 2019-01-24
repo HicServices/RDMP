@@ -8,8 +8,8 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueLibrary.Spontaneous;
+using FAnsi.Discovery.QuerySyntax;
 using QueryCaching.Aggregation;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CohortManagerLibrary.QueryBuilding
 {

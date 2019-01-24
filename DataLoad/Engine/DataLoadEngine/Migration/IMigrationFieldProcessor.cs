@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 
 namespace DataLoadEngine.Migration
 {

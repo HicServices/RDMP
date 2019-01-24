@@ -15,10 +15,11 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataLoadEngine.DatabaseManagement.Operations;
 using Diagnostics.TestData;
+using FAnsi;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Diagnostics
 {
@@ -174,7 +175,7 @@ namespace Diagnostics
                 var database = new DiscoveredServer(_liveDataServer.Builder).ExpectDatabase(_cohortDatabaseName);
 
                 if(database.Exists())
-                    database.ForceDrop();
+                    database.Drop();
 
                 string sql = string.Format(
 @"

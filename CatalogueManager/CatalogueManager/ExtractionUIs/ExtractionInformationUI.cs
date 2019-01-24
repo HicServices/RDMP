@@ -10,9 +10,9 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Copying;
+using FAnsi.Discovery.QuerySyntax;
+using Fansi.Implementations.MicrosoftSQL;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;

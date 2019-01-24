@@ -13,8 +13,8 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.Pipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
+using FAnsi.Connections;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataExportLibrary.CohortCreationPipeline
 {

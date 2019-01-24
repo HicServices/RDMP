@@ -4,8 +4,8 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace QueryCaching.Aggregation.Arguments
 {

@@ -8,8 +8,8 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Spontaneous;
+using Fansi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using Rhino.Mocks;
 
 namespace CatalogueLibraryTests.Integration.FilterImportingTests

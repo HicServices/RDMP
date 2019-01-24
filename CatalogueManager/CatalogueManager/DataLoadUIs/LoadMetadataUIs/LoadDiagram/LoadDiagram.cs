@@ -22,7 +22,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using CatalogueManager.Copying;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 

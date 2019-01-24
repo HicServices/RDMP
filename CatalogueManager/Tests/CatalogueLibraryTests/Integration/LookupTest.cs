@@ -5,6 +5,7 @@ using CatalogueLibrary.CommandExecution;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode;

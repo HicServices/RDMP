@@ -15,10 +15,10 @@ using CatalogueLibrary.Spontaneous;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using DataLoadEngine.Job;
+using FAnsi;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.CrossPlatformParameterTests
@@ -26,7 +26,7 @@ namespace CatalogueLibraryTests.CrossPlatformParameterTests
     public class BasicParameterUseTests:DatabaseTests
     {
         [Test]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void Test_DatabaseTypeQueryWithParameter_IntParameter(DatabaseType dbType)
         {
@@ -105,7 +105,7 @@ namespace CatalogueLibraryTests.CrossPlatformParameterTests
             }
             finally
             {
-                db.ForceDrop();
+                db.Drop();
             }
         }
     }

@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using FAnsi.Connections;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Rhino.Mocks;
 using Tests.Common;
 

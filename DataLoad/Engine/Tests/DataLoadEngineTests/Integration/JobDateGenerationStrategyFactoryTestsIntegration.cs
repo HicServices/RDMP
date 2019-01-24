@@ -5,15 +5,14 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngine.Job.Scheduling;
 using DataLoadEngine.Job.Scheduling.Exceptions;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
 using DataLoadEngineTests.Integration.Cache;
 using DataLoadEngineTests.Integration.PipelineTests;
+using FAnsi.Discovery;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

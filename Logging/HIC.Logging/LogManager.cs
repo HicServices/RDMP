@@ -5,9 +5,9 @@ using System.Data.Common;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
+using FAnsi.Discovery;
 using HIC.Logging.PastEvents;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace HIC.Logging
 {

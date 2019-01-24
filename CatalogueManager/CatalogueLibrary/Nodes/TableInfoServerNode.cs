@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using FAnsi;
 using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Nodes

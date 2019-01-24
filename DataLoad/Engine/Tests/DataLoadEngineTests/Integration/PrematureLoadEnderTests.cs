@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using CatalogueLibrary;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.Job;
+using FAnsi;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
 {
     class PrematureLoadEnderTests:DatabaseTests
     {
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestEndLoadBecause_NoTables(DatabaseType type)
         {
@@ -34,7 +28,7 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(ExitCodeType.OperationNotRequired ,ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
         }
 
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestEndLoadBecause_NoRows(DatabaseType type)
         {
@@ -53,7 +47,7 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(ExitCodeType.OperationNotRequired, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
         }
 
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestNoEnd_BecauseRows(DatabaseType type)
         {

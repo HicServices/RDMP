@@ -6,13 +6,12 @@ using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Repositories;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.Cohort
 {

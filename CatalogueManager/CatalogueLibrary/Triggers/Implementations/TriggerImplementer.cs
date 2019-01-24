@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Triggers.Exceptions;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Discovery.TypeTranslation;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 
 namespace CatalogueLibrary.Triggers.Implementations
 {

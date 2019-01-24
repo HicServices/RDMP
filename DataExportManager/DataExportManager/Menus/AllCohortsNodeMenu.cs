@@ -14,6 +14,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Providers.Nodes;
 using DataExportManager.CohortUI;
 using DataExportManager.CommandExecution.AtomicCommands;
+using FAnsi;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;

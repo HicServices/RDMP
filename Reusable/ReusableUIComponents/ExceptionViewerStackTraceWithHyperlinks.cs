@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ReusableLibraryCode;
+using ReusableUIComponents.Dialogs;
 
 
 namespace ReusableUIComponents

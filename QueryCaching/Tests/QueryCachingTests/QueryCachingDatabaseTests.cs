@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
+﻿using CatalogueLibrary.Data;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace QueryCachingTests
@@ -26,7 +19,7 @@ namespace QueryCachingTests
             DiscoveredQueryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(QueryCachingDatabaseName);
 
             if(DiscoveredQueryCachingDatabase.Exists())
-                DiscoveredQueryCachingDatabase.ForceDrop();
+                DiscoveredQueryCachingDatabase.Drop();
 
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
             scripter.CreateAndPatchDatabaseWithDotDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly, new ThrowImmediatelyCheckNotifier());
@@ -41,7 +34,7 @@ namespace QueryCachingTests
             QueryCachingDatabaseServer.DeleteInDatabase();
 
             if (DiscoveredQueryCachingDatabase.Exists())
-                DiscoveredQueryCachingDatabase.ForceDrop();
+                DiscoveredQueryCachingDatabase.Drop();
         }
     }
 }

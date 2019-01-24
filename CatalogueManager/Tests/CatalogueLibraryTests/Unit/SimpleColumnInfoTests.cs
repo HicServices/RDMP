@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using CatalogueLibrary.Data;
+using FAnsi;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Unit

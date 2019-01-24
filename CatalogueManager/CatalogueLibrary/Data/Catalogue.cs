@@ -10,6 +10,9 @@ using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.DublinCore;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -17,8 +20,6 @@ using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {

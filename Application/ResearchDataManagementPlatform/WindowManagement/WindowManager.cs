@@ -24,6 +24,7 @@ using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 

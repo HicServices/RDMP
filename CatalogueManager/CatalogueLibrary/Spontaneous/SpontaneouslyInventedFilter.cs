@@ -4,10 +4,10 @@ using System.Data.Common;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting.Construction;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
 namespace CatalogueLibrary.Spontaneous

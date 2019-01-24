@@ -3,6 +3,10 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Nodes
 {
+    /// <summary>
+    /// Identifies a database which is used to 'split off' identifiable data (columns) during a data load instead of loading it into the LIVE database (from which you
+    /// execute data extractions).
+    /// </summary>
     public class IdentifierDumpServerUsageNode:IDeleteable
     {
         public TableInfo TableInfo { get; private set; }

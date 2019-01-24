@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
+using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueLibrary.Data.Aggregation
 {

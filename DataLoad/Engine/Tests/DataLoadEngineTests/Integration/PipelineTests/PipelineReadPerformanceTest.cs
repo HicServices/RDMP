@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.DataFlowPipeline.Sources;
 using Diagnostics.TestData;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

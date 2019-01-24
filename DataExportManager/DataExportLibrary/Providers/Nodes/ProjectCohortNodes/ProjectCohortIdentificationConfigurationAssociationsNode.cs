@@ -3,6 +3,12 @@ using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.Providers.Nodes.ProjectCohortNodes
 {
+    /// <summary>
+    /// Collection of all <see cref="CohortIdentificationConfiguration"/> (queries for identifying patient lists) which are associated 
+    /// with a <see cref="Project"/>.  
+    /// 
+    /// <para>A <see cref="CohortIdentificationConfiguration"/> can be associated with multiple Projects</para>
+    /// </summary>
     public class ProjectCohortIdentificationConfigurationAssociationsNode:IOrderable
     {
         public Project Project { get; set; }

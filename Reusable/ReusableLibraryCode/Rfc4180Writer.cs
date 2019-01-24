@@ -4,8 +4,8 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 
 namespace ReusableLibraryCode
 {

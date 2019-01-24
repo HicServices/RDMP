@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Triggers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using FAnsi.Discovery;
 
 namespace DataLoadEngine.Migration
 {

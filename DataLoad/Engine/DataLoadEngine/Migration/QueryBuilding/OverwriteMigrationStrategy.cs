@@ -7,8 +7,9 @@ using System.Text;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Job;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using FAnsi.Connections;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.Migration.QueryBuilding

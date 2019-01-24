@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Repositories;
 using DataQualityEngine.Data;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration

@@ -1,4 +1,5 @@
-﻿using MapsDirectlyToDatabaseTable;
+﻿using FAnsi.Discovery.QuerySyntax;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;

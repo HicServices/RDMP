@@ -5,12 +5,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using FAnsi;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.DataHelper
 {
@@ -62,7 +61,7 @@ namespace CatalogueLibrary.DataHelper
             _usageContext = usageContext;
             _importFromSchema = importFromSchema;
 
-            _helper = new DatabaseHelperFactory(type).CreateInstance();
+            _helper = DatabaseCommandHelper.For(type);
             
             InitializeBuilder();
         }
@@ -109,7 +108,7 @@ namespace CatalogueLibrary.DataHelper
                     tableName += "..";
                 else
                     tableName += "."+_importFromSchema+".";
-            else if (_type == DatabaseType.MYSQLServer || _type == DatabaseType.Oracle)
+            else if (_type == DatabaseType.MySql || _type == DatabaseType.Oracle)
                 tableName += ".";
             else
                 throw new NotSupportedException("Unknown Type:" + _type);

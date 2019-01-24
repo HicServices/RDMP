@@ -15,6 +15,8 @@ using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess;
+using FAnsi;
+using FAnsi.Discovery;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Mutilators;
 using Diagnostics.TestData;
@@ -22,7 +24,6 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Diagnostics
 {
@@ -1228,11 +1229,11 @@ namespace Diagnostics
         {
             //drop the endpoint database
             var liveServer = DataAccessPortal.GetInstance().ExpectDatabase(DemographyTableInfo, DataAccessContext.InternalDataProcessing);
-            liveServer.ForceDrop();
+            liveServer.Drop();
 
             var staging = liveServer.Server.ExpectDatabase("DLE_STAGING");
             if(staging.Exists())
-                staging.ForceDrop();
+                staging.Drop();
 
             //drop the catalogue entities
             var lmd = DemographyCatalogue.LoadMetadata;

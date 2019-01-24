@@ -4,8 +4,8 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
+using FAnsi.Discovery;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.DatabaseManagement
 {

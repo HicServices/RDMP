@@ -15,15 +15,15 @@ using DataLoadEngine.DataFlowPipeline.Destinations;
 using DataLoadEngine.DataFlowPipeline.Sources;
 using DataLoadEngine.Job;
 using DataLoadEngine.Job.Scheduling;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using HIC.Logging;
 using LoadModules.Generic.LoadProgressUpdating;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Attachers
@@ -268,7 +268,7 @@ namespace LoadModules.Generic.Attachers
                 _remotePassword = RemoteTableAccessCredentials.GetDecryptedPassword();
             }
             
-            var helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
+            var helper = DatabaseCommandHelper.For(DatabaseType);
             var builder = helper.GetConnectionStringBuilder(RemoteServer, RemoteDatabaseName, _remoteUsername, _remotePassword);
             _remoteDatabase = new DiscoveredServer(builder).GetCurrentDatabase();
             

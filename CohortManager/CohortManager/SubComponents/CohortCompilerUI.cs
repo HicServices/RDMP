@@ -22,6 +22,7 @@ using CohortManagerLibrary.Execution.Joinables;
 using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 
 namespace CohortManager.SubComponents
