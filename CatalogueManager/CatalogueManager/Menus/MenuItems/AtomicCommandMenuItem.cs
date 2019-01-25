@@ -44,7 +44,7 @@ namespace CatalogueManager.Menus.MenuItems
 
                 if (sqlException != null)
                 {
-                    Regex fk = new Regex("FK_([A-Za-z_]*)");
+                    Regex fk = new Regex("((FK_)|(ix_))([A-Za-z_]*)");
                     var match = fk.Match(sqlException.Message);
 
                     if (match.Success)
@@ -53,7 +53,7 @@ namespace CatalogueManager.Menus.MenuItems
 
                         if (helpDict != null && helpDict.ContainsKey(match.Value))
                         {
-                            WideMessageBox.Show("Command impossible", "Rule:" + Environment.NewLine + helpDict[match.Value] + Environment.NewLine + "(" + match.Value + ")", Environment.StackTrace, true, match.Value);
+                            ExceptionViewer.Show("Rule Broken" + Environment.NewLine + helpDict[match.Value] + Environment.NewLine + "(" + match.Value + ")",ex);
                             return;
                         }
                     }

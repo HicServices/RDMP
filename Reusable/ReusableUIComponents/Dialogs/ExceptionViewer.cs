@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ReusableLibraryCode;
 
 namespace ReusableUIComponents.Dialogs
@@ -48,11 +49,19 @@ namespace ReusableUIComponents.Dialogs
             //if the API user is not being silly and passing a message that is the exception anyway!
             if (message.StartsWith(exception.Message))
             {
-                if(exception.InnerException != null)
+                if (exception.InnerException != null)
                     longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception.InnerException);
             }
             else
                 longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
+
+            if (message.Trim().Contains("\n"))
+            {
+                var split = message.Trim().Split('\n');
+                message = split[0];
+
+                longMessage = string.Join(Environment.NewLine,split.Skip(1)) + Environment.NewLine + Environment.NewLine + longMessage;
+            }
 
             ExceptionViewer ev = new ExceptionViewer(message,longMessage,exception);
 

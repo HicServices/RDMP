@@ -178,5 +178,11 @@ namespace ReusableUIComponents
         {
             this.Close();
         }
+
+        private void ExceptionViewerStackTraceWithHyperlinks_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape || (e.KeyCode == Keys.W && e.Control))
+                this.Close();
+        }
     }
 }

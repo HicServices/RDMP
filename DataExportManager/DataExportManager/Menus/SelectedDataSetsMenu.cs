@@ -28,7 +28,7 @@ namespace DataExportManager.Menus
 
             var root = selectedDataSet.RootFilterContainer;
 
-            Add(new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue, int.MaxValue) { OverrideCommandName = "Show Catalogue" });
+            Add(new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue, 1) { OverrideCommandName = "Show Catalogue" });
 
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
 

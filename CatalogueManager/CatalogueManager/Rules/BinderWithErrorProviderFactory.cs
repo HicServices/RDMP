@@ -53,6 +53,10 @@ namespace CatalogueManager.Rules
                 _currentValue = _propertyToCheck(_toTest);
                 var typeToTest = _toTest.GetType();
 
+                //never check for uniqueness on null values
+                if(_currentValue == null || string.IsNullOrWhiteSpace(_currentValue.ToString()))
+                    return;
+
                 //get all other objects which share our Type and contain equal values
                 if (_activator.CoreChildProvider.GetAllSearchables().Keys.OfType<T>().Except(new[] { _toTest }).Where(t=>t.GetType() == typeToTest).Any(AreEqual))
                     _errorProvider.SetError(_control, _problemDescription);
