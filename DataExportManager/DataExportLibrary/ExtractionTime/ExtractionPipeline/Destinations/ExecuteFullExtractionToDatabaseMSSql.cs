@@ -636,6 +636,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             }
 
+            if (TableNamingPattern != null && TableNamingPattern.Contains("$a"))
+            {
+                var dsRequest = _request as ExtractDatasetCommand;
+
+                if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+                    notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue + "' does not have an Acronym but TableNamingPattern contains $a", CheckResult.Fail));
+            }
+
             try
             {
                 var server = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
