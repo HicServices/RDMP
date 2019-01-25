@@ -36,9 +36,9 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting
             chart1.PaletteCustomColors = new Color[]
             {
              ConsequenceBar.CorrectColor,
+             ConsequenceBar.InvalidColor,
              ConsequenceBar.MissingColor,
-             ConsequenceBar.WrongColor,
-             ConsequenceBar.InvalidColor
+             ConsequenceBar.WrongColor
             };
             chart1.Palette = ChartColorPalette.None;
             chart1.KeyUp += chart1_KeyUp;

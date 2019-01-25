@@ -19,6 +19,7 @@
 9. [Does RDMP Support Schemas?](#schemas)
 9. [Does RDMP Views?](#views)
 9. [Does RDMP Support Table Valued Functions?](#tvf)
+9. [Is there a Data Quality Engine?](#dqe)
 
 <a name="untyped"></a>
 ### Can RDMP Load UnTyped Data?
@@ -301,3 +302,7 @@ You cannot load a view with data using the Data Load Engine.
 When importing a table from a Microsoft Sql Server database to create a `Catalogue` any table valued functions in the database will also be shown.  When you import these you will get a `TableInfo` which contains default values to supply to the function when querying it.  You can override these parameters e.g. for a project extraction, cohort identification configuration etc.
 
 ![A Table Valued Function TableInfo](Images/FAQ/TableValuedFunctionExample.png)
+
+<a name="dqe"></a>
+### Is there a Data Quality Engine?
+Yes.  You can read more about the DQE in the [technical implementation](./Validation.md) or (from a user perspective) in the [User Manual](../UserManual.docx).

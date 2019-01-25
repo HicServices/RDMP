@@ -174,7 +174,7 @@ namespace CatalogueManager.Validation
                         if (!entities.Any())
                         {
                             if (_requiredProperties[i].PropertyType == typeof(StandardRegex))
-                                MessageBox.Show("You currently do not have any standard regex concepts in your database, select Configure=>StandardRegex... from the menu above to create some",
+                                MessageBox.Show("You currently do not have any standard regex concepts in your database.  These can be created from the Table(Advanced) collection.",
                                 "No StandardRegex configured in your Catalogue");
                             else
                                 MessageBox.Show("You currently do not have any " + _requiredProperties[i].PropertyType + " in your database","Catalogue Entity Collection Empty");
