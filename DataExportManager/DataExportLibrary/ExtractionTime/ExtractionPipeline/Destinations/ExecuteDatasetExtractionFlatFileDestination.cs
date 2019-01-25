@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -22,7 +16,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.FileOutputFormats;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataLoadEngine.DataFlowPipeline;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
@@ -440,6 +433,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             catch (Exception e)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("DateFormat '" + DateFormat + "' was invalid",CheckResult.Fail, e));
+            }
+
+            var dsRequest = _request as ExtractDatasetCommand;
+
+            if (UseAcronymForFileNaming && dsRequest != null)
+            {
+                if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+                    notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue +"' does not have an Acronym but UseAcronymForFileNaming is true",CheckResult.Fail));
             }
         }
     }

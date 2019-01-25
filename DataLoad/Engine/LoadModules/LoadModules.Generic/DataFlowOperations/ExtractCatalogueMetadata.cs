@@ -96,7 +96,13 @@ namespace LoadModules.Generic.DataFlowOperations
 
         public void Check(ICheckNotifier notifier)
         {
-            
+            if (MetadataNamingPattern != null && MetadataNamingPattern.Contains("$a"))
+            {
+                var dsRequest = _request as ExtractDatasetCommand;
+
+                if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+                    notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue + "' does not have an Acronym but MetadataNamingPattern contains $a", CheckResult.Fail));
+            }
         }
 
         public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)

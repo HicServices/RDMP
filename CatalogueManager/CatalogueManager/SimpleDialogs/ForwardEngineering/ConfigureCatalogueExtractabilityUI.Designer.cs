@@ -268,7 +268,6 @@
             this.tbCatalogueName.Name = "tbCatalogueName";
             this.tbCatalogueName.Size = new System.Drawing.Size(277, 20);
             this.tbCatalogueName.TabIndex = 12;
-            this.tbCatalogueName.TextChanged += new System.EventHandler(this.tbCatalogueName_TextChanged);
             // 
             // tbDescription
             // 
@@ -279,7 +278,6 @@
             this.tbDescription.Name = "tbDescription";
             this.tbDescription.Size = new System.Drawing.Size(657, 48);
             this.tbDescription.TabIndex = 12;
-            this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
             // helpIconProjectSpecific
             // 
@@ -377,7 +375,6 @@
             this.tbAcronym.Name = "tbAcronym";
             this.tbAcronym.Size = new System.Drawing.Size(160, 20);
             this.tbAcronym.TabIndex = 26;
-            this.tbAcronym.TextChanged += new System.EventHandler(this.tbAcronym_TextChanged);
             // 
             // label8
             // 

@@ -109,12 +109,7 @@ namespace CatalogueManager.MainFormUITabs
 
             SetStringPropertyOnCatalogue((TextBox)sender, "Name");
         }
-
-        private void tbAcronym_TextChanged(object sender, EventArgs e)
-        {
-            SetStringPropertyOnCatalogue((TextBox)sender, "Acronym");
-        }
-
+        
         private void tbDescription_TextChanged(object sender, EventArgs e)
         {
             SetStringPropertyOnCatalogue((TextBox)sender, "Description");
@@ -421,15 +416,12 @@ namespace CatalogueManager.MainFormUITabs
             RefreshUIFromDatabase();
         }
 
-        protected override void SetRules(RuleBasedErrorProvider rules, Catalogue databaseObject)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, Catalogue databaseObject)
         {
-            base.SetRules(rules,databaseObject);
+            base.SetBindings(rules,databaseObject);
 
-            rules.EnsureAcronymUnique(c_tbAcronym, databaseObject);
-            rules.EnsureNameUnique(c_tbName, databaseObject);
-
-            c_tbAcronym.DataBindings.Clear();
-            c_tbAcronym.DataBindings.Add("Text", databaseObject, "Acronym",false,DataSourceUpdateMode.OnPropertyChanged);
+            rules.Bind(c_tbAcronym, "Text", databaseObject, "Acronym", false, DataSourceUpdateMode.OnPropertyChanged, c=>c.Acronym);
+            rules.Bind(c_tbName, "Text", databaseObject, "Name", false, DataSourceUpdateMode.OnPropertyChanged, c => c.Name);
         }
 
         private void RefreshUIFromDatabase()

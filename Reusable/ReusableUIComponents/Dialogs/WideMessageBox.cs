@@ -28,7 +28,8 @@ namespace ReusableUIComponents.Dialogs
         {
             "date",
             "example",
-            "column"
+            "column",
+            "error"
         };
 
         #region Static setup of dictionary of keywords
@@ -152,7 +153,8 @@ namespace ReusableUIComponents.Dialogs
 
         private void btnCopyToClipboard_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(richTextBox1.Text);
+            //gets around formatting of hyperlinks appearing in Ctrl+C
+            Clipboard.SetText(Args.Title + Environment.NewLine + Environment.NewLine + Args.Message);
         }
 
         private void WideMessageBox_KeyUp(object sender, KeyEventArgs e)
@@ -310,7 +312,7 @@ namespace ReusableUIComponents.Dialogs
        richTextBox1.SelectionStart == 0 && e.KeyData == Keys.Left
    ) e.Handled = true;
 
-            if(e.KeyData == Keys.Back || e.KeyData == Keys.Escape || (e.KeyData == Keys.W && e.Control))
+            if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape || (e.KeyData == Keys.W && e.Control))
                 e.Handled = true;
         }
     }

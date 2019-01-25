@@ -146,7 +146,7 @@ namespace DataExportLibrary.Data.DataTables
                 if(e.Message.Contains("FK_SelectedDataSets_ExtractableDataSet"))
                     throw new Exception("Cannot delete " + this + " because it is in use by the following configurations :" +
                         Environment.NewLine + 
-                        string.Join(Environment.NewLine, ExtractionConfigurations.Select(c=>c.Name +"(" + c.Project +")"), e));
+                        string.Join(Environment.NewLine, ExtractionConfigurations.Select(c=>c.Name +"(" + c.Project +")")), e);
                 throw;
             }
         }

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.SimpleDialogs.Reports;
-using MapsDirectlyToDatabaseTable;
-using RDMPStartup;
+using CatalogueManager.SimpleControls;
 using ReusableUIComponents;
 
 
@@ -75,8 +71,16 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         
         private void RDMPForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (((e.KeyData == Keys.W && e.Control) || e.KeyData == Keys.Escape) && CloseOnEscape)
+            if (((e.KeyCode == Keys.W && e.Control) || e.KeyCode == Keys.Escape) && CloseOnEscape)
                 Close();
+
+            if (e.KeyCode == Keys.S && e.Control)
+            {
+                var saveable = this as ISaveableUI;
+
+                if (saveable != null)
+                    saveable.GetObjectSaverButton().Save();
+            }
         }
     }
 
