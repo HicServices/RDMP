@@ -14,15 +14,14 @@
         <copyright>Copyright 2018</copyright>
         <dependencies>
             <dependency id="CsvHelper" version="7.1.1" />
-            <dependency id="MySql.Data" version="8.0.12" />
             <dependency id="Newtonsoft.Json" version="11.0.2"/>
-            <dependency id="Oracle.ManagedDataAccess" version="12.2.1100" />
             <dependency id="DocX" version="1.1.0" />
             <dependency id="JetBrains.Annotations" version="10.4.0" />
             <dependency id="CommandLineParser" version="2.3.0" />
             <dependency id="SharpZipLib" version="0.86.0" />
             <dependency id="SSH.NET" version="2013.4.7" />
             <dependency id="Mono.Reflection" version="1.1.0.0" />
+            <dependency id="HIC.FansiSql" version="0.9.0.0" />
         </dependencies>
     </metadata>
 </package>
