@@ -312,7 +312,7 @@ namespace ReusableUIComponents.Dialogs
        richTextBox1.SelectionStart == 0 && e.KeyData == Keys.Left
    ) e.Handled = true;
 
-            if(e.KeyData == Keys.Back || e.KeyData == Keys.Escape || (e.KeyData == Keys.W && e.Control))
+            if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape || (e.KeyData == Keys.W && e.Control))
                 e.Handled = true;
         }
     }

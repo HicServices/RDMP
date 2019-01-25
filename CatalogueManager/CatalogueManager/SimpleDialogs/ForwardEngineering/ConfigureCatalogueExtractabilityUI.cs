@@ -13,6 +13,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Rules;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
 using DataExportLibrary.Data.DataTables;
@@ -40,7 +41,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// table(s) that underlie the selected Catalogue (e.g. if you are importing a Results table which joins to a Header table in the dataset Biochemistry on primary/foreign key LabNumber).
     /// If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)</para>
     /// </summary>
-    public partial class ConfigureCatalogueExtractabilityUI : RDMPForm
+    public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         private object[] _extractionCategories;
         
@@ -517,6 +518,11 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             }
 
             olvColumnExtractability.RebuildColumns();
+        }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
         }
     }
 }
