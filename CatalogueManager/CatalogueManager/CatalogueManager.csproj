@@ -1726,6 +1726,9 @@
     <None Include="Icons\StandardPipelineUseCaseNode.png" />
     <None Include="Icons\OtherPipelinesNode.png" />
     <None Include="Icons\LookupCompositeJoinInfo.png" />
+    <None Include="Icons\Overlays\Extractable_Internal.png" />
+    <None Include="Icons\Overlays\Extractable_SpecialApproval.png" />
+    <None Include="Icons\Overlays\Extractable_Supplemental.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

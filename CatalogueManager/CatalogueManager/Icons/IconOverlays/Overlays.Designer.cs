@@ -123,6 +123,36 @@ namespace CatalogueManager.Icons.IconOverlays {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Extractable_Internal {
+            get {
+                object obj = ResourceManager.GetObject("Extractable_Internal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Extractable_SpecialApproval {
+            get {
+                object obj = ResourceManager.GetObject("Extractable_SpecialApproval", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Extractable_Supplemental {
+            get {
+                object obj = ResourceManager.GetObject("Extractable_Supplemental", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap FavouredItem {
             get {
                 object obj = ResourceManager.GetObject("FavouredItem", resourceCulture);

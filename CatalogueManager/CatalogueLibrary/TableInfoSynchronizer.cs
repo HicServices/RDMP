@@ -22,6 +22,8 @@ namespace CatalogueLibrary
         private DiscoveredServer _toSyncTo;
         private CatalogueRepository _repository;
 
+        public HashSet<Catalogue> ChangedCatalogues  = new HashSet<Catalogue>();
+
         /// <summary>
         /// Synchronizes the TableInfo against the underlying database to ensure the Catalogues understanding of what columns exist, what are primary keys,
         /// collation types etc match the reality.  Pass in an alternative 
@@ -205,6 +207,8 @@ namespace CatalogueLibrary
                             e.ExtractionCategory = ExtractionCategory.Internal;
                             e.SaveToDatabase();
                         }
+
+                        ChangedCatalogues.Add(relatedCatalogues[0]);
 
                     }
         }

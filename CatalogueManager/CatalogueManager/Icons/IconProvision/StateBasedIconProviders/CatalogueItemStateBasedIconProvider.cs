@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using CatalogueLibrary.Data;
@@ -27,10 +28,33 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 
             Bitmap toReturn = basicImage;
 
+            var ei = ci.ExtractionInformation;
+
             //it's extractable
-            if (ci.ExtractionInformation != null)
-                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
-            
+            if (ei != null)
+                switch (ei.ExtractionCategory)
+                {
+                    case ExtractionCategory.ProjectSpecific:
+                    case ExtractionCategory.Core:
+                        toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
+                        break;
+                    case ExtractionCategory.Supplemental:
+                        toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Supplemental);
+                        break;
+                    case ExtractionCategory.SpecialApprovalRequired:
+                        toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_SpecialApproval);
+                        break;
+                    case ExtractionCategory.Internal:
+                        toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Internal);
+                        break;
+                    case ExtractionCategory.Deprecated:
+                        toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
+                        toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Deprecated);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
 
             return toReturn;
         }

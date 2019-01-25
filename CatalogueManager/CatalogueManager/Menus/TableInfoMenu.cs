@@ -143,9 +143,11 @@ namespace CatalogueManager.Menus
 
         private void TableInfo_Click(TableInfo tableInfo)
         {
+            TableInfoSynchronizer syncher = new TableInfoSynchronizer(tableInfo);
+
             try
             {
-                TableInfoSynchronizer syncher = new TableInfoSynchronizer(tableInfo);
+                
                 bool wasSynchedsuccessfully = syncher.Synchronize(new MakeChangePopup(new YesNoYesToAllDialog()));
 
                 if (wasSynchedsuccessfully)
@@ -159,6 +161,9 @@ namespace CatalogueManager.Menus
             }
 
             Publish(tableInfo);
+
+            foreach (var c in syncher.ChangedCatalogues)
+                Publish(c);
         }
 
         private void AddColumnInfo_Click(TableInfo tableInfo)
