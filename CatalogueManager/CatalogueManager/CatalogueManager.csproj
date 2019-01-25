@@ -1187,7 +1187,7 @@
     <Compile Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.Designer.cs">
       <DependentUpon>ConfigureCatalogueExtractabilityUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Rules\RuleBasedErrorProvider.cs" />
+    <Compile Include="Rules\BinderWithErrorProviderFactory.cs" />
     <Compile Include="SimpleDialogs\NavigateTo\NavigateToObjectUI.cs">
       <SubType>Form</SubType>
     </Compile>

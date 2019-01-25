@@ -18,6 +18,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
@@ -141,7 +142,9 @@ namespace CatalogueLibrary.Data
 
         private Lazy<CatalogueItem[]> _knownCatalogueItems;
         
+        
         /// <inheritdoc/>
+        [Unique]
         public string Acronym
         {
             get { return _acronym; }
@@ -152,6 +155,7 @@ namespace CatalogueLibrary.Data
         /// The full human readable name of the dataset.  This should usually match the name of the underlying <see cref="TableInfo"/> but might differ
         /// if there are multiple tables powering the Catalogue or they don't have user accessible names.
         /// </summary>
+        [Unique]
         public string Name
         {
             get { return _name; }
@@ -1355,4 +1359,5 @@ namespace CatalogueLibrary.Data
         #endregion
 
     }
+
 }

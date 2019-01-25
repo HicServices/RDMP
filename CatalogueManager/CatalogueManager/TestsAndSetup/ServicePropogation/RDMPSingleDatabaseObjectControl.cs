@@ -33,7 +33,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         private Control _colorIndicator;
         protected IActivateItems _activator;
 
-        private RuleBasedErrorProvider _rules;
+        private BinderWithErrorProviderFactory _binder;
         
         public DatabaseEntity DatabaseObject { get; private set; }
         protected RDMPCollection AssociatedCollection = RDMPCollection.None;
@@ -57,10 +57,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             }
 
 
-            if (_rules == null)
+            if (_binder == null)
             {
-                _rules = new RuleBasedErrorProvider(activator);
-                SetRules(_rules,databaseObject);
+                _binder = new BinderWithErrorProviderFactory(activator);
+                SetBindings(_binder,databaseObject);
             }
 
             SetItemActivator(activator);
@@ -68,7 +68,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             ClearToolStrip();
         }
 
-        protected virtual void SetRules(RuleBasedErrorProvider rules, T databaseObject)
+        protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)
         {
             
         }

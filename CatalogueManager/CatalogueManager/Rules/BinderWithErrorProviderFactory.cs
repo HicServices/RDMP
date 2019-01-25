@@ -2,29 +2,30 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueManager.Rules
 {
-    public class RuleBasedErrorProvider
+    public class BinderWithErrorProviderFactory
     {
         private readonly IActivateItems _activator;
-        
-        public RuleBasedErrorProvider(IActivateItems activator)
+
+        public BinderWithErrorProviderFactory(IActivateItems activator)
         {
             _activator = activator;
         }
 
-        public void EnsureNameUnique(Control control, INamed named)
+        public void Bind<T>(Control c, string propertyName, T databaseObject, string dataMember, bool formattingEnabled, DataSourceUpdateMode updateMode,Func<T,object> getter) where T:IMapsDirectlyToDatabaseTable
         {
-            new UniqueRule<INamed>( _activator, named, (o)=>o.Name, control);
-        }
+            c.DataBindings.Clear();
+            c.DataBindings.Add(propertyName, databaseObject, dataMember, formattingEnabled, updateMode);
 
-        public void EnsureAcronymUnique(Control control, ICatalogue catalogue)
-        {
-            new UniqueRule<ICatalogue>(_activator, catalogue, (o)=>o.Acronym,control);
+            var property = databaseObject.GetType().GetProperty(dataMember);
+
+            if (property.GetCustomAttributes(typeof (UniqueAttribute), true).Any())
+                new UniqueRule<T>(_activator, databaseObject, getter, c);
         }
 
         private class UniqueRule<T> where T : IMapsDirectlyToDatabaseTable
@@ -50,9 +51,10 @@ namespace CatalogueManager.Rules
             void toTest_PropertyChanged(object sender, PropertyChangedEventArgs e)
             {
                 _currentValue = _propertyToCheck(_toTest);
+                var typeToTest = _toTest.GetType();
 
                 //get all other objects which share our Type and contain equal values
-                if (_activator.CoreChildProvider.GetAllSearchables().Keys.OfType<T>().Except(new[] { _toTest }).Any(AreEqual))
+                if (_activator.CoreChildProvider.GetAllSearchables().Keys.OfType<T>().Except(new[] { _toTest }).Where(t=>t.GetType() == typeToTest).Any(AreEqual))
                     _errorProvider.SetError(_control, _problemDescription);
                 else
                     _errorProvider.Clear(); //No error
@@ -70,5 +72,6 @@ namespace CatalogueManager.Rules
                 return Equals(_currentValue, _propertyToCheck(arg));
             }
         }
+
     }
 }

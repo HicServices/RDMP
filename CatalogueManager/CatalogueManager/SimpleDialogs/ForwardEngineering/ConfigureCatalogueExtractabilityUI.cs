@@ -59,10 +59,10 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         /// </summary>
         private Project _projectSpecific;
 
-        private RuleBasedErrorProvider _rules;
-
         public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
+
+        private BinderWithErrorProviderFactory _binder;
 
         public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny)
         {
@@ -92,16 +92,16 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             ExtractionInformation[] eis;
             forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _catalogueItems, out eis);
 
-            tbCatalogueName.Text = _catalogue.Name;
             tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
             tbTableName.Text = _tableInfo.Name;
             _catalogue.SaveToDatabase();
             
-            if (_rules == null)
+            if (_binder == null)
             {
-                _rules = new RuleBasedErrorProvider(activator);
-                _rules.EnsureAcronymUnique(tbAcronym,_catalogue);
-                _rules.EnsureNameUnique(tbCatalogueName,_catalogue);
+                _binder = new BinderWithErrorProviderFactory(activator);
+                _binder.Bind(tbCatalogueName,"Text",_catalogue,"Name",false,DataSourceUpdateMode.OnPropertyChanged, c=>c.Name);
+                _binder.Bind(tbAcronym, "Text", _catalogue, "Acronym", false, DataSourceUpdateMode.OnPropertyChanged, c => c.Acronym);
+                _binder.Bind(tbDescription, "Text", _catalogue, "Description", false, DataSourceUpdateMode.OnPropertyChanged, c => c.Description);
             }
 
             //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
@@ -458,22 +458,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                 return CatalogueItem.Name;
             }
         }
-
-        private void tbCatalogueName_TextChanged(object sender, EventArgs e)
-        {
-            _catalogue.Name = tbCatalogueName.Text;
-        }
-
-        private void tbAcronym_TextChanged(object sender, EventArgs e)
-        {
-            _catalogue.Acronym = tbAcronym.Text;
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            _catalogue.Description = tbDescription.Text;
-        }
-
 
         private void SelectProject(Project projectSpecificIfAny)
         {
