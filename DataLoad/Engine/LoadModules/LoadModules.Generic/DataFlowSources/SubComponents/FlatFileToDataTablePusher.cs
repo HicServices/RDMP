@@ -109,6 +109,10 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                         break;
                     }
 
+                //if we are ignoring this header
+                if(_headers.IgnoreColumnsList.Contains(_headers[i]))
+                    continue;
+                
                 //its an empty header, dont bother populating it
                 if (_headers[i].IsBasicallyNull())
                     if (!lineToPush[i].IsBasicallyNull())

@@ -573,6 +573,43 @@ old""", chunk.Rows[2][2]);
             File.Delete(filename);
         }
 
+        [Test]
+        public void Test_IgnoreColumns()
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("0101010101\t5\t2001-01-05\tomg\t");
+            sb.AppendLine("0101010101\t5\t2001-01-05\tomg2\t");
+            File.WriteAllText(filename, sb.ToString());
+            
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
+            source.ForceHeaders = "CHI\tStudyID\tDate\tSomeText";
+            source.MaxBatchSize = 10000;
+            source.IgnoreColumns = "StudyID\tDate\t";
+
+            var dt = source.GetChunk(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
+
+            Assert.NotNull(dt);
+
+            //should only be one column (chi since we ignore study and date)
+            Assert.AreEqual(2, dt.Columns.Count);
+            Assert.AreEqual("CHI", dt.Columns[0].ColumnName);
+            Assert.AreEqual("SomeText", dt.Columns[1].ColumnName);
+
+            Assert.AreEqual(2, dt.Rows.Count);
+
+            source.Dispose(new ThrowImmediatelyDataLoadJob(), null);
+
+            File.Delete(filename);
+            
+        }
+
         [TestCase("Fish In Barrel", "FishInBarrel")]
         [TestCase("32 Fish In Barrel","_32FishInBarrel")]//Column names can't start with numbers so underscore prefix applies
         [TestCase("once upon a time","onceUponATime")]//where spaces are removed cammel case the next symbol if it's a character

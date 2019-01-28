@@ -44,6 +44,13 @@ namespace LoadModules.Generic.Attachers
             set { _source.ForceHeadersReplacesFirstLineInFile = value; }
         }
 
+        [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreColumns_Description)]
+        public string IgnoreColumns
+        {
+            get { return _source.IgnoreColumns; }
+            set { _source.IgnoreColumns = value; }
+        }
+
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.BadDataHandlingStrategy_DemandDescription,DefaultValue = BadDataHandlingStrategy.ThrowException)]
         public BadDataHandlingStrategy BadDataHandlingStrategy
         {

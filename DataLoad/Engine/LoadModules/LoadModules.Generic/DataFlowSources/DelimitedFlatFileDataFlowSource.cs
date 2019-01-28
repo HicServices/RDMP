@@ -2,6 +2,7 @@
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
@@ -54,6 +55,10 @@ True - Attempt to read more lines to make a complete record
 False - Treat the line as bad data (See BadDataHandlingStrategy)";
 
         public const string MaximumErrorsToReport_DemandDescription = "The maximum number of file report before suppressing logging.  This is important if you have a large file e.g. 80 million rows and you have a bug/configuration problem that results in lots of bad rows.  Specify 0 for no limit.  Negatives also result in no limit";
+
+        public const string IgnoreColumns_Description = 
+@"By default all columns from the source (file) will be read.  Set this to a list of headers (separated with the correct separator for your file) to ignore the specified columns.
+This will not help you avoid bad data as the full file structure must still be read regardless.";
         #endregion
 
         [DemandsInitialization("The separator that delimits the file", Mandatory = true)]
@@ -105,6 +110,10 @@ False - Treat the line as bad data (See BadDataHandlingStrategy)";
         [DemandsInitialization(MaximumErrorsToReport_DemandDescription, DefaultValue = 100)]
         public int MaximumErrorsToReport { get; set; }
 
+        [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreColumns_Description)]
+        public string IgnoreColumns { get; set; }
+
+
         /// <summary>
         /// The database table we are trying to load
         /// </summary>
@@ -137,7 +146,7 @@ False - Treat the line as bad data (See BadDataHandlingStrategy)";
 
         private void InitializeComponents()
         {
-            Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders, ForceHeadersReplacesFirstLineInFile);
+            Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders, ForceHeadersReplacesFirstLineInFile, IgnoreColumns);
             DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewLinesInRecords);
             EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener, MaximumErrorsToReport <= 0 ? int.MaxValue:MaximumErrorsToReport,IgnoreBadReads);
         }

@@ -298,6 +298,57 @@ namespace DataLoadEngineTests.Integration
             File.Delete(filename);
 
         }
+
+
+        [Test]
+        public void Test_FlatFileAttcher_IgnoreColumns()
+        {
+            string filename = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob.csv");
+            var sw = new StreamWriter(filename);
+
+            sw.WriteLine("name,name2,address");
+            sw.WriteLine("Bob,Munchousain,\"67, franklin\"");
+            sw.WriteLine("Franky,Hollyw9ood,32 dodgery");
+
+            sw.Flush();
+            sw.Close();
+            sw.Dispose();
+
+            TableInfo ti;
+            ColumnInfo[] cols;
+            Import(_table, out ti, out cols);
+
+            var attacher = new AnySeparatorFileAttacher();
+            attacher.Initialize(hicProjectDirectory, _database);
+            attacher.Separator = ",";
+            attacher.FilePattern = "bob*";
+            attacher.TableToLoad = ti;
+            attacher.IgnoreColumns = "address";
+            
+            var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
+
+            var exitCode = attacher.Attach(job, new GracefulCancellationToken());
+            Assert.AreEqual(ExitCodeType.Success, exitCode);
+
+            using (var con = _database.Server.GetConnection())
+            {
+
+                con.Open();
+                var r = _database.Server.GetCommand("Select name,name2 from " + _table.GetRuntimeName(), con).ExecuteReader();
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Bob", r["name"]);
+                Assert.AreEqual("Munchousain", r["name2"]);
+
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Franky", r["name"]);
+                Assert.AreEqual("Hollyw9ood", r["name2"]);
+            }
+
+            attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+
+            File.Delete(filename);
+
+        }
         
         [TearDown]
         public void TearDown()
