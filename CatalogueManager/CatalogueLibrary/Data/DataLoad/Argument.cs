@@ -210,7 +210,16 @@ namespace CatalogueLibrary.Data.DataLoad
                 return customType;
 
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(concreteType))
-                return Repository.GetObjectByID(concreteType, Convert.ToInt32(value));
+                try
+                {
+
+                    return Repository.GetObjectByID(concreteType, Convert.ToInt32(value));
+                }
+                catch (KeyNotFoundException)
+                {
+                    //object has been deleted
+                    return null;
+                }
 
             if (typeof(Array).IsAssignableFrom(concreteType))
             {
