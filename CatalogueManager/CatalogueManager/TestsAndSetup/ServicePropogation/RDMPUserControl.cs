@@ -23,7 +23,17 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     {
         private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
+        /// <summary>
+        /// This is the strip of buttons and labels for all controls commonly used for interacting with the content of the tab.  The 
+        /// bar should start with <see cref="_menuDropDown"/>.
+        /// </summary>
         private ToolStrip _toolStrip;
+
+        /// <summary>
+        /// This is the button with 3 horizontal lines which exposes all menu options which are seldom pressed or navigate you somewhere
+        /// </summary>
+        private ToolStripMenuItem _menuDropDown;
+
         private AtomicCommandUIFactory atomicCommandUIFactory;
         private IActivateItems _activator;
 
@@ -79,19 +89,21 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             RepositoryLocator = _activator.RepositoryLocator;
         }
 
-        protected void ClearToolStrip()
-        {
-            //Clear the tool strip 
-            if (_toolStrip != null)
-                _toolStrip.Items.Clear();
-        }
 
         /// <summary>
-        /// Adds the given <paramref name="cmd"/> to the menu bar at the top of the control
+        /// Adds the given <paramref name="cmd"/> to the top bar at the top of the control.  This will be always
+        /// visible at the top of the form
         /// </summary>
         /// <param name="cmd"></param>
         protected void Add(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
         {
+            var p = Parent as RDMPUserControl;
+            if (p != null)
+            {
+                p.Add(cmd,overrideCommandName,overrideImage);
+                return;
+            }
+
             InitializeToolStrip();
 
             var button = atomicCommandUIFactory.CreateToolStripItem(cmd);
@@ -101,9 +113,72 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             if (overrideImage != null)
                 button.Image = overrideImage;
 
-            _toolStrip.Items.Add(button);
+            Add(button);
         }
 
+        /// <summary>
+        /// Adds the given <paramref name="item"/> to the top bar at the top of the control.  This will be always
+        /// visible at the top of the form
+        /// </summary>
+        /// <param name="cmd"></param>
+        protected void Add(ToolStripItem item)
+        {
+            var p = Parent as RDMPUserControl;
+            if (p != null)
+            {
+                p.Add(item);
+                return;
+            }
+
+            InitializeToolStrip();
+
+            _toolStrip.Items.Add(item);
+        }
+
+        /// <summary>
+        /// Adds the given <paramref name="cmd"/> to the drop down menu button bar at the top of the control.  This
+        /// will be visible only when you click on the menu button.
+        /// </summary>
+        /// <param name="cmd"></param>
+        protected void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
+        {
+            var p = Parent as RDMPUserControl;
+            if (p != null)
+            {
+                p.AddToMenu(cmd,overrideCommandName,overrideImage);
+                return;
+            }
+
+            InitializeToolStrip();
+
+            var menuItem = atomicCommandUIFactory.CreateMenuItem(cmd);
+            if (!string.IsNullOrWhiteSpace(overrideCommandName))
+                menuItem.Text = overrideCommandName;
+
+            if (overrideImage != null)
+                menuItem.Image = overrideImage;
+
+            AddToMenu(menuItem);
+        }
+
+        /// <summary>
+        /// Adds the given <paramref name="menuItem"/> to the drop down menu button bar at the top of the control.  This
+        /// will be visible only when you click on the menu button.
+        /// </summary>
+        protected void AddToMenu(ToolStripItem menuItem)
+        {
+            var p = Parent as RDMPUserControl;
+            if (p != null)
+            {
+                p.AddToMenu(menuItem);
+                return;
+            }
+
+            InitializeToolStrip();
+
+            _menuDropDown.DropDownItems.Add(menuItem);
+            _menuDropDown.Enabled = true;
+        }
 
         /// <summary>
         /// Adds a new ToolStripLabel with the supplied <paramref name="label"/> text to the menu bar at the top of the control
@@ -112,9 +187,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="showIcon">True to add the text icon next to the text</param>
         protected void Add(string label, bool showIcon = true)
         {
-            InitializeToolStrip();
-
-            _toolStrip.Items.Add(new ToolStripLabel(label, showIcon ? FamFamFamIcons.text_align_left : null));
+            Add(new ToolStripLabel(label, showIcon ? FamFamFamIcons.text_align_left : null));
         }
 
         private void InitializeToolStrip()
@@ -131,8 +204,15 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 _toolStrip.Location = new Point(0, 0);
                 _toolStrip.TabIndex = 1;
                 this.Controls.Add(this._toolStrip);
+                
+                //Add the three lines dropdown for seldom used options (See AddToMenu). This starts disabled.
+                _menuDropDown = new ToolStripMenuItem();
+                _menuDropDown.Image = CatalogueIcons.Menu;
+                _menuDropDown.Enabled = false;
+                _toolStrip.Items.Add(_menuDropDown);
             }
 
+            
             _activator.Theme.ApplyTo(_toolStrip);
         }
 

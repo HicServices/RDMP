@@ -502,25 +502,33 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 _aggregate.Description = tbDescription.Text;
         }
 
+        private bool _initializedMenu = false;
+
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
 
             _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
             SetAggregate(activator, databaseObject);
-
-            if (databaseObject.IsCohortIdentificationAggregate)
+            
+            if (!_initializedMenu)
             {
-                var cic = databaseObject.GetCohortIdentificationConfigurationIfAny();
-                if (cic != null)
-                    Add(new ExecuteCommandActivate(activator, cic), "Cohort Query");
-            }
-            else
-                Add(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0,true));
+                if (databaseObject.IsCohortIdentificationAggregate)
+                {
+                    var cic = databaseObject.GetCohortIdentificationConfigurationIfAny();
+                    if (cic != null)
+                        AddToMenu(new ExecuteCommandActivate(activator, cic), "Open Cohort Query");
+                }
+                else
+                    AddToMenu(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0, true));
 
-            Add(new ExecuteCommandViewSample(activator, databaseObject));
-            Add(new ExecuteCommandExecuteAggregateGraph(activator,databaseObject));
-            Add(new ExecuteCommandViewSqlParameters(activator, databaseObject));
+                Add(new ExecuteCommandExecuteAggregateGraph(activator, databaseObject),"Execute Graph");
+                Add(new ExecuteCommandViewSample(activator, databaseObject));
+
+                AddToMenu(new ExecuteCommandViewSqlParameters(activator, databaseObject));
+
+                _initializedMenu = true;
+            }
         }
 
         public ObjectSaverButton GetObjectSaverButton()

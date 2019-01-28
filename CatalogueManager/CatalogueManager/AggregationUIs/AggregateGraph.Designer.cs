@@ -49,13 +49,6 @@ namespace CatalogueManager.AggregationUIs
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.tpHeatmap = new System.Windows.Forms.TabPage();
             this.heatmapUI = new ReusableUIComponents.Heatmapping.HeatmapUI();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnSaveImages = new System.Windows.Forms.ToolStripButton();
-            this.btnClipboard = new System.Windows.Forms.ToolStripButton();
-            this.btnResendQuery = new System.Windows.Forms.ToolStripButton();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.tbTimeout = new System.Windows.Forms.ToolStripTextBox();
-            this.btnCache = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -63,7 +56,6 @@ namespace CatalogueManager.AggregationUIs
             this.tpDataTable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tpHeatmap.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // chart1
@@ -257,79 +249,12 @@ namespace CatalogueManager.AggregationUIs
             this.heatmapUI.Size = new System.Drawing.Size(659, 441);
             this.heatmapUI.TabIndex = 1;
             // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnSaveImages,
-            this.btnClipboard,
-            this.btnResendQuery,
-            this.toolStripLabel1,
-            this.tbTimeout,
-            this.btnCache});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(698, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btnSaveImages
-            // 
-            this.btnSaveImages.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSaveImages.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveImages.Image")));
-            this.btnSaveImages.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSaveImages.Name = "btnSaveImages";
-            this.btnSaveImages.Size = new System.Drawing.Size(23, 22);
-            this.btnSaveImages.Text = "Save Chart Image";
-            this.btnSaveImages.Click += new System.EventHandler(this.btnSaveImages_Click);
-            // 
-            // btnClipboard
-            // 
-            this.btnClipboard.Image = ((System.Drawing.Image)(resources.GetObject("btnClipboard.Image")));
-            this.btnClipboard.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnClipboard.Name = "btnClipboard";
-            this.btnClipboard.Size = new System.Drawing.Size(82, 22);
-            this.btnClipboard.Text = "Copy Data";
-            this.btnClipboard.ToolTipText = "Copies Data as HTML formatted (for pasting into Word / Excel etc)";
-            this.btnClipboard.Click += new System.EventHandler(this.btnClipboard_Click);
-            // 
-            // btnResendQuery
-            // 
-            this.btnResendQuery.Image = ((System.Drawing.Image)(resources.GetObject("btnResendQuery.Image")));
-            this.btnResendQuery.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnResendQuery.Name = "btnResendQuery";
-            this.btnResendQuery.Size = new System.Drawing.Size(88, 22);
-            this.btnResendQuery.Text = "Send Query";
-            this.btnResendQuery.Click += new System.EventHandler(this.btnResendQuery_Click);
-            // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(55, 22);
-            this.toolStripLabel1.Text = "Timeout:";
-            // 
-            // tbTimeout
-            // 
-            this.tbTimeout.Name = "tbTimeout";
-            this.tbTimeout.Size = new System.Drawing.Size(100, 25);
-            this.tbTimeout.TextChanged += new System.EventHandler(this.tbTimeout_TextChanged);
-            // 
-            // btnCache
-            // 
-            this.btnCache.Enabled = false;
-            this.btnCache.Image = ((System.Drawing.Image)(resources.GetObject("btnCache.Image")));
-            this.btnCache.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnCache.Name = "btnCache";
-            this.btnCache.Size = new System.Drawing.Size(60, 22);
-            this.btnCache.Text = "Cache";
-            this.btnCache.Click += new System.EventHandler(this.btnCache_Click);
-            // 
             // AggregateGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.toolStrip1);
             this.Name = "AggregateGraph";
             this.Size = new System.Drawing.Size(698, 508);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
@@ -342,8 +267,6 @@ namespace CatalogueManager.AggregationUIs
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tpHeatmap.ResumeLayout(false);
             this.tpHeatmap.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -366,12 +289,5 @@ namespace CatalogueManager.AggregationUIs
         private System.Windows.Forms.TabPage tpHeatmap;
         public HeatmapUI heatmapUI;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton btnSaveImages;
-        private System.Windows.Forms.ToolStripButton btnClipboard;
-        private System.Windows.Forms.ToolStripButton btnResendQuery;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
-        private System.Windows.Forms.ToolStripTextBox tbTimeout;
-        private System.Windows.Forms.ToolStripButton btnCache;
     }
 }

@@ -64,8 +64,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             }
 
             SetItemActivator(activator);
-
-            ClearToolStrip();
         }
 
         protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)

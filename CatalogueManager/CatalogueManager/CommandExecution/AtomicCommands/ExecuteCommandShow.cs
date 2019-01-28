@@ -11,18 +11,18 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     {
         private readonly IMapsDirectlyToDatabaseTable _objectToShow;
         private readonly int _expansionDepth;
-        private readonly bool _useIconAndTostring;
+        private readonly bool _useIconAndTypeName;
 
-        public ExecuteCommandShow(IActivateItems activator, IMapsDirectlyToDatabaseTable objectToShow, int expansionDepth, bool useIconAndTostring=false):base(activator)
+        public ExecuteCommandShow(IActivateItems activator, IMapsDirectlyToDatabaseTable objectToShow, int expansionDepth, bool useIconAndTypeName=false):base(activator)
         {
             _objectToShow = objectToShow;
             _expansionDepth = expansionDepth;
-            _useIconAndTostring = useIconAndTostring;
+            _useIconAndTypeName = useIconAndTypeName;
         }
 
         public override string GetCommandName()
         {
-            return _useIconAndTostring? _objectToShow.ToString():base.GetCommandName();
+            return _useIconAndTypeName? "Show " + _objectToShow.GetType().Name :base.GetCommandName();
         }
 
         public override void Execute()
@@ -39,7 +39,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return _useIconAndTostring? iconProvider.GetImage(_objectToShow):null;
+            return _useIconAndTypeName? iconProvider.GetImage(_objectToShow):null;
         }
     }
 }

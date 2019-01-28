@@ -1621,6 +1621,7 @@
     <None Include="Icons\AllGovernanceNode.png" />
     <None Include="Icons\AllProjectCohortIdentificationConfigurationsNode.png" />
     <None Include="Icons\AllFreeCohortIdentificationConfigurationsNode.png" />
+    <None Include="Icons\famfamfam\picture_save.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1730,6 +1731,7 @@
     <None Include="Icons\Overlays\Extractable_Internal.png" />
     <None Include="Icons\Overlays\Extractable_SpecialApproval.png" />
     <None Include="Icons\Overlays\Extractable_Supplemental.png" />
+    <None Include="Icons\Menu.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">

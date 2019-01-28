@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
+using CsvHelper;
 using FAnsi.Discovery;
 
 
@@ -519,6 +520,31 @@ namespace ReusableLibraryCode
 
             sb.Append("</Table>");
 
+            return sb.ToString();
+        }
+
+        public string DataTableToCsv(DataTable dt)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            using (CsvWriter w = new CsvWriter(new StringWriter(sb)))
+            {
+                foreach (DataColumn column in dt.Columns)
+                    w.WriteField(column.ColumnName);
+
+                w.NextRecord();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    foreach (var cellObject in row.ItemArray)
+                        w.WriteField(cellObject);
+
+                    w.NextRecord();
+                }
+
+                w.Flush();
+            }
+            
             return sb.ToString();
         }
         public void ShowFolderInWindowsExplorer(DirectoryInfo directoryInfo)

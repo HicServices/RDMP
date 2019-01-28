@@ -233,6 +233,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                 ragSmiley1.StartChecking(checkable);
         }
 
+        private bool _menuInitialized = false;
+
         public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
@@ -241,11 +243,15 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
             objectSaverButton1.SetupFor((DatabaseEntity)ExtractionFilter,_activator.RefreshBus);
 
-            Add(new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
-            Add(new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
-            Add(new ExecuteCommandViewFilterMatchGraph(_activator,databaseObject));
-            Add(new ExecuteCommandViewSqlParameters(_activator,databaseObject));
-            Add(new ExecuteCommandBrowseLookup(_activator,databaseObject));
+            if (!_menuInitialized)
+            {
+                AddToMenu(new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
+                AddToMenu(new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
+                AddToMenu(new ExecuteCommandViewFilterMatchGraph(_activator, databaseObject));
+                AddToMenu(new ExecuteCommandViewSqlParameters(_activator, databaseObject));
+                AddToMenu(new ExecuteCommandBrowseLookup(_activator, databaseObject));
+                _menuInitialized = true;
+            }
         }
        
         

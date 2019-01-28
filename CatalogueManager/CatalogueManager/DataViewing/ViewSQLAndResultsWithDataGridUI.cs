@@ -93,9 +93,9 @@ namespace CatalogueManager.DataViewing
             }
 
             SetItemActivator(activator);
-            ClearToolStrip();
+
             foreach (DatabaseEntity d in _collection.GetToolStripObjects())
-                Add(new ExecuteCommandShow(activator, d, 0,true));
+                AddToMenu(new ExecuteCommandShow(activator, d, 0,true));
 
             foreach (string s in _collection.GetToolStripStrings())
                 Add(s);
