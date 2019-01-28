@@ -62,7 +62,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
             base.SetDatabaseObject(activator, databaseObject);
             
             GovernanceDocument = databaseObject;
-            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

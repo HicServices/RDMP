@@ -91,7 +91,6 @@ namespace CatalogueManager.Validation
 
             _catalogue = databaseObject;
 
-            objectSaverButton1.SetupFor(this,databaseObject, _activator.RefreshBus);
             objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
             olvName.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);

@@ -121,14 +121,14 @@ namespace CatalogueManager.ExtractionUIs
 
         public override void SetDatabaseObject(IActivateItems activator,ExtractionInformation databaseObject)
         {
-            base.SetDatabaseObject(activator,databaseObject);
-
+            base.SetDatabaseObject(activator, databaseObject);
+            
             Setup(databaseObject);
-            objectSaverButton1.SetupFor(this,databaseObject,_activator.RefreshBus);
-            objectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
 
-            Add(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Catalogue Item");
-            Add(new ExecuteCommandShow(activator, databaseObject.ColumnInfo,0,true));
+            objectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
+            
+            AddToMenu(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Go To Catalogue Item");
+            AddToMenu(new ExecuteCommandShow(activator, databaseObject.ColumnInfo,0,true));
         }
 
         private bool objectSaverButton1OnBeforeSave(DatabaseEntity databaseEntity)

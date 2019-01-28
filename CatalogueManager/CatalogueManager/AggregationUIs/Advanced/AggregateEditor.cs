@@ -216,7 +216,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             PopulateTopX();
 
-            objectSaverButton1.SetupFor(this,_aggregate,_activator.RefreshBus);
             isRefreshing = false;
         }
 
@@ -502,8 +501,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 _aggregate.Description = tbDescription.Text;
         }
 
-        private bool _initializedMenu = false;
-
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
@@ -511,24 +508,20 @@ namespace CatalogueManager.AggregationUIs.Advanced
             _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
             SetAggregate(activator, databaseObject);
             
-            if (!_initializedMenu)
+            if (databaseObject.IsCohortIdentificationAggregate)
             {
-                if (databaseObject.IsCohortIdentificationAggregate)
-                {
-                    var cic = databaseObject.GetCohortIdentificationConfigurationIfAny();
-                    if (cic != null)
-                        AddToMenu(new ExecuteCommandActivate(activator, cic), "Open Cohort Query");
-                }
-                else
-                    AddToMenu(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0, true));
-
-                Add(new ExecuteCommandExecuteAggregateGraph(activator, databaseObject),"Execute Graph");
-                Add(new ExecuteCommandViewSample(activator, databaseObject));
-
-                AddToMenu(new ExecuteCommandViewSqlParameters(activator, databaseObject));
-
-                _initializedMenu = true;
+                var cic = databaseObject.GetCohortIdentificationConfigurationIfAny();
+                if (cic != null)
+                    AddToMenu(new ExecuteCommandActivate(activator, cic), "Open Cohort Query");
             }
+            else
+                AddToMenu(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0, true));
+
+            Add(new ExecuteCommandExecuteAggregateGraph(activator, databaseObject),"Execute Graph");
+            Add(new ExecuteCommandViewSample(activator, databaseObject));
+
+            AddToMenu(new ExecuteCommandViewSqlParameters(activator, databaseObject));
+
         }
 
         public ObjectSaverButton GetObjectSaverButton()

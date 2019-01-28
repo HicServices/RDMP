@@ -46,7 +46,6 @@ namespace CatalogueManager.SimpleDialogs
         {
             base.SetDatabaseObject(activator,databaseObject);
             SupportingDocument = databaseObject;
-            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
         }
         
         protected SupportingDocument SupportingDocument

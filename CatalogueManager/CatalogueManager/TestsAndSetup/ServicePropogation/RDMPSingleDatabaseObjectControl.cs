@@ -43,7 +43,9 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             _activator = activator;
             _activator.RefreshBus.EstablishSelfDestructProtocol(this,activator,databaseObject);
             DatabaseObject = databaseObject;
-            
+
+            ClearToolStrip();
+
             if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
             {
                 var colorProvider = new BackColorProvider();
@@ -56,7 +58,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 this.Controls.Add(this._colorIndicator);
             }
 
-
             if (_binder == null)
             {
                 _binder = new BinderWithErrorProviderFactory(activator);
@@ -64,6 +65,11 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             }
 
             SetItemActivator(activator);
+
+            var saveable = this as ISaveableUI;
+            if (saveable != null)
+                saveable.GetObjectSaverButton().SetupFor(this, databaseObject, activator.RefreshBus);
+
         }
 
         protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)

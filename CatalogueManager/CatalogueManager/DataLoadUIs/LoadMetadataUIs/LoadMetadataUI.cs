@@ -58,7 +58,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
         {
             base.SetDatabaseObject(activator,databaseObject);
             LoadMetadata = databaseObject;
-            objectSaverButton1.SetupFor(this,LoadMetadata,activator.RefreshBus);
         }
 
         private void tbDescription_TextChanged(object sender, EventArgs e)

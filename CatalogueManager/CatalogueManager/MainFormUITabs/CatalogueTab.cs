@@ -412,7 +412,6 @@ namespace CatalogueManager.MainFormUITabs
             base.SetDatabaseObject(activator,databaseObject);
             _catalogue = databaseObject;
             
-            objectSaverButton1.SetupFor(this,databaseObject,_activator.RefreshBus);
             RefreshUIFromDatabase();
         }
 

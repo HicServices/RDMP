@@ -83,7 +83,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         {
             base.SetDatabaseObject(activator,databaseObject);
             ExtractionFilterParameterSet = databaseObject;
-            objectSaverButton1.SetupFor(this,databaseObject,_activator.RefreshBus);
         }
 
         public ObjectSaverButton GetObjectSaverButton()

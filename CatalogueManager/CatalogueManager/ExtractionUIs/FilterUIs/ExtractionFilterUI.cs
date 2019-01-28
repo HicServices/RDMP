@@ -240,9 +240,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             base.SetDatabaseObject(activator,databaseObject);
             Catalogue = databaseObject.GetCatalogue();
             ExtractionFilter = databaseObject;
-
-            objectSaverButton1.SetupFor(this,(DatabaseEntity)ExtractionFilter,_activator.RefreshBus);
-
+            
             if (!_menuInitialized)
             {
                 AddToMenu(new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));

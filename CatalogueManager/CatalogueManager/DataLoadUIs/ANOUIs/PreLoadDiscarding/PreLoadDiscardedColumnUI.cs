@@ -69,8 +69,6 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
             tbRuntimeColumnName.Text = _preLoadDiscardedColumn.RuntimeColumnName;
             tbSqlDataType.Text = _preLoadDiscardedColumn.SqlDataType;
             ddDestination.SelectedItem = _preLoadDiscardedColumn.Destination;
-
-            objectSaverButton1.SetupFor(this,_preLoadDiscardedColumn,activator.RefreshBus);
         }
 
         private void ddDestination_SelectedIndexChanged(object sender, EventArgs e)

@@ -128,9 +128,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             base.SetDatabaseObject(activator, databaseObject);
             _loadProgress = databaseObject;
-
-            objectSaverButton1.SetupFor(this,_loadProgress, activator.RefreshBus);
-
+            
             ReloadUIFromDatabase();
 
             Add(new ExecuteCommandActivate(activator,databaseObject.LoadMetadata),"Execute Load",RDMPConcept.LoadMetadata);

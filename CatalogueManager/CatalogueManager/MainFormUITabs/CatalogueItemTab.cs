@@ -193,10 +193,6 @@ namespace CatalogueManager.MainFormUITabs
             base.SetDatabaseObject(activator,databaseObject);
             CatalogueItem = databaseObject;
             
-            ClearToolStrip();
-
-            objectSaverButton1.SetupFor(this, databaseObject, _activator.RefreshBus);
-
             if (CatalogueItem.ExtractionInformation != null)
                 AddToMenu(new ExecuteCommandActivate(activator, CatalogueItem.ExtractionInformation), "Go To Extraction Information");
             else

@@ -38,8 +38,6 @@ namespace CatalogueManager.CredentialsUIs
                 tbName.Text = _credentials.Name;
                 tbUsername.Text = _credentials.Username;
                 tbPassword.Text = _credentials.Password;
-
-                objectSaverButton1.SetupFor(this,databaseObject, activator.RefreshBus);
             }
             finally
             {

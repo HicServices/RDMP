@@ -52,6 +52,16 @@ namespace CatalogueManager.SimpleControls
         
         public void SetupFor(RDMPUserControl control, DatabaseEntity o, RefreshBus refreshBus)
         {
+            control.Add(btnSave);
+            control.Add(btnUndoRedo);
+
+            if (control.ParentForm == null)
+                throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
+
+            _parent = control;
+
+            Enable(false);
+
             //already set up before
             if(_o != null)
                 return;
@@ -59,19 +69,11 @@ namespace CatalogueManager.SimpleControls
             _o = o;
             _refreshBus = refreshBus;
             _refreshBus.Subscribe(this);
-            _parent = control;
-
+            
             o.PropertyChanged += PropertyChanged;
-
-            if (control.ParentForm == null)
-                throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
 
             control.ParentForm.Enter += ParentForm_Enter;
             control.ParentForm.Leave += ParentFormOnLeave;
-            Enable(false);
-
-            control.Add(btnSave);
-            control.Add(btnUndoRedo);
             
             //the first time it is set up it could still be out of date!
             CheckForOutOfDateObjectAndOfferToFix();

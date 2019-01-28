@@ -44,9 +44,6 @@ namespace CatalogueManager.Validation
             tbConceptName.Text = databaseObject.ConceptName;
             tbRegex.Text = databaseObject.Regex;
             tbDescription.Text = databaseObject.Description;
-
-
-            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
         }
 
         private void tbConceptName_TextChanged(object sender, EventArgs e)

@@ -132,9 +132,7 @@ namespace DataExportManager.CohortUI
             tbVersion.Text = _extractableCohort.ExternalVersion.ToString();
 
             GenerateSQLPreview();
-
-            objectSaverButton1.SetupFor(this,_extractableCohort,activator.RefreshBus);
-
+            
             var dx = _activator.CoreChildProvider as DataExportChildProvider;
 
             if (!_commonFunctionality1.IsSetup)

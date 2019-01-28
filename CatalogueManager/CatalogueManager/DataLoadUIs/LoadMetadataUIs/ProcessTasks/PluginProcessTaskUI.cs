@@ -89,7 +89,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             
             loadStageIconUI1.Setup(_activator.CoreIconProvider,_processTask.LoadStage);
 
-            objectSaverButton1.SetupFor(this,databaseObject,_activator.RefreshBus);
         }
 
         private void CheckComponent()

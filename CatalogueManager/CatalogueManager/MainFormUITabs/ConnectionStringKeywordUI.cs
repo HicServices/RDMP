@@ -39,9 +39,7 @@ namespace CatalogueManager.MainFormUITabs
             tbID.Text = _keyword.ID.ToString();
 
             pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(_keyword.DatabaseType);
-
-            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
-
+            
             tbCommandToDelete.Text = "DELETE FROM " + 
                 activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase()
                     .ExpectTable("ConnectionStringKeyword")

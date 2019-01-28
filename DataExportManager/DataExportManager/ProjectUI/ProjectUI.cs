@@ -128,7 +128,6 @@ namespace DataExportManager.ProjectUI
         {
             base.SetDatabaseObject(activator,databaseObject);
             Project = databaseObject;
-            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
         }
         
 

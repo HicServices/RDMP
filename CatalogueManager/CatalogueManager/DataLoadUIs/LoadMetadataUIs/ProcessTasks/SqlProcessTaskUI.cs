@@ -50,8 +50,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             base.SetDatabaseObject(activator, databaseObject);
             _processTask = databaseObject;
             
-            objectSaverButton1.SetupFor(this,_processTask, activator.RefreshBus);
-            
             LoadFile();
             
             loadStageIconUI1.Setup(activator.CoreIconProvider, _processTask.LoadStage);

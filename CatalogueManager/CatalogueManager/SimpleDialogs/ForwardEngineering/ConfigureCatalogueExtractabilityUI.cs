@@ -164,7 +164,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
 
             rdmpUserControlPanel.SetItemActivator(_activator);
-            objectSaverButton1.SetupFor(rdmpUserControlPanel, _catalogue, _activator.RefreshBus);
         }
 
 
