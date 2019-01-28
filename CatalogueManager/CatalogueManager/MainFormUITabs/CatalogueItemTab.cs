@@ -194,13 +194,15 @@ namespace CatalogueManager.MainFormUITabs
             CatalogueItem = databaseObject;
             objectSaverButton1.SetupFor(databaseObject,_activator.RefreshBus);
 
+            ClearToolStrip();
+
             if (CatalogueItem.ExtractionInformation != null)
-                Add(new ExecuteCommandActivate(activator, CatalogueItem.ExtractionInformation), "Extraction Information");
+                AddToMenu(new ExecuteCommandActivate(activator, CatalogueItem.ExtractionInformation), "Go To Extraction Information");
             else
-                Add(new ExecuteCommandMakeCatalogueItemExtractable(activator, CatalogueItem));
+                AddToMenu(new ExecuteCommandMakeCatalogueItemExtractable(activator, CatalogueItem), "Make Extractable");
 
             if(CatalogueItem.ColumnInfo_ID != null)
-                Add(new ExecuteCommandShow(activator,CatalogueItem.ColumnInfo,0,true));
+                AddToMenu(new ExecuteCommandShow(activator, CatalogueItem.ColumnInfo, 0, true));
         }
         
         #region Helper Methods for setting string and Uri properties

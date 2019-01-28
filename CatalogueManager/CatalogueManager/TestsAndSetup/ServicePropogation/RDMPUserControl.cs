@@ -135,6 +135,28 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             _toolStrip.Items.Add(item);
         }
 
+        protected void ClearToolStrip()
+        {
+            var p = Parent as RDMPUserControl;
+            if (p != null)
+            {
+                p.ClearToolStrip();
+                return;
+            }
+
+            if (_toolStrip != null)
+                _toolStrip.Items.Clear();
+
+            if (_menuDropDown != null)
+            {
+                _menuDropDown.DropDownItems.Clear();
+                _menuDropDown.Enabled = false;
+
+                if(_toolStrip != null)
+                    _toolStrip.Items.Add(_menuDropDown);
+            }
+        }
+
         /// <summary>
         /// Adds the given <paramref name="cmd"/> to the drop down menu button bar at the top of the control.  This
         /// will be visible only when you click on the menu button.
