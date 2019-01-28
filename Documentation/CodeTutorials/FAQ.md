@@ -143,12 +143,15 @@ In order for this to work the DLE RAW Attatchers enforce the following rules:
 1. Unmatched columns in RAW are ALLOWED.  For example you could have a column 'IsSensitiveRecord' which is in your live table but doesn't appear in input files.
 2. Unmatched columns in files are NOT ALLOWED.  If a flat file has a column 'Dangerous' you must have a corresponding column in your dataset
 
-If you don't want to clutter up your live database schema with unwanted columns you can accomodate these unwanted columns by creating PreLoadDiscardedColumns.  PreLoadDiscardedColumns are columns which are supplied by data providers but which you do not want in your LIVE database.  Each PreLoadDiscardedColumn can either:
+If you have columns in your file that you straight up don't want to load (see 2 above) then you can list them explicitly using the IgnoreColumns setting of your Attacher.
+
+![ReOrdering](Images/FAQ/IgnoreColumns.png)
+
+If you need to process data in the columns but don't want them in your final LIVE database table (e.g. to merge two fields or populate an aggregate column) then you can create a virtual RAW only column (called a PreLoadDiscardedColumn).  PreLoadDiscardedColumns are columns which are supplied by data providers but which you do not want in your LIVE database.  Each PreLoadDiscardedColumn can either:
 
 1. Be created in RAW and then thrown away (`Oblivion`).  This is useful if there are columns you don't care about or combo columns you want to use only to populate other columns (e.g. FullPatientName=> Forename + Surname) 
 2. Be dumped into an identifier dump (`StoreInIdentifiersDump`).  This is useful if you are supplied with lots of identifiable columns that you want to keep track of but seperated from the rest of the data
 3. Be promoted to LIVE in a diluted form (`Dilute`).  For example you might want to promote PatientName as a 1 or a 0 indicating whether or not it was provided and store the full name in the identifier dump as above.
-
 
 Creating a `PreLoadDiscardedColumn` can be done by right clicking the `TableInfo`	.  You will need to specify both the name of the virtual column and the datatype as it should be created in RAW (it won't appear in your LIVE table).
 

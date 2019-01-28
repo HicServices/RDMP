@@ -58,6 +58,7 @@ False - Treat the line as bad data (See BadDataHandlingStrategy)";
 
         public const string IgnoreColumns_Description = 
 @"By default all columns from the source (file) will be read.  Set this to a list of headers (separated with the correct separator for your file) to ignore the specified columns.
+
 This will not help you avoid bad data as the full file structure must still be read regardless.";
         #endregion
 
