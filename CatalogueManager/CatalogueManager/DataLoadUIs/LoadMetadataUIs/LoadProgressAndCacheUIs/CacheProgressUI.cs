@@ -62,7 +62,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             _cacheProgress = databaseObject;
             
-            Add(new ExecuteCommandExecuteCacheProgress(activator,databaseObject),"Execute");
+            AddToMenu(new ExecuteCommandExecuteCacheProgress(activator,databaseObject),"Go To Execute");
 
             ragSmiley1.Reset();
 

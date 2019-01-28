@@ -71,6 +71,13 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             
         }
 
+        protected override void InitializeToolStrip()
+        {
+            base.InitializeToolStrip();
+
+            if (_colorIndicator != null)
+                _colorIndicator.SendToBack();
+        }
 
         public void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject)
         {

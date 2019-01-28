@@ -31,9 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViewSQLAndResultsWithDataGridUI));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnExecuteSql = new System.Windows.Forms.ToolStripButton();
-            this.btnResetSql = new System.Windows.Forms.ToolStripButton();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.llCancel = new System.Windows.Forms.LinkLabel();
             this.pbLoading = new System.Windows.Forms.PictureBox();
@@ -41,7 +38,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,9 +48,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 28);
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(1245, 560);
+            this.dataGridView1.Size = new System.Drawing.Size(1244, 582);
             this.dataGridView1.TabIndex = 0;
             // 
             // splitContainer1
@@ -68,7 +64,6 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
             this.splitContainer1.Panel2.Controls.Add(this.ragSmiley1);
             this.splitContainer1.Panel2.Controls.Add(this.llCancel);
             this.splitContainer1.Panel2.Controls.Add(this.pbLoading);
@@ -76,35 +71,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(1249, 805);
             this.splitContainer1.SplitterDistance = 209;
             this.splitContainer1.TabIndex = 2;
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnExecuteSql,
-            this.btnResetSql});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1245, 25);
-            this.toolStrip1.TabIndex = 10;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btnExecuteSql
-            // 
-            this.btnExecuteSql.Image = ((System.Drawing.Image)(resources.GetObject("btnExecuteSql.Image")));
-            this.btnExecuteSql.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnExecuteSql.Name = "btnExecuteSql";
-            this.btnExecuteSql.Size = new System.Drawing.Size(71, 22);
-            this.btnExecuteSql.Text = "Run (F5)";
-            this.btnExecuteSql.Click += new System.EventHandler(this.btnExecuteSql_Click);
-            // 
-            // btnResetSql
-            // 
-            this.btnResetSql.Image = ((System.Drawing.Image)(resources.GetObject("btnResetSql.Image")));
-            this.btnResetSql.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnResetSql.Name = "btnResetSql";
-            this.btnResetSql.Size = new System.Drawing.Size(55, 22);
-            this.btnResetSql.Text = "Reset";
-            this.btnResetSql.Click += new System.EventHandler(this.btnResetSql_Click);
             // 
             // ragSmiley1
             // 
@@ -157,8 +123,6 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).EndInit();
             this.ResumeLayout(false);
 
@@ -171,8 +135,5 @@
         private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.LinkLabel llCancel;
         private System.Windows.Forms.PictureBox pbLoading;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton btnExecuteSql;
-        private System.Windows.Forms.ToolStripButton btnResetSql;
     }
 }

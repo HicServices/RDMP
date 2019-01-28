@@ -55,8 +55,6 @@ namespace CatalogueManager.DataViewing.Collections
         }
         public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            yield return TableInfo;
-            
             var filter = GetFilterIfAny() as ConcreteFilter;
 
             if (filter != null)

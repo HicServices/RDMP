@@ -27,8 +27,6 @@ namespace CatalogueManager.DataViewing.Collections
 
         public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            yield return AggregateConfiguration;
-
             if (UseQueryCache)
             {
                 var cache = GetCacheServer();

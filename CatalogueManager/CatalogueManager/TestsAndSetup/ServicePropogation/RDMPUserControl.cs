@@ -190,7 +190,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             Add(new ToolStripLabel(label, showIcon ? FamFamFamIcons.text_align_left : null));
         }
 
-        private void InitializeToolStrip()
+        protected virtual void InitializeToolStrip()
         {
             if(_activator == null)
                 throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");

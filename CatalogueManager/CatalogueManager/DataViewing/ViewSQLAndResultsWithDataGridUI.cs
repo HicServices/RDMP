@@ -44,6 +44,9 @@ namespace CatalogueManager.DataViewing
         private DiscoveredServer _server;
         private AutoCompleteProvider _autoComplete;
         
+        ToolStripButton btnExecuteSql = new ToolStripButton("Run");
+        ToolStripButton btnResetSql = new ToolStripButton("Restore Original SQL");
+
         public ViewSQLAndResultsWithDataGridUI()
         {
             InitializeComponent();
@@ -54,6 +57,9 @@ namespace CatalogueManager.DataViewing
             _scintilla.TextChanged += _scintilla_TextChanged;
             _scintilla.KeyUp += ScintillaOnKeyUp;
             DoTransparencyProperly.ThisHoversOver(ragSmiley1,dataGridView1);
+
+            btnExecuteSql.Click += (s,e) => RunQuery();
+            btnResetSql.Click += btnResetSql_Click;
         }
 
         private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -72,7 +78,7 @@ namespace CatalogueManager.DataViewing
                         ParentForm.Close();
         }
 
-
+        private bool _menuInitialized = false;
         
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
@@ -93,6 +99,14 @@ namespace CatalogueManager.DataViewing
             }
 
             SetItemActivator(activator);
+            
+            if (!_menuInitialized)
+            {
+                Add(btnExecuteSql);
+                Add(btnResetSql);
+
+                _menuInitialized = true;
+            }
 
             foreach (DatabaseEntity d in _collection.GetToolStripObjects())
                 AddToMenu(new ExecuteCommandShow(activator, d, 0,true));
@@ -101,8 +115,6 @@ namespace CatalogueManager.DataViewing
                 Add(s);
 
             RefreshUIFromDatabase();
-
-            activator.Theme.ApplyTo(toolStrip1);
         }
 
         private void RefreshUIFromDatabase()
@@ -214,15 +226,8 @@ namespace CatalogueManager.DataViewing
         {
             //enable the reset button only if the SQL has changed (e.g. user is typing stuff)
             btnResetSql.Enabled = !_originalSql.Equals(_scintilla.Text);
-            btnResetSql.Text = btnResetSql.Enabled ? "You have changed the above SQL, click to reset" : "";
-
         }
-
-        private void btnExecuteSql_Click(object sender, EventArgs e)
-        {
-            RunQuery();
-        }
-
+        
         private void RunQuery()
         {
             var selected = _scintilla.SelectedText;
