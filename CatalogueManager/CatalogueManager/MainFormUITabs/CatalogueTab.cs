@@ -10,6 +10,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
@@ -40,6 +41,10 @@ namespace CatalogueManager.MainFormUITabs
             ticketingControl1.TicketTextChanged += ticketingControl1_TicketTextChanged;
             
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            c_ddType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
+            c_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
+            c_ddGranularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
         }
 
         private Catalogue _catalogue;
@@ -280,15 +285,6 @@ namespace CatalogueManager.MainFormUITabs
             _catalogue.Periodicity = (Catalogue.CataloguePeriodicity)c_ddPeriodicity.SelectedItem;
 
         }
-
-        private void c_ddGranularity_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_loadingUI)
-                return;
-
-            _catalogue.Granularity = (Catalogue.CatalogueGranularity)c_ddGranularity.SelectedItem;
-
-        }
         #endregion
 
         private void SetUriPropertyOnCatalogue(TextBox tb, string property)
@@ -419,8 +415,20 @@ namespace CatalogueManager.MainFormUITabs
         {
             base.SetBindings(rules,databaseObject);
 
-            rules.Bind(c_tbAcronym, "Text", databaseObject, "Acronym", false, DataSourceUpdateMode.OnPropertyChanged, c=>c.Acronym);
-            rules.Bind(c_tbName, "Text", databaseObject, "Name", false, DataSourceUpdateMode.OnPropertyChanged, c => c.Name);
+            Bind(c_tbAcronym, "Text", "Acronym", c=>c.Acronym);
+            Bind(c_tbName, "Text", "Name", c => c.Name);
+            Bind(c_tbID,"Text","ID", c=>c.ID);
+            Bind(c_tbDescription,"Text","Description",c=>c.Description);
+            
+            Bind(c_ddType,"SelectedItem","Type",c=>c.Type);
+            Bind(c_ddGranularity,"SelectedItem","Granularity", c => c.Granularity);
+            Bind(c_ddPeriodicity, "SelectedItem", "Periodicity", c => c.Periodicity);
+            Bind(ddExplicitConsent, "SelectedItem", "Explicit_consent", c => c.Explicit_consent);
+
+            Bind(cbColdStorage, "Checked", "IsColdStorageDataset", c => c.IsColdStorageDataset);
+            Bind(cbDeprecated, "Checked", "IsDeprecated", c => c.IsDeprecated);
+            Bind(cbInternal, "Checked", "IsInternalDataset", c => c.IsInternalDataset);
+
         }
 
         private void RefreshUIFromDatabase()
@@ -446,24 +454,10 @@ namespace CatalogueManager.MainFormUITabs
             splitContainer1.Enabled = true;
             ticketingControl1.Enabled = true;
 
-            cbColdStorage.Checked = _catalogue.IsColdStorageDataset;
-            cbDeprecated.Checked = _catalogue.IsDeprecated;
-            cbInternal.Checked = _catalogue.IsInternalDataset;
-
-            c_tbID.Text = _catalogue.ID.ToString();
             ticketingControl1.TicketText = _catalogue.Ticket;
-            c_tbName.Text = _catalogue.Name;
-            c_tbDescription.Text = _catalogue.Description;
+            
             c_tbDetailPageURL.Text = _catalogue.Detail_Page_URL != null ? _catalogue.Detail_Page_URL.ToString() : "";
 
-            c_ddType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
-            c_ddType.SelectedItem = _catalogue.Type;
-
-            c_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
-            c_ddPeriodicity.SelectedItem = _catalogue.Periodicity;
-
-            c_ddGranularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
-            c_ddGranularity.SelectedItem = _catalogue.Granularity;
 
             c_tbGeographicalCoverage.Text = _catalogue.Geographical_coverage;
             c_tbBackgroundSummary.Text = _catalogue.Background_summary;
@@ -519,16 +513,6 @@ namespace CatalogueManager.MainFormUITabs
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
-        }
-
-        private void cbFlag_CheckedChanged(object sender, EventArgs e)
-        {
-            if (sender == cbDeprecated)
-                _catalogue.IsDeprecated = cbDeprecated.Checked;
-            if (sender == cbColdStorage)
-                _catalogue.IsColdStorageDataset = cbColdStorage.Checked;
-            if (sender == cbInternal)
-                _catalogue.IsInternalDataset = cbInternal.Checked;
         }
     }
 

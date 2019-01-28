@@ -77,6 +77,20 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             
         }
 
+        /// <summary>
+        /// Performs data binding using default parameters (OnPropertyChanged), no formatting etc.  Getter must be a
+        /// property of <see cref="DatabaseObject"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="c"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="dataMember"></param>
+        /// <param name="getter"></param>
+        protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter)
+        {
+            _binder.Bind(c,propertyName,(T)DatabaseObject,dataMember,false,DataSourceUpdateMode.OnPropertyChanged, getter);
+        }
+
         protected override void InitializeToolStrip()
         {
             base.InitializeToolStrip();

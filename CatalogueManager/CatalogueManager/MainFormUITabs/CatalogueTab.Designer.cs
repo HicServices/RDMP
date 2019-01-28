@@ -273,7 +273,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_ddGranularity.Name = "c_ddGranularity";
             this.c_ddGranularity.Size = new System.Drawing.Size(263, 21);
             this.c_ddGranularity.TabIndex = 8;
-            this.c_ddGranularity.SelectedValueChanged += new System.EventHandler(this.c_ddGranularity_SelectedIndexChanged);
             // 
             // label21
             // 
@@ -761,7 +760,6 @@ namespace CatalogueManager.MainFormUITabs
             this.cbColdStorage.TabIndex = 165;
             this.cbColdStorage.Text = "ColdStorage";
             this.cbColdStorage.UseVisualStyleBackColor = true;
-            this.cbColdStorage.CheckedChanged += new System.EventHandler(this.cbFlag_CheckedChanged);
             // 
             // cbInternal
             // 
@@ -772,7 +770,6 @@ namespace CatalogueManager.MainFormUITabs
             this.cbInternal.TabIndex = 165;
             this.cbInternal.Text = "Internal";
             this.cbInternal.UseVisualStyleBackColor = true;
-            this.cbInternal.CheckedChanged += new System.EventHandler(this.cbFlag_CheckedChanged);
             // 
             // cbDeprecated
             // 
@@ -783,7 +780,6 @@ namespace CatalogueManager.MainFormUITabs
             this.cbDeprecated.TabIndex = 165;
             this.cbDeprecated.Text = "Deprecated";
             this.cbDeprecated.UseVisualStyleBackColor = true;
-            this.cbDeprecated.CheckedChanged += new System.EventHandler(this.cbFlag_CheckedChanged);
             // 
             // label34
             // 
