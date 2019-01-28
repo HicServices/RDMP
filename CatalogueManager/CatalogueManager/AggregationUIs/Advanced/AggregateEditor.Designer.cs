@@ -342,15 +342,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.selectColumnUI1.Size = new System.Drawing.Size(690, 216);
             this.selectColumnUI1.TabIndex = 9;
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.objectSaverButton1.Location = new System.Drawing.Point(4, 892);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(54, 32);
-            this.objectSaverButton1.TabIndex = 26;
-            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -393,7 +384,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             // panel2
             // 
             this.panel2.Controls.Add(this.pictureBox1);
-            this.panel2.Controls.Add(this.objectSaverButton1);
             this.panel2.Controls.Add(this.panel1);
             this.panel2.Controls.Add(this.label6);
             this.panel2.Controls.Add(this.cbExtractable);

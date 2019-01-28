@@ -154,14 +154,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.autocompleteReminder.Size = new System.Drawing.Size(64, 20);
             this.autocompleteReminder.TabIndex = 29;
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(38, 85);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(57, 29);
-            this.objectSaverButton1.TabIndex = 4;
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.tbFilterName);
@@ -172,7 +164,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.panel1.Controls.Add(this.btnPublishToCatalogue);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.cbIsMandatory);
-            this.panel1.Controls.Add(this.objectSaverButton1);
             this.panel1.Controls.Add(this.ragSmiley1);
             this.panel1.Controls.Add(this.lblWhere);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;

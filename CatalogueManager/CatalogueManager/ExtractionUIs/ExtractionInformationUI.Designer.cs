@@ -168,14 +168,6 @@ namespace CatalogueManager.ExtractionUIs
             this.cbIsPrimaryKey.UseVisualStyleBackColor = true;
             this.cbIsPrimaryKey.CheckedChanged += new System.EventHandler(this.cbIsPrimaryKey_CheckedChanged);
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(3, 80);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(57, 29);
-            this.objectSaverButton1.TabIndex = 4;
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -233,7 +225,6 @@ namespace CatalogueManager.ExtractionUIs
             // panel1
             // 
             this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.objectSaverButton1);
             this.panel1.Controls.Add(this.ragSmiley1);
             this.panel1.Controls.Add(this.gbIsDirectlyExtractable);
             this.panel1.Controls.Add(this.pSql);

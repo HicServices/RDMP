@@ -440,19 +440,10 @@ namespace CatalogueManager.Issues
             this.ticketingControl1.TabIndex = 74;
             this.ticketingControl1.TicketText = "";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(6, 78);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(56, 29);
-            this.objectSaverButton1.TabIndex = 75;
-            // 
             // IssueUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.ticketingControl1);
             this.Controls.Add(this.lbError);
             this.Controls.Add(this.btnOpenFile);

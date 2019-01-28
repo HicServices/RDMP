@@ -241,7 +241,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             Catalogue = databaseObject.GetCatalogue();
             ExtractionFilter = databaseObject;
 
-            objectSaverButton1.SetupFor((DatabaseEntity)ExtractionFilter,_activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,(DatabaseEntity)ExtractionFilter,_activator.RefreshBus);
 
             if (!_menuInitialized)
             {

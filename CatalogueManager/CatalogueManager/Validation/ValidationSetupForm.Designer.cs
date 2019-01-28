@@ -203,7 +203,6 @@ namespace CatalogueManager.Validation
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.objectSaverButton1);
             this.splitContainer1.Panel2.Controls.Add(this.label4);
             this.splitContainer1.Panel2.Controls.Add(this.ddConsequence);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
@@ -235,14 +234,6 @@ namespace CatalogueManager.Validation
             this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Filter:";
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(265, 62);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(56, 28);
-            this.objectSaverButton1.TabIndex = 11;
             // 
             // toolStrip1
             // 

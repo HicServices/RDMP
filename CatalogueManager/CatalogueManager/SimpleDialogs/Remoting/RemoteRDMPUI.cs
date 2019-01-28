@@ -35,7 +35,7 @@ namespace CatalogueManager.SimpleDialogs.Remoting
         public override void SetDatabaseObject(IActivateItems activator, RemoteRDMP databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-            objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,databaseObject, activator.RefreshBus);
 
             Remote = databaseObject;
 

@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs.Revertable;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
 
 namespace CatalogueManager.SimpleControls
 {
@@ -23,14 +18,19 @@ namespace CatalogueManager.SimpleControls
     /// and call SetupFor on the DatabaseObject.  You should also mark your control as ISaveableUI and implement the single method on that interface so that shortcuts
     /// are correctly routed to this control.
     /// </summary>
-    public partial class ObjectSaverButton : UserControl,IRefreshBusSubscriber
+    public partial class ObjectSaverButton : IRefreshBusSubscriber
     {
         private Bitmap _undoImage;
         private Bitmap _redoImage;
 
+        private ToolStripButton btnSave  = new ToolStripButton("Save",FamFamFamIcons.disk);
+        private ToolStripButton btnUndoRedo = new ToolStripButton("Undo", FamFamFamIcons.Undo);
+
         public ObjectSaverButton()
         {
-            InitializeComponent();
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnUndoRedo.Click += new System.EventHandler(this.btnUndoRedo_Click);
+            
             _undoImage = FamFamFamIcons.Undo;
             _redoImage = FamFamFamIcons.Redo;
 
@@ -50,8 +50,7 @@ namespace CatalogueManager.SimpleControls
         private bool _isEnabled;
         private bool _undo = true;
         
-
-        public void SetupFor(DatabaseEntity o, RefreshBus refreshBus)
+        public void SetupFor(RDMPUserControl control, DatabaseEntity o, RefreshBus refreshBus)
         {
             //already set up before
             if(_o != null)
@@ -60,16 +59,20 @@ namespace CatalogueManager.SimpleControls
             _o = o;
             _refreshBus = refreshBus;
             _refreshBus.Subscribe(this);
+            _parent = control;
+
             o.PropertyChanged += PropertyChanged;
 
-            if (ParentForm == null)
+            if (control.ParentForm == null)
                 throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
 
-            ParentForm.Enter += ParentForm_Enter;
-            ParentForm.Leave += ParentFormOnLeave;
+            control.ParentForm.Enter += ParentForm_Enter;
+            control.ParentForm.Leave += ParentFormOnLeave;
             Enable(false);
-            Text = "&Save";
 
+            control.Add(btnSave);
+            control.Add(btnUndoRedo);
+            
             //the first time it is set up it could still be out of date!
             CheckForOutOfDateObjectAndOfferToFix();
         }
@@ -91,9 +94,9 @@ namespace CatalogueManager.SimpleControls
 
         public void Enable(bool b)
         {
-            if (InvokeRequired)
+            if (_parent.InvokeRequired)
             {
-                Invoke(new MethodInvoker(() => Enable(b)));
+                _parent.Invoke(new MethodInvoker(() => Enable(b)));
                 return;
             }
 
@@ -155,6 +158,7 @@ namespace CatalogueManager.SimpleControls
         }
 
         private RevertableObjectReport _undoneChanges;
+        private RDMPUserControl _parent;
 
         private void btnUndoRedo_Click(object sender, EventArgs e)
         {

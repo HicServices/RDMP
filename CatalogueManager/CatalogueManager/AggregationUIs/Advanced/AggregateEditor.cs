@@ -216,7 +216,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             PopulateTopX();
 
-            objectSaverButton1.SetupFor(_aggregate,_activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,_aggregate,_activator.RefreshBus);
             isRefreshing = false;
         }
 

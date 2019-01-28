@@ -133,7 +133,7 @@ namespace DataExportManager.CohortUI
 
             GenerateSQLPreview();
 
-            objectSaverButton1.SetupFor(_extractableCohort,activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,_extractableCohort,activator.RefreshBus);
 
             var dx = _activator.CoreChildProvider as DataExportChildProvider;
 

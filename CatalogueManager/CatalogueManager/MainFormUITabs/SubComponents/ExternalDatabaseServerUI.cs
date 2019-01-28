@@ -44,7 +44,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         {
             base.SetDatabaseObject(activator, databaseObject);
             _server = databaseObject;
-            objectSaverButton1.SetupFor(_server, activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,_server, activator.RefreshBus);
 
             bloading = true;
             

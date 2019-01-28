@@ -212,14 +212,12 @@ namespace DataExportManager.ProjectUI
             this.tcMasterTicket.Size = new System.Drawing.Size(300, 52);
             this.tcMasterTicket.TabIndex = 6;
             this.tcMasterTicket.TicketText = "";
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(114, 105);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 27);
-            this.objectSaverButton1.TabIndex = 8;
+             
+            
+            
+            
+            
+            
             // 
             // btnBrowse
             // 
@@ -237,7 +235,7 @@ namespace DataExportManager.ProjectUI
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnBrowse);
-            this.Controls.Add(this.objectSaverButton1);
+            
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.tcMasterTicket);
             this.Controls.Add(this.btnConfigureDataUsers);

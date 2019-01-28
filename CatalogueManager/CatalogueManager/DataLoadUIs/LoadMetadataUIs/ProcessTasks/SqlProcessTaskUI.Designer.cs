@@ -52,15 +52,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Editor";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.objectSaverButton1.Location = new System.Drawing.Point(3, 674);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(61, 26);
-            this.objectSaverButton1.TabIndex = 1;
-            // 
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
@@ -133,7 +124,6 @@
             this.Controls.Add(this.pbFile);
             this.Controls.Add(this.lblPath);
             this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.groupBox1);
             this.Name = "SqlProcessTaskUI";
             this.Size = new System.Drawing.Size(894, 703);

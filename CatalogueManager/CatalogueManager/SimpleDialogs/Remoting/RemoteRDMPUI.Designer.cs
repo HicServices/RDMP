@@ -37,15 +37,6 @@
             this.lblUrl = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.lblName = new System.Windows.Forms.Label();
-            this.SuspendLayout();
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(8, 123);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
-            this.objectSaverButton1.TabIndex = 9;
             // 
             // txtPassword
             // 
@@ -128,7 +119,7 @@
             this.Controls.Add(this.lblPassword);
             this.Controls.Add(this.lblUsername);
             this.Controls.Add(this.lblUrl);
-            this.Controls.Add(this.objectSaverButton1);
+            
             this.Name = "RemoteRDMPUI";
             this.Size = new System.Drawing.Size(407, 191);
             this.ResumeLayout(false);

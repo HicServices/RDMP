@@ -65,24 +65,41 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private BinderWithErrorProviderFactory _binder;
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny)
+        RDMPUserControlPanel rdmpUserControlPanel = new RDMPUserControlPanel();
+        ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
+
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny):this()
         {
             _tableInfo = tableInfo;
             Initialize(activator, initialDescription, projectSpecificIfAny);
         }
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny)
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny):this()
         {
             ColumnInfo[] cols;
             importer.DoImport(out _tableInfo, out cols);
 
             Initialize(activator,initialDescription,projectSpecificIfAny);
         }
-        
-        private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
+
+        private ConfigureCatalogueExtractabilityUI()
         {
             InitializeComponent();
 
+            //take panel1 out of us
+            this.Controls.Remove(panel1);
+
+            //and add it to the rdmp user control
+            rdmpUserControlPanel.Panel.Controls.Add(panel1);
+
+            //then put the user control in us
+            this.Controls.Add(rdmpUserControlPanel);
+            rdmpUserControlPanel.Dock = DockStyle.Fill;
+            panel1.Dock = DockStyle.Fill;
+        }
+
+        private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
+        {
             RepositoryLocator = activator.RepositoryLocator;
 
             _activator = activator;
@@ -133,9 +150,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             olvColumnInfoName.ImageGetter = ImageGetter;
             olvColumnExtractability.RebuildColumns();
-
-            objectSaverButton1.SetupFor(_catalogue, activator.RefreshBus);
-
+            
             if (_activator.RepositoryLocator.DataExportRepository == null)
                 gbProjectSpecific.Enabled = false;
             else
@@ -147,6 +162,9 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             ddIsExtractionIdentifier.Items.Add("<<None>>");
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
+
+            rdmpUserControlPanel.SetItemActivator(_activator);
+            objectSaverButton1.SetupFor(rdmpUserControlPanel, _catalogue, _activator.RefreshBus);
         }
 
 

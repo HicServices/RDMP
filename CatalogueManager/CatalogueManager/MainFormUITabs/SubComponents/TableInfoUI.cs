@@ -70,7 +70,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
             btnParameters.Enabled = _tableInfo.IsTableValuedFunction;
 
-            objectSaverButton1.SetupFor(_tableInfo,activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,_tableInfo,activator.RefreshBus);
             
             //if it's a Lookup table, don't let them try to make it IsPrimaryExtractionTable (but let them disable that if they have already made that mistake somehow)
             if (_tableInfo.IsLookupTable())

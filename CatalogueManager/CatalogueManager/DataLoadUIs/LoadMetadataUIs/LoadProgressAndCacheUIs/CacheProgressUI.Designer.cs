@@ -60,7 +60,6 @@
             this.gbCacheProgress.Controls.Add(this.pPipeline);
             this.gbCacheProgress.Controls.Add(this.btnRefresh);
             this.gbCacheProgress.Controls.Add(this.btnEdit);
-            this.gbCacheProgress.Controls.Add(this.objectSaverButton1);
             this.gbCacheProgress.Controls.Add(this.ddCacheLagDelayDurationType);
             this.gbCacheProgress.Controls.Add(this.udCacheLagDelayPeriodDuration);
             this.gbCacheProgress.Controls.Add(this.label2);
@@ -108,14 +107,6 @@
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(10, 159);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(57, 26);
-            this.objectSaverButton1.TabIndex = 44;
             // 
             // ddCacheLagDelayDurationType
             // 

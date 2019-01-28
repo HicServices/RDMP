@@ -160,7 +160,6 @@ namespace CatalogueManager.SimpleDialogs
             // 
             // gbSelectedEntity
             // 
-            this.gbSelectedEntity.Controls.Add(this.objectSaverButton1);
             this.gbSelectedEntity.Controls.Add(this.ticketingControl1);
             this.gbSelectedEntity.Controls.Add(this.label2);
             this.gbSelectedEntity.Controls.Add(this.tbID);
@@ -180,14 +179,6 @@ namespace CatalogueManager.SimpleDialogs
             this.gbSelectedEntity.TabIndex = 37;
             this.gbSelectedEntity.TabStop = false;
             this.gbSelectedEntity.Text = "Supporting Document";
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(17, 111);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(64, 30);
-            this.objectSaverButton1.TabIndex = 38;
             // 
             // ticketingControl1
             // 

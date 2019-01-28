@@ -1169,12 +1169,7 @@
     <Compile Include="Refreshing\RefreshObjectEventArgs.cs" />
     <Compile Include="Refreshing\RefreshObjectEventHandler.cs" />
     <Compile Include="SimpleControls\ISaveableUI.cs" />
-    <Compile Include="SimpleControls\ObjectSaverButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SimpleControls\ObjectSaverButton.Designer.cs">
-      <DependentUpon>ObjectSaverButton.cs</DependentUpon>
-    </Compile>
+    <Compile Include="SimpleControls\ObjectSaverButton.cs" />
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1384,6 +1379,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TestsAndSetup\ServicePropogation\RDMPUserControlPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="TestsAndSetup\ServicePropogation\ServiceLocatorPropagatorToChildControls.cs" />
@@ -1996,10 +1994,6 @@
     <EmbeddedResource Include="MainFormUITabs\SubComponents\TableInfoUI.resx">
       <DependentUpon>TableInfoUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleControls\ObjectSaverButton.resx">
-      <DependentUpon>ObjectSaverButton.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\BulkProcessCatalogueItems.resx">
       <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>
     </EmbeddedResource>
@@ -2112,6 +2106,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TestsAndSetup\ServicePropogation\RDMPForm.resx">
       <DependentUpon>RDMPForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestsAndSetup\ServicePropogation\RDMPUserControl.resx">
+      <DependentUpon>RDMPUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TestsAndSetup\StartupUI\ManagedDatabaseUI.resx">
       <DependentUpon>ManagedDatabaseUI.cs</DependentUpon>

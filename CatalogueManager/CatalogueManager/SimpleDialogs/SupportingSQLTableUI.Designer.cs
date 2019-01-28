@@ -163,7 +163,6 @@ namespace CatalogueManager.SimpleDialogs
             // gbSelectedEntity
             // 
             this.gbSelectedEntity.Controls.Add(this.btnAdd);
-            this.gbSelectedEntity.Controls.Add(this.objectSaverButton1);
             this.gbSelectedEntity.Controls.Add(this.tcTicket);
             this.gbSelectedEntity.Controls.Add(this.label2);
             this.gbSelectedEntity.Controls.Add(this.tbID);
@@ -182,14 +181,6 @@ namespace CatalogueManager.SimpleDialogs
             this.gbSelectedEntity.Size = new System.Drawing.Size(1254, 672);
             this.gbSelectedEntity.TabIndex = 36;
             this.gbSelectedEntity.TabStop = false;
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(26, 270);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 29);
-            this.objectSaverButton1.TabIndex = 38;
             // 
             // tcTicket
             // 

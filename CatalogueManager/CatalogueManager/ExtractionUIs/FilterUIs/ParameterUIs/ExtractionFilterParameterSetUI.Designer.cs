@@ -116,7 +116,6 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.objectSaverButton1);
             this.splitContainer1.Panel1.Controls.Add(this.tbID);
             this.splitContainer1.Panel1.Controls.Add(this.label2);
             this.splitContainer1.Panel1.Controls.Add(this.label3);
@@ -131,14 +130,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(998, 497);
             this.splitContainer1.SplitterDistance = 120;
             this.splitContainer1.TabIndex = 30;
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(11, 50);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(62, 31);
-            this.objectSaverButton1.TabIndex = 30;
             // 
             // btnRefreshParameters
             // 

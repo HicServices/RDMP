@@ -268,14 +268,6 @@
             this.label3.TabIndex = 37;
             this.label3.Text = "Server*:";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(96, 228);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(57, 28);
-            this.objectSaverButton1.TabIndex = 11;
-            // 
             // tbMappedDataPath
             // 
             this.tbMappedDataPath.Location = new System.Drawing.Point(96, 85);
@@ -319,7 +311,6 @@
             this.Controls.Add(this.ddDatabaseType);
             this.Controls.Add(this.tbMappedDataPath);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.pbServer);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.btnClearKnownType);

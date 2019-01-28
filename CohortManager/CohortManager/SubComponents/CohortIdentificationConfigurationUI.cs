@@ -98,7 +98,7 @@ namespace CohortManager.SubComponents
             tbDescription.Text = _configuration.Description;
             ticket.TicketText = _configuration.Ticket;
 
-            objectSaverButton1.SetupFor(_configuration, activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,_configuration, activator.RefreshBus);
 
             queryCachingServerSelector.RefreshUIFromDatabase();
 

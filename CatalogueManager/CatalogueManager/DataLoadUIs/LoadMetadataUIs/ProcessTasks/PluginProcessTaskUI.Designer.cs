@@ -65,14 +65,6 @@
             this.pArguments.Size = new System.Drawing.Size(916, 601);
             this.pArguments.TabIndex = 3;
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(420, 0);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(56, 26);
-            this.objectSaverButton1.TabIndex = 4;
-            // 
             // loadStageIconUI1
             // 
             this.loadStageIconUI1.Location = new System.Drawing.Point(551, 4);
@@ -107,7 +99,7 @@
             this.Controls.Add(this.btnCheckAgain);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.loadStageIconUI1);
-            this.Controls.Add(this.objectSaverButton1);
+            
             this.Controls.Add(this.pArguments);
             this.Controls.Add(this.tbName);
             this.Controls.Add(this.label1);

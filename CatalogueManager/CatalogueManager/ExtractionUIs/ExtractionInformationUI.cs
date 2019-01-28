@@ -124,7 +124,7 @@ namespace CatalogueManager.ExtractionUIs
             base.SetDatabaseObject(activator,databaseObject);
 
             Setup(databaseObject);
-            objectSaverButton1.SetupFor(databaseObject,_activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,databaseObject,_activator.RefreshBus);
             objectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
 
             Add(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Catalogue Item");

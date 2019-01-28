@@ -39,7 +39,7 @@ namespace CatalogueManager.CredentialsUIs
                 tbUsername.Text = _credentials.Username;
                 tbPassword.Text = _credentials.Password;
 
-                objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
+                objectSaverButton1.SetupFor(this,databaseObject, activator.RefreshBus);
             }
             finally
             {

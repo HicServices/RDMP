@@ -145,19 +145,11 @@
             this.label5.TabIndex = 16;
             this.label5.Text = "(Checks all PreLoadDiscardedColumns in TableInfo)";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(132, 130);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(56, 26);
-            this.objectSaverButton1.TabIndex = 17;
-            // 
             // PreLoadDiscardedColumnUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.objectSaverButton1);
+            
             this.Controls.Add(this.label5);
             this.Controls.Add(this.btnCheck);
             this.Controls.Add(this.checksUI1);

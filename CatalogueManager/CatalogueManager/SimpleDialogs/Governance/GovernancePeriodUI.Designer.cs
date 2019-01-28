@@ -206,14 +206,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 18;
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(78, 279);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
-            this.objectSaverButton1.TabIndex = 19;
-            // 
             // lblExpired
             // 
             this.lblExpired.BackColor = System.Drawing.Color.MistyRose;
@@ -230,7 +222,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.panel1.Controls.Add(this.tbName);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.btnImportCatalogues);
-            this.panel1.Controls.Add(this.objectSaverButton1);
             this.panel1.Controls.Add(this.btnAddCatalogue);
             this.panel1.Controls.Add(this.tbDescription);
             this.panel1.Controls.Add(this.label5);

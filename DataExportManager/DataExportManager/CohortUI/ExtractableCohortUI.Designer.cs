@@ -114,14 +114,6 @@ namespace DataExportManager.CohortUI
             this.pDescription.Size = new System.Drawing.Size(885, 161);
             this.pDescription.TabIndex = 15;
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(11, 158);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
-            this.objectSaverButton1.TabIndex = 16;
-            // 
             // helpIcon1
             // 
             this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
@@ -271,7 +263,6 @@ namespace DataExportManager.CohortUI
             this.Controls.Add(this.btnShowProject);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.helpIcon1);
-            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.pDescription);
             this.Controls.Add(this.lblDescription);
             this.Controls.Add(this.tbProjectNumber);

@@ -162,14 +162,6 @@
             this.label38.TabIndex = 141;
             this.label38.Text = "TableInfo ID";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(101, 130);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(58, 28);
-            this.objectSaverButton1.TabIndex = 7;
-            // 
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
@@ -206,7 +198,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.objectSaverButton1);
+            
             this.Controls.Add(this.btnSynchronize);
             this.Controls.Add(this.label38);
             this.Controls.Add(this.cbIsPrimaryExtractionTable);

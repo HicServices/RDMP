@@ -93,19 +93,11 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             this.label3.TabIndex = 9;
             this.label3.Text = "Description:";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(18, 198);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(59, 27);
-            this.objectSaverButton1.TabIndex = 11;
-            // 
             // LoadMetadataUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.objectSaverButton1);
+            
             this.Controls.Add(this.tbDescription);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.tbName);

@@ -83,7 +83,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         }
 
 
-        protected void SetItemActivator(IActivateItems activator)
+        public void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
             RepositoryLocator = _activator.RepositoryLocator;
@@ -95,7 +95,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// visible at the top of the form
         /// </summary>
         /// <param name="cmd"></param>
-        protected void Add(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
+        public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
         {
             var p = Parent as RDMPUserControl;
             if (p != null)
@@ -121,7 +121,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// visible at the top of the form
         /// </summary>
         /// <param name="cmd"></param>
-        protected void Add(ToolStripItem item)
+        public void Add(ToolStripItem item)
         {
             var p = Parent as RDMPUserControl;
             if (p != null)
@@ -162,7 +162,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// will be visible only when you click on the menu button.
         /// </summary>
         /// <param name="cmd"></param>
-        protected void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
+        public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
         {
             var p = Parent as RDMPUserControl;
             if (p != null)
@@ -187,7 +187,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// Adds the given <paramref name="menuItem"/> to the drop down menu button bar at the top of the control.  This
         /// will be visible only when you click on the menu button.
         /// </summary>
-        protected void AddToMenu(ToolStripItem menuItem)
+        public void AddToMenu(ToolStripItem menuItem)
         {
             var p = Parent as RDMPUserControl;
             if (p != null)
@@ -207,7 +207,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// </summary>
         /// <param name="label"></param>
         /// <param name="showIcon">True to add the text icon next to the text</param>
-        protected void Add(string label, bool showIcon = true)
+        public void Add(string label, bool showIcon = true)
         {
             Add(new ToolStripLabel(label, showIcon ? FamFamFamIcons.text_align_left : null));
         }

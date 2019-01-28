@@ -193,19 +193,9 @@
             this.loadProgressDiagram1.Size = new System.Drawing.Size(933, 713);
             this.loadProgressDiagram1.TabIndex = 26;
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.objectSaverButton1.Location = new System.Drawing.Point(3, 792);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(55, 26);
-            this.objectSaverButton1.TabIndex = 27;
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.loadProgressDiagram1);
-            this.panel1.Controls.Add(this.objectSaverButton1);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);

@@ -144,7 +144,7 @@ namespace DataExportManager.ProjectUI
             
             pbCic.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Link);
             
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
             
             _bLoading = false;
             

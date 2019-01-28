@@ -68,7 +68,7 @@ namespace CatalogueManager.SimpleDialogs
         {
             base.SetDatabaseObject(activator,databaseObject);
             SupportingSQLTable = databaseObject;
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
             RefreshUIFromDatabase();
         }
         

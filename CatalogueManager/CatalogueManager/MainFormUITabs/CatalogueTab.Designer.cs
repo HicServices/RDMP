@@ -667,7 +667,6 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.Panel1.Controls.Add(this.cbColdStorage);
             this.splitContainer1.Panel1.Controls.Add(this.cbInternal);
             this.splitContainer1.Panel1.Controls.Add(this.cbDeprecated);
-            this.splitContainer1.Panel1.Controls.Add(this.objectSaverButton1);
             this.splitContainer1.Panel1.Controls.Add(this.label24);
             this.splitContainer1.Panel1.Controls.Add(this.label34);
             this.splitContainer1.Panel1.Controls.Add(this.tbFolder);
@@ -785,14 +784,6 @@ namespace CatalogueManager.MainFormUITabs
             this.cbDeprecated.Text = "Deprecated";
             this.cbDeprecated.UseVisualStyleBackColor = true;
             this.cbDeprecated.CheckedChanged += new System.EventHandler(this.cbFlag_CheckedChanged);
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(133, 247);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(266, 32);
-            this.objectSaverButton1.TabIndex = 164;
             // 
             // label34
             // 

@@ -116,14 +116,6 @@
             this.ragSmiley.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley.TabIndex = 1;
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(6, 218);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
-            this.objectSaverButton1.TabIndex = 4;
-            // 
             // label4
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -169,7 +161,7 @@
             this.Controls.Add(this.lblID);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.pbDatabaseProvider);
-            this.Controls.Add(this.objectSaverButton1);
+            
             this.Controls.Add(this.ddDatabaseType);
             this.Controls.Add(this.tbValue);
             this.Controls.Add(this.tbID);

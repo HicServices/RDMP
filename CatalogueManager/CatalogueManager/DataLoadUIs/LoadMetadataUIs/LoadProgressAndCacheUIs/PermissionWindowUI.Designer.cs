@@ -226,14 +226,6 @@
             this.label11.TabIndex = 0;
             this.label11.Text = "(e.g. 10:20-10:40,11:20-11:40)";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(134, 361);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(58, 28);
-            this.objectSaverButton1.TabIndex = 9;
-            // 
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
@@ -249,7 +241,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.tbDescription);
             this.Controls.Add(this.tbName);
             this.Controls.Add(this.tbSunday);

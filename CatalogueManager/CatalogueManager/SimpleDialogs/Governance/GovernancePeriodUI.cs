@@ -76,7 +76,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             base.SetDatabaseObject(activator, databaseObject);
 
             GovernancePeriod = databaseObject;
-            objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,databaseObject, activator.RefreshBus);
         }
 
         private void tbName_TextChanged(object sender, EventArgs e)

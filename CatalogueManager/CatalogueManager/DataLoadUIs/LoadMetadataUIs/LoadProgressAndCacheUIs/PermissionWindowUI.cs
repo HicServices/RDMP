@@ -51,7 +51,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             for (var i = 0; i < 7; ++i)
                 PopulatePeriodTextBoxForDay(textBoxes[i], i, periodsByDay);
 
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
 
         }
         

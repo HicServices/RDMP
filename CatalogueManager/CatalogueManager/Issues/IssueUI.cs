@@ -204,7 +204,7 @@ namespace CatalogueManager.Issues
         {
             base.SetDatabaseObject(activator,databaseObject);
             CatalogueItemIssue = databaseObject;
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
         }
 
         private void QueryPreview_TextChanged(object sender, EventArgs e)

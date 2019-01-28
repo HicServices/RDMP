@@ -207,14 +207,6 @@ namespace DataExportManager.ProjectUI
             this.label1.TabIndex = 0;
             this.label1.Text = "Cohort Identification Configuration (Query):";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(6, 221);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 26);
-            this.objectSaverButton1.TabIndex = 51;
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -240,7 +232,6 @@ namespace DataExportManager.ProjectUI
             this.AutoScroll = true;
             this.Controls.Add(this.tbDescription);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.objectSaverButton1);
             this.Controls.Add(this.gbCohortRefreshing);
             this.Controls.Add(this.pChooseExtractionPipeline);
             this.Controls.Add(this.tbID);

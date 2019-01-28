@@ -128,7 +128,7 @@ namespace DataExportManager.ProjectUI
         {
             base.SetDatabaseObject(activator,databaseObject);
             Project = databaseObject;
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,databaseObject,activator.RefreshBus);
         }
         
 
@@ -419,7 +419,6 @@ namespace DataExportManager.ProjectUI
         public void SwitchToCutDownUIMode()
         {
             dataGridView1.Visible = false;
-            objectSaverButton1.Visible = false;
             lblExtractions.Visible = false;
             this.Height = 160;
         }
