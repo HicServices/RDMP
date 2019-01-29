@@ -12,13 +12,11 @@ using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery.QuerySyntax;
@@ -27,6 +25,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using CatalogueManager.Copying;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
@@ -70,7 +69,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Scintilla QueryHaving;
-
+        
         //Constructor
         public AggregateEditor()
         {
@@ -199,9 +198,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             tbID.Text = _aggregate.ID.ToString();
 
             SetNameText();
-
-            tbDescription.Text = _aggregate.Description;
-
+            
             DetermineFromTables();
 
             PopulateHavingText();
@@ -217,6 +214,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
             PopulateTopX();
 
             isRefreshing = false;
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, AggregateConfiguration databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbDescription,"Text","Description",a=>a.Description);
+            Bind(cbExtractable,"Checked","IsExtractable",a=>a.IsExtractable);
         }
 
         private void PopulateTopX()
@@ -485,22 +490,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             ReloadUIFromDatabase();
         }
 
-        private void cbExtractable_CheckedChanged(object sender, EventArgs e)
-        {
-            if (isRefreshing)
-                return;
-
-            _aggregate.IsExtractable = cbExtractable.Checked;
-            _aggregate.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            if (_aggregate != null)
-                _aggregate.Description = tbDescription.Text;
-        }
-
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
@@ -522,8 +511,11 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             AddToMenu(new ExecuteCommandViewSqlParameters(activator, databaseObject));
 
+            AddChecks(databaseObject);
+            StartChecking();
         }
-        
+
+
         private void tbName_TextChanged(object sender, EventArgs e)
         {
             _aggregate.Name = tbName.Text;

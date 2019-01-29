@@ -681,6 +681,9 @@ namespace CatalogueManager.AggregationUIs
                 base.SetDatabaseObject(activator,databaseObject);
                 menuInitialized = true;
                 
+                AddToMenu(new ExecuteCommandActivate(activator,databaseObject));
+                AddToMenu(new ToolStripSeparator());
+
                 AddToMenu(miSaveImages);
                 AddToMenu(miCopyToClipboard);
                 AddToMenu(btnCache);

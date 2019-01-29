@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
@@ -36,15 +30,23 @@ namespace CatalogueManager.ANOEngineeringUIs
             _anoTable = databaseObject;
             base.SetDatabaseObject(activator, databaseObject);
 
-            tbID.Text = _anoTable.ID.ToString();
-            nIntegers.Value = _anoTable.NumberOfIntegersToUseInAnonymousRepresentation;
-            nCharacters.Value = _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
-            tbName.Text = _anoTable.TableName;
-            tbSuffix.Text = _anoTable.Suffix;
-            
             lblServer.Text = _anoTable.Server.Name;
 
+            AddChecks(databaseObject);
+            StartChecking();
+
             SetEnabledness();
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ANOTable databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",a=>a.ID);
+            Bind(nIntegers,"Value","NumberOfIntegersToUseInAnonymousRepresentation",a=>a.NumberOfIntegersToUseInAnonymousRepresentation);
+            Bind(nCharacters,"Value","NumberOfCharactersToUseInAnonymousRepresentation",a=>a.NumberOfCharactersToUseInAnonymousRepresentation);
+            Bind(tbName,"Text","TableName",a=>a.TableName);
+            Bind(tbSuffix,"Text","Suffix",a=>a.Suffix);
         }
 
         private void SetEnabledness()

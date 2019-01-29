@@ -90,7 +90,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.tbDescription.Name = "tbDescription";
             this.tbDescription.Size = new System.Drawing.Size(652, 56);
             this.tbDescription.TabIndex = 0;
-            this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
             // tbID
             // 
@@ -127,7 +126,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.cbExtractable.TabIndex = 3;
             this.cbExtractable.Text = "Extractable";
             this.cbExtractable.UseVisualStyleBackColor = true;
-            this.cbExtractable.CheckedChanged += new System.EventHandler(this.cbExtractable_CheckedChanged);
             // 
             // gbAxis
             // 

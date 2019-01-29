@@ -6,8 +6,10 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
 
 namespace CatalogueManager.TestsAndSetup.ServicePropogation
 {
@@ -37,6 +39,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         private AtomicCommandUIFactory atomicCommandUIFactory;
         private IActivateItems _activator;
 
+        private RAGSmileyToolStrip ragSmileyToolStrip;
+        private ToolStripButton runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh);
+        private ICheckable _checkable;
+        
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator
         {
@@ -69,8 +75,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         public RDMPUserControl()
         {
             VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+
+            runChecksToolStripButton.Click += (s,e)=>StartChecking();
         }
-        
+
         protected override void OnLoad(EventArgs e)
         {
             if (VisualStudioDesignMode)
@@ -134,6 +142,31 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             _toolStrip.Items.Add(item);
         }
+
+        public void AddChecks(ICheckable checkable)
+        {
+            if (ragSmileyToolStrip == null)
+                ragSmileyToolStrip = new RAGSmileyToolStrip(this);
+
+            Add(ragSmileyToolStrip);
+            Add(runChecksToolStripButton);
+            _checkable = checkable;
+        }
+
+        /// <summary>
+        /// Runs checks on the last variable passed in <see cref="AddChecks"/>.  Do not call this method unless you have first
+        /// called <see cref="AddChecks"/>.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void StartChecking()
+        {
+            if(_checkable == null)
+                throw new Exception("_checkable is null, call AddChecks first");
+
+            ragSmileyToolStrip.StartChecking(_checkable);
+        }
+
 
         protected void ClearToolStrip()
         {

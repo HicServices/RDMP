@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi;
@@ -51,24 +52,31 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             {
                 SetupDropdownItems();
 
-                tbID.Text = _server.ID.ToString();
-                tbName.Text = _server.Name;
-                tbServerName.Text = _server.Server;
-                tbMappedDataPath.Text = _server.MappedDataPath;
-                tbDatabaseName.Text = _server.Database;
-                tbUsername.Text = _server.Username;
                 tbPassword.Text = _server.GetDecryptedPassword();
-                ddSetKnownType.Text = _server.CreatedByAssembly;
-
                 ddDatabaseType.SelectedItem = _server.DatabaseType;
                 pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(_server.DatabaseType);
 
                 pbServer.Image = _activator.CoreIconProvider.GetImage(_server);
+
+                AddChecks(databaseObject);
             }
             finally
             {
                 bloading = false;
             }
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ExternalDatabaseServer databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",s=>s.ID);
+            Bind(tbName,"Text","Name",s=>s.Name);
+            Bind(tbServerName, "Text", "Server", s => s.Server);
+            Bind(tbMappedDataPath, "Text", "MappedDataPath", s => s.MappedDataPath);
+            Bind(tbDatabaseName, "Text", "Database", s => s.Database);
+            Bind(tbUsername, "Text", "Username", s => s.Username);
+            Bind(ddSetKnownType, "Text", "CreatedByAssembly", s => s.CreatedByAssembly);
         }
 
         private void SetupDropdownItems()
@@ -80,68 +88,13 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
                 .Where(s => s.EndsWith(".Database") && //if it is a .Database assembly advertise it to the user as a known type of database
                     !(s.EndsWith("CatalogueLibrary.Database") || s.EndsWith("DataExportManager.Database"))).ToArray()); //unless it's one of the core ones (catalogue/data export)
         }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            _server.Name = tbName.Text;
-        }
-
-        private void tbServerName_TextChanged(object sender, EventArgs e)
-        {
-            btnCheckState.Enabled = !string.IsNullOrWhiteSpace(tbDatabaseName.Text) && !string.IsNullOrWhiteSpace(tbServerName.Text);
-            _server.Server = tbServerName.Text;
-        }
-
-        private void tbMappedDataPath_TextChanged(object sender, EventArgs e)
-        {
-            _server.MappedDataPath = tbMappedDataPath.Text;
-        }
-
-        private void tbDatabaseName_TextChanged(object sender, EventArgs e)
-        {
-            btnCheckState.Enabled = !string.IsNullOrWhiteSpace(tbDatabaseName.Text) && !string.IsNullOrWhiteSpace(tbServerName.Text);
-            _server.Database = tbDatabaseName.Text;
-        }
-
-        private void tbUsername_TextChanged(object sender, EventArgs e)
-        {
-            _server.Username = tbUsername.Text;
-        }
-
+        
         private void tbPassword_TextChanged(object sender, EventArgs e)
         {
             if(!bloading)
                 _server.Password = tbPassword.Text;
         }
-
-        private void ddSetKnownType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if(bloading)
-                return;
-            
-            _server.CreatedByAssembly = ddSetKnownType.SelectedItem as string;
-        }
-
-        private void btnCheckState_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                ragSmiley1.Reset();
-                ragSmiley1.Visible = true;
-                lblState.Text = "State:";
-
-                DataAccessPortal.GetInstance().ExpectServer(_server, DataAccessContext.InternalDataProcessing).TestConnection();
-                lblState.Text = "State:OK";
-                lblState.ForeColor = Color.Green;
-            }
-            catch (Exception exception)
-            {
-                lblState.Text = "State:" + exception.Message;
-                lblState.ForeColor = Color.Red;
-                ragSmiley1.Fatal(exception);
-            }
-        }
-
+        
         private void btnClearKnownType_Click(object sender, EventArgs e)
         {
             _server.CreatedByAssembly = null;

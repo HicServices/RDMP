@@ -13,6 +13,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
@@ -30,7 +31,7 @@ namespace CatalogueLibrary.Data
     /// <para>Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when openning connections.  Password
     /// is encrypted in the same fashion as in the DataAccessCredentials table.</para>
     /// </summary>
-    public class ExternalDatabaseServer : VersionedDatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed
+    public class ExternalDatabaseServer : VersionedDatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
     {
         #region Database Properties
 
@@ -206,6 +207,25 @@ namespace CatalogueLibrary.Data
         public override string ToString()
         {
             return Name;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            if (string.IsNullOrWhiteSpace(Server))
+                notifier.OnCheckPerformed(new CheckEventArgs("No Server set", CheckResult.Warning));
+            else   
+            if (string.IsNullOrWhiteSpace(Database))
+                notifier.OnCheckPerformed(new CheckEventArgs("No Database set", CheckResult.Warning));
+            else
+            try
+            {
+                DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.InternalDataProcessing).TestConnection();
+                notifier.OnCheckPerformed(new CheckEventArgs("Successfully connected to server", CheckResult.Success));
+            }
+            catch (Exception exception)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Failed to connect to server", CheckResult.Fail, exception));
+            }
         }
 
         /// <inheritdoc/>

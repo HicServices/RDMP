@@ -25,6 +25,7 @@ namespace ReusableUIComponents.ChecksUI
             //until first check is run
             Enabled = false;
             Text = "Checks";
+            Image = _green;
         }
 
         public bool IsGreen()
@@ -50,12 +51,6 @@ namespace ReusableUIComponents.ChecksUI
         private Task _checkTask;
         private object oTaskLock = new object();
 
-        public RAGSmileyToolStrip()
-        {
-            BackColor = Color.Transparent;
-            Image = _green;
-        }
-        
         protected override void OnClick(EventArgs e)
         {
             base.OnClick(e);
@@ -114,7 +109,7 @@ namespace ReusableUIComponents.ChecksUI
             
             //reset the checks too so as not to leave old check results kicking about
             memoryCheckNotifier = new ToMemoryCheckNotifier();
-
+            Tag = null;
             _worst = CheckResult.Success;
             Image = _green;
             Enabled = false;
