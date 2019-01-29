@@ -40,7 +40,7 @@ namespace DataExportManager.ProjectUI
             this.label6 = new System.Windows.Forms.Label();
             this.pChooseExtractionPipeline = new System.Windows.Forms.Panel();
             this.gbCohortRefreshing = new System.Windows.Forms.GroupBox();
-            this.ragSmiley1Refresh = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1Refresh = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.pChooseCohortRefreshPipeline = new System.Windows.Forms.Panel();
             this.btnClearCic = new System.Windows.Forms.Button();
             this.pbCic = new System.Windows.Forms.PictureBox();
@@ -273,6 +273,6 @@ namespace DataExportManager.ProjectUI
         private CatalogueManager.SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbDescription;
-        private ReusableUIComponents.RAGSmiley ragSmiley1Refresh;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1Refresh;
     }
 }

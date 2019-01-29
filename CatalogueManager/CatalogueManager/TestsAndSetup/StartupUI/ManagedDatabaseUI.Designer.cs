@@ -39,7 +39,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.lblDatabaseType = new System.Windows.Forms.Label();
             this.llPatch = new System.Windows.Forms.LinkLabel();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDatabase)).BeginInit();
@@ -197,6 +197,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblDatabaseType;
         private System.Windows.Forms.LinkLabel llPatch;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
     }
 }

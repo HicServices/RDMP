@@ -49,7 +49,7 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.SuspendLayout();
             // 
             // label1
@@ -292,6 +292,6 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
     }
 }

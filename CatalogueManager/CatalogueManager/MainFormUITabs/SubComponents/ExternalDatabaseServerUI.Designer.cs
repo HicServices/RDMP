@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.pbServer = new System.Windows.Forms.PictureBox();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.btnClearKnownType = new System.Windows.Forms.Button();
             this.ddSetKnownType = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -346,7 +346,7 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pbServer;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnClearKnownType;
         private System.Windows.Forms.ComboBox ddSetKnownType;
         private System.Windows.Forms.Label label15;

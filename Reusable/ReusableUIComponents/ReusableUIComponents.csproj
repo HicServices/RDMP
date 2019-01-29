@@ -121,7 +121,8 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>ReusableUIComponentsKey.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -227,12 +228,22 @@
     <Compile Include="ChecksUI\ChecksUI.Designer.cs">
       <DependentUpon>ChecksUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="ChecksUI\IRAGSmiley.cs" />
     <Compile Include="ChecksUI\MakeChangePopup.cs" />
     <Compile Include="ChecksUI\PopupChecksUI.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ChecksUI\PopupChecksUI.Designer.cs">
       <DependentUpon>PopupChecksUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChecksUI\RAGSmiley.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ChecksUI\RAGSmiley.Designer.cs">
+      <DependentUpon>RAGSmiley.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChecksUI\RAGSmileyToolStrip.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewDependencies.cs" />
     <Compile Include="CommandExecution\Proposals\ICommandExecutionProposal.cs" />
@@ -367,12 +378,6 @@
     </Compile>
     <Compile Include="Progress\ProgressUIEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RAGSmiley.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RAGSmiley.Designer.cs">
-      <DependentUpon>RAGSmiley.cs</DependentUpon>
-    </Compile>
     <Compile Include="RecentHistoryOfControls.cs" />
     <Compile Include="ScintillaHelper\CSharpLexer.cs" />
     <Compile Include="ScintillaHelper\ScintillaLineHighlightingHelper.cs" />
@@ -456,6 +461,9 @@
     <EmbeddedResource Include="ChecksUI\PopupChecksUI.resx">
       <DependentUpon>PopupChecksUI.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ChecksUI\RAGSmiley.resx">
+      <DependentUpon>RAGSmiley.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DatabaseTypeUI.resx">
       <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -504,9 +512,6 @@
     <EmbeddedResource Include="Progress\ProgressUI.resx">
       <DependentUpon>ProgressUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="RAGSmiley.resx">
-      <DependentUpon>RAGSmiley.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ServerDatabaseTableSelector.resx">
       <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
     </EmbeddedResource>
@@ -547,7 +552,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="ReusableUIComponentsKey.snk" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Dependencies\Templates\template.xaml">
@@ -568,6 +572,9 @@
     <Resource Include="Images\DependencyGraphToolbarInformation.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\TinyYellow.png" />
+    <None Include="Resources\TinyRed.png" />
+    <None Include="Resources\TinyGreen.png" />
     <None Include="Resources\WarningIcon.png" />
     <None Include="Resources\InformationIcon.png" />
     <None Include="Resources\ErrorIcon.png" />

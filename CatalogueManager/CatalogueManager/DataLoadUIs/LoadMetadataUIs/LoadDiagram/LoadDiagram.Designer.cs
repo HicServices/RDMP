@@ -36,7 +36,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             this.loadStateUI1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery.LoadStateUI();
             this.helpIconDiscoverTables = new ReusableUIComponents.HelpIcon();
             this.cbOnlyShowDynamicColumns = new System.Windows.Forms.CheckBox();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.tlvLoadedTables = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvState = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -216,7 +216,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 
         private TreeListView tlvLoadedTables;
         private OLVColumn olvName;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private OLVColumn olvDataType;
         private System.Windows.Forms.CheckBox cbOnlyShowDynamicColumns;
         private System.Windows.Forms.Button btnDiscoverTables;

@@ -37,7 +37,7 @@
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.ddShowPeriod = new System.Windows.Forms.ToolStripComboBox();
             this.cbIgnoreRowCounts = new System.Windows.Forms.ToolStripButton();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.racewayRenderArea = new Dashboard.Raceway.RacewayRenderAreaUI();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -163,7 +163,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnAddCatalogue;
         private System.Windows.Forms.ToolStripButton btnRemoveAll;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private RacewayRenderAreaUI racewayRenderArea;
         private System.Windows.Forms.ToolStripButton btnAddExtractableDatasetPackage;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;

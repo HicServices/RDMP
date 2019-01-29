@@ -14,6 +14,7 @@ using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
 using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
@@ -41,11 +42,14 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         private ArgumentCollection _argumentCollection;
         private Type _underlyingType;
         private ProcessTask _processTask;
+        private RAGSmileyToolStrip _ragSmiley;
 
         public PluginProcessTaskUI()
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.DataLoad;
+
+            _ragSmiley = new RAGSmileyToolStrip(this);
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)
@@ -77,6 +81,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 pArguments.Controls.Add(_argumentCollection);
             }
 
+            Add(_ragSmiley);
+
             CheckComponent();
             
             loadStageIconUI1.Setup(_activator.CoreIconProvider,_processTask.LoadStage);
@@ -102,11 +108,11 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
                 var mefTask = (IMEFRuntimeTask) factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
             
-                ragSmiley1.StartChecking(mefTask.MEFPluginClassInstance);
+                _ragSmiley.StartChecking(mefTask.MEFPluginClassInstance);
             }
             catch (Exception e)
             {
-                ragSmiley1.Fatal(e);
+                _ragSmiley.Fatal(e);
             }
         }
 

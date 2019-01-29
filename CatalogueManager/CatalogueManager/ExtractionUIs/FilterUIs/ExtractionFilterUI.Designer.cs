@@ -1,6 +1,7 @@
 ﻿using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.Refreshing;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs
 {
@@ -41,7 +42,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.tbFilterDescription = new System.Windows.Forms.TextBox();
             this.lblWhere = new System.Windows.Forms.Label();
             this.pQueryEditor = new System.Windows.Forms.Panel();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.autocompleteReminder = new ReusableUIComponents.KeyboardReminder();
             

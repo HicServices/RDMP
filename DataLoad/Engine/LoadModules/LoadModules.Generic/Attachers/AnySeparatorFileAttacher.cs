@@ -6,8 +6,9 @@ namespace LoadModules.Generic.Attachers
     /// <summary>
     /// Data load component for loading flat files into RAW tables (flat files must be delimited by a specific character (or sequence) e.g. csv)
     /// 
-    /// <para>Allows you to load zero or more flat files which are delimited by a given character or sequence of characters.  For example comma separated (use Separator ',')
-    /// or Tab separated (Use Separator '\t').</para>
+    /// <para>Allows you to load zero or more flat files which are delimited by a given character or sequence of characters.  For example comma
+    ///  separated (use Separator ',') or Tab separated (Use Separator '\t').
+    /// </para>
     /// </summary>
     public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
     {

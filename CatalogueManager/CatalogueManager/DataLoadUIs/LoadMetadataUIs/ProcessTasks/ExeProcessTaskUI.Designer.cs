@@ -34,7 +34,7 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.pbFile = new System.Windows.Forms.PictureBox();
             this.lblPath = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.tbExeCommand = new System.Windows.Forms.TextBox();
             this.btnRunExe = new System.Windows.Forms.Button();
             this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
@@ -162,7 +162,7 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.PictureBox pbFile;
         private System.Windows.Forms.Label lblPath;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.TextBox tbExeCommand;
         private System.Windows.Forms.Button btnRunExe;
         private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;

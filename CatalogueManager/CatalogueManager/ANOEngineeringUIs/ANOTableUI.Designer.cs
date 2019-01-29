@@ -36,7 +36,7 @@
             this.nCharacters = new System.Windows.Forms.NumericUpDown();
             this.nIntegers = new System.Windows.Forms.NumericUpDown();
             this.btnFinalise = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.btnDropANOTable = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
@@ -309,7 +309,7 @@
         private System.Windows.Forms.NumericUpDown nCharacters;
         private System.Windows.Forms.NumericUpDown nIntegers;
         private System.Windows.Forms.Button btnFinalise;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnDropANOTable;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbName;

@@ -36,7 +36,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.btnBrowseForExisting = new System.Windows.Forms.Button();
             this.btnCreateNewBrowse = new System.Windows.Forms.Button();
             this.lblDataIsReservedWordExisting = new System.Windows.Forms.Label();
@@ -215,7 +215,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCancel;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnBrowseForExisting;
         private System.Windows.Forms.Button btnCreateNewBrowse;
         private System.Windows.Forms.Label lblDataIsReservedWordExisting;

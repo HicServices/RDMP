@@ -1,4 +1,6 @@
-﻿namespace ReusableUIComponents.Progress
+﻿using ReusableUIComponents.ChecksUI;
+
+namespace ReusableUIComponents.Progress
 {
     partial class ProgressBarsUI
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             this.lblTask = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.btnClose = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 

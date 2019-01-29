@@ -54,7 +54,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.label11 = new System.Windows.Forms.Label();
             this.btnClearProject = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.gbDescription = new System.Windows.Forms.GroupBox();
             this.pbProject = new System.Windows.Forms.PictureBox();
             this.pbCohortSource = new System.Windows.Forms.PictureBox();
@@ -523,7 +523,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnClearProject;
         private System.Windows.Forms.Button btnOk;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.GroupBox gbDescription;
         private System.Windows.Forms.PictureBox pbProject;
         private System.Windows.Forms.PictureBox pbCohortSource;

@@ -40,7 +40,7 @@
             this.tbTableInfoID = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
             
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.label1 = new System.Windows.Forms.Label();
             this.tbSchema = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -233,7 +233,7 @@
         private System.Windows.Forms.Button btnParameters;
         private System.Windows.Forms.Button btnSynchronize;
         
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbSchema;
     }

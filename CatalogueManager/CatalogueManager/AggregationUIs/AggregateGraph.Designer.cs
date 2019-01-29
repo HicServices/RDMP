@@ -39,7 +39,7 @@ namespace CatalogueManager.AggregationUIs
             this.pbLoading = new System.Windows.Forms.PictureBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpGraph = new System.Windows.Forms.TabPage();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.lblLoadStage = new System.Windows.Forms.Label();
             this.llCancel = new System.Windows.Forms.LinkLabel();
             this.tpCode = new System.Windows.Forms.TabPage();
@@ -288,6 +288,6 @@ namespace CatalogueManager.AggregationUIs
         private System.Windows.Forms.Label lblLoadStage;
         private System.Windows.Forms.TabPage tpHeatmap;
         public HeatmapUI heatmapUI;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
     }
 }

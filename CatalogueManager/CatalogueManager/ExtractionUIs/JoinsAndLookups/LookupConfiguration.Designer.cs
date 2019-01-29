@@ -53,7 +53,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.label10 = new System.Windows.Forms.Label();
             this.btnPrimaryKeyCompositeHelp = new System.Windows.Forms.Button();
             this.btnCreateLookup = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.fk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.fk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
             this.fk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
@@ -456,7 +456,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         private KeyDropLocationUI fk3;
         private OLVColumn olvDescriptionsColumn;
         private System.Windows.Forms.Button btnCreateLookup;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label5;
     }

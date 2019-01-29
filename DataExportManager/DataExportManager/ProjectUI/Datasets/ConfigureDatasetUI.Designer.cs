@@ -51,7 +51,7 @@ namespace DataExportManager.ProjectUI.Datasets
             this.label7 = new System.Windows.Forms.Label();
             this.tbSearchTables = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.label5 = new System.Windows.Forms.Label();
             this.olvJoin = new BrightIdeasSoftware.ObjectListView();
             this.olvJoinTableName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -494,7 +494,7 @@ namespace DataExportManager.ProjectUI.Datasets
         private ObjectListView olvJoin;
         private OLVColumn olvJoinTableName;
         private OLVColumn olvJoinColumn;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.TextBox tbSearchTables;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnRefreshChecks;

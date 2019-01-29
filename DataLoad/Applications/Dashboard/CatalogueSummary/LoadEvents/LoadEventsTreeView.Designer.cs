@@ -37,7 +37,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             this.treeView1 = new BrightIdeasSoftware.TreeListView();
             this.olvDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.treeView1)).BeginInit();
             this.SuspendLayout();
@@ -136,6 +136,6 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         private TreeListView treeView1;
         private OLVColumn olvDescription;
         private OLVColumn olvDate;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ReusableUIComponents
+﻿using ReusableUIComponents.ChecksUI;
+
+namespace ReusableUIComponents
 {
     partial class ServerDatabaseTableSelector
     {
@@ -47,7 +49,7 @@
             this.btnRefreshDatabases = new System.Windows.Forms.Button();
             this.btnRefreshTables = new System.Windows.Forms.Button();
             this.databaseTypeUI1 = new ReusableUIComponents.DatabaseTypeUI();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.SuspendLayout();
             // 

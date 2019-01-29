@@ -40,8 +40,8 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.pbDownloadArrow = new System.Windows.Forms.PictureBox();
             this.lblFilesDownloaded = new System.Windows.Forms.Label();
             this.pbBigArrowPointingRight = new System.Windows.Forms.PictureBox();
-            this.ragSmiley2 = new ReusableUIComponents.RAGSmiley();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley2 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.pathLinkLabel1 = new ReusableUIComponents.LinkLabels.PathLinkLabel();
             this.lblFilesLoaded = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbFolder)).BeginInit();
@@ -201,8 +201,8 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
         private PathLinkLabel pathLinkLabel1;
         private System.Windows.Forms.PictureBox pbDosBox;
         private System.Windows.Forms.Label label3;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
-        private ReusableUIComponents.RAGSmiley ragSmiley2;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley2;
         private System.Windows.Forms.PictureBox pbDownloadArrow;
         private System.Windows.Forms.Label lblFilesDownloaded;
         private System.Windows.Forms.PictureBox pbBigArrowPointingRight;

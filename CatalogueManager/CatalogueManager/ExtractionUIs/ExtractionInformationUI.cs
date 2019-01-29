@@ -15,7 +15,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Fansi.Implementations.MicrosoftSQL;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-
+using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
@@ -61,6 +61,8 @@ namespace CatalogueManager.ExtractionUIs
         private bool isFirstTimeSetupCalled = true;
         private IQuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 
+        RAGSmileyToolStrip ragSmiley1;
+
         public ExtractionInformationUI()//For use with SetDatabaseObject
         {
             InitializeComponent();
@@ -76,6 +78,8 @@ namespace CatalogueManager.ExtractionUIs
             ObjectSaverButton1.BeforeSave += BeforeSave;
 
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            ragSmiley1 = new RAGSmileyToolStrip(this);
         }
 
         private bool BeforeSave(DatabaseEntity arg)
@@ -127,7 +131,8 @@ namespace CatalogueManager.ExtractionUIs
             Setup(databaseObject);
 
             ObjectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
-            
+
+            Add(ragSmiley1);
             AddToMenu(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Go To Description (CatalogueItem)");
             AddToMenu(new ExecuteCommandShow(activator, databaseObject.ColumnInfo,0,true));
         }

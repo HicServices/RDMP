@@ -33,7 +33,7 @@
             this.executeInAutomationServerUI1 = new CatalogueManager.SimpleControls.ExecuteInAutomationServerUI();
             this.btnAbortLoad = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
-            this.ragChecks = new ReusableUIComponents.RAGSmiley();
+            this.ragChecks = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -188,7 +188,7 @@
         private ExecuteInAutomationServerUI executeInAutomationServerUI1;
         private System.Windows.Forms.Button btnAbortLoad;
         private System.Windows.Forms.Button btnExecute;
-        private ReusableUIComponents.RAGSmiley ragChecks;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragChecks;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;

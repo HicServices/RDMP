@@ -30,7 +30,7 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.lblPath = new System.Windows.Forms.Label();
             this.pbFile = new System.Windows.Forms.PictureBox();
             this.btnBrowse = new System.Windows.Forms.Button();
@@ -137,7 +137,7 @@
 
         private System.Windows.Forms.GroupBox groupBox1;
         
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.PictureBox pbFile;
         private System.Windows.Forms.Button btnBrowse;

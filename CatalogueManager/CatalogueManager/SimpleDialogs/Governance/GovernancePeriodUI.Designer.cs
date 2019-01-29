@@ -45,7 +45,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.label5 = new System.Windows.Forms.Label();
             this.btnAddCatalogue = new System.Windows.Forms.Button();
             this.btnImportCatalogues = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             
             this.lblExpired = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -272,7 +272,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DateTimePicker dtpStartDate;
         private System.Windows.Forms.Label label3;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         
         private System.Windows.Forms.Label lblExpired;
         private System.Windows.Forms.Panel panel1;

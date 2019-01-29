@@ -36,7 +36,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbValue = new System.Windows.Forms.TextBox();
             this.pbDatabaseProvider = new System.Windows.Forms.PictureBox();
-            this.ragSmiley = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley = new ReusableUIComponents.ChecksUI.RAGSmiley();
             
             this.label4 = new System.Windows.Forms.Label();
             this.lblID = new System.Windows.Forms.Label();
@@ -188,7 +188,7 @@
         private System.Windows.Forms.TextBox tbValue;
         
         private System.Windows.Forms.PictureBox pbDatabaseProvider;
-        private ReusableUIComponents.RAGSmiley ragSmiley;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblID;
         private System.Windows.Forms.TextBox tbID;

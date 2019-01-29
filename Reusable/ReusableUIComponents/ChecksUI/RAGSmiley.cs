@@ -4,16 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 
-namespace ReusableUIComponents
+namespace ReusableUIComponents.ChecksUI
 {
     /// <summary>
     /// Reusable component that indicates the success / warning / failure of a task in a nice user friendly way.  Green indicates success, yellow indicates a warning and red indicates 
     /// failure.  If there is an exception associated with a failure then clicking on the red face will show the Exception.
     /// </summary>
-    public partial class RAGSmiley : UserControl,ICheckNotifier
+    public partial class RAGSmiley : UserControl, IRAGSmiley
     {
         private bool _alwaysShowHandCursor;
         
@@ -105,9 +104,7 @@ namespace ReusableUIComponents
             pbRed.Tag = ex;
             SetCorrectCursor();
         }
-
         
-
         public void Reset()
         {
             if (InvokeRequired)

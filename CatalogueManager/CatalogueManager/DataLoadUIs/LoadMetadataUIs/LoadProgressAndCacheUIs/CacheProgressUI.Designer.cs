@@ -47,7 +47,7 @@
             this.tbChunkPeriod = new System.Windows.Forms.TextBox();
             this.tbCacheProgressID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.gbCacheProgress.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDelayPeriodDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDuration)).BeginInit();
@@ -267,6 +267,6 @@
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Panel pPipeline;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
     }
 }

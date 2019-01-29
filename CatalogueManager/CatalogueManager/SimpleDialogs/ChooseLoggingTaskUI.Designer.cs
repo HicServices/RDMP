@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.ddTestLoggingServer = new System.Windows.Forms.ComboBox();
             this.ddLoggingServer = new System.Windows.Forms.ComboBox();
             this.btnCreateNewLoggingTask = new System.Windows.Forms.Button();
@@ -227,7 +227,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnCreateNewLoggingTask;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnCreateNewLoggingServer;
         private System.Windows.Forms.Button btnClearTest;
         private System.Windows.Forms.Button btnClearLive;

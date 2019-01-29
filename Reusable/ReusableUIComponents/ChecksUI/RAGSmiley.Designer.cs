@@ -1,4 +1,4 @@
-﻿namespace ReusableUIComponents
+﻿namespace ReusableUIComponents.ChecksUI
 {
     partial class RAGSmiley
     {

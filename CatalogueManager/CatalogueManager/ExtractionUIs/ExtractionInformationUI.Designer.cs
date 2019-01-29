@@ -44,7 +44,6 @@ namespace CatalogueManager.ExtractionUIs
             this.pSql = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
             this.lblFromTable = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.label6 = new System.Windows.Forms.Label();
             this.tbId = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -180,16 +179,6 @@ namespace CatalogueManager.ExtractionUIs
             this.lblFromTable.TabIndex = 3;
             this.lblFromTable.Text = "Your Header Goes Here";
             // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(9, 22);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(37, 38);
-            this.ragSmiley1.TabIndex = 1;
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -230,7 +219,6 @@ namespace CatalogueManager.ExtractionUIs
             // 
             this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.ragSmiley1);
             this.panel3.Controls.Add(this.lblFromTable);
             this.panel3.Controls.Add(this.pSql);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -271,7 +259,6 @@ namespace CatalogueManager.ExtractionUIs
         private System.Windows.Forms.Panel pSql;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblFromTable;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox tbId;
         private System.Windows.Forms.Panel panel2;
