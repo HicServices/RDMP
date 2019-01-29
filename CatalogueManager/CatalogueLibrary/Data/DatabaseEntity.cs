@@ -87,7 +87,7 @@ namespace CatalogueLibrary.Data
         {
             object uri = r[fieldName];
 
-            if (uri == null || uri == DBNull.Value)
+            if (uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString()))
                 return null;
 
             return new Uri(uri.ToString());

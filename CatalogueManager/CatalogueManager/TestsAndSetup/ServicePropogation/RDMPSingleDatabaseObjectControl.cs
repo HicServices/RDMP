@@ -87,8 +87,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         {
             _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
         }
-
-
+        
         /// <summary>
         /// Parses the datetime out of the <paramref name="tb"/> with blank being null.  If the string doesn't parse
         /// then the text will turn red.
@@ -116,6 +115,28 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             {
                 tb.ForeColor = Color.Red;
             }
+        }
+
+        /// <summary>
+        /// Parses the Uri out of the <paramref name="tb"/> with blank being null.  If the string doesn't parse
+        /// then the text will turn red.
+        /// </summary>
+        /// <param name="tb"></param>
+        /// <param name="p"></param>
+        protected void SetUrl(TextBox tb, Action<Uri> action)
+        {
+            try
+            {
+                Uri u = new Uri(tb.Text);
+                action(u);
+                tb.ForeColor = Color.Black;
+
+            }
+            catch (UriFormatException)
+            {
+                tb.ForeColor = Color.Red;
+            }
+
         }
 
         protected override void InitializeToolStrip()

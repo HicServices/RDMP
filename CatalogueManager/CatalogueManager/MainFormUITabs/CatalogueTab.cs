@@ -77,9 +77,6 @@ namespace CatalogueManager.MainFormUITabs
        
         private void ddExplicitConsent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_loadingUI)
-                return;
-            
             if (ddExplicitConsent.Text.Equals("Yes"))
                 _catalogue.Explicit_consent = true;
                 
@@ -124,8 +121,7 @@ namespace CatalogueManager.MainFormUITabs
             Bind(c_ddType,"SelectedItem","Type",c=>c.Type);
             Bind(c_ddGranularity,"SelectedItem","Granularity", c => c.Granularity);
             Bind(c_ddPeriodicity, "SelectedItem", "Periodicity", c => c.Periodicity);
-            Bind(ddExplicitConsent, "SelectedItem", "Explicit_consent", c => c.Explicit_consent);
-
+            
             Bind(cbColdStorage, "Checked", "IsColdStorageDataset", c => c.IsColdStorageDataset);
             Bind(cbDeprecated, "Checked", "IsDeprecated", c => c.IsDeprecated);
             Bind(cbInternal, "Checked", "IsInternalDataset", c => c.IsInternalDataset);
@@ -140,6 +136,7 @@ namespace CatalogueManager.MainFormUITabs
             Bind(c_tbResourceOwner ,"Text","Resource_owner", c=>c.Resource_owner);
             Bind(c_tbAttributionCitation ,"Text","Attribution_citation", c=>c.Attribution_citation);
             Bind(c_tbAccessOptions ,"Text","Access_options", c=>c.Access_options);
+            Bind(c_tbSubjectNumbers, "Text", "SubjectNumbers", c => c.SubjectNumbers);
 
             Bind(tbDataStandards,"Text", "Data_standards",c=>c.Data_standards);
             Bind(tbAdministrativeContactName,"Text", "Administrative_contact_name",c=>c.Administrative_contact_name);
@@ -151,20 +148,10 @@ namespace CatalogueManager.MainFormUITabs
             Bind(tbSourceOfDataCollection,"Text", "Source_of_data_collection",c=>c.Source_of_data_collection);
             Bind(c_tbAttributionCitation,"Text", "Attribution_citation",c=>c.Attribution_citation);
             Bind(c_tbAccessOptions,"Text", "Access_options",c=>c.Access_options);
-
-            Bind(c_tbDetailPageURL,"Text","Detail_Page_URL", c=>c.Detail_Page_URL);
-            Bind(c_tbAPIAccessURL,"Text","API_access_URL", c=>c.API_access_URL );
-            Bind(c_tbBrowseUrl,"Text","Browse_URL", c=>c.Browse_URL );
-            Bind(c_tbBulkDownloadUrl,"Text","Bulk_Download_URL", c=>c.Bulk_Download_URL );
-            Bind(c_tbQueryToolUrl,"Text","Query_tool_URL", c=>c.Query_tool_URL );
-            Bind(c_tbSourceUrl,"Text","Source_URL",c=>c.Source_URL );
         }
-
-        private bool _loadingUI = false;
 
         private void RefreshUIFromDatabase()
         {
-            _loadingUI = true;
             try
             {
                 ticketingControl1.ReCheckTicketingSystemInCatalogue();
@@ -190,7 +177,13 @@ namespace CatalogueManager.MainFormUITabs
 
             c_tbLastRevisionDate.Text = _catalogue.Last_revision_date.ToString();
             tbDatasetStartDate.Text = _catalogue.DatasetStartDate.ToString();
-            _loadingUI = false;
+            
+            c_tbAPIAccessURL.Text = _catalogue.API_access_URL != null ? _catalogue.API_access_URL.ToString() : "";
+            c_tbBrowseUrl.Text = _catalogue.Browse_URL != null ? _catalogue.Browse_URL.ToString() : "";
+            c_tbBulkDownloadUrl.Text = _catalogue.Bulk_Download_URL != null ? _catalogue.Bulk_Download_URL.ToString() : "";
+            c_tbQueryToolUrl.Text = _catalogue.Query_tool_URL != null ? _catalogue.Query_tool_URL.ToString() : "";
+            c_tbSourceUrl.Text = _catalogue.Source_URL != null ? _catalogue.Source_URL.ToString() : "";
+            c_tbDetailPageURL.Text = _catalogue.Detail_Page_URL != null ? _catalogue.Detail_Page_URL.ToString() : "";
         }
 
         private bool _expand = true;
@@ -210,6 +203,36 @@ namespace CatalogueManager.MainFormUITabs
         private void tbDatasetStartDate_TextChanged(object sender, EventArgs e)
         {
             SetDate(tbDatasetStartDate,v=>_catalogue.DatasetStartDate = v);
+        }
+
+        private void c_tbDetailPageURL_TextChanged(object sender, EventArgs e)
+        {
+            SetUrl((TextBox)sender,v=>_catalogue.Detail_Page_URL = v);
+        }
+
+        private void c_tbAPIAccessURL_TextChanged(object sender, EventArgs e)
+        {
+            SetUrl((TextBox)sender, v => _catalogue.API_access_URL = v);
+        }
+
+        private void c_tbBrowseUrl_TextChanged(object sender, EventArgs e)
+        {
+            SetUrl((TextBox)sender, v => _catalogue.Browse_URL = v);
+        }
+
+        private void c_tbBulkDownloadUrl_TextChanged(object sender, EventArgs e)
+        {
+            SetUrl((TextBox)sender, v => _catalogue.Bulk_Download_URL = v);
+        }
+
+        private void c_tbQueryToolUrl_TextChanged(object sender, EventArgs e)
+        {
+            SetUrl((TextBox)sender, v => _catalogue.Query_tool_URL = v);
+        }
+
+        private void c_tbSourceUrl_TextChanged(object sender, EventArgs e)
+        {
+            SetUrl((TextBox)sender, v => _catalogue.Source_URL = v);
         }
     }
 
