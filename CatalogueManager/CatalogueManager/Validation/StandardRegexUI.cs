@@ -104,11 +104,6 @@ namespace CatalogueManager.Validation
                 lblResultOfTest.ForeColor = Color.Red;
             }
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<StandardRegexUI_Design, UserControl>))]

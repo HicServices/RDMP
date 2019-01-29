@@ -44,7 +44,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.autocompleteReminder = new ReusableUIComponents.KeyboardReminder();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -195,7 +195,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         private System.Windows.Forms.TextBox tbFilterDescription;
         private System.Windows.Forms.Label lblWhere;
         private System.Windows.Forms.Panel pQueryEditor;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private RAGSmiley ragSmiley1;
         private System.Windows.Forms.ToolTip toolTip1;
         private KeyboardReminder autocompleteReminder;

@@ -42,7 +42,7 @@ namespace CatalogueManager.SimpleDialogs
             this.cbGlobal = new System.Windows.Forms.CheckBox();
             this.ddExternalServers = new System.Windows.Forms.ComboBox();
             this.gbSelectedEntity = new System.Windows.Forms.GroupBox();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.tcTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.btnAdd = new System.Windows.Forms.Button();
             this.gbSelectedEntity.SuspendLayout();
@@ -229,7 +229,7 @@ namespace CatalogueManager.SimpleDialogs
         private System.Windows.Forms.ComboBox ddExternalServers;
         private System.Windows.Forms.GroupBox gbSelectedEntity;
         private TicketingControl tcTicket;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.Button btnAdd;
     }
 }

@@ -58,11 +58,6 @@ namespace CatalogueManager.MainFormUITabs
             Check();
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
         private void tbName_TextChanged(object sender, EventArgs e)
         {
             _keyword.Name = tbName.Text;

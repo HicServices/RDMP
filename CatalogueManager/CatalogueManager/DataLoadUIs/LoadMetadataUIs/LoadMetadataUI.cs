@@ -64,11 +64,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
         {
             _loadMetadata.Description = tbDescription.Text;
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadMetadataUI_Design, UserControl>))]

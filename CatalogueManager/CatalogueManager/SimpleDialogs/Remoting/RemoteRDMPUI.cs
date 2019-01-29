@@ -43,12 +43,7 @@ namespace CatalogueManager.SimpleDialogs.Remoting
             txtUsername.Text = Remote.Username;
             txtPassword.Text = Remote.Password;
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
+        
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             Remote.Name = txtName.Text;

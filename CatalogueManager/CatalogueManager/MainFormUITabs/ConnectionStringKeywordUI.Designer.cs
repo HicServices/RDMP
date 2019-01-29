@@ -37,7 +37,7 @@
             this.tbValue = new System.Windows.Forms.TextBox();
             this.pbDatabaseProvider = new System.Windows.Forms.PictureBox();
             this.ragSmiley = new ReusableUIComponents.RAGSmiley();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.label4 = new System.Windows.Forms.Label();
             this.lblID = new System.Windows.Forms.Label();
             this.tbID = new System.Windows.Forms.TextBox();
@@ -186,7 +186,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbValue;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.PictureBox pbDatabaseProvider;
         private ReusableUIComponents.RAGSmiley ragSmiley;
         private System.Windows.Forms.Label label4;

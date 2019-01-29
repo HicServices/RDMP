@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.lblPath = new System.Windows.Forms.Label();
             this.pbFile = new System.Windows.Forms.PictureBox();
@@ -136,7 +136,7 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.PictureBox pbFile;

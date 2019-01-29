@@ -523,12 +523,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             AddToMenu(new ExecuteCommandViewSqlParameters(activator, databaseObject));
 
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
+        
         private void tbName_TextChanged(object sender, EventArgs e)
         {
             _aggregate.Name = tbName.Text;

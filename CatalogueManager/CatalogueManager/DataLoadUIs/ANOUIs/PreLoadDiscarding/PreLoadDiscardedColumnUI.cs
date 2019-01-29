@@ -110,10 +110,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
             RunChecks();
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
+
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PreLoadDiscardedColumnUI_Design, UserControl>))]

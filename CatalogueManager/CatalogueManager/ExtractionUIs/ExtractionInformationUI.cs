@@ -72,7 +72,7 @@ namespace CatalogueManager.ExtractionUIs
             QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
             QueryEditor.TextChanged += QueryEditorOnTextChanged;
 
-            objectSaverButton1.BeforeSave += BeforeSave;
+            ObjectSaverButton1.BeforeSave += BeforeSave;
 
             AssociatedCollection = RDMPCollection.Catalogue;
         }
@@ -125,7 +125,7 @@ namespace CatalogueManager.ExtractionUIs
             
             Setup(databaseObject);
 
-            objectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
+            ObjectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
             
             AddToMenu(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Go To Catalogue Item");
             AddToMenu(new ExecuteCommandShow(activator, databaseObject.ColumnInfo,0,true));
@@ -266,11 +266,6 @@ namespace CatalogueManager.ExtractionUIs
                     "You must put in an Alias ( AS XYZ ) at the end of your query if you want to hash it on extraction (to a researcher)");
                 e.Cancel = true;
             }
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         public override string GetTabName()

@@ -50,7 +50,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Tables;
-            objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
+            ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, TableInfo databaseObject)
@@ -189,11 +189,6 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             {
                 ExceptionViewer.Show(exception);
             }
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
     }

@@ -197,12 +197,7 @@ namespace CatalogueManager.SimpleDialogs
             if (_supportingSQLTable != null)
                 _supportingSQLTable.Ticket = tcTicket.TicketText;
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
+        
         private void btnAdd_Click(object sender, EventArgs e)
         {
             var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null, ServerDefaults.PermissableDefaults.None);

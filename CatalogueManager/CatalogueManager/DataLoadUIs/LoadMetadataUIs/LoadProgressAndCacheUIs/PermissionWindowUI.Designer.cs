@@ -48,7 +48,7 @@
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.SuspendLayout();
             // 
@@ -291,7 +291,7 @@
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private ReusableUIComponents.RAGSmiley ragSmiley1;
     }
 }

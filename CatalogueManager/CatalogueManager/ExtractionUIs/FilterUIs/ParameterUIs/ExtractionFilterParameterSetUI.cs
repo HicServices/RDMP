@@ -84,11 +84,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             base.SetDatabaseObject(activator,databaseObject);
             ExtractionFilterParameterSet = databaseObject;
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionFilterParameterSetUI_Design, UserControl>))]

@@ -409,11 +409,6 @@ namespace CatalogueManager.Issues
             if (timeSpan == TimeSpan.Zero) return dateTime; // Or could throw an ArgumentException
             return dateTime.AddTicks(-(dateTime.Ticks % timeSpan.Ticks));
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<IssueUI_Design, UserControl>))]

@@ -36,7 +36,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbID = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.btnRefreshParameters = new System.Windows.Forms.Button();
             this.parameterCollectionUI1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterCollectionUI();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -178,6 +178,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ParameterCollectionUI parameterCollectionUI1;
         private System.Windows.Forms.Button btnRefreshParameters;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
     }
 }

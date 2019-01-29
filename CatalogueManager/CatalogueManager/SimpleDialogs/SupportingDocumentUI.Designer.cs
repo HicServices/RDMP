@@ -42,7 +42,7 @@ namespace CatalogueManager.SimpleDialogs
             this.cbExtractable = new System.Windows.Forms.CheckBox();
             this.cbIsGlobal = new System.Windows.Forms.CheckBox();
             this.gbSelectedEntity = new System.Windows.Forms.GroupBox();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.gbSelectedEntity.SuspendLayout();
@@ -228,6 +228,6 @@ namespace CatalogueManager.SimpleDialogs
         private System.Windows.Forms.GroupBox gbSelectedEntity;
         private TicketingControl ticketingControl1;
         private System.Windows.Forms.Button btnBrowse;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
     }
 }

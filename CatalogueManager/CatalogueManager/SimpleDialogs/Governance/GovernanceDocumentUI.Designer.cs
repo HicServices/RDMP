@@ -39,7 +39,7 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
             this.btnOpenContainingFolder = new System.Windows.Forms.Button();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.SuspendLayout();
             // 
             // label1
@@ -184,6 +184,6 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.Button btnOpenContainingFolder;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
     }
 }

@@ -33,7 +33,7 @@
             this.pPipeline = new System.Windows.Forms.Panel();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.ddCacheLagDelayDurationType = new System.Windows.Forms.ComboBox();
             this.udCacheLagDelayPeriodDuration = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
@@ -263,7 +263,7 @@
         private System.Windows.Forms.NumericUpDown udCacheLagDelayPeriodDuration;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Panel pPipeline;

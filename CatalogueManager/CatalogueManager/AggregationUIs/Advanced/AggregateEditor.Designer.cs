@@ -56,7 +56,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.label2 = new System.Windows.Forms.Label();
             this._aggregateTopXui1 = new CatalogueManager.AggregationUIs.Advanced.AggregateTopXUI();
             this.selectColumnUI1 = new CatalogueManager.AggregationUIs.Advanced.SelectColumnUI();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -443,7 +443,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;
         private AggregateTopXUI _aggregateTopXui1;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label label6;

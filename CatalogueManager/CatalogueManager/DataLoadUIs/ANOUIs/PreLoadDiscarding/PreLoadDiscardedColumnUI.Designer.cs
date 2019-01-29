@@ -39,7 +39,7 @@
             this.btnCheck = new System.Windows.Forms.Button();
             this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.label5 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.SuspendLayout();
             // 
             // tbRuntimeColumnName
@@ -181,6 +181,6 @@
         private System.Windows.Forms.Button btnCheck;
         private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Label label5;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
     }
 }

@@ -39,7 +39,7 @@
             this.label37 = new System.Windows.Forms.Label();
             this.tbTableInfoID = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.label1 = new System.Windows.Forms.Label();
             this.tbSchema = new System.Windows.Forms.TextBox();
@@ -232,7 +232,7 @@
         private System.Windows.Forms.Label label38;
         private System.Windows.Forms.Button btnParameters;
         private System.Windows.Forms.Button btnSynchronize;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbSchema;

@@ -48,7 +48,7 @@ namespace CohortManager.SubComponents
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.btnClearCache = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.ticket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.queryCachingServerSelector = new CatalogueManager.AggregationUIs.QueryCachingServerSelector();
             this.btnAbortLoad = new System.Windows.Forms.Button();

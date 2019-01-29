@@ -154,11 +154,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
                 ExceptionViewer.Show(exception);
             }
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<GovernanceDocumentUI_Design, UserControl>))]

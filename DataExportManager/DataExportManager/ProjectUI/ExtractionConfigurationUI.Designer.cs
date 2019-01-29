@@ -46,7 +46,7 @@ namespace DataExportManager.ProjectUI
             this.pbCic = new System.Windows.Forms.PictureBox();
             this.cbxCohortIdentificationConfiguration = new ReusableUIComponents.SuggestComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.label2 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.gbCohortRefreshing.SuspendLayout();

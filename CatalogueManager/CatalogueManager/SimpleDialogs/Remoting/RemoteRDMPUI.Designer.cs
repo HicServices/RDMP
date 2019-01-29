@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.txtBaseUrl = new System.Windows.Forms.TextBox();
@@ -129,7 +129,7 @@
 
         #endregion
 
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.TextBox txtUsername;
         private System.Windows.Forms.TextBox txtBaseUrl;

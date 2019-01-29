@@ -36,7 +36,7 @@ namespace CatalogueManager.CredentialsUIs
             this.label3 = new System.Windows.Forms.Label();
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.tbPassword = new System.Windows.Forms.TextBox();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.SuspendLayout();
             // 
             // label1
@@ -118,6 +118,6 @@ namespace CatalogueManager.CredentialsUIs
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbUsername;
         private System.Windows.Forms.TextBox tbPassword;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
     }
 }

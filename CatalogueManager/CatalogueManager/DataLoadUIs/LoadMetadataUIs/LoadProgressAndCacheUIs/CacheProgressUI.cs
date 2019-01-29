@@ -180,11 +180,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             return cacheLagPeriod;
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
+        
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             _cacheProgress.RevertToDatabaseState();

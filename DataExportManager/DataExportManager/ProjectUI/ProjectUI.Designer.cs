@@ -47,7 +47,7 @@ namespace DataExportManager.ProjectUI
             this.dataGridView1 = new DataGridView();
             this.extractableCohortCollection1 = new DataExportManager.CohortUI.ExtractableCohortCollection();
             this.tcMasterTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.btnBrowse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();

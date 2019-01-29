@@ -46,7 +46,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.btnAddCatalogue = new System.Windows.Forms.Button();
             this.btnImportCatalogues = new System.Windows.Forms.Button();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.lblExpired = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
@@ -273,7 +273,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private System.Windows.Forms.DateTimePicker dtpStartDate;
         private System.Windows.Forms.Label label3;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.Label lblExpired;
         private System.Windows.Forms.Panel panel1;
     }

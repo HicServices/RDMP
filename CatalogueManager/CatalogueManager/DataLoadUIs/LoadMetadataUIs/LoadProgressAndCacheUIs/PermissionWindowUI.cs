@@ -99,11 +99,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             _permissionWindow.SetPermissionWindowPeriods(periodList);
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
         private void tbName_TextChanged(object sender, EventArgs e)
         {
             _permissionWindow.Name = tbName.Text;

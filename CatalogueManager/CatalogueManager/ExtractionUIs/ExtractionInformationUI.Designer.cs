@@ -42,7 +42,7 @@ namespace CatalogueManager.ExtractionUIs
             this.cbHashOnDataRelease = new System.Windows.Forms.CheckBox();
             this.cbIsExtractionIdentifier = new System.Windows.Forms.CheckBox();
             this.cbIsPrimaryKey = new System.Windows.Forms.CheckBox();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.label4 = new System.Windows.Forms.Label();
             this.pSql = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
@@ -265,7 +265,7 @@ namespace CatalogueManager.ExtractionUIs
         private System.Windows.Forms.CheckBox cbIsExtractionIdentifier;
         private System.Windows.Forms.CheckBox cbIsPrimaryKey;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Panel pSql;
         private System.Windows.Forms.Label label5;

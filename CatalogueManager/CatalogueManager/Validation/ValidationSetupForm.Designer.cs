@@ -46,7 +46,7 @@ namespace CatalogueManager.Validation
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.cbxTimePeriodColumn = new System.Windows.Forms.ToolStripComboBox();
@@ -348,7 +348,7 @@ namespace CatalogueManager.Validation
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cbxTimePeriodColumn;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;

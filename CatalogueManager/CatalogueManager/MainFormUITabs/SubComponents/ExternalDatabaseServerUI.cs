@@ -149,11 +149,6 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             ddSetKnownType.Text = null;
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
         private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_server == null)

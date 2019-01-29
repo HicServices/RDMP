@@ -178,10 +178,6 @@ namespace CatalogueManager.SimpleDialogs
                 tbUrl.Text = ofd.FileName;
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingDocumentUI_Design, UserControl>))]

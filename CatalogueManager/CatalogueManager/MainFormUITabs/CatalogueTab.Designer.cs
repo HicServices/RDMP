@@ -721,6 +721,7 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.Panel2.Controls.Add(this.c_tbGeographicalCoverage);
             this.splitContainer1.Panel2.Controls.Add(this.label19);
             this.splitContainer1.Panel2.Controls.Add(this.ticketingControl1);
+            this.splitContainer1.Panel2Collapsed = true;
             this.splitContainer1.Size = new System.Drawing.Size(717, 940);
             this.splitContainer1.SplitterDistance = 274;
             this.splitContainer1.TabIndex = 114;

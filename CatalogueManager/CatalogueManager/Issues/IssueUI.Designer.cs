@@ -69,7 +69,7 @@ namespace CatalogueManager.Issues
             this.btnOpenFile = new System.Windows.Forms.Button();
             this.lbError = new System.Windows.Forms.Label();
             this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.SuspendLayout();
             // 
             // pSQL
@@ -531,6 +531,6 @@ namespace CatalogueManager.Issues
         private System.Windows.Forms.Button btnOpenFile;
         private System.Windows.Forms.Label lbError;
         private TicketingControl ticketingControl1;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
     }
 }

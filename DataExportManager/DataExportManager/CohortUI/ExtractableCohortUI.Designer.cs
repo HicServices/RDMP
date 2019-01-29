@@ -39,7 +39,7 @@ namespace DataExportManager.CohortUI
             this.label1 = new System.Windows.Forms.Label();
             this.tbOverrideReleaseIdentifierSQL = new System.Windows.Forms.TextBox();
             this.pDescription = new System.Windows.Forms.Panel();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             this.tlvCohortUsage = new BrightIdeasSoftware.TreeListView();
             this.olvUsedIn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));

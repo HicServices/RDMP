@@ -43,7 +43,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbID = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.gbTesting.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -234,6 +234,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbTesting;
         private System.Windows.Forms.GroupBox gbTesting;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
     }
 }

@@ -36,7 +36,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             this.label1 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.SuspendLayout();
             // 
             // tbName
@@ -119,6 +119,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.Label label3;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
     }
 }

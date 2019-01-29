@@ -32,7 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
             this.pArguments = new System.Windows.Forms.Panel();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.loadStageIconUI1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadStageIconUI();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.btnCheckAgain = new System.Windows.Forms.Button();
@@ -115,7 +115,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Panel pArguments;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private LoadStageIconUI loadStageIconUI1;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnCheckAgain;

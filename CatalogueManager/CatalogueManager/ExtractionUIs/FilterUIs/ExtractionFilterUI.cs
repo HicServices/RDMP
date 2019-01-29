@@ -90,8 +90,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             #endregion QueryEditor
 
             
-            objectSaverButton1.BeforeSave += BeforeSave;
-            objectSaverButton1.AfterSave += AfterSave;
+            ObjectSaverButton1.BeforeSave += BeforeSave;
+            ObjectSaverButton1.AfterSave += AfterSave;
 
             autocompleteReminder.Setup("Show Objects",Keys.Control,Keys.Space);
         }
@@ -134,7 +134,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                     MessageBox.Show(
                         "You have unsaved changes to Filter \"" + ExtractionFilter.Name +
                         "\", would you like to save these now?", "Save Changes to Filter?", MessageBoxButtons.YesNo))
-                    objectSaverButton1.Save();
+                    ObjectSaverButton1.Save();
                 else
                 {
                     try
@@ -352,11 +352,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                     this.ParentForm.Close();
                 else
                     ExtractionFilter = (IFilter) e.Object;
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
     }
 

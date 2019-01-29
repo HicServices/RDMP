@@ -80,7 +80,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                     _scintilla = factory.Create(new RDMPCommandFactory());
                     groupBox1.Controls.Add(_scintilla);
                     _scintilla.SavePointLeft += ScintillaOnSavePointLeft;
-                    objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;    
+                    ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;    
                 }
             
                 SetupAutocomplete();
@@ -133,12 +133,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             if (_bLoading)
                 return;
 
-            objectSaverButton1.Enable(true);
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
+            ObjectSaverButton1.Enable(true);
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

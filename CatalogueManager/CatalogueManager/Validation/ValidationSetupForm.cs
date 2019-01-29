@@ -91,7 +91,7 @@ namespace CatalogueManager.Validation
 
             _catalogue = databaseObject;
 
-            objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
+            ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
             olvName.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
 
@@ -233,7 +233,7 @@ namespace CatalogueManager.Validation
 
 
             bSuppressChangeEvents = false;
-            objectSaverButton1.Enable(true);
+            ObjectSaverButton1.Enable(true);
         }
 
         private void btnAddSecondaryConstraint_Click(object sender, EventArgs e)
@@ -251,7 +251,7 @@ namespace CatalogueManager.Validation
                 
                 SelectedColumnItemValidator.SecondaryConstraints.Add(secondaryConstriant);
                 AddSecondaryConstraintControl(secondaryConstriant);
-                objectSaverButton1.Enable(true);
+                ObjectSaverButton1.Enable(true);
             }
         }
 
@@ -261,7 +261,7 @@ namespace CatalogueManager.Validation
 
             SelectedColumnItemValidator.SecondaryConstraints.Remove(toDelete);
             tableLayoutPanel1.Controls.Remove(sender as Control);
-            objectSaverButton1.Enable(true);
+            ObjectSaverButton1.Enable(true);
         }
 
         private void AddSecondaryConstraintControl(SecondaryConstraint secondaryConstriant)
@@ -289,7 +289,7 @@ namespace CatalogueManager.Validation
                 if (SelectedColumnItemValidator.PrimaryConstraint != null)
                 {
                     SelectedColumnItemValidator.PrimaryConstraint.Consequence = (Consequence) ddConsequence.SelectedValue;
-                    objectSaverButton1.Enable(true);
+                    ObjectSaverButton1.Enable(true);
                 }
                 else
                 {
@@ -367,11 +367,6 @@ namespace CatalogueManager.Validation
             {
                 return false;
             }
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         private void cbxTimePeriodColumn_SelectedIndexChanged(object sender, EventArgs e)

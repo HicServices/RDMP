@@ -51,7 +51,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.tbServerName = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.tbMappedDataPath = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.pbDatabaseProvider = new System.Windows.Forms.PictureBox();
@@ -368,7 +368,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbServerName;
         private System.Windows.Forms.Label label3;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.TextBox tbMappedDataPath;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.PictureBox pbDatabaseProvider;
