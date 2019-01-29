@@ -1,17 +1,14 @@
 using System;
-using System.ComponentModel;
 using System.Drawing;
-using System.Runtime.InteropServices;
+using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -34,7 +31,9 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         protected IActivateItems _activator;
 
         private BinderWithErrorProviderFactory _binder;
-        
+
+        protected ObjectSaverButton ObjectSaverButton1 = new ObjectSaverButton();
+
         public DatabaseEntity DatabaseObject { get; private set; }
         protected RDMPCollection AssociatedCollection = RDMPCollection.None;
 
@@ -66,9 +65,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             SetItemActivator(activator);
 
-            var saveable = this as ISaveableUI;
-            if (saveable != null)
-                saveable.GetObjectSaverButton().SetupFor(this, databaseObject, activator.RefreshBus);
+            ObjectSaverButton1.SetupFor(this, databaseObject, activator.RefreshBus);
 
         }
 
@@ -86,9 +83,39 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="propertyName"></param>
         /// <param name="dataMember"></param>
         /// <param name="getter"></param>
-        protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter)
+        protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter, bool formattingEnabled = true,DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
         {
-            _binder.Bind(c,propertyName,(T)DatabaseObject,dataMember,false,DataSourceUpdateMode.OnPropertyChanged, getter);
+            _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
+        }
+
+
+        /// <summary>
+        /// Parses the datetime out of the <paramref name="tb"/> with blank being null.  If the string doesn't parse
+        /// then the text will turn red.
+        /// </summary>
+        /// <param name="tb"></param>
+        /// <param name="p"></param>
+        protected void SetDate(TextBox tb, Action<DateTime?> action)
+        {
+            try
+            {
+                
+                if (string.IsNullOrWhiteSpace(tb.Text))
+                {
+                    action(null);
+                    return;
+                }
+
+                DateTime dateTime = DateTime.Parse(tb.Text);
+                action(dateTime);
+
+                tb.ForeColor = Color.Black;
+
+            }
+            catch (Exception)
+            {
+                tb.ForeColor = Color.Red;
+            }
         }
 
         protected override void InitializeToolStrip()
@@ -156,5 +183,9 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             }
         }
 
+        public virtual ObjectSaverButton GetObjectSaverButton()
+        {
+            return ObjectSaverButton1;
+        }
     }
 }

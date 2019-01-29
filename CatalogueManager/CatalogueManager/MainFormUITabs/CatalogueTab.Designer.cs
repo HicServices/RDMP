@@ -1,4 +1,5 @@
-﻿using CatalogueManager.LocationsMenu.Ticketing;
+﻿using System.Windows.Forms;
+using CatalogueManager.LocationsMenu.Ticketing;
 using CatalogueManager.MainFormUITabs.SubComponents;
 
 namespace CatalogueManager.MainFormUITabs
@@ -31,9 +32,9 @@ namespace CatalogueManager.MainFormUITabs
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label24 = new System.Windows.Forms.Label();
             this.tbFolder = new System.Windows.Forms.TextBox();
-            this.lblReasonNameIsUnacceptable = new System.Windows.Forms.Label();
             this.tbDatasetStartDate = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
@@ -94,7 +95,6 @@ namespace CatalogueManager.MainFormUITabs
             this.cbColdStorage = new System.Windows.Forms.CheckBox();
             this.cbInternal = new System.Windows.Forms.CheckBox();
             this.cbDeprecated = new System.Windows.Forms.CheckBox();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.label34 = new System.Windows.Forms.Label();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             this.label33 = new System.Windows.Forms.Label();
@@ -112,16 +112,18 @@ namespace CatalogueManager.MainFormUITabs
             this.label15 = new System.Windows.Forms.Label();
             this.tbAdministrativeContactName = new System.Windows.Forms.TextBox();
             this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(390, 77);
+            this.label24.Location = new System.Drawing.Point(390, 52);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(36, 13);
             this.label24.TabIndex = 152;
@@ -131,22 +133,11 @@ namespace CatalogueManager.MainFormUITabs
             // 
             this.tbFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFolder.Location = new System.Drawing.Point(432, 74);
+            this.tbFolder.Location = new System.Drawing.Point(432, 49);
             this.tbFolder.Name = "tbFolder";
             this.tbFolder.Size = new System.Drawing.Size(259, 20);
             this.tbFolder.TabIndex = 151;
             this.tbFolder.TextChanged += new System.EventHandler(this.tbFolder_TextChanged);
-            // 
-            // lblReasonNameIsUnacceptable
-            // 
-            this.lblReasonNameIsUnacceptable.AutoSize = true;
-            this.lblReasonNameIsUnacceptable.ForeColor = System.Drawing.Color.Red;
-            this.lblReasonNameIsUnacceptable.Location = new System.Drawing.Point(119, 55);
-            this.lblReasonNameIsUnacceptable.Name = "lblReasonNameIsUnacceptable";
-            this.lblReasonNameIsUnacceptable.Size = new System.Drawing.Size(78, 13);
-            this.lblReasonNameIsUnacceptable.TabIndex = 150;
-            this.lblReasonNameIsUnacceptable.Text = "ReasonInvalid:";
-            this.lblReasonNameIsUnacceptable.Visible = false;
             // 
             // tbDatasetStartDate
             // 
@@ -182,7 +173,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbSubjectNumbers.Name = "c_tbSubjectNumbers";
             this.c_tbSubjectNumbers.Size = new System.Drawing.Size(263, 20);
             this.c_tbSubjectNumbers.TabIndex = 133;
-            this.c_tbSubjectNumbers.TextChanged += new System.EventHandler(this.c_tbSubjectNumbers_TextChanged);
             // 
             // tbDataStandards
             // 
@@ -192,7 +182,6 @@ namespace CatalogueManager.MainFormUITabs
             this.tbDataStandards.Name = "tbDataStandards";
             this.tbDataStandards.Size = new System.Drawing.Size(555, 81);
             this.tbDataStandards.TabIndex = 26;
-            this.tbDataStandards.TextChanged += new System.EventHandler(this.tbDataStandards_TextChanged);
             // 
             // label26
             // 
@@ -218,7 +207,6 @@ namespace CatalogueManager.MainFormUITabs
             this.tbCountryOfOrigin.Name = "tbCountryOfOrigin";
             this.tbCountryOfOrigin.Size = new System.Drawing.Size(554, 20);
             this.tbCountryOfOrigin.TabIndex = 25;
-            this.tbCountryOfOrigin.TextChanged += new System.EventHandler(this.tbCountryOfOrigin_TextChanged);
             // 
             // label1
             // 
@@ -260,7 +248,7 @@ namespace CatalogueManager.MainFormUITabs
             // 
             // c_tbAcronym
             // 
-            this.c_tbAcronym.Location = new System.Drawing.Point(119, 74);
+            this.c_tbAcronym.Location = new System.Drawing.Point(119, 49);
             this.c_tbAcronym.Name = "c_tbAcronym";
             this.c_tbAcronym.Size = new System.Drawing.Size(263, 20);
             this.c_tbAcronym.TabIndex = 2;
@@ -297,13 +285,12 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbDescription.AcceptsReturn = true;
             this.c_tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.c_tbDescription.Location = new System.Drawing.Point(119, 100);
+            this.c_tbDescription.Location = new System.Drawing.Point(119, 75);
             this.c_tbDescription.Multiline = true;
             this.c_tbDescription.Name = "c_tbDescription";
             this.c_tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.c_tbDescription.Size = new System.Drawing.Size(595, 141);
             this.c_tbDescription.TabIndex = 4;
-            this.c_tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
             // c_tbID
             // 
@@ -337,7 +324,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbDetailPageURL.Name = "c_tbDetailPageURL";
             this.c_tbDetailPageURL.Size = new System.Drawing.Size(554, 20);
             this.c_tbDetailPageURL.TabIndex = 5;
-            this.c_tbDetailPageURL.TextChanged += new System.EventHandler(this.tbDetailPageURL_TextChanged);
             // 
             // label19
             // 
@@ -351,7 +337,7 @@ namespace CatalogueManager.MainFormUITabs
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(20, 77);
+            this.label2.Location = new System.Drawing.Point(20, 52);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(97, 13);
             this.label2.TabIndex = 58;
@@ -365,7 +351,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbGeographicalCoverage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.c_tbGeographicalCoverage.Size = new System.Drawing.Size(554, 50);
             this.c_tbGeographicalCoverage.TabIndex = 7;
-            this.c_tbGeographicalCoverage.TextChanged += new System.EventHandler(this.tbCoverage_TextChanged);
             // 
             // c_tbName
             // 
@@ -373,7 +358,7 @@ namespace CatalogueManager.MainFormUITabs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.c_tbName.Location = new System.Drawing.Point(119, 25);
             this.c_tbName.Name = "c_tbName";
-            this.c_tbName.Size = new System.Drawing.Size(271, 20);
+            this.c_tbName.Size = new System.Drawing.Size(263, 20);
             this.c_tbName.TabIndex = 1;
             this.c_tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
@@ -398,7 +383,7 @@ namespace CatalogueManager.MainFormUITabs
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 100);
+            this.label3.Location = new System.Drawing.Point(6, 75);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(109, 13);
             this.label3.TabIndex = 61;
@@ -410,7 +395,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbUpdateFrequency.Name = "c_tbUpdateFrequency";
             this.c_tbUpdateFrequency.Size = new System.Drawing.Size(263, 20);
             this.c_tbUpdateFrequency.TabIndex = 13;
-            this.c_tbUpdateFrequency.TextChanged += new System.EventHandler(this.tbUpdateFrequency_TextChanged);
             // 
             // label4
             // 
@@ -436,7 +420,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbSourceUrl.Name = "c_tbSourceUrl";
             this.c_tbSourceUrl.Size = new System.Drawing.Size(554, 20);
             this.c_tbSourceUrl.TabIndex = 24;
-            this.c_tbSourceUrl.TextChanged += new System.EventHandler(this.tbSourceUrl_TextChanged);
             // 
             // c_tbTopics
             // 
@@ -446,7 +429,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbTopics.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.c_tbTopics.Size = new System.Drawing.Size(263, 56);
             this.c_tbTopics.TabIndex = 11;
-            this.c_tbTopics.TextChanged += new System.EventHandler(this.tbTopics_TextChanged);
             // 
             // label5
             // 
@@ -473,7 +455,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbQueryToolUrl.Name = "c_tbQueryToolUrl";
             this.c_tbQueryToolUrl.Size = new System.Drawing.Size(554, 20);
             this.c_tbQueryToolUrl.TabIndex = 23;
-            this.c_tbQueryToolUrl.TextChanged += new System.EventHandler(this.tbQueryToolUrl_TextChanged);
             // 
             // c_tbBackgroundSummary
             // 
@@ -483,7 +464,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbBackgroundSummary.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.c_tbBackgroundSummary.Size = new System.Drawing.Size(554, 73);
             this.c_tbBackgroundSummary.TabIndex = 9;
-            this.c_tbBackgroundSummary.TextChanged += new System.EventHandler(this.tbNotes_TextChanged);
             // 
             // label6
             // 
@@ -500,7 +480,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbBulkDownloadUrl.Name = "c_tbBulkDownloadUrl";
             this.c_tbBulkDownloadUrl.Size = new System.Drawing.Size(554, 20);
             this.c_tbBulkDownloadUrl.TabIndex = 22;
-            this.c_tbBulkDownloadUrl.TextChanged += new System.EventHandler(this.tbBulkDownloadUrl_TextChanged);
             // 
             // c_tbTimeCoverage
             // 
@@ -508,7 +487,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbTimeCoverage.Name = "c_tbTimeCoverage";
             this.c_tbTimeCoverage.Size = new System.Drawing.Size(263, 20);
             this.c_tbTimeCoverage.TabIndex = 15;
-            this.c_tbTimeCoverage.TextChanged += new System.EventHandler(this.tbTimeCoverage_TextChanged);
             // 
             // label7
             // 
@@ -534,7 +512,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbBrowseUrl.Name = "c_tbBrowseUrl";
             this.c_tbBrowseUrl.Size = new System.Drawing.Size(554, 20);
             this.c_tbBrowseUrl.TabIndex = 21;
-            this.c_tbBrowseUrl.TextChanged += new System.EventHandler(this.tbBrowseUrl_TextChanged);
             // 
             // c_tbUpdateSchedule
             // 
@@ -542,7 +519,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbUpdateSchedule.Name = "c_tbUpdateSchedule";
             this.c_tbUpdateSchedule.Size = new System.Drawing.Size(263, 20);
             this.c_tbUpdateSchedule.TabIndex = 14;
-            this.c_tbUpdateSchedule.TextChanged += new System.EventHandler(this.tbUpdateSchedule_TextChanged);
             // 
             // label13
             // 
@@ -559,7 +535,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbAPIAccessURL.Name = "c_tbAPIAccessURL";
             this.c_tbAPIAccessURL.Size = new System.Drawing.Size(554, 20);
             this.c_tbAPIAccessURL.TabIndex = 20;
-            this.c_tbAPIAccessURL.TextChanged += new System.EventHandler(this.tbAPIAccessURL_TextChanged);
             // 
             // label10
             // 
@@ -578,7 +553,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_ddPeriodicity.Name = "c_ddPeriodicity";
             this.c_ddPeriodicity.Size = new System.Drawing.Size(263, 21);
             this.c_ddPeriodicity.TabIndex = 10;
-            this.c_ddPeriodicity.SelectedIndexChanged += new System.EventHandler(this.ddPeriodicity_SelectedIndexChanged);
             // 
             // c_tbAccessOptions
             // 
@@ -586,7 +560,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbAccessOptions.Name = "c_tbAccessOptions";
             this.c_tbAccessOptions.Size = new System.Drawing.Size(263, 20);
             this.c_tbAccessOptions.TabIndex = 19;
-            this.c_tbAccessOptions.TextChanged += new System.EventHandler(this.tbAccessOptions_TextChanged);
             // 
             // c_tbLastRevisionDate
             // 
@@ -594,7 +567,7 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbLastRevisionDate.Name = "c_tbLastRevisionDate";
             this.c_tbLastRevisionDate.Size = new System.Drawing.Size(263, 20);
             this.c_tbLastRevisionDate.TabIndex = 16;
-            this.c_tbLastRevisionDate.TextChanged += new System.EventHandler(this.tbLastRevisionDate_TextChanged);
+            this.c_tbLastRevisionDate.TextChanged += new System.EventHandler(this.c_tbLastRevisionDate_TextChanged);
             // 
             // label9
             // 
@@ -614,7 +587,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_ddType.Name = "c_ddType";
             this.c_ddType.Size = new System.Drawing.Size(263, 21);
             this.c_ddType.TabIndex = 6;
-            this.c_ddType.SelectedIndexChanged += new System.EventHandler(this.ddType_SelectedIndexChanged);
             // 
             // c_tbResourceOwner
             // 
@@ -622,7 +594,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbResourceOwner.Name = "c_tbResourceOwner";
             this.c_tbResourceOwner.Size = new System.Drawing.Size(263, 20);
             this.c_tbResourceOwner.TabIndex = 17;
-            this.c_tbResourceOwner.TextChanged += new System.EventHandler(this.c_tbResourceOwner_TextChanged);
             // 
             // c_tbAttributionCitation
             // 
@@ -632,7 +603,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_tbAttributionCitation.Name = "c_tbAttributionCitation";
             this.c_tbAttributionCitation.Size = new System.Drawing.Size(572, 81);
             this.c_tbAttributionCitation.TabIndex = 18;
-            this.c_tbAttributionCitation.TextChanged += new System.EventHandler(this.tbAttributionCitation_TextChanged);
             // 
             // label8
             // 
@@ -659,6 +629,7 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Panel2Collapsed = true;
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
@@ -670,7 +641,6 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.Panel1.Controls.Add(this.label34);
             this.splitContainer1.Panel1.Controls.Add(this.tbFolder);
             this.splitContainer1.Panel1.Controls.Add(this.btnExpandOrCollapse);
-            this.splitContainer1.Panel1.Controls.Add(this.lblReasonNameIsUnacceptable);
             this.splitContainer1.Panel1.Controls.Add(this.c_tbID);
             this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Controls.Add(this.c_tbName);
@@ -746,7 +716,6 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.Panel2.Controls.Add(this.c_tbGeographicalCoverage);
             this.splitContainer1.Panel2.Controls.Add(this.label19);
             this.splitContainer1.Panel2.Controls.Add(this.ticketingControl1);
-            this.splitContainer1.Panel2Collapsed = true;
             this.splitContainer1.Size = new System.Drawing.Size(717, 940);
             this.splitContainer1.SplitterDistance = 274;
             this.splitContainer1.TabIndex = 114;
@@ -754,7 +723,7 @@ namespace CatalogueManager.MainFormUITabs
             // cbColdStorage
             // 
             this.cbColdStorage.AutoSize = true;
-            this.cbColdStorage.Location = new System.Drawing.Point(11, 198);
+            this.cbColdStorage.Location = new System.Drawing.Point(11, 173);
             this.cbColdStorage.Name = "cbColdStorage";
             this.cbColdStorage.Size = new System.Drawing.Size(84, 17);
             this.cbColdStorage.TabIndex = 165;
@@ -764,7 +733,7 @@ namespace CatalogueManager.MainFormUITabs
             // cbInternal
             // 
             this.cbInternal.AutoSize = true;
-            this.cbInternal.Location = new System.Drawing.Point(11, 175);
+            this.cbInternal.Location = new System.Drawing.Point(11, 150);
             this.cbInternal.Name = "cbInternal";
             this.cbInternal.Size = new System.Drawing.Size(61, 17);
             this.cbInternal.TabIndex = 165;
@@ -774,7 +743,7 @@ namespace CatalogueManager.MainFormUITabs
             // cbDeprecated
             // 
             this.cbDeprecated.AutoSize = true;
-            this.cbDeprecated.Location = new System.Drawing.Point(11, 152);
+            this.cbDeprecated.Location = new System.Drawing.Point(11, 127);
             this.cbDeprecated.Name = "cbDeprecated";
             this.cbDeprecated.Size = new System.Drawing.Size(82, 17);
             this.cbDeprecated.TabIndex = 165;
@@ -784,7 +753,7 @@ namespace CatalogueManager.MainFormUITabs
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(44, 252);
+            this.label34.Location = new System.Drawing.Point(44, 231);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(83, 13);
             this.label34.TabIndex = 163;
@@ -792,7 +761,7 @@ namespace CatalogueManager.MainFormUITabs
             // 
             // btnExpandOrCollapse
             // 
-            this.btnExpandOrCollapse.Location = new System.Drawing.Point(9, 247);
+            this.btnExpandOrCollapse.Location = new System.Drawing.Point(9, 226);
             this.btnExpandOrCollapse.Name = "btnExpandOrCollapse";
             this.btnExpandOrCollapse.Size = new System.Drawing.Size(29, 23);
             this.btnExpandOrCollapse.TabIndex = 162;
@@ -817,7 +786,6 @@ namespace CatalogueManager.MainFormUITabs
             this.tbSourceOfDataCollection.Name = "tbSourceOfDataCollection";
             this.tbSourceOfDataCollection.Size = new System.Drawing.Size(559, 81);
             this.tbSourceOfDataCollection.TabIndex = 156;
-            this.tbSourceOfDataCollection.TextChanged += new System.EventHandler(this.tbSourceOfDataCollection_TextChanged);
             // 
             // label32
             // 
@@ -834,7 +802,6 @@ namespace CatalogueManager.MainFormUITabs
             this.tbEthicsApprover.Name = "tbEthicsApprover";
             this.tbEthicsApprover.Size = new System.Drawing.Size(559, 20);
             this.tbEthicsApprover.TabIndex = 155;
-            this.tbEthicsApprover.TextChanged += new System.EventHandler(this.tbEthicsApprover_TextChanged);
             // 
             // ddExplicitConsent
             // 
@@ -876,7 +843,6 @@ namespace CatalogueManager.MainFormUITabs
             this.tbAdministrativeContactAddress.Name = "tbAdministrativeContactAddress";
             this.tbAdministrativeContactAddress.Size = new System.Drawing.Size(560, 81);
             this.tbAdministrativeContactAddress.TabIndex = 153;
-            this.tbAdministrativeContactAddress.TextChanged += new System.EventHandler(this.tbAdministrativeContactAddress_TextChanged);
             // 
             // label30
             // 
@@ -893,7 +859,6 @@ namespace CatalogueManager.MainFormUITabs
             this.tbAdministrativeContactTelephone.Name = "tbAdministrativeContactTelephone";
             this.tbAdministrativeContactTelephone.Size = new System.Drawing.Size(561, 20);
             this.tbAdministrativeContactTelephone.TabIndex = 152;
-            this.tbAdministrativeContactTelephone.TextChanged += new System.EventHandler(this.tbAdministrativeContactTelephone_TextChanged);
             // 
             // tbAdministrativeContactEmail
             // 
@@ -901,7 +866,6 @@ namespace CatalogueManager.MainFormUITabs
             this.tbAdministrativeContactEmail.Name = "tbAdministrativeContactEmail";
             this.tbAdministrativeContactEmail.Size = new System.Drawing.Size(561, 20);
             this.tbAdministrativeContactEmail.TabIndex = 151;
-            this.tbAdministrativeContactEmail.TextChanged += new System.EventHandler(this.tbAdministrativeContactEmail_TextChanged);
             // 
             // label29
             // 
@@ -927,7 +891,6 @@ namespace CatalogueManager.MainFormUITabs
             this.tbAdministrativeContactName.Name = "tbAdministrativeContactName";
             this.tbAdministrativeContactName.Size = new System.Drawing.Size(561, 20);
             this.tbAdministrativeContactName.TabIndex = 150;
-            this.tbAdministrativeContactName.TextChanged += new System.EventHandler(this.tbAdministrativeContactName_TextChanged);
             // 
             // ticketingControl1
             // 
@@ -936,6 +899,10 @@ namespace CatalogueManager.MainFormUITabs
             this.ticketingControl1.Size = new System.Drawing.Size(304, 54);
             this.ticketingControl1.TabIndex = 149;
             this.ticketingControl1.TicketText = "";
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
             // 
             // CatalogueTab
             // 
@@ -950,6 +917,7 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1013,7 +981,6 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.TextBox tbDatasetStartDate;
         private System.Windows.Forms.Label label41;
         private TicketingControl ticketingControl1;
-        private System.Windows.Forms.Label lblReasonNameIsUnacceptable;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.TextBox tbFolder;
         private System.Windows.Forms.SplitContainer splitContainer1;
@@ -1033,9 +1000,9 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox tbAdministrativeContactName;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.CheckBox cbColdStorage;
         private System.Windows.Forms.CheckBox cbInternal;
         private System.Windows.Forms.CheckBox cbDeprecated;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
     }
 }

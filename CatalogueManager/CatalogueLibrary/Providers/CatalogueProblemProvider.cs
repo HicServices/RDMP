@@ -48,6 +48,9 @@ namespace CatalogueLibrary.Providers
             if (o is AllGovernanceNode)
                 return DescribeProblem((AllGovernanceNode) o);
 
+            if (o is Catalogue)
+                return DescribeProblem((Catalogue)o);
+
             if (o is CatalogueItem)
                 return DescribeProblem((CatalogueItem) o);
 
@@ -56,6 +59,15 @@ namespace CatalogueLibrary.Providers
 
             if (o is ExtractionInformation)
                 return DescribeProblem((ExtractionInformation) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(Catalogue catalogue)
+        {
+            string reason;
+            if (!Catalogue.IsAcceptableName(catalogue.Name, out reason))
+                return "Invalid Name:" + reason;
 
             return null;
         }
