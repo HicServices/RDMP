@@ -51,15 +51,17 @@
             this.lblServer = new System.Windows.Forms.Label();
             this.pbServer = new System.Windows.Forms.PictureBox();
             this.gbPushedTable = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.nCharacters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nIntegers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbServer)).BeginInit();
             this.gbPushedTable.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbID
             // 
-            this.tbID.Location = new System.Drawing.Point(55, 2);
+            this.tbID.Location = new System.Drawing.Point(61, 10);
             this.tbID.Name = "tbID";
             this.tbID.ReadOnly = true;
             this.tbID.Size = new System.Drawing.Size(99, 20);
@@ -68,7 +70,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(16, 5);
+            this.label12.Location = new System.Drawing.Point(22, 13);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(21, 13);
             this.label12.TabIndex = 13;
@@ -77,7 +79,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(223, 108);
+            this.label10.Location = new System.Drawing.Point(229, 116);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(87, 13);
             this.label10.TabIndex = 11;
@@ -86,7 +88,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(1, 108);
+            this.label9.Location = new System.Drawing.Point(7, 116);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(96, 13);
             this.label9.TabIndex = 11;
@@ -94,7 +96,7 @@
             // 
             // nCharacters
             // 
-            this.nCharacters.Location = new System.Drawing.Point(312, 106);
+            this.nCharacters.Location = new System.Drawing.Point(318, 114);
             this.nCharacters.Name = "nCharacters";
             this.nCharacters.Size = new System.Drawing.Size(120, 20);
             this.nCharacters.TabIndex = 10;
@@ -102,7 +104,7 @@
             // 
             // nIntegers
             // 
-            this.nIntegers.Location = new System.Drawing.Point(97, 106);
+            this.nIntegers.Location = new System.Drawing.Point(103, 114);
             this.nIntegers.Name = "nIntegers";
             this.nIntegers.Size = new System.Drawing.Size(120, 20);
             this.nIntegers.TabIndex = 10;
@@ -110,7 +112,7 @@
             // 
             // btnFinalise
             // 
-            this.btnFinalise.Location = new System.Drawing.Point(5, 132);
+            this.btnFinalise.Location = new System.Drawing.Point(11, 140);
             this.btnFinalise.Name = "btnFinalise";
             this.btnFinalise.Size = new System.Drawing.Size(205, 23);
             this.btnFinalise.TabIndex = 12;
@@ -123,14 +125,14 @@
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(216, 144);
+            this.ragSmiley1.Location = new System.Drawing.Point(222, 152);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 15;
             // 
             // btnDropANOTable
             // 
-            this.btnDropANOTable.Location = new System.Drawing.Point(5, 161);
+            this.btnDropANOTable.Location = new System.Drawing.Point(11, 169);
             this.btnDropANOTable.Name = "btnDropANOTable";
             this.btnDropANOTable.Size = new System.Drawing.Size(205, 23);
             this.btnDropANOTable.TabIndex = 16;
@@ -141,7 +143,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 31);
+            this.label1.Location = new System.Drawing.Point(22, 39);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 13;
@@ -149,7 +151,7 @@
             // 
             // tbName
             // 
-            this.tbName.Location = new System.Drawing.Point(55, 28);
+            this.tbName.Location = new System.Drawing.Point(61, 36);
             this.tbName.Name = "tbName";
             this.tbName.ReadOnly = true;
             this.tbName.Size = new System.Drawing.Size(207, 20);
@@ -158,7 +160,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 57);
+            this.label2.Location = new System.Drawing.Point(22, 65);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(36, 13);
             this.label2.TabIndex = 13;
@@ -166,7 +168,7 @@
             // 
             // tbSuffix
             // 
-            this.tbSuffix.Location = new System.Drawing.Point(55, 54);
+            this.tbSuffix.Location = new System.Drawing.Point(61, 62);
             this.tbSuffix.Name = "tbSuffix";
             this.tbSuffix.ReadOnly = true;
             this.tbSuffix.Size = new System.Drawing.Size(99, 20);
@@ -175,7 +177,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 83);
+            this.label3.Location = new System.Drawing.Point(17, 91);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(80, 13);
             this.label3.TabIndex = 13;
@@ -183,7 +185,7 @@
             // 
             // tbInputDataType
             // 
-            this.tbInputDataType.Location = new System.Drawing.Point(97, 80);
+            this.tbInputDataType.Location = new System.Drawing.Point(103, 88);
             this.tbInputDataType.Name = "tbInputDataType";
             this.tbInputDataType.Size = new System.Drawing.Size(207, 20);
             this.tbInputDataType.TabIndex = 14;
@@ -239,7 +241,7 @@
             // lblServer
             // 
             this.lblServer.AutoSize = true;
-            this.lblServer.Location = new System.Drawing.Point(30, 193);
+            this.lblServer.Location = new System.Drawing.Point(36, 201);
             this.lblServer.Name = "lblServer";
             this.lblServer.Size = new System.Drawing.Size(38, 13);
             this.lblServer.TabIndex = 18;
@@ -248,7 +250,7 @@
             // pbServer
             // 
             this.pbServer.Image = ((System.Drawing.Image)(resources.GetObject("pbServer.Image")));
-            this.pbServer.Location = new System.Drawing.Point(5, 190);
+            this.pbServer.Location = new System.Drawing.Point(11, 198);
             this.pbServer.Name = "pbServer";
             this.pbServer.Size = new System.Drawing.Size(19, 19);
             this.pbServer.TabIndex = 19;
@@ -260,43 +262,53 @@
             this.gbPushedTable.Controls.Add(this.lblPrivate);
             this.gbPushedTable.Controls.Add(this.lblRowCount);
             this.gbPushedTable.Controls.Add(this.lblPublic);
-            this.gbPushedTable.Location = new System.Drawing.Point(5, 215);
+            this.gbPushedTable.Location = new System.Drawing.Point(11, 223);
             this.gbPushedTable.Name = "gbPushedTable";
             this.gbPushedTable.Size = new System.Drawing.Size(418, 77);
             this.gbPushedTable.TabIndex = 20;
             this.gbPushedTable.TabStop = false;
             this.gbPushedTable.Text = "PushedTable";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label12);
+            this.panel1.Controls.Add(this.gbPushedTable);
+            this.panel1.Controls.Add(this.nCharacters);
+            this.panel1.Controls.Add(this.pbServer);
+            this.panel1.Controls.Add(this.nIntegers);
+            this.panel1.Controls.Add(this.lblServer);
+            this.panel1.Controls.Add(this.label9);
+            this.panel1.Controls.Add(this.btnDropANOTable);
+            this.panel1.Controls.Add(this.label10);
+            this.panel1.Controls.Add(this.ragSmiley1);
+            this.panel1.Controls.Add(this.btnFinalise);
+            this.panel1.Controls.Add(this.tbSuffix);
+            this.panel1.Controls.Add(this.tbID);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.tbInputDataType);
+            this.panel1.Controls.Add(this.tbName);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(493, 323);
+            this.panel1.TabIndex = 21;
+            // 
             // ANOTableUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.gbPushedTable);
-            this.Controls.Add(this.pbServer);
-            this.Controls.Add(this.lblServer);
-            this.Controls.Add(this.btnDropANOTable);
-            this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.tbSuffix);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbInputDataType);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.tbName);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.tbID);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.btnFinalise);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.nIntegers);
-            this.Controls.Add(this.nCharacters);
+            this.Controls.Add(this.panel1);
             this.Name = "ANOTableUI";
-            this.Size = new System.Drawing.Size(941, 471);
+            this.Size = new System.Drawing.Size(493, 323);
             ((System.ComponentModel.ISupportInitialize)(this.nCharacters)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nIntegers)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbServer)).EndInit();
             this.gbPushedTable.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -324,5 +336,6 @@
         private System.Windows.Forms.Label lblServer;
         private System.Windows.Forms.PictureBox pbServer;
         private System.Windows.Forms.GroupBox gbPushedTable;
+        private System.Windows.Forms.Panel panel1;
     }
 }
