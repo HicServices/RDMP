@@ -1,24 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.Collections;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
 using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
-using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
@@ -42,7 +36,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
     /// in the RAW bubble (i.e. not as a post load operation), only use modules you understand the function of and try to restrict the scope of your adjustment operations (it is usually better
     /// to write an extraction transform than to transform the data during load in case there is a mistake or a researcher wants uncorrupted original data).</para>
     /// </summary>
-    public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design,ISaveableUI
+    public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveableUI
     {
         private ArgumentCollection _argumentCollection;
         private Type _underlyingType;
@@ -84,11 +78,18 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             }
 
             CheckComponent();
-
-            tbName.Text = databaseObject.Name;
             
             loadStageIconUI1.Setup(_activator.CoreIconProvider,_processTask.LoadStage);
 
+            Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh, (s, e) => CheckComponent()));
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbName, "Text", "Name", d => d.Name);
+            Bind(tbID, "Text", "ID", d => d.ID);
         }
 
         private void CheckComponent()
@@ -107,7 +108,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             {
                 ragSmiley1.Fatal(e);
             }
-
         }
 
         private void tbName_TextChanged(object sender, EventArgs e)
@@ -119,11 +119,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             }
 
             _processTask.Name = tbName.Text;
-        }
-
-        private void btnCheckAgain_Click(object sender, EventArgs e)
-        {
-            CheckComponent();
         }
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -65,7 +66,8 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             SetItemActivator(activator);
 
-            ObjectSaverButton1.SetupFor(this, databaseObject, activator.RefreshBus);
+            if(this is ISaveableUI)
+                ObjectSaverButton1.SetupFor(this, databaseObject, activator.RefreshBus);
 
         }
 
@@ -73,6 +75,8 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         {
             
         }
+
+        HashSet<ComboBox> boundComboBoxes = new HashSet<ComboBox>();
 
         /// <summary>
         /// Performs data binding using default parameters (OnPropertyChanged), no formatting etc.  Getter must be a
@@ -85,9 +89,19 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="getter"></param>
         protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter, bool formattingEnabled = true,DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
         {
+            var box = c as ComboBox;
+
+            //workaround for only comitting lists on loose focus
+            if (box != null && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
+            {
+                boundComboBoxes.Add(box);
+                box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
+            }
+            
             _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
         }
-        
+
+
         /// <summary>
         /// Parses the datetime out of the <paramref name="tb"/> with blank being null.  If the string doesn't parse
         /// then the text will turn red.

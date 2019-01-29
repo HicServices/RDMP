@@ -76,11 +76,6 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
             yield break;
         }
 
-        public IEnumerable<string> GetToolStripStrings()
-        {
-            yield return _table.GetRuntimeName() + " (" + _arguments[ServerKey] + ")";
-        }
-
         public IDataAccessPoint GetDataAccessPoint()
         {
             return this;

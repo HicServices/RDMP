@@ -7,6 +7,7 @@ using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Copying;
@@ -127,7 +128,7 @@ namespace CatalogueManager.ExtractionUIs
 
             ObjectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
             
-            AddToMenu(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Go To Catalogue Item");
+            AddToMenu(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Go To Description (CatalogueItem)");
             AddToMenu(new ExecuteCommandShow(activator, databaseObject.ColumnInfo,0,true));
         }
 
@@ -152,6 +153,20 @@ namespace CatalogueManager.ExtractionUIs
             return true;
         }
 
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ExtractionInformation databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbId, "Text", "ID", ei => ei.ID);
+            Bind(tbDefaultOrder, "Text", "Order", ei => ei.Order);
+            Bind(tbAlias, "Text", "Alias", ei => ei.Alias);
+
+            Bind(cbHashOnDataRelease, "Checked", "HashOnDataRelease", ei => ei.HashOnDataRelease);
+            Bind(cbIsExtractionIdentifier, "Checked", "IsExtractionIdentifier", ei => ei.IsExtractionIdentifier);
+            Bind(cbIsPrimaryKey, "Checked", "IsPrimaryKey", ei => ei.IsPrimaryKey);
+
+            Bind(ddExtractionCategory, "SelectedItem", "ExtractionCategory", ei => ei.ExtractionCategory);
+        }
 
         private void Setup(ExtractionInformation extractionInformation)
         {
@@ -168,11 +183,7 @@ namespace CatalogueManager.ExtractionUIs
                 
                 autoComplete.RegisterForEvents(QueryEditor);
             }
-
-               
-            ddExtractionCategory.Enabled = true;
-            ddExtractionCategory.SelectedItem = ExtractionInformation.ExtractionCategory;
-
+            
             var colInfo = ExtractionInformation.ColumnInfo;
 
             //deal with empty values in database (shouldn't be any but could be)
@@ -181,60 +192,26 @@ namespace CatalogueManager.ExtractionUIs
                 ExtractionInformation.SelectSQL = colInfo.Name.Trim();
                 ExtractionInformation.SaveToDatabase();
             }
-
-
+            
             QueryEditor.Text = ExtractionInformation.SelectSQL + (!string.IsNullOrWhiteSpace(ExtractionInformation.Alias) ? _querySyntaxHelper.AliasPrefix + ExtractionInformation.Alias : "");
 
             
             lblFromTable.Text = colInfo == null?"MISSING ColumnInfo":colInfo.TableInfo.Name;
 
-            tbDefaultOrder.Text = ExtractionInformation.Order.ToString();
-            tbAlias.Text = ExtractionInformation.Alias;
-
-            cbHashOnDataRelease.Enabled = true;
-            cbHashOnDataRelease.Checked = ExtractionInformation.HashOnDataRelease;
-
-            cbIsExtractionIdentifier.Enabled = true;
-            cbIsExtractionIdentifier.Checked = ExtractionInformation.IsExtractionIdentifier;
-
-            cbIsPrimaryKey.Enabled = true;
-            cbIsPrimaryKey.Checked = ExtractionInformation.IsPrimaryKey;
-
+            
             if (!pSql.Controls.Contains(QueryEditor))
                 pSql.Controls.Add(QueryEditor);
             
         }
         
-        private void ddExtractionCategory_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //user changed the category so update the object and indicate that we have now got unsaved changes
-            if (ddExtractionCategory.SelectedItem != null && ExtractionInformation != null)
-                ExtractionInformation.ExtractionCategory = (ExtractionCategory) ddExtractionCategory.SelectedItem;
-        }
-        
         private void cbHashOnDataRelease_CheckedChanged(object sender, EventArgs e)
         {
-            ExtractionInformation.HashOnDataRelease = cbHashOnDataRelease.Checked;
-            CreateAliasIfDoesntExist(ExtractionInformation);
-            
-        }
-
-        private void cbIsExtractionIdentifier_CheckedChanged(object sender, EventArgs e)
-        {
-            ExtractionInformation.IsExtractionIdentifier = cbIsExtractionIdentifier.Checked;
-        }
-
-        private void cbIsPrimaryKey_CheckedChanged(object sender, EventArgs e)
-        {
-            ExtractionInformation.IsPrimaryKey = cbIsPrimaryKey.Checked;
-        }
-
-        private void CreateAliasIfDoesntExist(ExtractionInformation extractionInformation)
-        {
-            if (string.IsNullOrWhiteSpace(ExtractionInformation.Alias))
+            //Create alias if it doesn't have one yet
+            if (string.IsNullOrWhiteSpace(ExtractionInformation.Alias) && cbHashOnDataRelease.Checked)
             {
+                ExtractionInformation.HashOnDataRelease = true;
                 ExtractionInformation.Alias = ExtractionInformation.GetRuntimeName();
-                Setup(extractionInformation);
+                Setup(ExtractionInformation);
             }
         }
         /// <summary>

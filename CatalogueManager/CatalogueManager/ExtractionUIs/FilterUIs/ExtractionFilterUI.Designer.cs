@@ -69,7 +69,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.toolTip1.SetToolTip(this.cbIsMandatory, "Mandatory filters are automatically added to ExtractionConfigurations and Cohort " +
         "Identification Queries when the parent dataset is selected");
             this.cbIsMandatory.UseVisualStyleBackColor = true;
-            this.cbIsMandatory.CheckedChanged += new System.EventHandler(this.cbIsMandatory_CheckedChanged);
             // 
             // tbFilterName
             // 
@@ -79,7 +78,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.tbFilterName.Name = "tbFilterName";
             this.tbFilterName.Size = new System.Drawing.Size(695, 20);
             this.tbFilterName.TabIndex = 1;
-            this.tbFilterName.TextChanged += new System.EventHandler(this.tbFilterName_TextChanged);
             // 
             // btnPublishToCatalogue
             // 
@@ -113,7 +111,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.tbFilterDescription.Name = "tbFilterDescription";
             this.tbFilterDescription.Size = new System.Drawing.Size(1173, 89);
             this.tbFilterDescription.TabIndex = 3;
-            this.tbFilterDescription.TextChanged += new System.EventHandler(this.tbFilterDescription_TextChanged);
             // 
             // lblWhere
             // 

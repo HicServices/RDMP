@@ -28,20 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginProcessTaskUI));
             this.label1 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
             this.pArguments = new System.Windows.Forms.Panel();
-            
-            this.loadStageIconUI1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadStageIconUI();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.tbID = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
-            this.btnCheckAgain = new System.Windows.Forms.Button();
+            this.loadStageIconUI1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadStageIconUI();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 6);
+            this.label1.Location = new System.Drawing.Point(136, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 1;
@@ -49,9 +50,9 @@
             // 
             // tbName
             // 
-            this.tbName.Location = new System.Drawing.Point(75, 3);
+            this.tbName.Location = new System.Drawing.Point(180, 6);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(328, 20);
+            this.tbName.Size = new System.Drawing.Size(317, 20);
             this.tbName.TabIndex = 2;
             this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
@@ -60,53 +61,70 @@
             this.pArguments.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pArguments.Location = new System.Drawing.Point(0, 29);
+            this.pArguments.Location = new System.Drawing.Point(7, 34);
             this.pArguments.Name = "pArguments";
-            this.pArguments.Size = new System.Drawing.Size(916, 601);
+            this.pArguments.Size = new System.Drawing.Size(907, 596);
             this.pArguments.TabIndex = 3;
             // 
-            // loadStageIconUI1
+            // panel1
             // 
-            this.loadStageIconUI1.Location = new System.Drawing.Point(551, 4);
-            this.loadStageIconUI1.Name = "loadStageIconUI1";
-            this.loadStageIconUI1.Size = new System.Drawing.Size(232, 19);
-            this.loadStageIconUI1.TabIndex = 5;
+            this.panel1.Controls.Add(this.tbID);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.tbName);
+            this.panel1.Controls.Add(this.pArguments);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.ragSmiley1);
+            this.panel1.Controls.Add(this.loadStageIconUI1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(919, 633);
+            this.panel1.TabIndex = 8;
+            // 
+            // tbID
+            // 
+            this.tbID.Location = new System.Drawing.Point(31, 7);
+            this.tbID.Name = "tbID";
+            this.tbID.ReadOnly = true;
+            this.tbID.Size = new System.Drawing.Size(100, 20);
+            this.tbID.TabIndex = 9;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(4, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(21, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "ID:";
             // 
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(490, 1);
+            this.ragSmiley1.Location = new System.Drawing.Point(503, 3);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 6;
             // 
-            // btnCheckAgain
+            // loadStageIconUI1
             // 
-            this.btnCheckAgain.Image = ((System.Drawing.Image)(resources.GetObject("btnCheckAgain.Image")));
-            this.btnCheckAgain.Location = new System.Drawing.Point(521, 2);
-            this.btnCheckAgain.Name = "btnCheckAgain";
-            this.btnCheckAgain.Size = new System.Drawing.Size(24, 24);
-            this.btnCheckAgain.TabIndex = 7;
-            this.btnCheckAgain.UseVisualStyleBackColor = true;
-            this.btnCheckAgain.Click += new System.EventHandler(this.btnCheckAgain_Click);
+            this.loadStageIconUI1.Location = new System.Drawing.Point(534, 7);
+            this.loadStageIconUI1.Name = "loadStageIconUI1";
+            this.loadStageIconUI1.Size = new System.Drawing.Size(119, 19);
+            this.loadStageIconUI1.TabIndex = 5;
             // 
             // PluginProcessTaskUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnCheckAgain);
-            this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.loadStageIconUI1);
-            
-            this.Controls.Add(this.pArguments);
-            this.Controls.Add(this.tbName);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.panel1);
             this.Name = "PluginProcessTaskUI";
             this.Size = new System.Drawing.Size(919, 633);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -118,6 +136,8 @@
         
         private LoadStageIconUI loadStageIconUI1;
         private ReusableUIComponents.RAGSmiley ragSmiley1;
-        private System.Windows.Forms.Button btnCheckAgain;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox tbID;
     }
 }

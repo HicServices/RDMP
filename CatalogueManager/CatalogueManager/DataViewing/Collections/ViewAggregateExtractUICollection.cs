@@ -34,12 +34,7 @@ namespace CatalogueManager.DataViewing.Collections
                    yield return cache;
             }
         }
-
-        public IEnumerable<string> GetToolStripStrings()
-        {
-            yield break;
-        }
-
+        
         private ExternalDatabaseServer GetCacheServer()
         {
             var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();

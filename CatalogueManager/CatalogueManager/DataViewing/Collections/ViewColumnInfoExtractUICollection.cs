@@ -50,11 +50,8 @@ namespace CatalogueManager.DataViewing.Collections
 
             if (filter != null)
                 yield return filter;
-        }
 
-        public IEnumerable<string> GetToolStripStrings()
-        {
-            yield return ViewType.ToString();
+            yield return ColumnInfo.TableInfo;
         }
 
         public IDataAccessPoint GetDataAccessPoint()

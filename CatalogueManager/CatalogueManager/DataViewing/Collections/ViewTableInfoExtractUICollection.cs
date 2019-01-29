@@ -61,11 +61,6 @@ namespace CatalogueManager.DataViewing.Collections
                 yield return filter;
         }
 
-        public IEnumerable<string> GetToolStripStrings()
-        {
-            yield return ViewType.ToString();
-        }
-
         public IDataAccessPoint GetDataAccessPoint()
         {
             return TableInfo;

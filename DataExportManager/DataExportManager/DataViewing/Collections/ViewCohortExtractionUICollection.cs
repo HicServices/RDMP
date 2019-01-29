@@ -30,11 +30,6 @@ namespace DataExportManager.DataViewing.Collections
             yield return Cohort;
         }
 
-        public IEnumerable<string> GetToolStripStrings()
-        {
-            yield break;
-        }
-
         public IDataAccessPoint GetDataAccessPoint()
         {
             return Cohort.ExternalCohortTable;

@@ -11,7 +11,6 @@ namespace CatalogueManager.DataViewing.Collections
     public interface IViewSQLAndResultsCollection:IPersistableObjectCollection, IHasQuerySyntaxHelper
     {
         IEnumerable<DatabaseEntity> GetToolStripObjects();
-        IEnumerable<string> GetToolStripStrings();
 
         IDataAccessPoint GetDataAccessPoint();
         string GetSql();

@@ -110,10 +110,7 @@ namespace CatalogueManager.DataViewing
 
             foreach (DatabaseEntity d in _collection.GetToolStripObjects())
                 AddToMenu(new ExecuteCommandShow(activator, d, 0,true));
-
-            foreach (string s in _collection.GetToolStripStrings())
-                Add(s);
-
+            
             RefreshUIFromDatabase();
         }
 
