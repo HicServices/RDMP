@@ -36,20 +36,21 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             this.label1 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbName
             // 
-            this.tbName.Location = new System.Drawing.Point(160, 6);
+            this.tbName.Location = new System.Drawing.Point(156, 3);
             this.tbName.Name = "tbName";
-            this.tbName.ReadOnly = true;
+            this.tbName.ReadOnly = false;
             this.tbName.Size = new System.Drawing.Size(464, 20);
             this.tbName.TabIndex = 6;
             // 
             // tbID
             // 
-            this.tbID.Location = new System.Drawing.Point(39, 6);
+            this.tbID.Location = new System.Drawing.Point(35, 3);
             this.tbID.Name = "tbID";
             this.tbID.ReadOnly = true;
             this.tbID.Size = new System.Drawing.Size(71, 20);
@@ -58,7 +59,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(116, 9);
+            this.label2.Location = new System.Drawing.Point(112, 6);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(38, 13);
             this.label2.TabIndex = 4;
@@ -67,7 +68,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(8, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(21, 13);
             this.label1.TabIndex = 4;
@@ -77,37 +78,45 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             // 
             this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDescription.Location = new System.Drawing.Point(99, 32);
+            this.tbDescription.Location = new System.Drawing.Point(72, 29);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(984, 193);
+            this.tbDescription.Size = new System.Drawing.Size(877, 193);
             this.tbDescription.TabIndex = 10;
-            this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(30, 35);
+            this.label3.Location = new System.Drawing.Point(3, 32);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(63, 13);
             this.label3.TabIndex = 9;
             this.label3.Text = "Description:";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tbName);
+            this.panel1.Controls.Add(this.tbDescription);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.tbID);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(952, 239);
+            this.panel1.TabIndex = 11;
+            // 
             // LoadMetadataUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            
-            this.Controls.Add(this.tbDescription);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.tbName);
-            this.Controls.Add(this.tbID);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.panel1);
             this.Name = "LoadMetadataUI";
-            this.Size = new System.Drawing.Size(1086, 775);
+            this.Size = new System.Drawing.Size(952, 239);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -119,6 +128,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Panel panel1;
         
     }
 }

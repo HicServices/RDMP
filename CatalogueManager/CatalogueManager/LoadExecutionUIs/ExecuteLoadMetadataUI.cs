@@ -31,6 +31,12 @@ namespace CatalogueManager.LoadExecutionUIs
         private LoadMetadata _loadMetadata;
         private ILoadProgress[] _allLoadProgresses;
 
+        ToolStripMenuItem miDebugOptions = new ToolStripMenuItem("Debug Options");
+
+        ToolStripMenuItem miSkipArchiving = new ToolStripMenuItem("Skip Archiving") { CheckOnClick = true };
+        ToolStripMenuItem miMigrateRAWToStaging = new ToolStripMenuItem("Migrate RAW=>STAGING"){CheckOnClick = true,Checked = true};
+        ToolStripMenuItem miMigrateStagingToLive = new ToolStripMenuItem("Migrate STAGING=>Live") { CheckOnClick = true ,Checked=true};
+
         public ExecuteLoadMetadataUI()
         {
             InitializeComponent();
@@ -42,6 +48,8 @@ namespace CatalogueManager.LoadExecutionUIs
 
             checkAndExecuteUI1.CommandGetter = AutomationCommandGetter;
             checkAndExecuteUI1.StateChanged += SetButtonStates;
+
+            miDebugOptions.DropDownItems.AddRange(new []{miSkipArchiving,miMigrateRAWToStaging,miMigrateStagingToLive});
         }
         
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
@@ -57,6 +65,9 @@ namespace CatalogueManager.LoadExecutionUIs
 
             Add(new ExecuteCommandViewLoadDiagram(activator,_loadMetadata));
 
+            AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator,_loadMetadata));
+            AddToMenu(miDebugOptions);
+
             AddPluginCommands();
         }
         
@@ -68,8 +79,7 @@ namespace CatalogueManager.LoadExecutionUIs
             {
                 //there are some load progresses
                 gbLoadProgresses.Visible = true;
-                gbDebugOptions.Left = gbLoadProgresses.Right + 3;
-                
+
                 //give the user the dropdown options for which load progress he wants to run
                 var loadProgressData = new Dictionary<int, string> { { 0, "All available" } };
 
@@ -83,14 +93,12 @@ namespace CatalogueManager.LoadExecutionUIs
             else
             {
                 gbLoadProgresses.Visible = false;
-                gbDebugOptions.Left = 110;
             }
         }
 
         private void SetButtonStates(object sender, EventArgs e)
         {
             gbLoadProgresses.Enabled = checkAndExecuteUI1.ChecksPassed;
-            gbDebugOptions.Enabled = checkAndExecuteUI1.ChecksPassed;
         }
         
         private RDMPCommandLineOptions AutomationCommandGetter(CommandLineActivity activityRequested)
@@ -103,9 +111,9 @@ namespace CatalogueManager.LoadExecutionUIs
                 LoadMetadata = _loadMetadata.ID,
                 Iterative = cbRunIteratively.Checked,
                 DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
-                DoNotArchiveData = cbSkipArchiving.Checked,
-                StopAfterRAW = !cbMigrateRAWToStaging.Checked,
-                StopAfterSTAGING = !cbMigrateStagingToLive.Checked,
+                DoNotArchiveData = miSkipArchiving.Checked,
+                StopAfterRAW = !miMigrateRAWToStaging.Checked,
+                StopAfterSTAGING = !miMigrateStagingToLive.Checked,
             };
 
             if (lp != null)

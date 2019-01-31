@@ -33,10 +33,6 @@ namespace CatalogueManager.LoadExecutionUIs
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExecuteLoadMetadataUI));
-            this.cbSkipArchiving = new System.Windows.Forms.CheckBox();
-            this.gbDebugOptions = new System.Windows.Forms.GroupBox();
-            this.cbMigrateStagingToLive = new System.Windows.Forms.CheckBox();
-            this.cbMigrateRAWToStaging = new System.Windows.Forms.CheckBox();
             this.ddLoadProgress = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.udDaysPerJob = new System.Windows.Forms.NumericUpDown();
@@ -50,64 +46,11 @@ namespace CatalogueManager.LoadExecutionUIs
             this.flpControls = new System.Windows.Forms.FlowLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
-            this.gbDebugOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDaysPerJob)).BeginInit();
             this.gbLoadProgresses.SuspendLayout();
             this.flpControls.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // cbSkipArchiving
-            // 
-            this.cbSkipArchiving.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbSkipArchiving.AutoSize = true;
-            this.cbSkipArchiving.Location = new System.Drawing.Point(20, 19);
-            this.cbSkipArchiving.Name = "cbSkipArchiving";
-            this.cbSkipArchiving.Size = new System.Drawing.Size(93, 17);
-            this.cbSkipArchiving.TabIndex = 6;
-            this.cbSkipArchiving.Text = "Skip archiving";
-            this.cbSkipArchiving.UseVisualStyleBackColor = true;
-            // 
-            // gbDebugOptions
-            // 
-            this.gbDebugOptions.Controls.Add(this.cbMigrateStagingToLive);
-            this.gbDebugOptions.Controls.Add(this.cbMigrateRAWToStaging);
-            this.gbDebugOptions.Controls.Add(this.cbSkipArchiving);
-            this.gbDebugOptions.Location = new System.Drawing.Point(466, 3);
-            this.gbDebugOptions.Name = "gbDebugOptions";
-            this.gbDebugOptions.Size = new System.Drawing.Size(166, 90);
-            this.gbDebugOptions.TabIndex = 16;
-            this.gbDebugOptions.TabStop = false;
-            this.gbDebugOptions.Text = "Debug Options";
-            // 
-            // cbMigrateStagingToLive
-            // 
-            this.cbMigrateStagingToLive.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbMigrateStagingToLive.AutoSize = true;
-            this.cbMigrateStagingToLive.Checked = true;
-            this.cbMigrateStagingToLive.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbMigrateStagingToLive.Location = new System.Drawing.Point(20, 65);
-            this.cbMigrateStagingToLive.Name = "cbMigrateStagingToLive";
-            this.cbMigrateStagingToLive.Size = new System.Drawing.Size(135, 17);
-            this.cbMigrateStagingToLive.TabIndex = 10;
-            this.cbMigrateStagingToLive.Text = "Migrate Staging to Live";
-            this.cbMigrateStagingToLive.UseVisualStyleBackColor = true;
-            // 
-            // cbMigrateRAWToStaging
-            // 
-            this.cbMigrateRAWToStaging.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbMigrateRAWToStaging.AutoSize = true;
-            this.cbMigrateRAWToStaging.Checked = true;
-            this.cbMigrateRAWToStaging.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbMigrateRAWToStaging.Location = new System.Drawing.Point(20, 42);
-            this.cbMigrateRAWToStaging.Name = "cbMigrateRAWToStaging";
-            this.cbMigrateRAWToStaging.Size = new System.Drawing.Size(141, 17);
-            this.cbMigrateRAWToStaging.TabIndex = 9;
-            this.cbMigrateRAWToStaging.Text = "Migrate RAW to Staging";
-            this.cbMigrateRAWToStaging.UseVisualStyleBackColor = true;
             // 
             // ddLoadProgress
             // 
@@ -232,7 +175,6 @@ namespace CatalogueManager.LoadExecutionUIs
             this.flpControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flpControls.Controls.Add(this.gbLoadProgresses);
-            this.flpControls.Controls.Add(this.gbDebugOptions);
             this.flpControls.Location = new System.Drawing.Point(198, 3);
             this.flpControls.Name = "flpControls";
             this.flpControls.Size = new System.Drawing.Size(727, 110);
@@ -264,8 +206,6 @@ namespace CatalogueManager.LoadExecutionUIs
             this.Controls.Add(this.panel2);
             this.Name = "ExecuteLoadMetadataUI";
             this.Size = new System.Drawing.Size(922, 733);
-            this.gbDebugOptions.ResumeLayout(false);
-            this.gbDebugOptions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDaysPerJob)).EndInit();
             this.gbLoadProgresses.ResumeLayout(false);
             this.gbLoadProgresses.PerformLayout();
@@ -277,10 +217,6 @@ namespace CatalogueManager.LoadExecutionUIs
 
         #endregion
 
-        private System.Windows.Forms.CheckBox cbSkipArchiving;
-        private System.Windows.Forms.GroupBox gbDebugOptions;
-        private System.Windows.Forms.CheckBox cbMigrateStagingToLive;
-        private System.Windows.Forms.CheckBox cbMigrateRAWToStaging;
         private System.Windows.Forms.ComboBox ddLoadProgress;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown udDaysPerJob;

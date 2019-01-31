@@ -1,7 +1,6 @@
 ﻿using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -14,7 +13,7 @@ namespace CatalogueManager.Menus
         {
             Add(new ExecuteCommandViewLoadDiagram(_activator,loadMetadata));
 
-            Items.Add("Edit description", null,(s, e) => _activator.Activate<LoadMetadataUI, LoadMetadata>(loadMetadata));
+            Add(new ExecuteCommandEditLoadMetadataDescription(_activator, loadMetadata));
             
             Items.Add(new ToolStripSeparator());
 
