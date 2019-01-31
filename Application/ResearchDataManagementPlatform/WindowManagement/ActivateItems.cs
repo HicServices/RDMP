@@ -40,8 +40,8 @@ using CatalogueManager.Copying;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dependencies.Models;
 using ReusableUIComponents.Dialogs;
@@ -83,7 +83,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICommandFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
-        
+        public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
+
         public List<IProblemProvider> ProblemProviders { get; private set; }
 
         public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier)

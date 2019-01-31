@@ -83,13 +83,10 @@ namespace ReusableUIComponents.Dialogs
                 message = title;
                 title = null;
             }
-
+            
             //Replace single newlines with double new lines 
-            if(Args.FormatAsParagraphs)
-            {
-                message = Regex.Replace(message, "\r\n\\s*","\r\n\r\n");
-                message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", (m) => m.Groups[2].Value);
-            }
+            if (Args.FormatAsParagraphs)
+                message = CommentStore.FormatAsParagraphs(message);
 
             //if there is a title
             if (!string.IsNullOrWhiteSpace(title))

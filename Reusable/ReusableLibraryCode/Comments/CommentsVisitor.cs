@@ -36,6 +36,12 @@ namespace ReusableLibraryCode.Comments
             _store.Add(name, adjusted);
         }
 
-        
+        public override void VisitProperty(Property property)
+        {
+            base.VisitProperty(property);
+
+            if (property.Kind == MemberKinds.Property && property.Info != null && property.Info.DeclaringType != null)
+                Add(property.Info.DeclaringType.Name + "." + property.Info.Name, property.ToText());
+        }
     }
 }

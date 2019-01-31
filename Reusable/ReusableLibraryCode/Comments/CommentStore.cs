@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NuDoq;
 
 namespace ReusableLibraryCode.Comments
@@ -140,12 +141,16 @@ namespace ReusableLibraryCode.Comments
         /// </summary>
         /// <param name="word"></param>
         /// <param name="fuzzyMatch"></param>
+        /// <param name="formatAsParagraphs">true to pass result string through <see cref="FormatAsParagraphs"/></param>
         /// <returns></returns>
-        public string GetDocumentationIfExists(string word, bool fuzzyMatch)
+        public string GetDocumentationIfExists(string word, bool fuzzyMatch, bool formatAsParagraphs = false)
         {
             var match = GetDocumentationKeywordIfExists(word,fuzzyMatch);
-                
-            return match != null ? this[match]:null;
+
+            if (match == null)
+                return null;
+
+            return formatAsParagraphs ? FormatAsParagraphs(this[match]) : this[match];
         }
 
         /// <summary>
@@ -170,6 +175,19 @@ namespace ReusableLibraryCode.Comments
                 return GetDocumentationKeywordIfExists("I" + word, false);
 
             return null;
+        }
+
+        /// <summary>
+        /// Formats a string read from xmldoc into paragraphs and gets rid of namespace prefixes introduced by cref="" notation.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public string FormatAsParagraphs(string message)
+        {
+            message = Regex.Replace(message, "\r\n\\s*","\r\n\r\n");
+            message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", (m) => m.Groups[2].Value);
+            
+            return message;
         }
     }
 }

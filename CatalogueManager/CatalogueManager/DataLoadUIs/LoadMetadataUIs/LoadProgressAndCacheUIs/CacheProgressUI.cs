@@ -1,24 +1,16 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using CachingEngine.Factories;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
-using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
@@ -49,6 +41,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             ddCacheLagDelayDurationType.DataSource = Enum.GetValues(typeof(CacheLagPeriod.PeriodType));
 
             AssociatedCollection = RDMPCollection.DataLoad;
+            
             _bLoading = false;
         }
 
@@ -58,6 +51,12 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
+
+            hiProgress.SetHelpText("Cache Progress","Records how much data has been fetched from the remote source.  This should be automatically incremented by the cache pipeline as data is fetched and stored to disk.");
+            hiLagDuration.SetHelpText("Lag Duration",_activator.CommentStore.GetDocumentationIfExists("ICacheProgress.CacheLagPeriod", false,true));
+            hiCacheLagDelayPeriod.SetHelpText("Cache Lag Delay Period", _activator.CommentStore.GetDocumentationIfExists("ICacheProgress.CacheLagPeriodLoadDelay",false,true));
+            hiChunkPeriod.SetHelpText("Chunk Period", _activator.CommentStore.GetDocumentationIfExists("ICacheProgress.ChunkPeriod", false, true));
+            hiPipeline.SetHelpText("Pipeline", _activator.CommentStore.GetDocumentationIfExists("ICacheProgress.Pipeline_ID", false, true));
 
             _cacheProgress = databaseObject;
             
@@ -75,12 +74,20 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             }
         }
 
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, CacheProgress databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",c=>c.ID);
+            Bind(tbName,"Text","Name",c=>c.Name);
+
+
+        }
+
         private void PopulateCacheProgressPanel(ICacheProgress cacheProgress)
         {
             _bLoading = true;
 
-            gbCacheProgress.Enabled = true; 
-            tbCacheProgressID.Text = cacheProgress.ID.ToString();
             SetCacheProgressTextBox();
             
             var cacheLagPeriod = cacheProgress.GetCacheLagPeriod();
@@ -178,13 +185,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 cacheLagPeriod = new CacheLagPeriod(duration, (CacheLagPeriod.PeriodType)selectedItem);
 
             return cacheLagPeriod;
-        }
-
-        
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            _cacheProgress.RevertToDatabaseState();
-            SetCacheProgressTextBox();
         }
 
         private void btnEdit_Click(object sender, EventArgs e)

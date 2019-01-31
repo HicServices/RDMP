@@ -19,6 +19,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dependencies.Models;
 using ReusableUIComponents.Theme;
@@ -92,6 +93,11 @@ namespace CatalogueManager.ItemActivation
         /// Component for suggesting completion options for an ongoing drag or paste
         /// </summary>
         ICommandExecutionFactory CommandExecutionFactory { get;}
+
+        /// <summary>
+        /// Component for fetching xmldoc comments from the codebase 
+        /// </summary>
+        CommentStore CommentStore { get; }
 
         /// <summary>
         /// Creates a new late loading <see cref="IObjectVisualisation"/> for use with Dependency graph generation
