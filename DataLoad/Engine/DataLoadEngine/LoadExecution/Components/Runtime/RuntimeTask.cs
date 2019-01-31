@@ -21,7 +21,7 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
     /// <para>The second are those that do not have a MEF class powering them.  This includes ProcessTaskTypes like Executable and SQLFile where the ProcessTask.Path
     /// is simply the location of the exe/sql file to run at runtime. </para>
     /// </summary>
-    public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask
+    public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask,ICheckable
     {
         public RuntimeArgumentCollection RuntimeArguments { get; set; }
         public IProcessTask ProcessTask { get; set; }

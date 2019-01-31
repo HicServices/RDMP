@@ -1,23 +1,16 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataLoadEngine.LoadExecution.Components;
 using CatalogueManager.Copying;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
@@ -54,6 +47,17 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             
             loadStageIconUI1.Setup(activator.CoreIconProvider, _processTask.LoadStage);
             loadStageIconUI1.Left = tbID.Right +2;
+
+            AddChecks(_processTask);
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",p=>p.ID);
+            Bind(tbName,"Text","Name",p=>p.Name);
+            Bind(tbPath, "Text", "Path", p => p.Path);
         }
 
         private bool _bLoading = false;
@@ -63,17 +67,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             _bLoading = true;
             try
             {
-                lblPath.Text = _processTask.Path;
-                ragSmiley1.Left = lblPath.Right;
-                btnBrowse.Left = ragSmiley1.Right;
-
-                lblID.Left = btnBrowse.Right;
-                tbID.Left = lblID.Right;
-
-                pbFile.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.File);
-                tbID.Text = _processTask.ID.ToString();
-            
-
                 if (_scintilla == null)
                 {
                     ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
@@ -84,8 +77,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 }
             
                 SetupAutocomplete();
-                
-                ragSmiley1.Reset();
 
                 try
                 {
@@ -94,11 +85,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 }
                 catch (Exception e)
                 {
-                    ragSmiley1.Fatal(e);
+                    Fatal("Could not open file " + _processTask.Path,e);
                 }
-
-                if(!ragSmiley1.IsFatal())
-                    ragSmiley1.StartChecking(_processTask);
             }
             finally
             {
@@ -106,6 +94,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             }
         }
 
+        
         private void SetupAutocomplete()
         {
             //if theres an old one dispose it

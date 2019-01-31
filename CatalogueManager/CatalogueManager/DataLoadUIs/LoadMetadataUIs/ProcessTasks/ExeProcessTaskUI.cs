@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueManager.Collections;
@@ -17,12 +10,10 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
-using HIC.Logging;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
@@ -54,6 +45,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
             SetupForFile();
 
+            AddChecks(GetRuntimeTask);
+            StartChecking();
         }
 
         private void SetupForFile()
@@ -61,38 +54,29 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             lblPath.Text = _processTask.Path;
 
             lblPath.Text = _processTask.Path;
-            ragSmiley1.Left = lblPath.Right;
-            btnBrowse.Left = ragSmiley1.Right;
+            btnBrowse.Left = lblPath.Right;
 
             lblID.Left = btnBrowse.Right;
             tbID.Left = lblID.Right;
-
-
+            
             tbID.Text = _processTask.ID.ToString();
 
             loadStageIconUI1.Setup(_activator.CoreIconProvider, _processTask.LoadStage);
             loadStageIconUI1.Left = tbID.Right + 2;
-
-            GetExecutionCommand();
         }
 
-        private void GetExecutionCommand()
+        private ExecutableRuntimeTask GetRuntimeTask()
         {
-            btnRunExe.Enabled = false;
-            try
-            {
-                var factory = new RuntimeTaskFactory(_activator.RepositoryLocator.CatalogueRepository);
+            var factory = new RuntimeTaskFactory(_activator.RepositoryLocator.CatalogueRepository);
 
-                var lmd = _processTask.LoadMetadata;
-                var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
-                _runtimeTask = (ExecutableRuntimeTask)factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
-                tbExeCommand.Text = _runtimeTask.ExeFilepath + " " + _runtimeTask.CreateArgString();
-                btnRunExe.Enabled = true;
-            }
-            catch (Exception e)
-            {
-                ragSmiley1.Fatal(new Exception("Could not assemble ExecutableRuntimeTask or Arguments for exe", e));
-            }
+            var lmd = _processTask.LoadMetadata;
+            var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
+            
+            //populate the UI with the args
+            _runtimeTask = (ExecutableRuntimeTask)factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
+            tbExeCommand.Text = _runtimeTask.ExeFilepath + " " + _runtimeTask.CreateArgString();
+
+            return _runtimeTask;
         }
 
         private void btnRunExe_Click(object sender, EventArgs e)
@@ -100,6 +84,12 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             if (_runTask != null && !_runTask.IsCompleted)
             {
                 MessageBox.Show("Exe is still running");
+                return;
+            }
+            
+            if(_runtimeTask == null)
+            {
+                MessageBox.Show("Command could not be built,see Checks");
                 return;
             }
 

@@ -45,11 +45,6 @@
             this.tbID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.hiChunkPeriod = new ReusableUIComponents.HelpIcon();
-            this.hiPipeline = new ReusableUIComponents.HelpIcon();
-            this.hiCacheLagDelayPeriod = new ReusableUIComponents.HelpIcon();
-            this.hiLagDuration = new ReusableUIComponents.HelpIcon();
-            this.hiProgress = new ReusableUIComponents.HelpIcon();
             this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -192,11 +187,6 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.hiChunkPeriod);
-            this.panel1.Controls.Add(this.hiPipeline);
-            this.panel1.Controls.Add(this.hiCacheLagDelayPeriod);
-            this.panel1.Controls.Add(this.hiLagDuration);
-            this.panel1.Controls.Add(this.hiProgress);
             this.panel1.Controls.Add(this.pPipeline);
             this.panel1.Controls.Add(this.ragSmiley1);
             this.panel1.Controls.Add(this.tbName);
@@ -221,46 +211,6 @@
             this.panel1.Size = new System.Drawing.Size(878, 375);
             this.panel1.TabIndex = 33;
             // 
-            // hiChunkPeriod
-            // 
-            this.hiChunkPeriod.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hiChunkPeriod.BackgroundImage")));
-            this.hiChunkPeriod.Location = new System.Drawing.Point(206, 130);
-            this.hiChunkPeriod.Name = "hiChunkPeriod";
-            this.hiChunkPeriod.Size = new System.Drawing.Size(19, 19);
-            this.hiChunkPeriod.TabIndex = 48;
-            // 
-            // hiPipeline
-            // 
-            this.hiPipeline.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hiPipeline.BackgroundImage")));
-            this.hiPipeline.Location = new System.Drawing.Point(825, 199);
-            this.hiPipeline.Name = "hiPipeline";
-            this.hiPipeline.Size = new System.Drawing.Size(19, 19);
-            this.hiPipeline.TabIndex = 47;
-            // 
-            // hiCacheLagDelayPeriod
-            // 
-            this.hiCacheLagDelayPeriod.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hiCacheLagDelayPeriod.BackgroundImage")));
-            this.hiCacheLagDelayPeriod.Location = new System.Drawing.Point(206, 105);
-            this.hiCacheLagDelayPeriod.Name = "hiCacheLagDelayPeriod";
-            this.hiCacheLagDelayPeriod.Size = new System.Drawing.Size(19, 19);
-            this.hiCacheLagDelayPeriod.TabIndex = 46;
-            // 
-            // hiLagDuration
-            // 
-            this.hiLagDuration.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hiLagDuration.BackgroundImage")));
-            this.hiLagDuration.Location = new System.Drawing.Point(206, 79);
-            this.hiLagDuration.Name = "hiLagDuration";
-            this.hiLagDuration.Size = new System.Drawing.Size(19, 19);
-            this.hiLagDuration.TabIndex = 45;
-            // 
-            // hiProgress
-            // 
-            this.hiProgress.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hiProgress.BackgroundImage")));
-            this.hiProgress.Location = new System.Drawing.Point(254, 53);
-            this.hiProgress.Name = "hiProgress";
-            this.hiProgress.Size = new System.Drawing.Size(19, 19);
-            this.hiProgress.TabIndex = 44;
-            // 
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
@@ -275,7 +225,7 @@
             // 
             this.tbName.Location = new System.Drawing.Point(83, 29);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(296, 20);
+            this.tbName.Size = new System.Drawing.Size(350, 20);
             this.tbName.TabIndex = 1;
             // 
             // label3
@@ -323,10 +273,5 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label label3;
-        private ReusableUIComponents.HelpIcon hiCacheLagDelayPeriod;
-        private ReusableUIComponents.HelpIcon hiLagDuration;
-        private ReusableUIComponents.HelpIcon hiProgress;
-        private ReusableUIComponents.HelpIcon hiPipeline;
-        private ReusableUIComponents.HelpIcon hiChunkPeriod;
     }
 }

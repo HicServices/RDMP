@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
@@ -33,10 +34,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             base.SetDatabaseObject(activator, databaseObject);
             _permissionWindow = databaseObject;
-
-            tbName.Text = _permissionWindow.Name;
-            tbDescription.Text = _permissionWindow.Description;
-
+            
             var periods = _permissionWindow.PermissionWindowPeriods;
             var periodsByDay = new Dictionary<int, List<PermissionWindowPeriod>>();
             foreach (var period in periods)
@@ -51,9 +49,18 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             for (var i = 0; i < 7; ++i)
                 PopulatePeriodTextBoxForDay(textBoxes[i], i, periodsByDay);
 
-
+            AddHelp(tbMonday, "IPermissionWindow.PermissionWindowPeriods");
         }
-        
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, PermissionWindow databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbName,"Text","Name",w=>w.Name);
+            Bind(tbDescription, "Text", "Description", w => w.Description);
+            Bind(tbID,"Text","ID",w=>w.ID);
+        }
+
         private void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
         {
             if (periodsByDay.ContainsKey(dayNum)) PopulateTextBox(textBox, periodsByDay[dayNum]);
@@ -98,17 +105,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             _permissionWindow.SetPermissionWindowPeriods(periodList);
         }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            _permissionWindow.Name = tbName.Text;
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            _permissionWindow.Description = tbDescription.Text;
-        }
-
+        
         private void tbDay_TextChanged(object sender, EventArgs e)
         {
             ragSmiley1.Reset();

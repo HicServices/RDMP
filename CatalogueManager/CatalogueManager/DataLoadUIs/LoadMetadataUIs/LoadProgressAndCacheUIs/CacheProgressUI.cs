@@ -52,11 +52,11 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            hiProgress.SetHelpText("Cache Progress","Records how much data has been fetched from the remote source.  This should be automatically incremented by the cache pipeline as data is fetched and stored to disk.");
-            hiLagDuration.SetHelpText("Lag Duration",_activator.CommentStore.GetDocumentationIfExists("ICacheProgress.CacheLagPeriod", false,true));
-            hiCacheLagDelayPeriod.SetHelpText("Cache Lag Delay Period", _activator.CommentStore.GetDocumentationIfExists("ICacheProgress.CacheLagPeriodLoadDelay",false,true));
-            hiChunkPeriod.SetHelpText("Chunk Period", _activator.CommentStore.GetDocumentationIfExists("ICacheProgress.ChunkPeriod", false, true));
-            hiPipeline.SetHelpText("Pipeline", _activator.CommentStore.GetDocumentationIfExists("ICacheProgress.Pipeline_ID", false, true));
+            AddHelp(tbCacheProgress, "ICacheProgress.CacheFillProgress");
+            AddHelp(ddCacheLagDurationType,"ICacheProgress.CacheLagPeriod");
+            AddHelp(ddCacheLagDelayDurationType,"ICacheProgress.CacheLagPeriodLoadDelay");
+            AddHelp(tbChunkPeriod, "ICacheProgress.ChunkPeriod");
+            AddHelp(pPipeline,"ICacheProgress.Pipeline_ID");
 
             _cacheProgress = databaseObject;
             

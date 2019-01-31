@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -42,7 +43,12 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         private RAGSmileyToolStrip ragSmileyToolStrip;
         private ToolStripButton runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh);
         private ICheckable _checkable;
-        
+
+        /// <summary>
+        /// All keywords added via <see cref="AddHelp"/>
+        /// </summary>
+        private readonly HashSet<string> _helpAdded = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator
         {
@@ -196,6 +202,51 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 return;
 
             ragSmileyToolStrip.StartChecking(_checkable);
+        }
+
+        /// <summary>
+        /// Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks becomming 
+        /// visible if it was not visible before.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="exception"></param>
+        protected void Fatal(string s, Exception exception)
+        {
+            if (ragSmileyToolStrip == null)
+                ragSmileyToolStrip = new RAGSmileyToolStrip(this);
+
+            if (ragSmileyToolStrip.GetCurrentParent() == null)
+                Add(ragSmileyToolStrip);
+
+            ragSmileyToolStrip.OnCheckPerformed(new CheckEventArgs(s,CheckResult.Fail,exception));
+        }
+
+        /// <summary>
+        /// Adds a <see cref="HelpIcon"/> on the right of the control with documentation for the listed property
+        /// </summary>
+        /// <param name="c">The control you want the help to appear beside</param>
+        /// <param name="propertyName">The xml-doc property you want e.g. "ICatalogue.Name"</param>
+        protected void AddHelp(Control c, string propertyName,string title = null)
+        {
+            if(_activator == null)
+                throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
+
+            if(c.Parent == null)
+                throw new NotSupportedException("Control is not in a container.  HelpIcon cannot be added to top level controls");
+
+            _helpAdded.Add(propertyName);
+
+            title = title?? propertyName;
+            string body = _activator.CommentStore.GetDocumentationIfExists(propertyName,false,true);
+
+            if(body == null)
+                return;
+            
+            var help = new HelpIcon();
+            help.SetHelpText(title,body);
+            
+            help.Location = new Point(c.Right+3,c.Top);
+            c.Parent.Controls.Add(help);
         }
 
 
