@@ -124,10 +124,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _isPrimaryExtractionTable, value); }
         }
 
-        /// <summary>
-        /// The server that stores <see cref="PreLoadDiscardedColumn"/> values which do not make it to LIVE during a data load e.g. because they contain identifiable data that
-        /// must be split off (e.g. <see cref="DiscardedColumnDestination.StoreInIdentifiersDump"/>).
-        /// </summary>
+        /// <inheritdoc/>
         public int? IdentifierDumpServer_ID
         {
             get { return _identifierDumpServer_ID; }

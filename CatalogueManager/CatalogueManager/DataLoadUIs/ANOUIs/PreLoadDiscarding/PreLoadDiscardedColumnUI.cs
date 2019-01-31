@@ -6,6 +6,8 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
+using CatalogueManager.Menus.MenuItems;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DatabaseManagement.Operations;
@@ -50,8 +52,6 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
     /// </summary>
     public partial class PreLoadDiscardedColumnUI : PreLoadDiscardedColumnUI_Design, ISaveableUI
     {
-        private PreLoadDiscardedColumn _preLoadDiscardedColumn;
-        
         public PreLoadDiscardedColumnUI()
         {
             InitializeComponent();
@@ -62,55 +62,22 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
         public override void SetDatabaseObject(IActivateItems activator, PreLoadDiscardedColumn databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-
-            _preLoadDiscardedColumn = databaseObject;
-
-            tbID.Text = _preLoadDiscardedColumn.ID.ToString();
-            tbRuntimeColumnName.Text = _preLoadDiscardedColumn.RuntimeColumnName;
-            tbSqlDataType.Text = _preLoadDiscardedColumn.SqlDataType;
-            ddDestination.SelectedItem = _preLoadDiscardedColumn.Destination;
-        }
-
-        private void ddDestination_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_preLoadDiscardedColumn == null)
-                return;
-
-           _preLoadDiscardedColumn.Destination = (DiscardedColumnDestination) ddDestination.SelectedItem;
-        }
-
-        private void tbRuntimeColumnName_TextChanged(object sender, EventArgs e)
-        {
-           _preLoadDiscardedColumn.RuntimeColumnName = tbRuntimeColumnName.Text;
-        }
-        
-        private void tbSqlDataType_TextChanged(object sender, EventArgs e)
-        {
-            _preLoadDiscardedColumn.SqlDataType = tbSqlDataType.Text;
-        }
-
-        private void RunChecks()
-        {
-            IdentifierDumper dumper;
-            try
-            {
-                dumper = new IdentifierDumper((TableInfo) _preLoadDiscardedColumn.TableInfo);
-            }
-            catch (Exception e)
-            {
-                checksUI1.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
-                return;
-            }
             
-            checksUI1.StartChecking(dumper);
+            AddChecks(databaseObject);
+            StartChecking();
+
+            AddToMenu(new SetDumpServerMenuItem(_activator, databaseObject.TableInfo));
         }
 
-        private void btnCheck_Click(object sender, EventArgs e)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, PreLoadDiscardedColumn databaseObject)
         {
-            RunChecks();
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text", "ID",p=>p.ID);
+            Bind(tbRuntimeColumnName,"Text","RuntimeColumnName",p=>p.RuntimeColumnName);
+            Bind(tbSqlDataType,"Text","SqlDataType", p=>p.SqlDataType);
+            Bind(ddDestination,"SelectedItem", "Destination",p=>p.Destination);
         }
-
-
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PreLoadDiscardedColumnUI_Design, UserControl>))]

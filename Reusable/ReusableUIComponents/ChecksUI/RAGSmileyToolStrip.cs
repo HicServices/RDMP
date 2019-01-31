@@ -17,6 +17,8 @@ namespace ReusableUIComponents.ChecksUI
         private readonly Control _host;
         private CheckResult _worst;
 
+        YesNoYesToAllDialog dialog;
+
         public RAGSmileyToolStrip(Control host)
         {
             _host = host;
@@ -115,20 +117,27 @@ namespace ReusableUIComponents.ChecksUI
             Enabled = false;
         }
 
-
-
         public bool OnCheckPerformed(CheckEventArgs args)
         {
             if (_host.InvokeRequired)
-            {
-                _host.Invoke(new MethodInvoker(() => OnCheckPerformed(args)));
-                return false;
-            }
+                return (bool)_host.Invoke((Func<bool>) (() => OnCheckPerformed(args)));
+            
             
             //record in memory
             memoryCheckNotifier.OnCheckPerformed(args);
             
             Enabled = true;
+
+            if (dialog != null)
+            {
+                if(!string.IsNullOrWhiteSpace(args.ProposedFix))
+                    if (dialog.ShowDialog(string.Format("Problem:{0}\r\n\r\nFix:{1}",args.Message,args.ProposedFix), "Apply Fix?") == DialogResult.Yes)
+                    {
+                        ElevateState(CheckResult.Warning);
+                        memoryCheckNotifier.OnCheckPerformed(new CheckEventArgs("Fix will be applied",CheckResult.Warning));
+                        return true;
+                    }
+            }
 
             ElevateState(args.Result);
 
@@ -191,6 +200,8 @@ namespace ReusableUIComponents.ChecksUI
                 //if there is already a Task and it has not completed
                 if (_checkTask != null && !_checkTask.IsCompleted)
                     return;
+                
+                dialog = new YesNoYesToAllDialog();
 
                 //else start a new Task
                 Reset();

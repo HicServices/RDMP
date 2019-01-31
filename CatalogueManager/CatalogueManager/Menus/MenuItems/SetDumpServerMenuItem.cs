@@ -15,10 +15,10 @@ namespace CatalogueManager.Menus.MenuItems
 {
     internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
     {
-        private readonly TableInfo _tableInfo;
+        private readonly ITableInfo _tableInfo;
         private ExternalDatabaseServer[] _availableServers;
 
-        public SetDumpServerMenuItem(IActivateItems activator, TableInfo tableInfo): base(activator,"Add Dump Server")
+        public SetDumpServerMenuItem(IActivateItems activator, ITableInfo tableInfo): base(activator,"Add Dump Server")
         {
             _tableInfo = tableInfo;
 
@@ -58,7 +58,7 @@ namespace CatalogueManager.Menus.MenuItems
                     _tableInfo.IdentifierDumpServer_ID = selected.ID;
                     _tableInfo.SaveToDatabase();
 
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
+                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((TableInfo)_tableInfo));
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace CatalogueManager.Menus.MenuItems
                 _tableInfo.IdentifierDumpServer_ID = cmd.ServerCreatedIfAny.ID;
                 _tableInfo.SaveToDatabase();
 
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
+                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((TableInfo)_tableInfo));
             }
         }
     }

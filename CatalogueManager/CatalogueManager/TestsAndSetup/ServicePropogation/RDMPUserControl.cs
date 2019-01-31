@@ -143,6 +143,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             _toolStrip.Items.Add(item);
         }
 
+        /// <summary>
+        /// Adds check buttons to the tool strip and sets up <see cref="StartChecking"/> to target <paramref name="checkable"/>.
+        /// </summary>
+        /// <param name="checkable"></param>
         public void AddChecks(ICheckable checkable)
         {
             if (ragSmileyToolStrip == null)
@@ -154,6 +158,33 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         }
 
         /// <summary>
+        /// Adds check buttons to the tool strip and sets up <see cref="StartChecking"/> to target the return value of <paramref name="checkableFunc"/>.  If the method throws the
+        /// Exception will be exposed in the checking system. 
+        /// 
+        /// <para>Only use this method if there is a reasonable chance the <paramref name="checkableFunc"/> will crash otherwise use the normal overload</para>
+        /// </summary>
+        /// <param name="checkableFunc"></param>
+        protected void AddChecks(Func<ICheckable> checkableFunc)
+        {
+            if (ragSmileyToolStrip == null)
+                ragSmileyToolStrip = new RAGSmileyToolStrip(this);
+
+            Add(ragSmileyToolStrip);
+            Add(runChecksToolStripButton);
+
+            try
+            {
+                _checkable = checkableFunc();
+            }
+            catch (Exception e)
+            {
+                //covers the case where you have previously passed checks then fail but _checks points to the old passing one
+                _checkable = null;
+                ragSmileyToolStrip.Fatal(e);
+            }
+        }
+
+        /// <summary>
         /// Runs checks on the last variable passed in <see cref="AddChecks"/>.  Do not call this method unless you have first
         /// called <see cref="AddChecks"/>.
         /// </summary>
@@ -162,7 +193,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         protected void StartChecking()
         {
             if(_checkable == null)
-                throw new Exception("_checkable is null, call AddChecks first");
+                return;
 
             ragSmileyToolStrip.StartChecking(_checkable);
         }

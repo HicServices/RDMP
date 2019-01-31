@@ -28,6 +28,12 @@ namespace CatalogueLibrary.Data
         bool IsTableValuedFunction { get; }
 
         /// <summary>
+        /// The server that stores <see cref="PreLoadDiscardedColumn"/> values which do not make it to LIVE during a data load e.g. because they contain identifiable data that
+        /// must be split off (e.g. <see cref="DiscardedColumnDestination.StoreInIdentifiersDump"/>).
+        /// </summary>
+        int? IdentifierDumpServer_ID { get; set; }
+
+        /// <summary>
         /// Gets the name of the table in the given RAW=>STAGING=>LIVE section of a DLE run using the provided <paramref name="tableNamingScheme"/>
         /// </summary>
         /// <param name="bubble"></param>

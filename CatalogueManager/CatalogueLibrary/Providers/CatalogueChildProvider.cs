@@ -923,6 +923,10 @@ namespace CatalogueLibrary.Providers
             //get the discarded columns in this table
             var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Where(c => c.TableInfo_ID == tableInfo.ID));
 
+            //tell the column who thier parent is so they don't need to look up the database
+            foreach (PreLoadDiscardedColumn discardedCol in discardedCols)
+                discardedCol.InjectKnown(tableInfo);
+
             //if there are discarded columns
             if (discardedCols.Any())
             {

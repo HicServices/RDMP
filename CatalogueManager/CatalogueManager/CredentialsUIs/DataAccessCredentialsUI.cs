@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
@@ -16,8 +17,6 @@ namespace CatalogueManager.CredentialsUIs
     /// </summary>
     public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, ISaveableUI
     {
-        private DataAccessCredentials _credentials;
-        
         public DataAccessCredentialsUI()
         {
             InitializeComponent();
@@ -25,49 +24,14 @@ namespace CatalogueManager.CredentialsUIs
             AssociatedCollection = RDMPCollection.Tables;
         }
         
-        private bool _bLoading;
-        public override void SetDatabaseObject(IActivateItems activator, DataAccessCredentials databaseObject)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, DataAccessCredentials databaseObject)
         {
-            _bLoading = true;
-            try
-            {
-                base.SetDatabaseObject(activator,databaseObject);
+            base.SetBindings(rules, databaseObject);
             
-                _credentials = databaseObject;
-
-                tbName.Text = _credentials.Name;
-                tbUsername.Text = _credentials.Username;
-                tbPassword.Text = _credentials.Password;
-            }
-            finally
-            {
-                _bLoading = false;
-            }
+            Bind(tbName,"Text","Name",c=>c.Name);
+            Bind(tbUsername, "Text", "Username", c => c.Username);
+            Bind(tbPassword, "Text", "Password", c => c.Password);
         }
-
-        private void tb_TextChanged(object sender, EventArgs e)
-        {
-            if(_bLoading)
-                return;
-            
-            try
-            {
-                var tb = (TextBox)sender;
-
-                if (tb == tbName)
-                    _credentials.Name = tb.Text;
-                if (tb == tbUsername)
-                    _credentials.Username = tb.Text;
-                if (tb == tbPassword)
-                    _credentials.Password = tb.Text;
-            
-            }
-            catch (Exception ex)
-            {
-                ExceptionViewer.Show(ex);
-            }
-        }
-
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataAccessCredentialsUI_Design, UserControl>))]

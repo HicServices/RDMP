@@ -70,6 +70,9 @@ namespace ReusableUIComponents
         {
             InitializeComponent();
 
+            if(LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
+
             _workerRefreshDatabases.DoWork += UpdateDatabaseListAsync;
             _workerRefreshDatabases.WorkerSupportsCancellation = true;
             _workerRefreshDatabases.RunWorkerCompleted+=UpdateDatabaseAsyncCompleted;

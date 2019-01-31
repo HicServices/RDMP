@@ -47,7 +47,7 @@ namespace CatalogueManager.DashboardTabs
             base.SetDatabaseObject(activator, databaseObject);
 
             _controlFactory = new DashboardControlFactory(activator,RepositoryLocator,new Point(5,25));
-            btnAddDashboardControl.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DashboardControl, OverlayKind.Add);
+            btnAddDashboardControl.Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
             _layout = databaseObject;
             ReLayout();
 
