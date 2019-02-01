@@ -42,7 +42,7 @@ namespace Dashboard
         public override IEnumerable<IAtomicCommand> GetAdditionalCommandsForControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity databaseEntity)
         {
             if(control is DQEExecutionControl)
-                return new[] {new ExecuteCommandViewDQEResultsForCatalogue(ItemActivator).SetTarget(databaseEntity)};
+                return new[] {new ExecuteCommandViewDQEResultsForCatalogue(ItemActivator){OverrideCommandName = "View Results..."}.SetTarget(databaseEntity)};
 
             if (control is ExecuteLoadMetadataUI)
                 return new[] {new ExecuteCommandViewLoadMetadataLogs(ItemActivator, (LoadMetadata) databaseEntity)};

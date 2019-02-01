@@ -12,7 +12,6 @@ using CatalogueLibrary.Nodes.UsedByNodes;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Tutorials;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -47,8 +46,6 @@ namespace DataExportManager.ProjectUI
     {
         private IPipelineSelectionUI _pipelineSelectionUI1;
             
-        public int TopX { get; set; }
-
         private ExtractionConfiguration _extractionConfiguration;
         
         private IMapsDirectlyToDatabaseTable[] _globals;
@@ -63,6 +60,8 @@ namespace DataExportManager.ProjectUI
         private ArbitraryFolderNode _coreDatasetsFolder = new ArbitraryFolderNode(CoreDatasets);
         private ArbitraryFolderNode _projectSpecificDatasetsFolder = new ArbitraryFolderNode(ProjectSpecificDatasets);
         private ArbitraryFolderNode _globalsFolder = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME);
+        
+        private ToolStripControlHost _pipelinePanel;
 
         public ExecuteExtractionUI()
         {
@@ -81,11 +80,8 @@ namespace DataExportManager.ProjectUI
             tlvDatasets.HierarchicalCheckboxes = true;
             
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
-            pictureBox1.BackColor = Color.FromArgb(240, 240, 240);
 
             tlvDatasets.CellClick += tlvDatasets_CellClick;
-            
-            helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
         }
 
         void tlvDatasets_CellClick(object sender, CellClickEventArgs e)
@@ -110,7 +106,7 @@ namespace DataExportManager.ProjectUI
             var root = new HelpStage(tlvDatasets, "Choose the datasets and Globals you want to extract here.\r\n" +
                                                  "\r\n" +
                                                  "Click on the red icon to disable this help.");
-            var stage2 = new HelpStage(panel1, "Select the pipeline to run for extracting the data.\r\n");
+            var stage2 = new HelpStage(_pipelinePanel.Control, "Select the pipeline to run for extracting the data.\r\n");
             
             root.SetOption(">>", stage2);
             stage2.SetOption(">>", checkAndExecuteUI1.HelpStages.First());
@@ -230,9 +226,7 @@ namespace DataExportManager.ProjectUI
                     SuppressActivate = true,
                     AddCheckColumn = false
                 });
-
-            checkAndExecuteUI1.SetItemActivator(activator);
-
+            
             var checkedBefore = tlvDatasets.CheckedObjects;
 
             tlvDatasets.ClearObjects();
@@ -273,7 +267,7 @@ namespace DataExportManager.ProjectUI
                 var useCase = ExtractionPipelineUseCase.DesignTime();
                 var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
-                _pipelineSelectionUI1 = factory.Create("Extraction Pipeline", DockStyle.Fill, panel1);
+                _pipelineSelectionUI1 = factory.Create("Extraction Pipeline", DockStyle.Fill);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
 
                 //if the configuration has a default then use that pipeline
@@ -281,9 +275,18 @@ namespace DataExportManager.ProjectUI
                     _pipelineSelectionUI1.Pipeline = _extractionConfiguration.DefaultPipeline;
 
                 _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
+
+                _pipelinePanel = new ToolStripControlHost((Control) _pipelineSelectionUI1);
+                
+                helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
             }
 
-            TopX = -1;
+            Add(new ToolStripLabel("Extraction Pipeline:"));
+            Add(_pipelinePanel);
+
+            AddToMenu(new ExecuteCommandRelease(activator).SetTarget(_extractionConfiguration));
+            
+            checkAndExecuteUI1.SetItemActivator(activator);
 
             tlvDatasets.ExpandAll();
 
@@ -306,32 +309,7 @@ namespace DataExportManager.ProjectUI
             if (!checkAndExecuteUI1.IsExecuting)
                 checkAndExecuteUI1.Reset();
         }
-
-        private void tbTopX_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(tbTopX.Text))
-            {
-                TopX = -1;
-                return;
-            }
-            try
-            {
-                TopX = int.Parse(tbTopX.Text);
-
-                if (TopX < 0)
-                {
-                    TopX = -1;
-                    throw new Exception("Cannot be negative");
-                }
-
-                tbTopX.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                tbTopX.ForeColor = Color.Red;
-            }
-        }
-
+        
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
             tlvDatasets.ModelFilter = new TextMatchFilter(tlvDatasets,tbFilter.Text);

@@ -501,12 +501,12 @@ namespace CatalogueManager.AggregationUIs.Advanced
             {
                 var cic = databaseObject.GetCohortIdentificationConfigurationIfAny();
                 if (cic != null)
-                    AddToMenu(new ExecuteCommandActivate(activator, cic), "Open Cohort Query");
+                    AddToMenu(new ExecuteCommandActivate(activator, cic), "Open Cohort Query...");
             }
             else
                 AddToMenu(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0, true));
 
-            Add(new ExecuteCommandExecuteAggregateGraph(activator, databaseObject),"Execute Graph");
+            Add(new ExecuteCommandExecuteAggregateGraph(activator, databaseObject));
             Add(new ExecuteCommandViewSample(activator, databaseObject));
 
             AddToMenu(new ExecuteCommandViewSqlParameters(activator, databaseObject));

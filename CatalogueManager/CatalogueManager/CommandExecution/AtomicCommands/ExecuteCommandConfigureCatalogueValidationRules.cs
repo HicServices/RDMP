@@ -24,7 +24,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return _catalogue == null || string.IsNullOrWhiteSpace(_catalogue.ValidatorXML)? "Configure Validation Rules" : "Change Configuration Rules";
+            return "Validation Rules...";
         }
 
         public Image GetImage(IIconProvider iconProvider)

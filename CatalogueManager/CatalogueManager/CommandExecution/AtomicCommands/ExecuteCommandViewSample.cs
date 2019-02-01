@@ -21,6 +21,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if(_aggregate.IsCohortIdentificationAggregate && _aggregate.GetCohortIdentificationConfigurationIfAny() == null)
                 SetImpossible("Cohort Identification Aggregate is an orphan (it's cic has been deleted)");
+
+            UseTripleDotSuffix = true;
         }
 
         public override void Execute()

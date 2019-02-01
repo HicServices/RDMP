@@ -42,7 +42,7 @@ namespace CatalogueManager.DataQualityUIs
             _catalogue = databaseObject;
             checkAndExecuteUI1.SetItemActivator(activator);
             
-            Add(new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue));
+            Add(new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue),"Validation Rules...");
             AddPluginCommands();
         }
         

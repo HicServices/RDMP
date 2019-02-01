@@ -397,6 +397,8 @@
     <Compile Include="Collections\RDMPCollection.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionalitySettings.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionalityTreeHijacker.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Automation\AutomationCommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Automation\ExecuteCommandCopyRunCommandToClipboard.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddJoinInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewGovernanceDocument.cs" />
@@ -674,12 +676,7 @@
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleControls\CommandGetterHandler.cs" />
-    <Compile Include="SimpleControls\ExecuteInAutomationServerUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SimpleControls\ExecuteInAutomationServerUI.Designer.cs">
-      <DependentUpon>ExecuteInAutomationServerUI.cs</DependentUpon>
-    </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\Automation\ExecuteCommandRunDetached.cs" />
     <Compile Include="FindAndReplace\FindAndReplaceNode.cs" />
     <Compile Include="FindAndReplace\FindAndReplaceUI.cs">
       <SubType>UserControl</SubType>
@@ -1856,9 +1853,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleControls\CheckAndExecuteUI.resx">
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleControls\ExecuteInAutomationServerUI.resx">
-      <DependentUpon>ExecuteInAutomationServerUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FindAndReplace\FindAndReplaceUI.resx">
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>

@@ -33,6 +33,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return iconProvider.GetImage(RDMPConcept.Release);
         }
 
+        /// <summary>
+        /// Sets the thing being released, valid targets are <see cref="Project"/>, <see cref="ExtractionConfiguration"/> and <see cref="ISelectedDataSets"/>.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             _project =  target as Project;

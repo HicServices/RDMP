@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueManager.CommandExecution.AtomicCommands.Automation;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
 using RDMPAutomationService.Runners;
@@ -18,7 +21,7 @@ namespace CatalogueManager.SimpleControls
     /// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the 
     /// UI will show the checking/executing progress messages).  This class ensures that the behaviour is the same between console run rdmp and the UI applications.
     /// </summary>
-    public partial class CheckAndExecuteUI : UserControl, IConsultableBeforeClosing
+    public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClosing
     {
         //things you have to set for it to work
         public event EventHandler StateChanged;
@@ -39,14 +42,16 @@ namespace CatalogueManager.SimpleControls
             set { checksUI1.AllowsYesNoToAll = value; }
         }
 
-        public void SetItemActivator(IActivateItems activator)
+        public override void SetItemActivator(IActivateItems activator)
         {
+            base.SetItemActivator(activator);
+
             _factory = new RunnerFactory();
             _activator = activator;
-            executeInAutomationServerUI1.SetItemActivator(activator);
-            
-            executeInAutomationServerUI1.CommandGetter = Detatch_CommandGetter;
 
+            AddToMenu(new ExecuteCommandRunDetached(activator,Detatch_CommandGetter));
+            AddToMenu(new ExecuteCommandCopyRunCommandToClipboard(activator,Detatch_CommandGetter));
+            
             loadProgressUI1.ApplyTheme(activator.Theme);
         }
 
@@ -75,7 +80,7 @@ namespace CatalogueManager.SimpleControls
                 new HelpStage(btnExecute, "This button will execute the required operation in the RDMP UI.\r\n" +
                                           "Results will be shown below."),
             };
-            stages.AddRange(executeInAutomationServerUI1.HelpStages);
+            
             return stages;
         }
 
@@ -224,7 +229,6 @@ namespace CatalogueManager.SimpleControls
                 btnRunChecks.Enabled = true;
                 
                 btnExecute.Enabled = false;
-                executeInAutomationServerUI1.SetEnabled(false);
                 btnAbortLoad.Enabled = false;
                 return;
             }
@@ -243,13 +247,11 @@ namespace CatalogueManager.SimpleControls
                 //leave checks enabled and enable execute
                 btnRunChecks.Enabled = true;
                 btnExecute.Enabled = true;
-                executeInAutomationServerUI1.SetEnabled(true);
             }
             else
             {
                 //load is underway!
                 btnExecute.Enabled = false;
-                executeInAutomationServerUI1.SetEnabled(false);
                 btnRunChecks.Enabled = false;
 
                 //only thing we can do is abort

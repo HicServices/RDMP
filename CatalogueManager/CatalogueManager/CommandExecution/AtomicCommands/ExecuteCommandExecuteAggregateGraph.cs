@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -24,8 +18,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if (aggregate.IsCohortIdentificationAggregate) 
                 SetImpossible("AggregateConfiguration is a Cohort aggregate");
-        }
 
+            UseTripleDotSuffix = true;
+        }
         public override string GetCommandHelp()
         {
             return "Assembles and runs the graph query and renders the results as a graph";

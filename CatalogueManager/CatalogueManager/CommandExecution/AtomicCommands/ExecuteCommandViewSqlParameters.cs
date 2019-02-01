@@ -16,6 +16,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandViewSqlParameters(IActivateItems activator,ICollectSqlParameters collector):base(activator)
         {
             _collector = collector;
+            UseTripleDotSuffix = true;
         }
 
         public Image GetImage(IIconProvider iconProvider)

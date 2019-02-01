@@ -16,11 +16,19 @@ namespace ReusableLibraryCode.CommandExecution
         public string ReasonCommandImpossible { get; private set; }
         public string OverrideCommandName { get; set; }
 
+        
+        /// <summary>
+        /// True to add "..." to the end of the <see cref="GetCommandName"/>
+        /// </summary>
+        protected bool UseTripleDotSuffix { get; set; }
+
+
         public virtual void Execute()
         {
             if(IsImpossible)
                 throw new NotSupportedException("Command is marked as IsImpossible and should not be Executed.  Reason ReasonCommandImpossible is:" + ReasonCommandImpossible);
         }
+
 
         public virtual string GetCommandName()
         {
@@ -29,6 +37,10 @@ namespace ReusableLibraryCode.CommandExecution
 
             var name = GetType().Name;
             var adjusted = name.Replace("ExecuteCommand", "");
+
+            if (UseTripleDotSuffix)
+                adjusted += "...";
+
             return UsefulStuff.PascalCaseStringToHumanReadable(adjusted);
         
         }

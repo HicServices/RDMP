@@ -97,7 +97,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         }
 
 
-        public void SetItemActivator(IActivateItems activator)
+        public virtual void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
             RepositoryLocator = _activator.RepositoryLocator;
@@ -111,7 +111,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="cmd"></param>
         public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
         {
-            var p = Parent as RDMPUserControl;
+            var p = GetTopmostRDMPUserControl(this, null);
             if (p != null)
             {
                 p.Add(cmd,overrideCommandName,overrideImage);
@@ -137,7 +137,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="cmd"></param>
         public void Add(ToolStripItem item)
         {
-            var p = Parent as RDMPUserControl;
+            var p = GetTopmostRDMPUserControl(this, null);
             if (p != null)
             {
                 p.Add(item);
@@ -252,7 +252,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
         protected void ClearToolStrip()
         {
-            var p = Parent as RDMPUserControl;
+            var p = GetTopmostRDMPUserControl(this, null);
             if (p != null)
             {
                 p.ClearToolStrip();
@@ -279,7 +279,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="cmd"></param>
         public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
         {
-            var p = Parent as RDMPUserControl;
+            var p = GetTopmostRDMPUserControl(this, null);
             if (p != null)
             {
                 p.AddToMenu(cmd,overrideCommandName,overrideImage);
@@ -304,7 +304,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// </summary>
         public void AddToMenu(ToolStripItem menuItem)
         {
-            var p = Parent as RDMPUserControl;
+            var p = GetTopmostRDMPUserControl(this,null);
             if (p != null)
             {
                 p.AddToMenu(menuItem);
@@ -315,6 +315,20 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             _menuDropDown.DropDownItems.Add(menuItem);
             _menuDropDown.Enabled = true;
+        }
+
+        /// <summary>
+        /// Returns the topmost control which implements <see cref="RDMPUserControl"/>
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="found">pass null when calling this</param>
+        /// <returns></returns>
+        private RDMPUserControl GetTopmostRDMPUserControl(Control c, RDMPUserControl found)
+        {
+            if (c.Parent == null)
+                return found;
+
+            return GetTopmostRDMPUserControl(c.Parent, c.Parent as RDMPUserControl ?? found);
         }
 
         /// <summary>

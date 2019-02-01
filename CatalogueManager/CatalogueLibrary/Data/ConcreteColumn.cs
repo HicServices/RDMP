@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
+using Fansi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;
@@ -106,7 +107,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public string GetRuntimeName()
         {
-            var helper = ColumnInfo.GetQuerySyntaxHelper();
+            var helper = ColumnInfo == null ? new MicrosoftQuerySyntaxHelper(): ColumnInfo.GetQuerySyntaxHelper();
             if (!String.IsNullOrWhiteSpace(Alias))
                 return helper.GetRuntimeName(Alias);//.GetRuntimeName(); RDMPQuerySyntaxHelper.GetRuntimeName(this);
 
