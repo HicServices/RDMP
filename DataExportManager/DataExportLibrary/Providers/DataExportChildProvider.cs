@@ -431,51 +431,62 @@ namespace DataExportLibrary.Providers
 
                 if (server == null || !server.RespondsWithinTime(3, out ex) || !source.IsFullyPopulated())
                 {
-                    BlackListedSources.Add(source);
-                    
-                    _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Blacklisted source '" + source + "'",CheckResult.Fail, ex));
-
-                    //tell them not to bother looking for the cohort data because its inaccessible
-                    foreach (ExtractableCohort cohort in Cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).ToArray())
-                        cohort.InjectKnown((ExternalCohortDefinitionData)null);
-
+                    Blacklist(source,ex);
                     continue;
                 }
 
-                using (var con = server.GetConnection())
+                try
                 {
-                    con.Open();
-                    
-                    //Get all of the project numbers and remote origin ids etc from the source in one query
-                    var cmd = server.GetCommand(source.GetExternalDataSql(), con);
-                    cmd.CommandTimeout = 120;
-
-                    var r = cmd.ExecuteReader();
-                    while (r.Read())
+                    using (var con = server.GetConnection())
                     {
-                        //really should be only one here but still they might for some reason have 2 references to the same external cohort
-                        var cohorts = Cohorts.Where(
-                            c => c.OriginID == Convert.ToInt32(r["OriginID"]) && c.ExternalCohortTable_ID == source.ID)
-                            .ToArray();
+                        con.Open();
+                    
+                        //Get all of the project numbers and remote origin ids etc from the source in one query
+                        var cmd = server.GetCommand(source.GetExternalDataSql(), con);
+                        cmd.CommandTimeout = 120;
 
-                        //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
-                        foreach (ExtractableCohort c in cohorts)
+                        var r = cmd.ExecuteReader();
+                        while (r.Read())
                         {
-                            //load external data from the result set
-                            var externalData = new ExternalCohortDefinitionData(r, source.Name);
+                            //really should be only one here but still they might for some reason have 2 references to the same external cohort
+                            var cohorts = Cohorts.Where(
+                                c => c.OriginID == Convert.ToInt32(r["OriginID"]) && c.ExternalCohortTable_ID == source.ID)
+                                .ToArray();
 
-                            //tell the cohort about the data
-                            c.InjectKnown(externalData);
+                            //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
+                            foreach (ExtractableCohort c in cohorts)
+                            {
+                                //load external data from the result set
+                                var externalData = new ExternalCohortDefinitionData(r, source.Name);
 
-                            //for performance also keep a dictionary of project number => compatible cohorts
-                            if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
-                                ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
+                                //tell the cohort about the data
+                                c.InjectKnown(externalData);
 
-                            ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
+                                //for performance also keep a dictionary of project number => compatible cohorts
+                                if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
+                                    ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
+
+                                ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
+                            }
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    Blacklist(source,e);
+                }
             }
+        }
+
+        private void Blacklist(ExternalCohortTable source,Exception ex)
+        {
+            BlackListedSources.Add(source);
+
+            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Blacklisted source '" + source + "'", CheckResult.Fail, ex));
+
+            //tell them not to bother looking for the cohort data because its inaccessible
+            foreach (ExtractableCohort cohort in Cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).ToArray())
+                cohort.InjectKnown((ExternalCohortDefinitionData)null);
         }
 
         private List<CohortSourceUsedByProjectNode> GetAllCohortProjectUsageNodesFor(Project project)

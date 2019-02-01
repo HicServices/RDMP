@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables;
 using ReusableUIComponents;
@@ -14,49 +16,10 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
     /// Allows you to edit an external cohort reference.  This is the location of a cohort database and includes the names of the Cohort table and the names of 
     /// private/release identifiers in the database
     /// </summary>
-    public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design
+    public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design,ISaveableUI
     {
         private ExternalCohortTable _externalCohortTable;
-        bool _bLoading;
         
-        public ExternalCohortTable ExternalCohortTable
-        {
-            get { return _externalCohortTable; }
-            private set
-            {
-                _bLoading = true;
-                _externalCohortTable = value;
-
-                {
-                    tbID.Text = value.ID.ToString();
-                    tbName.Text = value.Name;
-
-                    serverDatabaseTableSelector1.DatabaseType = value.DatabaseType;
-
-                    string password = null;
-                    try
-                    {
-                        password = value.GetDecryptedPassword();
-                    }
-                    catch (Exception)
-                    {
-                        password = null;
-                    }
-
-                    serverDatabaseTableSelector1.SetExplicitDatabase(value.Server, value.Database, value.Username, password);
-
-                    tbTableName.Text = value.TableName;
-                    tbPrivateIdentifierField.Text = value.PrivateIdentifierField;
-                    tbReleaseIdentifierField.Text = value.ReleaseIdentifierField;
-                    tbDefinitionTableForeignKeyField.Text = value.DefinitionTableForeignKeyField;
-
-                    tbDefinitionTableName.Text = value.DefinitionTableName;
-                }
-
-                _bLoading = false;
-            }
-        }
-
         public ExternalCohortTableUI()
         {
             InitializeComponent();
@@ -64,45 +27,15 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             AssociatedCollection = RDMPCollection.SavedCohorts;
 
             serverDatabaseTableSelector1.HideTableComponents();
+
+            ObjectSaverButton1.BeforeSave += ObjectSaverButton1OnBeforeSave;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            if(ExternalCohortTable != null)
-            {
-                SaveDatabaseSettings();
-                ExternalCohortTable.SaveToDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(ExternalCohortTable));
-            }
-        }
-
-        private void tb_TextChanged(object sender, EventArgs e)
-        {
-            
-            if (ExternalCohortTable == null || _bLoading)
-                return;
-
-            var tbSender = (TextBox) sender;
-            var value = tbSender.Text;
-
-            if(tbSender == tbName)
-                ExternalCohortTable.Name = value;
-            if (tbSender == tbTableName)
-                ExternalCohortTable.TableName = value;
-            if (tbSender == tbPrivateIdentifierField)
-                ExternalCohortTable.PrivateIdentifierField = value;
-            if (tbSender == tbReleaseIdentifierField)
-                ExternalCohortTable.ReleaseIdentifierField = value;
-            if (tbSender == tbDefinitionTableForeignKeyField)
-                ExternalCohortTable.DefinitionTableForeignKeyField = value;
-            if (tbSender == tbDefinitionTableName)
-                ExternalCohortTable.DefinitionTableName = value;
-        }
-
-        private void btnCheck_Click(object sender, EventArgs e)
+        private bool ObjectSaverButton1OnBeforeSave(DatabaseEntity databaseEntity)
         {
             SaveDatabaseSettings();
-            checksUI1.StartChecking(ExternalCohortTable);
+            _externalCohortTable.SaveToDatabase();
+            return true;
         }
 
         private void SaveDatabaseSettings()
@@ -112,17 +45,56 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             if(db == null)
                 return;
 
-            ExternalCohortTable.Server = db.Server.Name;
-            ExternalCohortTable.Database = db.GetRuntimeName();
-            ExternalCohortTable.Username = db.Server.ExplicitUsernameIfAny;
-            ExternalCohortTable.Password = db.Server.ExplicitPasswordIfAny;
-            ExternalCohortTable.DatabaseType = db.Server.DatabaseType;
+            _externalCohortTable.Server = db.Server.Name;
+            _externalCohortTable.Database = db.GetRuntimeName();
+            _externalCohortTable.Username = db.Server.ExplicitUsernameIfAny;
+            _externalCohortTable.Password = db.Server.ExplicitPasswordIfAny;
+            _externalCohortTable.DatabaseType = db.Server.DatabaseType;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ExternalCohortTable databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            ExternalCohortTable = databaseObject;
+            _externalCohortTable = databaseObject;
+
+            serverDatabaseTableSelector1.DatabaseType = _externalCohortTable.DatabaseType;
+
+            string password = null;
+            try
+            {
+                password = _externalCohortTable.GetDecryptedPassword();
+            }
+            catch (Exception)
+            {
+                password = null;
+            }
+
+            serverDatabaseTableSelector1.SetExplicitDatabase(_externalCohortTable.Server, _externalCohortTable.Database, _externalCohortTable.Username, password);
+            
+            AddHelp(tbTableName, "IExternalCohortTable.TableName");
+            AddHelp(tbPrivateIdentifierField, "IExternalCohortTable.PrivateIdentifierField");
+            AddHelp(tbReleaseIdentifierField, "IExternalCohortTable.ReleaseIdentifierField");
+            AddHelp(tbDefinitionTableForeignKeyField, "IExternalCohortTable.DefinitionTableForeignKeyField");
+            
+            AddHelp(tbDefinitionTableName, "IExternalCohortTable.DefinitionTableName");
+
+            AddChecks(_externalCohortTable);
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ExternalCohortTable databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",e=>e.ID);
+            
+            Bind(tbID, "Text", "ID", e => e.ID);
+            Bind(tbName, "Text", "Name", e => e.Name);
+            Bind(tbTableName, "Text", "TableName", e => e.TableName);
+            Bind(tbPrivateIdentifierField, "Text", "PrivateIdentifierField", e => e.PrivateIdentifierField);
+            Bind(tbReleaseIdentifierField, "Text", "ReleaseIdentifierField", e => e.ReleaseIdentifierField);
+            Bind(tbDefinitionTableForeignKeyField, "Text", "DefinitionTableForeignKeyField", e => e.DefinitionTableForeignKeyField);
+
+            Bind(tbDefinitionTableName, "Text", "DefinitionTableName", e => e.DefinitionTableName);
         }
     }
 
