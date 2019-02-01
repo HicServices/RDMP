@@ -72,6 +72,10 @@ namespace CatalogueManager.Icons.IconProvision
                 else 
                     return null; //it's a string but an unhandled one so give them null back
             }
+
+            //if they already passed in an image just return it back (optionally with the overlay).
+            if (concept is Bitmap)
+                return GetImage((Bitmap)concept, kind);
             
             //if there are plugins injecting random objects into RDMP tree views etc then we need the ability to provide icons for them
             if (_pluginIconProviders != null)
