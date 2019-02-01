@@ -216,7 +216,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
             Bind(tbFilterName,"Text","Name",f=>f.Name);
             Bind(tbFilterDescription, "Text", "Description", f => f.Description);
-            Bind(cbIsMandatory, "IsChecked", "IsMandatory", f => f.IsMandatory);
+            Bind(cbIsMandatory, "Checked", "IsMandatory", f => f.IsMandatory);
         }
 
         /// <summary>

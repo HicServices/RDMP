@@ -58,16 +58,16 @@ namespace CatalogueManager.LoadExecutionUIs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ddLoadProgress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddLoadProgress.FormattingEnabled = true;
-            this.ddLoadProgress.Location = new System.Drawing.Point(88, 20);
+            this.ddLoadProgress.Location = new System.Drawing.Point(88, 14);
             this.ddLoadProgress.Name = "ddLoadProgress";
-            this.ddLoadProgress.Size = new System.Drawing.Size(291, 21);
+            this.ddLoadProgress.Size = new System.Drawing.Size(327, 21);
             this.ddLoadProgress.TabIndex = 48;
             this.ddLoadProgress.SelectedIndexChanged += new System.EventHandler(this.ddLoadProgress_SelectedIndexChanged);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 23);
+            this.label4.Location = new System.Drawing.Point(3, 19);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 13);
             this.label4.TabIndex = 50;
@@ -75,7 +75,7 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             // udDaysPerJob
             // 
-            this.udDaysPerJob.Location = new System.Drawing.Point(88, 45);
+            this.udDaysPerJob.Location = new System.Drawing.Point(88, 38);
             this.udDaysPerJob.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -93,7 +93,7 @@ namespace CatalogueManager.LoadExecutionUIs
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 47);
+            this.label3.Location = new System.Drawing.Point(6, 40);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 13);
             this.label3.TabIndex = 46;
@@ -112,7 +112,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbLoadProgresses.Controls.Add(this.label4);
             this.gbLoadProgresses.Location = new System.Drawing.Point(3, 3);
             this.gbLoadProgresses.Name = "gbLoadProgresses";
-            this.gbLoadProgresses.Size = new System.Drawing.Size(457, 90);
+            this.gbLoadProgresses.Size = new System.Drawing.Size(457, 62);
             this.gbLoadProgresses.TabIndex = 57;
             this.gbLoadProgresses.TabStop = false;
             this.gbLoadProgresses.Text = "Progressable To Execute";
@@ -121,7 +121,7 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             this.btnRefreshLoadProgresses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshLoadProgresses.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshLoadProgresses.Image")));
-            this.btnRefreshLoadProgresses.Location = new System.Drawing.Point(421, 18);
+            this.btnRefreshLoadProgresses.Location = new System.Drawing.Point(418, 13);
             this.btnRefreshLoadProgresses.Name = "btnRefreshLoadProgresses";
             this.btnRefreshLoadProgresses.Size = new System.Drawing.Size(30, 23);
             this.btnRefreshLoadProgresses.TabIndex = 59;
@@ -131,7 +131,7 @@ namespace CatalogueManager.LoadExecutionUIs
             // helpIconAbortShouldCancel
             // 
             this.helpIconAbortShouldCancel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIconAbortShouldCancel.BackgroundImage")));
-            this.helpIconAbortShouldCancel.Location = new System.Drawing.Point(281, 66);
+            this.helpIconAbortShouldCancel.Location = new System.Drawing.Point(422, 36);
             this.helpIconAbortShouldCancel.Name = "helpIconAbortShouldCancel";
             this.helpIconAbortShouldCancel.Size = new System.Drawing.Size(19, 19);
             this.helpIconAbortShouldCancel.TabIndex = 52;
@@ -139,17 +139,17 @@ namespace CatalogueManager.LoadExecutionUIs
             // helpIconRunRepeatedly
             // 
             this.helpIconRunRepeatedly.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIconRunRepeatedly.BackgroundImage")));
-            this.helpIconRunRepeatedly.Location = new System.Drawing.Point(104, 67);
+            this.helpIconRunRepeatedly.Location = new System.Drawing.Point(246, 37);
             this.helpIconRunRepeatedly.Name = "helpIconRunRepeatedly";
             this.helpIconRunRepeatedly.Size = new System.Drawing.Size(19, 19);
             this.helpIconRunRepeatedly.TabIndex = 52;
             // 
             // cbRunIteratively
             // 
-            this.cbRunIteratively.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbRunIteratively.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbRunIteratively.AutoSize = true;
-            this.cbRunIteratively.Location = new System.Drawing.Point(6, 68);
+            this.cbRunIteratively.Location = new System.Drawing.Point(148, 39);
             this.cbRunIteratively.Name = "cbRunIteratively";
             this.cbRunIteratively.Size = new System.Drawing.Size(103, 17);
             this.cbRunIteratively.TabIndex = 51;
@@ -159,11 +159,11 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             // cbAbortShouldActuallyCancelInstead
             // 
-            this.cbAbortShouldActuallyCancelInstead.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbAbortShouldActuallyCancelInstead.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbAbortShouldActuallyCancelInstead.AutoSize = true;
             this.cbAbortShouldActuallyCancelInstead.Enabled = false;
-            this.cbAbortShouldActuallyCancelInstead.Location = new System.Drawing.Point(129, 68);
+            this.cbAbortShouldActuallyCancelInstead.Location = new System.Drawing.Point(271, 39);
             this.cbAbortShouldActuallyCancelInstead.Name = "cbAbortShouldActuallyCancelInstead";
             this.cbAbortShouldActuallyCancelInstead.Size = new System.Drawing.Size(152, 17);
             this.cbAbortShouldActuallyCancelInstead.TabIndex = 11;
@@ -177,7 +177,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.flpControls.Controls.Add(this.gbLoadProgresses);
             this.flpControls.Location = new System.Drawing.Point(198, 3);
             this.flpControls.Name = "flpControls";
-            this.flpControls.Size = new System.Drawing.Size(727, 110);
+            this.flpControls.Size = new System.Drawing.Size(721, 70);
             this.flpControls.TabIndex = 59;
             // 
             // panel2
