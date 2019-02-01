@@ -60,6 +60,17 @@ namespace CatalogueLibrary.Providers
             if (o is ExtractionInformation)
                 return DescribeProblem((ExtractionInformation) o);
 
+            if (o is IFilter)
+                return DescribeProblem((IFilter) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(IFilter filter)
+        {
+            if (string.IsNullOrWhiteSpace(filter.WhereSQL))
+                return "Filter is blank";
+
             return null;
         }
 
