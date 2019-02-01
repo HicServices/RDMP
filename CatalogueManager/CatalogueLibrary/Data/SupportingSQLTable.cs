@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
@@ -74,7 +71,10 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// If true then the table should be copied to the output directory of project extractions that include the <see cref="Catalogue_ID"/>.
+        /// If true then the query will be executed and the resulting table will be copied to the output directory of project extractions that include the <see cref="Catalogue_ID"/>.
+        /// 
+        /// <para>This will fail if the query contains mulitple select statements.  Ensure that there is no identifiable data returned by the query since it will not be linked 
+        /// against the project cohort / anonymised in any way.</para>
         /// </summary>
         public bool Extractable
         {

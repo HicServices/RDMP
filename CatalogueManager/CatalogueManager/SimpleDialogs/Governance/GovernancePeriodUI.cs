@@ -1,12 +1,12 @@
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
@@ -31,39 +31,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
     public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
     {
         private GovernancePeriod _governancePeriod;
-        public event EventHandler ChangesSaved;
-
-        public GovernancePeriod GovernancePeriod
-        {
-            get { return _governancePeriod; }
-            set
-            {
-                _governancePeriod = value;
-                
-                //clear related catalogues
-                lbCatalogues.Items.Clear();
-                
-                tbName.Text = value.Name;
-                tbDescription.Text = value.Description;
-                ticketingControl1.TicketText = value.Ticket;
-
-                lblExpired.Visible = value.IsExpired();
-
-                dtpStartDate.Value = value.StartDate;
-
-                if (value.EndDate == null)
-                    rbNeverExpires.Checked = true;
-                else
-                {
-                    rbExpiresOn.Checked = true;
-                    dtpEndDate.Value = (DateTime) value.EndDate;
-                }
-                    
-                //add related catalogues
-                lbCatalogues.Items.AddRange(value.GovernedCatalogues.ToArray());
-                
-            }
-        }
 
         public GovernancePeriodUI()
         {
@@ -75,20 +42,39 @@ namespace CatalogueManager.SimpleDialogs.Governance
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            GovernancePeriod = databaseObject;
+            _governancePeriod = databaseObject;
+            
+            //clear related catalogues
+            lbCatalogues.Items.Clear();
+
+            ticketingControl1.TicketText = _governancePeriod.Ticket;
+
+            lblExpired.Visible = _governancePeriod.IsExpired();
+
+            dtpStartDate.Value = _governancePeriod.StartDate;
+
+            if (_governancePeriod.EndDate == null)
+                rbNeverExpires.Checked = true;
+            else
+            {
+                rbExpiresOn.Checked = true;
+                dtpEndDate.Value = (DateTime)_governancePeriod.EndDate;
+            }
+
+            //add related catalogues
+            lbCatalogues.Items.AddRange(_governancePeriod.GovernedCatalogues.ToArray());
+
+            AddChecks(_governancePeriod);
+            StartChecking();
         }
 
-        private void tbName_TextChanged(object sender, EventArgs e)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, GovernancePeriod databaseObject)
         {
-            if (_governancePeriod != null)
-                _governancePeriod.Name = tbName.Text;
+            base.SetBindings(rules, databaseObject);
 
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            if (_governancePeriod != null)
-                _governancePeriod.Description = tbDescription.Text;
+            Bind(tbID, "Text", "ID", g => g.ID);
+            Bind(tbName, "Text", "Name", g => g.Name);
+            Bind(tbDescription, "Text", "Description", g => g.Description);
         }
 
         private void rbNeverExpires_CheckedChanged(object sender, EventArgs e)
@@ -115,14 +101,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
                     _governancePeriod.EndDate = dtpEndDate.Value;
         }
 
-        private void rbExpiresOn_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnAddCatalogue_Click(object sender, EventArgs e)
         {
-            
             var alreadyMappedCatalogues = lbCatalogues.Items.Cast<Catalogue>();
             var allCatalogues = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
 
@@ -168,14 +148,14 @@ namespace CatalogueManager.SimpleDialogs.Governance
                         lbCatalogues.Items.Remove(toDelete);
                     }
 
-                Publish(GovernancePeriod);
+                Publish(_governancePeriod);
             }
         }
         
         private void btnImportCatalogues_Click(object sender, EventArgs e)
         {
             GovernancePeriod[] toImportFrom = RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>()
-                .Where(gov=>gov.ID != GovernancePeriod.ID)
+                .Where(gov => gov.ID != _governancePeriod.ID)
                 .ToArray();
 
             if (!toImportFrom.Any())

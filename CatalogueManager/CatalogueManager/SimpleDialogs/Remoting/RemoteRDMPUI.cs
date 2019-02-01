@@ -1,9 +1,8 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
@@ -15,53 +14,21 @@ namespace CatalogueManager.SimpleDialogs.Remoting
     /// </summary>
     public partial class RemoteRDMPUI : RemoteRDMPUI_Design, ISaveableUI
     {
-        private RemoteRDMP _remote;
-
-        public RemoteRDMP Remote
-        {
-            get { return _remote; }
-            set
-            {
-                _remote = value;
-            }
-        }
-
         public RemoteRDMPUI()
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Tables;
         }
 
-        public override void SetDatabaseObject(IActivateItems activator, RemoteRDMP databaseObject)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, RemoteRDMP databaseObject)
         {
-            base.SetDatabaseObject(activator, databaseObject);
+            base.SetBindings(rules, databaseObject);
 
-            Remote = databaseObject;
-
-            txtName.Text = Remote.Name;
-            txtBaseUrl.Text = Remote.URL;
-            txtUsername.Text = Remote.Username;
-            txtPassword.Text = Remote.Password;
-        }
-        
-        private void txtName_TextChanged(object sender, EventArgs e)
-        {
-            Remote.Name = txtName.Text;
-        }
-
-        private void txtBaseUrl_TextChanged(object sender, EventArgs e)
-        {
-            Remote.URL = txtBaseUrl.Text;
-        }
-
-        private void txtUsername_TextChanged(object sender, EventArgs e)
-        {
-            Remote.Username = txtUsername.Text;
-        }
-
-        private void txtPassword_TextChanged(object sender, EventArgs e)
-        {
-            Remote.Password = txtPassword.Text;
+            Bind(tbID,"Text","ID",r=>r.ID);
+            Bind(tbName, "Text", "Name", r => r.Name);
+            Bind(tbBaseUrl, "Text", "URL", r => r.URL);
+            Bind(tbUsername, "Text", "Username", r => r.Username);
+            Bind(tbPassword, "Text", "Password", r => r.Password);
         }
     }
 

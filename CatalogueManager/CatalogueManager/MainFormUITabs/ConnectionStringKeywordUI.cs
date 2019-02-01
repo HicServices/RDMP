@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi;
@@ -44,6 +45,19 @@ namespace CatalogueManager.MainFormUITabs
                 activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase()
                     .ExpectTable("ConnectionStringKeyword")
                     .GetFullyQualifiedName();
+
+            AddChecks(databaseObject);
+            StartChecking();
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ConnectionStringKeyword databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID, "Text", "ID", k => k.ID);
+            Bind(tbName,"Text","Name",k=>k.Name);
+            Bind(tbValue, "Text", "Value", k => k.Value);
+            Bind(ddDatabaseType, "Text", "DatabaseType", k => k.DatabaseType);
         }
 
         private void ddDatabaseType_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -52,27 +66,7 @@ namespace CatalogueManager.MainFormUITabs
                 return;
             
             var type = (DatabaseType)ddDatabaseType.SelectedValue;
-            _keyword.DatabaseType = type;
             pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(type);
-            
-            Check();
-        }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            _keyword.Name = tbName.Text;
-            Check();
-        }
-
-        private void tbValue_TextChanged(object sender, EventArgs e)
-        {
-            _keyword.Value = tbValue.Text;
-            Check();
-        }
-
-        private void Check()
-        {
-            ragSmiley.StartChecking(_keyword);
         }
     }
 

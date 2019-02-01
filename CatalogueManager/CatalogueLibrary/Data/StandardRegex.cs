@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Drawing;
+using System.Text.RegularExpressions;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data
 {
@@ -13,7 +16,7 @@ namespace CatalogueLibrary.Data
     /// StandardRegex with a description and then everyone can link against it and have access to a centralised description.  This prevents you having multiple arguments getting out
     /// of sync in Pipeline components for example.
     /// </summary>
-    public class StandardRegex : DatabaseEntity
+    public class StandardRegex : DatabaseEntity, ICheckable
     {
         #region Database Properties
         private string _conceptName;
@@ -75,6 +78,22 @@ namespace CatalogueLibrary.Data
         public override string ToString()
         {
             return ConceptName;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            if(!string.IsNullOrWhiteSpace(Regex))
+                try
+                {
+                    new Regex(Regex);
+                    notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
+                }
+                catch (ArgumentException ex)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Regex is invalid", CheckResult.Fail, ex));
+                }
+           
+
         }
     }
 }

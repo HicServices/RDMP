@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Governance;
 using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -33,35 +33,20 @@ namespace CatalogueManager.SimpleDialogs.Governance
     /// </summary>
     public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveableUI
     {
-        private GovernanceDocument _governanceDocument;
-
-        public GovernanceDocument GovernanceDocument
-        {
-            get { return _governanceDocument; }
-            set
-            {
-                _governanceDocument = value;
-                
-                tbName.Text = value.Name;
-                tbDescription.Text = value.Description;
-                tbID.Text = value.ID.ToString();
-                tbPath.Text = value.URL;
-                
-
-            }
-        }
-
         public GovernanceDocumentUI()
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Catalogue;
         }
 
-        public override void SetDatabaseObject(IActivateItems activator, GovernanceDocument databaseObject)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, GovernanceDocument databaseObject)
         {
-            base.SetDatabaseObject(activator, databaseObject);
-            
-            GovernanceDocument = databaseObject;
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID, "Text", "ID", g=>g.ID);
+            Bind(tbName, "Text", "Name", g => g.Name);
+            Bind(tbDescription, "Text", "Description", g => g.Description);
+            Bind(tbPath, "Text", "URL", g => g.URL);
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -74,63 +59,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
                 tbPath.Text = ofd.FileName;
             }
         }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-
-            if (string.IsNullOrWhiteSpace(tbName.Text))
-            {
-                tbName.Text = "No Name";
-                tbName.SelectAll();
-            }
-            try
-            {
-                if (_governanceDocument != null)
-                    _governanceDocument.Name = tbName.Text;
-
-                tbName.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                tbName.ForeColor = Color.Red;
-            }
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_governanceDocument != null)
-                    _governanceDocument.Description = tbDescription.Text;
-
-                tbDescription.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                tbDescription.ForeColor = Color.Red;
-            }
-            
-        }
-
-        private void tbPath_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(tbPath.Text))
-                tbPath.Text = "<<<Missing File Path>>>";
-            try
-            {
-                if (_governanceDocument != null)
-                {
-                    _governanceDocument.URL = tbPath.Text;
-                    _governanceDocument.SaveToDatabase();
-                }
-                tbPath.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                tbPath.ForeColor = Color.Red;
-            }
-        }
-
+        
         private void btnOpen_Click(object sender, EventArgs e)
         {
             try
