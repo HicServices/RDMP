@@ -201,6 +201,10 @@ namespace CatalogueLibrary.Data
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
 
+            //treat null and "" as the same
+            if (typeof(T) == typeof(string) && string.IsNullOrWhiteSpace(field as string) && string.IsNullOrWhiteSpace(value as string))
+                return false;
+
             if (_readonly)
                 throw new Exception("An attempt was made to modify Property '" + propertyName + "' of Database Object of Type '" + GetType().Name + "' while it was in read only mode.  Object was called '" + this + "'");
 
