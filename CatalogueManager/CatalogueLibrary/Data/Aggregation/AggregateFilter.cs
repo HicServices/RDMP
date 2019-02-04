@@ -24,12 +24,14 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL paramater values (along with descriptions for the user) that let you
     /// paramaterise (for the user) your AggregateFilter</para>
     /// </summary>
-    public class AggregateFilter : ConcreteFilter
+    public class AggregateFilter : ConcreteFilter,IDisableable
     {
         #region Database Properties
 
         private int? _filterContainerID;
         private int? _clonedFromExtractionFilterID;
+        private int? _associatedColumnInfoID;
+        private bool _isDisabled;
 
         /// <inheritdoc/>
         public override int? ClonedFromExtractionFilter_ID
@@ -45,7 +47,6 @@ namespace CatalogueLibrary.Data.Aggregation
             set { SetField(ref  _filterContainerID, value); }
         }
 
-        private int? _associatedColumnInfoID;
 
         /// <summary>
         /// Obsolete
@@ -55,6 +56,13 @@ namespace CatalogueLibrary.Data.Aggregation
         {
             get { return _associatedColumnInfoID; }
             set { SetField(ref  _associatedColumnInfoID, value); }
+        }
+
+        /// <inheritdoc/>
+        public bool IsDisabled
+        {
+            get { return _isDisabled; }
+            set { SetField(ref  _isDisabled, value); }
         }
         #endregion
 
@@ -116,7 +124,10 @@ namespace CatalogueLibrary.Data.Aggregation
                 FilterContainer_ID = int.Parse(r["FilterContainer_ID"].ToString());
             else
                 FilterContainer_ID = null;
+
+            IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         }
+
 
         /// <inheritdoc/>
         public override string ToString()

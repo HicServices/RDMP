@@ -11,6 +11,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections;
+using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
@@ -139,13 +140,20 @@ namespace CohortManager.SubComponents
 
             var compileable = olvItem.RowObject as Compileable;
             var selectedContainer = tlvConfiguration.SelectedObject as AggregationContainerTask;
+
+            //show disabled tasks in gray
+            if (compileable != null && !compileable.IsEnabled())
+            {
+                olvItem.BackColor = Color.Gray;
+                return;
+            }
+
             if (compileable != null && selectedContainer != null && compileable.ParentContainerIfAny != null)
             {
                 if (compileable.ParentContainerIfAny.Equals(selectedContainer.Container))
                 {
                     olvItem.BackColor = Color.LightCyan;
                 }
-
             }
         }
         private object ImageGetter(object rowObject)
@@ -171,26 +179,37 @@ namespace CohortManager.SubComponents
         private readonly Bitmap _cohortUnionImage;
         private readonly Bitmap _cohortIntersectImage;
         private readonly Bitmap _cohortExceptImage;
+        
+        private readonly IconOverlayProvider _overlayProvider = new IconOverlayProvider();
 
         private Bitmap GetImageForCompileable(Compileable compileable,Bitmap basicImage)
         {
+            Bitmap image = basicImage;
+
             if (compileable.IsFirstInContainer.HasValue && !compileable.IsFirstInContainer.Value)
             {
                 //we are not the first in our container 
                 switch (compileable.ParentContainerIfAny.Operation)
                 {
                     case SetOperation.UNION:
-                        return CombineImages(_cohortUnionImage,basicImage);
+                        image = CombineImages(_cohortUnionImage,basicImage);
+                        break;
                     case SetOperation.INTERSECT:
-                        return CombineImages(_cohortIntersectImage,basicImage);
+                        image = CombineImages(_cohortIntersectImage,basicImage);
+                        break;
                     case SetOperation.EXCEPT:
-                        return CombineImages(_cohortExceptImage,basicImage);
+                        image = CombineImages(_cohortExceptImage,basicImage);
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
-            return basicImage;
+            //if it is disabled show it in gray
+            if (!compileable.IsEnabled())
+                return _overlayProvider.GetGrayscale(image);
+
+            return image;
         }
 
         private Bitmap CombineImages(Bitmap image1, Bitmap image2)

@@ -77,6 +77,8 @@ namespace CohortManagerLibrary
             }
         }
 
+        public abstract bool IsEnabled();
+
         public string GetCachedQueryUseCount()
         {
            return _compiler.GetCachedQueryUseCount(this);

@@ -9,6 +9,7 @@ using CatalogueLibrary.Providers;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -41,7 +42,9 @@ namespace CohortManager.Menus
             Items.Add(setOperation);
 
             Items.Add("Add Sub Container", CohortIdentificationIcons.addCohortAggregateContainer,(s, e) => AddNewCohortAggregateContainer());
-            
+
+            Add(new ExecuteCommandDisableOrEnable(_activator, container));
+
             foreach (ToolStripMenuItem item in Items)
                 item.Enabled = item.Enabled && (cic != null && !cic.Frozen);
 

@@ -9,6 +9,7 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueLibrary.Repositories;
+using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
 using ReusableLibraryCode.Checks;
 
@@ -208,7 +209,7 @@ namespace CohortManagerLibrary.QueryBuilding
             helper.GetTabs(tabDepth, out tabs, out tabplusOne);
 
             //Things we need to output
-            var toWriteOut = currentContainer.GetOrderedContents().ToArray();
+            var toWriteOut = currentContainer.GetOrderedContents().Where(IsEnabled).ToArray();
 
             if (toWriteOut.Any())
                 _sql += Environment.NewLine + tabs + "(" + Environment.NewLine;
@@ -245,6 +246,17 @@ namespace CohortManagerLibrary.QueryBuilding
             //if we outputted anything
             if (toWriteOut.Any())
                 _sql += Environment.NewLine + tabs + ")" + Environment.NewLine ;
+        }
+
+        /// <summary>
+        /// Objects are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
+        /// </summary>
+        /// <returns></returns>
+        private bool IsEnabled(IOrderable arg)
+        {
+            //skip disabled things
+            var dis = arg as IDisableable;
+            return dis == null || !dis.IsDisabled;
         }
 
         private void AddAggregate(AggregateConfiguration aggregate, int tabDepth)

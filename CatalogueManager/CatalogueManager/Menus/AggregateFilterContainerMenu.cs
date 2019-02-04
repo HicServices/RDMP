@@ -1,6 +1,7 @@
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.FilterImporting.Construction;
+using CatalogueManager.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Menus
 {
@@ -12,7 +13,7 @@ namespace CatalogueManager.Menus
             new AggregateFilterFactory(args.ItemActivator.RepositoryLocator.CatalogueRepository),
             args, filterContainer)
         {
-
+            Add(new ExecuteCommandDisableOrEnable(_activator, filterContainer));
         }
 
         protected override IContainer GetNewFilterContainer()

@@ -276,11 +276,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         protected void ClearToolStrip()
         {
             var p = GetTopmostRDMPUserControl(this, null);
+            
+            //never clear the toolbar if you are not the topmost RDMPUserControl otherwise the parent will setup some menu items and you will clear it
             if (p != null)
-            {
-                p.ClearToolStrip();
                 return;
-            }
 
             if (_toolStrip != null)
                 _toolStrip.Items.Clear();

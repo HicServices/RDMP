@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using CatalogueManager.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -12,6 +13,8 @@ namespace CatalogueManager.Icons.IconOverlays
         readonly Dictionary<Bitmap,List<CachedOverlayResult>> _resultCache = new Dictionary<Bitmap, List<CachedOverlayResult>>();
 
         readonly Dictionary<Bitmap, Dictionary<Bitmap,Bitmap>>  _resultCacheCustom = new Dictionary<Bitmap, Dictionary<Bitmap, Bitmap>>();
+
+        readonly Dictionary<Bitmap,Bitmap> _greyscaleCache = new Dictionary<Bitmap, Bitmap>();
 
         private readonly EnumImageCollection<OverlayKind> _images;
 
@@ -69,6 +72,53 @@ namespace CatalogueManager.Icons.IconOverlays
             return _resultCacheCustom[forImage][customOverlay];
         }
 
+        public Bitmap GetGrayscale(Bitmap forImage)
+        {
+            if (!_greyscaleCache.ContainsKey(forImage))
+                _greyscaleCache.Add(forImage, MakeGrayscale(forImage));
+
+            return _greyscaleCache[forImage];
+        }
+
+        /// <summary>
+        /// From https://stackoverflow.com/a/2265990/4824531
+        /// </summary>
+        /// <param name="original"></param>
+        /// <returns></returns>
+        private static Bitmap MakeGrayscale(Bitmap original)
+        {
+            //create a blank bitmap the same size as original
+            Bitmap newBitmap = new Bitmap(original.Width, original.Height);
+
+            //get a graphics object from the new image
+            Graphics g = Graphics.FromImage(newBitmap);
+
+            //create the grayscale ColorMatrix
+            ColorMatrix colorMatrix = new ColorMatrix(
+               new float[][] 
+      {
+         new float[] {.3f, .3f, .3f, 0, 0},
+         new float[] {.59f, .59f, .59f, 0, 0},
+         new float[] {.11f, .11f, .11f, 0, 0},
+         new float[] {0, 0, 0, 1, 0},
+         new float[] {0, 0, 0, 0, 1}
+      });
+
+            //create some image attributes
+            ImageAttributes attributes = new ImageAttributes();
+
+            //set the color matrix attribute
+            attributes.SetColorMatrix(colorMatrix);
+
+            //draw the original image on the new image
+            //using the grayscale color matrix
+            g.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height),
+               0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
+
+            //dispose the Graphics object
+            g.Dispose();
+            return newBitmap;
+        }
 
         public Bitmap GetOverlayNoCache(Bitmap forImage, OverlayKind overlayKind)
         {

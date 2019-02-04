@@ -739,5 +739,166 @@ SET @bob_2='Boom!';
              }
          }
 
+        [Test]
+        public void TestGettingAggregateSQL_Aggregate_IsDisabled()
+        {
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
+
+
+            Assert.AreEqual(null, aggregate1.GetCohortAggregateContainerIfAny());
+
+            //set the order so that 2 comes before 1
+            rootcontainer.AddChild(aggregate2, 1);
+            rootcontainer.AddChild(aggregate1, 5);
+
+            //disable aggregate 1
+            aggregate1.IsDisabled = true;
+            aggregate1.SaveToDatabase();
+
+            Assert.AreEqual(rootcontainer, aggregate1.GetCohortAggregateContainerIfAny());
+            try
+            {
+                Assert.AreEqual(
+
+                    CollapseWhitespace(string.Format(
+@"(
+	/*cic_{0}_UnitTestAggregate2*/
+	SELECT
+	distinct
+	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
+	FROM 
+	[" + _scratchDatabaseName + @"]..[BulkData]
+)"
+
+       , cohortIdentificationConfiguration.ID))
+       , CollapseWhitespace(builder.SQL));
+            }
+            finally
+            {
+
+                aggregate1.IsDisabled = false;
+                aggregate1.SaveToDatabase();
+
+                rootcontainer.RemoveChild(aggregate1);
+                rootcontainer.RemoveChild(aggregate2);
+            }
+        }
+        
+        [Test]
+        public void TestGettingAggregateSQLFromEntirity_Filter_IsDisabled()
+        {
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
+
+            //setup a filter (all filters must be in a container so the container is a default AND container)
+            var AND1 = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
+            var filter1_1 = new AggregateFilter(CatalogueRepository, "filter1_1", AND1);
+            var filter1_2 = new AggregateFilter(CatalogueRepository, "filter1_2", AND1);
+
+            var AND2 = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
+            var filter2_1 = new AggregateFilter(CatalogueRepository, "filter2_1", AND2);
+            var filter2_2 = new AggregateFilter(CatalogueRepository, "filter2_2", AND2);
+
+            //Filters must belong to containers BEFORE parameter creation
+            //Make aggregate1 use the filter set we just setup
+            aggregate1.RootFilterContainer_ID = AND1.ID;
+            aggregate1.SaveToDatabase();
+
+            //Make aggregate3 use the other filter set we just setup
+            aggregate2.RootFilterContainer_ID = AND2.ID;
+            aggregate2.SaveToDatabase();
+
+            //set the order so that 2 comes before 1
+            rootcontainer.AddChild(aggregate2, 1);
+            rootcontainer.AddChild(aggregate1, 5);
+
+            filter2_2.IsDisabled = true;
+            filter2_2.SaveToDatabase();
+
+            //give the filter an implicit parameter requiring bit of SQL
+            foreach (var filter in new IFilter[] { filter1_1, filter1_2, filter2_1, filter2_2 })
+            {
+                filter.WhereSQL = "@bob = 'bob'";
+                filter.SaveToDatabase();
+                //get it to create the parameters for us
+                new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
+
+                //get the parameter it just created, set it's value and save it
+                var param = (AggregateFilterParameter)filter.GetAllParameters().Single();
+                param.Value = "'Boom!'";
+                param.ParameterSQL = "DECLARE @bob AS varchar(10);";
+
+                //change the values of the parameters
+                if (filter.Equals(filter2_1) || Equals(filter, filter2_2))
+                    param.Value = "'Grenades Are Go'";
+
+                param.SaveToDatabase();
+            }
+
+            Console.WriteLine(builder.SQL);
+
+            try
+            {
+                    Assert.AreEqual(
+CollapseWhitespace(
+string.Format(
+
+@"DECLARE @bob AS varchar(10);
+SET @bob='Grenades Are Go';
+DECLARE @bob_2 AS varchar(10);
+SET @bob_2='Boom!';
+
+(
+	/*cic_{0}_UnitTestAggregate2*/
+	SELECT
+	distinct
+	[" + TestDatabaseNames.Prefix + @"ScratchArea]..[BulkData].[chi]
+	FROM 
+	[" + TestDatabaseNames.Prefix + @"ScratchArea]..[BulkData]
+	WHERE
+	(
+	/*filter2_1*/
+	@bob = 'bob'
+	)
+
+	EXCEPT
+
+	/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+	distinct
+	[" + TestDatabaseNames.Prefix + @"ScratchArea]..[BulkData].[chi]
+	FROM 
+	[" + TestDatabaseNames.Prefix + @"ScratchArea]..[BulkData]
+	WHERE
+	(
+	/*filter1_1*/
+	@bob_2 = 'bob'
+	AND
+	/*filter1_2*/
+	@bob_2 = 'bob'
+	)
+)
+", cohortIdentificationConfiguration.ID)),
+CollapseWhitespace(builder.SQL));
+                
+            }
+            finally
+            {
+
+                filter2_2.IsDisabled = false;
+                filter2_2.SaveToDatabase();
+
+                rootcontainer.RemoveChild(aggregate2);
+                rootcontainer.RemoveChild(aggregate1);
+
+                filter1_1.DeleteInDatabase();
+                filter1_2.DeleteInDatabase();
+                filter2_1.DeleteInDatabase();
+                filter2_2.DeleteInDatabase();
+
+                AND1.DeleteInDatabase();
+                AND2.DeleteInDatabase();
+
+            }
+        }
     }
 }

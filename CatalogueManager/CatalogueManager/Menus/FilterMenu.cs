@@ -3,6 +3,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.DataViewing;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueManager.Menus
 {
@@ -15,6 +16,10 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
 
             Items.Add(new ToolStripSeparator());
+
+            var dis = filter as IDisableable;
+            if (dis != null)
+                Add(new ExecuteCommandDisableOrEnable(_activator, dis));
 
             Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {filter}));
             Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -16,6 +17,7 @@ namespace CohortManagerLibrary.Execution
     /// </summary>
     public class AggregationContainerTask : Compileable,IOrderable
     {
+        private CohortAggregateContainer[] _parentContainers;
         public CohortAggregateContainer Container { get; set; }
         
         public CohortAggregateContainer[] SubContainers { get; set; }
@@ -28,6 +30,7 @@ namespace CohortManagerLibrary.Execution
             SubContainers = Container.GetSubContainers();
             ContainedConfigurations = Container.GetAggregateConfigurations();
 
+            _parentContainers = Container.GetAllParentContainers().ToArray();
         }
 
         public override string GetCatalogueName()
@@ -56,6 +59,11 @@ namespace CohortManagerLibrary.Execution
             var catas = Container.Repository.GetAllObjectsInIDList<Catalogue>(cataIDs);
 
             return catas.SelectMany(c => c.GetTableInfoList(false)).ToArray();
+        }
+
+        public override bool IsEnabled()
+        {
+            return !Container.IsDisabled && !_parentContainers.Any(c=>c.IsDisabled);
         }
 
         public string DescribeOperation()

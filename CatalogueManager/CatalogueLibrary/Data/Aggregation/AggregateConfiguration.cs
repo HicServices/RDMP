@@ -41,7 +41,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>
+    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>,IDisableable
     {
         #region Database Properties
         private string _countSQL;
@@ -52,6 +52,7 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _pivotOnDimensionID;
         private bool _isExtractable;
         private string _havingSQL;
+        private bool _isDisabled;
 
 
         /// <summary>
@@ -172,6 +173,12 @@ namespace CatalogueLibrary.Data.Aggregation
             }
         }
 
+        /// <inheritdoc/>
+        public bool IsDisabled
+        {
+            get { return _isDisabled; }
+            set { SetField(ref _isDisabled, value); }
+        }
         #endregion
 
         #region Relationships
@@ -371,6 +378,7 @@ namespace CatalogueLibrary.Data.Aggregation
                 PivotOnDimensionID = Convert.ToInt32(r["PivotOnDimensionID"]);
 
             IsExtractable = Convert.ToBoolean(r["IsExtractable"]);
+            IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
 
             OverrideFiltersByUsingParentAggregateConfigurationInstead_ID =
                 ObjectToNullableInt(r["OverrideFiltersByUsingParentAggregateConfigurationInstead_ID"]);
@@ -550,7 +558,7 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _rootFilterContainerID;
         
         private bool orderFetchAttempted;
-        
+
         /// <summary>
         /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container
         /// (e.g. UNION / INTERSECT / EXCEPT) that it is in.  Returns null if it is not in a <see cref="CohortAggregateContainer"/>.

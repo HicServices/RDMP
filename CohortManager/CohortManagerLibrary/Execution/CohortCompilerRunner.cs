@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CohortManagerLibrary.Execution.Joinables;
-using QueryCaching.Aggregation;
-using QueryCaching.Aggregation.Arguments;
 
 namespace CohortManagerLibrary.Execution
 {
@@ -96,7 +91,7 @@ namespace CohortManagerLibrary.Execution
 
                 Compiler.CancelAllTasks(false);
 
-                RunAsync(Compiler.Tasks.Keys.Where(c => c is AggregationTask && c.State == CompilationState.NotScheduled), token);
+                RunAsync(Compiler.Tasks.Keys.Where(c => c is AggregationTask && c.IsEnabled() && c.State == CompilationState.NotScheduled), token);
 
                 SetPhase(Phase.CachingAggregateTasks);
 
@@ -107,12 +102,12 @@ namespace CohortManagerLibrary.Execution
                 var toReturn = Compiler.AddTask(_cic.RootCohortAggregateContainer, globals);
 
                 if(RunSubcontainers)
-                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively())
+                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(c=>!c.IsDisabled))
                         Compiler.AddTask(a, globals);
 
                 Compiler.CancelAllTasks(false);
 
-                RunAsync(Compiler.Tasks.Keys.Where(c => c.State == CompilationState.NotScheduled), token);
+                RunAsync(Compiler.Tasks.Keys.Where(c => c.State == CompilationState.NotScheduled && c.IsEnabled()), token);
 
                 SetPhase(Phase.Finished);
             

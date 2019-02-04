@@ -56,6 +56,11 @@ namespace CohortManagerLibrary.Execution.Joinables
             return Joinable.AggregateConfiguration.Catalogue.GetTableInfoList(false);
         }
 
+        public override bool IsEnabled()
+        {
+            return !_aggregate.IsDisabled;
+        }
+
         public override string ToString()
         {
             

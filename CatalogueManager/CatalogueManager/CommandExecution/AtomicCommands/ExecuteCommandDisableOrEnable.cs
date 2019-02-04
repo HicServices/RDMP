@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -7,13 +9,23 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandDisableOrEnable : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandDisableOrEnable : BasicUICommandExecution,IAtomicCommand
     {
         private readonly IDisableable _target;
 
         public ExecuteCommandDisableOrEnable(IActivateItems itemActivator, IDisableable target):base(itemActivator)
         {
             _target = target;
+
+            var container = _target as CohortAggregateContainer;
+
+            //don't let them disable the root container
+            if(container != null && container.IsRootContainer() && !container.IsDisabled)
+                SetImpossible("You cannot disable the root container of a cic");
+
+            var aggregateConfiguration = _target as AggregateConfiguration;
+            if(aggregateConfiguration != null && aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
+                SetImpossible("Joinable Patient Index Tables cannot be disabled");
         }
 
         public override void Execute()

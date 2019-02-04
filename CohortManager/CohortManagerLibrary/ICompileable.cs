@@ -30,7 +30,8 @@ namespace CohortManagerLibrary
 
         Stopwatch Stopwatch { get; set; }
         TimeSpan? ElapsedTime { get; }
-        
+
+        bool IsEnabled();
 
         string GetCachedQueryUseCount();
 

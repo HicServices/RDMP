@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
@@ -163,6 +164,24 @@ namespace DataExportLibrary.CohortCreationPipeline.Sources
 
         public void Check(ICheckNotifier notifier)
         {
+
+            var container = _cohortIdentificationConfiguration.RootCohortAggregateContainer;
+            if (container != null)
+            {
+                if (container.IsDisabled)
+                    notifier.OnCheckPerformed(new CheckEventArgs("Root container is disabled", CheckResult.Fail));
+
+                foreach (CohortAggregateContainer sub in container.GetAllSubContainersRecursively())
+                {
+                    if(sub.IsDisabled)
+                        notifier.OnCheckPerformed(new CheckEventArgs("Query includes disabled container '" + sub +"'",CheckResult.Warning));
+
+                    foreach (AggregateConfiguration configuration in sub.GetAggregateConfigurations())
+                        if(configuration.IsDisabled)
+                            notifier.OnCheckPerformed(new CheckEventArgs("Query includes disabled aggregate '" + configuration + "'",CheckResult.Warning));
+                }
+            }
+
             try
             {
                 if (_cohortIdentificationConfiguration.Frozen)

@@ -31,6 +31,8 @@ namespace CatalogueManager.Menus
 
             Add(new ExecuteCommandViewSample(args.ItemActivator, aggregate));
 
+            Add(new ExecuteCommandDisableOrEnable(_activator, aggregate));
+
             //only allow them to execute graph if it is normal aggregate graph
             if (!aggregate.IsCohortIdentificationAggregate)
                 Add(new ExecuteCommandExecuteAggregateGraph(_activator, aggregate));

@@ -17,10 +17,11 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
     /// The class deals with all this transparently via GetSubContainers.</para>
     /// </summary>
-    public class AggregateFilterContainer: VersionedDatabaseEntity, IContainer
+    public class AggregateFilterContainer : VersionedDatabaseEntity, IContainer, IDisableable
     {
         #region Database Properties
         private FilterContainerOperation _operation;
+        private bool _isDisabled;
 
 
         /// <inheritdoc/>
@@ -28,6 +29,13 @@ namespace CatalogueLibrary.Data.Aggregation
         {
             get { return _operation; }
             set { SetField(ref  _operation, value); }
+        }
+
+        /// <inheritdoc/>
+        public bool IsDisabled
+        {
+            get { return _isDisabled; }
+            set { SetField(ref _isDisabled, value); }
         }
 
         #endregion
@@ -48,6 +56,8 @@ namespace CatalogueLibrary.Data.Aggregation
             FilterContainerOperation op;
             FilterContainerOperation.TryParse(r["Operation"].ToString(), out op);
             Operation = op;
+
+            IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         }
 
         /// <inheritdoc/>

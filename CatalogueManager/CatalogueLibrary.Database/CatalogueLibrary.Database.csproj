@@ -260,6 +260,7 @@
     <EmbeddedResource Include="db\up\062_ObjectReferenceSupportCatalogue.sql" />
     <EmbeddedResource Include="db\up\063_PluginNameAndVersionMustBeUnique.sql" />
     <EmbeddedResource Include="db\up\064_FAnsiSupport.sql" />
+    <EmbeddedResource Include="db\up\065_IsDisabledSupport.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>
