@@ -308,7 +308,6 @@ namespace DataExportManager.CohortUI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbOverrideReleaseIdentifierSQL;
         private System.Windows.Forms.Panel pDescription;
-        private CatalogueManager.SimpleControls.ObjectSaverButton objectSaverButton1;
         private ReusableUIComponents.HelpIcon helpIcon1;
         private TreeListView tlvCohortUsage;
         private OLVColumn olvUsedIn;

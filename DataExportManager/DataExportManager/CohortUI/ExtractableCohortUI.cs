@@ -204,11 +204,6 @@ namespace DataExportManager.CohortUI
             _extractableCohort.OverrideReleaseIdentifierSQL = tbOverrideReleaseIdentifierSQL.Text;
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
         private void btnShowProject_Click(object sender, EventArgs e)
         {
             var dx = (DataExportChildProvider) _activator.CoreChildProvider;

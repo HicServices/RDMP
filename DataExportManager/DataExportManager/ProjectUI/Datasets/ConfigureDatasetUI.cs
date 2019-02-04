@@ -303,17 +303,10 @@ namespace DataExportManager.ProjectUI.Datasets
 
             SortSelectedByOrder();
 
-            Add(new ExecuteCommandShow(activator, databaseObject.ExtractableDataSet.Catalogue, 0, true),"Show Catalogue");
+            AddToMenu(new ExecuteCommandShow(activator, databaseObject.ExtractableDataSet.Catalogue, 0, true),"Show Catalogue");
             Add(new ExecuteCommandExecuteExtractionConfiguration(activator, databaseObject));
-            
-            RunChecks();
-            
-        }
 
-        private void RunChecks()
-        {
-            var checkable = new SelectedDataSetsChecker(SelectedDataSet, _activator.RepositoryLocator);
-            ragSmiley1.StartChecking(checkable);
+            AddChecks(new SelectedDataSetsChecker(SelectedDataSet, _activator.RepositoryLocator));
         }
 
         public override string GetTabName()
@@ -630,9 +623,9 @@ namespace DataExportManager.ProjectUI.Datasets
             tree.UseFiltering = !string.IsNullOrWhiteSpace(senderTb.Text);
         }
 
-        private void btnRefreshChecks_Click(object sender, EventArgs e)
+        protected override void OnBeforeChecking()
         {
-            RunChecks();
+            base.OnBeforeChecking();
 
             UpdateJoins();
         }

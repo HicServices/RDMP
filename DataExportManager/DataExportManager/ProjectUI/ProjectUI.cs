@@ -12,6 +12,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
 using CatalogueManager.SimpleDialogs.Revertable;
@@ -66,8 +67,6 @@ namespace DataExportManager.ProjectUI
                 //now load the UI form 
                 _project = value;
 
-                tbName.Text = value == null ? "" : value.Name ?? "";
-                tbID.Text = value == null ? "" : value.ID.ToString() ?? "";
                 dataGridView1.DataSource = value == null?null : LoadDatagridFor(value);
                 tcMasterTicket.TicketText = value == null ? "" : value.MasterTicket;
                 tbExtractionDirectory.Text = value == null ? "" : value.ExtractionDirectory;
@@ -124,12 +123,19 @@ namespace DataExportManager.ProjectUI
         }
 
 
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, Project databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID, "Text", "ID", p => p.ID); 
+            Bind(tbName, "Text", "Name", p => p.Name);
+        }
+
         public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
             Project = databaseObject;
         }
-        
 
         #region helper methods
         private void SetStringProperty(Control controlContainingValue, string property, object toSetOn)
@@ -227,20 +233,7 @@ namespace DataExportManager.ProjectUI
 
             return dtToReturn;
         }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            if (tbName.Text.Length == 0)
-            {
-                tbName.Text = "No Name";
-                tbName.SelectAll();
-            }
-
-            SetStringProperty(tbName,"Name",Project);
-
-        }
-
-
+        
         #region Right Click Context Menu
 
         #region Menu Items
@@ -333,10 +326,8 @@ namespace DataExportManager.ProjectUI
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
-
                 }
             }
-
         }
 
         private void tbExtractionDirectory_TextChanged(object sender, EventArgs e)
@@ -420,11 +411,6 @@ namespace DataExportManager.ProjectUI
             dataGridView1.Visible = false;
             lblExtractions.Visible = false;
             this.Height = 160;
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

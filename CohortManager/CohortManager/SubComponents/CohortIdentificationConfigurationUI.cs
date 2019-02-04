@@ -132,11 +132,6 @@ namespace CohortManager.SubComponents
             return "Execute:" + base.GetTabName();
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
         private void tbName_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(tbName.Text))

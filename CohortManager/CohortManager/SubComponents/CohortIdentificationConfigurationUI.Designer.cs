@@ -361,7 +361,6 @@ namespace CohortManager.SubComponents
 
         private CohortCompilerUI CohortCompilerUI1;
         private QueryCachingServerSelector queryCachingServerSelector;
-        private CatalogueManager.SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label lblName;

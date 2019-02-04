@@ -201,7 +201,17 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             if(_checkable == null)
                 return;
 
+            OnBeforeChecking();
+
             ragSmileyToolStrip.StartChecking(_checkable);
+        }
+
+        /// <summary>
+        /// Called immediately before checking the object set up by the last call to <see cref="AddChecks"/>
+        /// </summary>
+        protected virtual void OnBeforeChecking()
+        {
+            
         }
 
         /// <summary>

@@ -1,40 +1,20 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.FilterImporting.Construction;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.QueryBuilding.Parameters;
-using CatalogueLibrary.Repositories;
-using CatalogueManager;
 using CatalogueManager.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortCreationPipeline;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.Repositories;
-using HIC.Logging;
-using MapsDirectlyToDatabaseTable;
 using CatalogueManager.PipelineUIs.Pipelines;
 using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
@@ -75,67 +55,40 @@ namespace DataExportManager.ProjectUI
             AssociatedCollection = RDMPCollection.DataExport;
         }
         
-        public ExtractionConfiguration ExtractionConfiguration
-        {
-            get { return _extractionConfiguration; }
-            set
-            {
-                _extractionConfiguration = value;
-
-                tbUsername.Text = ExtractionConfiguration.Username ?? "";
-                tbCreated.Text = ExtractionConfiguration.dtCreated.ToString();
-                tcRelease.TicketText = ExtractionConfiguration.ReleaseTicket;
-                tcRequest.TicketText = ExtractionConfiguration.RequestTicket;
-                tbID.Text = ExtractionConfiguration.ID.ToString();
-                tbDescription.Text = ExtractionConfiguration.Description;
-            }
-        }
-        
         void tcRequest_TicketTextChanged(object sender, EventArgs e)
         {
-            if (ExtractionConfiguration == null)
+            if (_extractionConfiguration == null)
                 return;
 
             //don't change if it is already that
-            if (ExtractionConfiguration.RequestTicket != null && ExtractionConfiguration.RequestTicket.Equals(tcRequest.TicketText))
+            if (_extractionConfiguration.RequestTicket != null && _extractionConfiguration.RequestTicket.Equals(tcRequest.TicketText))
                 return;
-            
-            ExtractionConfiguration.RequestTicket = tcRequest.TicketText;
 
-            ExtractionConfiguration.SaveToDatabase();
+            _extractionConfiguration.RequestTicket = tcRequest.TicketText;
+
+            _extractionConfiguration.SaveToDatabase();
         }
 
         void tcRelease_TicketTextChanged(object sender, EventArgs e)
         {
-            if (ExtractionConfiguration == null)
+            if (_extractionConfiguration == null)
                 return;
 
             //don't change if it is already that
-            if (ExtractionConfiguration.ReleaseTicket != null && ExtractionConfiguration.ReleaseTicket.Equals(tcRelease.TicketText))
+            if (_extractionConfiguration.ReleaseTicket != null && _extractionConfiguration.ReleaseTicket.Equals(tcRelease.TicketText))
                 return;
 
-            ExtractionConfiguration.ReleaseTicket = tcRelease.TicketText;
-            ExtractionConfiguration.SaveToDatabase();
+            _extractionConfiguration.ReleaseTicket = tcRelease.TicketText;
+            _extractionConfiguration.SaveToDatabase();
         }
 
-
-        private void ExtractionConfigurationUI_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tcRequest_Load(object sender, EventArgs e)
-        {
-
-        }
-        
         private bool _bLoading = false;
         
         public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
             _bLoading = true;
-            ExtractionConfiguration = databaseObject;
+            _extractionConfiguration = databaseObject;
 
             SetupCohortIdentificationConfiguration();
 
@@ -144,14 +97,26 @@ namespace DataExportManager.ProjectUI
             
             pbCic.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Link);
             
+            tbCreated.Text = _extractionConfiguration.dtCreated.ToString();
+            tcRelease.TicketText = _extractionConfiguration.ReleaseTicket;
+            tcRequest.TicketText = _extractionConfiguration.RequestTicket;
+
             _bLoading = false;
-            
         }
-        
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ExtractionConfiguration databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbUsername, "Text", "Username", c => c.Username);
+            Bind(tbID,"Text", "ID",c=>c.ID);
+            Bind(tbDescription,"Text","Description",c=>c.Description);
+        }
+
         private void SetupCohortIdentificationConfiguration()
         {
             cbxCohortIdentificationConfiguration.DataSource = _activator.CoreChildProvider.AllCohortIdentificationConfigurations;
-            cbxCohortIdentificationConfiguration.SelectedItem = ExtractionConfiguration.CohortIdentificationConfiguration;
+            cbxCohortIdentificationConfiguration.SelectedItem = _extractionConfiguration.CohortIdentificationConfiguration;
         }
 
         private void SetupPipelineSelectionCohortRefresh()
@@ -163,15 +128,15 @@ namespace DataExportManager.ProjectUI
             try
             {
                 //the use case is extracting a dataset
-                var useCase = new CohortCreationRequest(ExtractionConfiguration);
+                var useCase = new CohortCreationRequest(_extractionConfiguration);
 
                 //the user is DefaultPipeline_ID field of ExtractionConfiguration
-                var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("CohortRefreshPipeline_ID"), ExtractionConfiguration);
+                var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("CohortRefreshPipeline_ID"), _extractionConfiguration);
 
                 //create the UI for this situation
                 var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
                 _cohortRefreshingPipelineSelectionUI = factory.Create("Cohort Refresh Pipeline", DockStyle.Fill,pChooseCohortRefreshPipeline);
-                _cohortRefreshingPipelineSelectionUI.Pipeline = ExtractionConfiguration.CohortRefreshPipeline;
+                _cohortRefreshingPipelineSelectionUI.Pipeline = _extractionConfiguration.CohortRefreshPipeline;
                 _cohortRefreshingPipelineSelectionUI.PipelineChanged += _cohortRefreshingPipelineSelectionUI_PipelineChanged;
                 _cohortRefreshingPipelineSelectionUI.CollapseToSingleLineMode();
             }
@@ -186,7 +151,7 @@ namespace DataExportManager.ProjectUI
             ragSmiley1Refresh.Reset();
             try
             {
-                new CohortCreationRequest(ExtractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline,new ThrowImmediatelyDataLoadEventListener());
+                new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline, new ThrowImmediatelyDataLoadEventListener());
             }
             catch (Exception ex)
             {
@@ -204,17 +169,12 @@ namespace DataExportManager.ProjectUI
             var useCase = ExtractionPipelineUseCase.DesignTime();
 
             //the user is DefaultPipeline_ID field of ExtractionConfiguration
-            var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"),ExtractionConfiguration);
+            var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"), _extractionConfiguration);
 
             //create the UI for this situation
             var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
             _extractionPipelineSelectionUI = factory.Create("Extraction Pipeline", DockStyle.Fill, pChooseExtractionPipeline);
             _extractionPipelineSelectionUI.CollapseToSingleLineMode();
-        }
-        
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         private void cbxCohortIdentificationConfiguration_SelectedIndexChanged(object sender, EventArgs e)
@@ -225,9 +185,9 @@ namespace DataExportManager.ProjectUI
             var cic = cbxCohortIdentificationConfiguration.SelectedItem as CohortIdentificationConfiguration;
 
             if (cic == null)
-                ExtractionConfiguration.CohortIdentificationConfiguration_ID = null;
+                _extractionConfiguration.CohortIdentificationConfiguration_ID = null;
             else
-                ExtractionConfiguration.CohortIdentificationConfiguration_ID = cic.ID;
+                _extractionConfiguration.CohortIdentificationConfiguration_ID = cic.ID;
 
             SetupPipelineSelectionCohortRefresh();
         }
@@ -235,11 +195,6 @@ namespace DataExportManager.ProjectUI
         private void btnClearCic_Click(object sender, EventArgs e)
         {
             cbxCohortIdentificationConfiguration.SelectedItem = null;
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            ExtractionConfiguration.Description = tbDescription.Text;
         }
     }
 
