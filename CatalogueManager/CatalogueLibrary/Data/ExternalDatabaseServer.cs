@@ -12,7 +12,9 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
@@ -43,6 +45,8 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// Human readable name for the server e.g. 'My Favourite Logging Database'
         /// </summary>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }

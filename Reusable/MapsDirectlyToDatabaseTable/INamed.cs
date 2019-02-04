@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using MapsDirectlyToDatabaseTable.Revertable;
+using ReusableLibraryCode.Annotations;
 
 namespace MapsDirectlyToDatabaseTable
 {
@@ -9,9 +10,11 @@ namespace MapsDirectlyToDatabaseTable
     /// </summary>
     public interface INamed : IRevertable, INotifyPropertyChanged
     {
+        
         /// <summary>
         /// A user meaningful name for describing the entity, this should be suitable for display in minimal screen space.
         /// </summary>
+        [NotNull]
         string Name { get; set; }
     }
 }

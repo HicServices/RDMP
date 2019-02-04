@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data.DataLoad
@@ -69,6 +70,7 @@ namespace CatalogueLibrary.Data.DataLoad
         }
 
         /// <inheritdoc/>
+        [NotNull]
         public string Name
         {
             get { return _name; }

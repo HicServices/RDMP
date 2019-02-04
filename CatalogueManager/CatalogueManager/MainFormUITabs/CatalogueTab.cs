@@ -106,6 +106,8 @@ namespace CatalogueManager.MainFormUITabs
             base.SetDatabaseObject(activator,databaseObject);
             _catalogue = databaseObject;
             
+            AddHelp(tbFolder, "CatalogueFolder");
+
             RefreshUIFromDatabase();
         }
 

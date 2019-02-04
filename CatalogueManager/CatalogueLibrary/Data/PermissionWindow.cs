@@ -8,7 +8,9 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
 {
@@ -26,6 +28,8 @@ namespace CatalogueLibrary.Data
         private bool _requiresSynchronousAccess;
         
         /// <inheritdoc/>
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }

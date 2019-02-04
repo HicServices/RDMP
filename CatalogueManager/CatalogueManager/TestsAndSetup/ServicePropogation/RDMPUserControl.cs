@@ -236,7 +236,9 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// </summary>
         /// <param name="c">The control you want the help to appear beside</param>
         /// <param name="propertyName">The xml-doc property you want e.g. "ICatalogue.Name"</param>
-        protected void AddHelp(Control c, string propertyName,string title = null)
+        /// <param name="anchor">Explicit anchor style to apply to help icon.  If you pass None (default) then anchor will
+        ///  be chosen based on the control <paramref name="c"/></param>
+        protected void AddHelp(Control c, string propertyName,string title = null, AnchorStyles anchor = AnchorStyles.None)
         {
             if(_activator == null)
                 throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
@@ -256,6 +258,17 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             help.SetHelpText(title,body);
             
             help.Location = new Point(c.Right+3,c.Top);
+
+            if (anchor == AnchorStyles.None)
+            {
+                if (c.Anchor.HasFlag(AnchorStyles.Right) && c.Anchor.HasFlag(AnchorStyles.Top))
+                    help.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+                else if (c.Anchor.HasFlag(AnchorStyles.Right) && c.Anchor.HasFlag(AnchorStyles.Bottom))
+                    help.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+            }
+            else
+                help.Anchor = anchor;
+
             c.Parent.Controls.Add(help);
         }
 

@@ -4,6 +4,7 @@ using System.Data.Common;
 using FAnsi;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 
@@ -37,6 +38,7 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// The name of the keyword.  Must be a valid connection string key for the <see cref="DatabaseType"/> e.g. IntegratedSecurity
         /// </summary>
+        [NotNull]
         public string Name
         {
             get { return _name; }

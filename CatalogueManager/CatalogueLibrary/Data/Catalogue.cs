@@ -156,6 +156,7 @@ namespace CatalogueLibrary.Data
         /// if there are multiple tables powering the Catalogue or they don't have user accessible names.
         /// </summary>
         [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }

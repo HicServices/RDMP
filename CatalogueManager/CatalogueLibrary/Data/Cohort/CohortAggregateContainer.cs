@@ -11,6 +11,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data.Cohort
@@ -42,6 +43,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <remarks>Starts out as simply the name of the <see cref="Operation"/> but can be changed by the user e.g. 'EXCEPT - Study Exclusion Criteria
         /// <para>This property should always start with the <see cref="Operation"/> to avoid confusion</para>
         /// </remarks>
+        [NotNull]
         public string Name
         {
             get { return _name; }

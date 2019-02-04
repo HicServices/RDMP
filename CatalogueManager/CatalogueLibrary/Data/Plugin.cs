@@ -7,6 +7,7 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
 {
@@ -23,6 +24,7 @@ namespace CatalogueLibrary.Data
         private Version _pluginVersion;
 
         /// <inheritdoc/>
+        [NotNull]
         public string Name
         {
             get { return _name; }

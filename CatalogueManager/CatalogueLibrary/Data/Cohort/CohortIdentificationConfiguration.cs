@@ -8,7 +8,9 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data.Cohort
@@ -39,6 +41,8 @@ namespace CatalogueLibrary.Data.Cohort
         private int? _clonedFrom_ID;
 
         /// <inheritdoc/>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }

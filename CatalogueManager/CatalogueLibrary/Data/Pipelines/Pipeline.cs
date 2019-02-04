@@ -4,8 +4,10 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data.Pipelines
 {
@@ -20,6 +22,8 @@ namespace CatalogueLibrary.Data.Pipelines
         private int? _sourcePipelineComponentID;
 
         /// <inheritdoc/>
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }

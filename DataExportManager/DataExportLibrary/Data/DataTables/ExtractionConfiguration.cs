@@ -15,6 +15,7 @@ using DataExportLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.Data.DataTables
@@ -113,6 +114,8 @@ namespace DataExportLibrary.Data.DataTables
             get { return _isReleased; }
             set { SetField(ref _isReleased, value); }
         }
+
+        [NotNull]
         public string Name
         {
             get { return _name; }

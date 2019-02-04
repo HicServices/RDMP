@@ -6,6 +6,7 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
 {
@@ -79,6 +80,8 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// A name for refering to the current issue 
         /// </summary>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }

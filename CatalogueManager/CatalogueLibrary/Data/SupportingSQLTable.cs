@@ -4,6 +4,8 @@ using System.Data.Common;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
@@ -55,6 +57,8 @@ namespace CatalogueLibrary.Data
         }
 
         /// <inheritdoc/>
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }

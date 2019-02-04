@@ -12,6 +12,7 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 
@@ -81,6 +82,7 @@ namespace CatalogueLibrary.Data
             }
         }
         /// <inheritdoc/>
+        [NotNull]
         public string Name {
             get { return _Name;}
             set {SetField(ref _Name,value);} 

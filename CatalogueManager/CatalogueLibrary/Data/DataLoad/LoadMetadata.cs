@@ -11,6 +11,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data.DataLoad
@@ -75,6 +76,8 @@ namespace CatalogueLibrary.Data.DataLoad
         }
 
         /// <inheritdoc/>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }

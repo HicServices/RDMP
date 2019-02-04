@@ -18,6 +18,7 @@ using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data.Aggregation
@@ -75,6 +76,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <summary>
         /// The unique name of the aggregate e.g. 'Biochemistry records by year divided by healthboard'
         /// </summary>
+        [NotNull]
         public string Name
         {
             get { return _name; }

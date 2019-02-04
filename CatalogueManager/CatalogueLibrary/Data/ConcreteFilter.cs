@@ -9,6 +9,7 @@ using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data
@@ -48,6 +49,7 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _whereSQL, value); }
         }
         /// <inheritdoc/>
+        [NotNull]
         public string Name
         {
             get { return _name; }

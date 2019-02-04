@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
 {
@@ -17,7 +19,9 @@ namespace CatalogueLibrary.Data
 	    #endregion
 
         /// <inheritdoc/>
-	    public string Name
+        [NotNull]
+        [Unique]
+        public string Name
 	    {
 		    get { return _name;}
 		    set { SetField(ref _name, value);}

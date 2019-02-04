@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
 {
@@ -24,6 +25,7 @@ namespace CatalogueLibrary.Data
         private int _extractionFilterID;
 
         /// <inheritdoc/>
+        [NotNull]
         public string Name
         {
             get { return _name; }

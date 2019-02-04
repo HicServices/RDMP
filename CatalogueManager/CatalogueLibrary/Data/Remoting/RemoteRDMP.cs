@@ -4,6 +4,8 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data.Remoting
@@ -38,6 +40,8 @@ namespace CatalogueLibrary.Data.Remoting
         }
 
         /// <inheritdoc/>
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }

@@ -669,6 +669,9 @@
     </Compile>
     <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
     <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
+    <Compile Include="Rules\BinderRule.cs" />
+    <Compile Include="Rules\NotNullRule.cs" />
+    <Compile Include="Rules\UniqueRule.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

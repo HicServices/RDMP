@@ -15,8 +15,10 @@ using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
@@ -48,6 +50,8 @@ namespace DataExportLibrary.Data.DataTables
         #region Database Properties
         private string _name;
 
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }

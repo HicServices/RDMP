@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
 {
@@ -17,6 +19,8 @@ namespace CatalogueLibrary.Data
         private string _emailAddress;
 
         /// <inheritdoc/>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }

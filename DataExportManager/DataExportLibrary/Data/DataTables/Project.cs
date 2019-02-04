@@ -11,6 +11,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -30,6 +31,8 @@ namespace DataExportLibrary.Data.DataTables
         private int? _projectNumber;
 
         /// <inheritdoc/>
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }

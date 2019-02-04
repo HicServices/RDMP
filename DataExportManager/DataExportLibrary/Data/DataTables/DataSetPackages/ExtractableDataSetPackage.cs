@@ -5,6 +5,8 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
+using ReusableLibraryCode.Annotations;
 
 namespace DataExportLibrary.Data.DataTables.DataSetPackages
 {
@@ -19,6 +21,8 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
         private string _creator;
         private DateTime _creationDate;
 
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }

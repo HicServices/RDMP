@@ -5,6 +5,8 @@ using System.Linq;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Ticketing;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
 {
@@ -63,6 +65,8 @@ namespace CatalogueLibrary.Data
         }
 
         /// <inheritdoc/>
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }

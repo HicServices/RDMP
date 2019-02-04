@@ -4,8 +4,10 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data.Governance
@@ -51,6 +53,8 @@ namespace CatalogueLibrary.Data.Governance
         }
 
         /// <inheritdoc/>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }

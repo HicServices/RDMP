@@ -11,6 +11,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data.Governance
@@ -40,6 +41,7 @@ namespace CatalogueLibrary.Data.Governance
         } //every document belongs to only one period of governance knoweldge (via fk relationship)
 
         /// <inheritdoc/>
+        [NotNull]
         public string Name
         {
             get { return _name; }

@@ -6,6 +6,8 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
 {
@@ -28,6 +30,8 @@ namespace CatalogueLibrary.Data
             set { SetField(ref _isDisabled, value); }
         }
         /// <inheritdoc/>
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }

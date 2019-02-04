@@ -5,7 +5,9 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
@@ -24,6 +26,8 @@ namespace CatalogueLibrary.Data
         private string _username;
 
         /// <inheritdoc/>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }

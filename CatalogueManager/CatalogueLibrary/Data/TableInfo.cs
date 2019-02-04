@@ -19,6 +19,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
@@ -62,6 +63,7 @@ namespace CatalogueLibrary.Data
         /// Fully specified table name
         /// </summary>
         [Sql]
+        [NotNull]
         public string Name
         {
             get { return _name; }

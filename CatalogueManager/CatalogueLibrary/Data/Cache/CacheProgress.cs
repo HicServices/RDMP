@@ -6,7 +6,9 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data.Cache
 {
@@ -28,6 +30,8 @@ namespace CatalogueLibrary.Data.Cache
         private string _cacheLagPeriodLoadDelay;
 
         /// <inheritdoc/>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }

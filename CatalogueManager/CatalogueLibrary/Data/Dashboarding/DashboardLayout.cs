@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
+using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data.Dashboarding
 {
@@ -22,6 +24,8 @@ namespace CatalogueLibrary.Data.Dashboarding
         private string _username;
 
         /// <inheritdoc/>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }
