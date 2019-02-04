@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -229,7 +229,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         /// 1. There is a row (2) with quotes in the middle which should get loaded correctly
         /// 2. Theres a row (4) with quotes in the middle of the text and the cell itself is quoted.  This loads but drops some quotes.
         /// 
-        /// The proper way to express row 4 is by escaping the quote with another quote i.e. "" (See test DelimitedFlatFileDataFlowSource_ProperQuoteEscaping) 
+        /// <para>The proper way to express row 4 is by escaping the quote with another quote i.e. "" (See test DelimitedFlatFileDataFlowSource_ProperQuoteEscaping) </para>
         /// </summary>
         [Test]
         public void DelimitedFlatFileDataFlowSource_LoadDataWithQuotesInMiddle_IgnoreBadReads()

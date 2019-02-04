@@ -1,6 +1,4 @@
-﻿using RichTextBoxLinks;
-
-namespace ReusableUIComponents.Dialogs
+﻿namespace ReusableUIComponents.Dialogs
 {
     partial class WideMessageBox
     {
@@ -34,7 +32,7 @@ namespace ReusableUIComponents.Dialogs
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCopyToClipboard = new System.Windows.Forms.Button();
             this.btnViewStackTrace = new System.Windows.Forms.Button();
-            this.richTextBox1 = new RichTextBoxLinks.RichTextBoxEx();
+            this.richTextBox1 = new RichTextBoxEx();
             this.pbIcon = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblMainMessage = new System.Windows.Forms.Label();

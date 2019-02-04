@@ -204,6 +204,25 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "RepoType",
             "LoadingBiochem",
 
+            //Stuff now in FAnsi
+            "MySqlAggregateHelper",
+            "MicrosoftSQLAggregateHelper",
+            "DbCommandBuilder",
+            "EnvironmentPotential",
+            "MySqlConnection",
+            "DbCommandBuilder",
+            "DbCommandBuilder",
+            "IDecideTypesForStrings",
+            "TypeCompatibilityGroup",
+            "DatatypeComputerTests",
+            "DataTypeRequest",
+            "CrossPlatformTests",
+            "IDecideTypesForStrings",
+            "TypeCompatibilityGroup",
+            "TypeTranslaterTests",
+            "DatatypeComputerTests",
+            "LoadRunID",
+
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
