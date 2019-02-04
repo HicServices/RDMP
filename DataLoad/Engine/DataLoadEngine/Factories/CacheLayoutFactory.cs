@@ -20,7 +20,7 @@ namespace DataLoadEngine.Factories
     {
         public ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata)
         {
-            AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks);
+            AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks.Where(p=>!p.IsDisabled));
 
             var cp = loadProgress.CacheProgress;
 

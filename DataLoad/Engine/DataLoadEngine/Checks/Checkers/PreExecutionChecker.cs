@@ -224,7 +224,7 @@ namespace DataLoadEngine.Checks.Checkers
 
         private void AtLeastOneTaskCheck()
         {
-            if (!_loadMetadata.ProcessTasks.Any())
+            if (_loadMetadata.ProcessTasks.All(p => p.IsDisabled))
                 _notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         "There are no ProcessTasks defined for '" + _loadMetadata +

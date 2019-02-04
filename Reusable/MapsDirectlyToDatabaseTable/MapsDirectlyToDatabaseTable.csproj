@@ -176,6 +176,7 @@
     <Compile Include="DatabaseConnectionConfiguration.cs" />
     <Compile Include="IDeletableWithCustomMessage.cs" />
     <Compile Include="IDeleteable.cs" />
+    <Compile Include="IDisableable.cs" />
     <Compile Include="INamed.cs" />
     <Compile Include="Injection\IInjectKnown.cs" />
     <Compile Include="IRepository.cs" />

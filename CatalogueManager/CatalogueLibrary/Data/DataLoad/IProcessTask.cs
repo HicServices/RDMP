@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using CatalogueLibrary.Data.Cohort;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
     /// <inheritdoc cref="ProcessTask"/>
-    public interface IProcessTask : IRevertable, IArgumentHost, ILoadProgressHost, IOrderable
+    public interface IProcessTask : IRevertable, IArgumentHost, ILoadProgressHost, IOrderable, IDisableable
     {
         /// <inheritdoc cref="IArgumentHost.GetAllArguments"/>
         IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get; }
@@ -36,10 +37,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// </summary>
         [Obsolete("Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
         int? RelatesSolelyToCatalogue_ID { get; }
-        
-        /// <summary>
-        /// True to skip the <see cref="ProcessTask"/> when executing the data load
-        /// </summary>
-        bool IsDisabled { get; }
     }
+
+    
 }

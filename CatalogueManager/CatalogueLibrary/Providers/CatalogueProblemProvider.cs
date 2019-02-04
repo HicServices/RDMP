@@ -7,6 +7,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Providers
 {
@@ -32,8 +33,6 @@ namespace CatalogueLibrary.Providers
 
                 //store just the ID for performance
                 .Select(i=>i.ID));
-
-            
         }
 
         /// <inheritdoc/>
@@ -45,6 +44,11 @@ namespace CatalogueLibrary.Providers
         /// <inheritdoc/>
         public string DescribeProblem(object o)
         {
+            var disableable = o as IDisableable;
+
+            if (disableable != null && disableable.IsDisabled)
+                return "Object is disabled";
+
             if (o is AllGovernanceNode)
                 return DescribeProblem((AllGovernanceNode) o);
 

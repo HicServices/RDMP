@@ -549,6 +549,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandScriptTable.cs" />
     <Compile Include="Menus\ContainerMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditLoadMetadataDescription.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDisableOrEnable.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\GovernancePeriodMenu.cs" />
@@ -557,6 +558,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
+    <Compile Include="Menus\ProcessTaskMenu.cs" />
     <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.cs">
       <SubType>UserControl</SubType>
     </Compile>
