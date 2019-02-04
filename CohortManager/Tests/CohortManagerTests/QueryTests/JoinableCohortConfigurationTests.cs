@@ -419,7 +419,9 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             aggregate2.AddDimension(anotherCol);
 
             _queryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName);
-            _queryCachingDatabase.Drop(); //make sure it doesn't exist
+            
+            if (_queryCachingDatabase.Exists())
+                _queryCachingDatabase.Drop(); //make sure it doesn't exist
 
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
             scripter.CreateAndPatchDatabaseWithDotDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly, new AcceptAllCheckNotifier());

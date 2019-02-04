@@ -126,7 +126,11 @@ namespace DataLoadEngineTests.Integration
                     new Tuple<string, string, Type>("BadDataHandlingStrategy", BadDataHandlingStrategy.ThrowException.ToString(), typeof (BadDataHandlingStrategy)),
                     new Tuple<string, string, Type>("ThrowOnEmptyFiles", "true", typeof (bool)),
                     new Tuple<string, string, Type>("AttemptToResolveNewLinesInRecords", "true", typeof (bool)),
-                    new Tuple<string, string, Type>("MaximumErrorsToReport", "0", typeof (int))
+                    new Tuple<string, string, Type>("MaximumErrorsToReport", "0", typeof (int)),
+                    new Tuple<string, string, Type>("IgnoreColumns", null, typeof (string)),
+                    new Tuple<string, string, Type>("IgnoreBadReads", "false", typeof (bool)),
+                    new Tuple<string, string, Type>("AddFilenameColumnNamed", null, typeof (string)),
+
                 };
                 
 

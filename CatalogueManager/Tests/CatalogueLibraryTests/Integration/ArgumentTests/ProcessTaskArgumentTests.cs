@@ -120,7 +120,7 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
         }
 
         [Test]
-        public void TableInfoType_FetchAfterDelete_Throws()
+        public void TableInfoType_FetchAfterDelete_ReturnsNull()
         {
             string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
 
@@ -148,9 +148,12 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
                 //Lolz I just deleted it out of the database
                 tableInfo.DeleteInDatabase();
 
-                //give the object back now please? - fails here because it's gone - like a rabit in a hat!
-                var ex = Assert.Throws<KeyNotFoundException>(()=>pta.GetValueAsSystemType());
-                StringAssert.Contains("Could not find TableInfo with ID",ex.Message);
+                //give the object back now please? - returns null because it's gone (new behaviour)
+                Assert.IsNull(pta.GetValueAsSystemType());
+
+                //old behaviour
+                /*var ex = Assert.Throws<KeyNotFoundException>(()=>pta.GetValueAsSystemType());
+                StringAssert.Contains("Could not find TableInfo with ID",ex.Message);*/
             }
             finally
             {

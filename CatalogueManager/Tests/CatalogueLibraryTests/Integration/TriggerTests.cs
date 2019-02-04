@@ -197,6 +197,10 @@ namespace CatalogueLibraryTests.Integration
         [TearDown]
         public void DropTable()
         {
+            //don't try to cleanup if there was Assert.Inconclusive because the server was inaccessible
+            if(_database == null)
+                return;
+
             string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
 
             GetImplementer().DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);

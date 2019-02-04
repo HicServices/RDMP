@@ -116,7 +116,7 @@ namespace DataLoadEngineTests.Unit
             Assert.AreEqual("3", dt.Rows[0][1]);
             Assert.AreEqual("yes", dt.Rows[0][2]);
 
-            Assert.AreEqual(_fileLocations[versionOfTestFile], dt.Rows[0][6]);
+            Assert.AreEqual(_fileLocations[versionOfTestFile].FullName, dt.Rows[0][6]);
         }
 
 

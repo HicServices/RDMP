@@ -18,7 +18,9 @@ namespace CatalogueLibraryTests.Integration
             string dbName = "CreateANewCatalogueDatabaseWithMasterDatabaseScriptExecutor";
 
             var database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbName);
-            database.Drop();
+            
+            if(database.Exists())
+                database.Drop();
 
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(database);
             executor.CreateDatabase(@"
