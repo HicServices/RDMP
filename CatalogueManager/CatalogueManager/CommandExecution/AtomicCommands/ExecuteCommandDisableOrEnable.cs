@@ -24,8 +24,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("You cannot disable the root container of a cic");
 
             var aggregateConfiguration = _target as AggregateConfiguration;
-            if(aggregateConfiguration != null && aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
-                SetImpossible("Joinable Patient Index Tables cannot be disabled");
+            if(aggregateConfiguration != null)
+                if(!aggregateConfiguration.IsCohortIdentificationAggregate)
+                    SetImpossible("Only cohort identification aggregates can be disabled");
+                else
+                    if(aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
+                        SetImpossible("Joinable Patient Index Tables cannot be disabled");
         }
 
         public override void Execute()

@@ -70,7 +70,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
             
             ObjectSaverButton1.BeforeSave += BeforeSave;
-            ObjectSaverButton1.AfterSave += AfterSave;
 
             autocompleteReminder.Setup("Show Objects",Keys.Control,Keys.Space);
         }
@@ -144,11 +143,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             return true;
         }
 
-        private void AfterSave()
-        {
-            RunChecksIfFilterIsICheckable();
-        }
-
         private void OfferWrappingIfUserIncludesANDOrOR()
         {
 
@@ -181,10 +175,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             }
         }
 
-        private void RunChecksIfFilterIsICheckable()
-        {
-            ragSmiley1.StartChecking(_extractionFilter);
-        }
         
         public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
         {
@@ -207,7 +197,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             //publish it if he wants
             btnPublishToCatalogue.Enabled = !(_extractionFilter is ExtractionFilter) && Catalogue != null;
 
-            RunChecksIfFilterIsICheckable();
+            AddChecks(databaseObject);
+            StartChecking();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ConcreteFilter databaseObject)

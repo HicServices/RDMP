@@ -214,6 +214,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
             PopulateTopX();
 
             isRefreshing = false;
+
+            ObjectSaverButton1.Enable(false);
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, AggregateConfiguration databaseObject)

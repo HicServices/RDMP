@@ -15,14 +15,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         private Catalogue _catalogue;
 
         [ImportingConstructor]
-        public ExecuteCommandViewCatalogueExtractionSql(IActivateItems activator,Catalogue catalogue): base(activator)
+        public ExecuteCommandViewCatalogueExtractionSql(IActivateItems activator,Catalogue catalogue): this(activator)
         {
             _catalogue = catalogue;
         }
 
         public ExecuteCommandViewCatalogueExtractionSql(IActivateItems activator) : base(activator)
         {
-            
+            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()

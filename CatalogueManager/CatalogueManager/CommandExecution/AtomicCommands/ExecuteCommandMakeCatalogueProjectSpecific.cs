@@ -18,14 +18,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         private Project _project;
 
         [ImportingConstructor]
-        public ExecuteCommandMakeCatalogueProjectSpecific(IActivateItems itemActivator,Catalogue catalogue, Project project):base(itemActivator)
+        public ExecuteCommandMakeCatalogueProjectSpecific(IActivateItems itemActivator,Catalogue catalogue, Project project):this(itemActivator)
         {
             SetCatalogue(catalogue);
             _project = project;
         }
         public ExecuteCommandMakeCatalogueProjectSpecific(IActivateItems itemActivator): base(itemActivator)
         {
-            
+            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()

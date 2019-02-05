@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.CohortCreationPipeline;
@@ -17,9 +12,7 @@ using DataExportLibrary.Providers;
 using DataExportManager.CohortUI.ImportCustomData;
 using HIC.Logging;
 using HIC.Logging.Listeners;
-using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.PipelineUIs.Pipelines;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands

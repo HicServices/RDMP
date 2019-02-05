@@ -547,6 +547,7 @@
     <Compile Include="Menus\AllServersNodeMenu.cs" />
     <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandScriptTable.cs" />
+    <Compile Include="Menus\CatalogueFolderMenu.cs" />
     <Compile Include="Menus\ContainerMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditLoadMetadataDescription.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDisableOrEnable.cs" />

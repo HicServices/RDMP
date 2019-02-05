@@ -1,20 +1,15 @@
 ﻿using System.Drawing;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandActivate : BasicUICommandExecution,IAtomicCommand
     {
         private readonly object _o;
-
+        
         public ExecuteCommandActivate(IActivateItems activator, object o) : base(activator)
         {    
             _o = o;
@@ -27,6 +22,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if(!Activator.CommandExecutionFactory.CanActivate(_o))
                 SetImpossible("Object cannot be Activated");
+
+            UseTripleDotSuffix = true;
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -39,7 +36,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return "Edit";
+            return "Edit...";
         }
 
         public override void Execute()

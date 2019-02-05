@@ -1,30 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.ANOEngineeringUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateANOVersion:BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateANOVersion:BasicUICommandExecution,IAtomicCommandWithTarget
     {
-        private readonly Catalogue _catalogue;
+        private Catalogue _catalogue;
 
         public ExecuteCommandCreateANOVersion(IActivateItems activator,Catalogue catalogue) : base(activator)
         {
             _catalogue = catalogue;
         }
 
+        public ExecuteCommandCreateANOVersion(IActivateItems activator) : base(activator)
+        {
+            
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ANOTable);
+        }
+
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+        {
+            _catalogue = (Catalogue) target;
+            return this;
         }
 
         public override string GetCommandHelp()
@@ -35,6 +42,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+
+            if (_catalogue == null)
+                _catalogue = SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues);
+
+            if(_catalogue == null)
+                return;
 
             Activator.Activate<ForwardEngineerANOCatalogueUI, Catalogue>(_catalogue);
         }

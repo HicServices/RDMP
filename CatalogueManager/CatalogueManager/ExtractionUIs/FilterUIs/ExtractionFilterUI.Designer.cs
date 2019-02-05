@@ -42,10 +42,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.tbFilterDescription = new System.Windows.Forms.TextBox();
             this.lblWhere = new System.Windows.Forms.Label();
             this.pQueryEditor = new System.Windows.Forms.Panel();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.autocompleteReminder = new ReusableUIComponents.KeyboardReminder();
-            
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -134,16 +132,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.pQueryEditor.Size = new System.Drawing.Size(1173, 361);
             this.pQueryEditor.TabIndex = 0;
             // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(67, 136);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 27;
-            // 
             // autocompleteReminder
             // 
             this.autocompleteReminder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -162,7 +150,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.panel1.Controls.Add(this.btnPublishToCatalogue);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.cbIsMandatory);
-            this.panel1.Controls.Add(this.ragSmiley1);
             this.panel1.Controls.Add(this.lblWhere);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -193,8 +180,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         private System.Windows.Forms.TextBox tbFilterDescription;
         private System.Windows.Forms.Label lblWhere;
         private System.Windows.Forms.Panel pQueryEditor;
-        
-        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.ToolTip toolTip1;
         private KeyboardReminder autocompleteReminder;
         private System.Windows.Forms.Panel panel1;
