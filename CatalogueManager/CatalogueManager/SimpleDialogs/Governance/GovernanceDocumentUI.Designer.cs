@@ -37,7 +37,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tbPath = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
-            this.btnOpen = new System.Windows.Forms.Button();
             this.btnOpenContainingFolder = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
@@ -126,19 +125,9 @@
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
-            // btnOpen
-            // 
-            this.btnOpen.Location = new System.Drawing.Point(72, 319);
-            this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(75, 23);
-            this.btnOpen.TabIndex = 7;
-            this.btnOpen.Text = "Open";
-            this.btnOpen.UseVisualStyleBackColor = true;
-            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
-            // 
             // btnOpenContainingFolder
             // 
-            this.btnOpenContainingFolder.Location = new System.Drawing.Point(153, 319);
+            this.btnOpenContainingFolder.Location = new System.Drawing.Point(68, 321);
             this.btnOpenContainingFolder.Name = "btnOpenContainingFolder";
             this.btnOpenContainingFolder.Size = new System.Drawing.Size(136, 23);
             this.btnOpenContainingFolder.TabIndex = 7;
@@ -151,7 +140,6 @@
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.btnOpenContainingFolder);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.btnOpen);
             this.panel1.Controls.Add(this.tbName);
             this.panel1.Controls.Add(this.btnBrowse);
             this.panel1.Controls.Add(this.tbID);
@@ -189,7 +177,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbPath;
         private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.Button btnOpenContainingFolder;
         private System.Windows.Forms.Panel panel1;
         

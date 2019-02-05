@@ -39,6 +39,15 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return _isExtractable?"Mark Not Extractable":"Mark Extractable";
         }
 
+        public override string GetCommandHelp()
+        {
+
+            if (_isExtractable)
+                return "Prevent dataset from being released in Project extracts.  This fails if it is already part of any ExtractionConfigurations";
+            
+            return @"Enable dataset linkage\extraction in Project extracts.  This requires that at least one column be marked IsExtractionIdentifier";
+        }
+
         public Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractableDataSet, _isExtractable?OverlayKind.Delete:OverlayKind.Add);

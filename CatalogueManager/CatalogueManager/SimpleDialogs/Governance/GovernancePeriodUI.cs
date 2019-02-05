@@ -2,10 +2,12 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -36,6 +38,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            olvName.ImageGetter = s => _activator.CoreIconProvider.GetImage(s);
         }
 
         public override void SetDatabaseObject(IActivateItems activator, GovernancePeriod databaseObject)
@@ -45,7 +49,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             _governancePeriod = databaseObject;
             
             //clear related catalogues
-            lbCatalogues.Items.Clear();
+            olvCatalogues.ClearObjects();
 
             ticketingControl1.TicketText = _governancePeriod.Ticket;
 
@@ -62,7 +66,9 @@ namespace CatalogueManager.SimpleDialogs.Governance
             }
 
             //add related catalogues
-            lbCatalogues.Items.AddRange(_governancePeriod.GovernedCatalogues.ToArray());
+            olvCatalogues.AddObjects(_governancePeriod.GovernedCatalogues.ToArray());
+
+            AddHelp(olvCatalogues,"GovernancePeriod.GovernedCatalogues");
 
             AddChecks(_governancePeriod);
             StartChecking();
@@ -103,7 +109,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
 
         private void btnAddCatalogue_Click(object sender, EventArgs e)
         {
-            var alreadyMappedCatalogues = lbCatalogues.Items.Cast<Catalogue>();
+            var alreadyMappedCatalogues = olvCatalogues.Objects.Cast<Catalogue>();
             var allCatalogues = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
 
             var availableToSelect =
@@ -132,20 +138,20 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private void AddCatalogue(Catalogue c)
         {
             _governancePeriod.CreateGovernanceRelationshipTo(c);
-            lbCatalogues.Items.Add(c);
+            olvCatalogues.AddObject(c);
         }
 
         private void lbCatalogues_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
-                var toDelete = lbCatalogues.SelectedItem as Catalogue;
+                var toDelete = olvCatalogues.SelectedObject as Catalogue;
 
                 if(toDelete != null)
                     if(MessageBox.Show("Are you sure you want to erase the fact that '" + _governancePeriod.Name + "' provides governance over Catalogue '" + toDelete + "'","Confirm Deleting Governance Relationship?",MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         _governancePeriod.DeleteGovernanceRelationshipTo(toDelete);
-                        lbCatalogues.Items.Remove(toDelete);
+                        olvCatalogues.RemoveObject(toDelete);
                     }
 
                 Publish(_governancePeriod);
@@ -171,7 +177,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
                 Catalogue[] toAdd = ((GovernancePeriod) dialog.Selected).GovernedCatalogues.ToArray();
 
                 //do not add any we already have
-                toAdd = toAdd.Except(lbCatalogues.Items.Cast<Catalogue>()).ToArray();
+                toAdd = toAdd.Except(olvCatalogues.Objects.Cast<Catalogue>()).ToArray();
 
                 if (!toAdd.Any())
                     MessageBox.Show("Selected GovernancePeriod '" + dialog.Selected +
@@ -184,6 +190,19 @@ namespace CatalogueManager.SimpleDialogs.Governance
                     Publish(_governancePeriod);
                 }
             }
+        }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+            olvCatalogues.UseFiltering = true;
+            olvCatalogues.ModelFilter = new TextMatchFilter(olvCatalogues,tbFilter.Text);
+        }
+
+        private void olvCatalogues_ItemActivate(object sender, EventArgs e)
+        {
+            var cata = olvCatalogues.SelectedObject as Catalogue;
+            if(cata != null)
+                _activator.RequestItemEmphasis(this,new EmphasiseRequest(cata));
         }
 
     }

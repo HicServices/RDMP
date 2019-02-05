@@ -31,6 +31,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
         public void ShowHelp(IActivateItems activator)
         {
+
+
             var typeDocs = activator.RepositoryLocator.CatalogueRepository.CommentStore;
 
             StringBuilder sb = new StringBuilder();
@@ -43,7 +45,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
                     if (firstMatch == null)
                         firstMatch = c.GetType().Name;
 
-                    sb.AppendLine(typeDocs[c.GetType().Name]);
+                    sb.AppendLine(typeDocs.GetDocumentationIfExists(c.GetType().Name,false,true));
                     sb.AppendLine();
                 }
 

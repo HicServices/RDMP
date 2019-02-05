@@ -54,6 +54,8 @@ namespace CatalogueManager.SimpleDialogs
             tbUrl.Text = _supportingDocument.URL != null ? _supportingDocument.URL.AbsoluteUri : "";
 
             AddHelp(cbExtractable, "SupportingDocument.Extractable");
+            AddHelp(cbIsGlobal, "SupportingSqlTable.IsGlobal");
+
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, SupportingDocument databaseObject)

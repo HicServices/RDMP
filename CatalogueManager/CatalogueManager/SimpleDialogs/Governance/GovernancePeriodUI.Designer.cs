@@ -1,4 +1,5 @@
-﻿using CatalogueManager.LocationsMenu.Ticketing;
+﻿using BrightIdeasSoftware;
+using CatalogueManager.LocationsMenu.Ticketing;
 
 namespace CatalogueManager.SimpleDialogs.Governance
 {
@@ -39,16 +40,20 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.tbName = new System.Windows.Forms.TextBox();
             this.dtpEndDate = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
-            this.lbCatalogues = new System.Windows.Forms.ListBox();
+            this.olvCatalogues = new BrightIdeasSoftware.ObjectListView();
+            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnAddCatalogue = new System.Windows.Forms.Button();
             this.btnImportCatalogues = new System.Windows.Forms.Button();
             this.lblExpired = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label7 = new System.Windows.Forms.Label();
+            this.tbFilter = new System.Windows.Forms.TextBox();
             this.tbID = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
+            ((System.ComponentModel.ISupportInitialize)(this.olvCatalogues)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -134,16 +139,31 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.label1.TabIndex = 0;
             this.label1.Text = "Name:";
             // 
-            // lbCatalogues
+            // olvCatalogues
             // 
-            this.lbCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.olvCatalogues.AllColumns.Add(this.olvName);
+            this.olvCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbCatalogues.FormattingEnabled = true;
-            this.lbCatalogues.Location = new System.Drawing.Point(390, 183);
-            this.lbCatalogues.Name = "lbCatalogues";
-            this.lbCatalogues.Size = new System.Drawing.Size(681, 186);
-            this.lbCatalogues.TabIndex = 9;
-            this.lbCatalogues.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbCatalogues_KeyUp);
+            this.olvCatalogues.CellEditUseWholeCell = false;
+            this.olvCatalogues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvName});
+            this.olvCatalogues.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvCatalogues.Location = new System.Drawing.Point(390, 183);
+            this.olvCatalogues.Name = "olvCatalogues";
+            this.olvCatalogues.RowHeight = 19;
+            this.olvCatalogues.ShowGroups = false;
+            this.olvCatalogues.Size = new System.Drawing.Size(656, 242);
+            this.olvCatalogues.TabIndex = 9;
+            this.olvCatalogues.UseCompatibleStateImageBehavior = false;
+            this.olvCatalogues.View = System.Windows.Forms.View.Details;
+            this.olvCatalogues.ItemActivate += new System.EventHandler(this.olvCatalogues_ItemActivate);
+            this.olvCatalogues.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbCatalogues_KeyUp);
+            // 
+            // olvName
+            // 
+            this.olvName.AspectName = "Name";
+            this.olvName.FillsFreeSpace = true;
+            this.olvName.Text = "Name";
             // 
             // tbDescription
             // 
@@ -167,7 +187,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // btnAddCatalogue
             // 
-            this.btnAddCatalogue.Location = new System.Drawing.Point(387, 375);
+            this.btnAddCatalogue.Location = new System.Drawing.Point(387, 455);
             this.btnAddCatalogue.Name = "btnAddCatalogue";
             this.btnAddCatalogue.Size = new System.Drawing.Size(98, 23);
             this.btnAddCatalogue.TabIndex = 11;
@@ -177,7 +197,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // btnImportCatalogues
             // 
-            this.btnImportCatalogues.Location = new System.Drawing.Point(491, 375);
+            this.btnImportCatalogues.Location = new System.Drawing.Point(491, 455);
             this.btnImportCatalogues.Name = "btnImportCatalogues";
             this.btnImportCatalogues.Size = new System.Drawing.Size(282, 23);
             this.btnImportCatalogues.TabIndex = 11;
@@ -198,6 +218,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label7);
+            this.panel1.Controls.Add(this.tbFilter);
             this.panel1.Controls.Add(this.tbID);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.tbName);
@@ -206,7 +228,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.panel1.Controls.Add(this.btnAddCatalogue);
             this.panel1.Controls.Add(this.tbDescription);
             this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.lbCatalogues);
+            this.panel1.Controls.Add(this.olvCatalogues);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.ticketingControl1);
             this.panel1.Controls.Add(this.dtpStartDate);
@@ -218,8 +240,27 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 13);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1078, 408);
+            this.panel1.Size = new System.Drawing.Size(1078, 481);
             this.panel1.TabIndex = 21;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(392, 432);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(32, 13);
+            this.label7.TabIndex = 22;
+            this.label7.Text = "Filter:";
+            // 
+            // tbFilter
+            // 
+            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbFilter.Location = new System.Drawing.Point(430, 429);
+            this.tbFilter.Name = "tbFilter";
+            this.tbFilter.Size = new System.Drawing.Size(616, 20);
+            this.tbFilter.TabIndex = 21;
+            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
             // tbID
             // 
@@ -253,7 +294,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lblExpired);
             this.Name = "GovernancePeriodUI";
-            this.Size = new System.Drawing.Size(1078, 421);
+            this.Size = new System.Drawing.Size(1078, 494);
+            ((System.ComponentModel.ISupportInitialize)(this.olvCatalogues)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -266,7 +308,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private System.Windows.Forms.Button btnAddCatalogue;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbDescription;
-        private System.Windows.Forms.ListBox lbCatalogues;
+        private ObjectListView olvCatalogues;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DateTimePicker dtpEndDate;
         private System.Windows.Forms.TextBox tbName;
@@ -282,5 +324,8 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label label6;
+        private OLVColumn olvName;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox tbFilter;
     }
 }

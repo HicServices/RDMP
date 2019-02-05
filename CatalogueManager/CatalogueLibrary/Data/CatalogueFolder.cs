@@ -1,16 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace CatalogueLibrary.Data
 {
     /// <summary>
-    /// The virtual 'folder' in which to describe the Catalogue as residing in to the user.  This is implemented in the UI as a tree of folders but is calculated from all the
-    /// visible Catalogues at any given time (you can't create an empty CatalogueFolder you just have to declare a Catalogue as being in a new folder name).
+    /// The virtual 'folder' in which to display Catalogues.  This should be a helpful subdivision e.g. "\core datasets\labsystems\"
+    ///  
+    /// <para>CatalogueFolder are represented in the user interface as a tree of folders (calculated at runtime). You can't create an empty CatalogueFolder,
+    /// just declare a Catalogue as being in a new folder and it will be automatically shown.</para>
     /// 
-    /// <para>CatalogueFolder is basically a string but has method to help prevent illegal paths and to calculate hierarchy based on multiple Catalogues (See GetImmediateSubFoldersUsing)</para>
+    /// <para>CatalogueFolder is persisted as a string but has methods to help prevent illegal paths and to calculate hierarchy based on multiple Catalogues 
+    /// (See <see cref="GetImmediateSubFoldersUsing"/>)</para>
     /// </summary>
     public class CatalogueFolder : IConvertible
     {

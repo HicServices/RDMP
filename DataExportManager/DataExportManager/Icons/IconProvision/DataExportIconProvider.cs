@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using CatalogueManager.Icons.IconProvision;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.LinkCreators;
@@ -21,6 +22,9 @@ namespace DataExportManager.Icons.IconProvision
         {
             if (concept is LinkedCohortNode)
                 return base.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Link);
+
+            if (concept as Type == typeof(SelectedDataSets))
+                return base.GetImage(RDMPConcept.Catalogue, OverlayKind.Link);
 
             if (concept is SelectedDataSets)
                 return base.GetImage(((SelectedDataSets)concept).ExtractableDataSet.Catalogue, OverlayKind.Link);

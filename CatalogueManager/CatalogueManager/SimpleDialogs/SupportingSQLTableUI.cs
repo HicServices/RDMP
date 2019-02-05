@@ -79,6 +79,7 @@ namespace CatalogueManager.SimpleDialogs
             _bLoading = false;
 
             AddHelp(cbExtractable, "SupportingSQLTable.Extractable");
+            AddHelp(cbGlobal,"SupportingSqlTable.IsGlobal");
 
             RefreshUIFromDatabase();
         }

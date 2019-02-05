@@ -108,6 +108,11 @@ namespace CatalogueManager.MainFormUITabs
             
             AddHelp(tbFolder, "CatalogueFolder");
 
+            AddHelp(cbDeprecated, "IMightBeDeprecated.IsDeprecated");
+            AddHelp(cbColdStorage, "ICatalogue.IsColdStorageDataset");
+            AddHelp(cbInternal, "ICatalogue.IsInternalDataset");
+
+
             RefreshUIFromDatabase();
         }
 

@@ -1,19 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Governance;
 using CatalogueManager.Collections;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
@@ -28,8 +21,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
     /// 
     /// <para>This control allows you to configure/view attachments of a GovernancePeriod (e.g. an email, a scan of a signed approval letter etc). For ease of reference you should describe
     /// what is in the document (e.g. 'letter to Fife healthboard (Mary Sue) listing the datasets we host and requesting re-approval for 2016.  Letter is signed by Dr Governancer.)'</para>
-    /// 
-    /// <para>This control saves changes as you make them (there is no need to press Ctrl+S)</para>
     /// </summary>
     public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveableUI
     {
@@ -60,18 +51,6 @@ namespace CatalogueManager.SimpleDialogs.Governance
             }
         }
         
-        private void btnOpen_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Process.Start(tbPath.Text);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-        }
-
         private void btnOpenContainingFolder_Click(object sender, EventArgs e)
         {
             try

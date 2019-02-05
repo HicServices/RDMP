@@ -18,7 +18,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _catalogue = catalogue;
         }
 
-        public override string ToString()
+        public override string GetCommandHelp()
         {
             return "Allows you to specify some freeform SQL that helps understand / interact with a dataset.  Optionally this SQL can be run and the results provided in project extractions.";
         }

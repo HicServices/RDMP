@@ -17,6 +17,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
         public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator,ExtractionInformation extractionInformation) : base(activator)
         {
+            if (!extractionInformation.IsExtractionIdentifier)
+                SetImpossible("Column is not marked IsExtractionIdentifier");
+
+            OverrideCommandName = "Create New Cohort From Column";
+
             SetExtractionIdentifierColumn(extractionInformation);
         }
 

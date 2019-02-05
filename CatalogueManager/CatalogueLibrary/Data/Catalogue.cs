@@ -7,7 +7,6 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.DublinCore;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using FAnsi;
