@@ -9,7 +9,7 @@
    1. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
    1. [When I connect to MySql it says 'The host localhost does not support SSL connections'](#disableSSL)
    1. [Does RDMP Support Schemas?](#schemas)
-   1. [Does RDMP Views?](#views)
+   1. [Does RDMP Support Views?](#views)
    1. [Does RDMP Support Table Valued Functions?](#tvf)
 1. Data Load Engine
    1. [Can RDMP Load UnTyped Data?](#untyped)
@@ -94,7 +94,7 @@ create table test.omg.MyTable1(MyCol int not null)
 When importing a table RDMP will record the schema it came from and fully qualify calls to the table.  When running the data load engine RAW and STAGING tables will always be created in dbo (to avoid issuing schema creation commands).
 
 <a name="views"></a>
-### Does RDMP Views?
+### Does RDMP Support Views?
 
 Yes, when importing a table from a database to create a `Catalogue` any views in the database will also be shown.  These are interacted with in exactly the same manner as regular tables.
 
@@ -197,6 +197,14 @@ A Catalogue is RDMP's representation of one of your datasets e.g. 'Hospital Admi
 * Graph definitions for viewing the contents of the dataset (and testing filters / cohorts built)
 * Attachments which help understand the dataset (e.g. a pdf file)
 
+![Catalogue](Images/FAQ/Catalogue.png)
+
+A Catalogue can be a part of project extraction configurations, used in cohort identification configurations.  They can be marked as Deprecated, Internal etc.
+
+The separation of dataset and underlying table allows you to have multiple datasets both of which draw data from the same table.  It also makes it easier to handle moving a table/database (e.g. to a new server or database) / renaming etc.
+
+Internally Catalogues are stored in the Catalogue table of the RDMP platform database (e.g. RDMP_Catalogue).  The ID field of this table is used by other objects to reference it (e.g. CatalogueItem.Catalogue_ID).  
+
 <a name="sharing"></a>
 ### Can I share/export/import my dataset metadata?
 
@@ -285,14 +293,6 @@ An example .dita file is shown below:
 <a name="dqe"></a>
 ### Is there a Data Quality Engine?
 Yes.  You can read more about the DQE in the [technical implementation](./Validation.md) or (from a user perspective) in the [User Manual](../UserManual.docx).
-
-![PerformanceCounter](Images/FAQ/Catalogue.png)
-
-A Catalogue can be a part of project extraction configurations, used in cohort identification configurations.  They can be marked as Deprecated, Internal etc.
-
-The separation of dataset and underlying table allows you to have multiple datasets both of which draw data from the same table.  It also makes it easier to handle moving a table/database (e.g. to a new server or database) / renaming etc.
-
-Internally Catalogues are stored in the Catalogue table of the RDMP platform database (e.g. RDMP_Catalogue).  The ID field of this table is used by other objects to reference it (e.g. CatalogueItem.Catalogue_ID).  
 
 ## User Interface Programming
 
