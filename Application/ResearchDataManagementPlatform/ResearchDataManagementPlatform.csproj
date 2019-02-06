@@ -186,7 +186,9 @@
     <Compile Include="WindowManagement\Licenses\License.cs" />
     <Compile Include="Menus\MenuItems\DataExportMenu.cs" />
     <Compile Include="Menus\MenuItems\SaveMenuItem.cs" />
-    <Compile Include="RDMPMainForm.cs" />
+    <Compile Include="RDMPMainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="RDMPMainForm.Designer.cs">
       <DependentUpon>RDMPMainForm.cs</DependentUpon>
     </Compile>
@@ -229,7 +231,9 @@
     <Compile Include="Menus\MenuItems\DisableTutorialsMenuItem.cs" />
     <Compile Include="Menus\MenuItems\LaunchTutorialMenuItem.cs" />
     <Compile Include="Menus\MenuItems\ResetTutorialsMenuItem.cs" />
-    <Compile Include="Menus\RDMPMenuStrip.cs" />
+    <Compile Include="Menus\RDMPMenuStrip.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Menus\RDMPMenuStrip.Designer.cs">
       <DependentUpon>RDMPMenuStrip.cs</DependentUpon>
     </Compile>
