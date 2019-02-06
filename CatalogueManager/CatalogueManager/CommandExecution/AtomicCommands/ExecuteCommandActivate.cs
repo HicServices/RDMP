@@ -22,8 +22,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if(!Activator.CommandExecutionFactory.CanActivate(_o))
                 SetImpossible("Object cannot be Activated");
-
-            UseTripleDotSuffix = true;
         }
 
         public Image GetImage(IIconProvider iconProvider)
@@ -36,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return "Edit...";
+            return "Edit";
         }
 
         public override void Execute()

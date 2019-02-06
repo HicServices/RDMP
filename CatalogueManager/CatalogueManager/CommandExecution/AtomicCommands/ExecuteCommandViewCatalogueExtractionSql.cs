@@ -22,7 +22,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandViewCatalogueExtractionSql(IActivateItems activator) : base(activator)
         {
-            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()

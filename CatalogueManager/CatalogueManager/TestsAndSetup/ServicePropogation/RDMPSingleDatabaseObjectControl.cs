@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
@@ -208,15 +209,33 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// </summary>
         protected void AddPluginCommands()
         {
+            foreach (IAtomicCommand cmd in GetPluginCommands())
+                Add(cmd);
+        }
+        /// <summary>
+        /// Adds the all <see cref="IAtomicCommand"/> specified by <see cref="IActivateItems.PluginUserInterfaces"/> for the current control.  Commands
+        /// will appear in the menu drop down options at the top of the control
+        /// </summary>
+        protected void AddPluginCommandsToMenu()
+        {
+            foreach (IAtomicCommand cmd in GetPluginCommands())
+                AddToMenu(cmd);
+        }
+
+        protected IEnumerable<IAtomicCommand> GetPluginCommands()
+        {
             foreach (var p in _activator.PluginUserInterfaces)
             {
-                var toAdd = p.GetAdditionalCommandsForControl(this, DatabaseObject);
+                var cmds = p.GetAdditionalCommandsForControl(this, DatabaseObject);
 
-                if(toAdd != null)
-                    foreach (IAtomicCommand cmd in toAdd)
-                        Add(cmd);
+                if (cmds == null)
+                    continue;
+
+                foreach (var c in cmds)
+                    yield return c;
             }
         }
+           
 
         public virtual ObjectSaverButton GetObjectSaverButton()
         {

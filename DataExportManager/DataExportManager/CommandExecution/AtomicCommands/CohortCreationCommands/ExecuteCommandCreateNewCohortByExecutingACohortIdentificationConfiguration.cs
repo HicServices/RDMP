@@ -26,6 +26,9 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
 
             if (!_allConfigurations.Any())
                 SetImpossible("You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
+
+
+            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()

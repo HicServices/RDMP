@@ -265,7 +265,7 @@ namespace ResearchDataManagementPlatform.Menus
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             AddToNew(new ExecuteCommandCreateNewExtractableDataSetPackage(_activator));
             AddToNew(new ExecuteCommandCreateNewDataExtractionProject(_activator));
-            AddToNew(new ExecuteCommandRelease(_activator){OverrideCommandName = "New Release"});
+            AddToNew(new ExecuteCommandRelease(_activator){OverrideCommandName = "New Release..."});
 
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             AddToNew(new ExecuteCommandCreateANOVersion(_activator));

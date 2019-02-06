@@ -16,6 +16,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         {
             if(Activator.RepositoryLocator.DataExportRepository == null)
                 SetImpossible("Data export database is not setup");
+
+            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()

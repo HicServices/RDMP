@@ -18,6 +18,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
         public ExecuteCommandImportDublinCoreFormat(IActivateItems activator, Catalogue catalogue):base(activator)
         {
             _target = catalogue;
+            UseTripleDotSuffix = true;
         }
 
         public override void Execute()

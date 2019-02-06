@@ -21,6 +21,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandRelease(IActivateItems activator) : base(activator)
         {
+            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()

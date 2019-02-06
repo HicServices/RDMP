@@ -16,7 +16,7 @@ namespace Dashboard.Menus.MenuItems
     {
         private readonly Catalogue _catalogue;
         readonly IExternalDatabaseServer _dqeServer;
-        public DQEMenuItem(IActivateItems activator, Catalogue catalogue): base(activator, "Data Quality Engine")
+        public DQEMenuItem(IActivateItems activator, Catalogue catalogue): base(activator, "Data Quality Engine...")
         {
             _catalogue = catalogue;
 
@@ -25,7 +25,7 @@ namespace Dashboard.Menus.MenuItems
 
             Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE);
 
-            Text = _dqeServer == null ? "Create DQE Database" : "Data Quality Engine";
+            Text = _dqeServer == null ? "Create DQE Database..." : "Data Quality Engine...";
         }
 
         protected override void OnClick(EventArgs e)

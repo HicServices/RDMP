@@ -42,8 +42,8 @@ namespace CatalogueManager.SimpleDialogs
             this.cbExtractable = new System.Windows.Forms.CheckBox();
             this.cbIsGlobal = new System.Windows.Forms.CheckBox();
             this.btnBrowse = new System.Windows.Forms.Button();
-            this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,7 +70,7 @@ namespace CatalogueManager.SimpleDialogs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbName.Location = new System.Drawing.Point(74, 29);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(456, 20);
+            this.tbName.Size = new System.Drawing.Size(298, 20);
             this.tbName.TabIndex = 4;
             // 
             // label3
@@ -90,7 +90,7 @@ namespace CatalogueManager.SimpleDialogs
             this.tbDescription.Location = new System.Drawing.Point(74, 55);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(770, 255);
+            this.tbDescription.Size = new System.Drawing.Size(612, 301);
             this.tbDescription.TabIndex = 5;
             // 
             // label4
@@ -106,9 +106,9 @@ namespace CatalogueManager.SimpleDialogs
             // 
             this.tbUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbUrl.Location = new System.Drawing.Point(71, 316);
+            this.tbUrl.Location = new System.Drawing.Point(71, 362);
             this.tbUrl.Name = "tbUrl";
-            this.tbUrl.Size = new System.Drawing.Size(773, 20);
+            this.tbUrl.Size = new System.Drawing.Size(615, 20);
             this.tbUrl.TabIndex = 6;
             this.tbUrl.TextChanged += new System.EventHandler(this.tbUrl_TextChanged);
             // 
@@ -116,7 +116,7 @@ namespace CatalogueManager.SimpleDialogs
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(36, 319);
+            this.label5.Location = new System.Drawing.Point(36, 365);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 13);
             this.label5.TabIndex = 8;
@@ -125,7 +125,7 @@ namespace CatalogueManager.SimpleDialogs
             // btnOpen
             // 
             this.btnOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpen.Location = new System.Drawing.Point(678, 342);
+            this.btnOpen.Location = new System.Drawing.Point(520, 388);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(80, 23);
             this.btnOpen.TabIndex = 7;
@@ -156,22 +156,13 @@ namespace CatalogueManager.SimpleDialogs
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(764, 342);
+            this.btnBrowse.Location = new System.Drawing.Point(606, 388);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(80, 23);
             this.btnBrowse.TabIndex = 8;
             this.btnBrowse.Text = "Browse...";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-            // 
-            // ticketingControl1
-            // 
-            this.ticketingControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ticketingControl1.Location = new System.Drawing.Point(541, -1);
-            this.ticketingControl1.Name = "ticketingControl1";
-            this.ticketingControl1.Size = new System.Drawing.Size(303, 54);
-            this.ticketingControl1.TabIndex = 3;
-            this.ticketingControl1.TicketText = "";
             // 
             // panel1
             // 
@@ -190,9 +181,19 @@ namespace CatalogueManager.SimpleDialogs
             this.panel1.Controls.Add(this.tbDescription);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.MinimumSize = new System.Drawing.Size(600, 400);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(850, 369);
+            this.panel1.Size = new System.Drawing.Size(692, 415);
             this.panel1.TabIndex = 9;
+            // 
+            // ticketingControl1
+            // 
+            this.ticketingControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ticketingControl1.Location = new System.Drawing.Point(383, -1);
+            this.ticketingControl1.Name = "ticketingControl1";
+            this.ticketingControl1.Size = new System.Drawing.Size(303, 54);
+            this.ticketingControl1.TabIndex = 3;
+            this.ticketingControl1.TicketText = "";
             // 
             // SupportingDocumentUI
             // 
@@ -200,7 +201,7 @@ namespace CatalogueManager.SimpleDialogs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Name = "SupportingDocumentUI";
-            this.Size = new System.Drawing.Size(850, 369);
+            this.Size = new System.Drawing.Size(692, 415);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);

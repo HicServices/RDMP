@@ -19,12 +19,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
         public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, FileCollectionCommand sourceFileCollection, Catalogue targetCatalogue): base(activator, sourceFileCollection)
         {
             _targetCatalogue = targetCatalogue;
+            UseTripleDotSuffix = true;
         }
 
         [ImportingConstructor]
         public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, Catalogue targetCatalogue): base(activator,null)
         {
             _targetCatalogue = targetCatalogue;
+            UseTripleDotSuffix = true;
         }
 
         protected override void ExecuteImpl(ShareManager shareManager, List<ShareDefinition> shareDefinitions)

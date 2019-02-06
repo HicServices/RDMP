@@ -17,7 +17,7 @@ namespace CatalogueManager.Menus
         {
             var iconProvider = _activator.CoreIconProvider;
 
-            ReBrandActivateAs("Bulk Process Catalogue Items...",RDMPConcept.CatalogueItem,OverlayKind.Edit);
+            ReBrandActivateAs("Bulk Process Catalogue Items",RDMPConcept.CatalogueItem,OverlayKind.Edit);
 
             Add(new ExecuteCommandAddNewCatalogueItem(_activator, node.Catalogue));
             Items.Add("Paste Clipboard as new Catalogue Items", iconProvider.GetImage(RDMPConcept.Clipboard,OverlayKind.Import), (s, e) => PasteClipboardAsNewCatalogueItems(node.Catalogue));

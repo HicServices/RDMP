@@ -23,6 +23,8 @@ namespace CohortManager.CommandExecution.AtomicCommands
         {
             if(!activator.CoreChildProvider.AllCatalogues.Any())
                 SetImpossible("There are no datasets loaded yet into RDMP");
+
+            UseTripleDotSuffix = true;
         }
 
         public Image GetImage(IIconProvider iconProvider)

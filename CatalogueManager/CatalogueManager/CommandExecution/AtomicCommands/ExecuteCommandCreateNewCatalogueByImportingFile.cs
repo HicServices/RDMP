@@ -38,6 +38,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandCreateNewCatalogueByImportingFile(IActivateItems activator, FileInfo file = null) : base(activator)
         {
             File = file;
+            UseTripleDotSuffix = true;
             CheckFile();
         }
 
@@ -50,6 +51,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
              }
 
             File = file.Files[0];
+            UseTripleDotSuffix = true;
             CheckFile();
         }
 

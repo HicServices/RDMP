@@ -17,6 +17,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
         public ExecuteCommandExportInDublinCoreFormat(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _definition = _translater.GenerateFrom(catalogue);
+            UseTripleDotSuffix = true;
         }
 
         public override void Execute()

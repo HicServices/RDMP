@@ -15,12 +15,12 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         private ExtractionInformation _extractionIdentifierColumn;
 
 
-        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator,ExtractionInformation extractionInformation) : base(activator)
+        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator,ExtractionInformation extractionInformation) : this(activator)
         {
             if (!extractionInformation.IsExtractionIdentifier)
                 SetImpossible("Column is not marked IsExtractionIdentifier");
 
-            OverrideCommandName = "Create New Cohort From Column";
+            OverrideCommandName = "Create New Cohort From Column...";
 
             SetExtractionIdentifierColumn(extractionInformation);
         }
@@ -31,17 +31,17 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         }
 
         [ImportingConstructor]
-        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, Catalogue catalogue): base(activator)
+        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, Catalogue catalogue): this(activator)
         {
             SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(catalogue));
         }
 
         public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator): base(activator)
         {
-            
+            UseTripleDotSuffix = true;
         }
 
-        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
+        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, ExternalCohortTable externalCohortTable) : this(activator)
         {
             ExternalCohortTable = externalCohortTable;
         }

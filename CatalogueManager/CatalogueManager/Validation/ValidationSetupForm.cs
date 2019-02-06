@@ -74,6 +74,10 @@ namespace CatalogueManager.Validation
             tableLayoutPanel1.Padding = new Padding(0, 0, vertScrollWidth, 0);
 
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
+
+            olvName.ImageGetter = (o) => _activator.CoreIconProvider.GetImage(o);
         }
 
         private bool isFirstTime = true;
@@ -83,6 +87,8 @@ namespace CatalogueManager.Validation
         {
             base.SetDatabaseObject(activator, databaseObject);
             
+            AddPluginCommandsToMenu();
+
             //if someone renames a Catalogue we don't want to erase all the rule changes they have configured here
             if(!isFirstTime)
                 return;
@@ -90,11 +96,7 @@ namespace CatalogueManager.Validation
             isFirstTime = false;
 
             _catalogue = databaseObject;
-
-            ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
-
-            olvName.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
-
+            
             SetupComboBoxes(databaseObject);
 
             //get the validation XML

@@ -32,6 +32,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if(_loggingServer == null)
                 SetImpossible("There is no default logging server configured");
+
+            UseTripleDotSuffix = true;
         }
 
         public override void Execute()

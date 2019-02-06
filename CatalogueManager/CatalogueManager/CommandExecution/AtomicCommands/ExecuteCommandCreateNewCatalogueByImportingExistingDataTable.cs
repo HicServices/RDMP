@@ -19,6 +19,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator,bool allowImportAsCatalogue=true) : base(activator)
         {
             this._allowImportAsCatalogue = allowImportAsCatalogue;
+            UseTripleDotSuffix = true;
         }
 
         public override void Execute()
@@ -44,7 +45,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public override string GetCommandName()
         {
             if (!_allowImportAsCatalogue)
-                return "Create New TableInfo By Importing Existing Data Table";
+                return "Create New TableInfo By Importing Existing Data Table...";
 
             return base.GetCommandName();
         }

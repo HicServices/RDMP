@@ -12,7 +12,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
     {
         public ExecuteCommandCreateNewCohortDatabaseUsingWizard(IActivateItems activator):base(activator)
         {
-            
+            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()

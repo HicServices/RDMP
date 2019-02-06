@@ -21,6 +21,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
             if(!_availableCatalogues.Any())
                 SetImpossible("There are no Catalogues that are not associated with another Load already");
+
+            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()
@@ -64,7 +66,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return "Create New Data Load Configuration";
+            return "Create New Data Load Configuration...";
         }
 
         public Image GetImage(IIconProvider iconProvider)

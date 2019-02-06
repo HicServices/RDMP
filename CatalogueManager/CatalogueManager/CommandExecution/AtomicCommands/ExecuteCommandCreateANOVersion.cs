@@ -16,11 +16,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandCreateANOVersion(IActivateItems activator,Catalogue catalogue) : base(activator)
         {
             _catalogue = catalogue;
+            UseTripleDotSuffix = true;
         }
 
         public ExecuteCommandCreateANOVersion(IActivateItems activator) : base(activator)
         {
-            
+            UseTripleDotSuffix = true;
         }
 
         public Image GetImage(IIconProvider iconProvider)

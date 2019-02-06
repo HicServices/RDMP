@@ -16,12 +16,14 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         public ExecuteCommandCreateNewCohortFromFile(IActivateItems activator, ExternalCohortTable externalCohortTable = null) : base(activator)
         {
             ExternalCohortTable = externalCohortTable;
+            UseTripleDotSuffix = true;
         }
         public ExecuteCommandCreateNewCohortFromFile(IActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable = null)
             : base(activator)
         {
             _file = file;
             ExternalCohortTable = externalCohortTable;
+            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()
