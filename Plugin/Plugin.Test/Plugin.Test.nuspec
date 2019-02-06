@@ -11,7 +11,7 @@
         <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>$Description$</description>
-        <copyright>Copyright 2018</copyright>
+        <copyright>Copyright 2018-2019</copyright>
         <dependencies>
             <dependency id="HIC.FansiSql" version="0.9.0.0" />
             <dependency id="CsvHelper" version="7.1.1" />
