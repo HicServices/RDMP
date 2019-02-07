@@ -194,6 +194,8 @@ namespace PluginPackager
                 _blacklist.Add(assembly.GetName().Name);
         }
 
+        HashSet<string> _dependenciesAlreadyTraversed = new HashSet<string>();
+
         private void AddWithDependencies(ICheckNotifier notifier, FileInfo dll, ZipArchive archive)
         {
             if (archive.Entries.All(ze => ze.Name != dll.Name))
@@ -219,7 +221,14 @@ namespace PluginPackager
                 if(dependentDll == null)
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not find dependent dll " + name.Name, CheckResult.Warning));
                 else
+                {
+                    //don't process circular dependencies
+                    if(_dependenciesAlreadyTraversed.Contains(dependentDll.Name))
+                        continue;
+
+                    _dependenciesAlreadyTraversed.Add(dependentDll.Name);
                     AddWithDependencies(notifier, dependentDll, archive);
+                }
             }
 
             
