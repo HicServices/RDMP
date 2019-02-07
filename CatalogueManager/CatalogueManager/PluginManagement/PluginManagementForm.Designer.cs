@@ -201,6 +201,7 @@ namespace CatalogueManager.PluginManagement
             this.olvLegacyPlugins.TabIndex = 9;
             this.olvLegacyPlugins.UseCompatibleStateImageBehavior = false;
             this.olvLegacyPlugins.View = System.Windows.Forms.View.Details;
+            this.olvLegacyPlugins.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyUp);
             // 
             // olvLegacyName
             // 

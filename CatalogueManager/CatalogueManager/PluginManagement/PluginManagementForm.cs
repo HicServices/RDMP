@@ -346,18 +346,27 @@ namespace CatalogueManager.PluginManagement
         {
             if (e.KeyCode == Keys.Delete)
             {
-                var deleteable = olvPlugins.SelectedObject as IDeleteable;
+                var olv = (ObjectListView) sender;
 
-                if(deleteable is Plugin)
-                    if(MessageBox.Show("Are you sure you want to delete '"+deleteable+"'?"+Environment.NewLine + Environment.NewLine +" NOTE:It is likely this assembly/plugin is currently ReadLocked since the application is running, deleting will remove it from the Database and remove it locally the next time you restart the application.","Confirm Deleting", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                var deleteables = olv.SelectedObjects.OfType<IDeleteable>().ToArray();
+
+                if (!deleteables.Any())
+                    return;
+                
+                
+                if(MessageBox.Show("Are you sure you want to delete? (Changes will take effect after restart)","Confirm Deleting", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    foreach (var d in deleteables)
                     {
-                        deleteable.DeleteInDatabase();
-                        if (wrongPlugins.Contains((Plugin)deleteable))
-                            wrongPlugins.Remove((Plugin) deleteable);
-                        else
-                            compatiblePlugins.ToList().Remove((Plugin)deleteable);
-                        RefreshUIFromDatabase();
+                        d.DeleteInDatabase();
+                        olvPlugins.RemoveObject(d);
+                        olvLegacyPlugins.RemoveObject(d);
                     }
+
+                    //delete any plugins for which there are no dlls left
+                    foreach (Plugin emptyPlugin in RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().Where(p => !p.LoadModuleAssemblies.Any()))
+                        emptyPlugin.DeleteInDatabase();
+                }
             }
         }
 
