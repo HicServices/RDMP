@@ -5,7 +5,7 @@
    1. [Does RDMP have an API?](#api)
    1. [Does RDMP Support Plugins?](#plugins)
 1. Database Compatibility
-   1. [What databases does RDMP support](#databases)
+   1. [What databases does RDMP support?](#databases)
    1. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
    1. [When I connect to MySql it says 'The host localhost does not support SSL connections'](#disableSSL)
    1. [Does RDMP Support Schemas?](#schemas)
@@ -14,7 +14,7 @@
 1. Data Load Engine
    1. [Can RDMP Load UnTyped Data?](#untyped)
    1. [How does RDMP deal with Csv/text files?](#csv)
-   1. [How does RDMP handle / translate untyped, C# and Database Types](#typetranslation)
+   1. [How does RDMP handle / translate untyped, C# and Database Types?](#typetranslation)
    1. [When loading data can I skip some columns?](#skipColumns)
    1. [Can I run SQL Scripts during a load?](#sqlScripts)
 1. Curation
@@ -50,10 +50,10 @@ When performing an operation in the RDMP client application (e.g. releasing a da
 
 <a name="api"></a>
 ### Does RDMP have an API?
-Yes, RDMP can be controlled programatically through it's API which is available as 3 NuGet packages 
+Yes, RDMP can be controlled programmatically through it's API which is available as 3 NuGet packages 
 - [HIC.RDMP.Plugin](https://www.nuget.org/packages/HIC.RDMP.Plugin): All core objects, engines etc
-- [HIC.RDMP.Plugin.UI](https://www.nuget.org/packages/HIC.RDMP.Plugin.UI): All definitions for writting user interace plugins that run in the main RDMP client application.
-- [HIC.RDMP.Plugin.Test](https://www.nuget.org/packages/HIC.RDMP.Plugin.Test/): Classes to simplify writting Unit/Integration Tests for RDMP plugins
+- [HIC.RDMP.Plugin.UI](https://www.nuget.org/packages/HIC.RDMP.Plugin.UI): All definitions for writing user interface plugins that run in the main RDMP client application.
+- [HIC.RDMP.Plugin.Test](https://www.nuget.org/packages/HIC.RDMP.Plugin.Test/): Classes to simplify writing Unit/Integration Tests for RDMP plugins
 
 <a name="plugins"></a>
 ### Does RDMP Support Plugins?
@@ -115,7 +115,7 @@ Yes, [determining database types from untyped data (e.g. CSV)](./DataTableUpload
 
 <a name="csv"></a>
 ### How does RDMP deal with Csv/text files?
-RDMP supports files delimited by any character (tab separated, pipe separated, comma separated etc).  Since [invalid formatting is a common problem with ETL of CSV files RDMP has several fault tolernace features](./CSVHandling.md).
+RDMP supports files delimited by any character (tab separated, pipe separated, comma separated etc).  Since [invalid formatting is a common problem with ETL of CSV files RDMP has several fault tolerance features](./CSVHandling.md).
 
 <a name="typetranslation"></a>
 ### How does RDMP handle / translate untyped, C# and Database Types?
@@ -129,7 +129,7 @@ The data load engine first loads all data to the temporary unconstrained RAW dat
 
 The above message shows the case where there is a new column appearing for the first time in input files for the data load (Belta) and an unmatched column in your RAW database (delta).  This could be a renamed column or it could be a new column with a new meaning.  Once you have identified the nature of the new column (new or renamed) then there are many ways to respond.  You could handle the name change in the DLE (e.g. using ForceHeaders or a Find and Replace script).  Or you could send an email to data provider rejecting the input file.
 
-In order for this to work the DLE RAW Attatchers enforce the following rules:
+In order for this to work the DLE RAW Attachers enforce the following rules:
 
 1. Unmatched columns in RAW are ALLOWED.  For example you could have a column 'IsSensitiveRecord' which is in your live table but doesn't appear in input files.
 2. Unmatched columns in files are NOT ALLOWED.  If a flat file has a column 'Dangerous' you must have a corresponding column in your dataset
@@ -141,7 +141,7 @@ If you have columns in your file that you straight up don't want to load (see 2 
 If you need to process data in the columns but don't want them in your final LIVE database table (e.g. to merge two fields or populate an aggregate column) then you can create a virtual RAW only column (called a PreLoadDiscardedColumn).  PreLoadDiscardedColumns are columns which are supplied by data providers but which you do not want in your LIVE database.  Each PreLoadDiscardedColumn can either:
 
 1. Be created in RAW and then thrown away (`Oblivion`).  This is useful if there are columns you don't care about or combo columns you want to use only to populate other columns (e.g. FullPatientName=> Forename + Surname) 
-2. Be dumped into an identifier dump (`StoreInIdentifiersDump`).  This is useful if you are supplied with lots of identifiable columns that you want to keep track of but seperated from the rest of the data
+2. Be dumped into an identifier dump (`StoreInIdentifiersDump`).  This is useful if you are supplied with lots of identifiable columns that you want to keep track of but separated from the rest of the data
 3. Be promoted to LIVE in a diluted form (`Dilute`).  For example you might want to promote PatientName as a 1 or a 0 indicating whether or not it was provided and store the full name in the identifier dump as above.
 
 Creating a `PreLoadDiscardedColumn` can be done by right clicking the `TableInfo`	.  You will need to specify both the name of the virtual column and the datatype as it should be created in RAW (it won't appear in your LIVE table).
@@ -152,7 +152,7 @@ If you want to dump / dilute the column you must configure a dump server.  And i
 
 ![ReOrdering](Images/FAQ/DiscardedColumnsFull.png)
 
-This approach gives a single workflow for acknowledging new columns and making conscious descisions about how to treat that data.  And since it is ALLOWED for columns in the database to appear that are not in input files you can still run the new load configuration on old files without it breaking.
+This approach gives a single workflow for acknowledging new columns and making conscious decisions about how to treat that data.  And since it is ALLOWED for columns in the database to appear that are not in input files you can still run the new load configuration on old files without it breaking.
 
 <a name="sqlScripts"></a>
 ### Can I run SQL Scripts during a load?
@@ -161,11 +161,11 @@ Yes once you have a load set up you can add SQL scripts to adjust the data in RA
 ![Add new script right click menu](Images/FAQ/AddNewRunSqlScriptTask.png)
 
 
-The Load Diagram shows the tables that will exist in RAW/STAGING.  Notice that the names for the tables/databases change depending on the stage.  This is handled by autocomplete when writting scripts (see below).
+The Load Diagram shows the tables that will exist in RAW/STAGING.  Notice that the names for the tables/databases change depending on the stage.  This is handled by autocomplete when writing scripts (see below).
 
 ![Load Stage Based Autocomplete](Images/FAQ/LoadStageAutoComplete.png)
 
-If you want to make a script agnostic of the LoadStage or if you are writting your own `INameDatabasesAndTablesDuringLoads` then you can reference columns/tables by ID using the following Sytnax
+If you want to make a script agnostic of the LoadStage or if you are writing your own `INameDatabasesAndTablesDuringLoads` then you can reference columns/tables by ID using the following Syntax
 
 ```
 {T:100}
@@ -237,7 +237,7 @@ Share Definition files include JSON serialization of values and are not designed
 
 #### Dublin Core
 
-`Catalogue` descriptive metadata can be serializied into an xml file which follows the [Dublin Core guidelines]( http://dublincore.org/documents/dc-xml-guidelines/).  RDMP can load dataset descriptions from `<metadata>` `XElements` which follow this xmlns.
+`Catalogue` descriptive metadata can be serialized into an xml file which follows the [Dublin Core guidelines]( http://dublincore.org/documents/dc-xml-guidelines/).  RDMP can load dataset descriptions from `<metadata>` `XElements` which follow this xmlns.
 
 An example can be seen below:
 
