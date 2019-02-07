@@ -91,7 +91,7 @@ namespace ReusableUIComponents.Dialogs
             }
             
             //Replace single newlines with double new lines 
-            if (Args.FormatAsParagraphs)
+            if (Args.FormatAsParagraphs && CommentStore != null)
                 message = CommentStore.FormatAsParagraphs(message);
 
             //if there is a title
@@ -199,8 +199,6 @@ namespace ReusableUIComponents.Dialogs
 
         private void SetMessage(string message, string keywordNotToAdd = null)
         {
-            richTextBox1.Visible = false;
-
             //unless the text is unreasonably long or we don't have help documentation available
             if (message.Length > 100000 || CommentStore == null)
             {
@@ -209,6 +207,7 @@ namespace ReusableUIComponents.Dialogs
             }
 
             bool lastWordWasALink = false;
+            richTextBox1.Visible = false;
 
             foreach (string word in Regex.Split(message, @"(?<=[. ,;)(<>-])"))
             {
