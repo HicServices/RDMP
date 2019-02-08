@@ -135,8 +135,6 @@ namespace MapsDirectlyToDatabaseTableUI
         {
             var types = mapsDirectlyToDatabaseTables.Select(m => m.GetType()).Distinct().ToArray();
 
-            bool addedColumns = false;
-
             //objects are not homogeneous
             if (types.Length == 1)
             {
@@ -150,7 +148,6 @@ namespace MapsDirectlyToDatabaseTableUI
                         //add a column
                         var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
                         olvObjects.AllColumns.Add(newCol);
-                        addedColumns = true;
                     }
                 }
             }
@@ -160,11 +157,7 @@ namespace MapsDirectlyToDatabaseTableUI
                 var newCol = new OLVColumn( "Type",null);
                 newCol.AspectGetter += TypeAspectGetter;
                 olvObjects.AllColumns.Add(newCol);
-                addedColumns = true;
             }
-
-            if (addedColumns)
-                olvObjects.RebuildColumns();
         }
 
         private object TypeAspectGetter(object rowObject)

@@ -351,12 +351,9 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var openables = _activator.CoreChildProvider.GetAllSearchables().Select(kvp=>kvp.Key).Where(o => _activator.CommandExecutionFactory.CanActivate(o));
-
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(openables, false, false);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-                _activator.WindowArranger.SetupEditAnything(this,dialog.Selected);
+            var navigate = new NavigateToObjectUI(_activator);
+            navigate.CompletionAction = (o) => _activator.WindowArranger.SetupEditAnything(this, o);
+            navigate.Show();
         }
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)

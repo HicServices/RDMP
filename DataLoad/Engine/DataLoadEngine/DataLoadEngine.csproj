@@ -400,7 +400,9 @@
     <Folder Include="Checks\Notifiers\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="..\..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="Checks\Checking.cd" />
     <None Include="DataFlowPipeline\Components\Anonymisation.cd" />
     <None Include="DataFlowPipeline\Destinations\DataTableUploadDestination.cd" />

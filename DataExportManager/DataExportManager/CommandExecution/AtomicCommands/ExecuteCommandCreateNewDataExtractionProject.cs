@@ -17,8 +17,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands
 {
-    public class 
-        ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution, IAtomicCommand
     {
         public ExecuteCommandCreateNewDataExtractionProject(IActivateItems activator) : base(activator)
         {

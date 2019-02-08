@@ -278,6 +278,9 @@
     <EmbeddedResource Include="..\..\LIBRARYLICENSES">
       <Link>WindowManagement\Licenses\LIBRARYLICENSES</Link>
     </EmbeddedResource>
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="DockingInfrastructure.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -289,11 +292,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">

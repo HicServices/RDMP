@@ -204,7 +204,9 @@
     <Compile Include="Versioning\Patch.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="MapsDirectlyToDatabaseTable.cd" />
     <None Include="packages.config" />
   </ItemGroup>

@@ -615,7 +615,9 @@
     <Compile Include="WordCatalogueExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="DataFlowPipeline\DataFlowPipeline.cd" />
     <None Include="DataStructures.cd" />
     <None Include="Arguments.cd" />

@@ -68,8 +68,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
 
             var activate = new ExecuteCommandActivate(_activator,o);
 
-            if(!activate.IsImpossible)
+            //activate it if possible
+            if (!activate.IsImpossible)
                 activate.Execute();
+            else
+                _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1)); //otherwise just show it
         }
 
         public void Setup(WindowLayout target)

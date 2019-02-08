@@ -6,15 +6,13 @@
 
 using System;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using CommandLine;
 using FAnsi.Discovery;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -39,11 +37,12 @@ namespace DatabaseCreation
 
         public static int RunOptionsAndReturnExitCode(DatabaseCreationProgramOptions options)
         {
-            
             var serverName = options.ServerName;
             var prefix = options.Prefix;
 
             Console.WriteLine("About to create on server '" + serverName + "' databases with prefix '" + prefix + "'");
+            
+            ImplementationManager.Load(typeof(MicrosoftSQLImplementation).Assembly);
 
             try
             {

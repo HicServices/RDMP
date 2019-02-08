@@ -365,9 +365,8 @@
     <Compile Include="Unit\SchedulingTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="DataLoadEngineTests.dll.config.template">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="..\..\..\..\App.config">
+      <Link>App.config</Link>
     </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
