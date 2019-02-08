@@ -1,13 +1,21 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary.Data
 {
@@ -110,13 +118,13 @@ namespace CatalogueLibrary.Data
         /// </summary>
         /// <param name="includeLookupTables"></param>
         /// <returns></returns>
-        TableInfo[] GetTableInfoList(bool includeLookupTables);
+        ITableInfo[] GetTableInfoList(bool includeLookupTables);
 
         /// <summary>
         /// Retrieves all the TableInfo objects associated with a particular catalogue
         /// </summary>
         /// <returns></returns>
-        TableInfo[] GetLookupTableInfoList();
+        ITableInfo[] GetLookupTableInfoList();
 
         /// <summary>
         /// Gets all distinct underlying <see cref="TableInfo"/> that are referenced by the <see cref="CatalogueItem"/>s of the Catalogue.  The tables are divided into
@@ -127,7 +135,7 @@ namespace CatalogueLibrary.Data
         /// <param name="normalTables">Unique TableInfos amongst all CatalogueItems in the Catalogue</param>
         /// <param name="lookupTables">Unique TableInfos amongst all CatalogueItems in the Catalogue where there is at least
         ///  one <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on the referencing ColumnInfo.</param>
-        void GetTableInfos(out List<TableInfo> normalTables, out List<TableInfo> lookupTables);
+        void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables);
 
         /// <summary>
         /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is 

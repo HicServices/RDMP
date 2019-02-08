@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -120,7 +126,7 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
         }
 
         [Test]
-        public void TableInfoType_FetchAfterDelete_Throws()
+        public void TableInfoType_FetchAfterDelete_ReturnsNull()
         {
             string tableInfoName = "TableInfoFor_" + new StackTrace().GetFrame(0).GetMethod().Name;
 
@@ -148,9 +154,12 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
                 //Lolz I just deleted it out of the database
                 tableInfo.DeleteInDatabase();
 
-                //give the object back now please? - fails here because it's gone - like a rabit in a hat!
-                var ex = Assert.Throws<KeyNotFoundException>(()=>pta.GetValueAsSystemType());
-                StringAssert.Contains("Could not find TableInfo with ID",ex.Message);
+                //give the object back now please? - returns null because it's gone (new behaviour)
+                Assert.IsNull(pta.GetValueAsSystemType());
+
+                //old behaviour
+                /*var ex = Assert.Throws<KeyNotFoundException>(()=>pta.GetValueAsSystemType());
+                StringAssert.Contains("Could not find TableInfo with ID",ex.Message);*/
             }
             finally
             {

@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,8 +39,8 @@ namespace DataLoadEngine.Job
         private readonly ILogManager _logManager;
         public ILoadMetadata LoadMetadata { get; private set; }
 
-        public List<TableInfo> RegularTablesToLoad { get; private set; }
-        public List<TableInfo> LookupTablesToLoad { get; private set; }
+        public List<ITableInfo> RegularTablesToLoad { get; private set; }
+        public List<ITableInfo> LookupTablesToLoad { get; private set; }
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
         private Stack<IDisposeAfterDataLoad> _disposalStack = new Stack<IDisposeAfterDataLoad>();

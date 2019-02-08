@@ -1,24 +1,24 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Windows.Media;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.MainFormUITabs;
-using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Copying;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;
-using ReusableUIComponents.SingleControlForms;
 using ScintillaNET;
 using Color = System.Drawing.Color;
 
@@ -44,124 +44,6 @@ namespace CatalogueManager.Issues
         
         private Scintilla QueryPreview { get; set; }
         
-        public CatalogueItemIssue CatalogueItemIssue
-        {
-            get { return _catalogueItemIssue; }
-            set
-            {
-                bloading = true;
-                
-                if(QueryPreview == null)
-                    return;
-                
-                _catalogueItemIssue = value;
-                if (value == null)
-                {
-                    tbID.Text = "";
-
-                    tbDescription.Text = "";
-                    tbDescription.Enabled = false;
-
-                    tbName.Text = "";
-                    tbName.Enabled = false;
-
-                    ticketingControl1.TicketText = "";
-                    ticketingControl1.Enabled = false;
-
-                    QueryPreview.Text = "";
-                    QueryPreview.ReadOnly = true;
-
-                    tbDescription.Text = "";
-                    tbDescription.Enabled = false;
-                    tbDescription.ForeColor = Color.Black;
-                    lbError.Text = "";
-
-                    ddStatus.SelectedItem = null;
-                    ddStatus.Enabled = false;
-
-                    ddSeverity.SelectedItem = null;
-                    ddSeverity.Enabled = false;
-
-                    tbAction.Text = "";
-                    tbAction.Enabled = false;
-
-                    tbReportedOnDate.Text = "";
-                    tbReportedOnDate.Enabled = false;
-
-                    tbNotesToResearcher.Text = "";
-                    tbNotesToResearcher.Enabled = false;
-
-                    tbOwner.Text =  "";
-                    tbReportedBy.Text = "";
-
-                    tbDateCreated.Text = "";
-                    tbDateOfLastStatusChange.Text = "";
-                    tbUserWhoCreated.Text = "";
-                    tbUserWhoLastChangedStatus.Text = "";
-
-                    tbPathToExcelSheetWithAdditionalInformation.Text = "";
-                    tbPathToExcelSheetWithAdditionalInformation.Enabled = false;
-                    btnBrowse.Enabled = false;
-                    btnOpenFile.Enabled = false;
-                    btnOpenFolder.Enabled = false;
-
-
-                }
-                else
-                {
-                    tbID.Text = value.ID.ToString();
-
-                    tbDescription.Text =  value.Description;
-                    tbDescription.Enabled = true;
-
-                    tbName.Text = value.Name;
-                    tbName.Enabled = true;
-
-                    ticketingControl1.TicketText = value.Ticket;
-                    ticketingControl1.Enabled = true;
-
-                    QueryPreview.ReadOnly = false;
-                    QueryPreview.Text = value.SQL;
-
-                    tbDescription.Text = value.Description;
-                    tbDescription.Enabled = true;
-                    tbDescription.ForeColor = Color.Black;
-                    lbError.Text = "";
-
-                    ddStatus.SelectedItem = value.Status;
-                    ddStatus.Enabled = true;
-
-                    ddSeverity.SelectedItem = value.Severity;
-                    ddSeverity.Enabled = true;
-
-                    tbAction.Text = value.Action;
-                    tbAction.Enabled = true;
-
-                    tbReportedOnDate.Text = value.ReportedOnDate.ToString();
-                    tbReportedOnDate.Enabled = true;
-
-                    tbNotesToResearcher.Text = value.NotesToResearcher;
-                    tbNotesToResearcher.Enabled = true;
-
-                    tbOwner.Text = value.Owner_ID != null ? value.Owner.Name : "";
-                    tbReportedBy.Text = value.ReportedBy_ID != null ? value.ReportedBy.Name : "";
-                    
-                    tbDateCreated.Text = value.DateCreated.ToString();
-                    tbDateOfLastStatusChange.Text = value.DateOfLastStatusChange.ToString();
-                    tbUserWhoCreated.Text = value.UserWhoCreated;
-                    tbUserWhoLastChangedStatus.Text = value.UserWhoLastChangedStatus;
-
-
-                    tbPathToExcelSheetWithAdditionalInformation.Text = value.PathToExcelSheetWithAdditionalInformation;
-                    tbPathToExcelSheetWithAdditionalInformation.Enabled = true;
-                    btnBrowse.Enabled = true;
-                    btnOpenFile.Enabled = true;
-                    btnOpenFolder.Enabled = true;
-                }
-
-                bloading = false;
-            }
-        }
         
         public IssueUI()
         {
@@ -195,16 +77,50 @@ namespace CatalogueManager.Issues
             if (bloading)
                 return;
 
-            if (CatalogueItemIssue != null)
-                CatalogueItemIssue.Ticket = ticketingControl1.TicketText;
+            if (_catalogueItemIssue != null)
+                _catalogueItemIssue.Ticket = ticketingControl1.TicketText;
         }
 
 
         public override void SetDatabaseObject(IActivateItems activator, CatalogueItemIssue databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            CatalogueItemIssue = databaseObject;
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+            _catalogueItemIssue = databaseObject;
+
+            bloading = true;
+
+            if (QueryPreview == null)
+                return;
+
+            ticketingControl1.TicketText = _catalogueItemIssue.Ticket;
+            QueryPreview.Text = _catalogueItemIssue.SQL;
+            
+            tbReportedOnDate.Text = _catalogueItemIssue.ReportedOnDate.ToString();
+            tbOwner.Text = _catalogueItemIssue.Owner_ID != null ? _catalogueItemIssue.Owner.Name : "";
+            tbReportedBy.Text = _catalogueItemIssue.ReportedBy_ID != null ? _catalogueItemIssue.ReportedBy.Name : "";
+
+            tbDateCreated.Text = _catalogueItemIssue.DateCreated.ToString();
+            tbDateOfLastStatusChange.Text = _catalogueItemIssue.DateOfLastStatusChange.ToString();
+            tbUserWhoLastChangedStatus.Text = _catalogueItemIssue.UserWhoLastChangedStatus;
+
+            bloading = false;
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, CatalogueItemIssue databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",i=>i.ID);
+            Bind(tbName, "Text", "Name", i => i.Name);
+            Bind(tbDescription, "Text", "Description", i => i.Description);
+            
+            Bind(ddStatus, "SelectedItem", "Status", i => i.Status);
+            Bind(ddSeverity, "SelectedItem", "Severity", i => i.Severity);
+            
+            Bind(tbAction, "Text", "Action", i => i.Action);
+            Bind(tbNotesToResearcher, "Text", "NotesToResearcher", i => i.NotesToResearcher);
+            Bind(tbUserWhoCreated, "Text", "UserWhoCreated", i => i.UserWhoCreated);
+            Bind(tbPathToExcelSheetWithAdditionalInformation, "Text", "PathToExcelSheetWithAdditionalInformation", i => i.PathToExcelSheetWithAdditionalInformation);
         }
 
         private void QueryPreview_TextChanged(object sender, EventArgs e)
@@ -212,77 +128,9 @@ namespace CatalogueManager.Issues
             if(bloading)
                 return;
 
-            if (CatalogueItemIssue != null)
-                CatalogueItemIssue.SQL = QueryPreview.Text;
+            _catalogueItemIssue.SQL = QueryPreview.Text;
         }
 
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-              if(bloading)
-                return;
-
-            if (CatalogueItemIssue != null)
-            {
-                try
-                {
-                    CatalogueItemIssue.Description = tbDescription.Text;
-                    tbDescription.ForeColor = Color.Black;
-                    lbError.Text = "";
-                }
-                catch (Exception exception)
-                {
-                    lbError.Text = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
-                    tbDescription.ForeColor = Color.Red;
-                }
-            }
-        }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        { 
-            if(bloading)
-                return;
-
-            if (string.IsNullOrWhiteSpace(tbName.Text))
-            {
-
-                tbName.Text = "No Name";
-                tbName.SelectAll();
-            }
-
-            CatalogueItemIssue.Name = tbName.Text;
-            
-
-        }
-
-
-        private void tbNotesToResearcher_TextChanged(object sender, EventArgs e)
-        {
-            if (bloading)
-                return;
-
-            if (CatalogueItemIssue != null)
-                CatalogueItemIssue.NotesToResearcher = tbNotesToResearcher.Text;
-        }
-
-        private void tbAction_TextChanged(object sender, EventArgs e)
-        {
-            if (bloading)
-                return;
-
-            if (CatalogueItemIssue != null)
-                CatalogueItemIssue.Action = tbAction.Text;
-        }
-
-        private void ddSeverity_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (bloading)
-                return;
-
-            if (CatalogueItemIssue != null && ddSeverity.SelectedItem is IssueSeverity)
-                CatalogueItemIssue.Severity = (IssueSeverity) ddSeverity.SelectedItem;
-        }
-        
         private void ddStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(bloading)
@@ -291,29 +139,15 @@ namespace CatalogueManager.Issues
             if(ddStatus.SelectedItem == null)
                 return;
 
-            if (CatalogueItemIssue != null)
-            {
-                CatalogueItemIssue.Status = (IssueStatus) ddStatus.SelectedItem;
-                CatalogueItemIssue.UserWhoLastChangedStatus = Environment.UserName;
-                CatalogueItemIssue.DateOfLastStatusChange = Truncate(DateTime.Now,TimeSpan.FromMinutes(1));
-            }
+            _catalogueItemIssue.UserWhoLastChangedStatus = Environment.UserName;
+            _catalogueItemIssue.DateOfLastStatusChange = Truncate(DateTime.Now, TimeSpan.FromMinutes(1));
         }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            if(CatalogueItemIssue != null)
-            {
-                CatalogueItemIssue.SaveToDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(CatalogueItemIssue));
-            }
-        }
-
+        
         private void tbReportedOnDate_TextChanged(object sender, EventArgs e)
         {
             try
             {
-                if (CatalogueItemIssue != null)
-                    CatalogueItemIssue.ReportedOnDate = DateTime.Parse(tbReportedOnDate.Text);
+                _catalogueItemIssue.ReportedOnDate = DateTime.Parse(tbReportedOnDate.Text);
 
                 tbReportedOnDate.ForeColor = Color.Black;
             }
@@ -326,44 +160,27 @@ namespace CatalogueManager.Issues
 
         private void btnChangeReportedBy_Click(object sender, EventArgs e)
         {
-            if (bloading || CatalogueItemIssue == null)
-                return;
-
             var dialog = new SelectIssueSystemUser();
             dialog.RepositoryLocator = RepositoryLocator;
             dialog.ShowDialog();
 
             if (dialog.SelectedUser != null)
             {
-                CatalogueItemIssue.ReportedBy_ID = dialog.SelectedUser.ID;
+                _catalogueItemIssue.ReportedBy_ID = dialog.SelectedUser.ID;
                 tbReportedBy.Text = dialog.SelectedUser.Name;
             }
         }
 
         private void btnChangeOwner_Click(object sender, EventArgs e)
         {
-            if(bloading || CatalogueItemIssue == null)
-                return;
-
-
             var dialog = new SelectIssueSystemUser();
             dialog.RepositoryLocator = RepositoryLocator;
             dialog.ShowDialog();
 
             if (dialog.SelectedUser != null)
             {
-                CatalogueItemIssue.Owner_ID = dialog.SelectedUser.ID;
+                _catalogueItemIssue.Owner_ID = dialog.SelectedUser.ID;
                 tbOwner.Text = dialog.SelectedUser.Name;
-            }
-
-        }
-
-        private void tbPathToExcelSheetWithAdditionalInformation_TextChanged(object sender, EventArgs e)
-        {
-            if (CatalogueItemIssue != null)
-            {
-                CatalogueItemIssue.PathToExcelSheetWithAdditionalInformation =
-                    tbPathToExcelSheetWithAdditionalInformation.Text;
             }
         }
 
@@ -374,22 +191,8 @@ namespace CatalogueManager.Issues
 
             if (ofd.ShowDialog(this) == DialogResult.OK)
                 tbPathToExcelSheetWithAdditionalInformation.Text = ofd.FileName;
-
-
         }
-
-        private void btnOpenFile_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                UsefulStuff.GetInstance().ShowFileInWindowsExplorer(new FileInfo(tbPathToExcelSheetWithAdditionalInformation.Text));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
+        
         private void btnOpenFolder_Click(object sender, EventArgs e)
         {
             FileInfo f = new FileInfo(tbPathToExcelSheetWithAdditionalInformation.Text);
@@ -409,11 +212,6 @@ namespace CatalogueManager.Issues
         {
             if (timeSpan == TimeSpan.Zero) return dateTime; // Or could throw an ArgumentException
             return dateTime.AddTicks(-(dateTime.Ticks % timeSpan.Ticks));
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
     }
 

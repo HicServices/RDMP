@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Windows.Forms;
 using ReusableLibraryCode.Settings;
@@ -11,7 +17,8 @@ namespace ReusableUIComponents.Settings
     /// </summary>
     public partial class UserSettingsFileUI : Form
     {
-        
+        private bool _bLoaded;
+
         public UserSettingsFileUI()
         {
             InitializeComponent();
@@ -19,10 +26,25 @@ namespace ReusableUIComponents.Settings
             cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
             cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
             cbUseCaching.Checked = UserSettings.UseCaching;
+            cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
+
+            ddTheme.DataSource = new []
+            {
+                "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme",
+                "ResearchDataManagementPlatform.Theme.MyVS2015DarkTheme",
+                "ResearchDataManagementPlatform.Theme.MyVS2015LightTheme"
+            };
+
+            ddTheme.SelectedItem = UserSettings.Theme;
+
+            _bLoaded = true;
         }
 
         private void cb_CheckedChanged(object sender, EventArgs e)
         {
+            if (!_bLoaded)
+                return;
+            
             var cb = (CheckBox)sender;
 
             if (cb == cbShowHomeOnStartup)
@@ -36,6 +58,21 @@ namespace ReusableUIComponents.Settings
 
             if (cb == cbUseCaching)
                 UserSettings.UseCaching = cb.Checked;
+
+            if (cb == cbThemeMenus)
+                UserSettings.ApplyThemeToMenus = cb.Checked;
         }
+
+        private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(!_bLoaded)
+                return;
+            
+            var t = ddTheme.SelectedItem as string;
+            
+            if(t != null)
+                UserSettings.Theme = t;
+        }
+
     }
 }

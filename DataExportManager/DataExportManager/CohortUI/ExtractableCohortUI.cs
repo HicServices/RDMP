@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -12,9 +18,9 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using CatalogueManager.Copying;
 using DataExportLibrary.Providers;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
@@ -132,9 +138,7 @@ namespace DataExportManager.CohortUI
             tbVersion.Text = _extractableCohort.ExternalVersion.ToString();
 
             GenerateSQLPreview();
-
-            objectSaverButton1.SetupFor(_extractableCohort,activator.RefreshBus);
-
+            
             var dx = _activator.CoreChildProvider as DataExportChildProvider;
 
             if (!_commonFunctionality1.IsSetup)
@@ -204,11 +208,6 @@ namespace DataExportManager.CohortUI
 
             tbOverrideReleaseIdentifierSQL.ForeColor = Color.Black;
             _extractableCohort.OverrideReleaseIdentifierSQL = tbOverrideReleaseIdentifierSQL.Text;
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         private void btnShowProject_Click(object sender, EventArgs e)

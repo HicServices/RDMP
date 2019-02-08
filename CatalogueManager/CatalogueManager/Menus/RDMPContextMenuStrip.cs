@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -46,6 +52,8 @@ namespace CatalogueManager.Menus
 
             _activator = _args.ItemActivator;
 
+            _activator.Theme.ApplyTo(this);
+
             AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
             RepositoryLocator = _activator.RepositoryLocator;
@@ -82,47 +90,10 @@ namespace CatalogueManager.Menus
             var nameable = _o as INamed;
             var databaseEntity = _o as DatabaseEntity;
 
-            if(Items.Count > 0)
-                Items.Add(new ToolStripSeparator());
-            
-            if (databaseEntity != null)
-                Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
-            
-            if (deletable != null)
-            {
-                if (_args.Masquerader is IDeleteable)
-                    deletable = (IDeleteable)_args.Masquerader;
+            var treeMenuItem = new ToolStripMenuItem("Tree");
+            var inspectionMenuItem = new ToolStripMenuItem("Inspection");
 
-                Add(new ExecuteCommandDelete(_activator, deletable),Keys.Delete);
-            }
-
-            if (nameable != null)
-                Add(new ExecuteCommandRename(_activator.RefreshBus, nameable),Keys.F2);
-
-            Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
-
-            if (databaseEntity != null)
-            {
-                if (databaseEntity.Equals(_args.CurrentlyPinnedObject))
-                    Add(new ExecuteCommandUnpin(_activator, databaseEntity));
-                else
-                    Add(new ExecuteCommandPin(_activator, databaseEntity));
-
-                Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, _activator.GetLazyCatalogueObjectVisualisation()));
-            }
-
-            if (commonFunctionality.CheckColumnProvider != null)
-            {
-                if(databaseEntity != null)
-                    Add(new ExecuteCommandCheck(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst));
-              
-                var checkAll = new ToolStripMenuItem("Check All",null,(s,e)=>commonFunctionality.CheckColumnProvider.CheckCheckables());
-                checkAll.Image = CatalogueIcons.TinyYellow;
-                checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
-                Items.Add(checkAll);
-                
-            }
-            
+            //add plugin menu items
             foreach (var plugin in _activator.PluginUserInterfaces)
             {
                 try
@@ -139,11 +110,70 @@ namespace CatalogueManager.Menus
                 }
             }
 
+            if(Items.Count > 0)
+                Items.Add(new ToolStripSeparator());
+
+            //add delete/rename etc
+            if (deletable != null)
+            {
+                if (_args.Masquerader is IDeleteable)
+                    deletable = (IDeleteable)_args.Masquerader;
+
+                Add(new ExecuteCommandDelete(_activator, deletable), Keys.Delete);
+            }
+
+            if (nameable != null)
+                Add(new ExecuteCommandRename(_activator.RefreshBus, nameable), Keys.F2);
+
+            //add seldom used submenus (pin, view dependencies etc)
+            Items.Add(inspectionMenuItem);
+            PopulateInspectionMenu(commonFunctionality, inspectionMenuItem);
+
+            Items.Add(treeMenuItem);
+            PopulateTreeMenu(commonFunctionality, treeMenuItem);
+
+            //add refresh and then finally help
+            if (databaseEntity != null)
+                Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
+
+            Add(new ExecuteCommandShowKeywordHelp(_activator, _args));}
+
+        private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)
+        {
+            var databaseEntity = _o as DatabaseEntity;
+
+            if (databaseEntity != null)
+            {
+                if (databaseEntity.Equals(_args.CurrentlyPinnedObject))
+                    Add(new ExecuteCommandUnpin(_activator, databaseEntity), Keys.None, treeMenuItem);
+                else
+                    Add(new ExecuteCommandPin(_activator, databaseEntity), Keys.None, treeMenuItem);
+            }
+
             if (_args.Tree != null && !commonFunctionality.Settings.SuppressChildrenAdder)
             {
-                Add(new ExecuteCommandExpandAllNodes(_activator, commonFunctionality, _args.Model));
-                Add(new ExecuteCommandCollapseChildNodes(_activator, commonFunctionality, _args.Model));
+                Add(new ExecuteCommandExpandAllNodes(_activator, commonFunctionality, _args.Model), Keys.None, treeMenuItem);
+                Add(new ExecuteCommandCollapseChildNodes(_activator, commonFunctionality, _args.Model), Keys.None, treeMenuItem);
             }
+        }
+
+        private void PopulateInspectionMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem inspectionMenuItem)
+        {
+            var databaseEntity = _o as DatabaseEntity;
+
+            if (commonFunctionality.CheckColumnProvider != null)
+            {
+                if (databaseEntity != null)
+                    Add(new ExecuteCommandCheck(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
+
+                var checkAll = new ToolStripMenuItem("Check All", null, (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables());
+                checkAll.Image = CatalogueIcons.TinyYellow;
+                checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
+                inspectionMenuItem.DropDownItems.Add(checkAll);
+            }
+
+            if(databaseEntity != null)
+                Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, _activator.GetLazyCatalogueObjectVisualisation()), Keys.None, inspectionMenuItem);
         }
 
         protected void Activate(DatabaseEntity o)

@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,15 +26,32 @@ namespace DataExportLibrary.Checks
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private IExtractionConfiguration _config;
+        
+        /// <summary>
+        /// True to fetch all <see cref="ISelectedDataSets"/> and check with <see cref="SelectedDataSetsChecker"/>
+        /// </summary>
         public bool CheckDatasets { get; set; }
+
+        /// <summary>
+        /// True to also check all globals with a <see cref="GlobalExtractionChecker"/>
+        /// </summary>
         public bool CheckGlobals { get; set; }
 
+        /// <summary>
+        /// Prepares checking of the given <paramref name="config"/>
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <param name="config"></param>
         public ExtractionConfigurationChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IExtractionConfiguration config)
         {
             _repositoryLocator = repositoryLocator;
             _config = config;
         }
 
+        /// <summary>
+        /// Checks that the configuration is in a valid state.  Supports both released (frozen) <see cref="ExtractionConfiguration"/> and unreleased ones.
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             if (_config.IsReleased)

@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +13,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Providers
 {
@@ -32,8 +39,6 @@ namespace CatalogueLibrary.Providers
 
                 //store just the ID for performance
                 .Select(i=>i.ID));
-
-            
         }
 
         /// <inheritdoc/>
@@ -45,8 +50,16 @@ namespace CatalogueLibrary.Providers
         /// <inheritdoc/>
         public string DescribeProblem(object o)
         {
+            var disableable = o as IDisableable;
+
+            if (disableable != null && disableable.IsDisabled)
+                return "Object is disabled";
+
             if (o is AllGovernanceNode)
                 return DescribeProblem((AllGovernanceNode) o);
+
+            if (o is Catalogue)
+                return DescribeProblem((Catalogue)o);
 
             if (o is CatalogueItem)
                 return DescribeProblem((CatalogueItem) o);
@@ -56,6 +69,26 @@ namespace CatalogueLibrary.Providers
 
             if (o is ExtractionInformation)
                 return DescribeProblem((ExtractionInformation) o);
+
+            if (o is IFilter)
+                return DescribeProblem((IFilter) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(IFilter filter)
+        {
+            if (string.IsNullOrWhiteSpace(filter.WhereSQL))
+                return "Filter is blank";
+
+            return null;
+        }
+
+        public string DescribeProblem(Catalogue catalogue)
+        {
+            string reason;
+            if (!Catalogue.IsAcceptableName(catalogue.Name, out reason))
+                return "Invalid Name:" + reason;
 
             return null;
         }

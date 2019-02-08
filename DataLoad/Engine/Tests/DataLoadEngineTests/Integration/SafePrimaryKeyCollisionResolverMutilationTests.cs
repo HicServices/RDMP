@@ -1,17 +1,20 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Data;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
-using DataLoadEngineTests.Integration.Mocks;
+using FAnsi;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -19,9 +22,9 @@ namespace DataLoadEngineTests.Integration
     public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer,true)]
-        [TestCase(DatabaseType.MYSQLServer,true)]
+        [TestCase(DatabaseType.MySql,true)]
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql, false)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_NoDifference_NoRecordsDeleted(DatabaseType dbType,bool bothNull)
         {
             var db = GetCleanedServer(dbType, true);
@@ -60,9 +63,9 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(4,tbl.GetRowCount());
         }
         [TestCase(DatabaseType.MicrosoftSQLServer,false)]
-        [TestCase(DatabaseType.MYSQLServer,false)]
+        [TestCase(DatabaseType.MySql,false)]
         [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MYSQLServer, true)]
+        [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferNull_RecordsDeleted(DatabaseType dbType,bool preferNulls)
         {
             var db = GetCleanedServer(dbType, true);
@@ -108,7 +111,7 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(preferNulls ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
         }
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_WithDatabaseNamer_RecordsDeleted(DatabaseType dbType)
         {
             var db = GetCleanedServer(dbType, true);
@@ -159,9 +162,9 @@ namespace DataLoadEngineTests.Integration
 
 
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql, false)]
         [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MYSQLServer, true)]
+        [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
             var db = GetCleanedServer(dbType, true);
@@ -212,9 +215,9 @@ namespace DataLoadEngineTests.Integration
 
 
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql, false)]
         [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MYSQLServer, true)]
+        [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_Dates_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
             var db = GetCleanedServer(dbType, true);
@@ -263,9 +266,9 @@ namespace DataLoadEngineTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql, false)]
         [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-        [TestCase(DatabaseType.MYSQLServer, true)]
+        [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_ComboKey_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
             var db = GetCleanedServer(dbType, true);

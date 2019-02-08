@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
@@ -36,15 +36,23 @@ namespace CatalogueManager.ANOEngineeringUIs
             _anoTable = databaseObject;
             base.SetDatabaseObject(activator, databaseObject);
 
-            tbID.Text = _anoTable.ID.ToString();
-            nIntegers.Value = _anoTable.NumberOfIntegersToUseInAnonymousRepresentation;
-            nCharacters.Value = _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
-            tbName.Text = _anoTable.TableName;
-            tbSuffix.Text = _anoTable.Suffix;
-            
             lblServer.Text = _anoTable.Server.Name;
 
+            AddChecks(databaseObject);
+            StartChecking();
+
             SetEnabledness();
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ANOTable databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",a=>a.ID);
+            Bind(nIntegers,"Value","NumberOfIntegersToUseInAnonymousRepresentation",a=>a.NumberOfIntegersToUseInAnonymousRepresentation);
+            Bind(nCharacters,"Value","NumberOfCharactersToUseInAnonymousRepresentation",a=>a.NumberOfCharactersToUseInAnonymousRepresentation);
+            Bind(tbName,"Text","TableName",a=>a.TableName);
+            Bind(tbSuffix,"Text","Suffix",a=>a.Suffix);
         }
 
         private void SetEnabledness()

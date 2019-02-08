@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -22,6 +28,7 @@ using CatalogueManager.SimpleDialogs.NavigateTo;
 using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CatalogueManager.Theme;
 using CatalogueManager.Tutorials;
 using CohortManager.CommandExecution.AtomicCommands;
 using DataExportLibrary.Data.DataTables;
@@ -40,6 +47,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -263,10 +271,15 @@ namespace ResearchDataManagementPlatform.Menus
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             AddToNew(new ExecuteCommandCreateNewExtractableDataSetPackage(_activator));
             AddToNew(new ExecuteCommandCreateNewDataExtractionProject(_activator));
-            AddToNew(new ExecuteCommandRelease(_activator));
+            AddToNew(new ExecuteCommandRelease(_activator){OverrideCommandName = "New Release..."});
+
+            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            AddToNew(new ExecuteCommandCreateANOVersion(_activator));
 
             // Location menu
             LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(RepositoryLocator)));
+
+            _activator.Theme.ApplyTo(menuStrip1);
         }
 
         private void AddToNew(IAtomicCommand cmd)
@@ -338,12 +351,9 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var openables = _activator.CoreChildProvider.GetAllSearchables().Select(kvp=>kvp.Key).Where(o => _activator.CommandExecutionFactory.CanActivate(o));
-
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(openables, false, false);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-                _activator.WindowArranger.SetupEditAnything(this,dialog.Selected);
+            var navigate = new NavigateToObjectUI(_activator);
+            navigate.CompletionAction = (o) => _activator.WindowArranger.SetupEditAnything(this, o);
+            navigate.Show();
         }
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,9 +1,17 @@
-﻿using System.Text;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
+using System.Text;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.Reports;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
@@ -29,6 +37,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
         public void ShowHelp(IActivateItems activator)
         {
+
+
             var typeDocs = activator.RepositoryLocator.CatalogueRepository.CommentStore;
 
             StringBuilder sb = new StringBuilder();
@@ -41,14 +51,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
                     if (firstMatch == null)
                         firstMatch = c.GetType().Name;
 
-                    sb.AppendLine(c.GetType().Name);
-                    sb.AppendLine(typeDocs[c.GetType().Name]);
+                    sb.AppendLine(typeDocs.GetDocumentationIfExists(c.GetType().Name,false,true));
                     sb.AppendLine();
                 }
 
             if (sb.Length > 0)
-                WideMessageBox.Show(sb.ToString(), environmentDotStackTrace: null, isModalDialog: true, keywordNotToAdd: firstMatch, title: "Help");
-        
+                WideMessageBox.Show(firstMatch, sb.ToString(),Environment.StackTrace,  true,  firstMatch,WideMessageBoxTheme.Help);
         }
     }
 }

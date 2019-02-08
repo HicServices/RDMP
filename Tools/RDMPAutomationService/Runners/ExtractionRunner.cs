@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -61,8 +67,6 @@ namespace RDMPAutomationService.Runners
 
         protected override void AfterRun()
         {
-            if(_dataLoadInfo != null && !_dataLoadInfo.IsClosed)
-                _dataLoadInfo.CloseAndMarkComplete();
         }
 
         protected override object[] GetRunnables()
@@ -71,8 +75,6 @@ namespace RDMPAutomationService.Runners
                 ExtractCommands.Clear();
 
             var commands = new List<IExtractCommand>();
-
-            _dataLoadInfo = StartAudit();
 
             //if we are extracting globals
             if (_options.ExtractGlobals)
@@ -99,25 +101,28 @@ namespace RDMPAutomationService.Runners
 
         protected override void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener)
         {
+            var dataLoadInfo = StartAudit();
+
             var globalCommand = runnable as ExtractGlobalsCommand;
             var datasetCommand = runnable as ExtractDatasetCommand;
 
-            var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, _dataLoadInfo);
+            var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, dataLoadInfo);
             var fork = new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand));
 
             if(globalCommand != null)
             {
-                var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, _pipeline, _dataLoadInfo) { Token = Token };
+                var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, _pipeline, dataLoadInfo) { Token = Token };
                 useCase.Execute(fork);
             }
 
             if (datasetCommand != null)
             {
-                var executeUseCase = new ExtractionPipelineUseCase(_project,datasetCommand, _pipeline, _dataLoadInfo) { Token = Token };
+                var executeUseCase = new ExtractionPipelineUseCase(_project, datasetCommand, _pipeline, dataLoadInfo) { Token = Token };
                 executeUseCase.Execute(fork);
             }
 
             logging.FinalizeTableLoadInfos();
+            dataLoadInfo.CloseAndMarkComplete();
         }
 
         protected override ICheckable[] GetCheckables(ICheckNotifier checkNotifier)
@@ -233,7 +238,7 @@ namespace RDMPAutomationService.Runners
                 //populate DataLoadInfo object (Audit)
                 dataLoadInfo = new DataLoadInfo(ExecuteDatasetExtractionSource.AuditTaskName,
                                                      Process.GetCurrentProcess().ProcessName,
-                                                     _project.Name + "(ExtractionConfiguration ID=" +
+                                                     _project.Name + " (ExtractionConfiguration ID=" +
                                                      _configuration.ID + ")",
                                                      "", false, _logManager.Server);
             }

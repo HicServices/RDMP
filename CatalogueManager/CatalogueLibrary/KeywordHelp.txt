@@ -82,3 +82,4 @@ ix_YouCanExportEachObjectOnlyOnce: Prevents you from exporting the same object t
 ix_SelectedDataSetsForceJoinsMustBeUnique: Prevents you from declaring that the same TableInfo should be forced joined when extracting the SelectedDataSets multiple times
 FK_SupplementalExtractionResults_ExtractionConfiguration: Prevents you from having Supplemental files extracted for configurations that don't exist.
 FK_OverrideRAWServer_ID: Prevents you deleting a server which is used as a RAW server for a data load (LoadMetadata)
+ix_PluginNameAndVersionMustBeUnique: Prevents you uploading two copies of the same plugin version.

@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -10,11 +16,9 @@ using MapsDirectlyToDatabaseTable;
 
 namespace Dashboard.PieCharts
 {
-    public class GoodBadCataloguePieChartObjectCollection : IPersistableObjectCollection
+    public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollection
     {
         public CataloguePieChartType PieChartType { get; set; }
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
         public bool ShowLabels { get; set; }
 
 
@@ -29,11 +33,9 @@ namespace Dashboard.PieCharts
         {
             //default
             PieChartType = CataloguePieChartType.EmptyDescriptions;
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
         }
 
-        public string SaveExtraText()
+        public override string SaveExtraText()
         {
             return Helper.SaveDictionaryToString(new Dictionary<string, string>()
             {
@@ -42,7 +44,7 @@ namespace Dashboard.PieCharts
             });
         }
 
-        public void LoadExtraText(string s)
+        public override void LoadExtraText(string s)
         {
             var dict = Helper.LoadDictionaryFromString(s);
 

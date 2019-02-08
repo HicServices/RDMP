@@ -1,29 +1,23 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
-using CatalogueManager.ExtractionUIs;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.Revertable;
-using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Common.Validation;
-using HIC.Logging;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
 using ReusableUIComponents;
 
 
@@ -39,110 +33,17 @@ namespace CatalogueManager.MainFormUITabs
     /// </summary>
     public partial class CatalogueItemTab : CatalogueItemTab_Design ,ISaveableUI
     {
-        private bool _clearingFormComponents;
-        
         public CatalogueItemTab()
         {
             InitializeComponent();
-            objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
+            ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
             AssociatedCollection = RDMPCollection.Catalogue;
+            
+            ci_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
         }
 
         private CatalogueItem _catalogueItem;
-
-        public CatalogueItem CatalogueItem
-        {
-            get { return _catalogueItem; }
-            private set
-            {
-                _catalogueItem = value;
-                
-                RefreshUIFromDatabase();
-            }
-        }
-
-        private void RefreshUIFromDatabase()
-        {
-            _clearingFormComponents = true;
-
-            ci_tbID.Text = _catalogueItem.ID.ToString();
-            ci_tbName.Text = _catalogueItem.Name;
-
-            _oldCatalogueItemName = _catalogueItem.Name;
-            _newCatalogueItemName = _catalogueItem.Name;
-
-            ci_tbStatisticalConsiderations.Text = _catalogueItem.Statistical_cons;
-            ci_tbResearchRelevance.Text = _catalogueItem.Research_relevance;
-            ci_tbDescription.Text = _catalogueItem.Description;
-            ci_tbTopics.Text = _catalogueItem.Topic;
-
-            ci_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
-            ci_ddPeriodicity.SelectedItem = _catalogueItem.Periodicity;
-
-            ci_tbAggregationMethod.Text = _catalogueItem.Agg_method;
-            ci_tbLimitations.Text = _catalogueItem.Limitations;
-            ci_tbComments.Text = _catalogueItem.Comments;
-           
-            _clearingFormComponents = false;
-                
-        }
-
-
-        private string _oldCatalogueItemName = "";
-
-        private string _newCatalogueItemName = "";
-
-
-        private void ci_tbName_TextChanged(object sender, EventArgs e)
-        {
-            _newCatalogueItemName = ci_tbName.Text;
-            SetStringPropertyOnCatalogueItem((TextBox)sender,"Name");
-        }
-
-        private void ci_tbStatisticalConsiderations_TextChanged(object sender, EventArgs e)
-        {
-            SetStringPropertyOnCatalogueItem((TextBox)sender, "Statistical_cons");
-        }
-
-        private void ci_tbResearchRelevance_TextChanged(object sender, EventArgs e)
-        {
-            SetStringPropertyOnCatalogueItem((TextBox)sender, "Research_relevance");
-        }
-
-        private void ci_tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            SetStringPropertyOnCatalogueItem((TextBox)sender, "Description");
-        }
-
-        private void ci_tbTopics_TextChanged(object sender, EventArgs e)
-        {
-            SetStringPropertyOnCatalogueItem((TextBox)sender, "Topic");
-        }
-
-        private void ci_ddPeriodicity_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_clearingFormComponents)
-                return;
-
-            if (_catalogueItem != null)
-                _catalogueItem.Periodicity = (Catalogue.CataloguePeriodicity) ci_ddPeriodicity.SelectedItem;
-        }
-
-        private void ci_tbAggregationMethod_TextChanged(object sender, EventArgs e)
-        {
-            SetStringPropertyOnCatalogueItem((TextBox)sender, "Agg_method");
-        }
-
-        private void ci_tbLimitations_TextChanged(object sender, EventArgs e)
-        {
-            SetStringPropertyOnCatalogueItem((TextBox)sender, "Limitations");
-        }
-
-        private void ci_tbComments_TextChanged(object sender, EventArgs e)
-        {
-            SetStringPropertyOnCatalogueItem((TextBox)sender, "Comments");
-        }
-
+        
         bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
         {
             //see if we need to display the dialog that lets the user sync up descriptions of multiuse columns e.g. CHI
@@ -159,78 +60,39 @@ namespace CatalogueManager.MainFormUITabs
                     return false;
             }
 
-            PropagateRenameIfRequired();
-
             return true;
-        }
-
-        private bool PropagateRenameIfRequired()
-        {
-            if(_oldCatalogueItemName.Equals(_newCatalogueItemName))
-                return false;
-
-            if(_catalogueItem.Name != _newCatalogueItemName)
-                throw new Exception("Unsure why _newCatalogueItemName is not an exact match for ci.Name");
-
-            var cata = _catalogueItem.Catalogue;
-
-            if (!string.IsNullOrWhiteSpace(cata.ValidatorXML) && cata.ValidatorXML.Contains(_oldCatalogueItemName))
-                if(MessageBox.Show("You just renamed the CatlogueItem " + _oldCatalogueItemName + " to " + _newCatalogueItemName + " would you like to perform a rename on the validation XML for the Catalogue?","Fix Validation references?",MessageBoxButtons.YesNo)
-                    == DialogResult.Yes)
-                    try
-                    {
-                        Validator validator = Validator.LoadFromXml(cata.ValidatorXML);
-
-                        validator.RenameColumn(_oldCatalogueItemName, _newCatalogueItemName);
-                    
-                        string newXML = validator.SaveToXml();
-
-                        cata.ValidatorXML = newXML;
-                        cata.SaveToDatabase();
-                        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cata));
-                        return true;
-                    }
-                    catch(Exception ex)
-                    {
-                        MessageBox.Show("Problem occurred when attempting to rename column " + _oldCatalogueItemName +
-                                        " to " + _newCatalogueItemName + " : " + ex);
-                    }
-
-            return false;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, CatalogueItem databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            CatalogueItem = databaseObject;
-            objectSaverButton1.SetupFor(databaseObject,_activator.RefreshBus);
-        }
-        
-        #region Helper Methods for setting string and Uri properties
+            _catalogueItem = databaseObject;
 
-        private void SetStringPropertyOnCatalogueItem(TextBox tb, string property)
-        {
-            SetStringProperty(tb, property, _catalogueItem);
-        }
-
-        private void SetStringProperty(TextBox tb, string property, object toSetOn)
-        {
-            PropertyInfo target = toSetOn.GetType().GetProperty(property);
-            FieldInfo targetMaxLength = toSetOn.GetType().GetField(property + "_MaxLength");
-            
-            if (target == null || targetMaxLength == null)
-                throw new Exception("Could not find property " + property + " or it did not have a specified _MaxLength");
-
-            if (tb.TextLength > (int)targetMaxLength.GetValue(toSetOn))
-                tb.ForeColor = Color.Red;
+            if (_catalogueItem.ExtractionInformation != null)
+                AddToMenu(new ExecuteCommandActivate(activator, _catalogueItem.ExtractionInformation), "Go To Extraction Information");
             else
-            {
-                target.SetValue(toSetOn, tb.Text, null);
-                tb.ForeColor = Color.Black;
-            }
+                AddToMenu(new ExecuteCommandMakeCatalogueItemExtractable(activator, _catalogueItem), "Make Extractable");
+
+            if (_catalogueItem.ColumnInfo_ID != null)
+                AddToMenu(new ExecuteCommandShow(activator, _catalogueItem.ColumnInfo, 0, true));
         }
 
-        #endregion
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, CatalogueItem databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(ci_tbID,"Text","ID",ci=>ci.ID);
+            Bind(ci_tbName, "Text", "Name", ci => ci.Name);
+            Bind(ci_tbStatisticalConsiderations,"Text", "Statistical_cons",ci=>ci.Statistical_cons);
+            Bind(ci_tbResearchRelevance, "Text", "Research_relevance", ci => ci.Research_relevance);
+            Bind(ci_tbDescription, "Text", "Description", ci => ci.Description);
+            Bind(ci_tbTopics, "Text", "Topic", ci => ci.Topic);
+            Bind(ci_ddPeriodicity, "SelectedItem", "Periodicity", ci => ci.Periodicity);
+            Bind(ci_tbAggregationMethod, "Text", "Agg_method", ci => ci.Agg_method);
+            Bind(ci_tbLimitations, "Text", "Limitations", ci => ci.Limitations);
+            Bind(ci_tbComments,"Text", "Comments",ci=>ci.Comments);
+        }
+
 
         private bool _expand = true;
 
@@ -241,10 +103,6 @@ namespace CatalogueManager.MainFormUITabs
             btnExpandOrCollapse.Text = _expand ? "+" : "-";
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
 
         public override string GetTabName()
         {

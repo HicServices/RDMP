@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -7,7 +13,11 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
@@ -35,51 +45,15 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         
         private void ReloadUIFromDatabase()
         {
-            if (_loadProgress != null)
-            {
-                loadProgressDiagram1.SetLoadProgress(_loadProgress,_activator);
-                loadProgressDiagram1.Visible = true;
-            }
-            else
-                loadProgressDiagram1.Visible = false;
+            loadProgressDiagram1.SetLoadProgress(_loadProgress, _activator);
+            loadProgressDiagram1.Visible = true;
 
             tbDataLoadProgress.ReadOnly = true;
-
-            if (_loadProgress == null)
-            {
-                tbID.Text = "";
-                //dtpOriginDate.Value = DateTime.MinValue;
-                tbOriginDate.Text = null;
-                tbName.Text = null;
-
-                groupBox1.Visible = false;
-            }
-            else
-            {
-                groupBox1.Visible = true;
                 
-                if(_loadProgress.OriginDate != null)
-                    tbOriginDate.Text = _loadProgress.OriginDate.ToString();
+            if(_loadProgress.OriginDate != null)
+                tbOriginDate.Text = _loadProgress.OriginDate.ToString();
                 
-                tbID.Text = _loadProgress.ID.ToString();
-                tbName.Text = _loadProgress.Name;
-
-                tbDataLoadProgress.Text = _loadProgress.DataLoadProgress != null ? _loadProgress.DataLoadProgress.ToString() : "";
-
-                nDefaultNumberOfDaysToLoadEachTime.Value = _loadProgress.DefaultNumberOfDaysToLoadEachTime;
-            }
-        }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            _loadProgress.Name = tbName.Text;
-            
-        }
-        
-        private void nDefaultNumberOfDaysToLoadEachTime_ValueChanged(object sender, EventArgs e)
-        {
-
-            _loadProgress.DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(nDefaultNumberOfDaysToLoadEachTime.Value);
+            tbDataLoadProgress.Text = _loadProgress.DataLoadProgress != null ? _loadProgress.DataLoadProgress.ToString() : "";
         }
 
         private void btnEditLoadProgress_Click(object sender, EventArgs e)
@@ -125,15 +99,22 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             base.SetDatabaseObject(activator, databaseObject);
             _loadProgress = databaseObject;
-
-            objectSaverButton1.SetupFor(_loadProgress, activator.RefreshBus);
-
+            
             ReloadUIFromDatabase();
+
+            AddHelp(nDefaultNumberOfDaysToLoadEachTime, "ILoadProgress.DefaultNumberOfDaysToLoadEachTime");
+
+            AddToMenu(new ExecuteCommandActivate(activator,databaseObject.LoadMetadata),"Execute Load");
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, LoadProgress databaseObject)
         {
-            return objectSaverButton1;
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",l=>l.ID);
+            Bind(tbName, "Text", "Name", l => l.Name);
+            Bind(nDefaultNumberOfDaysToLoadEachTime, "Value", "DefaultNumberOfDaysToLoadEachTime", l => l.DefaultNumberOfDaysToLoadEachTime);
         }
     }
 

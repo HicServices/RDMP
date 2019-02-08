@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -69,6 +75,8 @@ namespace DataExportManager.DataRelease
         private IEnumerable<ExtractionConfiguration> _configurations = new ExtractionConfiguration[0];
         private IEnumerable<ISelectedDataSets> _selectedDataSets = new ISelectedDataSets[0];
 
+        private ToolStripControlHost _pipelinePanel;
+
         public DataReleaseUI()
         {
             InitializeComponent();
@@ -88,7 +96,6 @@ namespace DataExportManager.DataRelease
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
-            pictureBox1.BackColor = Color.FromArgb(240,240,240);
         }
 
         private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
@@ -200,17 +207,20 @@ namespace DataExportManager.DataRelease
             var ec = _project.ExtractionConfigurations.FirstOrDefault();
             _globals = ec != null ? ec.GetGlobals() : new IMapsDirectlyToDatabaseTable[0];
 
-            checkAndExecuteUI1.SetItemActivator(activator);
-
             if (_pipelineSelectionUI1 == null)
             {
                 var context = ReleaseUseCase.DesignTime();
-                _pipelineSelectionUI1 = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill, pnlPipeline);
+                _pipelineSelectionUI1 = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
                 _pipelineSelectionUI1.Pipeline = null;
-                
                 _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
+
+                _pipelinePanel = new ToolStripControlHost((Control)_pipelineSelectionUI1);
             }
+
+            Add(new ToolStripLabel("Release Pipeline:"));
+            Add(_pipelinePanel);
+            checkAndExecuteUI1.SetItemActivator(activator);
 
             var checkedBefore = tlvReleasePotentials.CheckedObjects;
 
@@ -240,37 +250,7 @@ namespace DataExportManager.DataRelease
         {
             return "Release: " + _project;
         }
-        /*
-        private void ConfigurationReleasePotentialUIOnRequestRelease(object sender, ReleasePotential[] datasetReleasePotentials, ReleaseEnvironmentPotential environmentPotential)
-        {
-            if (!datasetReleasePotentials.All(p =>
-            {
-                var dsReleasability = p.Assessments[p.DatasetExtractionResult];
-                return dsReleasability == Releaseability.Releaseable ||
-                       dsReleasability == Releaseability.ColumnDifferencesVsCatalogue;
-            }))
-                throw new Exception("Attempt made to release one or more datasets that are not assessed as being Releaseable (or ColumnDifferencesVsCatalogue)");
-
-            if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
-                throw new Exception("Ticketing system decided that Environment was not ready for release");
-        }*/
-        /*
-        private ReleaseData GetReleaseData()
-        {
-            return new ReleaseData
-            {
-                ConfigurationsForRelease = flowLayoutPanel1
-                                                    .Controls
-                                                    .Cast<ConfigurationReleasePotentialUI>()
-                                                    .ToDictionary(crp => (IExtractionConfiguration)crp.Configuration, crp => crp.ReleasePotentials),
-                EnvironmentPotential = flowLayoutPanel1
-                                                    .Controls
-                                                    .Cast<ConfigurationReleasePotentialUI>()
-                                                    .Select(crp => crp.EnvironmentalPotential).FirstOrDefault(),
-                ReleaseState = ReleaseState.Nothing
-            };
-        }*/
-
+        
         public void TickAllFor(ExtractionConfiguration configuration)
         {
             tlvReleasePotentials.UncheckAll();

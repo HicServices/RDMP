@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,16 +21,19 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Reports;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CsvHelper;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
@@ -52,6 +61,18 @@ namespace CatalogueManager.AggregationUIs
 
         private AggregateConfiguration _aggregateConfiguration;
 
+        ToolStripMenuItem miSaveImages = new ToolStripMenuItem("Save Image", FamFamFamIcons.disk);
+
+        ToolStripMenuItem miCopyToClipboard = new ToolStripMenuItem("Copy to Clipboard", CatalogueIcons.Clipboard);
+        ToolStripMenuItem miClipboardWord = new ToolStripMenuItem("Word Format");
+        ToolStripMenuItem miClipboardCsv = new ToolStripMenuItem("Comma Separated Format");
+        ToolStripMenuItem btnCache = new ToolStripMenuItem("Cache", FamFamFamIcons.picture_save);
+
+        ToolStripButton btnResendQuery = new ToolStripButton("Send Query", FamFamFamIcons.arrow_refresh);
+        ToolStripLabel   timeoutLabel = new ToolStripLabel("Timeout:");
+        ToolStripTextBox tbTimeout = new ToolStripTextBox();
+        
+        
         public AggregateGraph()
         {
             InitializeComponent();
@@ -76,6 +97,22 @@ namespace CatalogueManager.AggregationUIs
 
             tbTimeout.Text = "300";
             Timeout = 300;
+
+            miCopyToClipboard.DropDownItems.Add(miClipboardWord);
+            miCopyToClipboard.DropDownItems.Add(miClipboardCsv);
+            
+            miClipboardWord.Click += ClipboardClick;
+            miClipboardWord.ToolTipText = "Copies data as HTML formatted (for pasting into Word / Excel etc)";
+            miClipboardCsv.Click += ClipboardClick;
+            miClipboardCsv.ToolTipText = "Copies data as CSV formatted";
+
+            btnResendQuery.Click += btnResendQuery_Click;
+            miSaveImages.Click += MiSaveImagesClick;
+            btnCache.Click += btnCache_Click;
+            tbTimeout.TextChanged += tbTimeout_TextChanged;
+
+            
+            btnCache.Enabled = false;
         }
 
         private void SetToolbarButtonsEnabled(bool enabled)
@@ -86,8 +123,9 @@ namespace CatalogueManager.AggregationUIs
                 return;
             }
 
-            btnSaveImages.Enabled = enabled && _dt != null && _dt.Rows.Count>0;
-            btnClipboard.Enabled = enabled && _dt != null && _dt.Rows.Count > 0;
+            miSaveImages.Enabled = enabled && _dt != null && _dt.Rows.Count>0;
+            miClipboardCsv.Enabled = enabled && _dt != null && _dt.Rows.Count > 0;
+            miClipboardWord.Enabled = enabled && _dt != null && _dt.Rows.Count > 0;
             btnResendQuery.Enabled = enabled;
         }
 
@@ -638,50 +676,74 @@ namespace CatalogueManager.AggregationUIs
         /// Normally you dont need to work about double subscriptions but this graph gets recycled during MetadataReport generation with different aggregates one
         /// after the other which violetates the 1 subscription per control rule (see base.SetDatabaseObject)
         /// </summary>
-        private bool initialized = false;
+        private bool menuInitialized = false;
+
+        private bool _ribbonInitialized = false;
 
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
-            if (!initialized)
+            if (!menuInitialized)
             {
                 base.SetDatabaseObject(activator,databaseObject);
-                initialized = true;
+                menuInitialized = true;
+                
+                AddToMenu(new ExecuteCommandActivate(activator,databaseObject));
+                AddToMenu(new ToolStripSeparator());
+
+                AddToMenu(miSaveImages);
+                AddToMenu(miCopyToClipboard);
+                AddToMenu(btnCache);
+
+                Add(btnResendQuery);
+                Add(timeoutLabel);
+                Add(tbTimeout);
             }
-            
-            SetAggregate(databaseObject);
+
+            SetAggregate(activator,databaseObject);
         }
 
+
         /// <summary>
-        /// Loads the Graph without establishing a lifetime subscription to refresh events (use if you are a base class who has it's own subscription or if you plan to load multiple
-        /// different graphs into this control one after the other).
+        /// Loads the Graph without establishing a lifetime subscription to refresh events (use if you are a derrived class who has it's own subscription or if you plan
+        /// to load multiple different graphs into this control one after the other).
         /// </summary>
         /// <param name="graph"></param>
-        public void SetAggregate(AggregateConfiguration graph)
+        /// <param name="b"></param>
+        public void SetAggregate(IActivateItems activator,AggregateConfiguration graph)
         {
             //graphs cant edit so no need to even record refresher/activator
             _aggregateConfiguration = graph;
+            
+            SetItemActivator(activator);
+
             SetupRibbon();
         }
 
         private void SetupRibbon()
         {
-            rdmpObjectsRibbonUI1.Clear();
-            rdmpObjectsRibbonUI1.SetIconProvider(_activator.CoreIconProvider);
+            if (_ribbonInitialized)
+                return;
+            
+            _ribbonInitialized = true;
+
             foreach (var o in GetRibbonObjects())
             {
-                if(o is string)
-                    rdmpObjectsRibbonUI1.Add((string)o);
+                if (o is string)
+                    Add((string) o);
+                else if (o is DatabaseEntity)
+                    AddToMenu(new ExecuteCommandShow(_activator, (DatabaseEntity) o, 0, true));
                 else
-                if (o is DatabaseEntity)
-                    rdmpObjectsRibbonUI1.Add((DatabaseEntity)o);
-                else
-                    throw new NotSupportedException("GetRibbonObjects can only return strings or DatabaseEntity objects, object '" + o + "' is not valid because it is a '" + o.GetType().Name + "'");
+                    throw new NotSupportedException(
+                        "GetRibbonObjects can only return strings or DatabaseEntity objects, object '" + o +
+                        "' is not valid because it is a '" + o.GetType().Name + "'");
             }
+            
         }
+
 
         protected virtual object[] GetRibbonObjects()
         {
-            return new[] {_aggregateConfiguration};
+            return new object[0];
         }
 
         protected override void OnRepositoryLocatorAvailable()
@@ -705,7 +767,7 @@ namespace CatalogueManager.AggregationUIs
                 yield return new BitmapWithDescription(heatmapUI.GetImage(800),null,null);
         }
         
-        private void btnSaveImages_Click(object sender, EventArgs e)
+        private void MiSaveImagesClick(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.FileName = "Chart.jpg";
@@ -727,13 +789,22 @@ namespace CatalogueManager.AggregationUIs
             }
         }
 
-        private void btnClipboard_Click(object sender, EventArgs e)
+        private void ClipboardClick(object sender, EventArgs e)
         {
-            string s = UsefulStuff.GetInstance().DataTableToHtmlDataTable(_dt);
+            if(sender == miClipboardWord)
+            {
+                string s = UsefulStuff.GetInstance().DataTableToHtmlDataTable(_dt);
 
-            var formatted = UsefulStuff.GetInstance().GetClipboardFormatedHtmlStringFromHtmlString(s);
+                var formatted = UsefulStuff.GetInstance().GetClipboardFormatedHtmlStringFromHtmlString(s);
             
-            Clipboard.SetText(formatted,TextDataFormat.Html);
+                Clipboard.SetText(formatted,TextDataFormat.Html);
+            }
+
+            if (sender == miClipboardCsv)
+            {
+                string s = UsefulStuff.GetInstance().DataTableToCsv(_dt);
+                Clipboard.SetText(s);
+            }
         }
 
         private void btnResendQuery_Click(object sender, EventArgs e)

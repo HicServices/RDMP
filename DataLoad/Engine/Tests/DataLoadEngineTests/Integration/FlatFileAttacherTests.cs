@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,15 +12,15 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
-using DataLoadEngineTests.Integration.Mocks;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -279,6 +285,57 @@ namespace DataLoadEngineTests.Integration
             var exitCode = attacher.Attach(job, new GracefulCancellationToken());
             Assert.AreEqual(ExitCodeType.Success, exitCode);
             
+            using (var con = _database.Server.GetConnection())
+            {
+
+                con.Open();
+                var r = _database.Server.GetCommand("Select name,name2 from " + _table.GetRuntimeName(), con).ExecuteReader();
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Bob", r["name"]);
+                Assert.AreEqual("Munchousain", r["name2"]);
+
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Franky", r["name"]);
+                Assert.AreEqual("Hollyw9ood", r["name2"]);
+            }
+
+            attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+
+            File.Delete(filename);
+
+        }
+
+
+        [Test]
+        public void Test_FlatFileAttcher_IgnoreColumns()
+        {
+            string filename = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob.csv");
+            var sw = new StreamWriter(filename);
+
+            sw.WriteLine("name,name2,address");
+            sw.WriteLine("Bob,Munchousain,\"67, franklin\"");
+            sw.WriteLine("Franky,Hollyw9ood,32 dodgery");
+
+            sw.Flush();
+            sw.Close();
+            sw.Dispose();
+
+            TableInfo ti;
+            ColumnInfo[] cols;
+            Import(_table, out ti, out cols);
+
+            var attacher = new AnySeparatorFileAttacher();
+            attacher.Initialize(hicProjectDirectory, _database);
+            attacher.Separator = ",";
+            attacher.FilePattern = "bob*";
+            attacher.TableToLoad = ti;
+            attacher.IgnoreColumns = "address";
+            
+            var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
+
+            var exitCode = attacher.Attach(job, new GracefulCancellationToken());
+            Assert.AreEqual(ExitCodeType.Success, exitCode);
+
             using (var con = _database.Server.GetConnection())
             {
 

@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,8 +13,8 @@ using System.Linq;
 using System.Text;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
+using FAnsi.Discovery;
 using LoadModules.Generic.Exceptions;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Extensions;
 
@@ -28,14 +34,22 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         private readonly ExplicitTypingCollection _explicitlyTypedColumns;
         private readonly string _forceHeaders;
         private readonly bool _forceHeadersReplacesFirstLineInFile;
+        private readonly string _ignoreColumns;
 
-        public FlatFileColumnCollection(FlatFileToLoad toLoad, bool makeHeaderNamesSane, ExplicitTypingCollection explicitlyTypedColumns, string forceHeaders, bool forceHeadersReplacesFirstLineInFile)
+        /// <summary>
+        /// The columns from the file the user does not want to load into the destination (this will not help 
+        /// you avoid bad data).
+        /// </summary>
+        public HashSet<string> IgnoreColumnsList { get; private set; }
+
+        public FlatFileColumnCollection(FlatFileToLoad toLoad, bool makeHeaderNamesSane, ExplicitTypingCollection explicitlyTypedColumns, string forceHeaders, bool forceHeadersReplacesFirstLineInFile, string ignoreColumns)
         {
             _toLoad = toLoad;
             _makeHeaderNamesSane = makeHeaderNamesSane;
             _explicitlyTypedColumns = explicitlyTypedColumns;
             _forceHeaders = forceHeaders;
             _forceHeadersReplacesFirstLineInFile = forceHeadersReplacesFirstLineInFile;
+            _ignoreColumns = ignoreColumns;
         }
 
         public string this[int index]
@@ -74,7 +88,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
         /// <summary>
         /// Counts the number of headers that are not null
         /// </summary>
-        public int CountNotNull { get { return _headers.Count(h => !h.IsBasicallyNull()); } }
+        public int CountNotNull { get { return _headers.Except(IgnoreColumnsList).Count(h => !h.IsBasicallyNull()); } }
 
         /// <summary>
         /// The number of headers including null ones (but not trailing null headers)
@@ -112,6 +126,15 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                 _headers = _forceHeaders.Split(new[] { r.Configuration.Delimiter }, StringSplitOptions.None);
                 r.Configuration.HasHeaderRecord = false;
             }
+            
+            //ignore these columns (trimmed and ignoring case)
+            if (!string.IsNullOrWhiteSpace(_ignoreColumns))
+                IgnoreColumnsList = new HashSet<string>(
+                    _ignoreColumns.Split(new[] {r.Configuration.Delimiter}, StringSplitOptions.None)
+                        .Select(h => h.Trim())
+                    , StringComparer.CurrentCultureIgnoreCase);
+            else
+                IgnoreColumnsList = new HashSet<string>();
 
             //Make adjustments to the headers (trim etc)
 
@@ -131,6 +154,8 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                 for (int i = 0; i < _headers.Length; i++)
                     _headers[i] = QuerySyntaxHelper.MakeHeaderNameSane(_headers[i]);
         }
+
+        
 
         /// <summary>
         /// Creates a new empty DataTable has only the columns found in the headers that were read during <see cref="GetHeadersFromFile"/>
@@ -153,6 +178,10 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             foreach (string header in _headers)
             {
                 string h = header;
+
+                //if we are ignoring this column
+                if(h != null && IgnoreColumnsList.Contains(h.Trim()))
+                    continue; //skip adding to dt
 
                 //watch for duplicate columns
                 if (dt.Columns.Contains(header))
@@ -216,6 +245,13 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                     continue;
                 }
 
+                //if we are ignoring the header
+                if (IgnoreColumnsList.Contains(_headers[index]))
+                {
+                    ASCIIArt.AppendLine(_headers[index] + ">>>IGNORED");
+                    continue;
+                }
+
                 //try replacing spaces with underscores
                 if (dt.Columns.Contains(_headers[index].Replace(" ", "_")))
                 {
@@ -256,8 +292,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                 foreach (string commonSeparator in _commonSeparators)
                     if(_headers[0].Contains(commonSeparator))
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Your separator does not appear in the headers line of your file ("+_toLoad.File.Name+") but the separator '"+commonSeparator+"' does... did you mean to set the Separator to '"+commonSeparator+"'? The headers line is:\"" + _headers[0] +"\""));
-
-
+            
             listener.OnNotify(this, new NotifyEventArgs(
                 headersNotFound.Any()?ProgressEventType.Error : ProgressEventType.Information, //information or warning if there are unrecognised field names
                 "I will now tell you about how the columns in your file do or do not match the columns in your database, Matching flat file columns (or forced replacement headers) against database headers resulted in:" + Environment.NewLine + ASCIIArt)); //tell them about what columns match what

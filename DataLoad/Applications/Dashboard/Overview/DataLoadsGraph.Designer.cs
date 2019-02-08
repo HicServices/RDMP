@@ -35,7 +35,7 @@ namespace Dashboard.Overview
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataLoadsGraph));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.lblNoDataLoadsFound = new System.Windows.Forms.Label();
             this.pbLoading = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -229,7 +229,7 @@ namespace Dashboard.Overview
         private System.Windows.Forms.ColumnHeader Category;
         private System.Windows.Forms.PictureBox pbLoading;
         private System.Windows.Forms.Label lblNoDataLoadsFound;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private OLVColumn olvName;
         private OLVColumn olvCategory;
         private OLVColumn olvStatus;

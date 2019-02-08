@@ -1,8 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary;
@@ -10,17 +14,16 @@ using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
+using CatalogueManager.SimpleControls;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
 using DataExportLibrary.Data.DataTables;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode;
-using ReusableUIComponents;
 using ReusableUIComponents.TransparentHelpSystem;
 
 namespace CatalogueManager.SimpleDialogs.ForwardEngineering
@@ -44,7 +47,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// table(s) that underlie the selected Catalogue (e.g. if you are importing a Results table which joins to a Header table in the dataset Biochemistry on primary/foreign key LabNumber).
     /// If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)</para>
     /// </summary>
-    public partial class ConfigureCatalogueExtractabilityUI : Form
+    public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         private object[] _extractionCategories;
         
@@ -66,23 +69,44 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny)
+        private BinderWithErrorProviderFactory _binder;
+
+        RDMPUserControlPanel rdmpUserControlPanel = new RDMPUserControlPanel();
+        ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
+
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny):this()
         {
             _tableInfo = tableInfo;
             Initialize(activator, initialDescription, projectSpecificIfAny);
         }
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny)
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny):this()
         {
             ColumnInfo[] cols;
             importer.DoImport(out _tableInfo, out cols);
 
             Initialize(activator,initialDescription,projectSpecificIfAny);
         }
-        
-        private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
+
+        private ConfigureCatalogueExtractabilityUI()
         {
             InitializeComponent();
+
+            //take panel1 out of us
+            this.Controls.Remove(panel1);
+
+            //and add it to the rdmp user control
+            rdmpUserControlPanel.Panel.Controls.Add(panel1);
+
+            //then put the user control in us
+            this.Controls.Add(rdmpUserControlPanel);
+            rdmpUserControlPanel.Dock = DockStyle.Fill;
+            panel1.Dock = DockStyle.Fill;
+        }
+
+        private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
+        {
+            RepositoryLocator = activator.RepositoryLocator;
 
             _activator = activator;
             
@@ -92,10 +116,17 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             ExtractionInformation[] eis;
             forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _catalogueItems, out eis);
 
-            tbCatalogueName.Text = _catalogue.Name;
             tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
             tbTableName.Text = _tableInfo.Name;
             _catalogue.SaveToDatabase();
+            
+            if (_binder == null)
+            {
+                _binder = new BinderWithErrorProviderFactory(activator);
+                _binder.Bind(tbCatalogueName,"Text",_catalogue,"Name",false,DataSourceUpdateMode.OnPropertyChanged, c=>c.Name);
+                _binder.Bind(tbAcronym, "Text", _catalogue, "Acronym", false, DataSourceUpdateMode.OnPropertyChanged, c => c.Acronym);
+                _binder.Bind(tbDescription, "Text", _catalogue, "Description", false, DataSourceUpdateMode.OnPropertyChanged, c => c.Description);
+            }
 
             //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
             foreach (CatalogueItem ci in _catalogueItems)
@@ -125,9 +156,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             olvColumnInfoName.ImageGetter = ImageGetter;
             olvColumnExtractability.RebuildColumns();
-
-            objectSaverButton1.SetupFor(_catalogue, activator.RefreshBus);
-
+            
             if (_activator.RepositoryLocator.DataExportRepository == null)
                 gbProjectSpecific.Enabled = false;
             else
@@ -139,6 +168,8 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             ddIsExtractionIdentifier.Items.Add("<<None>>");
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
+
+            rdmpUserControlPanel.SetItemActivator(_activator);
         }
 
 
@@ -452,17 +483,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             }
         }
 
-        private void tbCatalogueName_TextChanged(object sender, EventArgs e)
-        {
-            _catalogue.Name = tbCatalogueName.Text;
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            _catalogue.Description = tbDescription.Text;
-        }
-
-
         private void SelectProject(Project projectSpecificIfAny)
         {
             if (projectSpecificIfAny == null)
@@ -521,6 +541,11 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             }
 
             olvColumnExtractability.RebuildColumns();
+        }
+
+        public ObjectSaverButton GetObjectSaverButton()
+        {
+            return objectSaverButton1;
         }
     }
 }

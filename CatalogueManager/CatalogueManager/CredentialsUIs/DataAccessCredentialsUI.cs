@@ -1,12 +1,20 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.CredentialsUIs
 {
@@ -15,8 +23,6 @@ namespace CatalogueManager.CredentialsUIs
     /// </summary>
     public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, ISaveableUI
     {
-        private DataAccessCredentials _credentials;
-        
         public DataAccessCredentialsUI()
         {
             InitializeComponent();
@@ -24,54 +30,13 @@ namespace CatalogueManager.CredentialsUIs
             AssociatedCollection = RDMPCollection.Tables;
         }
         
-        private bool _bLoading;
-        public override void SetDatabaseObject(IActivateItems activator, DataAccessCredentials databaseObject)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, DataAccessCredentials databaseObject)
         {
-            _bLoading = true;
-            try
-            {
-                base.SetDatabaseObject(activator,databaseObject);
+            base.SetBindings(rules, databaseObject);
             
-                _credentials = databaseObject;
-
-                tbName.Text = _credentials.Name;
-                tbUsername.Text = _credentials.Username;
-                tbPassword.Text = _credentials.Password;
-
-                objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
-            }
-            finally
-            {
-                _bLoading = false;
-            }
-        }
-
-        private void tb_TextChanged(object sender, EventArgs e)
-        {
-            if(_bLoading)
-                return;
-            
-            try
-            {
-                var tb = (TextBox)sender;
-
-                if (tb == tbName)
-                    _credentials.Name = tb.Text;
-                if (tb == tbUsername)
-                    _credentials.Username = tb.Text;
-                if (tb == tbPassword)
-                    _credentials.Password = tb.Text;
-            
-            }
-            catch (Exception ex)
-            {
-                ExceptionViewer.Show(ex);
-            }
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
+            Bind(tbName,"Text","Name",c=>c.Name);
+            Bind(tbUsername, "Text", "Username", c => c.Username);
+            Bind(tbPassword, "Text", "Password", c => c.Password);
         }
     }
 

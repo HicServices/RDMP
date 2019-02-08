@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,14 +18,14 @@ using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data.Aggregation
 {
@@ -31,19 +37,17 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>AggregateConfigurations can be used with an AggregateBuilder to produce runnable SQL which will return a DataTable containing results appropriate to the
     /// query being built.</para>
     /// 
-    /// <para>There are Three types of AggregateConfiguration:
-    ///  1. 'Aggregate Graph' - Produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard
-    ///  2. 'Cohort Aggregate' - Produce a list of unique patient identifiers from a dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')
-    ///  3. 'Joinable PatientIndex Table' - Produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See 
-    /// JoinableCohortAggregateConfiguration).</para>
-    /// 
+    /// <para>There are Three types of AggregateConfiguration (these are configurations - not seperate classes):</para>
+    /// <para>1. 'Aggregate Graph' - Produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard</para>
+    /// <para>2. 'Cohort Aggregate' - Produce a list of unique patient identifiers from a dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')</para>
+    /// <para>3. 'Joinable PatientIndex Table' - Produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)</para>
     /// <para>The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
     /// AggregateConfiguration is. </para>
     /// 
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>
+    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>,IDisableable
     {
         #region Database Properties
         private string _countSQL;
@@ -54,6 +58,7 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _pivotOnDimensionID;
         private bool _isExtractable;
         private string _havingSQL;
+        private bool _isDisabled;
 
 
         /// <summary>
@@ -78,6 +83,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <summary>
         /// The unique name of the aggregate e.g. 'Biochemistry records by year divided by healthboard'
         /// </summary>
+        [NotNull]
         public string Name
         {
             get { return _name; }
@@ -173,6 +179,12 @@ namespace CatalogueLibrary.Data.Aggregation
             }
         }
 
+        /// <inheritdoc/>
+        public bool IsDisabled
+        {
+            get { return _isDisabled; }
+            set { SetField(ref _isDisabled, value); }
+        }
         #endregion
 
         #region Relationships
@@ -372,6 +384,7 @@ namespace CatalogueLibrary.Data.Aggregation
                 PivotOnDimensionID = Convert.ToInt32(r["PivotOnDimensionID"]);
 
             IsExtractable = Convert.ToBoolean(r["IsExtractable"]);
+            IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
 
             OverrideFiltersByUsingParentAggregateConfigurationInstead_ID =
                 ObjectToNullableInt(r["OverrideFiltersByUsingParentAggregateConfigurationInstead_ID"]);
@@ -551,7 +564,7 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _rootFilterContainerID;
         
         private bool orderFetchAttempted;
-        
+
         /// <summary>
         /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container
         /// (e.g. UNION / INTERSECT / EXCEPT) that it is in.  Returns null if it is not in a <see cref="CohortAggregateContainer"/>.

@@ -103,8 +103,10 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.KeyPreview = true;
             this.Name = "ExceptionViewerStackTraceWithHyperlinks";
             this.Text = "ExceptionViewerStackTraceWithHyperlinks";
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ExceptionViewerStackTraceWithHyperlinks_KeyUp);
             this.ResumeLayout(false);
 
         }

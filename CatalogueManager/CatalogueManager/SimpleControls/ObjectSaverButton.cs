@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs.Revertable;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
 
 namespace CatalogueManager.SimpleControls
 {
@@ -23,14 +24,19 @@ namespace CatalogueManager.SimpleControls
     /// and call SetupFor on the DatabaseObject.  You should also mark your control as ISaveableUI and implement the single method on that interface so that shortcuts
     /// are correctly routed to this control.
     /// </summary>
-    public partial class ObjectSaverButton : UserControl,IRefreshBusSubscriber
+    public partial class ObjectSaverButton : IRefreshBusSubscriber
     {
         private Bitmap _undoImage;
         private Bitmap _redoImage;
 
+        private ToolStripButton btnSave  = new ToolStripButton("Save",FamFamFamIcons.disk);
+        private ToolStripButton btnUndoRedo = new ToolStripButton("Undo", FamFamFamIcons.Undo);
+
         public ObjectSaverButton()
         {
-            InitializeComponent();
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnUndoRedo.Click += new System.EventHandler(this.btnUndoRedo_Click);
+            
             _undoImage = FamFamFamIcons.Undo;
             _redoImage = FamFamFamIcons.Redo;
 
@@ -50,9 +56,18 @@ namespace CatalogueManager.SimpleControls
         private bool _isEnabled;
         private bool _undo = true;
         
-
-        public void SetupFor(DatabaseEntity o, RefreshBus refreshBus)
+        public void SetupFor(RDMPUserControl control, DatabaseEntity o, RefreshBus refreshBus)
         {
+            control.Add(btnSave);
+            control.Add(btnUndoRedo);
+
+            if (control.ParentForm == null)
+                throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
+
+            _parent = control;
+
+            Enable(false);
+
             //already set up before
             if(_o != null)
                 return;
@@ -60,16 +75,12 @@ namespace CatalogueManager.SimpleControls
             _o = o;
             _refreshBus = refreshBus;
             _refreshBus.Subscribe(this);
+            
             o.PropertyChanged += PropertyChanged;
 
-            if (ParentForm == null)
-                throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
-
-            ParentForm.Enter += ParentForm_Enter;
-            ParentForm.Leave += ParentFormOnLeave;
-            Enable(false);
-            Text = "&Save";
-
+            control.ParentForm.Enter += ParentForm_Enter;
+            control.ParentForm.Leave += ParentFormOnLeave;
+            
             //the first time it is set up it could still be out of date!
             CheckForOutOfDateObjectAndOfferToFix();
         }
@@ -91,9 +102,9 @@ namespace CatalogueManager.SimpleControls
 
         public void Enable(bool b)
         {
-            if (InvokeRequired)
+            if (_parent.InvokeRequired)
             {
-                Invoke(new MethodInvoker(() => Enable(b)));
+                _parent.Invoke(new MethodInvoker(() => Enable(b)));
                 return;
             }
 
@@ -155,7 +166,7 @@ namespace CatalogueManager.SimpleControls
         }
 
         private RevertableObjectReport _undoneChanges;
-        private readonly string[] _ignoreChangesToTheseProperties = new[] { "Lifeline", "LockHeldBy", "LockedBecauseRunning" };
+        private RDMPUserControl _parent;
 
         private void btnUndoRedo_Click(object sender, EventArgs e)
         {
@@ -230,8 +241,7 @@ namespace CatalogueManager.SimpleControls
             var changes = _o.HasLocalChanges();
             //are there changes
             if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                return changes.Differences.Any(d => !_ignoreChangesToTheseProperties.Contains(d.Property.Name)); //are the changes to properties we care about
-
+                return changes.Differences.Any(); //are the changes to properties
 
             return false;
         }

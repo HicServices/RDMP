@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,6 +17,12 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MySql;
+using FAnsi.Implementations.Oracle;
 using MapsDirectlyToDatabaseTable;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
@@ -19,7 +31,6 @@ using RDMPStartup.Events;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace Tests.Common
 {
@@ -55,6 +66,12 @@ namespace Tests.Common
         {
             CatalogueRepository.SuppressHelpLoading = true;
             
+            ImplementationManager.Load(
+                typeof(MicrosoftSQLImplementation).Assembly,
+                typeof(OracleImplementation).Assembly,
+                typeof(MySqlImplementation).Assembly
+                );
+
             ReadSettingsFile();
         }
 
@@ -121,7 +138,7 @@ namespace Tests.Common
                     if (k == "server" || k == "database" || k== "user id" || k =="password")
                         continue;
 
-                    new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MYSQLServer, k, builder[k].ToString());
+                    new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
                 }
                 _discoveredMySqlServer = new DiscoveredServer(builder);
             }
@@ -220,7 +237,7 @@ namespace Tests.Common
         {
             foreach (DiscoveredDatabase db in forCleanup)
                 if (db.Exists())
-                    db.ForceDrop();
+                    db.Drop();
         }
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         { 
@@ -258,7 +275,7 @@ namespace Tests.Common
 
             //if it already exists drop it
             if(DiscoveredDatabaseICanCreateRandomTablesIn.Exists())
-                DiscoveredDatabaseICanCreateRandomTablesIn.ForceDrop();
+                DiscoveredDatabaseICanCreateRandomTablesIn.Drop();
 
             //create it
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(scratchDatabaseName);
@@ -413,7 +430,7 @@ delete from {1}..Project
                 case DatabaseType.MicrosoftSQLServer:
                     server = new DiscoveredServer(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder);
                     break;
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     server = _discoveredMySqlServer == null ? null : new DiscoveredServer(_discoveredMySqlServer.Builder);
                     break;
                 case DatabaseType.Oracle:
@@ -596,7 +613,7 @@ GO
  permissions.HasFlag(TestLowPrivilegePermissions.Reader) ? "" : "--",
  permissions.HasFlag(TestLowPrivilegePermissions.Reader) ? "" : "--",
  permissions.HasFlag(TestLowPrivilegePermissions.CreateAndDropTables) ? "" : "--");
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     break;
                 case DatabaseType.Oracle:
                     break;

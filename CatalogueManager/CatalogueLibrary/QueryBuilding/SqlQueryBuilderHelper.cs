@@ -1,20 +1,19 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using CatalogueLibrary.Checks;
-using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
-
+using FAnsi.Discovery.QuerySyntax;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.QueryBuilding
 {
@@ -31,6 +30,8 @@ namespace CatalogueLibrary.QueryBuilding
         /// <returns></returns>
         public static List<IFilter> GetAllFiltersUsedInContainerTreeRecursively(IContainer currentContainer)
         {
+            //Note: This returns IsDisabled objects since it is used by cloning systems
+
             List<IFilter> toAdd = new List<IFilter>();
 
             //if there is a container
@@ -443,19 +444,27 @@ namespace CatalogueLibrary.QueryBuilding
         public static string GetWHERESQL(ISqlQueryBuilder qb)
         {
             string toReturn = "";
-            
+
+            //if the root filter container is disabled don't render it
+            if (!IsEnabled(qb.RootFilterContainer))
+                return "";
+
             var emptyFilters = qb.Filters.Where(f => string.IsNullOrWhiteSpace(f.WhereSQL)).ToArray();
 
             if (emptyFilters.Any())
                 throw new QueryBuildingException("The following empty filters were found in the query:" + Environment.NewLine + string.Join(Environment.NewLine, emptyFilters.Select(f => f.Name)));
             
             //recursively iterate the filter containers joining them up with their operation (AND or OR) and doing tab indentation etc
-            if (qb.Filters.Count > 0)
+            if (qb.Filters.Any())
             {
-                toReturn += Environment.NewLine;
-                toReturn += "WHERE" + Environment.NewLine;
+                string filtersSql = WriteContainerTreeRecursively(toReturn, 0, qb.RootFilterContainer, qb);
 
-                toReturn = WriteContainerTreeRecursively(toReturn, 0, qb.RootFilterContainer, qb);
+                if(!string.IsNullOrWhiteSpace(filtersSql))
+                {
+                    toReturn += Environment.NewLine;
+                    toReturn += "WHERE" + Environment.NewLine;
+                    toReturn += filtersSql;
+                }
             }
 
             return toReturn;
@@ -468,27 +477,31 @@ namespace CatalogueLibrary.QueryBuilding
             for (int i = 0; i < tabDepth; i++)
                 tabs += "\t";
 
-            //output starting bracket
-            toReturn += tabs + "(" + Environment.NewLine;
+            //get all the filters in the current container
+            IFilter[] filtersInContainer = currentContainer.GetFilters().Where(IsEnabled).ToArray();
 
             //see if we have subcontainers
-            IContainer[] subcontainers = currentContainer.GetSubContainers();
+            IContainer[] subcontainers = currentContainer.GetSubContainers().Where(IsEnabled).ToArray();
 
-            if (subcontainers != null)
-                for (int i = 0; i < subcontainers.Length; i++)
-                {
-                    toReturn = WriteContainerTreeRecursively(toReturn, tabDepth + 1, subcontainers[i], qb);
+            //if there are no filters or subcontainers return nothing
+            if (!filtersInContainer.Any() && !subcontainers.Any())
+                return "";
 
-                    //there are more subcontainers to come
-                    if (i + 1 < subcontainers.Length)
-                        toReturn += tabs + currentContainer.Operation + Environment.NewLine;
-                }
+            //output starting bracket
+            toReturn += tabs + "(" + Environment.NewLine;
+            
+            //write out subcontainers
+            for (int i = 0; i < subcontainers.Length; i++)
+            {
+                toReturn = WriteContainerTreeRecursively(toReturn, tabDepth + 1, subcontainers[i], qb);
 
-            //get all the filters in the current container
-            IFilter[] filtersInContainer = currentContainer.GetFilters();
+                //there are more subcontainers to come
+                if (i + 1 < subcontainers.Length)
+                    toReturn += tabs + currentContainer.Operation + Environment.NewLine;
+            }
             
             //if there are both filters and containers we need to join the trees with the operator (e.g. AND)
-            if (subcontainers != null && subcontainers.Length >= 1 && filtersInContainer != null && filtersInContainer.Length >= 1)
+            if (subcontainers.Length >= 1 && filtersInContainer.Length >= 1)
                 toReturn += currentContainer.Operation + Environment.NewLine;
 
             //output each filter also make sure it is tabbed in correctly
@@ -518,6 +531,29 @@ namespace CatalogueLibrary.QueryBuilding
         }
 
         /// <summary>
+        /// Containers are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
+        /// </summary>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        private static bool IsEnabled(IContainer container)
+        {
+            //skip disabled containers
+            var dis = container as IDisableable;
+            return dis == null || !dis.IsDisabled;
+        }
+
+        /// <summary>
+        /// Filters are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private static bool IsEnabled(IFilter filter)
+        {
+            //skip disabled filters
+            var dis = filter as IDisableable;
+            return dis == null || !dis.IsDisabled;
+        }
+        /// <summary>
         /// Returns the unique database server type <see cref="IQuerySyntaxHelper"/> by evaluating the <see cref="TableInfo"/> used in the query.
         /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para> 
         /// </summary>
@@ -534,8 +570,7 @@ namespace CatalogueLibrary.QueryBuilding
                 throw new QueryBuildingException("Cannot build query because there are multiple DatabaseTypes involved in the query:" + string.Join(",",
                     tablesUsedInQuery.Select(t=>t.GetRuntimeName() + "(" + t.DatabaseType + ")")));
 
-            var helper = new DatabaseHelperFactory(databaseTypes.Single()).CreateInstance();
-            return helper.GetQuerySyntaxHelper();
+            return DatabaseCommandHelper.For(databaseTypes.Single()).GetQuerySyntaxHelper();
         }
 
         /// <summary>

@@ -224,9 +224,39 @@
       <HintPath>..\..\..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FAnsi">
+      <HintPath>..\..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Google.Protobuf">
+      <HintPath>..\..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
@@ -261,7 +291,6 @@
     <Compile Include="Integration\CoalescerTests.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseDataLoadTests.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseMergeCommandTest.cs" />
-    <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseConstraintsTests.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseInsertTests.cs" />
     <Compile Include="Integration\CrossDatabaseTypeTests\HowDoWeAchieveMd5Test.cs" />
     <Compile Include="Integration\DatabaseClonerTests.cs" />
@@ -277,7 +306,6 @@
     <Compile Include="Integration\ImportFilesDataProviderTests.cs" />
     <Compile Include="Integration\JobDateGenerationStrategyFactoryTestsIntegration.cs" />
     <Compile Include="Integration\KVPAttacherTest.cs" />
-    <Compile Include="Integration\Mocks\RdmpMockFactory.cs" />
     <Compile Include="Integration\PayloadTest.cs" />
     <Compile Include="Integration\PipelineTests\Components\AliasHandlerTests.cs" />
     <Compile Include="Integration\PipelineTests\Components\RemoveDuplicatesTests.cs" />
@@ -337,8 +365,8 @@
     <Compile Include="Unit\SchedulingTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DataLoadEngineTests.dll.config.template">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="..\..\..\..\App.config">
+      <Link>App.config</Link>
     </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -383,6 +411,10 @@
     <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\CatalogueManager\Tests\CatalogueLibraryTests\CatalogueLibraryTests.csproj">
+      <Project>{E733ACCF-3610-4F90-A240-8B9A757270C4}</Project>
+      <Name>CatalogueLibraryTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Diagnostics\Diagnostics.csproj">
       <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>

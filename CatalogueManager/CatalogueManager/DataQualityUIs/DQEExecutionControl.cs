@@ -1,20 +1,18 @@
-using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System.ComponentModel;
-using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Triggers;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataLoadEngine.Migration;
-using DataQualityEngine.Reports;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
-using ReusableLibraryCode.Icons.IconProvision;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataQualityUIs
@@ -30,7 +28,7 @@ namespace CatalogueManager.DataQualityUIs
     public partial class DQEExecutionControl : DQEExecutionControl_Design
     {
         private Catalogue _catalogue;
-
+        
         public DQEExecutionControl()
         {
             InitializeComponent();
@@ -50,10 +48,10 @@ namespace CatalogueManager.DataQualityUIs
             _catalogue = databaseObject;
             checkAndExecuteUI1.SetItemActivator(activator);
             
-            btnValidationRules.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Edit);
-            btnViewResults.Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph);
+            Add(new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue),"Validation Rules...");
+            AddPluginCommands();
         }
-
+        
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             base.ConsultAboutClosing(sender,e);
@@ -64,19 +62,6 @@ namespace CatalogueManager.DataQualityUIs
         {
             return "DQE Execution:" + base.GetTabName();
         }
-
-
-        private void btnValidationRules_Click(object sender, EventArgs e)
-        {
-            var cmd = new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue);
-            cmd.Execute();
-        }
-
-        private void btnViewResults_Click(object sender, EventArgs e)
-        {
-            _activator.ActivateViewDQEResultsForCatalogue(_catalogue);
-        }
-
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DQEExecutionControl_Design, UserControl>))]

@@ -1,31 +1,29 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
 using CohortManagerLibrary.QueryBuilding;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections
 {
-    public class ViewAggregateExtractUICollection : IViewSQLAndResultsCollection
+    public class ViewAggregateExtractUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
     {
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
         public bool UseQueryCache { get; set; }
 
         public ViewAggregateExtractUICollection()
         {
-            Helper = new PersistStringHelper();
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
         }
 
         public ViewAggregateExtractUICollection(AggregateConfiguration config):this()
@@ -33,28 +31,16 @@ namespace CatalogueManager.DataViewing.Collections
             DatabaseObjects.Add(config);
         }
 
-        public string SaveExtraText()
+        public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            return "";
-        }
-
-        public void LoadExtraText(string s)
-        {
-            
-        }
-
-        public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
-        {
-            ribbon.Add(AggregateConfiguration);
-            
-            if(UseQueryCache)
+            if (UseQueryCache)
             {
                 var cache = GetCacheServer();
                 if (cache != null)
-                    ribbon.Add(cache);
+                   yield return cache;
             }
         }
-
+        
         private ExternalDatabaseServer GetCacheServer()
         {
             var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
@@ -64,6 +50,7 @@ namespace CatalogueManager.DataViewing.Collections
 
             return null;
         }
+
 
         public IDataAccessPoint GetDataAccessPoint()
         {

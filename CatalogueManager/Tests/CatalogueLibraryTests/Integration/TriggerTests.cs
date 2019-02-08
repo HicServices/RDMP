@@ -1,13 +1,20 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Triggers;
 using CatalogueLibrary.Triggers.Exceptions;
 using CatalogueLibrary.Triggers.Implementations;
+using FAnsi;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Exceptions;
 using Tests.Common;
 
@@ -35,7 +42,7 @@ namespace CatalogueLibraryTests.Integration
             return new TriggerImplementerFactory(_database.Server.DatabaseType).Create(_table);
         }
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void NoTriggerExists(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -43,7 +50,7 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void CreateWithNoPks_Complain(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -53,7 +60,7 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void CreateWithPks_Valid(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -66,7 +73,7 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void AlterTest_InvalidThenRecreateItAndItsValidAgain(DatabaseType dbType)
         {
             CreateWithPks_Valid(dbType);
@@ -87,7 +94,7 @@ namespace CatalogueLibraryTests.Integration
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void NowTestDataInsertion(DatabaseType dbType)
         {
             AlterTest_InvalidThenRecreateItAndItsValidAgain(dbType);
@@ -116,7 +123,7 @@ namespace CatalogueLibraryTests.Integration
             }
         }
 
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void DiffDatabaseDataFetcherTest(DatabaseType dbType)
         {
@@ -196,6 +203,10 @@ namespace CatalogueLibraryTests.Integration
         [TearDown]
         public void DropTable()
         {
+            //don't try to cleanup if there was Assert.Inconclusive because the server was inaccessible
+            if(_database == null)
+                return;
+
             string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
 
             GetImplementer().DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);

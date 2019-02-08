@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +18,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
 using CatalogueManager.SimpleDialogs.Revertable;
@@ -30,6 +37,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SqlDialogs;
 
 namespace DataExportManager.ProjectUI
@@ -65,8 +73,6 @@ namespace DataExportManager.ProjectUI
                 //now load the UI form 
                 _project = value;
 
-                tbName.Text = value == null ? "" : value.Name ?? "";
-                tbID.Text = value == null ? "" : value.ID.ToString() ?? "";
                 dataGridView1.DataSource = value == null?null : LoadDatagridFor(value);
                 tcMasterTicket.TicketText = value == null ? "" : value.MasterTicket;
                 tbExtractionDirectory.Text = value == null ? "" : value.ExtractionDirectory;
@@ -123,13 +129,19 @@ namespace DataExportManager.ProjectUI
         }
 
 
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, Project databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID, "Text", "ID", p => p.ID); 
+            Bind(tbName, "Text", "Name", p => p.Name);
+        }
+
         public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
             Project = databaseObject;
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
         }
-        
 
         #region helper methods
         private void SetStringProperty(Control controlContainingValue, string property, object toSetOn)
@@ -227,20 +239,7 @@ namespace DataExportManager.ProjectUI
 
             return dtToReturn;
         }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            if (tbName.Text.Length == 0)
-            {
-                tbName.Text = "No Name";
-                tbName.SelectAll();
-            }
-
-            SetStringProperty(tbName,"Name",Project);
-
-        }
-
-
+        
         #region Right Click Context Menu
 
         #region Menu Items
@@ -333,10 +332,8 @@ namespace DataExportManager.ProjectUI
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
-
                 }
             }
-
         }
 
         private void tbExtractionDirectory_TextChanged(object sender, EventArgs e)
@@ -418,14 +415,8 @@ namespace DataExportManager.ProjectUI
         public void SwitchToCutDownUIMode()
         {
             dataGridView1.Visible = false;
-            objectSaverButton1.Visible = false;
             lblExtractions.Visible = false;
             this.Height = 160;
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

@@ -30,10 +30,9 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CheckAndExecuteUI));
             this.gbControls = new System.Windows.Forms.GroupBox();
-            this.executeInAutomationServerUI1 = new CatalogueManager.SimpleControls.ExecuteInAutomationServerUI();
             this.btnAbortLoad = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
-            this.ragChecks = new ReusableUIComponents.RAGSmiley();
+            this.ragChecks = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -47,7 +46,6 @@
             // 
             // gbControls
             // 
-            this.gbControls.Controls.Add(this.executeInAutomationServerUI1);
             this.gbControls.Controls.Add(this.btnAbortLoad);
             this.gbControls.Controls.Add(this.btnExecute);
             this.gbControls.Controls.Add(this.ragChecks);
@@ -57,18 +55,10 @@
             this.gbControls.Controls.Add(this.btnRunChecks);
             this.gbControls.Location = new System.Drawing.Point(3, 3);
             this.gbControls.Name = "gbControls";
-            this.gbControls.Size = new System.Drawing.Size(187, 109);
+            this.gbControls.Size = new System.Drawing.Size(187, 61);
             this.gbControls.TabIndex = 58;
             this.gbControls.TabStop = false;
             this.gbControls.Text = "Controls";
-            // 
-            // executeInAutomationServerUI1
-            // 
-            this.executeInAutomationServerUI1.CommandGetter = null;
-            this.executeInAutomationServerUI1.Location = new System.Drawing.Point(29, 57);
-            this.executeInAutomationServerUI1.Name = "executeInAutomationServerUI1";
-            this.executeInAutomationServerUI1.Size = new System.Drawing.Size(155, 46);
-            this.executeInAutomationServerUI1.TabIndex = 59;
             // 
             // btnAbortLoad
             // 
@@ -144,19 +134,20 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbLoad.Controls.Add(this.checksUI1);
             this.gbLoad.Controls.Add(this.loadProgressUI1);
-            this.gbLoad.Location = new System.Drawing.Point(2, 118);
+            this.gbLoad.Location = new System.Drawing.Point(2, 70);
             this.gbLoad.Name = "gbLoad";
-            this.gbLoad.Size = new System.Drawing.Size(799, 553);
+            this.gbLoad.Size = new System.Drawing.Size(799, 601);
             this.gbLoad.TabIndex = 57;
             this.gbLoad.TabStop = false;
             this.gbLoad.Text = "Load Execution";
             // 
             // checksUI1
             // 
+            this.checksUI1.AllowsYesNoToAll = true;
             this.checksUI1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checksUI1.Location = new System.Drawing.Point(3, 16);
             this.checksUI1.Name = "checksUI1";
-            this.checksUI1.Size = new System.Drawing.Size(793, 534);
+            this.checksUI1.Size = new System.Drawing.Size(793, 582);
             this.checksUI1.TabIndex = 0;
             // 
             // loadProgressUI1
@@ -164,7 +155,7 @@
             this.loadProgressUI1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.loadProgressUI1.Location = new System.Drawing.Point(3, 16);
             this.loadProgressUI1.Name = "loadProgressUI1";
-            this.loadProgressUI1.Size = new System.Drawing.Size(793, 534);
+            this.loadProgressUI1.Size = new System.Drawing.Size(793, 582);
             this.loadProgressUI1.TabIndex = 42;
             // 
             // CheckAndExecuteUI
@@ -185,10 +176,9 @@
         #endregion
 
         private System.Windows.Forms.GroupBox gbControls;
-        private ExecuteInAutomationServerUI executeInAutomationServerUI1;
         private System.Windows.Forms.Button btnAbortLoad;
         private System.Windows.Forms.Button btnExecute;
-        private ReusableUIComponents.RAGSmiley ragChecks;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragChecks;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;

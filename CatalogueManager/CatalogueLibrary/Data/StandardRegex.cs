@@ -1,9 +1,18 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Drawing;
+using System.Text.RegularExpressions;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data
 {
@@ -13,7 +22,7 @@ namespace CatalogueLibrary.Data
     /// StandardRegex with a description and then everyone can link against it and have access to a centralised description.  This prevents you having multiple arguments getting out
     /// of sync in Pipeline components for example.
     /// </summary>
-    public class StandardRegex : DatabaseEntity
+    public class StandardRegex : DatabaseEntity, ICheckable
     {
         #region Database Properties
         private string _conceptName;
@@ -75,6 +84,22 @@ namespace CatalogueLibrary.Data
         public override string ToString()
         {
             return ConceptName;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            if(!string.IsNullOrWhiteSpace(Regex))
+                try
+                {
+                    new Regex(Regex);
+                    notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
+                }
+                catch (ArgumentException ex)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Regex is invalid", CheckResult.Fail, ex));
+                }
+           
+
         }
     }
 }

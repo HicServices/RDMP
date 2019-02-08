@@ -1,17 +1,21 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
-using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.LoadExecutionUIs
@@ -48,15 +52,12 @@ namespace CatalogueManager.LoadExecutionUIs
 
             _cacheProgress = databaseObject;
 
-            rdmpObjectsRibbonUI1.Clear();
-            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
-            rdmpObjectsRibbonUI1.Add((DatabaseEntity) _cacheProgress.LoadProgress);
-            rdmpObjectsRibbonUI1.Add((DatabaseEntity) _cacheProgress);
-
+            AddToMenu(new ExecuteCommandEditCacheProgress(activator, databaseObject), "Edit");
+            AddToMenu(new ExecuteCommandShowCacheFetchFailures(activator, databaseObject),"View Cache Failures");
+            
             bool failures = _cacheProgress.CacheFetchFailures.Any(f => f.ResolvedOn == null);
-            btnViewFailures.Enabled = failures;
             cbFailures.Enabled = failures;
-
+            
             checkAndExecuteUI1.SetItemActivator(activator);
         }
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
@@ -64,25 +65,8 @@ namespace CatalogueManager.LoadExecutionUIs
             base.ConsultAboutClosing(sender, e);
             checkAndExecuteUI1.ConsultAboutClosing(sender, e);
         }
-        private void btnViewFailures_Click(object sender, EventArgs e)
-        {
-            // for now just show a modal dialog with a data grid view of all the failure rows
-            var dt = new DataTable("CacheFetchFailure");
-            
-            using (var con = RepositoryLocator.CatalogueRepository.GetConnection())
-            {
-                var cmd = (SqlCommand)DatabaseCommandHelper.GetCommand("SELECT * FROM CacheFetchFailure WHERE CacheProgress_ID=@CacheProgressID AND ResolvedOn IS NULL", con.Connection);
-                cmd.Parameters.AddWithValue("@CacheProgressID", _cacheProgress.ID);
-                var reader = cmd.ExecuteReader();
-                dt.Load(reader);
-            }
-
-            var dgv = new DataGridView {DataSource = dt, Dock = DockStyle.Fill};
-            var form = new Form {Text = "Cache Fetch Failures for " + _cacheProgress.LoadProgress.Name};
-            form.Controls.Add(dgv);
-            form.Show();
-        }
     }
+
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CachingEngineUI_Design, UserControl>))]
     public abstract class CachingEngineUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>
     {

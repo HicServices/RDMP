@@ -1,40 +1,28 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using CatalogueLibrary.Checks;
-using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Providers;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.MainFormUITabs;
-using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable;
 using CatalogueManager.Copying;
-using ReusableLibraryCode;
+using FAnsi.Discovery.QuerySyntax;
+using Fansi.Implementations.MicrosoftSQL;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents;
-
+using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.ScintillaHelper;
-using ReusableUIComponents.SingleControlForms;
 using ScintillaNET;
 
 
@@ -79,6 +67,8 @@ namespace CatalogueManager.ExtractionUIs
         private bool isFirstTimeSetupCalled = true;
         private IQuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 
+        RAGSmileyToolStrip ragSmiley1;
+
         public ExtractionInformationUI()//For use with SetDatabaseObject
         {
             InitializeComponent();
@@ -91,9 +81,11 @@ namespace CatalogueManager.ExtractionUIs
             QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
             QueryEditor.TextChanged += QueryEditorOnTextChanged;
 
-            objectSaverButton1.BeforeSave += BeforeSave;
+            ObjectSaverButton1.BeforeSave += BeforeSave;
 
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            ragSmiley1 = new RAGSmileyToolStrip(this);
         }
 
         private bool BeforeSave(DatabaseEntity arg)
@@ -140,11 +132,15 @@ namespace CatalogueManager.ExtractionUIs
 
         public override void SetDatabaseObject(IActivateItems activator,ExtractionInformation databaseObject)
         {
-            base.SetDatabaseObject(activator,databaseObject);
-
+            base.SetDatabaseObject(activator, databaseObject);
+            
             Setup(databaseObject);
-            objectSaverButton1.SetupFor(databaseObject,_activator.RefreshBus);
-            objectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
+
+            ObjectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
+
+            Add(ragSmiley1);
+            AddToMenu(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Go To Description (CatalogueItem)");
+            AddToMenu(new ExecuteCommandShow(activator, databaseObject.ColumnInfo,0,true));
         }
 
         private bool objectSaverButton1OnBeforeSave(DatabaseEntity databaseEntity)
@@ -168,6 +164,20 @@ namespace CatalogueManager.ExtractionUIs
             return true;
         }
 
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ExtractionInformation databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbId, "Text", "ID", ei => ei.ID);
+            Bind(tbDefaultOrder, "Text", "Order", ei => ei.Order);
+            Bind(tbAlias, "Text", "Alias", ei => ei.Alias);
+
+            Bind(cbHashOnDataRelease, "Checked", "HashOnDataRelease", ei => ei.HashOnDataRelease);
+            Bind(cbIsExtractionIdentifier, "Checked", "IsExtractionIdentifier", ei => ei.IsExtractionIdentifier);
+            Bind(cbIsPrimaryKey, "Checked", "IsPrimaryKey", ei => ei.IsPrimaryKey);
+
+            Bind(ddExtractionCategory, "SelectedItem", "ExtractionCategory", ei => ei.ExtractionCategory);
+        }
 
         private void Setup(ExtractionInformation extractionInformation)
         {
@@ -184,11 +194,7 @@ namespace CatalogueManager.ExtractionUIs
                 
                 autoComplete.RegisterForEvents(QueryEditor);
             }
-
-               
-            ddExtractionCategory.Enabled = true;
-            ddExtractionCategory.SelectedItem = ExtractionInformation.ExtractionCategory;
-
+            
             var colInfo = ExtractionInformation.ColumnInfo;
 
             //deal with empty values in database (shouldn't be any but could be)
@@ -197,60 +203,26 @@ namespace CatalogueManager.ExtractionUIs
                 ExtractionInformation.SelectSQL = colInfo.Name.Trim();
                 ExtractionInformation.SaveToDatabase();
             }
-
-
+            
             QueryEditor.Text = ExtractionInformation.SelectSQL + (!string.IsNullOrWhiteSpace(ExtractionInformation.Alias) ? _querySyntaxHelper.AliasPrefix + ExtractionInformation.Alias : "");
 
             
             lblFromTable.Text = colInfo == null?"MISSING ColumnInfo":colInfo.TableInfo.Name;
 
-            tbDefaultOrder.Text = ExtractionInformation.Order.ToString();
-            tbAlias.Text = ExtractionInformation.Alias;
-
-            cbHashOnDataRelease.Enabled = true;
-            cbHashOnDataRelease.Checked = ExtractionInformation.HashOnDataRelease;
-
-            cbIsExtractionIdentifier.Enabled = true;
-            cbIsExtractionIdentifier.Checked = ExtractionInformation.IsExtractionIdentifier;
-
-            cbIsPrimaryKey.Enabled = true;
-            cbIsPrimaryKey.Checked = ExtractionInformation.IsPrimaryKey;
-
+            
             if (!pSql.Controls.Contains(QueryEditor))
                 pSql.Controls.Add(QueryEditor);
             
         }
         
-        private void ddExtractionCategory_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //user changed the category so update the object and indicate that we have now got unsaved changes
-            if (ddExtractionCategory.SelectedItem != null && ExtractionInformation != null)
-                ExtractionInformation.ExtractionCategory = (ExtractionCategory) ddExtractionCategory.SelectedItem;
-        }
-        
         private void cbHashOnDataRelease_CheckedChanged(object sender, EventArgs e)
         {
-            ExtractionInformation.HashOnDataRelease = cbHashOnDataRelease.Checked;
-            CreateAliasIfDoesntExist(ExtractionInformation);
-            
-        }
-
-        private void cbIsExtractionIdentifier_CheckedChanged(object sender, EventArgs e)
-        {
-            ExtractionInformation.IsExtractionIdentifier = cbIsExtractionIdentifier.Checked;
-        }
-
-        private void cbIsPrimaryKey_CheckedChanged(object sender, EventArgs e)
-        {
-            ExtractionInformation.IsPrimaryKey = cbIsPrimaryKey.Checked;
-        }
-
-        private void CreateAliasIfDoesntExist(ExtractionInformation extractionInformation)
-        {
-            if (string.IsNullOrWhiteSpace(ExtractionInformation.Alias))
+            //Create alias if it doesn't have one yet
+            if (string.IsNullOrWhiteSpace(ExtractionInformation.Alias) && cbHashOnDataRelease.Checked)
             {
+                ExtractionInformation.HashOnDataRelease = true;
                 ExtractionInformation.Alias = ExtractionInformation.GetRuntimeName();
-                Setup(extractionInformation);
+                Setup(ExtractionInformation);
             }
         }
         /// <summary>
@@ -282,11 +254,6 @@ namespace CatalogueManager.ExtractionUIs
                     "You must put in an Alias ( AS XYZ ) at the end of your query if you want to hash it on extraction (to a researcher)");
                 e.Cancel = true;
             }
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         public override string GetTabName()

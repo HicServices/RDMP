@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -10,12 +16,12 @@ using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration.QueryBuilding;
+using FAnsi.Discovery;
 using LoadModules.Generic.Mutilators.QueryBuilders;
 using DataLoadEngine.Migration;
 using DataLoadEngine.Mutilators;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.Mutilators
@@ -163,7 +169,7 @@ namespace LoadModules.Generic.Mutilators
         /// <param name="tiCurrent"></param>
         /// <param name="joinPathToTimeTable">Chain of JoinInfos back to the TimePeriodicity table so we can join to it and recover the effective date of a particular row</param>
         /// <param name="childJoins"></param>
-        private void ProcessTable(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> childJoins)
+        private void ProcessTable(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> childJoins)
         {
             var columnSetsToMigrate = _migrationConfiguration.CreateMigrationColumnSetFromTableInfos(new[] {tiCurrent}.ToList(),null, new BackfillMigrationFieldProcessor());
             var columnSet = columnSetsToMigrate.Single();
@@ -177,7 +183,7 @@ namespace LoadModules.Generic.Mutilators
             UpdateOldParentsThatHaveNewChildren(tiCurrent, joinPathToTimeTable, queryHelper, mcsQueryHelper);
         }
 
-        private void UpdateOldParentsThatHaveNewChildren(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
+        private void UpdateOldParentsThatHaveNewChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
         {
             var update = string.Format(@"WITH 
 {0}
@@ -198,7 +204,7 @@ LiveDataForUpdating LEFT JOIN {2} AS CurrentTable {3}",
             }
         }
 
-        private void DeleteEntriesHavingNoChildren(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> joinsToProcess, MigrationColumnSetQueryHelper mcsQueryHelper)
+        private void DeleteEntriesHavingNoChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> joinsToProcess, MigrationColumnSetQueryHelper mcsQueryHelper)
         {
             // If there are no joins then we should delete any old updates at this level
             string deleteSql;
@@ -253,7 +259,7 @@ RIGHT JOIN EntriesToDelete {1}",
         /// <param name="tiCurrent"></param>
         /// <param name="joinPathToTimeTable"></param>
         /// <returns></returns>
-        private string GetCurrentOldEntriesSQL(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+        private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
         {
             return string.Format(@"
 CurrentOldEntries AS (
@@ -270,7 +276,7 @@ SELECT ToLoadWithTime.* FROM
         /// <param name="tiCurrent"></param>
         /// <param name="joinPathToTimeTable"></param>
         /// <returns></returns>
-        private string GetLiveDataToUpdateStaging(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+        private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
         {
             return string.Format(@"
 LiveDataForUpdating AS (

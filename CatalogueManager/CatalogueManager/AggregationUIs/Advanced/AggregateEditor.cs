@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,21 +18,21 @@ using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using CatalogueManager.Copying;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
@@ -69,7 +75,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Scintilla QueryHaving;
-
+        
         //Constructor
         public AggregateEditor()
         {
@@ -90,8 +96,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             olvJoinTableName.ImageGetter += ImageGetter;
 
             olvJoin.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
-
-            btnGraph.Image = CatalogueIcons.BigGraph;
         }
 
         private object ImageGetter(object rowObject)
@@ -182,10 +186,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             _activator = activator;
             _aggregate = configuration;
             _options = options ?? new AggregateBuilderOptionsFactory().Create(configuration);
-
-            //can graph it if it isn't a cohort one or patient index table
-            btnGraph.Enabled = !_aggregate.IsCohortIdentificationAggregate;
-
+            
             ReloadUIFromDatabase();
         }
 
@@ -203,9 +204,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             tbID.Text = _aggregate.ID.ToString();
 
             SetNameText();
-
-            tbDescription.Text = _aggregate.Description;
-
+            
             DetermineFromTables();
 
             PopulateHavingText();
@@ -220,8 +219,17 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             PopulateTopX();
 
-            objectSaverButton1.SetupFor(_aggregate,_activator.RefreshBus);
             isRefreshing = false;
+
+            ObjectSaverButton1.Enable(false);
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, AggregateConfiguration databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbDescription,"Text","Description",a=>a.Description);
+            Bind(cbExtractable,"Checked","IsExtractable",a=>a.IsExtractable);
         }
 
         private void PopulateTopX()
@@ -280,14 +288,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             tbName.Text = _aggregate.ToString();
         }
 
-        
-        private void btnParameters_Click(object sender, EventArgs e)
-        {
-
-            var options = new ParameterCollectionUIOptionsFactory().Create(_aggregate);
-            ParameterCollectionUI.ShowAsDialog(options);
-        }
-        
         private void OnListboxKeyUp(object sender, KeyEventArgs e)
         {
             var s = (ObjectListView) sender;
@@ -498,39 +498,31 @@ namespace CatalogueManager.AggregationUIs.Advanced
             ReloadUIFromDatabase();
         }
 
-        private void cbExtractable_CheckedChanged(object sender, EventArgs e)
-        {
-            if (isRefreshing)
-                return;
-
-            _aggregate.IsExtractable = cbExtractable.Checked;
-            _aggregate.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            if (_aggregate != null)
-                _aggregate.Description = tbDescription.Text;
-        }
-
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
 
             _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
             SetAggregate(activator, databaseObject);
+            
+            if (databaseObject.IsCohortIdentificationAggregate)
+            {
+                var cic = databaseObject.GetCohortIdentificationConfigurationIfAny();
+                if (cic != null)
+                    AddToMenu(new ExecuteCommandActivate(activator, cic), "Open Cohort Query...");
+            }
+            else
+                AddToMenu(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0, true));
+
+            Add(new ExecuteCommandExecuteAggregateGraph(activator, databaseObject));
+            Add(new ExecuteCommandViewSample(activator, databaseObject));
+
+            AddToMenu(new ExecuteCommandViewSqlParameters(activator, databaseObject));
+
+            AddChecks(databaseObject);
+            StartChecking();
         }
 
-        private void btnViewQuery_Click(object sender, EventArgs e)
-        {
-            _activator.ViewDataSample(new ViewAggregateExtractUICollection(_aggregate));
-        }
-        
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
 
         private void tbName_TextChanged(object sender, EventArgs e)
         {
@@ -540,12 +532,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             if (cic != null)
                 cic.EnsureNamingConvention(_aggregate);
-        }
-
-        private void btnGraph_Click(object sender, EventArgs e)
-        {
-            var cmd = new ExecuteCommandExecuteAggregateGraph(_activator, _aggregate);
-            cmd.Execute();
         }
 
         private void olvJoin_ItemActivate(object sender, EventArgs e)

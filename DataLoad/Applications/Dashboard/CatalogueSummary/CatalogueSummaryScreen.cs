@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -6,6 +12,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LogViewer.Tabs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -38,47 +45,7 @@ namespace Dashboard.CatalogueSummary
             AssociatedCollection = RDMPCollection.Catalogue;
             DoubleBuffered = true;
         }
-
-        public Catalogue Catalogue
-        {
-            get { return _catalogue; }
-            private set
-            {
-                //novel value
-                _catalogue = value;
-                
-                //clear old DQE graphs
-                ClearDQEGraphs();
-
-                //if there is a catalogue
-                if(Catalogue != null)
-                {
-
-                    DQERepository dqeRepository = null;
-                    try
-                    {
-                        //try to get the dqe server
-                        dqeRepository = new DQERepository((CatalogueRepository)Catalogue.Repository);
-                    }
-                    catch (Exception)
-                    {
-                        //there is no dqe server, ah well nevermind
-                    }
-
-                    //dqe server did exist!
-                    if(dqeRepository != null)
-                    {
-                        //get evaluations for the catalogue
-                        Evaluation[] evaluations = dqeRepository.GetAllEvaluationsFor(Catalogue).ToArray();
-                        
-                        //there have been some evaluations
-                        evaluationTrackBar1.Evaluations = evaluations;
-                    }
-                }
-
-            }
-        }
-
+        
         private void ClearDQEGraphs()
         {
             timePeriodicityChart1.ClearGraph();
@@ -112,7 +79,33 @@ namespace Dashboard.CatalogueSummary
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            Catalogue = databaseObject;
+
+            //clear old DQE graphs
+            ClearDQEGraphs();
+            
+            DQERepository dqeRepository = null;
+            try
+            {
+                //try to get the dqe server
+                dqeRepository = new DQERepository((CatalogueRepository)databaseObject.Repository);
+            }
+            catch (Exception)
+            {
+                //there is no dqe server, ah well nevermind
+            }
+
+            //dqe server did exist!
+            if (dqeRepository != null)
+            {
+                //get evaluations for the catalogue
+                Evaluation[] evaluations = dqeRepository.GetAllEvaluationsFor(databaseObject).ToArray();
+
+                //there have been some evaluations
+                evaluationTrackBar1.Evaluations = evaluations;
+            }
+
+            Add(new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(databaseObject));
+            Add(new ExecuteCommandRunDQEOnCatalogue(activator,databaseObject),"Run Data Quality Engine...");
         }
 
         public override string GetTabName()

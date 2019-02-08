@@ -1,15 +1,21 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableUIComponents;
-
-
 
 namespace CatalogueManager.SimpleDialogs
 {
@@ -35,32 +41,43 @@ namespace CatalogueManager.SimpleDialogs
     /// 
     /// <para> Delete All CatalogueItems (If you really want to nuke the lot of them!) </para>
     /// </summary>
-    public partial class BulkProcessCatalogueItems : Form
+    public partial class BulkProcessCatalogueItems : BulkProcessCatalogueItems_Design
     {
-        public Catalogue Catalogue { get; set; }
+        private Catalogue _catalogue;
 
-        public BulkProcessCatalogueItems(Catalogue catalogue)
+        public BulkProcessCatalogueItems()
         {
-            Catalogue = catalogue;
             InitializeComponent();
 
-            if(Catalogue == null)
-                return;
-
-            RefreshUIFromDatabase();
-
+            olvName.ImageGetter += ImageGetter;
+            
             ddExtractionCategory.DataSource = Enum.GetValues(typeof (ExtractionCategory));
         }
-        private void RefreshUIFromDatabase()
-        {
-            lbCatalogueItems.Items.Clear();
-            lbCatalogueItems.Items.AddRange(Catalogue.CatalogueItems.ToArray());
-            
-            cbTableInfos.Items.Clear();
-            cbTableInfos.Items.AddRange(Catalogue.GetTableInfoList(true));
 
+        public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+        {
+            base.SetDatabaseObject(activator, databaseObject);
+
+            _catalogue = databaseObject;
+            
+            RefreshUIFromDatabase();
         }
 
+        private void RefreshUIFromDatabase()
+        {
+            _catalogue.ClearAllInjections();
+
+            olvCatalogueItems.ClearObjects();
+            olvCatalogueItems.AddObjects(_catalogue.CatalogueItems);
+
+            cbTableInfos.Items.Clear();
+            cbTableInfos.Items.AddRange(_catalogue.GetTableInfoList(true));
+        }
+
+        private object ImageGetter(object rowObject)
+        {
+            return _activator.CoreIconProvider.GetImage(rowObject);
+        }
 
         private void groupBox2_Enter(object sender, EventArgs e)
         {
@@ -71,44 +88,19 @@ namespace CatalogueManager.SimpleDialogs
         {
             if(e.KeyCode == Keys.V && e.Control)
             {
-                lock (oDrawLock)
-                    lbPastedColumns.Items.AddRange(
+                lbPastedColumns.Items.AddRange(
                         UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
                 
-                rbApplyToMatching.Checked = true;
-                        
+                UpdateFilter();
             }
 
             if(e.KeyCode == Keys.Delete & lbPastedColumns.SelectedItem != null)
-                lbPastedColumns.Items.Remove(lbPastedColumns.SelectedItem);
-
-            
-
-
-        }
-
-        private readonly object oDrawLock = new object();
-        private void lbCatalogueItems_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            lock (oDrawLock)
             {
-                if (e.Index != -1)
-                {
-                    var catalogueItem = (CatalogueItem) lbCatalogueItems.Items[e.Index];
-                    
-                    if(lbPastedColumns.Items.Contains(catalogueItem.Name))
-                        e.Graphics.FillRectangle(new SolidBrush(Color.LawnGreen), e.Bounds);
-
-                }
-                else 
-                    e.Graphics.FillRectangle(new SolidBrush(Color.White), e.Bounds);
-
-
-                e.Graphics.DrawString(lbCatalogueItems.Items[e.Index].ToString(), lbCatalogueItems.Font, new SolidBrush(Color.Black), e.Bounds);
-                
+                lbPastedColumns.Items.Remove(lbPastedColumns.SelectedItem);
+                UpdateFilter();
             }
         }
-
+        
         private void btnApplyTransform_Click(object sender, EventArgs e)
         {
 
@@ -136,7 +128,7 @@ namespace CatalogueManager.SimpleDialogs
             int countExtractionInformationsCreated = 0;
             int countOfColumnInfoAssociationsCreated = 0;
 
-            foreach (CatalogueItem catalogueItem in lbCatalogueItems.Items)
+            foreach (CatalogueItem catalogueItem in olvCatalogueItems.Objects)
             {
                 if (ShouldTransformCatalogueItem(catalogueItem))
                 {
@@ -244,25 +236,21 @@ namespace CatalogueManager.SimpleDialogs
             if (!string.IsNullOrWhiteSpace(message))
                 MessageBox.Show(message);
 
+            Publish(_catalogue);
+
             RefreshUIFromDatabase();
         }
 
 
         private bool ShouldTransformCatalogueItem(CatalogueItem catalogueItem)
         {
-            if (rbApplyToAll.Checked)
-                return true;
-
-            return lbPastedColumns.Items.Contains(catalogueItem.Name);
-
+            return olvCatalogueItems.FilteredObjects.Cast<CatalogueItem>().Contains(catalogueItem);
         }
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            lock (oDrawLock)
-            {
-                lbPastedColumns.Items.Clear();   
-            }
+            lbPastedColumns.Items.Clear();
+            UpdateFilter();
         }
 
         private void ddExtractionCategory_SelectedIndexChanged(object sender, EventArgs e)
@@ -279,5 +267,32 @@ namespace CatalogueManager.SimpleDialogs
         {
 
         }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+            UpdateFilter();
+        }
+
+        private void UpdateFilter()
+        {
+            List<IModelFilter> filters = new List<IModelFilter>();
+            List<IModelFilter> orFilters = new List<IModelFilter>();
+
+            foreach (var item in lbPastedColumns.Items)
+                orFilters.Add(new TextMatchFilter(olvCatalogueItems, item.ToString()));
+
+            filters.Add(new TextMatchFilter(olvCatalogueItems, tbFilter.Text));
+
+            if (orFilters.Any())
+                filters.Add(new CompositeAnyFilter(orFilters));
+
+            olvCatalogueItems.ModelFilter = new CompositeAllFilter(filters);
+            olvCatalogueItems.UseFiltering = true;
+        }
+    }
+
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<BulkProcessCatalogueItems_Design, UserControl>))]
+    public class BulkProcessCatalogueItems_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+    {
     }
 }

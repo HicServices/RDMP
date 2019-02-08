@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 
 namespace ReusableLibraryCode.CommandExecution
@@ -16,11 +22,19 @@ namespace ReusableLibraryCode.CommandExecution
         public string ReasonCommandImpossible { get; private set; }
         public string OverrideCommandName { get; set; }
 
+        
+        /// <summary>
+        /// True to add "..." to the end of the <see cref="GetCommandName"/>
+        /// </summary>
+        protected bool UseTripleDotSuffix { get; set; }
+
+
         public virtual void Execute()
         {
             if(IsImpossible)
                 throw new NotSupportedException("Command is marked as IsImpossible and should not be Executed.  Reason ReasonCommandImpossible is:" + ReasonCommandImpossible);
         }
+
 
         public virtual string GetCommandName()
         {
@@ -29,6 +43,10 @@ namespace ReusableLibraryCode.CommandExecution
 
             var name = GetType().Name;
             var adjusted = name.Replace("ExecuteCommand", "");
+
+            if (UseTripleDotSuffix)
+                adjusted += "...";
+
             return UsefulStuff.PascalCaseStringToHumanReadable(adjusted);
         
         }

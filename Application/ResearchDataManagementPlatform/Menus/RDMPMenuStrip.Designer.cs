@@ -119,7 +119,7 @@
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // findToolStripMenuItem
@@ -413,7 +413,7 @@
             this.Controls.Add(this.rdmpTaskBar1);
             this.Controls.Add(this.menuStrip1);
             this.Name = "RDMPTopMenuStrip";
-            this.Size = new System.Drawing.Size(1160, 52);
+            this.Size = new System.Drawing.Size(1160, 48);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

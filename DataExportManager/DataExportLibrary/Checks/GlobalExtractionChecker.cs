@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
@@ -21,9 +27,15 @@ namespace DataExportLibrary.Checks
         private readonly ExtractGlobalsCommand _command;
         private readonly IPipeline _alsoCheckPipeline;
 
+        /// <summary>
+        /// Prepares to check the globals extractable artifacts that should be fetched when extracting the <paramref name="configuration"/>
+        /// </summary>
+        /// <param name="configuration"></param>
         public GlobalExtractionChecker(ExtractionConfiguration configuration) : this (configuration, null, null)
         { }
-        
+
+
+        /// <inheritdoc cref="GlobalExtractionChecker(ExtractionConfiguration)"/>
         public GlobalExtractionChecker(ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
         {
             this._configuration = configuration;
@@ -31,6 +43,11 @@ namespace DataExportLibrary.Checks
             this._alsoCheckPipeline = alsoCheckPipeline;
         }
 
+        /// <summary>
+        /// Checks that all globals pass thier respective checkers (<see cref="SupportingSQLTableChecker"/> and <see cref="SupportingDocumentsFetcher"/>) and that
+        /// the <see cref="Pipeline"/> (if any) is capable of extracting the globals.
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             foreach (SupportingSQLTable table in _configuration.GetGlobals().OfType<SupportingSQLTable>())

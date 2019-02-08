@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -17,16 +23,15 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadProcess;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TableCreation;
+using FAnsi.Discovery.TypeTranslation;
 using HIC.Logging;
 using LoadModules.Generic.Attachers;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
@@ -70,13 +75,13 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.AllPrimaryKeys)]
-        [TestCase(DatabaseType.MYSQLServer,TestCase.Normal)]
-        //[TestCase(DatabaseType.MYSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)] //Not supported by MySql:Incorrect table definition; there can be only one auto column and it must be defined as a key
-        [TestCase(DatabaseType.MYSQLServer, TestCase.DodgyCollation)]
-        [TestCase(DatabaseType.MYSQLServer, TestCase.WithCustomTableNamer)]
-        [TestCase(DatabaseType.MYSQLServer, TestCase.LowPrivilegeLoaderAccount)]
-        [TestCase(DatabaseType.MYSQLServer, TestCase.AllPrimaryKeys)]
-        [TestCase(DatabaseType.MYSQLServer, TestCase.WithDiffColumnIgnoreRegex)]
+        [TestCase(DatabaseType.MySql,TestCase.Normal)]
+        //[TestCase(DatabaseType.MySql, TestCase.WithNonPrimaryKeyIdentityColumn)] //Not supported by MySql:Incorrect table definition; there can be only one auto column and it must be defined as a key
+        [TestCase(DatabaseType.MySql, TestCase.DodgyCollation)]
+        [TestCase(DatabaseType.MySql, TestCase.WithCustomTableNamer)]
+        [TestCase(DatabaseType.MySql, TestCase.LowPrivilegeLoaderAccount)]
+        [TestCase(DatabaseType.MySql, TestCase.AllPrimaryKeys)]
+        [TestCase(DatabaseType.MySql, TestCase.WithDiffColumnIgnoreRegex)]
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
             var defaults = new ServerDefaults(CatalogueRepository);
@@ -87,7 +92,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 
             var raw = db.Server.ExpectDatabase(db.GetRuntimeName() + "_RAW");
             if(raw.Exists())
-                raw.ForceDrop();
+                raw.Drop();
             
             var dt = new DataTable("MyTable");
             dt.Columns.Add("Name");
@@ -101,7 +106,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             if (testCase == TestCase.DodgyCollation)
                 if(databaseType == DatabaseType.MicrosoftSQLServer)
                     nameCol.Collation = "Latin1_General_CS_AS_KS_WS";
-                else if (databaseType == DatabaseType.MYSQLServer)
+                else if (databaseType == DatabaseType.MySql)
                     nameCol.Collation = "latin1_german1_ci";
 
 
@@ -233,7 +238,7 @@ MrMurder,2001-01-01,Yella");
                 Assert.AreEqual(DBNull.Value,bob[SpecialFieldNames.DataLoadRunID]);
 
                 //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
-                if(databaseType != DatabaseType.MYSQLServer)
+                if(databaseType != DatabaseType.MySql)
                     Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
             }
             finally
@@ -254,12 +259,12 @@ MrMurder,2001-01-01,Yella");
             {
                 var db2 = db.Server.ExpectDatabase("BB_STAGING");
                 if(db.Exists())
-                    db2.ForceDrop();
+                    db2.Drop();
             }
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void DLELoadTwoTables(DatabaseType databaseType)
         {
             //setup the data tables
@@ -299,22 +304,33 @@ MrMurder,2001-01-01,Yella");
             //forward declare this column as part of pk (will be used to specify foreign key
             var fkParentID = new DatabaseColumnRequest("Parent_ID", "int"){IsPrimaryKey = true};
 
-            var childTbl = db.CreateTable("Child", dtChild, new[]
+            var args = new CreateTableArgs(
+                db,
+                "Child",
+                null,
+                dtChild,
+                false,
+                new Dictionary<DatabaseColumnRequest, DiscoveredColumn>()
+                {
+                    {fkParentID, pkParentID}
+                },
+                true);
+
+            args.ExplicitColumnDefinitions = new[]
             {
                 fkParentID
-            }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>()
-            {
-                {fkParentID, pkParentID}
-            }, true);
+            };
+
+            var childTbl = db.CreateTable(args);
 
             Assert.AreEqual(1, parentTbl.GetRowCount());
             Assert.AreEqual(2, childTbl.GetRowCount());
 
             //create a new load
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoading2");
-
+            
+            TableInfo childTableInfo = Import(childTbl, lmd, logManager);
             TableInfo parentTableInfo = Import(parentTbl,lmd,logManager);
-            TableInfo childTableInfo = Import(childTbl, lmd,logManager);
 
             var projectDirectory = SetupLoadDirectory(lmd);
 

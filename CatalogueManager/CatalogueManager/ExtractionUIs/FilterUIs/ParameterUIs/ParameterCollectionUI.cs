@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,11 +20,13 @@ using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Google.Protobuf.WellKnownTypes;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ScintillaNET;
+using Enum = System.Enum;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 {
@@ -191,11 +199,17 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
         private void btnAddParameter_Click(object sender, EventArgs e)
         {
-            var newParameter = Options.CreateNewParameter();
-            Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
+            Random r = new Random();
 
-            RefreshParametersFromDatabase();
-            
+            var dialog  = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, "@MyParam" + r.Next());
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var newParameter = Options.CreateNewParameter(dialog.ResultText.Trim());
+                
+                Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
+                
+                RefreshParametersFromDatabase();   
+            }
         }
 
         private void olvParameters_KeyDown(object sender, KeyEventArgs e)

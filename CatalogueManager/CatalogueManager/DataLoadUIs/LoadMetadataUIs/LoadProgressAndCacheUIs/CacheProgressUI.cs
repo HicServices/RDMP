@@ -1,23 +1,22 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using CachingEngine.Factories;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.SimpleFileImporting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
-using ReusableLibraryCode;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
@@ -48,6 +47,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             ddCacheLagDelayDurationType.DataSource = Enum.GetValues(typeof(CacheLagPeriod.PeriodType));
 
             AssociatedCollection = RDMPCollection.DataLoad;
+            
             _bLoading = false;
         }
 
@@ -57,10 +57,17 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-            objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
+
+            AddHelp(tbCacheProgress, "ICacheProgress.CacheFillProgress");
+            AddHelp(ddCacheLagDurationType,"ICacheProgress.CacheLagPeriod");
+            AddHelp(ddCacheLagDelayDurationType,"ICacheProgress.CacheLagPeriodLoadDelay");
+            AddHelp(tbChunkPeriod, "ICacheProgress.ChunkPeriod");
+            AddHelp(pPipeline,"ICacheProgress.Pipeline_ID");
 
             _cacheProgress = databaseObject;
             
+            AddToMenu(new ExecuteCommandExecuteCacheProgress(activator,databaseObject),"Go To Execute");
+
             ragSmiley1.Reset();
 
             try
@@ -73,12 +80,20 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             }
         }
 
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, CacheProgress databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",c=>c.ID);
+            Bind(tbName,"Text","Name",c=>c.Name);
+
+
+        }
+
         private void PopulateCacheProgressPanel(ICacheProgress cacheProgress)
         {
             _bLoading = true;
 
-            gbCacheProgress.Enabled = true; 
-            tbCacheProgressID.Text = cacheProgress.ID.ToString();
             SetCacheProgressTextBox();
             
             var cacheLagPeriod = cacheProgress.GetCacheLagPeriod();
@@ -176,17 +191,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 cacheLagPeriod = new CacheLagPeriod(duration, (CacheLagPeriod.PeriodType)selectedItem);
 
             return cacheLagPeriod;
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            _cacheProgress.RevertToDatabaseState();
-            SetCacheProgressTextBox();
         }
 
         private void btnEdit_Click(object sender, EventArgs e)

@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -7,18 +13,19 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.DublinCore;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
@@ -140,7 +147,9 @@ namespace CatalogueLibrary.Data
 
         private Lazy<CatalogueItem[]> _knownCatalogueItems;
         
+        
         /// <inheritdoc/>
+        [Unique]
         public string Acronym
         {
             get { return _acronym; }
@@ -151,6 +160,8 @@ namespace CatalogueLibrary.Data
         /// The full human readable name of the dataset.  This should usually match the name of the underlying <see cref="TableInfo"/> but might differ
         /// if there are multiple tables powering the Catalogue or they don't have user accessible names.
         /// </summary>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }
@@ -959,7 +970,7 @@ namespace CatalogueLibrary.Data
             else
                 notifier.OnCheckPerformed(new CheckEventArgs("Catalogue name " + Name + " follows naming conventions ",CheckResult.Success));
             
-            TableInfo[] tables = GetTableInfoList(true);
+            ITableInfo[] tables = GetTableInfoList(true);
             foreach (TableInfo t in tables)
                 t.Check(notifier);
 
@@ -1045,9 +1056,9 @@ namespace CatalogueLibrary.Data
         }
 
         /// <inheritdoc/>
-        public TableInfo[] GetTableInfoList(bool includeLookupTables)
+        public ITableInfo[] GetTableInfoList(bool includeLookupTables)
         {
-            List<TableInfo> normalTables, lookupTables;
+            List<ITableInfo> normalTables, lookupTables;
             GetTableInfos(out normalTables, out lookupTables);
 
             if (includeLookupTables)
@@ -1057,21 +1068,21 @@ namespace CatalogueLibrary.Data
         }
 
         /// <inheritdoc/>
-        public TableInfo[] GetLookupTableInfoList()
+        public ITableInfo[] GetLookupTableInfoList()
         {
-            List<TableInfo> normalTables, lookupTables;
+            List<ITableInfo> normalTables, lookupTables;
             GetTableInfos(out normalTables, out lookupTables);
 
             return lookupTables.ToArray();
         }
         
         /// <inheritdoc/>
-        public void GetTableInfos(out List<TableInfo> normalTables, out List<TableInfo> lookupTables)
+        public void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
         {
             var tables = GetColumnInfos().GroupBy(c=>c.TableInfo_ID).Select(c => c.First().TableInfo).ToArray();
 
-            normalTables = new List<TableInfo>(tables.Where(t=>!t.IsLookupTable()));
-            lookupTables = new List<TableInfo>(tables.Where(t=>t.IsLookupTable()));
+            normalTables = new List<ITableInfo>(tables.Where(t=>!t.IsLookupTable()));
+            lookupTables = new List<ITableInfo>(tables.Where(t=>t.IsLookupTable()));
         }
 
         private IEnumerable<ColumnInfo> GetColumnInfos()
@@ -1120,7 +1131,7 @@ namespace CatalogueLibrary.Data
             return DataAccessPortal.GetInstance().ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
         }
 
-        private TableInfo[] GetTableInfosIdeallyJustFromMainTables()
+        private ITableInfo[] GetTableInfosIdeallyJustFromMainTables()
         {
 
             //try with only the normal tables
@@ -1354,4 +1365,5 @@ namespace CatalogueLibrary.Data
         #endregion
 
     }
+
 }

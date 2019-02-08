@@ -1,19 +1,19 @@
-﻿using System;
-using System.CodeDom.Compiler;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CohortManagerLibrary.Execution
 {
@@ -27,12 +27,21 @@ namespace CohortManagerLibrary.Execution
 
         private string _catalogueName;
         private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+        private List<CohortAggregateContainer> _allParentContainers;
 
         public AggregationTask(AggregateConfiguration aggregate, CohortCompiler compiler): base(compiler)
         {
             Aggregate = aggregate;
             _catalogueName = aggregate.Catalogue.Name;
             _cohortIdentificationConfiguration = compiler.CohortIdentificationConfiguration;
+
+            var container = aggregate.GetCohortAggregateContainerIfAny();
+
+            if(container != null)
+            {
+                _allParentContainers = container.GetAllParentContainers().ToList();
+                _allParentContainers.Add(container);
+            }
         }
 
 
@@ -62,6 +71,12 @@ namespace CohortManagerLibrary.Execution
         public override IDataAccessPoint[] GetDataAccessPoints()
         {
             return Aggregate.Catalogue.GetTableInfoList(false);
+        }
+
+        public override bool IsEnabled()
+        {
+            //aggregate is not disabled and none of the parent containers are disabled either
+            return !Aggregate.IsDisabled && !_allParentContainers.Any(c=>c.IsDisabled);
         }
 
         public override AggregateConfiguration GetAggregateConfiguration()

@@ -56,7 +56,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="Plugin.UI.nuspec" />
     <None Include="PluginUI.build" />
   </ItemGroup>

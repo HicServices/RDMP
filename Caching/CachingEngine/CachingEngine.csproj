@@ -66,7 +66,6 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -172,6 +171,9 @@
     <Compile Include="BasicCache\NoSubdirectoriesCachePathResolver.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="CachingEngine.cd" />
     <None Include="packages.config" />
   </ItemGroup>

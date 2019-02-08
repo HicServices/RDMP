@@ -1,23 +1,27 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Construction;
+using FAnsi.Connections;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TableCreation;
+using FAnsi.Discovery.TypeTranslation;
 using HIC.Logging;
 using HIC.Logging.Listeners;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Exceptions;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Destinations
@@ -50,6 +54,9 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         
         [DemandsInitialization(AlterTimeout_Description, DefaultValue = 300)]
         public int AlterTimeout { get; set; }
+
+        [DemandsInitialization("Optional - Change system behaviour when a new table is being created by the component", TypeOf = typeof(IDatabaseColumnRequestAdjuster))]
+        public Type Adjuster { get; set; }
 
         public string TargetTableName { get; private set; }
         
@@ -85,6 +92,13 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
         {
             if (toProcess == null)
                 return null;
+
+            IDatabaseColumnRequestAdjuster adjuster = null;
+            if (Adjuster != null)
+            {
+                var constructor = new ObjectConstructor();
+                adjuster = (IDatabaseColumnRequestAdjuster) constructor.Construct(Adjuster);
+            }
 
             //work out the table name for the table we are going to create
             if (TargetTableName == null)
@@ -138,9 +152,9 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
                    createdTable = true;
 
                    if (AllowResizingColumnsAtUploadTime)
-                       _database.CreateTable(out _dataTypeDictionary, TargetTableName, toProcess,ExplicitTypes.ToArray(), true);
+                       _database.CreateTable(out _dataTypeDictionary, TargetTableName, toProcess, ExplicitTypes.ToArray(), true, adjuster);
                    else
-                       _database.CreateTable(TargetTableName, toProcess, ExplicitTypes.ToArray(), true);
+                       _database.CreateTable(TargetTableName, toProcess, ExplicitTypes.ToArray(), true, adjuster);
 
                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Created table " + TargetTableName + " successfully."));
                 }

@@ -1,4 +1,6 @@
-﻿namespace ReusableUIComponents
+﻿using ReusableUIComponents.ChecksUI;
+
+namespace ReusableUIComponents
 {
     partial class ServerDatabaseTableSelector
     {
@@ -47,7 +49,7 @@
             this.btnRefreshDatabases = new System.Windows.Forms.Button();
             this.btnRefreshTables = new System.Windows.Forms.Button();
             this.databaseTypeUI1 = new ReusableUIComponents.DatabaseTypeUI();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.SuspendLayout();
             // 
@@ -242,7 +244,7 @@
             // 
             // databaseTypeUI1
             // 
-            this.databaseTypeUI1.DatabaseType = ReusableLibraryCode.DatabaseType.MicrosoftSQLServer;
+            this.databaseTypeUI1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
             this.databaseTypeUI1.Location = new System.Drawing.Point(470, 50);
             this.databaseTypeUI1.Name = "databaseTypeUI1";
             this.databaseTypeUI1.Size = new System.Drawing.Size(150, 28);

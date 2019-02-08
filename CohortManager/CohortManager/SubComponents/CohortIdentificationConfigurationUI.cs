@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -97,9 +103,7 @@ namespace CohortManager.SubComponents
             tbName.Text = _configuration.Name;
             tbDescription.Text = _configuration.Description;
             ticket.TicketText = _configuration.Ticket;
-
-            objectSaverButton1.SetupFor(_configuration, activator.RefreshBus);
-
+            
             queryCachingServerSelector.RefreshUIFromDatabase();
 
             if (_configuration.QueryCachingServer_ID == null)
@@ -132,11 +136,6 @@ namespace CohortManager.SubComponents
         public override string GetTabName()
         {
             return "Execute:" + base.GetTabName();
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         private void tbName_TextChanged(object sender, EventArgs e)

@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -87,7 +93,7 @@ namespace CatalogueLibrary.Data
         {
             object uri = r[fieldName];
 
-            if (uri == null || uri == DBNull.Value)
+            if (uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString()))
                 return null;
 
             return new Uri(uri.ToString());
@@ -200,6 +206,10 @@ namespace CatalogueLibrary.Data
         protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+
+            //treat null and "" as the same
+            if (typeof(T) == typeof(string) && string.IsNullOrWhiteSpace(field as string) && string.IsNullOrWhiteSpace(value as string))
+                return false;
 
             if (_readonly)
                 throw new Exception("An attempt was made to modify Property '" + propertyName + "' of Database Object of Type '" + GetType().Name + "' while it was in read only mode.  Object was called '" + this + "'");

@@ -1,14 +1,20 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace CatalogueLibrary
 {
@@ -21,6 +27,8 @@ namespace CatalogueLibrary
         private readonly TableInfo _tableToSync;
         private DiscoveredServer _toSyncTo;
         private CatalogueRepository _repository;
+
+        public HashSet<Catalogue> ChangedCatalogues  = new HashSet<Catalogue>();
 
         /// <summary>
         /// Synchronizes the TableInfo against the underlying database to ensure the Catalogues understanding of what columns exist, what are primary keys,
@@ -205,6 +213,8 @@ namespace CatalogueLibrary
                             e.ExtractionCategory = ExtractionCategory.Internal;
                             e.SaveToDatabase();
                         }
+
+                        ChangedCatalogues.Add(relatedCatalogues[0]);
 
                     }
         }

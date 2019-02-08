@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -126,6 +132,11 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private List<Type> showOnlyTypes = new List<Type>();
         private AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
         
+        /// <summary>
+        /// The action to perform when the form closes with an object selected (defaults to Emphasise)
+        /// </summary>
+        public Action<IMapsDirectlyToDatabaseTable> CompletionAction { get; set; }
+
         public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
         {
             if(!TypesThatAreNotUsefulParents.Contains(t))
@@ -138,6 +149,10 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             _favouriteProvider = _activator.FavouritesProvider;
             _magnifier = FamFamFamIcons.magnifier;
             InitializeComponent();
+
+            CompletionAction = Emphasise;
+
+            activator.Theme.ApplyTo(toolStrip1);
 
             _searchables = _activator.CoreChildProvider.GetAllSearchables();
             
@@ -279,7 +294,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if (e.KeyCode == Keys.Enter && !_skipEnter)
             {
                 e.Handled = true;
-                EmphasiseAndClose(keyboardSelectedIndex);
+                PerformCompletionAction(keyboardSelectedIndex);
             }
             
             if (e.KeyCode == Keys.Escape)
@@ -299,10 +314,10 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if(e.Y<= DrawMatchesStartingAtY || e.Y > (RowHeight * MaxMatches )+ DrawMatchesStartingAtY)
                 return;
 
-            EmphasiseAndClose(RowIndexFromPoint(e.X, e.Y));
+            PerformCompletionAction(RowIndexFromPoint(e.X, e.Y));
         }
         
-        private void EmphasiseAndClose(int indexToSelect)
+        private void PerformCompletionAction(int indexToSelect)
         {
             lock (oMatches)
             {
@@ -310,10 +325,15 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     return;
 
                 Close();
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[indexToSelect], int.MaxValue) { Pin = true });
+                CompletionAction(_matches[indexToSelect]);
             }
-            
         }
+
+        private void Emphasise(IMapsDirectlyToDatabaseTable o)
+        {
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1) { Pin = true });
+        }
+
 
         protected override void OnMouseMove(MouseEventArgs e)
         {

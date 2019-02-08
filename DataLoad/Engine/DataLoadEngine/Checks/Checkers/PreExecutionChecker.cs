@@ -1,15 +1,20 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.DatabaseManagement;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Migration;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using ReusableLibraryCode.DataAccess;
 
 namespace DataLoadEngine.Checks.Checkers
 {
@@ -21,7 +26,13 @@ namespace DataLoadEngine.Checks.Checkers
         private readonly ILoadMetadata _loadMetadata;
         private readonly IList<ICatalogue> _cataloguesToLoad;
         private readonly HICDatabaseConfiguration _databaseConfiguration;
-        
+
+        /// <summary>
+        /// True if when running <see cref="Check"/> there was a catastrophic problem e.g. unable to reach tables which means you shouldn't bother
+        /// running any other kinds of checks
+        /// </summary>
+        public bool HardFail { get; private set; }
+
         public PreExecutionChecker(ILoadMetadata loadMetadata, HICDatabaseConfiguration overrideDatabaseConfiguration) 
         {
             _loadMetadata = loadMetadata;
@@ -42,7 +53,6 @@ namespace DataLoadEngine.Checks.Checkers
             {
                 CheckTablesAreEmptyInDatabaseOnServer();
                 CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(allTableInfos, LoadBubble.Staging);
-                CheckStandardColumnsArePresentInStaging(allTableInfos);
             }
         }
 
@@ -62,7 +72,7 @@ namespace DataLoadEngine.Checks.Checkers
                 _notifier.OnCheckPerformed(new CheckEventArgs(successMessage + ": " + dbInfo, CheckResult.Success, null));
         }
 
-        private void CheckTablesDoNotExistOnStaging(IEnumerable<TableInfo> allTableInfos)
+        private void CheckTablesDoNotExistOnStaging(IEnumerable<ITableInfo> allTableInfos)
         {
             DiscoveredDatabase stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
             var alreadyExistingTableInfosThatShouldntBeThere = new List<string>();
@@ -108,7 +118,7 @@ namespace DataLoadEngine.Checks.Checkers
         }
 
         // Check that the column infos from the catalogue match up with what is actually in the staging databases
-        private void CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(IEnumerable<TableInfo> allTableInfos, LoadBubble deploymentStage)
+        private void CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(IEnumerable<ITableInfo> allTableInfos, LoadBubble deploymentStage)
         {
             var dbInfo = _databaseConfiguration.DeployInfo[deploymentStage];
             foreach (var tableInfo in allTableInfos)
@@ -126,57 +136,12 @@ namespace DataLoadEngine.Checks.Checkers
             }
         }
 
-        private void CheckStandardColumnsArePresentInStaging(IEnumerable<TableInfo> allTableInfos)
-        {
-            // check standard columns are present in staging database
-            var standardColumnNames = new List<string>();
-            CheckStandardColumnsArePresentForStage(allTableInfos, standardColumnNames, LoadBubble.Staging, LoadBubble.Staging);
-        }
-        private void CheckStandardColumnsArePresentInLive(IEnumerable<TableInfo> allTableInfos)
-        {
-            // check standard columns are present in live database
-            var standardColumnNames = MigrationColumnSet.GetStandardColumnNames();
-            CheckStandardColumnsArePresentForStage(allTableInfos, standardColumnNames, LoadBubble.Live, LoadBubble.Live);
-        }
-
-        private void CheckStandardColumnsArePresentForStage(IEnumerable<TableInfo> allTableInfos, List<string> columnNames, LoadBubble deploymentStage, LoadBubble tableNamingConvention)
-        {
-            var dbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Live];
-            foreach (var tableInfo in allTableInfos)
-            {
-                var tableName = tableInfo.GetRuntimeName(tableNamingConvention, _databaseConfiguration.DatabaseNamer);
-                try
-                {
-                    //only supply the schema if it is live/archive (RAW / STAGING never have schema name)
-                    string schema = deploymentStage >= LoadBubble.Live ? tableInfo.Schema : null;
-
-                    var cols = dbInfo.ExpectTable(tableName, schema).DiscoverColumns().ToArray();
-                    
-                    string missing = string.Join(",",
-                        columnNames.Where(
-                            req =>
-                                !cols.Any(c => c.GetRuntimeName().Equals(req, StringComparison.CurrentCultureIgnoreCase))));
-                    
-                    if (!string.IsNullOrWhiteSpace(missing))
-                        throw new Exception(dbInfo + " does not contain columns: " + missing);
-
-                }
-                catch (Exception e)
-                {
-                    _notifier.OnCheckPerformed(new CheckEventArgs("Standard columns (" + string.Join(",", columnNames) + ") not included in database structure for table '" + tableName + "'", CheckResult.Fail, e));
-                }
-            }
-
-            _notifier.OnCheckPerformed(new CheckEventArgs(deploymentStage + " database '" + dbInfo + "' is correctly configured", CheckResult.Success, null));
-        }
-
         private void PreExecutionDatabaseCheck()
         {
             var allNonLookups = _cataloguesToLoad.SelectMany(catalogue => catalogue.GetTableInfoList(false)).Distinct().ToList();
             CheckDatabaseExistsForStage(LoadBubble.Live, "LIVE database found", "LIVE database not found");
             CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(allNonLookups, LoadBubble.Live);
             
-            CheckStandardColumnsArePresentInLive(allNonLookups);
             CheckUpdateTriggers(allNonLookups);
             CheckRAWDatabaseIsNotPresent();
         }
@@ -205,7 +170,7 @@ namespace DataLoadEngine.Checks.Checkers
             }
         }
 
-        private void CheckUpdateTriggers(IEnumerable<TableInfo> allTableInfos)
+        private void CheckUpdateTriggers(IEnumerable<ITableInfo> allTableInfos)
         {
             // Check that the update triggers are present/enabled
             foreach (var tableInfo in allTableInfos)
@@ -221,9 +186,39 @@ namespace DataLoadEngine.Checks.Checkers
  
         public void Check(ICheckNotifier notifier)
         {
-            //extra super not threadsafe eh?
             _notifier = notifier;
 
+            //For each table in load can we reach it and is it a valid table type
+            foreach (ITableInfo ti in _loadMetadata.GetAllCatalogues().SelectMany(c => c.GetTableInfoList(true)).Distinct())
+            {
+                DiscoveredTable tbl;
+                try
+                {
+                    tbl = ti.Discover(DataAccessContext.DataLoad);
+                }
+                catch (Exception e)
+                {
+                    HardFail = true;
+                    notifier.OnCheckPerformed(new CheckEventArgs("Could not reach table in load '" + ti.Name +"'",CheckResult.Fail,e));
+                    return;
+                }
+
+                if (!tbl.Exists())
+                {
+                    HardFail = true;
+                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti.Name + "' does not exist", CheckResult.Fail));
+                }
+
+                if (tbl.TableType != TableType.Table)
+                {
+                    HardFail = true;
+                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + ti + "' is a " + tbl.TableType,CheckResult.Fail));
+                }
+            }
+
+            if(HardFail)
+                return;
+            
             AtLeastOneTaskCheck();
 
             PreExecutionStagingDatabaseCheck(false);
@@ -231,9 +226,11 @@ namespace DataLoadEngine.Checks.Checkers
             
         }
 
+        
+
         private void AtLeastOneTaskCheck()
         {
-            if (!_loadMetadata.ProcessTasks.Any())
+            if (_loadMetadata.ProcessTasks.All(p => p.IsDisabled))
                 _notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         "There are no ProcessTasks defined for '" + _loadMetadata +

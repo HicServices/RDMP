@@ -1,26 +1,25 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup;
-using CatalogueManager.Tutorials;
-using CommandLine;
 using DatabaseCreation;
 using Diagnostics;
+using FAnsi;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
-using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.TransparentHelpSystem;
-using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
 namespace CatalogueManager.LocationsMenu
 {
@@ -181,49 +180,9 @@ namespace CatalogueManager.LocationsMenu
         private void btnSaveAndClose_Click(object sender, EventArgs e)
         {
             //if save is successful
-            if(SaveConnectionStrings())
-            {
-                try
-                {
-                    CreateMissingFieldsChecker(MissingFieldsChecker.ThingToCheck.Catalogue)
-                        .Check(new ThrowImmediatelyCheckNotifier());
-                }
-                catch (Exception exception)
-                {
-                    bool launchDiagnostics = checksUI1.OnCheckPerformed(new CheckEventArgs("Catalogue database did not pass silent integrity checks, press the Check button to see the full check output",CheckResult.Fail,exception,"Launch diagnostics screen?"));
-                    
-                    if(launchDiagnostics)
-                    {
-                        var dialog = new DiagnosticsScreen(exception);
-                        dialog.RepositoryLocator = _repositoryLocator;
-                        dialog.ShowDialog(this);
-                    }
-
-                    return;
-                }
-
-                if(!string.IsNullOrWhiteSpace(tbDataExportManagerConnectionString.Text))
-                    try
-                    {
-                        CreateMissingFieldsChecker(MissingFieldsChecker.ThingToCheck.DataExportManager).Check(new ThrowImmediatelyCheckNotifier());
-                    }
-                    catch (Exception exception)
-                    {
-                        bool launchDiagnostics = checksUI1.OnCheckPerformed(new CheckEventArgs("Data Export Manager database did not pass silent integrity checks, press the Check button to see the full check output", CheckResult.Fail, exception,"Launch diagnostics screen"));
-                        
-                        if (launchDiagnostics)
-                        {
-                            var dialog = new DiagnosticsScreen(exception);
-                            dialog.RepositoryLocator = _repositoryLocator;
-                            dialog.ShowDialog(this);
-                        }
-
-                        return;
-                    }
-
+            if (SaveConnectionStrings())
                 //integrity checks passed
                 RestartApplication();
-            }
         }
 
         private void btnCheckDataExportManager_Click(object sender, EventArgs e)

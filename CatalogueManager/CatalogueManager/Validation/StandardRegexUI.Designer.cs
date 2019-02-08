@@ -43,8 +43,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbID = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.gbTesting.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbTesting
@@ -54,9 +55,9 @@
             this.gbTesting.Controls.Add(this.tbTesting);
             this.gbTesting.Controls.Add(this.label8);
             this.gbTesting.Controls.Add(this.btnTest);
-            this.gbTesting.Location = new System.Drawing.Point(2, 335);
+            this.gbTesting.Location = new System.Drawing.Point(4, 300);
             this.gbTesting.Name = "gbTesting";
-            this.gbTesting.Size = new System.Drawing.Size(966, 211);
+            this.gbTesting.Size = new System.Drawing.Size(921, 252);
             this.gbTesting.TabIndex = 10;
             this.gbTesting.TabStop = false;
             this.gbTesting.Text = "Testing";
@@ -77,7 +78,7 @@
             this.lblResultOfTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblResultOfTest.Location = new System.Drawing.Point(35, 53);
             this.lblResultOfTest.Name = "lblResultOfTest";
-            this.lblResultOfTest.Size = new System.Drawing.Size(925, 144);
+            this.lblResultOfTest.Size = new System.Drawing.Size(880, 144);
             this.lblResultOfTest.TabIndex = 9;
             // 
             // tbTesting
@@ -112,7 +113,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(106, 290);
+            this.label6.Location = new System.Drawing.Point(108, 284);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(798, 13);
             this.label6.TabIndex = 3;
@@ -124,17 +125,16 @@
             // 
             this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDescription.Location = new System.Drawing.Point(109, 87);
+            this.tbDescription.Location = new System.Drawing.Point(92, 81);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(859, 200);
+            this.tbDescription.Size = new System.Drawing.Size(833, 200);
             this.tbDescription.TabIndex = 3;
-            this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(40, 90);
+            this.label5.Location = new System.Drawing.Point(23, 84);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(63, 13);
             this.label5.TabIndex = 0;
@@ -144,16 +144,15 @@
             // 
             this.tbRegex.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbRegex.Location = new System.Drawing.Point(109, 61);
+            this.tbRegex.Location = new System.Drawing.Point(92, 56);
             this.tbRegex.Name = "tbRegex";
-            this.tbRegex.Size = new System.Drawing.Size(859, 20);
+            this.tbRegex.Size = new System.Drawing.Size(424, 20);
             this.tbRegex.TabIndex = 2;
-            this.tbRegex.TextChanged += new System.EventHandler(this.tbRegex_TextChanged);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(62, 64);
+            this.label4.Location = new System.Drawing.Point(45, 59);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 13);
             this.label4.TabIndex = 0;
@@ -161,16 +160,15 @@
             // 
             // tbConceptName
             // 
-            this.tbConceptName.Location = new System.Drawing.Point(109, 35);
+            this.tbConceptName.Location = new System.Drawing.Point(92, 30);
             this.tbConceptName.Name = "tbConceptName";
             this.tbConceptName.Size = new System.Drawing.Size(309, 20);
             this.tbConceptName.TabIndex = 1;
-            this.tbConceptName.TextChanged += new System.EventHandler(this.tbConceptName_TextChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(22, 38);
+            this.label3.Location = new System.Drawing.Point(5, 33);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(81, 13);
             this.label3.TabIndex = 0;
@@ -178,7 +176,7 @@
             // 
             // tbID
             // 
-            this.tbID.Location = new System.Drawing.Point(109, 9);
+            this.tbID.Location = new System.Drawing.Point(92, 4);
             this.tbID.Name = "tbID";
             this.tbID.ReadOnly = true;
             this.tbID.Size = new System.Drawing.Size(100, 20);
@@ -187,41 +185,42 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(82, 12);
+            this.label2.Location = new System.Drawing.Point(65, 7);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(21, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "ID:";
             // 
-            // objectSaverButton1
+            // panel1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(109, 312);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
-            this.objectSaverButton1.TabIndex = 11;
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.gbTesting);
+            this.panel1.Controls.Add(this.tbRegex);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.tbDescription);
+            this.panel1.Controls.Add(this.tbConceptName);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.tbID);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(928, 555);
+            this.panel1.TabIndex = 11;
             // 
             // StandardRegexUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.objectSaverButton1);
-            this.Controls.Add(this.gbTesting);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbID);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.tbDescription);
-            this.Controls.Add(this.tbConceptName);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.tbRegex);
+            this.Controls.Add(this.panel1);
             this.Name = "StandardRegexUI";
-            this.Size = new System.Drawing.Size(1009, 620);
+            this.Size = new System.Drawing.Size(928, 555);
             this.gbTesting.ResumeLayout(false);
             this.gbTesting.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -242,6 +241,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbTesting;
         private System.Windows.Forms.GroupBox gbTesting;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private System.Windows.Forms.Panel panel1;
+        
     }
 }

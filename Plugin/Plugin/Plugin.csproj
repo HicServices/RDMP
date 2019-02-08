@@ -152,6 +152,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="nuget-dev-push.config" />
     <None Include="Plugin.build">
       <SubType>Designer</SubType>

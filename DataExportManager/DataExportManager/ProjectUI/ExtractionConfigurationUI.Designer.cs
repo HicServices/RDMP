@@ -40,23 +40,24 @@ namespace DataExportManager.ProjectUI
             this.label6 = new System.Windows.Forms.Label();
             this.pChooseExtractionPipeline = new System.Windows.Forms.Panel();
             this.gbCohortRefreshing = new System.Windows.Forms.GroupBox();
-            this.ragSmiley1Refresh = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1Refresh = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.pChooseCohortRefreshPipeline = new System.Windows.Forms.Panel();
             this.btnClearCic = new System.Windows.Forms.Button();
             this.pbCic = new System.Windows.Forms.PictureBox();
             this.cbxCohortIdentificationConfiguration = new ReusableUIComponents.SuggestComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.label2 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.gbCohortRefreshing.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCic)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(137, 9);
+            this.label4.Location = new System.Drawing.Point(133, 9);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(58, 13);
             this.label4.TabIndex = 6;
@@ -64,7 +65,7 @@ namespace DataExportManager.ProjectUI
             // 
             // tbUsername
             // 
-            this.tbUsername.Location = new System.Drawing.Point(201, 6);
+            this.tbUsername.Location = new System.Drawing.Point(197, 6);
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.ReadOnly = true;
             this.tbUsername.Size = new System.Drawing.Size(158, 20);
@@ -72,7 +73,7 @@ namespace DataExportManager.ProjectUI
             // 
             // tbCreated
             // 
-            this.tbCreated.Location = new System.Drawing.Point(412, 5);
+            this.tbCreated.Location = new System.Drawing.Point(408, 5);
             this.tbCreated.Name = "tbCreated";
             this.tbCreated.ReadOnly = true;
             this.tbCreated.Size = new System.Drawing.Size(158, 20);
@@ -81,7 +82,7 @@ namespace DataExportManager.ProjectUI
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(364, 8);
+            this.label5.Location = new System.Drawing.Point(360, 8);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(47, 13);
             this.label5.TabIndex = 8;
@@ -90,7 +91,7 @@ namespace DataExportManager.ProjectUI
             // tcRelease
             // 
             this.tcRelease.AutoSize = true;
-            this.tcRelease.Location = new System.Drawing.Point(317, 42);
+            this.tcRelease.Location = new System.Drawing.Point(313, 42);
             this.tcRelease.Name = "tcRelease";
             this.tcRelease.Size = new System.Drawing.Size(300, 52);
             this.tcRelease.TabIndex = 46;
@@ -99,16 +100,15 @@ namespace DataExportManager.ProjectUI
             // tcRequest
             // 
             this.tcRequest.AutoSize = true;
-            this.tcRequest.Location = new System.Drawing.Point(11, 42);
+            this.tcRequest.Location = new System.Drawing.Point(7, 42);
             this.tcRequest.Name = "tcRequest";
             this.tcRequest.Size = new System.Drawing.Size(300, 52);
             this.tcRequest.TabIndex = 46;
             this.tcRequest.TicketText = "";
-            this.tcRequest.Load += new System.EventHandler(this.tcRequest_Load);
             // 
             // tbID
             // 
-            this.tbID.Location = new System.Drawing.Point(35, 6);
+            this.tbID.Location = new System.Drawing.Point(31, 6);
             this.tbID.Name = "tbID";
             this.tbID.ReadOnly = true;
             this.tbID.Size = new System.Drawing.Size(96, 20);
@@ -117,7 +117,7 @@ namespace DataExportManager.ProjectUI
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 9);
+            this.label6.Location = new System.Drawing.Point(4, 9);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(21, 13);
             this.label6.TabIndex = 47;
@@ -125,7 +125,7 @@ namespace DataExportManager.ProjectUI
             // 
             // pChooseExtractionPipeline
             // 
-            this.pChooseExtractionPipeline.Location = new System.Drawing.Point(11, 360);
+            this.pChooseExtractionPipeline.Location = new System.Drawing.Point(7, 360);
             this.pChooseExtractionPipeline.Name = "pChooseExtractionPipeline";
             this.pChooseExtractionPipeline.Size = new System.Drawing.Size(826, 37);
             this.pChooseExtractionPipeline.TabIndex = 49;
@@ -138,7 +138,7 @@ namespace DataExportManager.ProjectUI
             this.gbCohortRefreshing.Controls.Add(this.pbCic);
             this.gbCohortRefreshing.Controls.Add(this.cbxCohortIdentificationConfiguration);
             this.gbCohortRefreshing.Controls.Add(this.label1);
-            this.gbCohortRefreshing.Location = new System.Drawing.Point(11, 250);
+            this.gbCohortRefreshing.Location = new System.Drawing.Point(7, 250);
             this.gbCohortRefreshing.Name = "gbCohortRefreshing";
             this.gbCohortRefreshing.Size = new System.Drawing.Size(743, 104);
             this.gbCohortRefreshing.TabIndex = 50;
@@ -207,18 +207,10 @@ namespace DataExportManager.ProjectUI
             this.label1.TabIndex = 0;
             this.label1.Text = "Cohort Identification Configuration (Query):";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(6, 221);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(75, 26);
-            this.objectSaverButton1.TabIndex = 51;
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 97);
+            this.label2.Location = new System.Drawing.Point(2, 97);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 13);
             this.label2.TabIndex = 52;
@@ -226,39 +218,46 @@ namespace DataExportManager.ProjectUI
             // 
             // tbDescription
             // 
-            this.tbDescription.Location = new System.Drawing.Point(10, 113);
+            this.tbDescription.Location = new System.Drawing.Point(6, 113);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
             this.tbDescription.Size = new System.Drawing.Size(744, 105);
             this.tbDescription.TabIndex = 53;
-            this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.tbDescription);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.tbUsername);
+            this.panel1.Controls.Add(this.gbCohortRefreshing);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.pChooseExtractionPipeline);
+            this.panel1.Controls.Add(this.tbCreated);
+            this.panel1.Controls.Add(this.tbID);
+            this.panel1.Controls.Add(this.tcRequest);
+            this.panel1.Controls.Add(this.tcRelease);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(852, 492);
+            this.panel1.TabIndex = 54;
             // 
             // ExtractionConfigurationUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.Controls.Add(this.tbDescription);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.objectSaverButton1);
-            this.Controls.Add(this.gbCohortRefreshing);
-            this.Controls.Add(this.pChooseExtractionPipeline);
-            this.Controls.Add(this.tbID);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.tcRelease);
-            this.Controls.Add(this.tcRequest);
-            this.Controls.Add(this.tbCreated);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.tbUsername);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.panel1);
             this.Name = "ExtractionConfigurationUI";
-            this.Size = new System.Drawing.Size(1162, 834);
-            this.Load += new System.EventHandler(this.ExtractionConfigurationUI_Load);
+            this.Size = new System.Drawing.Size(852, 492);
             this.gbCohortRefreshing.ResumeLayout(false);
             this.gbCohortRefreshing.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCic)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -279,9 +278,9 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnClearCic;
         private System.Windows.Forms.Panel pChooseCohortRefreshPipeline;
-        private CatalogueManager.SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbDescription;
-        private ReusableUIComponents.RAGSmiley ragSmiley1Refresh;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1Refresh;
+        private System.Windows.Forms.Panel panel1;
     }
 }

@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System.ComponentModel.Composition;
 using System.Drawing;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
@@ -28,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return CatalogueIcons.ExecuteArrow;
+            return iconProvider.GetImage(RDMPConcept.LoadMetadata);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -39,14 +45,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
 
         public override string GetCommandHelp()
         {
-            return "This will take you to the Data Load Configurations list and allow you to Edit the Load (change which modules execute, which Catalogues are loaded etc)." +
-                   "\r\n" +
-                   "You must choose a Load from the list before proceeding.";
+            return "Run the data load configuration through RAW=>STAGING=>LIVE";
         }
 
         public override string GetCommandName()
         {
-            return "Execute Data Load Configuration";
+            return "Execute Load";
         }
 
         public override void Execute()

@@ -1,12 +1,14 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Checks
@@ -22,9 +24,21 @@ namespace DataExportLibrary.Checks
         IExtractionConfiguration[] _extractionConfigurations;
         private DirectoryInfo _projectDirectory;
 
+        /// <summary>
+        /// True to fetch all <see cref="IExtractionConfiguration"/> and check with <see cref="ExtractionConfigurationChecker"/>
+        /// </summary>
         public bool CheckConfigurations { get; set; }
+
+        /// <summary>
+        /// True to fetch all <see cref="ISelectedDataSets"/> and check with <see cref="SelectedDataSetsChecker"/>
+        /// </summary>
         public bool CheckDatasets { get; set; }
 
+        /// <summary>
+        /// Sets up the class to check the state of the <paramref name="project"/>
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <param name="project"></param>
         public ProjectChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project)
         {
             _repositoryLocator = repositoryLocator;
@@ -33,6 +47,11 @@ namespace DataExportLibrary.Checks
             CheckConfigurations = true;
         }
 
+        /// <summary>
+        /// Checks the <see cref="IProject"/> has a valid <see cref="IProject.ExtractionDirectory"/>, <see cref="IProject.ProjectNumber"/> etc and runs additional 
+        /// checkers (See <see cref="CheckConfigurations"/> and <see cref="CheckDatasets"/>).
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("About to check project " + _project.Name + " (ID="+_project.ID+")", CheckResult.Success));

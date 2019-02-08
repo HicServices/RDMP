@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -6,6 +12,8 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.MainFormUITabs;
+using CatalogueManager.Menus.MenuItems;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DatabaseManagement.Operations;
@@ -50,8 +58,6 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
     /// </summary>
     public partial class PreLoadDiscardedColumnUI : PreLoadDiscardedColumnUI_Design, ISaveableUI
     {
-        private PreLoadDiscardedColumn _preLoadDiscardedColumn;
-        
         public PreLoadDiscardedColumnUI()
         {
             InitializeComponent();
@@ -62,59 +68,21 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
         public override void SetDatabaseObject(IActivateItems activator, PreLoadDiscardedColumn databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-
-            _preLoadDiscardedColumn = databaseObject;
-
-            tbID.Text = _preLoadDiscardedColumn.ID.ToString();
-            tbRuntimeColumnName.Text = _preLoadDiscardedColumn.RuntimeColumnName;
-            tbSqlDataType.Text = _preLoadDiscardedColumn.SqlDataType;
-            ddDestination.SelectedItem = _preLoadDiscardedColumn.Destination;
-
-            objectSaverButton1.SetupFor(_preLoadDiscardedColumn,activator.RefreshBus);
-        }
-
-        private void ddDestination_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_preLoadDiscardedColumn == null)
-                return;
-
-           _preLoadDiscardedColumn.Destination = (DiscardedColumnDestination) ddDestination.SelectedItem;
-        }
-
-        private void tbRuntimeColumnName_TextChanged(object sender, EventArgs e)
-        {
-           _preLoadDiscardedColumn.RuntimeColumnName = tbRuntimeColumnName.Text;
-        }
-        
-        private void tbSqlDataType_TextChanged(object sender, EventArgs e)
-        {
-            _preLoadDiscardedColumn.SqlDataType = tbSqlDataType.Text;
-        }
-
-        private void RunChecks()
-        {
-            IdentifierDumper dumper;
-            try
-            {
-                dumper = new IdentifierDumper((TableInfo) _preLoadDiscardedColumn.TableInfo);
-            }
-            catch (Exception e)
-            {
-                checksUI1.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
-                return;
-            }
             
-            checksUI1.StartChecking(dumper);
+            AddChecks(databaseObject);
+            StartChecking();
+
+            AddToMenu(new SetDumpServerMenuItem(_activator, databaseObject.TableInfo));
         }
 
-        private void btnCheck_Click(object sender, EventArgs e)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, PreLoadDiscardedColumn databaseObject)
         {
-            RunChecks();
-        }
+            base.SetBindings(rules, databaseObject);
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
+            Bind(tbID,"Text", "ID",p=>p.ID);
+            Bind(tbRuntimeColumnName,"Text","RuntimeColumnName",p=>p.RuntimeColumnName);
+            Bind(tbSqlDataType,"Text","SqlDataType", p=>p.SqlDataType);
+            Bind(ddDestination,"SelectedItem", "Destination",p=>p.Destination);
         }
     }
 

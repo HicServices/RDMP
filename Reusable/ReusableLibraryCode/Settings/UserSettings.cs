@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using Plugin.Settings.Abstractions;
 
@@ -68,6 +74,12 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("DataExportConnectionString", value); }
         }
 
+        public static string Theme
+        {
+            get { return AppSettings.GetValueOrDefault("Theme", "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme"); }
+            set { AppSettings.AddOrUpdateValue("Theme", value); }
+        }
+
         #region Catalogue flag visibility settings
         public static bool ShowInternalCatalogues
         {
@@ -100,7 +112,55 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("UseCaching", false); }
             set { AppSettings.AddOrUpdateValue("UseCaching", value); }
         }
-        
+
+        public static bool ShowColumnProjectNumber
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnProjectNumber", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnProjectNumber", value); }
+        }
+
+        public static bool ShowColumnCohortSource
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnCohortSource", false); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnCohortSource", value); }
+        }
+
+        public static bool ShowColumnCohortVersion
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnCohortVersion", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnCohortVersion", value); }
+        }
+
+        public static bool ShowColumnFavourite
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnFavourite", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnFavourite", value); }
+        }
+
+        public static bool ShowColumnCheck
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnCheck", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnCheck", value); }
+        }
+
+        public static bool ShowColumnFilters
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnFilters", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnFilters", value); }
+        }
+
+        public static bool ShowColumnDataType
+        {
+            get { return AppSettings.GetValueOrDefault("ShowColumnDataType", true); }
+            set { AppSettings.AddOrUpdateValue("ShowColumnDataType", value); }
+        }
+
+        public static bool ApplyThemeToMenus
+        {
+            get { return AppSettings.GetValueOrDefault("ApplyThemeToMenus", true); }
+            set { AppSettings.AddOrUpdateValue("ApplyThemeToMenus", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

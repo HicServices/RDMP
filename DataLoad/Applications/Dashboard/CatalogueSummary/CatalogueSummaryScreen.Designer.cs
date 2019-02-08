@@ -48,11 +48,9 @@ namespace Dashboard.CatalogueSummary
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -63,8 +61,8 @@ namespace Dashboard.CatalogueSummary
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer1.Size = new System.Drawing.Size(1028, 536);
-            this.splitContainer1.SplitterDistance = 227;
+            this.splitContainer1.Size = new System.Drawing.Size(1034, 552);
+            this.splitContainer1.SplitterDistance = 233;
             this.splitContainer1.TabIndex = 3;
             // 
             // timePeriodicityChart1
@@ -72,7 +70,7 @@ namespace Dashboard.CatalogueSummary
             this.timePeriodicityChart1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.timePeriodicityChart1.Location = new System.Drawing.Point(0, 0);
             this.timePeriodicityChart1.Name = "timePeriodicityChart1";
-            this.timePeriodicityChart1.Size = new System.Drawing.Size(1024, 223);
+            this.timePeriodicityChart1.Size = new System.Drawing.Size(1030, 229);
             this.timePeriodicityChart1.TabIndex = 0;
             // 
             // splitContainer3
@@ -88,7 +86,7 @@ namespace Dashboard.CatalogueSummary
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.columnStatesChart1);
-            this.splitContainer3.Size = new System.Drawing.Size(1024, 301);
+            this.splitContainer3.Size = new System.Drawing.Size(1030, 311);
             this.splitContainer3.SplitterDistance = 163;
             this.splitContainer3.TabIndex = 1;
             // 
@@ -97,7 +95,7 @@ namespace Dashboard.CatalogueSummary
             this.dqePivotCategorySelector1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dqePivotCategorySelector1.Location = new System.Drawing.Point(0, 0);
             this.dqePivotCategorySelector1.Name = "dqePivotCategorySelector1";
-            this.dqePivotCategorySelector1.Size = new System.Drawing.Size(163, 301);
+            this.dqePivotCategorySelector1.Size = new System.Drawing.Size(163, 311);
             this.dqePivotCategorySelector1.TabIndex = 0;
             // 
             // columnStatesChart1
@@ -105,17 +103,16 @@ namespace Dashboard.CatalogueSummary
             this.columnStatesChart1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.columnStatesChart1.Location = new System.Drawing.Point(0, 0);
             this.columnStatesChart1.Name = "columnStatesChart1";
-            this.columnStatesChart1.Size = new System.Drawing.Size(857, 301);
+            this.columnStatesChart1.Size = new System.Drawing.Size(863, 311);
             this.columnStatesChart1.TabIndex = 2;
             // 
             // evaluationTrackBar1
             // 
-            this.evaluationTrackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.evaluationTrackBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.evaluationTrackBar1.Evaluations = null;
-            this.evaluationTrackBar1.Location = new System.Drawing.Point(8, 545);
+            this.evaluationTrackBar1.Location = new System.Drawing.Point(0, 552);
             this.evaluationTrackBar1.Name = "evaluationTrackBar1";
-            this.evaluationTrackBar1.Size = new System.Drawing.Size(1017, 71);
+            this.evaluationTrackBar1.Size = new System.Drawing.Size(1034, 71);
             this.evaluationTrackBar1.TabIndex = 4;
             this.evaluationTrackBar1.EvaluationSelected += new Dashboard.CatalogueSummary.DataQualityReporting.SubComponents.EvaluationSelectedHandler(this.evaluationTrackBar1_EvaluationSelected);
             // 
@@ -123,8 +120,8 @@ namespace Dashboard.CatalogueSummary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.evaluationTrackBar1);
             this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.evaluationTrackBar1);
             this.Name = "CatalogueSummaryScreen";
             this.Size = new System.Drawing.Size(1034, 623);
             this.splitContainer1.Panel1.ResumeLayout(false);

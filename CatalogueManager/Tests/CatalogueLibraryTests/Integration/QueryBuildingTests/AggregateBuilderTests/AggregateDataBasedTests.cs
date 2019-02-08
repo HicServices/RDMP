@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Data;
 using System.Linq;
 using CatalogueLibrary;
@@ -9,13 +15,14 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
 using DataLoadEngine.DataFlowPipeline.Destinations;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
+using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax.Aggregation;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -167,7 +174,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         //[TestCase(DatabaseType.Oracle)]// doesn't quite work yet :) needs full implementation of database abstraction layer for Oracle to work
         public void Count_CorrectNumberOfRowsCalculated(DatabaseType type)
         {
@@ -191,7 +198,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_CategoryWithCount_Correct(DatabaseType type)
         {
             Catalogue catalogue;
@@ -224,7 +231,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_CategoryWithSum_Correct(DatabaseType type)
         {
             Catalogue catalogue;
@@ -260,7 +267,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_CategoryWithSum_WHEREStatement(DatabaseType type)
         {
             Catalogue catalogue;
@@ -300,7 +307,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         }
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_AxisWithSum_Correct(DatabaseType type)
         {
             Catalogue catalogue;
@@ -343,7 +350,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         }
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_AxisWithCount_HAVING(DatabaseType type)
         {
             Catalogue catalogue;
@@ -389,7 +396,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_AxisWithCount_WHERECorrect(DatabaseType type)
         {
             Catalogue catalogue;
@@ -429,7 +436,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_Correct(DatabaseType type)
         {
             Catalogue catalogue;
@@ -484,7 +491,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_WHEREStatement(DatabaseType type)
         {
             Catalogue catalogue;
@@ -544,7 +551,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         /// <param name="type"></param>
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_Top2BasedonCountColumnDesc(DatabaseType type)
         {
             Catalogue catalogue;
@@ -605,7 +612,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         /// <param name="type"></param>
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_Top2AlphabeticalAsc_WHEREStatement(DatabaseType type)
         {
             Catalogue catalogue;
@@ -669,7 +676,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         /// <param name="type"></param>
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_HAVING_Top1_WHERE(DatabaseType type)
         {
             Catalogue catalogue;

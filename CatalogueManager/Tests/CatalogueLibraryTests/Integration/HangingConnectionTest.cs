@@ -1,12 +1,18 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FAnsi.Discovery;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -24,7 +30,7 @@ namespace CatalogueLibraryTests.Integration
         {
             //drop it if it existed
             if (DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName).Exists())
-                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName).ForceDrop();
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName).Drop();
             
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(testDbName);
             Thread.Sleep(500);
@@ -56,7 +62,7 @@ namespace CatalogueLibraryTests.Integration
                 Assert.Throws<Exception>(ThrowIfDatabaseLock);//despite us closing the connection and using the 'using' block .net still keeps a connection in sleep state to the server ><
             }
             
-            db.ForceDrop();
+            db.Drop();
         }
 
         void ThrowIfDatabaseLock()

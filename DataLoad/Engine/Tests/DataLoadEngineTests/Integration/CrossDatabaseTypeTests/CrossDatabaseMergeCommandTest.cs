@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -11,9 +17,9 @@ using CatalogueLibrary.Triggers.Implementations;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using DataLoadEngine.Migration;
+using FAnsi;
 using HIC.Logging;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
@@ -22,7 +28,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
     public class CrossDatabaseMergeCommandTest:DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestMerge(DatabaseType databaseType)
         {
             var dbFrom = GetCleanedServer(databaseType, "CrossDatabaseMergeCommandFrom");
@@ -88,7 +94,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
 
             var job = new ThrowImmediatelyDataLoadJob();
             job.DataLoadInfo = dli;
-            job.RegularTablesToLoad = new List<TableInfo>(new[]{ti});
+            job.RegularTablesToLoad = new List<ITableInfo>(new[]{ti});
             
             migrationHost.Migrate(job, new GracefulCancellationToken());
             

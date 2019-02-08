@@ -1,16 +1,23 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 
 
@@ -45,67 +52,49 @@ namespace CatalogueManager.SimpleDialogs
         public override void SetDatabaseObject(IActivateItems activator, SupportingDocument databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            SupportingDocument = databaseObject;
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
-        }
-        
-        protected SupportingDocument SupportingDocument
-        {
-            get { return _supportingDocument; }
-            set {
-                _supportingDocument = value;
 
-                //populate various textboxes
-                tbID.Text = "" + value.ID;
-                tbDescription.Text = value.Description;
-                tbName.Text = value.Name;
-                cbExtractable.Checked = value.Extractable;
-                cbIsGlobal.Checked = value.IsGlobal;
-                ticketingControl1.TicketText = value.Ticket;
+            _supportingDocument = databaseObject;
 
-                tbUrl.Text = value.URL != null ? value.URL.AbsoluteUri : "";
-            }
+            //populate various textboxes
+            ticketingControl1.TicketText = _supportingDocument.Ticket;
+            tbUrl.Text = _supportingDocument.URL != null ? _supportingDocument.URL.AbsoluteUri : "";
+
+            AddHelp(cbExtractable, "SupportingDocument.Extractable");
+            AddHelp(cbIsGlobal, "SupportingSqlTable.IsGlobal");
+
         }
 
-        private void tbName_TextChanged(object sender, EventArgs e)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, SupportingDocument databaseObject)
         {
+            base.SetBindings(rules, databaseObject);
 
-            if(string.IsNullOrWhiteSpace(tbName.Text))
-            {
-                tbName.Text = "No Name";
-                tbName.SelectAll();
-            }
-
-             SetStringPropertyOn(tbName, "Name", SupportingDocument);
-            
-        }
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            SetStringPropertyOn(tbDescription, "Description", SupportingDocument);
+            Bind(tbID,"Text", "ID",s=>s.ID);
+            Bind(tbDescription,"Text","Description",s=>s.Description);
+            Bind(tbName,"Text","Name",s=>s.Name);
+            Bind(cbExtractable,"Checked","Extractable", s=>s.Extractable);
+            Bind(cbIsGlobal,"Checked","IsGlobal",s=>s.IsGlobal);
         }
 
         private void tbUrl_TextChanged(object sender, EventArgs e)
         {
-            SetUriPropertyOn(tbUrl, "URL", SupportingDocument);
+            SetUriPropertyOn(tbUrl, "URL", _supportingDocument);
         }
-
-
+        
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            if (SupportingDocument != null)
+            if (_supportingDocument != null)
                 try
                 {
-                    Process.Start(SupportingDocument.URL.ToString());
+                    var f = new FileInfo(_supportingDocument.URL.AbsolutePath);
+                    UsefulStuff.GetInstance().ShowFileInWindowsExplorer(f);
                 }
                 catch (Exception ex)
                 {
 
                     MessageBox.Show("unable to open file:" + ex.Message);
                 }
-                
         }
         
-
         private void SetUriPropertyOn( TextBox tb,string propertyToSet,object toSetOn)
         {
             if (toSetOn != null)
@@ -134,36 +123,6 @@ namespace CatalogueManager.SimpleDialogs
                 }
             }
         }
-
-        private void SetStringPropertyOn(TextBox tb, string property, object toSetOn)
-        {
-            if (toSetOn != null)
-            {
-                PropertyInfo target = toSetOn.GetType().GetProperty(property);
-                FieldInfo targetMaxLength = toSetOn.GetType().GetField(property + "_MaxLength");
-                
-                if (target == null || targetMaxLength == null)
-                    throw new Exception("Could not find property " + property + " or it did not have a specified _MaxLength");
-
-                if (tb.TextLength > (int)targetMaxLength.GetValue(toSetOn))
-                    tb.ForeColor = Color.Red;
-                else
-                {
-                    target.SetValue(toSetOn, tb.Text, null);
-                    tb.ForeColor = Color.Black;
-                }
-            }
-        }
-        private void cbExtractable_CheckedChanged(object sender, EventArgs e)
-        {
-            if (SupportingDocument != null)
-                SupportingDocument.Extractable = cbExtractable.Checked;
-        }
-        private void cbIsGlobal_CheckedChanged(object sender, EventArgs e)
-        {
-            if (SupportingDocument != null)
-                SupportingDocument.IsGlobal = cbIsGlobal.Checked;
-        }
         
         void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
         {
@@ -179,10 +138,6 @@ namespace CatalogueManager.SimpleDialogs
                 tbUrl.Text = ofd.FileName;
         }
 
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingDocumentUI_Design, UserControl>))]

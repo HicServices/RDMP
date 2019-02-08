@@ -1,4 +1,10 @@
-﻿using System.Data.SqlClient;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System.Data.SqlClient;
 using CatalogueLibrary.Repositories;
 using CommandLine;
 using RDMPAutomationService.Properties;
@@ -29,7 +35,7 @@ namespace RDMPAutomationService.Options.Abstracts
         [Option(Required = false, HelpText = "Full connection string to the DataExport database, this overrides DataExportDatabaseName and allows custom ports, username/password etc")]
         public string DataExportConnectionString { get; set; }
         
-        [Value(0, HelpText = @"Command to run on the engine: 'run' or 'check' ", Required = true)]
+        [Option(Required = true, HelpText = @"Command to run on the engine: 'run' or 'check' ")]
         public CommandLineActivity Command { get; set; }
 
         [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]

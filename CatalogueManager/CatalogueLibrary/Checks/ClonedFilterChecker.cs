@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
@@ -55,13 +61,16 @@ namespace CatalogueLibrary.Checks
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     "Catalogue reports that the original filter we were cloned from " +
-                    (exist ? " still exists " : " no longer exists"), exist ? CheckResult.Success : CheckResult.Fail));
+                    (exist ? " still exists " : " no longer exists"), exist ? CheckResult.Success : CheckResult.Warning));
 
             //it hasn't been nuked
             if (exist)
             {
                 //get it
                 var parent = _catalogueDatabaseRepository.GetObjectByID<ExtractionFilter>((int) _allegedParent);
+
+                if (string.IsNullOrWhiteSpace(parent.WhereSQL) || string.IsNullOrWhiteSpace(_child.WhereSQL))
+                    return;
 
                 //see if someone has been monkeying with the parent (or the child) in which case warn them about the disparity
                 if (parent.WhereSQL.Equals(_child.WhereSQL))

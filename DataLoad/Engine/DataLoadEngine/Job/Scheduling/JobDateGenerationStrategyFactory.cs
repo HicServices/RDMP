@@ -1,21 +1,14 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using CachingEngine.Factories;
 using CachingEngine.Layouts;
-using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.DataProvider;
-using DataLoadEngine.DataProvider.FromCache;
-using DataLoadEngine.Job.Scheduling.Exceptions;
-using DataLoadEngine.LoadExecution.Components.Arguments;
-using DataLoadEngine.LoadExecution.Components.Runtime;
-using DataLoadEngine.LoadExecution;
+using DataLoadEngine.Factories;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
 using ReusableLibraryCode.Progress;
 
@@ -48,56 +41,13 @@ namespace DataLoadEngine.Job.Scheduling
                 return new SingleScheduleConsecutiveDateStrategy(loadProgress);
 
             var loadMetadata = loadProgress.LoadMetadata;
-            
+
+            var factory = new CacheLayoutFactory();
+
             if (_typeToCreate == typeof(SingleScheduleCacheDateTrackingStrategy))
-                return new SingleScheduleCacheDateTrackingStrategy(CreateCacheLayout(loadProgress, loadMetadata, listener), loadProgress,listener);
+                return new SingleScheduleCacheDateTrackingStrategy(factory.CreateCacheLayout(loadProgress, loadMetadata), loadProgress,listener);
 
             throw new Exception("Factory has been configured to supply an unknown type");
-        }
-
-        private ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata, IDataLoadEventListener listener)
-        {
-            AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks);
-
-            var cp = loadProgress.CacheProgress;
-
-            var factory = new CachingPipelineUseCase(cp);
-            var destination = factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());
-            
-            return destination.CreateCacheLayout();
-        }
-
-        private void AssertThatThereIsACacheDataProvider(ILoadMetadata metadata, IEnumerable<IProcessTask> processTasks)
-        {
-            const string whatWeExpected = @"(we expected one that was a MEF class implementing ICachedDataProvider since you are trying to execute a cache based data load)";
-
-            List<ProcessTask> incompatibleProviders = new List<ProcessTask>();
-            List<ProcessTask> compatibleProviders = new List<ProcessTask>();
-
-            
-            foreach (ProcessTask task in processTasks)
-            {
-                //it's not a DataProvider
-                if(!task.ProcessTaskType.Equals(ProcessTaskType.DataProvider))
-                    continue;
-
-                var type = ((CatalogueRepository) task.Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(task.Path);
-
-                if (typeof (ICachedDataProvider).IsAssignableFrom(type))
-                    compatibleProviders.Add(task);
-                else
-                    incompatibleProviders.Add(task);
-            }
-            
-            if (!incompatibleProviders.Any() && !compatibleProviders.Any())
-                throw new CacheDataProviderFindingException("LoadMetadata " + metadata + " does not have ANY process tasks of type ProcessTaskType.DataProvider " + whatWeExpected);
-
-            if(!compatibleProviders.Any())
-                throw new CacheDataProviderFindingException("LoadMetadata " + metadata + " has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider " + whatWeExpected + " FYI the data providers in your load wrap the following classes:" + string.Join(",",incompatibleProviders.Select(t=>t.Path)));
-
-            if(compatibleProviders.Count > 1)
-                throw new CacheDataProviderFindingException("LoadMetadata " + metadata + " has multiple cache DataProviders tasks (" + string.Join(",",compatibleProviders.Select(p=>p.ToString())) + "), you are only allowed 1");
-
         }
     }
 }

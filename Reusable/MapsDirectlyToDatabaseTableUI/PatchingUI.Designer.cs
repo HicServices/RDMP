@@ -69,6 +69,7 @@
             // 
             // checksUI1
             // 
+            this.checksUI1.AllowsYesNoToAll = true;
             this.checksUI1.Location = new System.Drawing.Point(12, 168);
             this.checksUI1.Name = "checksUI1";
             this.checksUI1.Size = new System.Drawing.Size(1271, 442);
@@ -78,9 +79,9 @@
             // 
             this.btnAttemptPatching.Location = new System.Drawing.Point(15, 139);
             this.btnAttemptPatching.Name = "btnAttemptPatching";
-            this.btnAttemptPatching.Size = new System.Drawing.Size(181, 23);
+            this.btnAttemptPatching.Size = new System.Drawing.Size(96, 23);
             this.btnAttemptPatching.TabIndex = 5;
-            this.btnAttemptPatching.Text = "List Problems And Attempt Fixes";
+            this.btnAttemptPatching.Text = "Apply Patch";
             this.btnAttemptPatching.UseVisualStyleBackColor = true;
             this.btnAttemptPatching.Click += new System.EventHandler(this.btnAttemptPatching_Click);
             // 

@@ -1,17 +1,17 @@
-using System.Collections.Generic;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.LinkCreators;
-using MapsDirectlyToDatabaseTable;
 
 namespace DataExportManager.ProjectUI.Graphs
 {
-    public class ExtractionAggregateGraphObjectCollection : IPersistableObjectCollection
+    public class ExtractionAggregateGraphObjectCollection : PersistableObjectCollection
     {
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
-
         public SelectedDataSets SelectedDataSets { get { return (SelectedDataSets) DatabaseObjects[0]; }}
         public AggregateConfiguration Graph { get { return (AggregateConfiguration) DatabaseObjects[1]; }}
 
@@ -20,8 +20,7 @@ namespace DataExportManager.ProjectUI.Graphs
         /// </summary>
         public ExtractionAggregateGraphObjectCollection()
         {
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
+
         }
 
         /// <summary>
@@ -33,16 +32,6 @@ namespace DataExportManager.ProjectUI.Graphs
         {
             DatabaseObjects.Add(selectedDataSet);
             DatabaseObjects.Add(graph);
-        }
-        
-        public string SaveExtraText()
-        {
-            return "";//no extra data required
-        }
-
-        public void LoadExtraText(string s)
-        {
-            //no action required
         }
     }
 }

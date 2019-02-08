@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +16,7 @@ using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Settings;
 
 
@@ -85,6 +92,18 @@ namespace MapsDirectlyToDatabaseTableUI
             olvObjects.RebuildColumns();
             
             MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>();
+
+            olvSelected.GroupWithItemCountFormat = "{0} ({1} objects)";
+            olvSelected.GroupWithItemCountSingularFormat = "{0} (1 objects)";
+            olvSelected.GroupKeyGetter += GroupKeyGetter;
+        }
+
+        private object GroupKeyGetter(object rowObject)
+        {
+            if (MultiSelected == null)
+                return false;
+
+            return MultiSelected.Contains(rowObject)? "Selected": "Not Selected";
         }
 
         private bool buildGroupsRequired = false;
@@ -116,8 +135,6 @@ namespace MapsDirectlyToDatabaseTableUI
         {
             var types = mapsDirectlyToDatabaseTables.Select(m => m.GetType()).Distinct().ToArray();
 
-            bool addedColumns = false;
-
             //objects are not homogeneous
             if (types.Length == 1)
             {
@@ -131,7 +148,6 @@ namespace MapsDirectlyToDatabaseTableUI
                         //add a column
                         var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
                         olvObjects.AllColumns.Add(newCol);
-                        addedColumns = true;
                     }
                 }
             }
@@ -141,11 +157,7 @@ namespace MapsDirectlyToDatabaseTableUI
                 var newCol = new OLVColumn( "Type",null);
                 newCol.AspectGetter += TypeAspectGetter;
                 olvObjects.AllColumns.Add(newCol);
-                addedColumns = true;
             }
-
-            if (addedColumns)
-                olvObjects.RebuildColumns();
         }
 
         private object TypeAspectGetter(object rowObject)
@@ -168,7 +180,7 @@ namespace MapsDirectlyToDatabaseTableUI
                     olvObjects.ShowGroups = true;
                     olvObjects.AlwaysGroupByColumn = olvSelected;
                     olvObjects.AlwaysGroupBySortOrder = SortOrder.Descending;
-                    
+                    olvObjects.ShowItemCountOnGroups = true;   
                 }
                 else
                 {

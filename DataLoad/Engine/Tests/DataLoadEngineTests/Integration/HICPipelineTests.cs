@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +15,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngine.Job;
+using FAnsi.Discovery;
 using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
 using RDMPAutomationService.Options;
@@ -16,7 +23,6 @@ using RDMPAutomationService.Runners;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -126,7 +132,11 @@ namespace DataLoadEngineTests.Integration
                     new Tuple<string, string, Type>("BadDataHandlingStrategy", BadDataHandlingStrategy.ThrowException.ToString(), typeof (BadDataHandlingStrategy)),
                     new Tuple<string, string, Type>("ThrowOnEmptyFiles", "true", typeof (bool)),
                     new Tuple<string, string, Type>("AttemptToResolveNewLinesInRecords", "true", typeof (bool)),
-                    new Tuple<string, string, Type>("MaximumErrorsToReport", "0", typeof (int))
+                    new Tuple<string, string, Type>("MaximumErrorsToReport", "0", typeof (int)),
+                    new Tuple<string, string, Type>("IgnoreColumns", null, typeof (string)),
+                    new Tuple<string, string, Type>("IgnoreBadReads", "false", typeof (bool)),
+                    new Tuple<string, string, Type>("AddFilenameColumnNamed", null, typeof (string)),
+
                 };
                 
 
@@ -186,12 +196,12 @@ namespace DataLoadEngineTests.Integration
                     return;
                 
                 if (DatabaseToLoad.Exists())
-                    DatabaseToLoad.ForceDrop();
+                    DatabaseToLoad.Drop();
 
                 // check if RAW has been created and remove it
                 var raw = _server.ExpectDatabase(DatabaseToLoad.GetRuntimeName() + "_RAW");
                 if (raw.Exists())
-                    raw.ForceDrop();
+                    raw.Drop();
             }
         }
 

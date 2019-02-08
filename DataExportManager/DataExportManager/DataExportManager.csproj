@@ -222,8 +222,37 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FAnsi">
+      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.Oracle">
+      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -231,24 +260,25 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="CohortUI\CohortSourceDiagram.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CohortUI\CohortSourceDiagram.Designer.cs">
-      <DependentUpon>CohortSourceDiagram.cs</DependentUpon>
     </Compile>
     <Compile Include="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
       <SubType>UserControl</SubType>
@@ -352,7 +382,6 @@
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationsNodeMenu.cs" />
     <Compile Include="Menus\ExtractionDirectoryNodeMenu.cs" />
-    <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\ProjectCohortIdentificationConfigurationAssociationsNodeMenu.cs" />
     <Compile Include="Menus\ProjectSavedCohortsNodeMenu.cs" />
     <Compile Include="Menus\SelectedDataSetsMenu.cs" />
@@ -371,9 +400,6 @@
     </Compile>
     <Compile Include="ProjectUI\Datasets\ConfigureDatasetUI.Designer.cs">
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProjectUI\DataGridViewWithBackgroundImage.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="ProjectUI\Datasets\Node\AvailableForceJoinNode.cs" />
     <Compile Include="ProjectUI\DataUsers\DataUserManagement.cs">
@@ -442,9 +468,6 @@
     <Compile Include="Wizard\CreateNewDataExtractionProjectUI.Designer.cs">
       <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="CohortUI\CohortSourceDiagram.resx">
-      <DependentUpon>CohortSourceDiagram.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">
       <DependentUpon>CreateNewCohortDatabaseWizardUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -526,6 +549,9 @@
     <EmbeddedResource Include="Wizard\CreateNewDataExtractionProjectUI.resx">
       <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

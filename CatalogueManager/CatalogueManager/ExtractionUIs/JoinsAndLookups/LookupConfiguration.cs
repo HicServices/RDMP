@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +26,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using Point = System.Drawing.Point;
 
@@ -148,7 +155,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         {
             if(t.IsTableValuedFunction)
             {
-                WideMessageBox.Show("Table '" + t + "' is a TableValuedFunction, you cannot use it as a lookup table");
+                WideMessageBox.Show("Lookup table not valid","Table '" + t + "' is a TableValuedFunction, you cannot use it as a lookup table");
                 return;
             }
 
@@ -328,14 +335,14 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
         private void btnPrimaryKeyCompositeHelp_Click(object sender, EventArgs e)
         {
-            WideMessageBox.Show(
+            WideMessageBox.Show("Lookup help",
 @"Usually you only need one primary key/foreign key relationship e.g. M=Male, F=Female in which z_GenderLookup..Sex is the primary key and Demography..PatientGender is the foreign key.  However sometimes you need additional lookup joins.
 
 For example:
 if the Drug Code 'TIB' is reused in Tayside and Fife healthboard with different meanings then the primary key/foreign key would of the Lookup table would have to be both the 'Code' (TIB) and the 'Prescribing Healthboard' (T or F).
 
 Only define secondary columns if you really need them! if any of the key fields do not match between the Lookup table and the Dataset table then no lookup description will be recorded",
-                                                                                                                                                                                        null, true, null, null,CatalogueIcons.Help, WideMessageBoxTheme.Help);
+                                                                                                                                                                                        null, true, null, WideMessageBoxTheme.Help);
         }
 
         private void olvLookupColumns_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)

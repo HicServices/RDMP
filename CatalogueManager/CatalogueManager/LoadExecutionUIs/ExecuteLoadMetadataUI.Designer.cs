@@ -33,10 +33,6 @@ namespace CatalogueManager.LoadExecutionUIs
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExecuteLoadMetadataUI));
-            this.cbSkipArchiving = new System.Windows.Forms.CheckBox();
-            this.gbDebugOptions = new System.Windows.Forms.GroupBox();
-            this.cbMigrateStagingToLive = new System.Windows.Forms.CheckBox();
-            this.cbMigrateRAWToStaging = new System.Windows.Forms.CheckBox();
             this.ddLoadProgress = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.udDaysPerJob = new System.Windows.Forms.NumericUpDown();
@@ -48,69 +44,13 @@ namespace CatalogueManager.LoadExecutionUIs
             this.cbRunIteratively = new System.Windows.Forms.CheckBox();
             this.cbAbortShouldActuallyCancelInstead = new System.Windows.Forms.CheckBox();
             this.flpControls = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnViewLogs = new System.Windows.Forms.Button();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
-            this.rdmpObjectsRibbonUI1 = new CatalogueManager.ObjectVisualisation.RDMPObjectsRibbonUI();
-            this.btnLoadDiagram = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.gbDebugOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDaysPerJob)).BeginInit();
             this.gbLoadProgresses.SuspendLayout();
             this.flpControls.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // cbSkipArchiving
-            // 
-            this.cbSkipArchiving.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbSkipArchiving.AutoSize = true;
-            this.cbSkipArchiving.Location = new System.Drawing.Point(20, 19);
-            this.cbSkipArchiving.Name = "cbSkipArchiving";
-            this.cbSkipArchiving.Size = new System.Drawing.Size(93, 17);
-            this.cbSkipArchiving.TabIndex = 6;
-            this.cbSkipArchiving.Text = "Skip archiving";
-            this.cbSkipArchiving.UseVisualStyleBackColor = true;
-            // 
-            // gbDebugOptions
-            // 
-            this.gbDebugOptions.Controls.Add(this.cbMigrateStagingToLive);
-            this.gbDebugOptions.Controls.Add(this.cbMigrateRAWToStaging);
-            this.gbDebugOptions.Controls.Add(this.cbSkipArchiving);
-            this.gbDebugOptions.Location = new System.Drawing.Point(537, 3);
-            this.gbDebugOptions.Name = "gbDebugOptions";
-            this.gbDebugOptions.Size = new System.Drawing.Size(166, 90);
-            this.gbDebugOptions.TabIndex = 16;
-            this.gbDebugOptions.TabStop = false;
-            this.gbDebugOptions.Text = "Debug Options";
-            // 
-            // cbMigrateStagingToLive
-            // 
-            this.cbMigrateStagingToLive.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbMigrateStagingToLive.AutoSize = true;
-            this.cbMigrateStagingToLive.Checked = true;
-            this.cbMigrateStagingToLive.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbMigrateStagingToLive.Location = new System.Drawing.Point(20, 65);
-            this.cbMigrateStagingToLive.Name = "cbMigrateStagingToLive";
-            this.cbMigrateStagingToLive.Size = new System.Drawing.Size(135, 17);
-            this.cbMigrateStagingToLive.TabIndex = 10;
-            this.cbMigrateStagingToLive.Text = "Migrate Staging to Live";
-            this.cbMigrateStagingToLive.UseVisualStyleBackColor = true;
-            // 
-            // cbMigrateRAWToStaging
-            // 
-            this.cbMigrateRAWToStaging.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbMigrateRAWToStaging.AutoSize = true;
-            this.cbMigrateRAWToStaging.Checked = true;
-            this.cbMigrateRAWToStaging.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbMigrateRAWToStaging.Location = new System.Drawing.Point(20, 42);
-            this.cbMigrateRAWToStaging.Name = "cbMigrateRAWToStaging";
-            this.cbMigrateRAWToStaging.Size = new System.Drawing.Size(141, 17);
-            this.cbMigrateRAWToStaging.TabIndex = 9;
-            this.cbMigrateRAWToStaging.Text = "Migrate RAW to Staging";
-            this.cbMigrateRAWToStaging.UseVisualStyleBackColor = true;
             // 
             // ddLoadProgress
             // 
@@ -118,16 +58,16 @@ namespace CatalogueManager.LoadExecutionUIs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ddLoadProgress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddLoadProgress.FormattingEnabled = true;
-            this.ddLoadProgress.Location = new System.Drawing.Point(88, 20);
+            this.ddLoadProgress.Location = new System.Drawing.Point(88, 14);
             this.ddLoadProgress.Name = "ddLoadProgress";
-            this.ddLoadProgress.Size = new System.Drawing.Size(291, 21);
+            this.ddLoadProgress.Size = new System.Drawing.Size(327, 21);
             this.ddLoadProgress.TabIndex = 48;
             this.ddLoadProgress.SelectedIndexChanged += new System.EventHandler(this.ddLoadProgress_SelectedIndexChanged);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 23);
+            this.label4.Location = new System.Drawing.Point(3, 19);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 13);
             this.label4.TabIndex = 50;
@@ -135,7 +75,7 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             // udDaysPerJob
             // 
-            this.udDaysPerJob.Location = new System.Drawing.Point(88, 45);
+            this.udDaysPerJob.Location = new System.Drawing.Point(88, 38);
             this.udDaysPerJob.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -153,7 +93,7 @@ namespace CatalogueManager.LoadExecutionUIs
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 47);
+            this.label3.Location = new System.Drawing.Point(6, 40);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 13);
             this.label3.TabIndex = 46;
@@ -170,9 +110,9 @@ namespace CatalogueManager.LoadExecutionUIs
             this.gbLoadProgresses.Controls.Add(this.udDaysPerJob);
             this.gbLoadProgresses.Controls.Add(this.label3);
             this.gbLoadProgresses.Controls.Add(this.label4);
-            this.gbLoadProgresses.Location = new System.Drawing.Point(74, 3);
+            this.gbLoadProgresses.Location = new System.Drawing.Point(3, 3);
             this.gbLoadProgresses.Name = "gbLoadProgresses";
-            this.gbLoadProgresses.Size = new System.Drawing.Size(457, 90);
+            this.gbLoadProgresses.Size = new System.Drawing.Size(457, 62);
             this.gbLoadProgresses.TabIndex = 57;
             this.gbLoadProgresses.TabStop = false;
             this.gbLoadProgresses.Text = "Progressable To Execute";
@@ -181,7 +121,7 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             this.btnRefreshLoadProgresses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshLoadProgresses.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshLoadProgresses.Image")));
-            this.btnRefreshLoadProgresses.Location = new System.Drawing.Point(421, 18);
+            this.btnRefreshLoadProgresses.Location = new System.Drawing.Point(418, 13);
             this.btnRefreshLoadProgresses.Name = "btnRefreshLoadProgresses";
             this.btnRefreshLoadProgresses.Size = new System.Drawing.Size(30, 23);
             this.btnRefreshLoadProgresses.TabIndex = 59;
@@ -191,7 +131,7 @@ namespace CatalogueManager.LoadExecutionUIs
             // helpIconAbortShouldCancel
             // 
             this.helpIconAbortShouldCancel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIconAbortShouldCancel.BackgroundImage")));
-            this.helpIconAbortShouldCancel.Location = new System.Drawing.Point(281, 66);
+            this.helpIconAbortShouldCancel.Location = new System.Drawing.Point(422, 36);
             this.helpIconAbortShouldCancel.Name = "helpIconAbortShouldCancel";
             this.helpIconAbortShouldCancel.Size = new System.Drawing.Size(19, 19);
             this.helpIconAbortShouldCancel.TabIndex = 52;
@@ -199,17 +139,17 @@ namespace CatalogueManager.LoadExecutionUIs
             // helpIconRunRepeatedly
             // 
             this.helpIconRunRepeatedly.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIconRunRepeatedly.BackgroundImage")));
-            this.helpIconRunRepeatedly.Location = new System.Drawing.Point(104, 67);
+            this.helpIconRunRepeatedly.Location = new System.Drawing.Point(246, 37);
             this.helpIconRunRepeatedly.Name = "helpIconRunRepeatedly";
             this.helpIconRunRepeatedly.Size = new System.Drawing.Size(19, 19);
             this.helpIconRunRepeatedly.TabIndex = 52;
             // 
             // cbRunIteratively
             // 
-            this.cbRunIteratively.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbRunIteratively.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbRunIteratively.AutoSize = true;
-            this.cbRunIteratively.Location = new System.Drawing.Point(6, 68);
+            this.cbRunIteratively.Location = new System.Drawing.Point(148, 39);
             this.cbRunIteratively.Name = "cbRunIteratively";
             this.cbRunIteratively.Size = new System.Drawing.Size(103, 17);
             this.cbRunIteratively.TabIndex = 51;
@@ -219,11 +159,11 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             // cbAbortShouldActuallyCancelInstead
             // 
-            this.cbAbortShouldActuallyCancelInstead.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbAbortShouldActuallyCancelInstead.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbAbortShouldActuallyCancelInstead.AutoSize = true;
             this.cbAbortShouldActuallyCancelInstead.Enabled = false;
-            this.cbAbortShouldActuallyCancelInstead.Location = new System.Drawing.Point(129, 68);
+            this.cbAbortShouldActuallyCancelInstead.Location = new System.Drawing.Point(271, 39);
             this.cbAbortShouldActuallyCancelInstead.Name = "cbAbortShouldActuallyCancelInstead";
             this.cbAbortShouldActuallyCancelInstead.Size = new System.Drawing.Size(152, 17);
             this.cbAbortShouldActuallyCancelInstead.TabIndex = 11;
@@ -234,89 +174,49 @@ namespace CatalogueManager.LoadExecutionUIs
             // 
             this.flpControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.flpControls.Controls.Add(this.panel1);
             this.flpControls.Controls.Add(this.gbLoadProgresses);
-            this.flpControls.Controls.Add(this.gbDebugOptions);
-            this.flpControls.Location = new System.Drawing.Point(195, 25);
+            this.flpControls.Location = new System.Drawing.Point(198, 3);
             this.flpControls.Name = "flpControls";
-            this.flpControls.Size = new System.Drawing.Size(724, 110);
+            this.flpControls.Size = new System.Drawing.Size(721, 70);
             this.flpControls.TabIndex = 59;
             // 
-            // btnViewLogs
+            // panel2
             // 
-            this.btnViewLogs.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.btnViewLogs.Location = new System.Drawing.Point(3, 5);
-            this.btnViewLogs.Name = "btnViewLogs";
-            this.btnViewLogs.Size = new System.Drawing.Size(59, 36);
-            this.btnViewLogs.TabIndex = 58;
-            this.btnViewLogs.Text = "View Logs";
-            this.btnViewLogs.UseVisualStyleBackColor = true;
-            this.btnViewLogs.Click += new System.EventHandler(this.btnViewLogs_Click);
+            this.panel2.Controls.Add(this.flpControls);
+            this.panel2.Controls.Add(this.checkAndExecuteUI1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(922, 733);
+            this.panel2.TabIndex = 60;
             // 
             // checkAndExecuteUI1
             // 
+            this.checkAndExecuteUI1.AllowsYesNoToAll = true;
             this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 22);
+            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 0);
             this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
-            this.checkAndExecuteUI1.Size = new System.Drawing.Size(922, 711);
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(922, 733);
             this.checkAndExecuteUI1.TabIndex = 58;
-            // 
-            // rdmpObjectsRibbonUI1
-            // 
-            this.rdmpObjectsRibbonUI1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.rdmpObjectsRibbonUI1.Location = new System.Drawing.Point(0, 0);
-            this.rdmpObjectsRibbonUI1.Margin = new System.Windows.Forms.Padding(0);
-            this.rdmpObjectsRibbonUI1.Name = "rdmpObjectsRibbonUI1";
-            this.rdmpObjectsRibbonUI1.Size = new System.Drawing.Size(922, 22);
-            this.rdmpObjectsRibbonUI1.TabIndex = 60;
-            // 
-            // btnLoadDiagram
-            // 
-            this.btnLoadDiagram.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.btnLoadDiagram.Location = new System.Drawing.Point(3, 42);
-            this.btnLoadDiagram.Name = "btnLoadDiagram";
-            this.btnLoadDiagram.Size = new System.Drawing.Size(59, 36);
-            this.btnLoadDiagram.TabIndex = 58;
-            this.btnLoadDiagram.Text = "Load Diagram";
-            this.btnLoadDiagram.UseVisualStyleBackColor = true;
-            this.btnLoadDiagram.Click += new System.EventHandler(this.btnLoadDiagram_Click);
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.panel1.Controls.Add(this.btnViewLogs);
-            this.panel1.Controls.Add(this.btnLoadDiagram);
-            this.panel1.Location = new System.Drawing.Point(3, 7);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(65, 82);
-            this.panel1.TabIndex = 59;
             // 
             // ExecuteLoadMetadataUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.flpControls);
-            this.Controls.Add(this.checkAndExecuteUI1);
-            this.Controls.Add(this.rdmpObjectsRibbonUI1);
+            this.Controls.Add(this.panel2);
             this.Name = "ExecuteLoadMetadataUI";
             this.Size = new System.Drawing.Size(922, 733);
-            this.gbDebugOptions.ResumeLayout(false);
-            this.gbDebugOptions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDaysPerJob)).EndInit();
             this.gbLoadProgresses.ResumeLayout(false);
             this.gbLoadProgresses.PerformLayout();
             this.flpControls.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.CheckBox cbSkipArchiving;
-        private System.Windows.Forms.GroupBox gbDebugOptions;
-        private System.Windows.Forms.CheckBox cbMigrateStagingToLive;
-        private System.Windows.Forms.CheckBox cbMigrateRAWToStaging;
         private System.Windows.Forms.ComboBox ddLoadProgress;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown udDaysPerJob;
@@ -329,10 +229,7 @@ namespace CatalogueManager.LoadExecutionUIs
         private System.Windows.Forms.Button btnRefreshLoadProgresses;
         private CheckAndExecuteUI checkAndExecuteUI1;
         private System.Windows.Forms.FlowLayoutPanel flpControls;
-        private ObjectVisualisation.RDMPObjectsRibbonUI rdmpObjectsRibbonUI1;
-        private System.Windows.Forms.Button btnViewLogs;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnLoadDiagram;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

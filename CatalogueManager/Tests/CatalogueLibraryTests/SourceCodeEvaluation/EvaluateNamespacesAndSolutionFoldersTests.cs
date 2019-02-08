@@ -1,5 +1,12 @@
-﻿using System;
+﻿// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -103,6 +110,24 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             var noMappingToDatabaseComments = new AutoCommentsEvaluator();
             noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, csFilesFound);
 
+            var copyrightHeaderEvaluator = new CopyrightHeaderEvaluator();
+            copyrightHeaderEvaluator.FindProblems(csFilesFound);
+
+            //foreach (var file in slndir.EnumerateFiles("*.cs", SearchOption.AllDirectories))
+            //{
+                
+            //    if (file.Name.StartsWith("AssemblyInfo") || file.Name.StartsWith("TemporaryGenerated") || file.Name.EndsWith("Designer.cs"))
+            //        continue;
+
+            //    var line = File.ReadLines(file.FullName).FirstOrDefault();
+            //    if (line != null && line.StartsWith("// Copyright"))
+            //        continue;
+
+
+
+            //    Console.WriteLine(file.FullName);
+            //}
+
         }
 
         private void FindUnreferencedProjectsRescursively(Dictionary<VisualStudioProjectReference, List<string>> projects, DirectoryInfo dir)
@@ -180,6 +205,49 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         {
             Console.WriteLine(s);
             errors.Add(s);
+        }
+    }
+
+    public class CopyrightHeaderEvaluator
+    {
+        public void FindProblems(List<string> csFilesFound)
+        {
+            Dictionary<string, string> suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+
+            foreach (var file in csFilesFound)
+            {
+                if (file.Contains(".Designer.cs"))
+                    continue;
+
+                bool changes = false;
+
+                StringBuilder sbSuggestedText = new StringBuilder();
+
+                var text = File.ReadAllLines(file);
+
+                if (text[0] != @"// Copyright (c) The University of Dundee 2018-2019")
+                {
+                    changes = true;
+                    sbSuggestedText.AppendLine(@"// Copyright (c) The University of Dundee 2018-2019");
+                    sbSuggestedText.AppendLine(@"// This file is part of the Research Data Management Platform (RDMP).");
+                    sbSuggestedText.AppendLine(
+                        @"// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.");
+                    sbSuggestedText.AppendLine(
+                        @"// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.");
+                    sbSuggestedText.AppendLine(@"// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.");
+                    sbSuggestedText.AppendLine();
+                    sbSuggestedText.Append(File.ReadAllText(file));
+                }
+
+                if (changes)
+                    suggestedNewFileContents.Add(file, sbSuggestedText.ToString());
+            }
+
+            Assert.IsEmpty(suggestedNewFileContents);
+
+            //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
+            foreach (KeyValuePair<string, string> suggestedNewFileContent in suggestedNewFileContents)
+                File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
         }
     }
 

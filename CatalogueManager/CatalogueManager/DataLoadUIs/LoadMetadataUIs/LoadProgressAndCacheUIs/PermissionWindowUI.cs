@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -6,6 +12,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
@@ -33,10 +40,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             base.SetDatabaseObject(activator, databaseObject);
             _permissionWindow = databaseObject;
-
-            tbName.Text = _permissionWindow.Name;
-            tbDescription.Text = _permissionWindow.Description;
-
+            
             var periods = _permissionWindow.PermissionWindowPeriods;
             var periodsByDay = new Dictionary<int, List<PermissionWindowPeriod>>();
             foreach (var period in periods)
@@ -51,10 +55,18 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             for (var i = 0; i < 7; ++i)
                 PopulatePeriodTextBoxForDay(textBoxes[i], i, periodsByDay);
 
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
-
+            AddHelp(tbMonday, "IPermissionWindow.PermissionWindowPeriods");
         }
-        
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, PermissionWindow databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbName,"Text","Name",w=>w.Name);
+            Bind(tbDescription, "Text", "Description", w => w.Description);
+            Bind(tbID,"Text","ID",w=>w.ID);
+        }
+
         private void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
         {
             if (periodsByDay.ContainsKey(dayNum)) PopulateTextBox(textBox, periodsByDay[dayNum]);
@@ -99,22 +111,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             _permissionWindow.SetPermissionWindowPeriods(periodList);
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            _permissionWindow.Name = tbName.Text;
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            _permissionWindow.Description = tbDescription.Text;
-        }
-
+        
         private void tbDay_TextChanged(object sender, EventArgs e)
         {
             ragSmiley1.Reset();

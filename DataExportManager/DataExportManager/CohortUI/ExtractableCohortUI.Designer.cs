@@ -33,279 +33,281 @@ namespace DataExportManager.CohortUI
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExtractableCohortUI));
-            this.tbID = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.lblDescription = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tbOverrideReleaseIdentifierSQL = new System.Windows.Forms.TextBox();
-            this.pDescription = new System.Windows.Forms.Panel();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
-            this.tlvCohortUsage = new BrightIdeasSoftware.TreeListView();
-            this.olvUsedIn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.tlvPreviousVersions = new BrightIdeasSoftware.TreeListView();
-            this.olvOtherVersions = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbVersion = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbProjectNumber = new System.Windows.Forms.TextBox();
-            this.btnShowProject = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tbOriginId = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.tlvCohortUsage)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tlvPreviousVersions)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            tbID = new System.Windows.Forms.TextBox();
+            label5 = new System.Windows.Forms.Label();
+            lblDescription = new System.Windows.Forms.Label();
+            label1 = new System.Windows.Forms.Label();
+            tbOverrideReleaseIdentifierSQL = new System.Windows.Forms.TextBox();
+            pDescription = new System.Windows.Forms.Panel();
+            helpIcon1 = new ReusableUIComponents.HelpIcon();
+            tlvCohortUsage = new BrightIdeasSoftware.TreeListView();
+            olvUsedIn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            tlvPreviousVersions = new BrightIdeasSoftware.TreeListView();
+            olvOtherVersions = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            olvVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            label2 = new System.Windows.Forms.Label();
+            tbVersion = new System.Windows.Forms.TextBox();
+            label3 = new System.Windows.Forms.Label();
+            tbProjectNumber = new System.Windows.Forms.TextBox();
+            btnShowProject = new System.Windows.Forms.Button();
+            label4 = new System.Windows.Forms.Label();
+            tbOriginId = new System.Windows.Forms.TextBox();
+            panel1 = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)(tlvCohortUsage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(tlvPreviousVersions)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(splitContainer1)).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbID
             // 
-            this.tbID.Location = new System.Drawing.Point(161, 19);
-            this.tbID.Name = "tbID";
-            this.tbID.ReadOnly = true;
-            this.tbID.Size = new System.Drawing.Size(100, 20);
-            this.tbID.TabIndex = 12;
+            tbID.Location = new System.Drawing.Point(157, 4);
+            tbID.Name = "tbID";
+            tbID.ReadOnly = true;
+            tbID.Size = new System.Drawing.Size(100, 20);
+            tbID.TabIndex = 12;
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(134, 22);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(21, 13);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "ID:";
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(130, 7);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(21, 13);
+            label5.TabIndex = 11;
+            label5.Text = "ID:";
             // 
             // lblDescription
             // 
-            this.lblDescription.AutoSize = true;
-            this.lblDescription.Location = new System.Drawing.Point(100, 123);
-            this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(55, 13);
-            this.lblDescription.TabIndex = 13;
-            this.lblDescription.Text = "Audit Log:";
+            lblDescription.AutoSize = true;
+            lblDescription.Location = new System.Drawing.Point(96, 108);
+            lblDescription.Name = "lblDescription";
+            lblDescription.Size = new System.Drawing.Size(55, 13);
+            lblDescription.TabIndex = 13;
+            lblDescription.Text = "Audit Log:";
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 45);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(150, 13);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "OverrideReleaseIdentifierSQL:";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(1, 30);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(150, 13);
+            label1.TabIndex = 11;
+            label1.Text = "OverrideReleaseIdentifierSQL:";
             // 
             // tbOverrideReleaseIdentifierSQL
             // 
-            this.tbOverrideReleaseIdentifierSQL.Location = new System.Drawing.Point(161, 45);
-            this.tbOverrideReleaseIdentifierSQL.Name = "tbOverrideReleaseIdentifierSQL";
-            this.tbOverrideReleaseIdentifierSQL.Size = new System.Drawing.Size(468, 20);
-            this.tbOverrideReleaseIdentifierSQL.TabIndex = 12;
-            this.tbOverrideReleaseIdentifierSQL.TextChanged += new System.EventHandler(this.tbOverrideReleaseIdentifierSQL_TextChanged);
+            tbOverrideReleaseIdentifierSQL.Location = new System.Drawing.Point(157, 30);
+            tbOverrideReleaseIdentifierSQL.Name = "tbOverrideReleaseIdentifierSQL";
+            tbOverrideReleaseIdentifierSQL.Size = new System.Drawing.Size(468, 20);
+            tbOverrideReleaseIdentifierSQL.TabIndex = 12;
+            tbOverrideReleaseIdentifierSQL.TextChanged += new System.EventHandler(this.tbOverrideReleaseIdentifierSQL_TextChanged);
             // 
             // pDescription
             // 
-            this.pDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            pDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pDescription.Location = new System.Drawing.Point(161, 123);
-            this.pDescription.Name = "pDescription";
-            this.pDescription.Size = new System.Drawing.Size(885, 161);
-            this.pDescription.TabIndex = 15;
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(11, 158);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
-            this.objectSaverButton1.TabIndex = 16;
+            pDescription.Location = new System.Drawing.Point(157, 108);
+            pDescription.Name = "pDescription";
+            pDescription.Size = new System.Drawing.Size(888, 161);
+            pDescription.TabIndex = 15;
             // 
             // helpIcon1
             // 
-            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
-            this.helpIcon1.Location = new System.Drawing.Point(635, 45);
-            this.helpIcon1.Name = "helpIcon1";
-            this.helpIcon1.Size = new System.Drawing.Size(19, 19);
-            this.helpIcon1.TabIndex = 17;
+            helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
+            helpIcon1.Location = new System.Drawing.Point(631, 30);
+            helpIcon1.Name = "helpIcon1";
+            helpIcon1.Size = new System.Drawing.Size(19, 19);
+            helpIcon1.TabIndex = 17;
             // 
             // tlvCohortUsage
             // 
-            this.tlvCohortUsage.AllColumns.Add(this.olvUsedIn);
-            this.tlvCohortUsage.CellEditUseWholeCell = false;
-            this.tlvCohortUsage.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvUsedIn});
-            this.tlvCohortUsage.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvCohortUsage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvCohortUsage.Location = new System.Drawing.Point(0, 0);
-            this.tlvCohortUsage.Name = "tlvCohortUsage";
-            this.tlvCohortUsage.ShowGroups = false;
-            this.tlvCohortUsage.Size = new System.Drawing.Size(542, 276);
-            this.tlvCohortUsage.TabIndex = 18;
-            this.tlvCohortUsage.UseCompatibleStateImageBehavior = false;
-            this.tlvCohortUsage.View = System.Windows.Forms.View.Details;
-            this.tlvCohortUsage.VirtualMode = true;
+            tlvCohortUsage.AllColumns.Add(olvUsedIn);
+            tlvCohortUsage.CellEditUseWholeCell = false;
+            tlvCohortUsage.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            olvUsedIn});
+            tlvCohortUsage.Cursor = System.Windows.Forms.Cursors.Default;
+            tlvCohortUsage.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlvCohortUsage.Location = new System.Drawing.Point(0, 0);
+            tlvCohortUsage.Name = "tlvCohortUsage";
+            tlvCohortUsage.ShowGroups = false;
+            tlvCohortUsage.Size = new System.Drawing.Size(539, 276);
+            tlvCohortUsage.TabIndex = 18;
+            tlvCohortUsage.UseCompatibleStateImageBehavior = false;
+            tlvCohortUsage.View = System.Windows.Forms.View.Details;
+            tlvCohortUsage.VirtualMode = true;
             // 
             // olvUsedIn
             // 
-            this.olvUsedIn.AspectName = "ToString";
-            this.olvUsedIn.FillsFreeSpace = true;
-            this.olvUsedIn.Text = "Used In";
+            olvUsedIn.AspectName = "ToString";
+            olvUsedIn.FillsFreeSpace = true;
+            olvUsedIn.Text = "Used In";
             // 
             // tlvPreviousVersions
             // 
-            this.tlvPreviousVersions.AllColumns.Add(this.olvOtherVersions);
-            this.tlvPreviousVersions.AllColumns.Add(this.olvVersion);
-            this.tlvPreviousVersions.CellEditUseWholeCell = false;
-            this.tlvPreviousVersions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvOtherVersions,
-            this.olvVersion});
-            this.tlvPreviousVersions.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvPreviousVersions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvPreviousVersions.Location = new System.Drawing.Point(0, 0);
-            this.tlvPreviousVersions.Name = "tlvPreviousVersions";
-            this.tlvPreviousVersions.ShowGroups = false;
-            this.tlvPreviousVersions.Size = new System.Drawing.Size(497, 276);
-            this.tlvPreviousVersions.TabIndex = 19;
-            this.tlvPreviousVersions.UseCompatibleStateImageBehavior = false;
-            this.tlvPreviousVersions.View = System.Windows.Forms.View.Details;
-            this.tlvPreviousVersions.VirtualMode = true;
+            tlvPreviousVersions.AllColumns.Add(olvOtherVersions);
+            tlvPreviousVersions.AllColumns.Add(olvVersion);
+            tlvPreviousVersions.CellEditUseWholeCell = false;
+            tlvPreviousVersions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            olvOtherVersions,
+            olvVersion});
+            tlvPreviousVersions.Cursor = System.Windows.Forms.Cursors.Default;
+            tlvPreviousVersions.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlvPreviousVersions.Location = new System.Drawing.Point(0, 0);
+            tlvPreviousVersions.Name = "tlvPreviousVersions";
+            tlvPreviousVersions.ShowGroups = false;
+            tlvPreviousVersions.Size = new System.Drawing.Size(496, 276);
+            tlvPreviousVersions.TabIndex = 19;
+            tlvPreviousVersions.UseCompatibleStateImageBehavior = false;
+            tlvPreviousVersions.View = System.Windows.Forms.View.Details;
+            tlvPreviousVersions.VirtualMode = true;
             // 
             // olvOtherVersions
             // 
-            this.olvOtherVersions.AspectName = "ToString";
-            this.olvOtherVersions.FillsFreeSpace = true;
-            this.olvOtherVersions.Text = "Other Versions";
+            olvOtherVersions.AspectName = "ToString";
+            olvOtherVersions.FillsFreeSpace = true;
+            olvOtherVersions.Text = "Other Versions";
             // 
             // olvVersion
             // 
-            this.olvVersion.AspectName = "ExternalVersion";
-            this.olvVersion.Text = "Version";
+            olvVersion.AspectName = "ExternalVersion";
+            olvVersion.Text = "Version";
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(3, 290);
-            this.splitContainer1.Name = "splitContainer1";
+            splitContainer1.Location = new System.Drawing.Point(4, 275);
+            splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.tlvCohortUsage);
+            splitContainer1.Panel1.Controls.Add(tlvCohortUsage);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tlvPreviousVersions);
-            this.splitContainer1.Size = new System.Drawing.Size(1043, 276);
-            this.splitContainer1.SplitterDistance = 542;
-            this.splitContainer1.TabIndex = 20;
+            splitContainer1.Panel2.Controls.Add(tlvPreviousVersions);
+            splitContainer1.Size = new System.Drawing.Size(1039, 276);
+            splitContainer1.SplitterDistance = 539;
+            splitContainer1.TabIndex = 20;
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(110, 71);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 13);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "Version:";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(106, 56);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(45, 13);
+            label2.TabIndex = 11;
+            label2.Text = "Version:";
             // 
             // tbVersion
             // 
-            this.tbVersion.Location = new System.Drawing.Point(161, 71);
-            this.tbVersion.Name = "tbVersion";
-            this.tbVersion.ReadOnly = true;
-            this.tbVersion.Size = new System.Drawing.Size(159, 20);
-            this.tbVersion.TabIndex = 12;
-            this.tbVersion.TextChanged += new System.EventHandler(this.tbOverrideReleaseIdentifierSQL_TextChanged);
+            tbVersion.Location = new System.Drawing.Point(157, 56);
+            tbVersion.Name = "tbVersion";
+            tbVersion.ReadOnly = true;
+            tbVersion.Size = new System.Drawing.Size(159, 20);
+            tbVersion.TabIndex = 12;
+            tbVersion.TextChanged += new System.EventHandler(this.tbOverrideReleaseIdentifierSQL_TextChanged);
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(72, 100);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 13);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "Project Number:";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(68, 85);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(83, 13);
+            label3.TabIndex = 11;
+            label3.Text = "Project Number:";
             // 
             // tbProjectNumber
             // 
-            this.tbProjectNumber.Location = new System.Drawing.Point(161, 97);
-            this.tbProjectNumber.Name = "tbProjectNumber";
-            this.tbProjectNumber.ReadOnly = true;
-            this.tbProjectNumber.Size = new System.Drawing.Size(159, 20);
-            this.tbProjectNumber.TabIndex = 12;
-            this.tbProjectNumber.TextChanged += new System.EventHandler(this.tbOverrideReleaseIdentifierSQL_TextChanged);
+            tbProjectNumber.Location = new System.Drawing.Point(157, 82);
+            tbProjectNumber.Name = "tbProjectNumber";
+            tbProjectNumber.ReadOnly = true;
+            tbProjectNumber.Size = new System.Drawing.Size(159, 20);
+            tbProjectNumber.TabIndex = 12;
+            tbProjectNumber.TextChanged += new System.EventHandler(this.tbOverrideReleaseIdentifierSQL_TextChanged);
             // 
             // btnShowProject
             // 
-            this.btnShowProject.Location = new System.Drawing.Point(326, 95);
-            this.btnShowProject.Name = "btnShowProject";
-            this.btnShowProject.Size = new System.Drawing.Size(45, 23);
-            this.btnShowProject.TabIndex = 21;
-            this.btnShowProject.Text = "Show";
-            this.btnShowProject.UseVisualStyleBackColor = true;
-            this.btnShowProject.Click += new System.EventHandler(this.btnShowProject_Click);
+            btnShowProject.Location = new System.Drawing.Point(322, 80);
+            btnShowProject.Name = "btnShowProject";
+            btnShowProject.Size = new System.Drawing.Size(45, 23);
+            btnShowProject.TabIndex = 21;
+            btnShowProject.Text = "Show";
+            btnShowProject.UseVisualStyleBackColor = true;
+            btnShowProject.Click += new System.EventHandler(this.btnShowProject_Click);
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(268, 22);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(51, 13);
-            this.label4.TabIndex = 11;
-            this.label4.Text = "Origin ID:";
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(264, 7);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(51, 13);
+            label4.TabIndex = 11;
+            label4.Text = "Origin ID:";
             // 
             // tbOriginId
             // 
-            this.tbOriginId.Location = new System.Drawing.Point(325, 19);
-            this.tbOriginId.Name = "tbOriginId";
-            this.tbOriginId.ReadOnly = true;
-            this.tbOriginId.Size = new System.Drawing.Size(100, 20);
-            this.tbOriginId.TabIndex = 12;
+            tbOriginId.Location = new System.Drawing.Point(321, 4);
+            tbOriginId.Name = "tbOriginId";
+            tbOriginId.ReadOnly = true;
+            tbOriginId.Size = new System.Drawing.Size(100, 20);
+            tbOriginId.TabIndex = 12;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(tbID);
+            panel1.Controls.Add(splitContainer1);
+            panel1.Controls.Add(btnShowProject);
+            panel1.Controls.Add(label5);
+            panel1.Controls.Add(label4);
+            panel1.Controls.Add(helpIcon1);
+            panel1.Controls.Add(tbOriginId);
+            panel1.Controls.Add(pDescription);
+            panel1.Controls.Add(label1);
+            panel1.Controls.Add(lblDescription);
+            panel1.Controls.Add(tbOverrideReleaseIdentifierSQL);
+            panel1.Controls.Add(tbProjectNumber);
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(label3);
+            panel1.Controls.Add(tbVersion);
+            panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            panel1.Location = new System.Drawing.Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(1046, 563);
+            panel1.TabIndex = 22;
             // 
             // ExtractableCohortUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnShowProject);
-            this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.helpIcon1);
-            this.Controls.Add(this.objectSaverButton1);
-            this.Controls.Add(this.pDescription);
-            this.Controls.Add(this.lblDescription);
-            this.Controls.Add(this.tbProjectNumber);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.tbVersion);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbOverrideReleaseIdentifierSQL);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.tbOriginId);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.tbID);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(panel1);
             this.Name = "ExtractableCohortUI";
-            this.Size = new System.Drawing.Size(1046, 843);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvCohortUsage)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tlvPreviousVersions)).EndInit();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            this.Size = new System.Drawing.Size(1046, 563);
+            ((System.ComponentModel.ISupportInitialize)(tlvCohortUsage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(tlvPreviousVersions)).EndInit();
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(splitContainer1)).EndInit();
+            splitContainer1.ResumeLayout(false);
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
+        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbOverrideReleaseIdentifierSQL;
         private System.Windows.Forms.Panel pDescription;
-        private CatalogueManager.SimpleControls.ObjectSaverButton objectSaverButton1;
         private ReusableUIComponents.HelpIcon helpIcon1;
         private TreeListView tlvCohortUsage;
         private OLVColumn olvUsedIn;
@@ -320,5 +322,6 @@ namespace DataExportManager.CohortUI
         private System.Windows.Forms.Button btnShowProject;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbOriginId;
+
     }
 }

@@ -1,23 +1,22 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataLoadEngine.LoadExecution.Components;
 using CatalogueManager.Copying;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
@@ -50,12 +49,21 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             base.SetDatabaseObject(activator, databaseObject);
             _processTask = databaseObject;
             
-            objectSaverButton1.SetupFor(_processTask, activator.RefreshBus);
-            
             LoadFile();
             
             loadStageIconUI1.Setup(activator.CoreIconProvider, _processTask.LoadStage);
             loadStageIconUI1.Left = tbID.Right +2;
+
+            AddChecks(_processTask);
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",p=>p.ID);
+            Bind(tbName,"Text","Name",p=>p.Name);
+            Bind(tbPath, "Text", "Path", p => p.Path);
         }
 
         private bool _bLoading = false;
@@ -65,29 +73,16 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             _bLoading = true;
             try
             {
-                lblPath.Text = _processTask.Path;
-                ragSmiley1.Left = lblPath.Right;
-                btnBrowse.Left = ragSmiley1.Right;
-
-                lblID.Left = btnBrowse.Right;
-                tbID.Left = lblID.Right;
-
-                pbFile.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.File);
-                tbID.Text = _processTask.ID.ToString();
-            
-
                 if (_scintilla == null)
                 {
                     ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
                     _scintilla = factory.Create(new RDMPCommandFactory());
                     groupBox1.Controls.Add(_scintilla);
                     _scintilla.SavePointLeft += ScintillaOnSavePointLeft;
-                    objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;    
+                    ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;    
                 }
             
                 SetupAutocomplete();
-                
-                ragSmiley1.Reset();
 
                 try
                 {
@@ -96,11 +91,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 }
                 catch (Exception e)
                 {
-                    ragSmiley1.Fatal(e);
+                    Fatal("Could not open file " + _processTask.Path,e);
                 }
-
-                if(!ragSmiley1.IsFatal())
-                    ragSmiley1.StartChecking(_processTask);
             }
             finally
             {
@@ -108,6 +100,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             }
         }
 
+        
         private void SetupAutocomplete()
         {
             //if theres an old one dispose it
@@ -135,12 +128,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             if (_bLoading)
                 return;
 
-            objectSaverButton1.Enable(true);
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
+            ObjectSaverButton1.Enable(true);
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

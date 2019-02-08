@@ -35,7 +35,7 @@ namespace CatalogueManager.Collections
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TableInfoCollectionUI));
             this.tlvTableInfos = new BrightIdeasSoftware.TreeListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvDataType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfos)).BeginInit();
             this.SuspendLayout();
@@ -43,11 +43,11 @@ namespace CatalogueManager.Collections
             // tlvTableInfos
             // 
             this.tlvTableInfos.AllColumns.Add(this.olvColumn1);
-            this.tlvTableInfos.AllColumns.Add(this.olvColumn2);
+            this.tlvTableInfos.AllColumns.Add(this.olvDataType);
             this.tlvTableInfos.CellEditUseWholeCell = false;
             this.tlvTableInfos.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1,
-            this.olvColumn2});
+            this.olvDataType});
             this.tlvTableInfos.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvTableInfos.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvTableInfos.Location = new System.Drawing.Point(0, 0);
@@ -68,10 +68,10 @@ namespace CatalogueManager.Collections
             // 
             // olvColumn2
             // 
-            this.olvColumn2.AspectName = "";
-            this.olvColumn2.IsEditable = false;
-            this.olvColumn2.Text = "DataType";
-            this.olvColumn2.Width = 110;
+            this.olvDataType.AspectName = "";
+            this.olvDataType.IsEditable = false;
+            this.olvDataType.Text = "DataType";
+            this.olvDataType.Width = 110;
             // 
             // imageList1
             // 
@@ -100,6 +100,6 @@ namespace CatalogueManager.Collections
         private TreeListView tlvTableInfos;
         private OLVColumn olvColumn1;
         private System.Windows.Forms.ImageList imageList1;
-        private OLVColumn olvColumn2;
+        private OLVColumn olvDataType;
     }
 }

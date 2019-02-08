@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -11,6 +17,7 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -29,16 +36,22 @@ namespace DataExportLibrary.Data.DataTables
         private string _extractionDirectory;
         private int? _projectNumber;
 
+        /// <inheritdoc/>
+        [NotNull]
+        [Unique]
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+        /// <inheritdoc/>
         public string MasterTicket
         {
             get { return _masterTicket; }
             set { SetField(ref _masterTicket, value); }
         }
+
+        /// <inheritdoc/>
         [AdjustableLocation]
         public string ExtractionDirectory
         {
@@ -46,6 +59,7 @@ namespace DataExportLibrary.Data.DataTables
             set { SetField(ref _extractionDirectory, value); }
         }
 
+        /// <inheritdoc/>
         [UsefulProperty]
         public int? ProjectNumber
         {
@@ -72,6 +86,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IExtractionConfiguration[] ExtractionConfigurations
         {

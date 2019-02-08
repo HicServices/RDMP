@@ -28,54 +28,46 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
-            this.txtPassword = new System.Windows.Forms.TextBox();
-            this.txtUsername = new System.Windows.Forms.TextBox();
-            this.txtBaseUrl = new System.Windows.Forms.TextBox();
+            this.tbPassword = new System.Windows.Forms.TextBox();
+            this.tbUsername = new System.Windows.Forms.TextBox();
+            this.tbBaseUrl = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.lblUsername = new System.Windows.Forms.Label();
             this.lblUrl = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
+            this.tbName = new System.Windows.Forms.TextBox();
             this.lblName = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.tbID = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // objectSaverButton1
+            // tbPassword
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(8, 123);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
-            this.objectSaverButton1.TabIndex = 9;
+            this.tbPassword.Location = new System.Drawing.Point(72, 113);
+            this.tbPassword.Name = "tbPassword";
+            this.tbPassword.Size = new System.Drawing.Size(276, 20);
+            this.tbPassword.TabIndex = 4;
+            this.tbPassword.UseSystemPasswordChar = true;
             // 
-            // txtPassword
+            // tbUsername
             // 
-            this.txtPassword.Location = new System.Drawing.Point(75, 97);
-            this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(280, 20);
-            this.txtPassword.TabIndex = 15;
-            this.txtPassword.UseSystemPasswordChar = true;
-            this.txtPassword.TextChanged += new System.EventHandler(this.txtPassword_TextChanged);
+            this.tbUsername.Location = new System.Drawing.Point(72, 87);
+            this.tbUsername.Name = "tbUsername";
+            this.tbUsername.Size = new System.Drawing.Size(276, 20);
+            this.tbUsername.TabIndex = 3;
             // 
-            // txtUsername
+            // tbBaseUrl
             // 
-            this.txtUsername.Location = new System.Drawing.Point(75, 71);
-            this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(280, 20);
-            this.txtUsername.TabIndex = 14;
-            this.txtUsername.TextChanged += new System.EventHandler(this.txtUsername_TextChanged);
-            // 
-            // txtBaseUrl
-            // 
-            this.txtBaseUrl.Location = new System.Drawing.Point(75, 45);
-            this.txtBaseUrl.Name = "txtBaseUrl";
-            this.txtBaseUrl.Size = new System.Drawing.Size(280, 20);
-            this.txtBaseUrl.TabIndex = 13;
-            this.txtBaseUrl.TextChanged += new System.EventHandler(this.txtBaseUrl_TextChanged);
+            this.tbBaseUrl.Location = new System.Drawing.Point(72, 61);
+            this.tbBaseUrl.Name = "tbBaseUrl";
+            this.tbBaseUrl.Size = new System.Drawing.Size(463, 20);
+            this.tbBaseUrl.TabIndex = 2;
             // 
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(6, 100);
+            this.lblPassword.Location = new System.Drawing.Point(3, 116);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(56, 13);
             this.lblPassword.TabIndex = 10;
@@ -84,7 +76,7 @@
             // lblUsername
             // 
             this.lblUsername.AutoSize = true;
-            this.lblUsername.Location = new System.Drawing.Point(6, 74);
+            this.lblUsername.Location = new System.Drawing.Point(3, 90);
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Size = new System.Drawing.Size(58, 13);
             this.lblUsername.TabIndex = 11;
@@ -93,59 +85,89 @@
             // lblUrl
             // 
             this.lblUrl.AutoSize = true;
-            this.lblUrl.Location = new System.Drawing.Point(6, 48);
+            this.lblUrl.Location = new System.Drawing.Point(3, 64);
             this.lblUrl.Name = "lblUrl";
             this.lblUrl.Size = new System.Drawing.Size(59, 13);
             this.lblUrl.TabIndex = 12;
             this.lblUrl.Text = "Base URL:";
             // 
-            // txtName
+            // tbName
             // 
-            this.txtName.Location = new System.Drawing.Point(75, 19);
-            this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(280, 20);
-            this.txtName.TabIndex = 17;
-            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+            this.tbName.Location = new System.Drawing.Point(72, 35);
+            this.tbName.Name = "tbName";
+            this.tbName.Size = new System.Drawing.Size(276, 20);
+            this.tbName.TabIndex = 1;
             // 
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(6, 22);
+            this.lblName.Location = new System.Drawing.Point(21, 38);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(38, 13);
             this.lblName.TabIndex = 16;
             this.lblName.Text = "Name:";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tbID);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.lblName);
+            this.panel1.Controls.Add(this.tbName);
+            this.panel1.Controls.Add(this.lblUrl);
+            this.panel1.Controls.Add(this.lblUsername);
+            this.panel1.Controls.Add(this.tbPassword);
+            this.panel1.Controls.Add(this.lblPassword);
+            this.panel1.Controls.Add(this.tbUsername);
+            this.panel1.Controls.Add(this.tbBaseUrl);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(538, 191);
+            this.panel1.TabIndex = 18;
+            // 
+            // tbID
+            // 
+            this.tbID.Location = new System.Drawing.Point(72, 9);
+            this.tbID.Name = "tbID";
+            this.tbID.ReadOnly = true;
+            this.tbID.Size = new System.Drawing.Size(154, 20);
+            this.tbID.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(38, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(21, 13);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "ID:";
+            // 
             // RemoteRDMPUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.txtName);
-            this.Controls.Add(this.lblName);
-            this.Controls.Add(this.txtPassword);
-            this.Controls.Add(this.txtUsername);
-            this.Controls.Add(this.txtBaseUrl);
-            this.Controls.Add(this.lblPassword);
-            this.Controls.Add(this.lblUsername);
-            this.Controls.Add(this.lblUrl);
-            this.Controls.Add(this.objectSaverButton1);
+            this.Controls.Add(this.panel1);
             this.Name = "RemoteRDMPUI";
-            this.Size = new System.Drawing.Size(407, 191);
+            this.Size = new System.Drawing.Size(538, 191);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.TextBox txtUsername;
-        private System.Windows.Forms.TextBox txtBaseUrl;
+        
+        private System.Windows.Forms.TextBox tbPassword;
+        private System.Windows.Forms.TextBox tbUsername;
+        private System.Windows.Forms.TextBox tbBaseUrl;
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.Label lblUsername;
         private System.Windows.Forms.Label lblUrl;
-        private System.Windows.Forms.TextBox txtName;
+        private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label lblName;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TextBox tbID;
+        private System.Windows.Forms.Label label1;
     }
 }

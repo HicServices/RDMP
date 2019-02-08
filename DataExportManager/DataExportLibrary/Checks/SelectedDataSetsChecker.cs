@@ -1,9 +1,16 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using ADOX;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
@@ -16,6 +23,7 @@ using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using FAnsi.Connections;
 using HIC.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -95,8 +103,11 @@ namespace DataExportLibrary.Checks
                 return;
             }
 
+            foreach (IGrouping<string, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.GetRuntimeName()).Where(g=>g.Count()>1))
+                notifier.OnCheckPerformed(new CheckEventArgs("There are " + grouping.Count() + " columns in the extract called '" +grouping.Key + "'",CheckResult.Fail));
+            
             //Make sure cohort and dataset are on same server before checking (can still get around this at runtime by using ExecuteCrossServerDatasetExtractionSource)
-            if(!cohortServer.Server.Name.Equals(server.Name) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
+            if(!cohortServer.Server.Name.Equals(server.Name,StringComparison.CurrentCultureIgnoreCase) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     string.Format("Cohort is on server '{0}' ({1}) but dataset is on '{2}' ({3})",
                     cohortServer.Server.Name,

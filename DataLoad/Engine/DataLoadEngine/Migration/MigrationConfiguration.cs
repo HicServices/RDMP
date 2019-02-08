@@ -1,10 +1,19 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
+using FAnsi.Discovery;
+using FAnsi.Discovery.Constraints;
+using MySqlX.XDevAPI.Relational;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace DataLoadEngine.Migration
 {
@@ -26,11 +35,11 @@ namespace DataLoadEngine.Migration
             _namer = namer;
         }
 
-        public IList<MigrationColumnSet> CreateMigrationColumnSetFromTableInfos(List<TableInfo> tableInfos, List<TableInfo> lookupTableInfos, IMigrationFieldProcessor migrationFieldProcessor)
+        public IList<MigrationColumnSet> CreateMigrationColumnSetFromTableInfos(List<ITableInfo> tableInfos, List<ITableInfo> lookupTableInfos, IMigrationFieldProcessor migrationFieldProcessor)
         {
             //treat null values as empty
-            tableInfos = tableInfos ?? new List<TableInfo>();
-            lookupTableInfos = lookupTableInfos ?? new List<TableInfo>();
+            tableInfos = tableInfos ?? new List<ITableInfo>();
+            lookupTableInfos = lookupTableInfos ?? new List<ITableInfo>();
 
             var columnSet = new List<MigrationColumnSet>();
 
@@ -53,8 +62,13 @@ namespace DataLoadEngine.Migration
 
                 columnSet.Add(new MigrationColumnSet(fromTable,toTable, migrationFieldProcessor));
             }
+            
+            var sorter = new RelationshipTopologicalSort(columnSet.Select(c => c.DestinationTable));
+            columnSet = columnSet.OrderBy(s => ((ReadOnlyCollection<DiscoveredTable>)sorter.Order).IndexOf(s.DestinationTable)).ToList();
 
             return columnSet;
         }
     }
+
+    
 }

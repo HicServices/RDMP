@@ -1,25 +1,27 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.Collections;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
 using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
-using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 {
@@ -41,16 +43,19 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
     /// in the RAW bubble (i.e. not as a post load operation), only use modules you understand the function of and try to restrict the scope of your adjustment operations (it is usually better
     /// to write an extraction transform than to transform the data during load in case there is a mistake or a researcher wants uncorrupted original data).</para>
     /// </summary>
-    public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design,ISaveableUI
+    public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveableUI
     {
         private ArgumentCollection _argumentCollection;
         private Type _underlyingType;
         private ProcessTask _processTask;
+        private RAGSmileyToolStrip _ragSmiley;
 
         public PluginProcessTaskUI()
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.DataLoad;
+
+            _ragSmiley = new RAGSmileyToolStrip(this);
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)
@@ -82,13 +87,21 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 pArguments.Controls.Add(_argumentCollection);
             }
 
-            CheckComponent();
+            Add(_ragSmiley);
 
-            tbName.Text = databaseObject.Name;
+            CheckComponent();
             
             loadStageIconUI1.Setup(_activator.CoreIconProvider,_processTask.LoadStage);
 
-            objectSaverButton1.SetupFor(databaseObject,_activator.RefreshBus);
+            Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh, (s, e) => CheckComponent()));
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbName, "Text", "Name", d => d.Name);
+            Bind(tbID, "Text", "ID", d => d.ID);
         }
 
         private void CheckComponent()
@@ -101,18 +114,12 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
                 var mefTask = (IMEFRuntimeTask) factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
             
-                ragSmiley1.StartChecking(mefTask.MEFPluginClassInstance);
+                _ragSmiley.StartChecking(mefTask.MEFPluginClassInstance);
             }
             catch (Exception e)
             {
-                ragSmiley1.Fatal(e);
+                _ragSmiley.Fatal(e);
             }
-
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         private void tbName_TextChanged(object sender, EventArgs e)
@@ -124,11 +131,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             }
 
             _processTask.Name = tbName.Text;
-        }
-
-        private void btnCheckAgain_Click(object sender, EventArgs e)
-        {
-            CheckComponent();
         }
     }
 

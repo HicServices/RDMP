@@ -33,7 +33,7 @@ namespace CatalogueManager.PipelineUIs.DataObjects
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataFlowComponentVisualisation));
             this.pComponent = new System.Windows.Forms.Panel();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.lblText = new System.Windows.Forms.Label();
             this.prongRight1 = new System.Windows.Forms.Panel();
             this.prongRight2 = new System.Windows.Forms.Panel();
@@ -179,6 +179,6 @@ namespace CatalogueManager.PipelineUIs.DataObjects
         protected System.Windows.Forms.Label lblText;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.PictureBox pbInsertHere;
-        protected ReusableUIComponents.RAGSmiley ragSmiley1;
+        protected ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
     }
 }

@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -9,7 +15,6 @@ using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
-using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.Icons.IconProvision;
@@ -20,8 +25,10 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dependencies.Models;
+using ReusableUIComponents.Theme;
 
 namespace CatalogueManager.ItemActivation
 {
@@ -33,6 +40,8 @@ namespace CatalogueManager.ItemActivation
     /// </summary>
     public interface IActivateItems
     {
+        ITheme Theme { get; }
+
         ServerDefaults ServerDefaults { get; }
 
         /// <summary>
@@ -92,6 +101,11 @@ namespace CatalogueManager.ItemActivation
         ICommandExecutionFactory CommandExecutionFactory { get;}
 
         /// <summary>
+        /// Component for fetching xmldoc comments from the codebase 
+        /// </summary>
+        CommentStore CommentStore { get; }
+
+        /// <summary>
         /// Creates a new late loading <see cref="IObjectVisualisation"/> for use with Dependency graph generation
         /// </summary>
         /// <returns></returns>
@@ -113,11 +127,9 @@ namespace CatalogueManager.ItemActivation
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
         /// <returns></returns>
-        T Activate<T>(IPersistableObjectCollection collection) where T : IObjectCollectionControl, new();
+        T Activate<T>(IPersistableObjectCollection collection) where T : Control,IObjectCollectionControl, new();
 
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
-
-        IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported);
 
         void ViewDataSample(IViewSQLAndResultsCollection collection);
 
@@ -129,8 +141,6 @@ namespace CatalogueManager.ItemActivation
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
 
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
-
-        void ActivateReOrderCatalogueItems(Catalogue catalogue);
 
         void ViewFilterGraph(object sender,FilterGraphObjectCollection collection);
 
@@ -144,6 +154,12 @@ namespace CatalogueManager.ItemActivation
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);
         object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
-        void ActivateViewDQEResultsForCatalogue(Catalogue catalogue);
+
+        /// <summary>
+        /// Returns xml doc comments from the CommentStore for the given class (or null if it is undocumented)
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        string GetDocumentation(Type type);
     }
 }

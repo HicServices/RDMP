@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +12,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPAutomationService.Options;
@@ -30,6 +37,12 @@ namespace CatalogueManager.LoadExecutionUIs
         private LoadMetadata _loadMetadata;
         private ILoadProgress[] _allLoadProgresses;
 
+        ToolStripMenuItem miDebugOptions = new ToolStripMenuItem("Debug Options");
+
+        ToolStripMenuItem miSkipArchiving = new ToolStripMenuItem("Skip Archiving") { CheckOnClick = true };
+        ToolStripMenuItem miMigrateRAWToStaging = new ToolStripMenuItem("Migrate RAW=>STAGING"){CheckOnClick = true,Checked = true};
+        ToolStripMenuItem miMigrateStagingToLive = new ToolStripMenuItem("Migrate STAGING=>Live") { CheckOnClick = true ,Checked=true};
+
         public ExecuteLoadMetadataUI()
         {
             InitializeComponent();
@@ -41,6 +54,8 @@ namespace CatalogueManager.LoadExecutionUIs
 
             checkAndExecuteUI1.CommandGetter = AutomationCommandGetter;
             checkAndExecuteUI1.StateChanged += SetButtonStates;
+
+            miDebugOptions.DropDownItems.AddRange(new []{miSkipArchiving,miMigrateRAWToStaging,miMigrateStagingToLive});
         }
         
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
@@ -49,14 +64,17 @@ namespace CatalogueManager.LoadExecutionUIs
             _loadMetadata = databaseObject;
 
             checkAndExecuteUI1.SetItemActivator(activator);
-
-            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
-            rdmpObjectsRibbonUI1.Clear();
-            rdmpObjectsRibbonUI1.Add(_loadMetadata);
-
+            
             SetButtonStates(null,null);
 
             SetLoadProgressGroupBoxState();
+
+            Add(new ExecuteCommandViewLoadDiagram(activator,_loadMetadata));
+
+            AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator,_loadMetadata));
+            AddToMenu(miDebugOptions);
+
+            AddPluginCommands();
         }
         
         private void SetLoadProgressGroupBoxState()
@@ -67,8 +85,7 @@ namespace CatalogueManager.LoadExecutionUIs
             {
                 //there are some load progresses
                 gbLoadProgresses.Visible = true;
-                gbDebugOptions.Left = gbLoadProgresses.Right + 3;
-                
+
                 //give the user the dropdown options for which load progress he wants to run
                 var loadProgressData = new Dictionary<int, string> { { 0, "All available" } };
 
@@ -82,14 +99,12 @@ namespace CatalogueManager.LoadExecutionUIs
             else
             {
                 gbLoadProgresses.Visible = false;
-                gbDebugOptions.Left = 110;
             }
         }
 
         private void SetButtonStates(object sender, EventArgs e)
         {
             gbLoadProgresses.Enabled = checkAndExecuteUI1.ChecksPassed;
-            gbDebugOptions.Enabled = checkAndExecuteUI1.ChecksPassed;
         }
         
         private RDMPCommandLineOptions AutomationCommandGetter(CommandLineActivity activityRequested)
@@ -102,9 +117,9 @@ namespace CatalogueManager.LoadExecutionUIs
                 LoadMetadata = _loadMetadata.ID,
                 Iterative = cbRunIteratively.Checked,
                 DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
-                DoNotArchiveData = cbSkipArchiving.Checked,
-                StopAfterRAW = !cbMigrateRAWToStaging.Checked,
-                StopAfterSTAGING = !cbMigrateStagingToLive.Checked,
+                DoNotArchiveData = miSkipArchiving.Checked,
+                StopAfterRAW = !miMigrateRAWToStaging.Checked,
+                StopAfterSTAGING = !miMigrateStagingToLive.Checked,
             };
 
             if (lp != null)
@@ -161,17 +176,6 @@ namespace CatalogueManager.LoadExecutionUIs
         {
             SetLoadProgressGroupBoxState();
         }
-
-        private void btnViewLogs_Click(object sender, EventArgs e)
-        {
-            _activator.ActivateViewLog(_loadMetadata);
-        }
-
-        private void btnLoadDiagram_Click(object sender, EventArgs e)
-        {
-            _activator.ActivateViewLoadMetadataDiagram(this, _loadMetadata);
-        }
-
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DatasetLoadControl_Design, UserControl>))]

@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,9 +15,12 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Events;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.PipelineUIs.Pipelines
@@ -31,7 +40,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     /// like cohort committing, data extraction etc.</para>
     /// 
     /// </summary>
-    public partial class ConfigureAndExecutePipeline : UserControl
+    public partial class ConfigureAndExecutePipeline : RDMPUserControl
     {
         private readonly PipelineUseCase _useCase;
         private PipelineSelectionUI _pipelineSelectionUI;
@@ -61,7 +70,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
            if(useCase == null && activator == null)
                return;
 
-            rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
+            SetItemActivator(activator);
+            progressUI1.ApplyTheme(activator.Theme);
 
             pipelineDiagram1 = new PipelineDiagram();
 
@@ -76,23 +86,21 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                 throw new NotSupportedException("Only DataTable flow contexts can be used with this class");
 
             foreach (var o in useCase.GetInitializationObjects())
-                AddInitializationObject(o);
+            {
+                var de = o as DatabaseEntity;
+                if (o is DatabaseEntity)
+                    Add(new ExecuteCommandShow(activator,de,0,true));
+                else
+                    Add(o.ToString());
+
+                _initializationObjects.Add(o);
+            }
 
             SetPipelineOptions( activator.RepositoryLocator.CatalogueRepository);
 
            lblTask.Text = "Task:" + useCase.GetType().Name;
         }
         
-        private void AddInitializationObject(object o)
-        {
-            if(o is DatabaseEntity)
-                rdmpObjectsRibbonUI1.Add((DatabaseEntity)o);
-            else
-                rdmpObjectsRibbonUI1.Add(o);
-
-            _initializationObjects.Add(o);
-        }
-
         private bool _pipelineOptionsSet = false;
 
         

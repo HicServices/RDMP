@@ -1,22 +1,26 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
 using ReusableUIComponents.ScintillaHelper;
@@ -38,18 +42,23 @@ namespace CatalogueManager.ExtractionUIs
     {
         private Catalogue _catalogue;
         
+        ToolStripButton rbCore = new ToolStripButton("Core");
+        ToolStripButton rbSupplemental = new ToolStripButton("Supplemental"){Checked = true};
+        ToolStripButton rbSpecialApproval = new ToolStripButton("Special Approval");
+        ToolStripButton rbInternal = new ToolStripButton("Internal");
+
+        
         private Scintilla QueryPreview;
         public ViewExtractionSql()
         {
             InitializeComponent();
             
             #region Query Editor setup
-
-
+            
             QueryPreview = new ScintillaTextEditorFactory().Create();
             QueryPreview.ReadOnly = true;
 
-            this.scRadioButtonsSqlSplit.Panel2.Controls.Add(QueryPreview);
+            scMainLeftRightSplit.Panel2.Controls.Add(QueryPreview);
             bLoading = false;
 
             #endregion
@@ -57,6 +66,21 @@ namespace CatalogueManager.ExtractionUIs
             AssociatedCollection = RDMPCollection.Catalogue;
 
             olvColumn1.ImageGetter += ImageGetter;
+            olvFilterName.ImageGetter += ImageGetter;
+
+            rbCore.Click += rb_Click;
+            rbSupplemental.Click += rb_Click;
+            rbSpecialApproval.Click += rb_Click;
+            rbInternal.Click += rb_Click;
+        }
+
+        private void rb_Click(object sender, EventArgs e)
+        {
+            //treat as radio button
+            foreach (ToolStripButton item in new[] {rbCore, rbSupplemental, rbSpecialApproval, rbInternal})
+                item.Checked = item == sender;
+
+            RefreshUIFromDatabase();
         }
 
         private object ImageGetter(object rowObject)
@@ -65,7 +89,7 @@ namespace CatalogueManager.ExtractionUIs
         }
 
         private bool bLoading = false;
-
+        
 
         private void RefreshUIFromDatabase()
         {
@@ -89,10 +113,10 @@ namespace CatalogueManager.ExtractionUIs
                     extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific));
                     extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
 
-                    if (rbSupplemental.Checked || rbCoreSupplementalAndSpecialApproval.Checked)
+                    if (rbSupplemental.Checked || rbSpecialApproval.Checked)
                         extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
 
-                    if (rbCoreSupplementalAndSpecialApproval.Checked)
+                    if (rbCore.Checked)
                         extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
 
                 }
@@ -105,14 +129,18 @@ namespace CatalogueManager.ExtractionUIs
                 olvExtractionInformations.AddObjects(extractionInformations.ToArray());
                 
                 //add the available filters
-                MemoriseListboxState();
-                
-                clbFilters.Items.Clear();
-                foreach (var extractionInformation in extractionInformations)
-                    clbFilters.Items.AddRange(extractionInformation.ExtractionFilters.ToArray());
-                
-                AttemptToRestoreListboxState();
+                var filters = extractionInformations.SelectMany(ei => ei.ExtractionFilters).ToArray();
 
+                //remove deleted ones
+                if (olvFilters.Objects != null)
+                    foreach (ExtractionFilter f in olvFilters.Objects.Cast<ExtractionFilter>().Except(filters).ToArray())
+                        olvFilters.RemoveObject(f);
+
+                //add new ones
+                foreach (ExtractionFilter f in filters)
+                    if (olvFilters.IndexOf(f) == -1)
+                        olvFilters.AddObject(f);
+                
                 //generate SQL -- only make it readonly after setting the .Text otherwise it ignores the .Text setting even though it is programatical
                 QueryPreview.ReadOnly = false;
                 QueryPreview.Text = GenerateExtractionSQLForCatalogue(extractionInformations.ToArray());
@@ -134,111 +162,52 @@ namespace CatalogueManager.ExtractionUIs
         {
             QueryBuilder builder = new QueryBuilder(null,null);
             builder.AddColumnRange(extractionInformations);
-
-
+            
             List<ExtractionFilter> filters = new List<ExtractionFilter>();
 
-            foreach (ExtractionFilter f in clbFilters.CheckedItems)
+            foreach (ExtractionFilter f in olvFilters.CheckedObjects)
                 filters.Add(f);
 
             builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null,filters.ToArray(),FilterContainerOperation.AND);
             return builder.SQL;
         }
         
-        #region methods for reselecting / checking the listbox after database refresh
-        private List<int> _wasCheckedFilterIDs = new List<int>();
-        private int _wasSelectedFilterID;
-
-        private void AttemptToRestoreListboxState()
-        {
-            for (int i = 0; i < clbFilters.Items.Count; i++)
-            {
-                ExtractionFilter item = (ExtractionFilter)clbFilters.Items[i];
-                if (item.ID == _wasSelectedFilterID)
-                    clbFilters.SelectedItem = item;
-
-                if (_wasCheckedFilterIDs.Contains(item.ID))
-                    clbFilters.SetItemChecked(i, true);
-            }
-        }
-
-
-        private void MemoriseListboxState()
-        {
-            if (clbFilters.SelectedItem != null)
-            {
-                _wasSelectedFilterID = ((ExtractionFilter)clbFilters.SelectedItem).ID;
-            }
-            else
-                _wasSelectedFilterID = -1;
-
-            _wasCheckedFilterIDs.Clear();
-
-            foreach (ExtractionFilter extractionFilter in clbFilters.CheckedItems)
-                _wasCheckedFilterIDs.Add(extractionFilter.ID);
-
-        }
-        #endregion
-
-        private void RadioButtons_CheckedChanged(object sender, EventArgs e)
-        {
-            RefreshUIFromDatabase();
-        }
-
-        private void clbFilters_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            if(bLoading)
-                return;
-
-            this.BeginInvoke((MethodInvoker)RefreshUIFromDatabase);
-        }
-        private int _collapseCounter = 0;
-        
-        private void btnCollapse_Click(object sender, EventArgs e)
-        {
-            if (_collapseCounter == 0)
-            {
-                scFiltersAndColumns.Panel1Collapsed = false;
-                scFiltersAndColumns.Panel2Collapsed = true;
-            }
-            if (_collapseCounter == 1)
-            {
-                scFiltersAndColumns.Panel1Collapsed = true;
-                scFiltersAndColumns.Panel2Collapsed = false;
-            }
-            if (_collapseCounter == 2)
-            {
-                scFiltersAndColumns.Panel1Collapsed = false;
-                scFiltersAndColumns.Panel2Collapsed = false;
-            }
-
-            _collapseCounter = (_collapseCounter + 1) %3;
-        }
-
-   
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
             _catalogue = databaseObject;
             RefreshUIFromDatabase();
-        }
 
-        private void btnAdvancedReorder_Click(object sender, EventArgs e)
-        {
-            _activator.ActivateReOrderCatalogueItems(_catalogue);
-        }
+            rbCore.Image = CatalogueIcons.ExtractionInformation;
+            rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental;
+            rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval;
+            rbInternal.Image = activator.CoreIconProvider.GetImage(CatalogueIcons.ExtractionInformation_SpecialApproval, OverlayKind.Internal);
 
+            Add(rbCore);
+            Add(rbSupplemental);
+            Add(rbSpecialApproval);
+            Add(rbInternal);
+
+            AddToMenu(new ExecuteCommandReOrderColumns(_activator, _catalogue));
+            
+        }
+        
         public override string GetTabName()
         {
             return base.GetTabName() + "(SQL)";
         }
 
-        private void olvExtractionInformations_ItemActivate(object sender, EventArgs e)
+        private void olv_ItemActivate(object sender, EventArgs e)
         {
-            var o = olvExtractionInformations.SelectedObject as IMapsDirectlyToDatabaseTable;
+            var o = ((ObjectListView)sender).SelectedObject as IMapsDirectlyToDatabaseTable;
             if(o != null)
                 _activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
+        }
+
+        private void olvFilters_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            RefreshUIFromDatabase();
         }
     }
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewExtractionSql_Design, UserControl>))]

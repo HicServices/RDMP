@@ -37,7 +37,7 @@
             this.lblWarning = new System.Windows.Forms.Label();
             this.tbTimeout = new System.Windows.Forms.TextBox();
             this.lblTimeout = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.SuspendLayout();
             // 
             // ddStrategy
@@ -174,6 +174,6 @@
         private System.Windows.Forms.Label lblWarning;
         private System.Windows.Forms.TextBox tbTimeout;
         private System.Windows.Forms.Label lblTimeout;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
     }
 }

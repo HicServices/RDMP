@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +17,7 @@ using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
-    public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector);
+    public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector,string parameterName);
 
     public class ParameterCollectionUIOptions
     {
@@ -53,20 +59,25 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             _createNewParameterDelegate = createNewParameterDelegate;
 
             if (_createNewParameterDelegate == null)
-            {
                 if (AnyTableSqlParameter.IsSupportedType(collector.GetType()))
-                {
-                    _createNewParameterDelegate = delegate
-                    {
-                        Random r = new Random();
-                        var entity = (IMapsDirectlyToDatabaseTable) collector;
-                        var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity,"DECLARE @" + r.Next(100) + " as varchar(10)");
-                        newParam.Value = "'todo'";
-                        newParam.SaveToDatabase();
-                        return newParam;
-                    };
-                }
-            }
+                    _createNewParameterDelegate = CreateNewParameterDefaultImplementation;
+        }
+
+
+        /// <summary>
+        /// Method called when creating new parameters if no CreateNewSqlParameterHandler was provided during construction
+        /// </summary>
+        /// <returns></returns>
+        private ISqlParameter CreateNewParameterDefaultImplementation(ICollectSqlParameters collector, string parameterName)
+        {
+            if (!parameterName.StartsWith("@"))
+                parameterName = "@" + parameterName;
+
+            var entity = (IMapsDirectlyToDatabaseTable) collector;
+            var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, "DECLARE " + parameterName + " as varchar(10)");
+            newParam.Value = "'todo'";
+            newParam.SaveToDatabase();
+            return newParam;
         }
 
         public bool CanNewParameters()
@@ -74,12 +85,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             return _createNewParameterDelegate != null;
         }
 
-        public ISqlParameter CreateNewParameter()
+        public ISqlParameter CreateNewParameter(string parameterName = null)
         {
-            return _createNewParameterDelegate(Collector);
+            return _createNewParameterDelegate(Collector,parameterName);
         }
-
-
+        
         public bool IsHigherLevel(ISqlParameter parameter)
         {
             return ParameterManager.GetLevelForParameter(parameter) > CurrentLevel;

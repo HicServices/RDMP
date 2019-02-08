@@ -47,11 +47,8 @@ namespace DataExportManager.ProjectUI.Datasets
             this.flpCouldNotJoinTables = new System.Windows.Forms.FlowLayoutPanel();
             this.label8 = new System.Windows.Forms.Label();
             this.helpIconJoin = new ReusableUIComponents.HelpIcon();
-            this.btnRefreshChecks = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
             this.tbSearchTables = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
             this.label5 = new System.Windows.Forms.Label();
             this.olvJoin = new BrightIdeasSoftware.ObjectListView();
             this.olvJoinTableName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -60,9 +57,9 @@ namespace DataExportManager.ProjectUI.Datasets
             this.label4 = new System.Windows.Forms.Label();
             this.olvSelected = new BrightIdeasSoftware.ObjectListView();
             this.olvSelectedColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvIssues = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedCatalogue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvIssues = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -145,11 +142,8 @@ namespace DataExportManager.ProjectUI.Datasets
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.flpCouldNotJoinTables);
-            this.splitContainer1.Panel2.Controls.Add(this.btnRefreshChecks);
-            this.splitContainer1.Panel2.Controls.Add(this.label7);
             this.splitContainer1.Panel2.Controls.Add(this.tbSearchTables);
             this.splitContainer1.Panel2.Controls.Add(this.label6);
-            this.splitContainer1.Panel2.Controls.Add(this.ragSmiley1);
             this.splitContainer1.Panel2.Controls.Add(this.label5);
             this.splitContainer1.Panel2.Controls.Add(this.olvJoin);
             this.splitContainer1.Panel2.Controls.Add(this.tbSearchSelected);
@@ -267,27 +261,6 @@ namespace DataExportManager.ProjectUI.Datasets
             this.helpIconJoin.Size = new System.Drawing.Size(19, 19);
             this.helpIconJoin.TabIndex = 1;
             // 
-            // btnRefreshChecks
-            // 
-            this.btnRefreshChecks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshChecks.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshChecks.Image")));
-            this.btnRefreshChecks.Location = new System.Drawing.Point(274, 444);
-            this.btnRefreshChecks.Name = "btnRefreshChecks";
-            this.btnRefreshChecks.Size = new System.Drawing.Size(22, 24);
-            this.btnRefreshChecks.TabIndex = 165;
-            this.btnRefreshChecks.UseVisualStyleBackColor = true;
-            this.btnRefreshChecks.Click += new System.EventHandler(this.btnRefreshChecks_Click);
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(278, 469);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(38, 13);
-            this.label7.TabIndex = 166;
-            this.label7.Text = "Check";
-            // 
             // tbSearchTables
             // 
             this.tbSearchTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -307,17 +280,6 @@ namespace DataExportManager.ProjectUI.Datasets
             this.label6.Size = new System.Drawing.Size(44, 13);
             this.label6.TabIndex = 163;
             this.label6.Text = "Search:";
-            // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(298, 443);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 162;
             // 
             // label5
             // 
@@ -430,6 +392,11 @@ namespace DataExportManager.ProjectUI.Datasets
             this.olvSelectedColumnName.Sortable = false;
             this.olvSelectedColumnName.Text = "Name";
             // 
+            // olvIssues
+            // 
+            this.olvIssues.Text = "Issues";
+            this.olvIssues.Width = 100;
+            // 
             // olvSelectedColumnOrder
             // 
             this.olvSelectedColumnOrder.AspectName = "Order";
@@ -441,11 +408,6 @@ namespace DataExportManager.ProjectUI.Datasets
             // 
             this.olvSelectedCatalogue.Text = "Catalogue";
             this.olvSelectedCatalogue.Width = 100;
-            // 
-            // olvIssues
-            // 
-            this.olvIssues.Text = "Issues";
-            this.olvIssues.Width = 100;
             // 
             // ConfigureDatasetUI
             // 
@@ -494,11 +456,8 @@ namespace DataExportManager.ProjectUI.Datasets
         private ObjectListView olvJoin;
         private OLVColumn olvJoinTableName;
         private OLVColumn olvJoinColumn;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
         private System.Windows.Forms.TextBox tbSearchTables;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button btnRefreshChecks;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.FlowLayoutPanel flpCouldNotJoinTables;
         private System.Windows.Forms.Label label8;
         private ReusableUIComponents.HelpIcon helpIconJoin;

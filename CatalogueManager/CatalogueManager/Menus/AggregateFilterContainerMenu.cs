@@ -1,85 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
+using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
-using RDMPStartup;
-using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
-    class AggregateFilterContainerMenu : RDMPContextMenuStrip
+    class AggregateFilterContainerMenu : ContainerMenu
     {
-        private readonly AggregateFilterContainer _filterContainer;
-        private ExtractionFilter[] _importableFilters;
 
-        public AggregateFilterContainerMenu(RDMPContextMenuStripArgs args, AggregateFilterContainer filterContainer): base(args, filterContainer)
+        public AggregateFilterContainerMenu(RDMPContextMenuStripArgs args, AggregateFilterContainer filterContainer)
+            : base(
+            new AggregateFilterFactory(args.ItemActivator.RepositoryLocator.CatalogueRepository),
+            args, filterContainer)
         {
-            _filterContainer = filterContainer;
-
-            var aggregate = _filterContainer.GetAggregate();
-
-            _importableFilters = aggregate.Catalogue.GetAllFilters();
-
-            string operationTarget = filterContainer.Operation == FilterContainerOperation.AND ? "OR" : "AND";
-
-            Items.Add("Set Operation to " + operationTarget, null, (s, e) => FlipContainerOperation());
-
-            var addFilter = new ToolStripMenuItem("Add New Filter", GetImage(RDMPConcept.Filter, OverlayKind.Add));
-            addFilter.DropDownItems.Add("Blank", null, (s, e) => AddBlankFilter());
-
-            var import = new ToolStripMenuItem("From Catalogue", null, (s, e) => ImportFilter());
-            import.Enabled = _importableFilters.Any();
-            addFilter.DropDownItems.Add(import);
-            
-            Items.Add(addFilter);
-
-            Items.Add("Add SubContainer", GetImage(RDMPConcept.FilterContainer,OverlayKind.Add), (s, e) => AddSubcontainer());
-
+            Add(new ExecuteCommandDisableOrEnable(_activator, filterContainer));
         }
 
-        private void FlipContainerOperation()
+        protected override IContainer GetNewFilterContainer()
         {
-            _filterContainer.Operation = _filterContainer.Operation == FilterContainerOperation.AND
-                ? FilterContainerOperation.OR
-                : FilterContainerOperation.AND;
-
-            _filterContainer.SaveToDatabase();
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_filterContainer));
-        }
-
-        private void AddSubcontainer()
-        {
-            var newContainer = new AggregateFilterContainer(RepositoryLocator.CatalogueRepository,FilterContainerOperation.AND);
-            _filterContainer.AddChild(newContainer);
-            Publish(_filterContainer);
-        }
-
-        private void ImportFilter()
-        {
-            var newFilter = _activator.AdvertiseCatalogueFiltersToUser(_filterContainer, _importableFilters);
-
-            if(newFilter != null)
-            {
-                _filterContainer.AddChild((AggregateFilter) newFilter);
-                Publish(_filterContainer);
-            }
-        }
-
-        private void AddBlankFilter()
-        {
-            var newFilter = new AggregateFilter(RepositoryLocator.CatalogueRepository, "New Filter " + Guid.NewGuid(),_filterContainer);
-            Publish(newFilter);
-            Activate(newFilter);
+            return new AggregateFilterContainer(RepositoryLocator.CatalogueRepository,FilterContainerOperation.AND);
         }
     }
 }

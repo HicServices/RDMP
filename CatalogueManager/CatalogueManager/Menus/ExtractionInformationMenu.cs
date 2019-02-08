@@ -1,43 +1,21 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Forms;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.PerformanceImprovement;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
+using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTableUI;
-using RDMPStartup;
-using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class ExtractionInformationMenu : RDMPContextMenuStrip
     {
-        private readonly ExtractionInformation _extractionInformation;
-
-        public ExtractionInformationMenu(RDMPContextMenuStripArgs args, ExtractionInformation extractionInformation)
-            : base(args,extractionInformation)
+        public ExtractionInformationMenu(RDMPContextMenuStripArgs args, ExtractionInformation extractionInformation): base(args,extractionInformation)
         {
-            _extractionInformation = extractionInformation;
-
-            var addFilter = new ToolStripMenuItem("Add New Extraction Filter", _activator.CoreIconProvider.GetImage(RDMPConcept.Filter,OverlayKind.Add), (s, e) => AddFilter());
-            Items.Add(addFilter);
-        }
-        
-        private void AddFilter()
-        {
-            var newFilter = new ExtractionFilter(RepositoryLocator.CatalogueRepository, "New Filter " + Guid.NewGuid(),_extractionInformation);
-            Publish(newFilter);
-            Activate(newFilter);
+            Add(new ExecuteCommandCreateNewFilter(args.ItemActivator,new ExtractionFilterFactory(extractionInformation)));
         }
     }
 }

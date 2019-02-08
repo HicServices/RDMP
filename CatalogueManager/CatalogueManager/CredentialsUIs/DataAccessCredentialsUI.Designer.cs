@@ -36,13 +36,14 @@ namespace CatalogueManager.CredentialsUIs
             this.label3 = new System.Windows.Forms.Label();
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.tbPassword = new System.Windows.Forms.TextBox();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 25);
+            this.label1.Location = new System.Drawing.Point(3, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 1;
@@ -50,16 +51,15 @@ namespace CatalogueManager.CredentialsUIs
             // 
             // tbName
             // 
-            this.tbName.Location = new System.Drawing.Point(74, 22);
+            this.tbName.Location = new System.Drawing.Point(67, 6);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(287, 20);
+            this.tbName.Size = new System.Drawing.Size(257, 20);
             this.tbName.TabIndex = 2;
-            this.tbName.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 51);
+            this.label2.Location = new System.Drawing.Point(3, 35);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(58, 13);
             this.label2.TabIndex = 3;
@@ -68,7 +68,7 @@ namespace CatalogueManager.CredentialsUIs
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 77);
+            this.label3.Location = new System.Drawing.Point(3, 61);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(56, 13);
             this.label3.TabIndex = 4;
@@ -76,45 +76,44 @@ namespace CatalogueManager.CredentialsUIs
             // 
             // tbUsername
             // 
-            this.tbUsername.Location = new System.Drawing.Point(74, 48);
+            this.tbUsername.Location = new System.Drawing.Point(67, 32);
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(206, 20);
             this.tbUsername.TabIndex = 5;
-            this.tbUsername.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(74, 74);
+            this.tbPassword.Location = new System.Drawing.Point(67, 58);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(206, 20);
             this.tbPassword.TabIndex = 6;
-            this.tbPassword.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
-            // objectSaverButton1
+            // panel1
             // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(74, 97);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(54, 27);
-            this.objectSaverButton1.TabIndex = 7;
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.tbPassword);
+            this.panel1.Controls.Add(this.tbName);
+            this.panel1.Controls.Add(this.tbUsername);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(404, 198);
+            this.panel1.TabIndex = 7;
             // 
             // DataAccessCredentialsUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.objectSaverButton1);
-            this.Controls.Add(this.tbPassword);
-            this.Controls.Add(this.tbUsername);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbName);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.panel1);
             this.MinimumSize = new System.Drawing.Size(404, 198);
             this.Name = "DataAccessCredentialsUI";
             this.Size = new System.Drawing.Size(404, 198);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -126,6 +125,7 @@ namespace CatalogueManager.CredentialsUIs
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbUsername;
         private System.Windows.Forms.TextBox tbPassword;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        private System.Windows.Forms.Panel panel1;
+        
     }
 }

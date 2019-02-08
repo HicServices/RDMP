@@ -46,7 +46,7 @@ namespace CatalogueManager.Validation
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.cbxTimePeriodColumn = new System.Windows.Forms.ToolStripComboBox();
@@ -203,7 +203,6 @@ namespace CatalogueManager.Validation
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.objectSaverButton1);
             this.splitContainer1.Panel2.Controls.Add(this.label4);
             this.splitContainer1.Panel2.Controls.Add(this.ddConsequence);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
@@ -235,14 +234,6 @@ namespace CatalogueManager.Validation
             this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Filter:";
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(265, 62);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(56, 28);
-            this.objectSaverButton1.TabIndex = 11;
             // 
             // toolStrip1
             // 
@@ -357,7 +348,7 @@ namespace CatalogueManager.Validation
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
+        
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cbxTimePeriodColumn;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;

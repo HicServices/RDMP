@@ -48,7 +48,7 @@ namespace CohortManager.SubComponents
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.btnClearCache = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
+            
             this.ticket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
             this.queryCachingServerSelector = new CatalogueManager.AggregationUIs.QueryCachingServerSelector();
             this.btnAbortLoad = new System.Windows.Forms.Button();
@@ -195,15 +195,6 @@ namespace CohortManager.SubComponents
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.objectSaverButton1.Location = new System.Drawing.Point(7, 49);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(57, 26);
-            this.objectSaverButton1.TabIndex = 58;
-            // 
             // ticket
             // 
             this.ticket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -293,7 +284,6 @@ namespace CohortManager.SubComponents
             this.splitContainer3.Panel1.Controls.Add(this.ticket);
             this.splitContainer3.Panel1.Controls.Add(this.tbDescription);
             this.splitContainer3.Panel1.Controls.Add(this.tbID);
-            this.splitContainer3.Panel1.Controls.Add(this.objectSaverButton1);
             this.splitContainer3.Panel1.Controls.Add(this.tbName);
             this.splitContainer3.Panel1.Controls.Add(this.label1);
             this.splitContainer3.Panel1.Controls.Add(this.lblDescription);
@@ -371,7 +361,6 @@ namespace CohortManager.SubComponents
 
         private CohortCompilerUI CohortCompilerUI1;
         private QueryCachingServerSelector queryCachingServerSelector;
-        private CatalogueManager.SimpleControls.ObjectSaverButton objectSaverButton1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label lblName;

@@ -37,7 +37,7 @@
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.ddShowPeriod = new System.Windows.Forms.ToolStripComboBox();
             this.cbIgnoreRowCounts = new System.Windows.Forms.ToolStripButton();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.racewayRenderArea = new Dashboard.Raceway.RacewayRenderAreaUI();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -70,32 +70,29 @@
             // 
             // btnAddCatalogue
             // 
-            this.btnAddCatalogue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnAddCatalogue.Image = ((System.Drawing.Image)(resources.GetObject("btnAddCatalogue.Image")));
             this.btnAddCatalogue.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAddCatalogue.Name = "btnAddCatalogue";
-            this.btnAddCatalogue.Size = new System.Drawing.Size(23, 22);
-            this.btnAddCatalogue.Text = "Add Catalogue";
+            this.btnAddCatalogue.Size = new System.Drawing.Size(49, 22);
+            this.btnAddCatalogue.Text = "Add";
             this.btnAddCatalogue.Click += new System.EventHandler(this.btnAddCatalogue_Click);
             // 
             // btnAddExtractableDatasetPackage
             // 
-            this.btnAddExtractableDatasetPackage.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnAddExtractableDatasetPackage.Image = ((System.Drawing.Image)(resources.GetObject("btnAddExtractableDatasetPackage.Image")));
             this.btnAddExtractableDatasetPackage.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAddExtractableDatasetPackage.Name = "btnAddExtractableDatasetPackage";
-            this.btnAddExtractableDatasetPackage.Size = new System.Drawing.Size(23, 22);
-            this.btnAddExtractableDatasetPackage.Text = "Add Extractable Dataset Package";
+            this.btnAddExtractableDatasetPackage.Size = new System.Drawing.Size(49, 22);
+            this.btnAddExtractableDatasetPackage.Text = "Add";
             this.btnAddExtractableDatasetPackage.Click += new System.EventHandler(this.btnAddExtractableDatasetPackage_Click);
             // 
             // btnRemoveAll
             // 
-            this.btnRemoveAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnRemoveAll.Image = ((System.Drawing.Image)(resources.GetObject("btnRemoveAll.Image")));
             this.btnRemoveAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRemoveAll.Name = "btnRemoveAll";
-            this.btnRemoveAll.Size = new System.Drawing.Size(23, 22);
-            this.btnRemoveAll.Text = "Remove All Catalogues";
+            this.btnRemoveAll.Size = new System.Drawing.Size(54, 22);
+            this.btnRemoveAll.Text = "Clear";
             this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
             // 
             // toolStripLabel1
@@ -113,12 +110,11 @@
             // cbIgnoreRowCounts
             // 
             this.cbIgnoreRowCounts.CheckOnClick = true;
-            this.cbIgnoreRowCounts.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.cbIgnoreRowCounts.Image = ((System.Drawing.Image)(resources.GetObject("cbIgnoreRowCounts.Image")));
             this.cbIgnoreRowCounts.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.cbIgnoreRowCounts.Name = "cbIgnoreRowCounts";
-            this.cbIgnoreRowCounts.Size = new System.Drawing.Size(23, 22);
-            this.cbIgnoreRowCounts.Text = "Respect Row Counts";
+            this.cbIgnoreRowCounts.Size = new System.Drawing.Size(84, 22);
+            this.cbIgnoreRowCounts.Text = "No Counts";
             this.cbIgnoreRowCounts.CheckedChanged += new System.EventHandler(this.cbIgnoreRowCounts_CheckedChanged);
             // 
             // ragSmiley1
@@ -167,7 +163,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnAddCatalogue;
         private System.Windows.Forms.ToolStripButton btnRemoveAll;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private RacewayRenderAreaUI racewayRenderArea;
         private System.Windows.Forms.ToolStripButton btnAddExtractableDatasetPackage;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;

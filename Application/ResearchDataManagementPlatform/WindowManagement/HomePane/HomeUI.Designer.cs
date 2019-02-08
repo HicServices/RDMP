@@ -104,7 +104,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             // 
             // tlpDataManagement
             // 
-            this.tlpDataManagement.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tlpDataManagement.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tlpDataManagement.ColumnCount = 1;
             this.tlpDataManagement.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -112,12 +113,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.tlpDataManagement.Name = "tlpDataManagement";
             this.tlpDataManagement.RowCount = 1;
             this.tlpDataManagement.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpDataManagement.Size = new System.Drawing.Size(312, 114);
+            this.tlpDataManagement.Size = new System.Drawing.Size(400, 208);
             this.tlpDataManagement.TabIndex = 13;
             // 
             // tlpDataExport
             // 
-            this.tlpDataExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tlpDataExport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tlpDataExport.ColumnCount = 1;
             this.tlpDataExport.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -125,7 +127,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.tlpDataExport.Name = "tlpDataExport";
             this.tlpDataExport.RowCount = 1;
             this.tlpDataExport.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpDataExport.Size = new System.Drawing.Size(236, 114);
+            this.tlpDataExport.Size = new System.Drawing.Size(400, 205);
             this.tlpDataExport.TabIndex = 16;
             // 
             // flowLayoutPanel1
@@ -150,16 +152,16 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.panel1.Controls.Add(this.tlpDataManagement);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(317, 150);
+            this.panel1.Size = new System.Drawing.Size(400, 244);
             this.panel1.TabIndex = 18;
             // 
             // panel4
             // 
             this.panel4.Controls.Add(this.label1);
             this.panel4.Controls.Add(this.tlpCohortCreation);
-            this.panel4.Location = new System.Drawing.Point(326, 3);
+            this.panel4.Location = new System.Drawing.Point(409, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(269, 184);
+            this.panel4.Size = new System.Drawing.Size(400, 244);
             this.panel4.TabIndex = 19;
             // 
             // label1
@@ -175,7 +177,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             // 
             // tlpCohortCreation
             // 
-            this.tlpCohortCreation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tlpCohortCreation.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tlpCohortCreation.ColumnCount = 1;
             this.tlpCohortCreation.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -183,25 +186,25 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.tlpCohortCreation.Name = "tlpCohortCreation";
             this.tlpCohortCreation.RowCount = 1;
             this.tlpCohortCreation.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpCohortCreation.Size = new System.Drawing.Size(261, 145);
+            this.tlpCohortCreation.Size = new System.Drawing.Size(400, 205);
             this.tlpCohortCreation.TabIndex = 16;
             // 
             // panel2
             // 
             this.panel2.Controls.Add(this.lblExport);
             this.panel2.Controls.Add(this.tlpDataExport);
-            this.panel2.Location = new System.Drawing.Point(601, 3);
+            this.panel2.Location = new System.Drawing.Point(815, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(244, 150);
+            this.panel2.Size = new System.Drawing.Size(400, 241);
             this.panel2.TabIndex = 18;
             // 
             // panel5
             // 
             this.panel5.Controls.Add(this.label3);
             this.panel5.Controls.Add(this.tlpDataLoad);
-            this.panel5.Location = new System.Drawing.Point(851, 3);
+            this.panel5.Location = new System.Drawing.Point(3, 253);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(244, 150);
+            this.panel5.Size = new System.Drawing.Size(400, 194);
             this.panel5.TabIndex = 19;
             // 
             // label3
@@ -217,7 +220,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             // 
             // tlpDataLoad
             // 
-            this.tlpDataLoad.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tlpDataLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tlpDataLoad.ColumnCount = 1;
             this.tlpDataLoad.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -225,16 +229,16 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.tlpDataLoad.Name = "tlpDataLoad";
             this.tlpDataLoad.RowCount = 1;
             this.tlpDataLoad.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpDataLoad.Size = new System.Drawing.Size(236, 114);
+            this.tlpDataLoad.Size = new System.Drawing.Size(400, 158);
             this.tlpDataLoad.TabIndex = 16;
             // 
             // panel3
             // 
             this.panel3.Controls.Add(this.label4);
             this.panel3.Controls.Add(this.tlpAdvanced);
-            this.panel3.Location = new System.Drawing.Point(3, 193);
+            this.panel3.Location = new System.Drawing.Point(409, 253);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(244, 150);
+            this.panel3.Size = new System.Drawing.Size(400, 194);
             this.panel3.TabIndex = 20;
             // 
             // label4
@@ -250,7 +254,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             // 
             // tlpAdvanced
             // 
-            this.tlpAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tlpAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tlpAdvanced.ColumnCount = 1;
             this.tlpAdvanced.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -258,7 +263,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.tlpAdvanced.Name = "tlpAdvanced";
             this.tlpAdvanced.RowCount = 1;
             this.tlpAdvanced.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpAdvanced.Size = new System.Drawing.Size(236, 114);
+            this.tlpAdvanced.Size = new System.Drawing.Size(400, 158);
             this.tlpAdvanced.TabIndex = 16;
             // 
             // HomeUI

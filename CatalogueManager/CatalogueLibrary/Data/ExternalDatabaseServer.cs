@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -8,17 +14,21 @@ using System.Web.UI.WebControls;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueLibrary.Data
 {
     /// <summary>
-    /// Records information about an SQL database.  This can be a system specific database e.g. a Logging database or an ANOStore or it could be a generic
-    /// database you use to hold data (e.g. lookups). 
+    /// <para>Records information about a server.  This can be a system specific database e.g. a Logging database or an ANOStore or it could be a generic
+    /// database you use to hold data (e.g. lookups).  These are usually database servers but don't have to be (e.g. you could create a reference to an FTP server).</para>
     /// 
     /// <para>IMPORTANT: do not add an ExternalDatabaseServer just because you store data on it, instead you should import pointers to the data you hold as TableInfo 
     /// objects which themselves store Server/Database which allows for minimal disruption when you decide to move a table to a different server (it also allows
@@ -29,7 +39,7 @@ namespace CatalogueLibrary.Data
     /// <para>Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when openning connections.  Password
     /// is encrypted in the same fashion as in the DataAccessCredentials table.</para>
     /// </summary>
-    public class ExternalDatabaseServer : VersionedDatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed
+    public class ExternalDatabaseServer : VersionedDatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
     {
         #region Database Properties
 
@@ -41,6 +51,8 @@ namespace CatalogueLibrary.Data
         /// <summary>
         /// Human readable name for the server e.g. 'My Favourite Logging Database'
         /// </summary>
+        [Unique]
+        [NotNull]
         public string Name
         {
             get { return _name; }
@@ -205,6 +217,25 @@ namespace CatalogueLibrary.Data
         public override string ToString()
         {
             return Name;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            if (string.IsNullOrWhiteSpace(Server))
+                notifier.OnCheckPerformed(new CheckEventArgs("No Server set", CheckResult.Warning));
+            else   
+            if (string.IsNullOrWhiteSpace(Database))
+                notifier.OnCheckPerformed(new CheckEventArgs("No Database set", CheckResult.Warning));
+            else
+            try
+            {
+                DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.InternalDataProcessing).TestConnection();
+                notifier.OnCheckPerformed(new CheckEventArgs("Successfully connected to server", CheckResult.Success));
+            }
+            catch (Exception exception)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Failed to connect to server", CheckResult.Fail, exception));
+            }
         }
 
         /// <inheritdoc/>

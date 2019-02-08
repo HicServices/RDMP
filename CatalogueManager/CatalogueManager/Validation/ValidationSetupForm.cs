@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,6 +24,7 @@ using HIC.Common.Validation.Constraints.Primary;
 using HIC.Common.Validation.Constraints.Secondary;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.Validation
@@ -73,6 +80,10 @@ namespace CatalogueManager.Validation
             tableLayoutPanel1.Padding = new Padding(0, 0, vertScrollWidth, 0);
 
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
+
+            olvName.ImageGetter = (o) => _activator.CoreIconProvider.GetImage(o);
         }
 
         private bool isFirstTime = true;
@@ -82,6 +93,8 @@ namespace CatalogueManager.Validation
         {
             base.SetDatabaseObject(activator, databaseObject);
             
+            AddPluginCommandsToMenu();
+
             //if someone renames a Catalogue we don't want to erase all the rule changes they have configured here
             if(!isFirstTime)
                 return;
@@ -89,12 +102,7 @@ namespace CatalogueManager.Validation
             isFirstTime = false;
 
             _catalogue = databaseObject;
-
-            objectSaverButton1.SetupFor(databaseObject, _activator.RefreshBus);
-            objectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
-
-            olvName.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o);
-
+            
             SetupComboBoxes(databaseObject);
 
             //get the validation XML
@@ -233,7 +241,7 @@ namespace CatalogueManager.Validation
 
 
             bSuppressChangeEvents = false;
-            objectSaverButton1.Enable(true);
+            ObjectSaverButton1.Enable(true);
         }
 
         private void btnAddSecondaryConstraint_Click(object sender, EventArgs e)
@@ -251,7 +259,7 @@ namespace CatalogueManager.Validation
                 
                 SelectedColumnItemValidator.SecondaryConstraints.Add(secondaryConstriant);
                 AddSecondaryConstraintControl(secondaryConstriant);
-                objectSaverButton1.Enable(true);
+                ObjectSaverButton1.Enable(true);
             }
         }
 
@@ -261,7 +269,7 @@ namespace CatalogueManager.Validation
 
             SelectedColumnItemValidator.SecondaryConstraints.Remove(toDelete);
             tableLayoutPanel1.Controls.Remove(sender as Control);
-            objectSaverButton1.Enable(true);
+            ObjectSaverButton1.Enable(true);
         }
 
         private void AddSecondaryConstraintControl(SecondaryConstraint secondaryConstriant)
@@ -289,7 +297,7 @@ namespace CatalogueManager.Validation
                 if (SelectedColumnItemValidator.PrimaryConstraint != null)
                 {
                     SelectedColumnItemValidator.PrimaryConstraint.Consequence = (Consequence) ddConsequence.SelectedValue;
-                    objectSaverButton1.Enable(true);
+                    ObjectSaverButton1.Enable(true);
                 }
                 else
                 {
@@ -367,11 +375,6 @@ namespace CatalogueManager.Validation
             {
                 return false;
             }
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         private void cbxTimePeriodColumn_SelectedIndexChanged(object sender, EventArgs e)

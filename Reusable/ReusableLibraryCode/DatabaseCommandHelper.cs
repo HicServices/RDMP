@@ -1,18 +1,25 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Linq;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Discovery.TypeTranslation.TypeDeciders;
+using FAnsi.Implementation;
+using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MySql;
+using FAnsi.Implementations.Oracle;
 using MySql.Data.MySqlClient;
 using Oracle.ManagedDataAccess.Client;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.MySql;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Oracle;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.TypeDeciders;
 using ReusableLibraryCode.Performance;
 
 namespace ReusableLibraryCode
@@ -24,6 +31,13 @@ namespace ReusableLibraryCode
     /// </summary>
     public class DatabaseCommandHelper
     {
+        private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new Dictionary<DatabaseType, IImplementation>()
+        {
+            {DatabaseType.MySql,new MySqlImplementation()},
+            {DatabaseType.Oracle,new OracleImplementation()},
+            {DatabaseType.MicrosoftSQLServer,new MicrosoftSQLImplementation()},
+        };
+
         public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;
 
         /// <summary>
@@ -31,10 +45,41 @@ namespace ReusableLibraryCode
         /// </summary>
         public static int GlobalTimeout = 30;
 
+        
+
+        public static IDiscoveredServerHelper For(DbConnection con)
+        {
+            return _dbConHelpersByType.Values.Single(i => i.IsFor(con)).GetServerHelper();
+        }
+
+        public static IDiscoveredServerHelper For(DbConnectionStringBuilder connectionStringBuilder)
+        {
+            return _dbConHelpersByType.Values.Single(i => i.IsFor(connectionStringBuilder)).GetServerHelper();
+        }
+
+        public static IDiscoveredServerHelper For(DatabaseType dbType)
+        {
+            return _dbConHelpersByType[dbType].GetServerHelper();
+        }
+
+        public static IDiscoveredServerHelper For(DbCommand cmd)
+        {
+            if (cmd is SqlCommand)
+                return _dbConHelpersByType[DatabaseType.MicrosoftSQLServer].GetServerHelper();
+            if (cmd is OracleCommand)
+                return _dbConHelpersByType[DatabaseType.Oracle].GetServerHelper();
+            if (cmd is MySqlCommand)
+                return _dbConHelpersByType[DatabaseType.MySql].GetServerHelper();
+
+            throw new NotSupportedException("Didn't know what helper to use for DbCommand Type " + cmd.GetType());
+            //todo: add this method to implementation in FAnsi
+            //return _dbConHelpersByType.Values.Single(i => i.IsFor(cmd)).GetServerHelper();
+        }
+
         public static DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null)
         {
-            var cmd =  new DatabaseHelperFactory(con).CreateInstance().GetCommand(s,con,transaction);
-
+            var cmd = For(con).GetCommand(s, con, transaction);
+            
             if(PerformanceCounter != null)
                 PerformanceCounter.AddAudit(cmd,Environment.StackTrace.ToString());
 
@@ -44,7 +89,7 @@ namespace ReusableLibraryCode
 
         public static DbCommand GetInsertCommand(DbCommand cmd)
         {
-            var toReturn = new DatabaseHelperFactory(cmd).CreateInstance().GetCommandBuilder(cmd).GetInsertCommand(true);
+            var toReturn = For(cmd).GetCommandBuilder(cmd).GetInsertCommand(true);
             toReturn.CommandTimeout = cmd.CommandTimeout = GlobalTimeout;
             
             return toReturn;
@@ -52,22 +97,22 @@ namespace ReusableLibraryCode
 
         public static DbParameter GetParameter(string parameterName,DbCommand forCommand)
         {
-            return new DatabaseHelperFactory(forCommand).CreateInstance().GetParameter(parameterName);
+            return For(forCommand).GetParameter(parameterName);
         }
 
         public static DbParameter GetParameter(string parameterName, DatabaseType databaseType)
         {
-            return new DatabaseHelperFactory(databaseType).CreateInstance().GetParameter(parameterName);
+            return For(databaseType).GetParameter(parameterName);
         }
         // only used in missing fields checker, should be in UsefulStuff?
         public static DbConnection GetConnection(DbConnectionStringBuilder connectionStringBuilder)
         {
-            return new DatabaseHelperFactory(connectionStringBuilder).CreateInstance().GetConnection(connectionStringBuilder);
+            return For(connectionStringBuilder).GetConnection(connectionStringBuilder);
         }
 
         public static DbDataAdapter GetDataAdapter(DbCommand cmd)
         {
-            return new DatabaseHelperFactory(cmd).CreateInstance().GetDataAdapter(cmd);
+            return For(cmd).GetDataAdapter(cmd);
         }
 
         public static void AddParameterWithValueToCommand(string parameterName, DbCommand command, object valueForParameter)
@@ -86,7 +131,7 @@ namespace ReusableLibraryCode
                 case DatabaseType.MicrosoftSQLServer:
                     helper = new MicrosoftSQLServerHelper();
                     break;
-                case DatabaseType.MYSQLServer:
+                case DatabaseType.MySql:
                     helper = new MySqlServerHelper();
                     break;
                 case DatabaseType.Oracle:
@@ -101,15 +146,7 @@ namespace ReusableLibraryCode
 
         static TypeDeciderFactory typeDeciderFactory = new TypeDeciderFactory();
 
-        /// <summary>
-        /// Gets a DbParameter hard typed with the correct DbType for the discoveredColumn and the Value set to the correct Value representation (e.g. DBNull for nulls or whitespace).
-        /// <para>Also handles converting DateTime representations since many DBMS are a bit rubbish at that</para> 
-        /// </summary>
-        /// <param name="paramName">The name for the parameter e.g. @myParamter</param>
-        /// <param name="syntaxHelper">The syntax that can figure out Types for the DBMS you are targetting, grab from your nearest <see cref="ReusableLibraryCode.DataAccess.IHasQuerySyntaxHelper"/> e.g. <see cref="DiscoveredColumn.Table"/></param>
-        /// <param name="discoveredColumn">The column the parameter is for loading - this is used to determine the DbType for the paramter</param>
-        /// <param name="value">The value to populate into the command, this will be converted to DBNull.Value if the value is nullish</param>
-        /// <returns></returns>
+        
         public static DbParameter GetParameter(string paramName, IQuerySyntaxHelper syntaxHelper, DiscoveredColumn discoveredColumn, object value)
         {
             var p = GetParameter(paramName, syntaxHelper.DatabaseType);

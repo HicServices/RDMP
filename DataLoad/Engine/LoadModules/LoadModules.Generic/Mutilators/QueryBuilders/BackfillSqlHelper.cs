@@ -1,9 +1,15 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 
 namespace LoadModules.Generic.Mutilators.QueryBuilders
 {
@@ -34,7 +40,7 @@ namespace LoadModules.Generic.Mutilators.QueryBuilders
         /// <param name="dbInfo"></param>
         /// <param name="joinPath"></param>
         /// <returns></returns>
-        public string CreateSqlForJoinToTimePeriodicityTable(string tableAlias, TableInfo tableInfo, string timePeriodTableAlias, DiscoveredDatabase dbInfo, List<JoinInfo> joinPath)
+        public string CreateSqlForJoinToTimePeriodicityTable(string tableAlias, ITableInfo tableInfo, string timePeriodTableAlias, DiscoveredDatabase dbInfo, List<JoinInfo> joinPath)
         {
             if (tableInfo.ID == _timePeriodicityField.TableInfo_ID && joinPath.Count > 0)
                 throw new InvalidOperationException("You have asked for a join where the original table *is* the TimePeriodicityTable but a non-empty join path has been provided. There should be no path when dealing directly with the TimePeriodicity table");
@@ -100,7 +106,7 @@ LEFT JOIN {0} {1} ON {2}.{3} = {1}.{4}",
         }
 
 
-        public string GetSQLComparingStagingAndLiveTables(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+        public string GetSQLComparingStagingAndLiveTables(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
         {
             // All rows in STAGING tiCurrent + the time from the TimePeriodicity table
             var toLoadWithTimeSQL =

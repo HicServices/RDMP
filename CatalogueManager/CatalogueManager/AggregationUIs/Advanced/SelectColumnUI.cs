@@ -1,11 +1,13 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
@@ -13,20 +15,19 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueManager.AutoComplete;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
+using Fansi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SqlDialogs;
 
 namespace CatalogueManager.AggregationUIs.Advanced
@@ -97,7 +98,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     if (countColumn != null)
                         if (_options.GetCountColumnRequirement(_aggregate) == CountColumnRequirement.CannotHaveOne)
                         {
-                            WideMessageBox.Show("Cohort Sets cannot have Count columns");
+                            WideMessageBox.Show("Cohort Sets cannot have count columns","A count column is a SELECT column with an aggregate function (count(*), sum(x) etc).  The SELECT component for cohort identification must be the patient id column only.");
                         }
                         else
                             Save(countColumn);
@@ -109,7 +110,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                         //if it's a normal aggregate then don't let the user have more than 2 columns
                         if (!_aggregate.IsCohortIdentificationAggregate && _includedColumns.OfType<AggregateDimension>().Count() >= 2)
                         {
-                            WideMessageBox.Show("You can only have a maximum of 2 columns in any graph (plus a count)");
+                            WideMessageBox.Show("Too many columns","You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
                             return;
                         }
 

@@ -1,20 +1,24 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
-using MapsDirectlyToDatabaseTable;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace CatalogueManager.DataViewing.Collections.Arbitrary
 {
-    internal class ArbitraryTableExtractionUICollection : IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
+    internal class ArbitraryTableExtractionUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
     {
         private DiscoveredTable _table;
         
@@ -34,12 +38,11 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
         }
 
         /// <summary>
-        /// probably needed for deserialization or something
+        /// Needed for deserialization
         /// </summary>
         public ArbitraryTableExtractionUICollection()
         {
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
+            
         }
 
         public ArbitraryTableExtractionUICollection(DiscoveredTable table) :this()
@@ -56,34 +59,27 @@ namespace CatalogueManager.DataViewing.Collections.Arbitrary
             Username = table.Database.Server.ExplicitUsernameIfAny;
             Password = table.Database.Server.ExplicitPasswordIfAny;
         }
-        
-        /// <inheritdoc/>
-        public PersistStringHelper Helper { get; private set; }
-
-        /// <inheritdoc/>
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
-
         /// <nheritdoc/>
-        public string SaveExtraText()
+        public override string SaveExtraText()
         {
             return Helper.SaveDictionaryToString(_arguments);
         }
 
-        public void LoadExtraText(string s)
+        public override void LoadExtraText(string s)
         {
             _arguments = Helper.LoadDictionaryFromString(s);
 
             DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), _arguments[DatabaseTypeKey]);
 
-            var builder = new DatabaseHelperFactory(DatabaseType).CreateInstance().GetConnectionStringBuilder(Server,Database,null,null);
+            var builder = DatabaseCommandHelper.For(DatabaseType).GetConnectionStringBuilder(Server,Database,null,null);
 
             var server = new DiscoveredServer(builder);
             _table = server.ExpectDatabase(Database).ExpectTable(_arguments[TableKey]);
         }
         
-        public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
+        public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            ribbon.Add( _table.GetRuntimeName() + " ("+_arguments[ServerKey] +")");
+            yield break;
         }
 
         public IDataAccessPoint GetDataAccessPoint()

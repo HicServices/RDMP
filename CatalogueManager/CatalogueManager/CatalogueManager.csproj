@@ -262,9 +262,37 @@
       <HintPath>..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FAnsi">
+      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.MySql">
+      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.Oracle">
+      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -369,6 +397,8 @@
     <Compile Include="Collections\RDMPCollection.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionalitySettings.cs" />
     <Compile Include="Collections\RDMPCollectionCommonFunctionalityTreeHijacker.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Automation\AutomationCommandExecution.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Automation\ExecuteCommandCopyRunCommandToClipboard.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddJoinInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewGovernanceDocument.cs" />
@@ -377,7 +407,9 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAnonymiseColumnInfo.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBrowseLookup.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkImportTableInfos.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkProcessCatalogueItems.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCheck.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandClonePipeline.cs" />
@@ -389,22 +421,20 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueFromTableInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewFilter.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewFilterFromCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewGovernancePeriod.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewStandardRegex.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDeprecate.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipelineWithUseCase.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportObjectsToFileUI.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportInDublinCoreFormat.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueItemDescription.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportDublinCoreFormat.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportShareDefinitionList.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueItemExtractable.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueProjectSpecific.cs" />
@@ -413,13 +443,28 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOverrideRawServer.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReOrderColumns.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunChecksInPopupWindow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowCacheFetchFailures.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowRelatedObject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchData.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchGraph.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadDiagram.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSample.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSqlParameters.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportInDublinCoreFormat.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportObjectsToFileUI.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportDublinCoreFormat.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportFilterDescriptionsFromShare.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportShare.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportShareDefinitionList.cs" />
+    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemsNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDashboardLayout.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
@@ -450,6 +495,12 @@
     <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
     <Compile Include="Copying\Commands\TableInfoCommand.cs" />
     <Compile Include="Copying\RDMPCommandFactory.cs" />
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.Designer.cs">
+      <DependentUpon>LookupBrowserUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -496,9 +547,19 @@
     <Compile Include="Menus\AllServersNodeMenu.cs" />
     <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandScriptTable.cs" />
+    <Compile Include="Menus\CatalogueFolderMenu.cs" />
+    <Compile Include="Menus\ContainerMenu.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditLoadMetadataDescription.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDisableOrEnable.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
+    <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\GovernancePeriodMenu.cs" />
+    <Compile Include="Menus\LookupMenu.cs" />
+    <Compile Include="Menus\MenuItems\AtomicCommandToolStripItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
+    <Compile Include="Menus\ProcessTaskMenu.cs" />
     <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -611,6 +672,9 @@
     </Compile>
     <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
     <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
+    <Compile Include="Rules\BinderRule.cs" />
+    <Compile Include="Rules\NotNullRule.cs" />
+    <Compile Include="Rules\UniqueRule.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -618,12 +682,7 @@
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleControls\CommandGetterHandler.cs" />
-    <Compile Include="SimpleControls\ExecuteInAutomationServerUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SimpleControls\ExecuteInAutomationServerUI.Designer.cs">
-      <DependentUpon>ExecuteInAutomationServerUI.cs</DependentUpon>
-    </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\Automation\ExecuteCommandRunDetached.cs" />
     <Compile Include="FindAndReplace\FindAndReplaceNode.cs" />
     <Compile Include="FindAndReplace\FindAndReplaceUI.cs">
       <SubType>UserControl</SubType>
@@ -670,7 +729,7 @@
       <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
     </Compile>
     <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandUIFactory.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditAndRunExistingDataExtractionProject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditDataExtractionProject.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandExecuteLoadMetadata.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
@@ -991,12 +1050,6 @@
     <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
     <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
     <Compile Include="Menus\RDMPContextMenuStripArgs.cs" />
-    <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ObjectVisualisation\RDMPObjectsRibbonUI.Designer.cs">
-      <DependentUpon>RDMPObjectsRibbonUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="PluginChildProvision\IPluginUserInterface.cs" />
     <Compile Include="PluginChildProvision\PluginChildProvider.cs" />
     <Compile Include="PluginManagement\CodeGeneration\CodeGenerationException.cs" />
@@ -1120,14 +1173,9 @@
     <Compile Include="Refreshing\RefreshObjectEventArgs.cs" />
     <Compile Include="Refreshing\RefreshObjectEventHandler.cs" />
     <Compile Include="SimpleControls\ISaveableUI.cs" />
-    <Compile Include="SimpleControls\ObjectSaverButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SimpleControls\ObjectSaverButton.Designer.cs">
-      <DependentUpon>ObjectSaverButton.cs</DependentUpon>
-    </Compile>
+    <Compile Include="SimpleControls\ObjectSaverButton.cs" />
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.Designer.cs">
       <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>
@@ -1138,6 +1186,7 @@
     <Compile Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.Designer.cs">
       <DependentUpon>ConfigureCatalogueExtractabilityUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Rules\BinderWithErrorProviderFactory.cs" />
     <Compile Include="SimpleDialogs\NavigateTo\NavigateToObjectUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1336,6 +1385,9 @@
     <Compile Include="TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="TestsAndSetup\ServicePropogation\RDMPUserControlPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="TestsAndSetup\ServicePropogation\ServiceLocatorPropagatorToChildControls.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\RDMPUserControl.cs">
       <SubType>UserControl</SubType>
@@ -1397,6 +1449,9 @@
     <Compile Include="Validation\ValidationSetupForm.Designer.cs">
       <DependentUpon>ValidationSetupForm.cs</DependentUpon>
     </Compile>
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="ExtractionUIs\FilterUIs\ParameterUIs\Parameters.cd" />
     <None Include="LogViewer\LoggingUI.cd" />
     <None Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueUIs.cd" />
@@ -1570,6 +1625,7 @@
     <None Include="Icons\AllGovernanceNode.png" />
     <None Include="Icons\AllProjectCohortIdentificationConfigurationsNode.png" />
     <None Include="Icons\AllFreeCohortIdentificationConfigurationsNode.png" />
+    <None Include="Icons\famfamfam\picture_save.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />
@@ -1676,6 +1732,10 @@
     <None Include="Icons\StandardPipelineUseCaseNode.png" />
     <None Include="Icons\OtherPipelinesNode.png" />
     <None Include="Icons\LookupCompositeJoinInfo.png" />
+    <None Include="Icons\Overlays\Extractable_Internal.png" />
+    <None Include="Icons\Overlays\Extractable_SpecialApproval.png" />
+    <None Include="Icons\Overlays\Extractable_Supplemental.png" />
+    <None Include="Icons\Menu.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
     <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
@@ -1735,6 +1795,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.resx">
+      <DependentUpon>LookupBrowserUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupUI.resx">
       <DependentUpon>LookupUI.cs</DependentUpon>
@@ -1798,9 +1861,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleControls\CheckAndExecuteUI.resx">
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleControls\ExecuteInAutomationServerUI.resx">
-      <DependentUpon>ExecuteInAutomationServerUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FindAndReplace\FindAndReplaceUI.resx">
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
@@ -1910,9 +1970,6 @@
     <EmbeddedResource Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.resx">
       <DependentUpon>ExternalDatabaseServerUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ObjectVisualisation\RDMPObjectsRibbonUI.resx">
-      <DependentUpon>RDMPObjectsRibbonUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTable.resx">
       <DependentUpon>GenerateClassCodeFromTable.cs</DependentUpon>
     </EmbeddedResource>
@@ -1939,10 +1996,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\SubComponents\TableInfoUI.resx">
       <DependentUpon>TableInfoUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SimpleControls\ObjectSaverButton.resx">
-      <DependentUpon>ObjectSaverButton.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\BulkProcessCatalogueItems.resx">
       <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>
@@ -2053,6 +2106,12 @@
     <EmbeddedResource Include="TestsAndSetup\DiagnosticsScreen.resx">
       <DependentUpon>DiagnosticsScreen.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestsAndSetup\ServicePropogation\RDMPForm.resx">
+      <DependentUpon>RDMPForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestsAndSetup\ServicePropogation\RDMPUserControl.resx">
+      <DependentUpon>RDMPUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TestsAndSetup\StartupUI\ManagedDatabaseUI.resx">
       <DependentUpon>ManagedDatabaseUI.cs</DependentUpon>

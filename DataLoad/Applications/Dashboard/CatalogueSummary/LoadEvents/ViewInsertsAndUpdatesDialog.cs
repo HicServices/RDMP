@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,12 +15,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Triggers;
+using Fansi.Implementations.MicrosoftSQL;
 using HIC.Logging.PastEvents;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SqlDialogs;
 
 
@@ -103,7 +110,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             //we didn't see any errors so probably everything was fine
             if(fetchDataResultedInNoErrors)
-                WideMessageBox.Show("Data ready for you to view in the Inserts / Updates tabs");
+                WideMessageBox.Show("Data Ready","Data ready for you to view in the Inserts / Updates tabs",WideMessageBoxTheme.Help);
 
         }
 

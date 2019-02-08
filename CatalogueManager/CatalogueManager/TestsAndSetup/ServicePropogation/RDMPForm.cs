@@ -1,10 +1,14 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.SimpleDialogs.Reports;
-using RDMPStartup;
+using CatalogueManager.SimpleControls;
 using ReusableUIComponents;
 
 
@@ -20,10 +24,17 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     {
         private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         
+        /// <summary>
+        /// Whether escape keystrokes should trigger form closing (defaults to true).
+        /// </summary>
+        public bool CloseOnEscape { get; set; } 
+
         public RDMPForm()
         {
             KeyPreview = true;
+            CloseOnEscape = true;
             VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+            KeyDown += RDMPForm_KeyDown;
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -62,6 +73,20 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         public void SetVisualStudioDesignMode(bool visualStudioDesignMode)
         {
             VisualStudioDesignMode = visualStudioDesignMode;
+        }
+        
+        private void RDMPForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (((e.KeyCode == Keys.W && e.Control) || e.KeyCode == Keys.Escape) && CloseOnEscape)
+                Close();
+
+            if (e.KeyCode == Keys.S && e.Control)
+            {
+                var saveable = this as ISaveableUI;
+
+                if (saveable != null)
+                    saveable.GetObjectSaverButton().Save();
+            }
         }
     }
 

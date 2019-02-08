@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -7,10 +13,10 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using DataLoadEngine.Job;
+using FAnsi.Discovery;
 using LoadModules.Generic.DataFlowSources;
 using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngineTests.Integration.PipelineTests.Sources
@@ -229,7 +235,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         /// 1. There is a row (2) with quotes in the middle which should get loaded correctly
         /// 2. Theres a row (4) with quotes in the middle of the text and the cell itself is quoted.  This loads but drops some quotes.
         /// 
-        /// The proper way to express row 4 is by escaping the quote with another quote i.e. "" (See test DelimitedFlatFileDataFlowSource_ProperQuoteEscaping) 
+        /// <para>The proper way to express row 4 is by escaping the quote with another quote i.e. "" (See test DelimitedFlatFileDataFlowSource_ProperQuoteEscaping) </para>
         /// </summary>
         [Test]
         public void DelimitedFlatFileDataFlowSource_LoadDataWithQuotesInMiddle_IgnoreBadReads()
@@ -571,6 +577,43 @@ old""", chunk.Rows[2][2]);
             source.Dispose(new ThrowImmediatelyDataLoadJob(), null);
 
             File.Delete(filename);
+        }
+
+        [Test]
+        public void Test_IgnoreColumns()
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("0101010101\t5\t2001-01-05\tomg\t");
+            sb.AppendLine("0101010101\t5\t2001-01-05\tomg2\t");
+            File.WriteAllText(filename, sb.ToString());
+            
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
+            source.ForceHeaders = "CHI\tStudyID\tDate\tSomeText";
+            source.MaxBatchSize = 10000;
+            source.IgnoreColumns = "StudyID\tDate\t";
+
+            var dt = source.GetChunk(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
+
+            Assert.NotNull(dt);
+
+            //should only be one column (chi since we ignore study and date)
+            Assert.AreEqual(2, dt.Columns.Count);
+            Assert.AreEqual("CHI", dt.Columns[0].ColumnName);
+            Assert.AreEqual("SomeText", dt.Columns[1].ColumnName);
+
+            Assert.AreEqual(2, dt.Rows.Count);
+
+            source.Dispose(new ThrowImmediatelyDataLoadJob(), null);
+
+            File.Delete(filename);
+            
         }
 
         [TestCase("Fish In Barrel", "FishInBarrel")]

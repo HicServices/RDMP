@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -17,15 +23,18 @@ using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.LoadProgressUpdating;
 using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.ANOEngineeringUIs
 {
@@ -344,12 +353,9 @@ namespace CatalogueManager.ANOEngineeringUIs
                 //don't display anything below ColumnInfo
                 tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] {typeof (ColumnInfo)};
                 
-                rdmpObjectsRibbonUI1.SetIconProvider(activator.CoreIconProvider);
-                rdmpObjectsRibbonUI1.Add(databaseObject);
-
                 _setup = true;
             }
-
+            
             //Add them and expand them
             tlvTableInfoMigrations.ClearObjects();
             tlvTableInfoMigrations.AddObjects(_planManager.TableInfos);
@@ -441,7 +447,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
                 if(engine.NewCatalogue != null && engine.LoadMetadata != null)
                 {
-                    foreach (KeyValuePair<TableInfo, QueryBuilder> sqls in engine.SelectSQLForMigrations)
+                    foreach (KeyValuePair<ITableInfo, QueryBuilder> sqls in engine.SelectSQLForMigrations)
                         CreateAttacher(sqls.Key, sqls.Value, engine.LoadMetadata, sqls.Key.IsLookupTable()? null:engine.LoadProgressIfAny);
 
                     foreach (KeyValuePair<PreLoadDiscardedColumn, IDilutionOperation> dilutionOps in engine.DilutionOperationsForMigrations)
@@ -462,7 +468,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             }
         }
 
-        private void CreateAttacher(TableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
+        private void CreateAttacher(ITableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
         {
             var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
             pt.ProcessTaskType = ProcessTaskType.Attacher;
@@ -474,7 +480,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
 
             pt.SetArgumentValue("RemoteServer", t.Server);
-            pt.SetArgumentValue("RemoteDatabaseName", t.GetDatabaseRuntimeName());
+            pt.SetArgumentValue("RemoteDatabaseName", t.GetDatabaseRuntimeName(LoadStage.PostLoad));
             pt.SetArgumentValue("RemoteTableName", t.GetRuntimeName());
             pt.SetArgumentValue("DatabaseType", DatabaseType.MicrosoftSQLServer);
             pt.SetArgumentValue("RemoteSelectSQL", qb.SQL);

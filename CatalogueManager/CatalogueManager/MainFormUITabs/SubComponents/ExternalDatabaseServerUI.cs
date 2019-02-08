@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,8 +16,10 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
@@ -43,7 +51,6 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
         {
             base.SetDatabaseObject(activator, databaseObject);
             _server = databaseObject;
-            objectSaverButton1.SetupFor(_server, activator.RefreshBus);
 
             bloading = true;
             
@@ -51,24 +58,31 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
             {
                 SetupDropdownItems();
 
-                tbID.Text = _server.ID.ToString();
-                tbName.Text = _server.Name;
-                tbServerName.Text = _server.Server;
-                tbMappedDataPath.Text = _server.MappedDataPath;
-                tbDatabaseName.Text = _server.Database;
-                tbUsername.Text = _server.Username;
                 tbPassword.Text = _server.GetDecryptedPassword();
-                ddSetKnownType.Text = _server.CreatedByAssembly;
-
                 ddDatabaseType.SelectedItem = _server.DatabaseType;
                 pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(_server.DatabaseType);
 
                 pbServer.Image = _activator.CoreIconProvider.GetImage(_server);
+
+                AddChecks(databaseObject);
             }
             finally
             {
                 bloading = false;
             }
+        }
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ExternalDatabaseServer databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",s=>s.ID);
+            Bind(tbName,"Text","Name",s=>s.Name);
+            Bind(tbServerName, "Text", "Server", s => s.Server);
+            Bind(tbMappedDataPath, "Text", "MappedDataPath", s => s.MappedDataPath);
+            Bind(tbDatabaseName, "Text", "Database", s => s.Database);
+            Bind(tbUsername, "Text", "Username", s => s.Username);
+            Bind(ddSetKnownType, "Text", "CreatedByAssembly", s => s.CreatedByAssembly);
         }
 
         private void SetupDropdownItems()
@@ -80,75 +94,18 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
                 .Where(s => s.EndsWith(".Database") && //if it is a .Database assembly advertise it to the user as a known type of database
                     !(s.EndsWith("CatalogueLibrary.Database") || s.EndsWith("DataExportManager.Database"))).ToArray()); //unless it's one of the core ones (catalogue/data export)
         }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            _server.Name = tbName.Text;
-        }
-
-        private void tbServerName_TextChanged(object sender, EventArgs e)
-        {
-            _server.Server = tbServerName.Text;
-        }
-
-        private void tbMappedDataPath_TextChanged(object sender, EventArgs e)
-        {
-            _server.MappedDataPath = tbMappedDataPath.Text;
-        }
-
-        private void tbDatabaseName_TextChanged(object sender, EventArgs e)
-        {
-            _server.Database = tbDatabaseName.Text;
-        }
-
-        private void tbUsername_TextChanged(object sender, EventArgs e)
-        {
-            _server.Username = tbUsername.Text;
-        }
-
+        
         private void tbPassword_TextChanged(object sender, EventArgs e)
         {
             if(!bloading)
                 _server.Password = tbPassword.Text;
         }
-
-        private void ddSetKnownType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if(bloading)
-                return;
-            
-            _server.CreatedByAssembly = ddSetKnownType.SelectedItem as string;
-        }
-
-        private void btnCheckState_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                ragSmiley1.Reset();
-                ragSmiley1.Visible = true;
-
-                DataAccessPortal.GetInstance().ExpectServer(_server, DataAccessContext.InternalDataProcessing).TestConnection();
-                lblState.Text = "State:OK";
-                lblState.ForeColor = Color.Green;
-            }
-            catch (Exception exception)
-            {
-                lblState.Text = "State" + exception.Message;
-                lblState.ForeColor = Color.Red;
-                ragSmiley1.Fatal(exception);
-            }
-        }
-
+        
         private void btnClearKnownType_Click(object sender, EventArgs e)
         {
             _server.CreatedByAssembly = null;
             ddSetKnownType.SelectedItem = null;
             ddSetKnownType.Text = null;
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
 
         private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)

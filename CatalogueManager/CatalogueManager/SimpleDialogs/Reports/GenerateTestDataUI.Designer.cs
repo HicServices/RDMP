@@ -33,14 +33,14 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.lblDirectory = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.ragSmileyDirectory = new ReusableUIComponents.RAGSmiley();
+            this.ragSmileyDirectory = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.gbDemography = new System.Windows.Forms.GroupBox();
             this.gbPrescribing = new System.Windows.Forms.GroupBox();
             this.gbBiochemistry = new System.Windows.Forms.GroupBox();
             this.pPopulationSize = new System.Windows.Forms.Panel();
             this.tbPopulationSize = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.ragSmileyPopulation = new ReusableUIComponents.RAGSmiley();
+            this.ragSmileyPopulation = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.btnGenerate = new System.Windows.Forms.Button();
             this.sizeDemography = new CatalogueManager.SimpleDialogs.Reports.TestDataGenerator();
             this.sizePrescribing = new CatalogueManager.SimpleDialogs.Reports.TestDataGenerator();
@@ -260,8 +260,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbPopulationSize;
         private System.Windows.Forms.Label label7;
-        private ReusableUIComponents.RAGSmiley ragSmileyPopulation;
-        private ReusableUIComponents.RAGSmiley ragSmileyDirectory;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmileyPopulation;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmileyDirectory;
         private System.Windows.Forms.Panel pPopulationSize;
         private System.Windows.Forms.GroupBox gbBiochemistry;
         private System.Windows.Forms.GroupBox gbPrescribing;

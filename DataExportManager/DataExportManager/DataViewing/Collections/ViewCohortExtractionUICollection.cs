@@ -1,49 +1,39 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ObjectVisualisation;
 using DataExportLibrary.Data.DataTables;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 
 namespace DataExportManager.DataViewing.Collections
 {
-    internal class ViewCohortExtractionUICollection : IViewSQLAndResultsCollection
+    internal class ViewCohortExtractionUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
     {
-        public PersistStringHelper Helper { get; private set; }
-        public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
-
         public ViewCohortExtractionUICollection()
         {
-            DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-            Helper = new PersistStringHelper();
         }
 
         public ViewCohortExtractionUICollection(ExtractableCohort cohort):this()
         {
             DatabaseObjects.Add(cohort);
         }
-
-        public string SaveExtraText()
-        {
-            return null;
-        }
-
-        public void LoadExtraText(string s)
-        {
-            
-        }
         
         public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
-
-        public void SetupRibbon(RDMPObjectsRibbonUI ribbon)
+        
+        public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            ribbon.Add(Cohort);
+            yield return Cohort;
         }
 
         public IDataAccessPoint GetDataAccessPoint()

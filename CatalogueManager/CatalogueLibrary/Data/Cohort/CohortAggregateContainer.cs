@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -11,6 +17,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data.Cohort
@@ -20,13 +27,14 @@ namespace CatalogueLibrary.Data.Cohort
     /// and then EXCEPT "patients who have been prescribed Diazepam before 2000".  This is gives you DISTINCT patients who were FIRST prescribed Diazepam AFTER 2000.  A CohortAggregateContainer
     /// is a collection of sets (actually implemented as an AggregateConfiguration) (and optionally subcontainers) which are all separated with the given SetOperation.
     /// </summary>
-    public class CohortAggregateContainer : DatabaseEntity, IDeleteable, ISaveable, IOrderable,INamed
+    public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisableable
     {
         #region Database Properties
 
         private SetOperation _operation;
         private string _name;
         private int _order;
+        private bool _isDisabled;
 
         /// <summary>
         /// Describes how patient identifier sets identified by children (subcontainers and <see cref="AggregateConfiguration"/>s) in this container are combined using
@@ -42,6 +50,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <remarks>Starts out as simply the name of the <see cref="Operation"/> but can be changed by the user e.g. 'EXCEPT - Study Exclusion Criteria
         /// <para>This property should always start with the <see cref="Operation"/> to avoid confusion</para>
         /// </remarks>
+        [NotNull]
         public string Name
         {
             get { return _name; }
@@ -59,6 +68,13 @@ namespace CatalogueLibrary.Data.Cohort
             set { SetField(ref  _order, value); }
         }
 
+        /// <inheritdoc/>
+        public bool IsDisabled
+        {
+            get { return _isDisabled; }
+            set { SetField(ref _isDisabled , value); }
+        }
+
         #endregion
 
         internal CohortAggregateContainer(ICatalogueRepository repository, DbDataReader r)
@@ -69,6 +85,7 @@ namespace CatalogueLibrary.Data.Cohort
             SetOperation.TryParse(r["Operation"].ToString(), out op);
             Operation = op;
             Name = r["Name"].ToString();
+            IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         }
 
         /// <summary>
@@ -437,6 +454,35 @@ namespace CatalogueLibrary.Data.Cohort
                 toReturn.AddRange(sub.GetAllSubContainersRecursively());
             
             return toReturn;
+        }
+
+        /// <summary>
+        /// Returns true if this a cohort set and is the topmost (root) SET container of a <see cref="CohortIdentificationConfiguration"/>.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsRootContainer()
+        {
+            var cic = GetCohortIdentificationConfiguration();
+            if (cic != null)
+                return cic.RootCohortAggregateContainer_ID == ID;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns all containers that exist above the current container (up to the root container of the CohortIdentificationConfiguration)
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<CohortAggregateContainer> GetAllParentContainers()
+        {
+            CohortAggregateContainer container = this;
+
+            while (container != null)
+            {
+                container = container.GetParentContainerIfAny();
+                if (container != null)
+                    yield return container;
+            }
         }
     }
 }

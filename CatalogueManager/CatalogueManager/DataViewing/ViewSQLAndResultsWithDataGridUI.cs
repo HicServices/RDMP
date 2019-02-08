@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Data;
 using System.Data.Common;
@@ -6,18 +12,20 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.AutoComplete;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
@@ -41,7 +49,9 @@ namespace CatalogueManager.DataViewing
         private string _originalSql;
         private DiscoveredServer _server;
         private AutoCompleteProvider _autoComplete;
-        private bool _isRibbonSetup = false;
+        
+        ToolStripButton btnExecuteSql = new ToolStripButton("Run");
+        ToolStripButton btnResetSql = new ToolStripButton("Restore Original SQL");
 
         public ViewSQLAndResultsWithDataGridUI()
         {
@@ -53,6 +63,9 @@ namespace CatalogueManager.DataViewing
             _scintilla.TextChanged += _scintilla_TextChanged;
             _scintilla.KeyUp += ScintillaOnKeyUp;
             DoTransparencyProperly.ThisHoversOver(ragSmiley1,dataGridView1);
+
+            btnExecuteSql.Click += (s,e) => RunQuery();
+            btnResetSql.Click += btnResetSql_Click;
         }
 
         private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -71,7 +84,7 @@ namespace CatalogueManager.DataViewing
                         ParentForm.Close();
         }
 
-
+        private bool _menuInitialized = false;
         
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
@@ -90,14 +103,20 @@ namespace CatalogueManager.DataViewing
 
                 _autoComplete.RegisterForEvents(_scintilla);
             }
+
+            SetItemActivator(activator);
             
-            if(!_isRibbonSetup)
+            if (!_menuInitialized)
             {
-                ribbon.SetIconProvider(activator.CoreIconProvider);
-                _collection.SetupRibbon(ribbon);
-                _isRibbonSetup = true;
+                Add(btnExecuteSql);
+                Add(btnResetSql);
+
+                _menuInitialized = true;
             }
 
+            foreach (DatabaseEntity d in _collection.GetToolStripObjects())
+                AddToMenu(new ExecuteCommandShow(activator, d, 0,true));
+            
             RefreshUIFromDatabase();
         }
 
@@ -210,15 +229,8 @@ namespace CatalogueManager.DataViewing
         {
             //enable the reset button only if the SQL has changed (e.g. user is typing stuff)
             btnResetSql.Enabled = !_originalSql.Equals(_scintilla.Text);
-            btnResetSql.Text = btnResetSql.Enabled ? "You have changed the above SQL, click to reset" : "";
-
         }
-
-        private void btnExecuteSql_Click(object sender, EventArgs e)
-        {
-            RunQuery();
-        }
-
+        
         private void RunQuery()
         {
             var selected = _scintilla.SelectedText;

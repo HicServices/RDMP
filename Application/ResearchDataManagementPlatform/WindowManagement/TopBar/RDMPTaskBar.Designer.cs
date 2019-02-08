@@ -53,6 +53,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.cbxLayouts = new System.Windows.Forms.ToolStripComboBox();
             this.btnSaveWindowLayout = new System.Windows.Forms.ToolStripButton();
             this.btnDeleteLayout = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -165,7 +166,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripLabel2,
             this.cbxLayouts,
             this.btnSaveWindowLayout,
-            this.btnDeleteLayout});
+            this.btnDeleteLayout,
+            this.toolStripSeparator4});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1319, 25);
@@ -259,6 +261,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnDeleteLayout.Text = "Delete Layout";
             this.btnDeleteLayout.Click += new System.EventHandler(this.btnDelete_Click);
             // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            // 
             // RDMPTaskBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -297,6 +304,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStripButton btnSaveWindowLayout;
         private System.Windows.Forms.ToolStripButton btnForward;
         private System.Windows.Forms.ToolStripSplitButton btnBack;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 
     }
 }

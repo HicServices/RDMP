@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -10,6 +16,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPStartup;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.PluginChildProvision
@@ -28,5 +35,15 @@ namespace CatalogueManager.PluginChildProvision
         /// <param name="treeObject"></param>
         /// <returns></returns>
         ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object treeObject);
+        
+        /// <summary>
+        /// Return a list of commands that should be exposed on the given user interface tab control (<paramref name="control"/>) when displaying the
+        /// given <see cref="databaseEntity"/> object.  These will be shown as buttons on the control (where the control invokes
+        ///  <see cref="RDMPSingleDatabaseObjectControl{T}.AddPluginCommands"/>)
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="databaseEntity"></param>
+        /// <returns></returns>
+        IEnumerable<IAtomicCommand> GetAdditionalCommandsForControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity databaseEntity);
     }
 }

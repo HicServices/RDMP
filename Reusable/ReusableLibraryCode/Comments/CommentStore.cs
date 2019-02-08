@@ -1,8 +1,15 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NuDoq;
 
 namespace ReusableLibraryCode.Comments
@@ -12,7 +19,7 @@ namespace ReusableLibraryCode.Comments
     /// </summary>
     public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     {
-        private readonly Dictionary<string,string> _dictionary = new Dictionary<string, string>();
+        private readonly Dictionary<string,string> _dictionary = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
         private string[] _ignoreHelpFor = new[]
         {
@@ -133,6 +140,60 @@ namespace ReusableLibraryCode.Comments
         public string GetTypeDocumentationIfExists(Type type, bool allowInterfaceInstead = true)
         {
             return GetTypeDocumentationIfExists(int.MaxValue, type, allowInterfaceInstead);
+        }
+
+        /// <summary>
+        /// Searches the CommentStore for variations of the <paramref name="word"/> and returns the documentation if found (or null)
+        /// </summary>
+        /// <param name="word"></param>
+        /// <param name="fuzzyMatch"></param>
+        /// <param name="formatAsParagraphs">true to pass result string through <see cref="FormatAsParagraphs"/></param>
+        /// <returns></returns>
+        public string GetDocumentationIfExists(string word, bool fuzzyMatch, bool formatAsParagraphs = false)
+        {
+            var match = GetDocumentationKeywordIfExists(word,fuzzyMatch);
+
+            if (match == null)
+                return null;
+
+            return formatAsParagraphs ? FormatAsParagraphs(this[match]) : this[match];
+        }
+
+        /// <summary>
+        /// Searches the CommentStore for variations of the <paramref name="word"/> and returns the key that matches (which might be word verbatim).
+        /// 
+        /// <para>This does not return the actual documentation, use <see cref="GetDocumentationIfExists"/> for that</para>
+        /// </summary>
+        /// <param name="word"></param>
+        /// <param name="fuzzyMatch"></param>
+        /// <returns></returns>
+        public string GetDocumentationKeywordIfExists(string word, bool fuzzyMatch)
+        {
+            if (ContainsKey(word))
+                return word;
+
+            //try the plural if we didnt match the basic word
+            if (word.EndsWith("s") && fuzzyMatch)
+                return GetDocumentationKeywordIfExists(word.TrimEnd('s'), true);
+
+            //try the interface
+            if (fuzzyMatch)
+                return GetDocumentationKeywordIfExists("I" + word, false);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Formats a string read from xmldoc into paragraphs and gets rid of namespace prefixes introduced by cref="" notation.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public string FormatAsParagraphs(string message)
+        {
+            message = Regex.Replace(message, "\r\n\\s*","\r\n\r\n");
+            message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", (m) => m.Groups[2].Value);
+            
+            return message;
         }
     }
 }

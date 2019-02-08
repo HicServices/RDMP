@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using CatalogueLibrary.Data.Pipelines;
@@ -11,13 +17,7 @@ namespace CatalogueLibrary.Data.Cache
     public interface ICacheProgress : INamed
     {
         /// <summary>
-        /// Used by the automation server to decide whether to execute a CacheProgress.  This period is the minimum amount of available to fetch data that must
-        /// exist before starting a caching activity.  E.g. if the cache is up to date (including the lag period offset) and 1 second passes then we don't want to 
-        /// make a request for 1 second of data.  Similarly we don't want to just use the ChunkPeriod otherwise we would be executing arbitrary manner.  
-        /// 
-        /// <para>This lets you say 'only execute the cache if theres at least 1 month of data (assumed) to exist on the cache source' (CacheLagPeriodLoadDelay) and don't
-        /// request any data generated within the last month (CacheLagPeriod).  This means the cache will execute once a month and fetch a month of data at a time but
-        /// the CacheFillProgress will always be 1-2 months behind DateTime.Now (depending on how recently the execution occured).</para>
+        /// <para>The amount of time that has to have passed beyond the <see cref="CacheLagPeriod"/> before a fetch will be initiated.</para>
         /// 
         /// <para>Stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod</para> 
         /// </summary>

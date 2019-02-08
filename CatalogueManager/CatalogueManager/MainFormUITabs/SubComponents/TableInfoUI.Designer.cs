@@ -39,8 +39,8 @@
             this.label37 = new System.Windows.Forms.Label();
             this.tbTableInfoID = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
-            this.ragSmiley1 = new ReusableUIComponents.RAGSmiley();
+            
+            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.label1 = new System.Windows.Forms.Label();
             this.tbSchema = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -162,14 +162,6 @@
             this.label38.TabIndex = 141;
             this.label38.Text = "TableInfo ID";
             // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(101, 130);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(58, 28);
-            this.objectSaverButton1.TabIndex = 7;
-            // 
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
@@ -206,7 +198,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.objectSaverButton1);
+            
             this.Controls.Add(this.btnSynchronize);
             this.Controls.Add(this.label38);
             this.Controls.Add(this.cbIsPrimaryExtractionTable);
@@ -240,8 +232,8 @@
         private System.Windows.Forms.Label label38;
         private System.Windows.Forms.Button btnParameters;
         private System.Windows.Forms.Button btnSynchronize;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
-        private ReusableUIComponents.RAGSmiley ragSmiley1;
+        
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbSchema;
     }

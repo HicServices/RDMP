@@ -1,23 +1,24 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Media;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.LocationsMenu;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Copying;
 using ReusableUIComponents;
-
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
-using Color = System.Drawing.Color;
 
 namespace CatalogueManager.SimpleDialogs
 {
@@ -67,16 +68,44 @@ namespace CatalogueManager.SimpleDialogs
         public override void SetDatabaseObject(IActivateItems activator, SupportingSQLTable databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            SupportingSQLTable = databaseObject;
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+            _supportingSQLTable = databaseObject;
+
+            _bLoading = true;
+
+            QueryPreview.Text = _supportingSQLTable.SQL;
+
+            //if it has an external server configured
+            if (_supportingSQLTable.ExternalDatabaseServer_ID != null)
+                ddExternalServers.Text = _supportingSQLTable.ExternalDatabaseServer.ToString();
+            else
+                ddExternalServers.Text = NoExternalServer;
+
+            tcTicket.TicketText = _supportingSQLTable.Ticket;
+
+            _bLoading = false;
+
+            AddHelp(cbExtractable, "SupportingSQLTable.Extractable");
+            AddHelp(cbGlobal,"SupportingSqlTable.IsGlobal");
+
             RefreshUIFromDatabase();
         }
-        
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, SupportingSQLTable databaseObject)
+        {
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbID,"Text","ID",s=>s.ID);
+            Bind(tbName,"Text","Name",s=>s.Name);
+            Bind(tbDescription,"Text","Description",s=>s.Description);
+            Bind(cbExtractable,"Checked","Extractable",s=>s.Extractable);
+            Bind(cbGlobal,"Checked","IsGlobal",s=>s.IsGlobal);
+        }
+
         private void RefreshUIFromDatabase()
         {
             ddExternalServers.Items.Clear();
             ddExternalServers.Items.Add(NoExternalServer);
-            ddExternalServers.Items.AddRange(SupportingSQLTable.Repository.GetAllObjects<ExternalDatabaseServer>().ToArray());
+            ddExternalServers.Items.AddRange(_supportingSQLTable.Repository.GetAllObjects<ExternalDatabaseServer>().ToArray());
 
             if (_supportingSQLTable != null)
                 ddExternalServers.SelectedItem = _supportingSQLTable.ExternalDatabaseServer;
@@ -84,82 +113,29 @@ namespace CatalogueManager.SimpleDialogs
 
         private bool _bLoading;
 
-        protected SupportingSQLTable SupportingSQLTable
-        {
-            get { return _supportingSQLTable; }
-            private set
-            {
-                _bLoading = true;
-
-                _supportingSQLTable = value;
-
-                tbDescription.Text = value.Description;
-                tbName.Text = value.Name;
-                tbID.Text = value.ID.ToString();
-                QueryPreview.Text = value.SQL;
-
-                //if it has an external server configured
-                if (value.ExternalDatabaseServer_ID != null)
-                    ddExternalServers.Text = value.ExternalDatabaseServer.ToString();
-                else
-                    ddExternalServers.Text = NoExternalServer;
-
-                tcTicket.TicketText = value.Ticket;
-                    
-                cbExtractable.Checked = value.Extractable;
-                cbGlobal.Checked = value.IsGlobal;                 
-                
-                _bLoading = false;
-            }
-        }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(tbName.Text))
-            {
-                tbName.Text = "No Name";
-                tbName.SelectAll();
-            }
-            
-            if (SupportingSQLTable != null)
-                SupportingSQLTable.Name = tbName.Text;
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            if (SupportingSQLTable != null)
-                SupportingSQLTable.Description = tbDescription.Text;
-             
-        }
 
         void QueryPreview_TextChanged(object sender, EventArgs e)
         {
-            if (SupportingSQLTable != null)
-                SupportingSQLTable.SQL = QueryPreview.Text;
+            if (_supportingSQLTable != null)
+                _supportingSQLTable.SQL = QueryPreview.Text;
         }
-
-        private void cbExtractable_CheckedChanged(object sender, EventArgs e)
-        {
-            if (SupportingSQLTable != null)
-                SupportingSQLTable.Extractable = cbExtractable.Checked;
-        }
-
+        
         private void cbGlobal_CheckedChanged(object sender, EventArgs e)
         {
             if(_bLoading)
                 return;
 
-            if (SupportingSQLTable != null)
+            if (_supportingSQLTable != null)
             {
                 if (cbGlobal.Checked)
-                    SupportingSQLTable.IsGlobal = true;
+                    _supportingSQLTable.IsGlobal = true;
                 else
                 {
                     if (
                         MessageBox.Show(
                             "Are you sure you want to tie this SQL to this specific Catalogue? and stop it being Globally viewable to all Catalogues?",
                             "Disable Globalness?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        SupportingSQLTable.IsGlobal = false;
+                        _supportingSQLTable.IsGlobal = false;
                     else
                         cbGlobal.Checked = true;
                 }
@@ -172,14 +148,8 @@ namespace CatalogueManager.SimpleDialogs
             //apparently that is S when the control key is held down
             if(e.KeyChar == 19 && ModifierKeys == Keys.Control)
                 e.Handled = true;
-            
         }
         
-        private void btnManageExternalServers_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void ddExternalServers_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(_supportingSQLTable == null)
@@ -198,12 +168,7 @@ namespace CatalogueManager.SimpleDialogs
             if (_supportingSQLTable != null)
                 _supportingSQLTable.Ticket = tcTicket.TicketText;
         }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
+        
         private void btnAdd_Click(object sender, EventArgs e)
         {
             var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null, ServerDefaults.PermissableDefaults.None);

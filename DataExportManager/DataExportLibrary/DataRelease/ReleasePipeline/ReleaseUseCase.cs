@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Linq;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
@@ -12,6 +18,13 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {
+    /// <summary>
+    /// Describes the use case in which a <see cref="Pipeline"/> takes artifacts produced as part of one or more <see cref="ExtractionConfiguration"/> for a <see cref="Project"/>.  
+    /// The artifacts may be CSV files, tables in an extraction database etc.  The artifacts should be gathered and sent to the recipient (e.g. zipped up and moved to FTP
+    /// server / output folder).  
+    /// 
+    /// <para>The configurations should be marked as released.</para>
+    /// </summary>
     public sealed class ReleaseUseCase : PipelineUseCase
     {
         public ReleaseUseCase(IProject project, ReleaseData releaseData, ICatalogueRepository catalogueRepository)

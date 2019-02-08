@@ -1,14 +1,19 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using FAnsi;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace ReusableUIComponents
@@ -71,6 +76,9 @@ namespace ReusableUIComponents
         {
             InitializeComponent();
 
+            if(LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
+
             _workerRefreshDatabases.DoWork += UpdateDatabaseListAsync;
             _workerRefreshDatabases.WorkerSupportsCancellation = true;
             _workerRefreshDatabases.RunWorkerCompleted+=UpdateDatabaseAsyncCompleted;
@@ -85,7 +93,7 @@ namespace ReusableUIComponents
             var r2 = new RecentHistoryOfControls(cbxDatabase, new Guid("e1a4e7a8-3f7a-4018-8ff5-2fd661ee06a3"));
             r2.AddHistoryAsItemsToComboBox(cbxDatabase);
 
-            _helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
+            _helper = DatabaseCommandHelper.For(DatabaseType);
         }
 
         
@@ -101,7 +109,7 @@ namespace ReusableUIComponents
 
             _workerRefreshTablesToken = new CancellationTokenSource();
 
-            var syntaxHelper = new MicrosoftQuerySyntaxHelper();
+            var syntaxHelper = discoveredDatabase.Server.GetQuerySyntaxHelper();
             try
             {
                 using (var con = discoveredDatabase.Server.GetConnection())
@@ -471,7 +479,7 @@ namespace ReusableUIComponents
 
         private void databaseTypeUI1_DatabaseTypeChanged(object sender, EventArgs e)
         {
-            _helper = new DatabaseHelperFactory(DatabaseType).CreateInstance();
+            _helper = DatabaseCommandHelper.For(DatabaseType);
             UpdateDatabaseList();
         }
 

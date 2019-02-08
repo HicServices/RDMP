@@ -1,28 +1,33 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.AutoComplete;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.DataViewing;
 using CatalogueManager.ExtractionUIs.FilterUIs.Options;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
-using ReusableUIComponents.SingleControlForms;
 using ScintillaNET;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs
@@ -47,40 +52,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
     /// </summary>
     public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSubscriber, ISaveableUI
     {
-        private IQuerySyntaxHelper _querySyntaxHelper;
-
         private IFilter _extractionFilter;
-        public IFilter ExtractionFilter
-        {
-            get { return _extractionFilter; }
-            private set
-            {
-                _extractionFilter = value;
-                
-                FigureOutGlobalsAndAutoComplete(value);
-
-                tbFilterName.Text = value.Name;
-                tbFilterDescription.Text = value.Description;
-                QueryEditor.Text = value.WhereSQL;
-                cbIsMandatory.Checked = value.IsMandatory;
-                
-                //if we are not looking at a catalogue filter (ExtractionFilter) we must be looking at an AggregateFilter 
-                //or Deployed filter but it could be a new one and not a clone - if it is a novel user creation, let him 
-                //publish it if he wants
-                btnPublishToCatalogue.Enabled = !(value is ExtractionFilter) && Catalogue != null;
-
-                RunChecksIfFilterIsICheckable();
-                
-                RefreshParameters();
-            }
-        }
-
-
-        private void RefreshParameters()
-        {
-            var options = new ParameterCollectionUIOptionsFactory().Create(ExtractionFilter, GlobalFilterParameters ?? new ISqlParameter[0]);
-            parameterCollectionUI1.SetUp(options);
-        }
 
         private AutoCompleteProvider _autoCompleteProvider;
 
@@ -103,24 +75,23 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             #endregion QueryEditor
 
             
-            objectSaverButton1.BeforeSave += BeforeSave;
-            objectSaverButton1.AfterSave += AfterSave;
+            ObjectSaverButton1.BeforeSave += BeforeSave;
 
             autocompleteReminder.Setup("Show Objects",Keys.Control,Keys.Space);
         }
 
         void QueryEditor_TextChanged(object sender, EventArgs e)
         {
-            ExtractionFilter.WhereSQL = QueryEditor.Text;
+            _extractionFilter.WhereSQL = QueryEditor.Text;
         }
 
-        private void FigureOutGlobalsAndAutoComplete(IFilter value)
+        private void FigureOutGlobalsAndAutoComplete()
         {
             var factory = new FilterUIOptionsFactory();
-            var options = factory.Create(value);
+            var options = factory.Create(_extractionFilter);
             
             var autoCompleteFactory = new AutoCompleteProviderFactory(_activator);
-            _autoCompleteProvider = autoCompleteFactory.Create(value.GetQuerySyntaxHelper());
+            _autoCompleteProvider = autoCompleteFactory.Create(_extractionFilter.GetQuerySyntaxHelper());
             
             foreach (var t in options.GetTableInfos())
                 _autoCompleteProvider.Add(t);
@@ -142,12 +113,12 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         /// </summary>
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
-            if (ExtractionFilter != null && ExtractionFilter.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+            if (_extractionFilter != null && _extractionFilter.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
                 if (DialogResult.Yes ==
                     MessageBox.Show(
-                        "You have unsaved changes to Filter \"" + ExtractionFilter.Name +
+                        "You have unsaved changes to Filter \"" + _extractionFilter.Name +
                         "\", would you like to save these now?", "Save Changes to Filter?", MessageBoxButtons.YesNo))
-                    objectSaverButton1.Save();
+                    ObjectSaverButton1.Save();
                 else
                 {
                     try
@@ -155,7 +126,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                         //So there are local changes to the filter but the user doesnt want to save them.  We need to undo the local changes to the
                         //object that we have a reference to.  This is important because other classes might still have references to that object too
                         //so we fetch a fresh copy out of the database (RevertChanges) and set each of the properties to the original (last saved) values
-                        ExtractionFilter.RevertToDatabaseState();
+                        _extractionFilter.RevertToDatabaseState();
                     }
                     catch (Exception ex)
                     {
@@ -164,45 +135,18 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                 }
         }
 
-        private void tbFilterName_TextChanged(object sender, EventArgs e)
-        {
-            int caretPosition = tbFilterName.SelectionStart;
-
-            if(string.IsNullOrWhiteSpace(tbFilterName.Text))
-            {
-                tbFilterName.Text = "No Name";
-                tbFilterName.SelectAll();
-            }
-
-            ExtractionFilter.Name = tbFilterName.Text;
-            tbFilterName.SelectionStart = caretPosition;   
-        }
-
-        private void tbFilterDescription_TextChanged(object sender, EventArgs e)
-        {
-            int caretPosition = tbFilterDescription.SelectionStart;
-            ExtractionFilter.Description = tbFilterDescription.Text;
-            tbFilterDescription.SelectionStart = caretPosition;    
-        }
-
         private bool BeforeSave(DatabaseEntity databaseEntity)
         {
             SubstituteQueryEditorTextIfContainsLineComments();
             OfferWrappingIfUserIncludesANDOrOR();
 
             //update SQL
-            ExtractionFilter.WhereSQL = QueryEditor.Text.TrimEnd();
-            
-            var creator = new ParameterCreator(ExtractionFilter.GetFilterFactory(), GlobalFilterParameters, null);
-            creator.CreateAll(ExtractionFilter,null);
+            _extractionFilter.WhereSQL = QueryEditor.Text.TrimEnd();
+
+            var creator = new ParameterCreator(_extractionFilter.GetFilterFactory(), GlobalFilterParameters, null);
+            creator.CreateAll(_extractionFilter, null);
 
             return true;
-        }
-
-        private void AfterSave()
-        {
-            RunChecksIfFilterIsICheckable();
-            RefreshParameters();
         }
 
         private void OfferWrappingIfUserIncludesANDOrOR()
@@ -217,9 +161,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                 MessageBox.Show("Your Filter SQL has an AND / OR in it, so we are going to wrap it in brackets for you", "Filter contains AND/OR");
 
                 QueryEditor.Text = "(" + QueryEditor.Text + ")";
-
             }
-            
         }
 
         /// <summary>
@@ -239,40 +181,40 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             }
         }
 
-        private void RunChecksIfFilterIsICheckable()
-        {
-            var checkable = ExtractionFilter as ICheckable;
-
-            if (checkable != null)
-                ragSmiley1.StartChecking(checkable);
-        }
-
+        
         public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
         {
-            _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
-
             base.SetDatabaseObject(activator,databaseObject);
             Catalogue = databaseObject.GetCatalogue();
-            ExtractionFilter = databaseObject;
-
-            objectSaverButton1.SetupFor((DatabaseEntity)ExtractionFilter,_activator.RefreshBus);
+            _extractionFilter = databaseObject;
             
+            AddToMenu(new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
+            AddToMenu(new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
+            AddToMenu(new ExecuteCommandViewFilterMatchGraph(_activator, databaseObject));
+            AddToMenu(new ExecuteCommandViewSqlParameters(_activator, databaseObject));
+            AddToMenu(new ExecuteCommandBrowseLookup(_activator, databaseObject));
+
+            FigureOutGlobalsAndAutoComplete();
+            
+            QueryEditor.Text = _extractionFilter.WhereSQL;
+
+            //if we are not looking at a catalogue filter (ExtractionFilter) we must be looking at an AggregateFilter 
+            //or Deployed filter but it could be a new one and not a clone - if it is a novel user creation, let him 
+            //publish it if he wants
+            btnPublishToCatalogue.Enabled = !(_extractionFilter is ExtractionFilter) && Catalogue != null;
+
+            AddChecks(databaseObject);
+            StartChecking();
         }
-       
-        
-        private void cbIsMandatory_CheckedChanged(object sender, EventArgs e)
+
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, ConcreteFilter databaseObject)
         {
-            try
-            {
-                ExtractionFilter.IsMandatory = cbIsMandatory.Checked;
-                ExtractionFilter.SaveToDatabase();
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message);
-            }
+            base.SetBindings(rules, databaseObject);
+
+            Bind(tbFilterName,"Text","Name",f=>f.Name);
+            Bind(tbFilterDescription, "Text", "Description", f => f.Description);
+            Bind(cbIsMandatory, "Checked", "IsMandatory", f => f.IsMandatory);
         }
-        
 
         /// <summary>
         /// Used for publishing IFilters created here back to the main Catalogue
@@ -283,12 +225,12 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         {
             if(Catalogue == null)
             {
-                WideMessageBox.Show("Unsure how you manged to click this button when Catalogue was null!");
+                WideMessageBox.Show("Unexpected system state","Unsure how you manged to click this button when Catalogue was null!");
                 return;
-            } 
-            if (ExtractionFilter == null)
+            }
+            if (_extractionFilter == null)
             {
-                WideMessageBox.Show("Unsure how you managed to click this button when ExtractionFilter was null!");
+                WideMessageBox.Show("Unexpected system state", "Unsure how you managed to click this button when ExtractionFilter was null!");
                 return;
             }
             
@@ -296,20 +238,20 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             
             if (!allExtractionInformations.Any())
             {
-                WideMessageBox.Show("Cannot publish filter because Catalogue " + Catalogue +
-                                    " does not have any ExtractionInformations we could hang it off off");
+                WideMessageBox.Show("Cannot publish filter", "Cannot publish filter because Catalogue " + Catalogue +
+                                    " does not have any ExtractionInformations (extractable columns) we could associate it with");
                 return;
             }
             
             string reason;
-            if (!FilterImporter.IsProperlyDocumented(ExtractionFilter,out reason))
+            if (!FilterImporter.IsProperlyDocumented(_extractionFilter, out reason))
             {
-                WideMessageBox.Show("Filter is not properly documented:"+reason);
+                WideMessageBox.Show("Cannot publish filter", "Filter is not properly documented:" + reason);
                 return;
             }
             
             var dr = MessageBox.Show(
-                "You are about to commit filter '" + ExtractionFilter + "' as new master ExtractionFilter in the Catalogue '" +
+                "You are about to commit filter '" + _extractionFilter + "' as new master ExtractionFilter in the Catalogue '" +
                 Catalogue +
                 "', this will make it reusable asset for anyone using the dataset anywhere, is that what you want? (You will be prompted to pick a column to associate the new master filter with)",
                 "Create new master ExtractionFilter?", MessageBoxButtons.YesNoCancel);
@@ -326,24 +268,24 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
                     var toAddTo = (ExtractionInformation) dialog.Selected;
                     
                     //see if there is one with the same name that for some reason we are not known to be a child of already
-                    var duplicate = toAddTo.ExtractionFilters.SingleOrDefault(f => f.Name.Equals(ExtractionFilter.Name));
+                    var duplicate = toAddTo.ExtractionFilters.SingleOrDefault(f => f.Name.Equals(_extractionFilter.Name));
 
                     if (duplicate != null)
                     {
-                        var drMarkSame = MessageBox.Show("There is already a filter called " + ExtractionFilter.Name +
+                        var drMarkSame = MessageBox.Show("There is already a filter called " + _extractionFilter.Name +
                                                             " in ExtractionInformation " + toAddTo + " do you want to mark this filter as a child of that master filter?",
                                                                 "Duplicate, mark these as the same?",MessageBoxButtons.YesNo);
 
                         if (drMarkSame == DialogResult.Yes)
                         {
-                            ExtractionFilter.ClonedFromExtractionFilter_ID = duplicate.ID;
-                            ExtractionFilter.SaveToDatabase();
+                            _extractionFilter.ClonedFromExtractionFilter_ID = duplicate.ID;
+                            _extractionFilter.SaveToDatabase();
                         }
                         return;
                     }
 
 
-                    new FilterImporter(new ExtractionFilterFactory(toAddTo), null).ImportFilter(ExtractionFilter, null);
+                    new FilterImporter(new ExtractionFilterFactory(toAddTo), null).ImportFilter(_extractionFilter, null);
                     MessageBox.Show("Publish successful");
                 }
             }
@@ -353,37 +295,12 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         {
             if(!(e.Object is IFilter))
                 return;
-            
-            if(e.Object.Equals(ExtractionFilter))
+
+            if (e.Object.Equals(_extractionFilter))
                 if (!e.Object.Exists()) //its deleted
                     this.ParentForm.Close();
                 else
-                    ExtractionFilter = (IFilter) e.Object;
-        }
-
-        private bool expand = false;
-        
-
-
-        private void btnParametersExpand_Click(object sender, EventArgs e)
-        {
-            splitContainer1.Panel2Collapsed = !expand;
-            expand = !expand;
-            btnParametersExpand.Text = expand ? "+" : "-";
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
-        private void ExtractionFilterUI_SizeChanged(object sender, EventArgs e)
-        {
-            if(splitContainer1.Panel2Collapsed)
-                lblParams.Top = lblWhere.Bottom + splitContainer1.Height/2;
-            else
-                lblParams.Top = lblWhere.Bottom + splitContainer1.SplitterDistance;
-            btnParametersExpand.Top = lblParams.Top;
+                    _extractionFilter = (IFilter)e.Object;
         }
     }
 

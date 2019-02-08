@@ -53,7 +53,6 @@ namespace CatalogueManager.MainFormUITabs
             this.label36 = new System.Windows.Forms.Label();
             this.ci_tbName = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.objectSaverButton1 = new CatalogueManager.SimpleControls.ObjectSaverButton();
             this.label1 = new System.Windows.Forms.Label();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -109,7 +108,6 @@ namespace CatalogueManager.MainFormUITabs
             this.ci_tbComments.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ci_tbComments.Size = new System.Drawing.Size(639, 84);
             this.ci_tbComments.TabIndex = 146;
-            this.ci_tbComments.TextChanged += new System.EventHandler(this.ci_tbComments_TextChanged);
             // 
             // label30
             // 
@@ -131,7 +129,6 @@ namespace CatalogueManager.MainFormUITabs
             this.ci_tbLimitations.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ci_tbLimitations.Size = new System.Drawing.Size(639, 91);
             this.ci_tbLimitations.TabIndex = 145;
-            this.ci_tbLimitations.TextChanged += new System.EventHandler(this.ci_tbLimitations_TextChanged);
             // 
             // label31
             // 
@@ -150,7 +147,6 @@ namespace CatalogueManager.MainFormUITabs
             this.ci_tbTopics.Name = "ci_tbTopics";
             this.ci_tbTopics.Size = new System.Drawing.Size(639, 20);
             this.ci_tbTopics.TabIndex = 142;
-            this.ci_tbTopics.TextChanged += new System.EventHandler(this.ci_tbTopics_TextChanged);
             // 
             // label32
             // 
@@ -169,7 +165,6 @@ namespace CatalogueManager.MainFormUITabs
             this.ci_tbAggregationMethod.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ci_tbAggregationMethod.Size = new System.Drawing.Size(639, 97);
             this.ci_tbAggregationMethod.TabIndex = 144;
-            this.ci_tbAggregationMethod.TextChanged += new System.EventHandler(this.ci_tbAggregationMethod_TextChanged);
             // 
             // label33
             // 
@@ -193,7 +188,6 @@ namespace CatalogueManager.MainFormUITabs
             this.ci_tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ci_tbDescription.Size = new System.Drawing.Size(699, 122);
             this.ci_tbDescription.TabIndex = 139;
-            this.ci_tbDescription.TextChanged += new System.EventHandler(this.ci_tbDescription_TextChanged);
             // 
             // label34
             // 
@@ -215,7 +209,6 @@ namespace CatalogueManager.MainFormUITabs
             this.ci_tbResearchRelevance.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ci_tbResearchRelevance.Size = new System.Drawing.Size(639, 114);
             this.ci_tbResearchRelevance.TabIndex = 141;
-            this.ci_tbResearchRelevance.TextChanged += new System.EventHandler(this.ci_tbResearchRelevance_TextChanged);
             // 
             // ci_ddPeriodicity
             // 
@@ -225,7 +218,6 @@ namespace CatalogueManager.MainFormUITabs
             this.ci_ddPeriodicity.Name = "ci_ddPeriodicity";
             this.ci_ddPeriodicity.Size = new System.Drawing.Size(335, 21);
             this.ci_ddPeriodicity.TabIndex = 143;
-            this.ci_ddPeriodicity.SelectedIndexChanged += new System.EventHandler(this.ci_ddPeriodicity_SelectedIndexChanged);
             // 
             // ci_tbStatisticalConsiderations
             // 
@@ -236,7 +228,6 @@ namespace CatalogueManager.MainFormUITabs
             this.ci_tbStatisticalConsiderations.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ci_tbStatisticalConsiderations.Size = new System.Drawing.Size(639, 113);
             this.ci_tbStatisticalConsiderations.TabIndex = 140;
-            this.ci_tbStatisticalConsiderations.TextChanged += new System.EventHandler(this.ci_tbStatisticalConsiderations_TextChanged);
             // 
             // label35
             // 
@@ -268,7 +259,6 @@ namespace CatalogueManager.MainFormUITabs
             this.ci_tbName.Name = "ci_tbName";
             this.ci_tbName.Size = new System.Drawing.Size(694, 20);
             this.ci_tbName.TabIndex = 138;
-            this.ci_tbName.TextChanged += new System.EventHandler(this.ci_tbName_TextChanged);
             // 
             // splitContainer1
             // 
@@ -281,7 +271,6 @@ namespace CatalogueManager.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.objectSaverButton1);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.btnExpandOrCollapse);
             this.splitContainer1.Panel1.Controls.Add(this.ci_tbDescription);
@@ -313,14 +302,6 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.Size = new System.Drawing.Size(805, 727);
             this.splitContainer1.SplitterDistance = 220;
             this.splitContainer1.TabIndex = 158;
-            // 
-            // objectSaverButton1
-            // 
-            this.objectSaverButton1.Location = new System.Drawing.Point(132, 185);
-            this.objectSaverButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.objectSaverButton1.Name = "objectSaverButton1";
-            this.objectSaverButton1.Size = new System.Drawing.Size(56, 33);
-            this.objectSaverButton1.TabIndex = 162;
             // 
             // label1
             // 
@@ -383,6 +364,5 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnExpandOrCollapse;
-        private SimpleControls.ObjectSaverButton objectSaverButton1;
     }
 }

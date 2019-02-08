@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
-using System.Configuration;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -22,7 +22,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.FileOutputFormats;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataLoadEngine.DataFlowPipeline;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
@@ -72,6 +71,17 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
+            if (_firstTime)
+            {
+                if (CleanExtractionFolderBeforeExtraction)
+                {
+                    var rootDir = _request.GetExtractionDirectory();
+                    rootDir.Delete(true);
+                    rootDir.Create();
+                }
+                _firstTime = false;
+            }
+
             _request.ElevateState(ExtractCommandState.WritingToFile);
 
             if (!haveWrittenBundleContents && _request is ExtractDatasetCommand)
@@ -216,10 +226,12 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         private IExtractCommand _request ;
         private DataLoadInfo _dataLoadInfo;
+        private bool _firstTime;
 
         public void PreInitialize(IExtractCommand request, IDataLoadEventListener listener)
         {
             _request = request;
+            _firstTime = true;
             
             if (_request == ExtractDatasetCommand.EmptyCommand)
             {
@@ -234,12 +246,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 return;
             }
 
-            if (CleanExtractionFolderBeforeExtraction)
-            {
-                var rootDir = _request.GetExtractionDirectory();
-                rootDir.Delete(true);
-                rootDir.Create();
-            }
             LinesWritten = 0;
 
             DirectoryPopulated = request.GetExtractionDirectory();
@@ -433,6 +439,14 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             catch (Exception e)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("DateFormat '" + DateFormat + "' was invalid",CheckResult.Fail, e));
+            }
+
+            var dsRequest = _request as ExtractDatasetCommand;
+
+            if (UseAcronymForFileNaming && dsRequest != null)
+            {
+                if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+                    notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue +"' does not have an Acronym but UseAcronymForFileNaming is true",CheckResult.Fail));
             }
         }
     }

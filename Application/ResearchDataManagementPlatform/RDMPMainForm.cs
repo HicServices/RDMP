@@ -1,5 +1,12 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,13 +16,15 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
+using ResearchDataManagementPlatform.Theme;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
-using ReusableUIComponents.Settings;
+using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform
@@ -28,13 +37,40 @@ namespace ResearchDataManagementPlatform
     public partial class RDMPMainForm : RDMPForm
     {
         private readonly PersistenceDecisionFactory _persistenceFactory = new PersistenceDecisionFactory();
+        private ITheme _theme;
 
         public RDMPMainForm()
         {
             InitializeComponent();
 
+            PatchController.EnableAll = true;
+
+            try
+            {
+                var t = UserSettings.Theme;
+                if (!string.IsNullOrWhiteSpace(t))
+                {
+                    var type = Type.GetType(t);
+                    _theme = type == null ? new MyVS2015BlueTheme() : (ITheme) Activator.CreateInstance(type);
+                }
+                else
+                    _theme = new MyVS2015BlueTheme();
+            }
+            catch (Exception)
+            {
+                _theme = new MyVS2015BlueTheme();
+            }
+
+            _theme.ApplyThemeToMenus = UserSettings.ApplyThemeToMenus;
+
+            dockPanel1.Theme = (ThemeBase)_theme;
+            dockPanel1.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
+            dockPanel1.DefaultFloatWindowSize = new Size(640, 520);
+            dockPanel1.ShowDocumentIcon = true;
             dockPanel1.DocumentStyle = DocumentStyle.DockingWindow;
+
             WindowState = FormWindowState.Maximized;
+            CloseOnEscape = false;
 
             if (UserSettings.LicenseAccepted != new License("LIBRARYLICENSES").GetMd5OfLicense())
                 new LicenseUI().ShowDialog();
@@ -44,6 +80,7 @@ namespace ResearchDataManagementPlatform
         readonly RefreshBus _refreshBus = new RefreshBus();
         private FileInfo _persistenceFile;
         private ICheckNotifier _globalErrorCheckNotifier;
+        
 
         private void RDMPMainForm_Load(object sender, EventArgs e)
         {
@@ -54,7 +91,7 @@ namespace ResearchDataManagementPlatform
             _globalErrorCheckNotifier = exceptionCounter;
             _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
-            _windowManager = new WindowManager(this,_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
+            _windowManager = new WindowManager(_theme,this,_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
             _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title

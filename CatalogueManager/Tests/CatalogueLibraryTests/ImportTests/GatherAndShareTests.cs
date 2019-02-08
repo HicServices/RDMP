@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ANOStore;
@@ -6,8 +12,10 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
+using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
+using ReusableLibraryCode.Annotations;
 using Sharing.Dependency.Gathering;
 using Tests.Common;
 
@@ -225,8 +233,54 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.AreEqual("Cata", ((Catalogue) newObjects[0]).Name);
             Assert.AreEqual("Ci1", ((CatalogueItem) newObjects[1]).Name);
             Assert.AreEqual("Ci2", ((CatalogueItem) newObjects[2]).Name);
+        }
 
+        [Test]
+        public void GatherAndShare_ExtractionFilter_Test()
+        {
+            //Setup some objects under Catalogue
+            var cata = new Catalogue(CatalogueRepository, "Cata");
+            cata.Periodicity = Catalogue.CataloguePeriodicity.BiMonthly;
+            cata.SaveToDatabase();
+
+            var catalogueItem1 = new CatalogueItem(CatalogueRepository, cata, "Ci1");
             
+            var tableInfo = new TableInfo(CatalogueRepository, "Myt");
+            var colInfo = new ColumnInfo(CatalogueRepository, "[Mt].[C1]", "varchar(10)", tableInfo);
+
+            catalogueItem1.ColumnInfo_ID = colInfo.ID;
+            catalogueItem1.SaveToDatabase();
+
+            //Setup a Filter under this extractable column (the filter is what we will share)
+            var ei = new ExtractionInformation(CatalogueRepository, catalogueItem1, colInfo, "UPPER(C1) as Fish");
+
+            var filter = new ExtractionFilter(CatalogueRepository, "My Filter", ei);
+            filter.Description = "amagad";
+            filter.WhereSQL = "UPPER(C1) = @a";
+
+            //Give the filter a parameter @a just to make things interesting
+            var declaration = filter.GetQuerySyntaxHelper().GetParameterDeclaration("@a", new DatabaseTypeRequest(typeof (string), 1));
+            var param = filter.GetFilterFactory().CreateNewParameter(filter, declaration);
+            
+            //Also create a 'known good value' set i.e. recommended value for the parameter to achive some goal (you can have multiple of these - this will not be shared)
+            var set = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Fife");
+            var val = new ExtractionFilterParameterSetValue(CatalogueRepository, set, (ExtractionFilterParameter) param);
+            val.Value = "'FISH'";
+
+            //Gather the dependencies (this is what we are testing)
+            var gatherer = new Gatherer(RepositoryLocator);
+            
+            Assert.IsTrue(gatherer.CanGatherDependencies(filter));
+            var gathered = gatherer.GatherDependencies(filter);
+
+            //gatherer should have gathered the filter and the parameter (but not the ExtractionFilterParameterSet sets)
+            Assert.AreEqual(1,gathered.Children.Count);
+            Assert.AreEqual(param,gathered.Children[0].Object);
+             
+            //Cleanup
+            val.DeleteInDatabase();
+            set.DeleteInDatabase();
+            cata.DeleteInDatabase();
         }
     }
 }

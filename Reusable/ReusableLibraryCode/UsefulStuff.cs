@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -13,7 +19,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
+using CsvHelper;
+using FAnsi.Discovery;
 
 
 namespace ReusableLibraryCode
@@ -519,6 +526,31 @@ namespace ReusableLibraryCode
 
             sb.Append("</Table>");
 
+            return sb.ToString();
+        }
+
+        public string DataTableToCsv(DataTable dt)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            using (CsvWriter w = new CsvWriter(new StringWriter(sb)))
+            {
+                foreach (DataColumn column in dt.Columns)
+                    w.WriteField(column.ColumnName);
+
+                w.NextRecord();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    foreach (var cellObject in row.ItemArray)
+                        w.WriteField(cellObject);
+
+                    w.NextRecord();
+                }
+
+                w.Flush();
+            }
+            
             return sb.ToString();
         }
         public void ShowFolderInWindowsExplorer(DirectoryInfo directoryInfo)

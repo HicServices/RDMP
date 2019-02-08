@@ -203,9 +203,34 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FAnsi, Version=0.9.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.MicrosoftSQL">
+      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FAnsi.Implementations.Oracle">
+      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Mono.Reflection.1.1.0.0\lib\Mono.Reflection.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -214,6 +239,10 @@
     </Reference>
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
@@ -256,7 +285,6 @@
     <Compile Include="Integration\ColumnInfoTests.cs" />
     <Compile Include="Integration\CredentialsTests.cs" />
     <Compile Include="Integration\CrossDatabaseTriggerTests.cs" />
-    <Compile Include="Integration\DataAccess\ConnectionStringKeywordAccumulatorTests.cs" />
     <Compile Include="Integration\DataAccess\SuperMultiThreadedVolumeAccess.cs" />
     <Compile Include="Integration\DataAccess\TestDataAccess.cs" />
     <Compile Include="Integration\Dependencies\DependencyTests.cs" />
@@ -294,6 +322,7 @@
     <Compile Include="Integration\VersioningTests.cs" />
     <Compile Include="JsonSerializationTests\JsonSerializationTests.cs" />
     <Compile Include="LazyTest.cs" />
+    <Compile Include="Mocks\RdmpMockFactory.cs" />
     <Compile Include="RefactoringTests\SelectSQLRefactorerTests.cs" />
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
     <Compile Include="SourceCodeEvaluation\ClassFileEvaluation\AllImportantClassesDocumented.cs" />
@@ -436,14 +465,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="..\..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="Integration\CommitAssemblyTest.cd" />
     <None Include="packages.config" />
     <None Include="Resources\InvalidPlugin.dll" />
     <None Include="Resources\DummyPlugin.dll" />
-    <Content Include="CatalogueLibraryTests.dll.config.template">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

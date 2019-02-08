@@ -1,5 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,13 +12,12 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
-using DataLoadEngineTests.Integration.Mocks;
+using FAnsi;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -22,8 +26,8 @@ namespace DataLoadEngineTests.Integration
     {
         [TestCase(DatabaseType.MicrosoftSQLServer,true)]
         [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MYSQLServer,true)]
-        [TestCase(DatabaseType.MYSQLServer, false)]
+        [TestCase(DatabaseType.MySql,true)]
+        [TestCase(DatabaseType.MySql, false)]
         public void TestCoalescer_RampantNullness(DatabaseType type,bool useCustomNamer)
         {
             var db = GetCleanedServer(type, "TestCoalescer");
@@ -116,7 +120,7 @@ namespace DataLoadEngineTests.Integration
                 Assert.AreNotEqual(DBNull.Value, row["f4"]);
             }
 
-            db.ForceDrop();
+            db.Drop();
         }
 
     }

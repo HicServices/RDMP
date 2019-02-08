@@ -1,16 +1,24 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace CatalogueLibrary.Data
 {
     /// <summary>
-    /// The virtual 'folder' in which to describe the Catalogue as residing in to the user.  This is implemented in the UI as a tree of folders but is calculated from all the
-    /// visible Catalogues at any given time (you can't create an empty CatalogueFolder you just have to declare a Catalogue as being in a new folder name).
+    /// The virtual 'folder' in which to display Catalogues.  This should be a helpful subdivision e.g. "\core datasets\labsystems\"
+    ///  
+    /// <para>CatalogueFolder are represented in the user interface as a tree of folders (calculated at runtime). You can't create an empty CatalogueFolder,
+    /// just declare a Catalogue as being in a new folder and it will be automatically shown.</para>
     /// 
-    /// <para>CatalogueFolder is basically a string but has method to help prevent illegal paths and to calculate hierarchy based on multiple Catalogues (See GetImmediateSubFoldersUsing)</para>
+    /// <para>CatalogueFolder is persisted as a string but has methods to help prevent illegal paths and to calculate hierarchy based on multiple Catalogues 
+    /// (See <see cref="GetImmediateSubFoldersUsing"/>)</para>
     /// </summary>
     public class CatalogueFolder : IConvertible
     {

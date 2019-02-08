@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -174,15 +180,16 @@ namespace CatalogueManager.Validation
                         if (!entities.Any())
                         {
                             if (_requiredProperties[i].PropertyType == typeof(StandardRegex))
-                                MessageBox.Show("You currently do not have any standard regex concepts in your database, select Configure=>StandardRegex... from the menu above to create some",
+                                MessageBox.Show("You currently do not have any standard regex concepts in your database.  These can be created from the Table(Advanced) collection.",
                                 "No StandardRegex configured in your Catalogue");
                             else
                                 MessageBox.Show("You currently do not have any " + _requiredProperties[i].PropertyType + " in your database","Catalogue Entity Collection Empty");
                         }
                         else
                         {
+                            dd.Items.Add("<<Clear>>");
                             dd.Items.AddRange(entities);
-                            dd.SelectedIndexChanged += (s, e) => _requiredProperties[(int)dd.Tag].SetValue(SecondaryConstriant, dd.SelectedItem, null);
+                            dd.SelectedIndexChanged += (s, e) => _requiredProperties[(int)dd.Tag].SetValue(SecondaryConstriant, dd.SelectedItem as IMapsDirectlyToDatabaseTable, null);
                         }
 
                         //See if it has a value

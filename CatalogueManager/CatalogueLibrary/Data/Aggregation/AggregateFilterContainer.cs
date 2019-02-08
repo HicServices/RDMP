@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,10 +23,11 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
     /// The class deals with all this transparently via GetSubContainers.</para>
     /// </summary>
-    public class AggregateFilterContainer: VersionedDatabaseEntity, IContainer
+    public class AggregateFilterContainer : VersionedDatabaseEntity, IContainer, IDisableable
     {
         #region Database Properties
         private FilterContainerOperation _operation;
+        private bool _isDisabled;
 
 
         /// <inheritdoc/>
@@ -28,6 +35,13 @@ namespace CatalogueLibrary.Data.Aggregation
         {
             get { return _operation; }
             set { SetField(ref  _operation, value); }
+        }
+
+        /// <inheritdoc/>
+        public bool IsDisabled
+        {
+            get { return _isDisabled; }
+            set { SetField(ref _isDisabled, value); }
         }
 
         #endregion
@@ -48,6 +62,8 @@ namespace CatalogueLibrary.Data.Aggregation
             FilterContainerOperation op;
             FilterContainerOperation.TryParse(r["Operation"].ToString(), out op);
             Operation = op;
+
+            IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         }
 
         /// <inheritdoc/>

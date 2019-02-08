@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -14,6 +20,7 @@ using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.SimpleDialogs.NavigateTo
 {
@@ -118,7 +125,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     typeof(ICheckable).IsAssignableFrom(p.ParameterType) ||
                     typeof(IMightBeDeprecated).IsAssignableFrom(p.ParameterType)||
                     p.HasDefaultValue ||
-                    p.ParameterType.IsValueType
+                    (p.ParameterType.IsValueType && !typeof(Enum).IsAssignableFrom(p.ParameterType))
                 );
         }
 
@@ -219,12 +226,18 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                         .ToArray());
 
             if (typeof(ICheckable).IsAssignableFrom(paramType))
-                return PickOne(parameterInfo, paramType, _activator.CoreChildProvider.GetAllSearchables().Keys.OfType<ICheckable>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+            {
+                return PickOne(parameterInfo, paramType, _activator.CoreChildProvider.GetAllSearchables()
+                    .Keys.OfType<ICheckable>()
+                    .Cast<IMapsDirectlyToDatabaseTable>()
+                    .Where(paramType.IsInstanceOfType)
+                    .ToArray());
+            }
 
             if (parameterInfo.HasDefaultValue)
                 return parameterInfo.DefaultValue;
 
-            if (paramType.IsValueType)
+            if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
             {
                 var typeTextDialog = new TypeTextOrCancelDialog("Enter Value","Enter value for '" + parameterInfo.Name + "' (" + paramType.Name + ")",1000);
 

@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,9 +16,9 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
 using ScintillaNET;
 
 namespace CatalogueManager.AutoComplete
@@ -38,13 +44,13 @@ namespace CatalogueManager.AutoComplete
             _autocomplete.TargetControlWrapper = new ScintillaWrapper(queryEditor);
         }
         
-        public void Add(TableInfo tableInfo)
+        public void Add(ITableInfo tableInfo)
         {
             Add(tableInfo,LoadStage.PostLoad);
         }
 
 
-        public void Add(ColumnInfo columnInfo, TableInfo tableInfo, string databaseName, LoadStage stage, IQuerySyntaxHelper syntaxHelper)
+        public void Add(ColumnInfo columnInfo, ITableInfo tableInfo, string databaseName, LoadStage stage, IQuerySyntaxHelper syntaxHelper)
         {
             var col = columnInfo.GetRuntimeName(stage);
             var table = tableInfo.GetRuntimeName(stage);
@@ -73,7 +79,7 @@ namespace CatalogueManager.AutoComplete
             AddUnlessDuplicate(snip);
         }
 
-        private void Add(PreLoadDiscardedColumn discardedColumn, TableInfo tableInfo, string rawDbName)
+        private void Add(PreLoadDiscardedColumn discardedColumn, ITableInfo tableInfo, string rawDbName)
         {
             var snip = new SubstringAutocompleteItem(discardedColumn.GetRuntimeName());
             var colName = discardedColumn.GetRuntimeName();
@@ -173,7 +179,7 @@ namespace CatalogueManager.AutoComplete
             AddUnlessDuplicate(snip);
         }
         
-        public void Add(TableInfo tableInfo, LoadStage loadStage)
+        public void Add(ITableInfo tableInfo, LoadStage loadStage)
         {
             //we already have it
             if(items.Any(i=>i.Tag.Equals(tableInfo)))

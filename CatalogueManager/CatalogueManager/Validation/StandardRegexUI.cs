@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +17,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
@@ -40,54 +47,20 @@ namespace CatalogueManager.Validation
 
             _standardRegex = databaseObject;
 
-            tbID.Text = databaseObject.ID.ToString();
-            tbConceptName.Text = databaseObject.ConceptName;
-            tbRegex.Text = databaseObject.Regex;
-            tbDescription.Text = databaseObject.Description;
-
-
-            objectSaverButton1.SetupFor(databaseObject,activator.RefreshBus);
+            AddChecks(_standardRegex);
+            StartChecking();
         }
 
-        private void tbConceptName_TextChanged(object sender, EventArgs e)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, StandardRegex databaseObject)
         {
-            tbConceptName.BackColor = Color.White;
-
-            if(_standardRegex != null)
-                if (string.IsNullOrWhiteSpace(tbConceptName.Text))
-                    tbConceptName.BackColor = Color.Pink;
-                else
-                    _standardRegex.ConceptName = tbConceptName.Text;
+            base.SetBindings(rules, databaseObject);
+            
+            Bind(tbID,"Text","ID",r=>r.ID);
+            Bind(tbConceptName,"Text","ConceptName", r=>r.ConceptName);
+            Bind(tbRegex,"Text","Regex", r=>r.Regex);
+            Bind(tbDescription,"Text","Description", r => r.Description);
         }
-
-        private void tbRegex_TextChanged(object sender, EventArgs e)
-        {
-            tbRegex.BackColor = Color.White;
-
-            if (_standardRegex != null)
-                if (string.IsNullOrWhiteSpace(tbRegex.Text))
-                    tbRegex.BackColor = Color.Pink;
-                else
-                {
-                    try
-                    {
-                        Regex r = new Regex(tbRegex.Text);
-                        _standardRegex.Regex = tbRegex.Text;
-                        tbRegex.ForeColor = Color.Black;
-                    }
-                    catch (Exception)
-                    {
-                        tbRegex.ForeColor = Color.Red;
-                    }
-                }
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            if (_standardRegex != null)
-                _standardRegex.Description = tbDescription.Text;
-        }
-
+        
         private void btnTest_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(tbTesting.Text))
@@ -106,11 +79,6 @@ namespace CatalogueManager.Validation
                 lblResultOfTest.Text = "The text '" + tbTesting.Text + "' failed to match Regex pattern '" + _standardRegex.Regex + "' meaning that the value will fail validation and will be flagged as a validation failure";
                 lblResultOfTest.ForeColor = Color.Red;
             }
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
         }
     }
 

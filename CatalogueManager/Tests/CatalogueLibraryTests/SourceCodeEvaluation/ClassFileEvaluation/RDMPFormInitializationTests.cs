@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,33 +47,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             sbFindInstantiations.Append("new (");
             sbFindInstantiations.Append(string.Join("|", rdmpFormClassNames.Select(Regex.Escape)));
             sbFindInstantiations.Append(")\\s*\\(");
-
-            Regex matchConstructorUse = new Regex(sbFindInstantiations.ToString());
-
-            foreach (string csFile in csFiles)
-            {
-                string readToEnd = File.ReadAllText(csFile);
-
-                var matches = matchConstructorUse.Matches(readToEnd);
-                    
-                foreach (Match match in matches)
-                {
-                    int lineNumberOfMatch = readToEnd.Substring(0, match.Index).Count(c => c == '\n');
-                    Console.WriteLine(csFile + " uses constructor of class " + match.Groups[1].Value + " (Line number:" + lineNumberOfMatch+")");
-                        
-                    string substring = readToEnd.Substring(match.Index);
-
-                    var lines = substring.Split('\n');
-                    if(!lines[1].Contains("RepositoryLocator"))
-                    {
-                        string msg = "FAIL: The next line after the constructor should be RepositoryLocator = X so that the RDMPForm is initialized properly but it isn't!";
-                        Console.WriteLine(msg);
-                        _fails.Add(msg);
-                            
-                    }
-                }
-            }
-            
 
             if(_fails.Any())
                 Assert.Fail("Fix the problems above (anything marked FAIL:) then Clean and Recompile the ENTIRE solution to ensure a fresh copy of SourceCodeForSelfAwareness.zip gets created and run the test again");
@@ -149,7 +128,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                 }
 
 
-                if (constructor.Contains("RepositoryLocator") || constructor.Contains("_repositoryLocator"))
+                if (Regex.IsMatch(constructor,"[^.]RepositoryLocator") || constructor.Contains("_repositoryLocator"))
                     Assert.Fail("Constructor of class " + className +
                                 " contains a reference to RepositoryLocator, this property cannot be used until OnLoad is called");
             }

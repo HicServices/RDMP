@@ -1,12 +1,14 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
@@ -14,22 +16,22 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
     public class CrossDatabaseInsertTests : DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer,"Dave")]
-        [TestCase(DatabaseType.MYSQLServer,"Dave")]
+        [TestCase(DatabaseType.MySql,"Dave")]
         [TestCase(DatabaseType.Oracle, "Dave")]
         
         [TestCase(DatabaseType.MicrosoftSQLServer, @"].;\""ffff 
 [")]
 
-        [TestCase(DatabaseType.MYSQLServer, @"].;\""ffff 
+        [TestCase(DatabaseType.MySql, @"].;\""ffff 
 [")]
 
         [TestCase(DatabaseType.Oracle, @"].;\""ffff 
 [")]
 
-        [TestCase(DatabaseType.MYSQLServer, "Dave")]
+        [TestCase(DatabaseType.MySql, "Dave")]
         [TestCase(DatabaseType.Oracle, "Dave")]
         [TestCase(DatabaseType.MicrosoftSQLServer, 1.5)]
-        [TestCase(DatabaseType.MYSQLServer, 1.5)]
+        [TestCase(DatabaseType.MySql, 1.5)]
         [TestCase(DatabaseType.Oracle, 1.5)]
         public void CreateTableAndInsertAValue_ColumnOverload(DatabaseType type, object value)
         {
@@ -55,7 +57,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer, 1.5)]
-        [TestCase(DatabaseType.MYSQLServer, 1.5)]
+        [TestCase(DatabaseType.MySql, 1.5)]
         [TestCase(DatabaseType.Oracle, 1.5)]
         public void CreateTableAndInsertAValue_StringOverload(DatabaseType type, object value)
         {
@@ -79,7 +81,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.Oracle)]
         public void CreateTableAndInsertAValue_ReturnsIdentity(DatabaseType type)
         {

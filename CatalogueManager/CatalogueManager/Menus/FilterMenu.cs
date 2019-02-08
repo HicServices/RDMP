@@ -1,18 +1,15 @@
-﻿using System;
-using System.Linq;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.DataViewing;
-using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs;
-using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using RDMPStartup;
-using ReusableLibraryCode.Icons.IconProvision;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueManager.Menus
 {
@@ -20,36 +17,18 @@ namespace CatalogueManager.Menus
     {
         public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
         {
-            var cata = filter.GetCatalogue();
+            Add(new ExecuteCommandViewFilterMatchData(args.ItemActivator, filter, ViewType.TOP_100));
+            Add(new ExecuteCommandViewFilterMatchData(args.ItemActivator, filter, ViewType.Aggregate));
+            Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
 
-            var columnInfo = filter.GetColumnInfoIfExists();
+            Items.Add(new ToolStripSeparator());
 
-            if (columnInfo != null)
-            {
-                Items.Add("View Extract", GetImage(RDMPConcept.TableInfo,OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewTableInfoExtractUICollection(columnInfo.TableInfo, ViewType.TOP_100, filter)));
-                Items.Add("View Extract (" + columnInfo.GetRuntimeName() + ")", GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.TOP_100, filter)));
-                //create right click context menu
-                Items.Add("View Aggreggate (of " + columnInfo.GetRuntimeName() + ")", GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter), (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.Aggregate, filter)));
+            var dis = filter as IDisableable;
+            if (dis != null)
+                Add(new ExecuteCommandDisableOrEnable(_activator, dis));
 
-            }
-            
-            if (cata != null)
-            { 
-                //compatible graphs are those that are not part of a cic (i.e. they are proper aggregate graphs)
-                var compatibleGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
-
-                if (compatibleGraphs.Any())
-                {
-                    var graphMenu = new ToolStripMenuItem("View Aggregate Graph of Filter",GetImage(RDMPConcept.AggregateGraph));
-
-                    foreach (AggregateConfiguration graph in compatibleGraphs)
-                    {
-                        var collection = new FilterGraphObjectCollection(graph, (ConcreteFilter)filter);
-                        graphMenu.DropDownItems.Add(graph.Name,GetImage(RDMPConcept.AggregateGraph, OverlayKind.Filter),(s, e) => _activator.ViewFilterGraph(this, collection));
-                    }
-                    Items.Add(graphMenu);
-                }
-            }
+            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {filter}));
+            Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
         }
     }
 }

@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,10 +25,12 @@ using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI.Datasets.Node;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 
 namespace DataExportManager.ProjectUI.Datasets
 {
@@ -301,13 +309,10 @@ namespace DataExportManager.ProjectUI.Datasets
 
             SortSelectedByOrder();
 
-            RunChecks();
-        }
+            AddToMenu(new ExecuteCommandShow(activator, databaseObject.ExtractableDataSet.Catalogue, 0, true),"Show Catalogue");
+            Add(new ExecuteCommandExecuteExtractionConfiguration(activator, databaseObject));
 
-        private void RunChecks()
-        {
-            var checkable = new SelectedDataSetsChecker(SelectedDataSet, _activator.RepositoryLocator);
-            ragSmiley1.StartChecking(checkable);
+            AddChecks(new SelectedDataSetsChecker(SelectedDataSet, _activator.RepositoryLocator));
         }
 
         public override string GetTabName()
@@ -624,9 +629,9 @@ namespace DataExportManager.ProjectUI.Datasets
             tree.UseFiltering = !string.IsNullOrWhiteSpace(senderTb.Text);
         }
 
-        private void btnRefreshChecks_Click(object sender, EventArgs e)
+        protected override void OnBeforeChecking()
         {
-            RunChecks();
+            base.OnBeforeChecking();
 
             UpdateJoins();
         }

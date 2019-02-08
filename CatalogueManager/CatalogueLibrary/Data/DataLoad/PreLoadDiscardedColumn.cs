@@ -1,10 +1,19 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using CatalogueLibrary.Repositories;
+using Fansi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.Microsoft;
+using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Data.DataLoad
 {
@@ -39,7 +48,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// LIVE columns created in the RAW bubble but also the dropped columns described in PreLoadDiscardedColumn instances.  This allows the live system state to drive required formats/fields
     /// for data load resulting in a stricter/more maintainable data load model.</para>
     /// </summary>
-    public class PreLoadDiscardedColumn : VersionedDatabaseEntity, IPreLoadDiscardedColumn
+    public class PreLoadDiscardedColumn : VersionedDatabaseEntity, IPreLoadDiscardedColumn, ICheckable, IInjectKnown<ITableInfo>
     {
         #region Database Properties
 
@@ -49,6 +58,7 @@ namespace CatalogueLibrary.Data.DataLoad
         private string _sqlDataType;
         private int? _duplicateRecordResolutionOrder;
         private bool _duplicateRecordResolutionIsAscending;
+        private Lazy<ITableInfo> _knownTableInfo;
 
         /// <inheritdoc cref="IPreLoadDiscardedColumn.TableInfo"/>
         public int TableInfo_ID
@@ -95,7 +105,7 @@ namespace CatalogueLibrary.Data.DataLoad
         {
             get
             {
-                return Repository.GetObjectByID<TableInfo>(TableInfo_ID);
+                return _knownTableInfo.Value;
             }
         }
         #endregion
@@ -122,6 +132,8 @@ namespace CatalogueLibrary.Data.DataLoad
                 {"Destination", DiscardedColumnDestination.Oblivion},
                 {"RuntimeColumnName", name ?? "NewColumn" + Guid.NewGuid()}
             });
+
+            ClearAllInjections();
         }
 
         internal PreLoadDiscardedColumn(ICatalogueRepository repository, DbDataReader r)
@@ -138,6 +150,8 @@ namespace CatalogueLibrary.Data.DataLoad
                 DuplicateRecordResolutionOrder = null;
 
             DuplicateRecordResolutionIsAscending = Convert.ToBoolean(r["DuplicateRecordResolutionIsAscending"]);
+
+            ClearAllInjections();
         }
 
         /// <inheritdoc/>
@@ -145,6 +159,37 @@ namespace CatalogueLibrary.Data.DataLoad
         {
             return RuntimeColumnName + " (" + Destination + ")";
         }
+
+
+        public void Check(ICheckNotifier notifier)
+        {
+            //if it goes into the identifier dump then the table had better have one
+            if (GoesIntoIdentifierDump() && TableInfo.IdentifierDumpServer_ID == null)
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs(
+                        string.Format(
+                            "Column is set to {0}  which means it's value should be stored in the IdentifierDump but the parent table '{1}'  doesn't have a dump server configured",
+                            Destination,
+                            TableInfo),
+                        CheckResult.Fail));
+            else
+                notifier.OnCheckPerformed(new CheckEventArgs("Destination is ok", CheckResult.Success));
+
+            if (
+                //if column is not diluted (i.e. oblivion or dumped) then there shouldn't be any other columns with the same name
+                Destination != DiscardedColumnDestination.Dilute &&
+
+                //are there duplicate named columns?
+                TableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)
+                    .Except(new[] {this})
+                    .Any(c => c.GetRuntimeName(LoadStage.AdjustRaw).Equals(GetRuntimeName(LoadStage.AdjustRaw),StringComparison.CurrentCultureIgnoreCase)))
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs("There are 2+ columns called '" + GetRuntimeName(LoadStage.AdjustRaw) + "' in this table",
+                        CheckResult.Fail));
+            else
+                notifier.OnCheckPerformed(new CheckEventArgs("Name is unique", CheckResult.Success));
+        }
+
         /// <inheritdoc/>
         public string GetRuntimeName()
         {
@@ -168,6 +213,16 @@ namespace CatalogueLibrary.Data.DataLoad
             return Destination == DiscardedColumnDestination.StoreInIdentifiersDump
                    ||
                    Destination == DiscardedColumnDestination.Dilute;
+        }
+
+        public void InjectKnown(ITableInfo instance)
+        {
+            _knownTableInfo = new Lazy<ITableInfo>(() => instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownTableInfo = new Lazy<ITableInfo>(() => Repository.GetObjectByID<TableInfo>(TableInfo_ID));
         }
     }
 }

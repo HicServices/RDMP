@@ -31,17 +31,13 @@ namespace DataExportManager.DataRelease
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataReleaseUI));
             this.panel1 = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
-            this.pnlPipeline = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tlvReleasePotentials = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvReleaseability = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -51,41 +47,21 @@ namespace DataExportManager.DataRelease
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Controls.Add(this.checkAndExecuteUI1);
-            this.panel1.Controls.Add(this.pnlPipeline);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(697, 646);
             this.panel1.TabIndex = 19;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(195, 38);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(265, 101);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 20;
-            this.pictureBox1.TabStop = false;
-            // 
             // checkAndExecuteUI1
             // 
+            this.checkAndExecuteUI1.AllowsYesNoToAll = true;
             this.checkAndExecuteUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 32);
+            this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 0);
             this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
-            this.checkAndExecuteUI1.Size = new System.Drawing.Size(697, 614);
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(697, 646);
             this.checkAndExecuteUI1.TabIndex = 19;
-            // 
-            // pnlPipeline
-            // 
-            this.pnlPipeline.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlPipeline.Location = new System.Drawing.Point(0, 0);
-            this.pnlPipeline.Name = "pnlPipeline";
-            this.pnlPipeline.Size = new System.Drawing.Size(697, 32);
-            this.pnlPipeline.TabIndex = 21;
             // 
             // splitContainer1
             // 
@@ -147,7 +123,6 @@ namespace DataExportManager.DataRelease
             this.Name = "DataReleaseUI";
             this.Size = new System.Drawing.Size(1025, 650);
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -165,8 +140,6 @@ namespace DataExportManager.DataRelease
         private BrightIdeasSoftware.TreeListView tlvReleasePotentials;
         private OLVColumn olvName;
         private OLVColumn olvReleaseability;
-        private System.Windows.Forms.Panel pnlPipeline;
-        private System.Windows.Forms.PictureBox pictureBox1;
 
 
     }

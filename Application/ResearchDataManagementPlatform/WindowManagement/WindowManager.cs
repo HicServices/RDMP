@@ -1,10 +1,18 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -22,6 +30,8 @@ using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
+using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -55,24 +65,21 @@ namespace ResearchDataManagementPlatform.WindowManagement
         HomeUI _home;
         DockContent _homeContent;
 
-        public WindowManager(RDMPMainForm mainForm, RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
+        public WindowManager(ITheme theme,RDMPMainForm mainForm, RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
             _windowFactory = new WindowFactory(repositoryLocator,this);
-            ActivateItems = new ActivateItems(refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
+            ActivateItems = new ActivateItems(theme,refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
 
             _mainDockPanel = mainDockPanel;
-            _mainDockPanel.Theme = new VS2005Theme();
-            _mainDockPanel.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
             
-            _mainDockPanel.ShowDocumentIcon = true;
-
             MainForm = mainForm;
             RepositoryLocator = repositoryLocator;
 
             Navigation = new NavigationTrack();
             mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
+            
         }
-        
+
         /// <summary>
         /// Creates a new instance of the given RDMPCollectionUI specified by the Enum collectionToCreate at the specified dock position
         /// </summary>
@@ -104,7 +111,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 case RDMPCollection.DataExport:
                     if (RepositoryLocator.DataExportRepository == null)
                     {
-                        WideMessageBox.Show("Cannot create DataExport Toolbox because DataExportRepository has not been set/created yet");
+                        WideMessageBox.Show("Data export database unavailable","Cannot create DataExport Toolbox because DataExportRepository has not been set/created yet");
                         return null;
                     }
 
@@ -317,9 +324,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if (TabChanged != null)
                 TabChanged(sender, newTab);
-
-            
         }
+
 
         /// <summary>
         /// Records the fact that a new single object editing tab has been opened.  .
@@ -359,6 +365,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
         }
 
+        public PersistableObjectCollectionDockContent GetActiveWindowIfAnyFor(Type windowType, IPersistableObjectCollection collection)
+        {
+            return _trackedWindows.OfType<PersistableObjectCollectionDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.Collection.Equals(collection));
+        }
         /// <summary>
         /// Check whether a given RDMPSingleControlTab is already showing with the given DatabaseObject (e.g. is user currently editing Catalogue bob in CatalogueTab)
         /// </summary>
@@ -413,11 +423,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             finally
             {
                 Navigation.Resume();
+                Navigation.Append(_mainDockPanel.ActiveDocument as DockContent);
             }
         }
-
-
-
-
     }
 }

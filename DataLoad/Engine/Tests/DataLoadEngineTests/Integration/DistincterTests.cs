@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,9 +14,9 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
+using FAnsi;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using Rhino.Mocks;
 using Tests.Common;
 
@@ -20,7 +26,7 @@ namespace DataLoadEngineTests.Integration
     {
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestDistincter_Duplicates(DatabaseType type)
         {
             var db = GetCleanedServer(type, "TestCoalescer",true);
@@ -63,7 +69,7 @@ namespace DataLoadEngineTests.Integration
             distincter.Initialize(db, LoadStage.AdjustRaw);
 
             var job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Expect(p => p.RegularTablesToLoad).Return(new List<TableInfo>(new[] { tableInfo }));
+            job.Expect(p => p.RegularTablesToLoad).Return(new List<ITableInfo>(new[] { tableInfo }));
             job.Expect(p => p.Configuration).Return(new HICDatabaseConfiguration(db.Server));
 
             distincter.Mutilate(job);
@@ -72,12 +78,12 @@ namespace DataLoadEngineTests.Integration
 
             Assert.AreEqual(rowsBefore/2,rowsAfter);
 
-            db.ForceDrop();
+            db.Drop();
         }
 
         [Test]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MYSQLServer)]
+        [TestCase(DatabaseType.MySql)]
         public void TestDistincter_NoDuplicates(DatabaseType type)
         {
             var db = GetCleanedServer(type, "TestCoalescer",true);
@@ -120,7 +126,7 @@ namespace DataLoadEngineTests.Integration
             distincter.Initialize(db, LoadStage.AdjustRaw);
 
             var job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Expect(p => p.RegularTablesToLoad).Return(new List<TableInfo>(new[] { tableInfo }));
+            job.Expect(p => p.RegularTablesToLoad).Return(new List<ITableInfo>(new[] { tableInfo }));
             job.Expect(p => p.Configuration).Return(new HICDatabaseConfiguration(db.Server));
 
             distincter.Mutilate(job);
@@ -129,7 +135,7 @@ namespace DataLoadEngineTests.Integration
 
             Assert.AreEqual(rowsBefore, rowsAfter);
 
-            db.ForceDrop();
+            db.Drop();
         }
     }
 }

@@ -46,7 +46,7 @@ namespace DataExportManager.Wizard
             this.lblCohortFile = new System.Windows.Forms.Label();
             this.btnSelectClearCohortFile = new System.Windows.Forms.Button();
             this.gbCic = new System.Windows.Forms.GroupBox();
-            this.ragCic = new ReusableUIComponents.RAGSmiley();
+            this.ragCic = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.btnClearCohort = new System.Windows.Forms.Button();
             this.ddCicPipeline = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -62,8 +62,8 @@ namespace DataExportManager.Wizard
             this.label6 = new System.Windows.Forms.Label();
             this.pbCohortSources = new System.Windows.Forms.PictureBox();
             this.btnCreateNewCohortSource = new System.Windows.Forms.Button();
-            this.ragExecute = new ReusableUIComponents.RAGSmiley();
-            this.ragProjectNumber = new ReusableUIComponents.RAGSmiley();
+            this.ragExecute = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragProjectNumber = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.label11 = new System.Windows.Forms.Label();
             this.tbCohortName = new System.Windows.Forms.TextBox();
             this.cbDefineCohort = new System.Windows.Forms.CheckBox();
@@ -519,13 +519,13 @@ namespace DataExportManager.Wizard
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.PictureBox pbCohortSources;
         private System.Windows.Forms.Button btnCreateNewCohortSource;
-        private ReusableUIComponents.RAGSmiley ragExecute;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragExecute;
         private OLVColumn olvColumn1;
-        private ReusableUIComponents.RAGSmiley ragProjectNumber;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragProjectNumber;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox tbCohortName;
         private System.Windows.Forms.Button btnClearCohort;
-        private ReusableUIComponents.RAGSmiley ragCic;
+        private ReusableUIComponents.ChecksUI.RAGSmiley ragCic;
         private System.Windows.Forms.CheckBox cbDefineCohort;
         private System.Windows.Forms.GroupBox gbCohortAndDatasets;
     }

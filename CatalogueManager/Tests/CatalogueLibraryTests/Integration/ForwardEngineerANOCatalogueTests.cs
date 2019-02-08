@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +22,12 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Triggers;
 using Diagnostics.TestData;
+using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DatabaseHelpers.Discovery;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -106,7 +112,7 @@ namespace CatalogueLibraryTests.Integration
 
     ,"Should not be able to drop primary key column");
 
-            db.ForceDrop();
+            db.Drop();
         }
 
 
@@ -138,7 +144,7 @@ namespace CatalogueLibraryTests.Integration
             var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
             Assert.IsTrue(anoCatalogue.Exists());
 
-            db.ForceDrop();
+            db.Drop();
 
             var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
             var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
@@ -190,7 +196,7 @@ namespace CatalogueLibraryTests.Integration
             var idColInAnoDatabase = anoCatalogue.CatalogueItems[0].ColumnInfo;
             Assert.AreEqual("int", idColInAnoDatabase.Data_type);
             
-            db.ForceDrop();
+            db.Drop();
 
             var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
             var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
@@ -337,8 +343,8 @@ namespace CatalogueLibraryTests.Integration
             }
             finally
             {
-                dbFrom.ForceDrop();
-                dbTo.ForceDrop();
+                dbFrom.Drop();
+                dbTo.Drop();
             }
         }
         
@@ -504,7 +510,7 @@ namespace CatalogueLibraryTests.Integration
             Assert.AreEqual(1, qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins().Count(),"The new Lookup did not have the composite join key (sex/hb_extract)");
             Assert.AreNotEqual(compositeLookup, qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins(), "New query builder for ano catalogue identified the OLD LookupCompositeJoinInfo!");
 
-            db.ForceDrop();
+            db.Drop();
 
             var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
             var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();

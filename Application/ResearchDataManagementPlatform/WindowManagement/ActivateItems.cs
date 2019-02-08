@@ -1,4 +1,10 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -13,11 +19,9 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution;
-using CatalogueManager.DashboardTabs;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.ExtractionUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ExtractionUIs.JoinsAndLookups;
 using CatalogueManager.Icons.IconProvision;
@@ -42,10 +46,12 @@ using CatalogueManager.Copying;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dependencies.Models;
+using ReusableUIComponents.Dialogs;
+using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -56,6 +62,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// </summary>
     public class ActivateItems : IActivateItems, IRefreshBusSubscriber
     {
+
         public event EmphasiseItemHandler Emphasise;
 
         private readonly DockPanel _mainDockPanel;
@@ -66,6 +73,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
+        public ITheme Theme { get; private set; }
         public ServerDefaults ServerDefaults { get; private set; }
         public RefreshBus RefreshBus { get; private set; }
         public FavouritesProvider FavouritesProvider { get; private set; }
@@ -81,11 +89,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICommandFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
-        
+        public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
+
         public List<IProblemProvider> ProblemProviders { get; private set; }
 
-        public ActivateItems(RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier)
+        public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier)
         {
+            Theme = theme;
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
             _windowManager = windowManager;
@@ -106,8 +116,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             //handle custom icons from plugin user interfaces in which
             CoreIconProvider = new DataExportIconProvider(PluginUserInterfaces.ToArray());
-            KeywordHelpTextListbox.HelpKeywordsIconProvider = CoreIconProvider;
-
+            
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
 
             WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
@@ -252,12 +261,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
         
-        public IFilter AdvertiseCatalogueFiltersToUser(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
-        {
-            var wizard = new FilterImportWizard();
-            return wizard.ImportOneFromSelection(containerToImportOneInto, filtersThatCouldBeImported);
-        }
-        
         public void ViewDataSample(IViewSQLAndResultsCollection collection)
         {
             Activate<ViewSQLAndResultsWithDataGridUI>(collection);
@@ -298,12 +301,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if(optionalLookupTableInfo != null)
                 t.SetLookupTableInfo(optionalLookupTableInfo);
         }
-
-        public void ActivateReOrderCatalogueItems(Catalogue catalogue)
-        {
-            Activate<ReOrderCatalogueItems, Catalogue>(catalogue);
-        }
-
+        
         public void ViewFilterGraph(object sender,FilterGraphObjectCollection collection)
         {
             var aggFilter = collection.GetFilter() as AggregateFilter;
@@ -392,13 +390,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return objectToEmphasise;
         }
 
-        public void ActivateViewDQEResultsForCatalogue(Catalogue catalogue)
+        public string GetDocumentation(Type type)
         {
-            var cmd = new ExecuteCommandViewDQEResultsForCatalogue(this).SetTarget(catalogue);
-            if(cmd.IsImpossible)
-                MessageBox.Show(cmd.ReasonCommandImpossible);
-            else
-                cmd.Execute();
+            return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
         }
 
         ///<inheritdoc/>
@@ -415,13 +409,18 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         
         public T Activate<T>(IPersistableObjectCollection collection)
-            where T: IObjectCollectionControl,new()
+            where T: Control,IObjectCollectionControl,new()
 
         {
+            Control existingHostedControlInstance;
+            if (PopExisting(typeof(T), collection, out existingHostedControlInstance))
+                return (T)existingHostedControlInstance;
+
             var uiInstance = new T();
             Activate(uiInstance, collection);
             return uiInstance;
         }
+
 
         private T Activate<T, T2>(T2 databaseObject, Bitmap tabImage)
             where T : RDMPSingleDatabaseObjectControl<T2>, new()
@@ -455,6 +454,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return existing != null;
         }
 
+        private bool PopExisting(Type windowType, IPersistableObjectCollection collection, out Control existingHostedControlInstance)
+        {
+            var existing = _windowManager.GetActiveWindowIfAnyFor(windowType, collection);
+            existingHostedControlInstance = null;
+
+            if (existing != null)
+            {
+                existingHostedControlInstance = existing.GetControl();
+                existing.Activate();
+                existing.HandleUserRequestingTabRefresh(this);
+            }
+
+            return existing != null;
+        }
         public DockContent Activate(DeserializeInstruction instruction)
         {
             if (instruction.DatabaseObject != null && instruction.ObjectCollection != null)

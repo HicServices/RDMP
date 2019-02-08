@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.TransparentHelpSystem;
 
 namespace ReusableUIComponents
@@ -36,7 +36,7 @@ namespace ReusableUIComponents
             Regex rgx = new Regex("(.{150}\\s)");
             _hoverText = rgx.Replace(hoverText, "$1\n");
 
-            Cursor = _workFlow != null? Cursors.Hand : Cursors.Default;
+            Cursor = Cursors.Hand;
         }
 
         private void HelpIcon_MouseHover(object sender, EventArgs e)
@@ -59,10 +59,10 @@ namespace ReusableUIComponents
 
         private void HelpIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            if(_workFlow != null)
+            if (_workFlow != null)
                 _workFlow.Start(true);
+            else
+                WideMessageBox.Show(_title, _hoverText, WideMessageBoxTheme.Help);
         }
     }
-
-  
 }

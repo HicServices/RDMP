@@ -1,9 +1,14 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
@@ -15,59 +20,21 @@ namespace CatalogueManager.SimpleDialogs.Remoting
     /// </summary>
     public partial class RemoteRDMPUI : RemoteRDMPUI_Design, ISaveableUI
     {
-        private RemoteRDMP _remote;
-
-        public RemoteRDMP Remote
-        {
-            get { return _remote; }
-            set
-            {
-                _remote = value;
-            }
-        }
-
         public RemoteRDMPUI()
         {
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Tables;
         }
 
-        public override void SetDatabaseObject(IActivateItems activator, RemoteRDMP databaseObject)
+        protected override void SetBindings(BinderWithErrorProviderFactory rules, RemoteRDMP databaseObject)
         {
-            base.SetDatabaseObject(activator, databaseObject);
-            objectSaverButton1.SetupFor(databaseObject, activator.RefreshBus);
+            base.SetBindings(rules, databaseObject);
 
-            Remote = databaseObject;
-
-            txtName.Text = Remote.Name;
-            txtBaseUrl.Text = Remote.URL;
-            txtUsername.Text = Remote.Username;
-            txtPassword.Text = Remote.Password;
-        }
-
-        public ObjectSaverButton GetObjectSaverButton()
-        {
-            return objectSaverButton1;
-        }
-
-        private void txtName_TextChanged(object sender, EventArgs e)
-        {
-            Remote.Name = txtName.Text;
-        }
-
-        private void txtBaseUrl_TextChanged(object sender, EventArgs e)
-        {
-            Remote.URL = txtBaseUrl.Text;
-        }
-
-        private void txtUsername_TextChanged(object sender, EventArgs e)
-        {
-            Remote.Username = txtUsername.Text;
-        }
-
-        private void txtPassword_TextChanged(object sender, EventArgs e)
-        {
-            Remote.Password = txtPassword.Text;
+            Bind(tbID,"Text","ID",r=>r.ID);
+            Bind(tbName, "Text", "Name", r => r.Name);
+            Bind(tbBaseUrl, "Text", "URL", r => r.URL);
+            Bind(tbUsername, "Text", "Username", r => r.Username);
+            Bind(tbPassword, "Text", "Password", r => r.Password);
         }
     }
 

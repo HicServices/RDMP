@@ -1,31 +1,23 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AggregationUIs;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportManager.Icons.IconProvision;
-using MapsDirectlyToDatabaseTable;
-using CatalogueManager.Copying.Commands;
-using ReusableLibraryCode.DatabaseHelpers.Discovery.QuerySyntax;
+using FAnsi.Discovery.QuerySyntax;
 
 namespace DataExportManager.ProjectUI.Graphs
 {
@@ -104,7 +96,7 @@ namespace DataExportManager.ProjectUI.Graphs
             if (_collection == null)
                 return base.GetRibbonObjects();
 
-            return new object[] { Request.Configuration ,Request.DatasetBundle.DataSet,AggregateConfiguration};
+            return new object[] { Request.Configuration ,Request.SelectedDataSets,AggregateConfiguration,"Graphing Extraction Query"};
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -151,7 +143,7 @@ namespace DataExportManager.ProjectUI.Graphs
             Request = new ExtractDatasetCommand(RepositoryLocator,config, new ExtractableDatasetBundle(ds));
             Request.GenerateQueryBuilder();
 
-            SetAggregate(_collection.Graph);
+            SetAggregate(activator,_collection.Graph);
             LoadGraphAsync();
         }
 
