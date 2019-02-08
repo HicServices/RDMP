@@ -113,9 +113,6 @@
     <None Include="..\..\App.config">
       <Link>App.config</Link>
     </None>
-    <None Include="HIC.Logging.Tests.dll.config.template">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

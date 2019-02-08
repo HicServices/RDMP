@@ -472,9 +472,6 @@
     <None Include="packages.config" />
     <None Include="Resources\InvalidPlugin.dll" />
     <None Include="Resources\DummyPlugin.dll" />
-    <Content Include="CatalogueLibraryTests.dll.config.template">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
