@@ -187,8 +187,9 @@ namespace CatalogueManager.Validation
                         }
                         else
                         {
+                            dd.Items.Add("<<Clear>>");
                             dd.Items.AddRange(entities);
-                            dd.SelectedIndexChanged += (s, e) => _requiredProperties[(int)dd.Tag].SetValue(SecondaryConstriant, dd.SelectedItem, null);
+                            dd.SelectedIndexChanged += (s, e) => _requiredProperties[(int)dd.Tag].SetValue(SecondaryConstriant, dd.SelectedItem as IMapsDirectlyToDatabaseTable, null);
                         }
 
                         //See if it has a value
