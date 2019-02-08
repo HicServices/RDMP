@@ -132,6 +132,11 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private List<Type> showOnlyTypes = new List<Type>();
         private AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
         
+        /// <summary>
+        /// The action to perform when the form closes with an object selected (defaults to Emphasise)
+        /// </summary>
+        public Action<IMapsDirectlyToDatabaseTable> CompletionAction { get; set; }
+
         public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
         {
             if(!TypesThatAreNotUsefulParents.Contains(t))
@@ -144,6 +149,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             _favouriteProvider = _activator.FavouritesProvider;
             _magnifier = FamFamFamIcons.magnifier;
             InitializeComponent();
+
+            CompletionAction = Emphasise;
 
             activator.Theme.ApplyTo(toolStrip1);
 
@@ -287,7 +294,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if (e.KeyCode == Keys.Enter && !_skipEnter)
             {
                 e.Handled = true;
-                EmphasiseAndClose(keyboardSelectedIndex);
+                PerformCompletionAction(keyboardSelectedIndex);
             }
             
             if (e.KeyCode == Keys.Escape)
@@ -307,10 +314,10 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if(e.Y<= DrawMatchesStartingAtY || e.Y > (RowHeight * MaxMatches )+ DrawMatchesStartingAtY)
                 return;
 
-            EmphasiseAndClose(RowIndexFromPoint(e.X, e.Y));
+            PerformCompletionAction(RowIndexFromPoint(e.X, e.Y));
         }
         
-        private void EmphasiseAndClose(int indexToSelect)
+        private void PerformCompletionAction(int indexToSelect)
         {
             lock (oMatches)
             {
@@ -318,10 +325,15 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     return;
 
                 Close();
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(_matches[indexToSelect], 1) { Pin = true });
+                CompletionAction(_matches[indexToSelect]);
             }
-            
         }
+
+        private void Emphasise(IMapsDirectlyToDatabaseTable o)
+        {
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1) { Pin = true });
+        }
+
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
