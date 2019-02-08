@@ -317,7 +317,9 @@
     <Compile Include="VisualStudioSolutionFileProcessing\VisualStudioSolutionFolder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="packages.config" />
     <None Include="ReusableLibraryCode.snk" />
   </ItemGroup>

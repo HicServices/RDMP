@@ -341,7 +341,9 @@
     <Compile Include="Repositories\DataExportRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="DataRelease\DataRelease.cd" />
     <None Include="Data\DataTables\Cohorts.cd" />
     <None Include="ExecuteDatasetExtraction.cd" />

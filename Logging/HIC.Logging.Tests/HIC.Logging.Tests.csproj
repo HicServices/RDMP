@@ -110,7 +110,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="HIC.Logging.Tests.dll.config.template">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

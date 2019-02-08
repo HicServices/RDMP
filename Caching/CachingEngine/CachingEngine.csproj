@@ -171,7 +171,9 @@
     <Compile Include="BasicCache\NoSubdirectoriesCachePathResolver.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="CachingEngine.cd" />
     <None Include="packages.config" />
   </ItemGroup>
