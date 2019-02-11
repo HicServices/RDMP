@@ -11,20 +11,19 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing;
 using CatalogueManager.ExtractionUIs.FilterUIs.Options;
+using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
+using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
-using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
-using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
@@ -59,7 +58,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         public ISqlParameter[] GlobalFilterParameters { get; private set; }
 
         private Scintilla QueryEditor;
-   
+        
         public ExtractionFilterUI()
         {
             InitializeComponent();
@@ -187,21 +186,25 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             base.SetDatabaseObject(activator,databaseObject);
             Catalogue = databaseObject.GetCatalogue();
             _extractionFilter = databaseObject;
+
+            var factory = new ParameterCollectionUIOptionsFactory();
+            var options = factory.Create(databaseObject);
+
+            //collapse panel 1 unless there are parameters
+            splitContainer1.Panel1Collapsed = !options.ParameterManager.ParametersFoundSoFarInQueryGeneration.Values.Any(v => v.Any());
+
+            parameterCollectionUI1.SetUp(options);
             
             AddToMenu(new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
             AddToMenu(new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
             AddToMenu(new ExecuteCommandViewFilterMatchGraph(_activator, databaseObject));
             AddToMenu(new ExecuteCommandViewSqlParameters(_activator, databaseObject));
             AddToMenu(new ExecuteCommandBrowseLookup(_activator, databaseObject));
+            AddToMenu(new ExecuteCommandPublishFilter(_activator,databaseObject,databaseObject.GetCatalogue()));
 
             FigureOutGlobalsAndAutoComplete();
             
             QueryEditor.Text = _extractionFilter.WhereSQL;
-
-            //if we are not looking at a catalogue filter (ExtractionFilter) we must be looking at an AggregateFilter 
-            //or Deployed filter but it could be a new one and not a clone - if it is a novel user creation, let him 
-            //publish it if he wants
-            btnPublishToCatalogue.Enabled = !(_extractionFilter is ExtractionFilter) && Catalogue != null;
 
             AddChecks(databaseObject);
             StartChecking();
@@ -220,76 +223,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         /// Used for publishing IFilters created here back to the main Catalogue
         /// </summary>
         public Catalogue Catalogue { get; set; }
-
-        private void btnPublishToCatalogue_Click(object sender, EventArgs e)
-        {
-            if(Catalogue == null)
-            {
-                WideMessageBox.Show("Unexpected system state","Unsure how you manged to click this button when Catalogue was null!");
-                return;
-            }
-            if (_extractionFilter == null)
-            {
-                WideMessageBox.Show("Unexpected system state", "Unsure how you managed to click this button when ExtractionFilter was null!");
-                return;
-            }
-            
-            ExtractionInformation[] allExtractionInformations = Catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
-            
-            if (!allExtractionInformations.Any())
-            {
-                WideMessageBox.Show("Cannot publish filter", "Cannot publish filter because Catalogue " + Catalogue +
-                                    " does not have any ExtractionInformations (extractable columns) we could associate it with");
-                return;
-            }
-            
-            string reason;
-            if (!FilterImporter.IsProperlyDocumented(_extractionFilter, out reason))
-            {
-                WideMessageBox.Show("Cannot publish filter", "Filter is not properly documented:" + reason);
-                return;
-            }
-            
-            var dr = MessageBox.Show(
-                "You are about to commit filter '" + _extractionFilter + "' as new master ExtractionFilter in the Catalogue '" +
-                Catalogue +
-                "', this will make it reusable asset for anyone using the dataset anywhere, is that what you want? (You will be prompted to pick a column to associate the new master filter with)",
-                "Create new master ExtractionFilter?", MessageBoxButtons.YesNoCancel);
-
-            if (dr == DialogResult.Yes)
-            {
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(allExtractionInformations,false,false);
-                dialog.ShowDialog();
-
-                if (dialog.DialogResult == DialogResult.OK && dialog.Selected != null)
-                {
-                    btnPublishToCatalogue.Enabled = false;
-
-                    var toAddTo = (ExtractionInformation) dialog.Selected;
-                    
-                    //see if there is one with the same name that for some reason we are not known to be a child of already
-                    var duplicate = toAddTo.ExtractionFilters.SingleOrDefault(f => f.Name.Equals(_extractionFilter.Name));
-
-                    if (duplicate != null)
-                    {
-                        var drMarkSame = MessageBox.Show("There is already a filter called " + _extractionFilter.Name +
-                                                            " in ExtractionInformation " + toAddTo + " do you want to mark this filter as a child of that master filter?",
-                                                                "Duplicate, mark these as the same?",MessageBoxButtons.YesNo);
-
-                        if (drMarkSame == DialogResult.Yes)
-                        {
-                            _extractionFilter.ClonedFromExtractionFilter_ID = duplicate.ID;
-                            _extractionFilter.SaveToDatabase();
-                        }
-                        return;
-                    }
-
-
-                    new FilterImporter(new ExtractionFilterFactory(toAddTo), null).ImportFilter(_extractionFilter, null);
-                    MessageBox.Show("Publish successful");
-                }
-            }
-        }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
