@@ -144,7 +144,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
                 return;
             
             var parameters = olvParameters.Objects.Cast<ISqlParameter>().ToArray();
-
             var toDisable = parameters.Where(Options.ShouldBeDisabled);
 
             //These parameters are super special and in fact only have a Value (other properties are inherited from a parent ExtractionFilterParameter) so only let the user edit the Value textbox if there are any of these in the UI
@@ -192,7 +191,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         {
             Options = options;
 
-            lblUseCase.Text = "Use Case:" + options.UseCase;
+            hiParameters.SetHelpText("Use Case",options.UseCase);
+
             parameterEditorScintillaControl1.Options = options;
             RefreshParametersFromDatabase();
         }
