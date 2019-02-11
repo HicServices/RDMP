@@ -251,6 +251,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Annotations\Annotations.cs" />
+    <Compile Include="AssemblyResolver.cs" />
     <Compile Include="BiDictionary.cs" />
     <Compile Include="Checks\AcceptAllCheckNotifier.cs" />
     <Compile Include="Checks\CheckEventArgs.cs" />

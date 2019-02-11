@@ -5,7 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
@@ -29,9 +33,10 @@ namespace DatabaseCreation
         public const string DefaultDataExportDatabaseName = "DataExport";
         public const string DefaultDQEDatabaseName = "DQE";
         public const string DefaultLoggingDatabaseName = "Logging";
-
+        
         public static int Main(string[] args)
         {
+            AssemblyResolver.SetupAssemblyResolver();
             return UsefulStuff.GetParser().ParseArguments<DatabaseCreationProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
         }
 
@@ -90,5 +95,6 @@ namespace DatabaseCreation
             return builder;
         }
 
+        
     }
 }
