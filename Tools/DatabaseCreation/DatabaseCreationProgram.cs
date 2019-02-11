@@ -5,7 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
@@ -30,8 +34,11 @@ namespace DatabaseCreation
         public const string DefaultDQEDatabaseName = "DQE";
         public const string DefaultLoggingDatabaseName = "Logging";
 
+        private static HashSet<string> assemblyResolveAttempts = new HashSet<string>(); 
+
         public static int Main(string[] args)
         {
+            SetupAssemblyResolver();
             return UsefulStuff.GetParser().ParseArguments<DatabaseCreationProgramOptions>(args).MapResult(RunOptionsAndReturnExitCode, errs => 1);
         }
 
@@ -90,5 +97,33 @@ namespace DatabaseCreation
             return builder;
         }
 
+        private static void SetupAssemblyResolver()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
+            {
+                string assemblyInfo = resolveArgs.Name;
+                var parts = assemblyInfo.Split(',');
+                string name = parts[0];
+
+                if (assemblyResolveAttempts.Contains(assemblyInfo))
+                    return null;
+
+                assemblyResolveAttempts.Add(assemblyInfo);
+
+                var assembly = Assembly.GetExecutingAssembly().Location;
+                if (String.IsNullOrWhiteSpace(assembly))
+                    return null;
+
+                var directoryInfo = new FileInfo(assembly).Directory;
+                if (directoryInfo == null)
+                    return null;
+                
+                var file = directoryInfo.EnumerateFiles(name + ".dll").FirstOrDefault();
+                if (file == null)
+                    return null;
+
+                return Assembly.LoadFile(file.FullName);
+            };
+        }
     }
 }
