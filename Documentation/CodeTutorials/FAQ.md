@@ -12,6 +12,7 @@
    1. [Does RDMP Support Views?](#views)
    1. [Does RDMP Support Table Valued Functions?](#tvf)
 1. Data Load Engine
+   1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
    1. [How does RDMP deal with Csv/text files?](#csv)
    1. [How does RDMP handle / translate untyped, C# and Database Types?](#typetranslation)
@@ -108,6 +109,31 @@ When importing a table from a Microsoft Sql Server database to create a `Catalog
 ![A Table Valued Function TableInfo](Images/FAQ/TableValuedFunctionExample.png)
 
 ## Data Load Engine
+
+<a name="vsssis"></a>
+
+### How does RDMP differ from classic tools e.g. SSIS?
+
+RDMP is primarily a data management tool and does not seek to replace existing ETL tools (e.g. SSIS) that you might use for complex data transforms / data migrations etc.  That said, routine loading of clinical/research datasets differ from these traditional ETL jobs in key ways which make a bespoke tool (RDMP) useful:
+
+- Data sources are error prone 
+  - Duplication
+  - Badly formatted files (e.g. unescaped CSV)
+  - Schema changes (e.g. columns changing periodically)
+- Scale in dimensions other than row count
+  - By number of dataset
+  - By number of columns (e.g. researcher adds some new columns to his dataset)
+- Require specific narrow set of transformations (e.g. anonymisation)
+- Benefits from traceability
+  - When each row appeared
+  - When row values change (when and what old values were)
+  - Which job/batch loaded a given row (allows tracing rows back to original source files)
+ 
+The Data Load Engine is designed to rapidly build simple data loads with a robust framework for error detection, traceability and duplication avoidance.  Core to the data load process implemented in RMDP is the automatic migration of the data you are trying to load through increasingly structured states (RAW=>STAGING=>LIVE).  This allows for rapid error detection and ensures that bad data remains in an isolated area for inspection by data analysts.
+  
+![Diagram of the stages of an RDMP load](Images/FAQ/DLEDiagram.png)
+
+A full description of the mechanics and design of the DLE can be found in the [UserManual](../UserManual.docx)
 
 <a name="untyped"></a>
 ### Can RDMP Load UnTyped Data?
