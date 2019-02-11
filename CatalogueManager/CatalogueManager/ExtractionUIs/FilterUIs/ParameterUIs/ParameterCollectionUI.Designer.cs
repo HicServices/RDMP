@@ -40,21 +40,22 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvComment = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvOwner = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.parameterEditorScintillaControl1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterEditorScintillaControl();
             this.btnOverride = new System.Windows.Forms.Button();
-            this.lblUseCase = new System.Windows.Forms.Label();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.hiParameters = new ReusableUIComponents.HelpIcon();
+            this.parameterEditorScintillaControl1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterEditorScintillaControl();
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnAddParameter
             // 
-            this.btnAddParameter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddParameter.Location = new System.Drawing.Point(583, 9);
+            this.btnAddParameter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddParameter.Location = new System.Drawing.Point(971, 549);
             this.btnAddParameter.Name = "btnAddParameter";
             this.btnAddParameter.Size = new System.Drawing.Size(129, 23);
             this.btnAddParameter.TabIndex = 10;
@@ -85,9 +86,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvParameters.FullRowSelect = true;
             this.olvParameters.GroupImageList = this.imageList1;
             this.olvParameters.HideSelection = false;
-            this.olvParameters.Location = new System.Drawing.Point(3, 38);
+            this.olvParameters.Location = new System.Drawing.Point(0, 0);
             this.olvParameters.Name = "olvParameters";
-            this.olvParameters.Size = new System.Drawing.Size(838, 477);
+            this.olvParameters.Size = new System.Drawing.Size(1235, 543);
             this.olvParameters.SmallImageList = this.imageList1;
             this.olvParameters.TabIndex = 11;
             this.olvParameters.UseCompatibleStateImageBehavior = false;
@@ -116,9 +117,10 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             // 
             this.olvValue.AspectName = "Value";
             this.olvValue.CellEditUseWholeCell = true;
+            this.olvValue.FillsFreeSpace = true;
             this.olvValue.Groupable = false;
             this.olvValue.Text = "Value";
-            this.olvValue.Width = 100;
+            this.olvValue.Width = 238;
             // 
             // olvComment
             // 
@@ -142,42 +144,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.imageList1.Images.SetKeyName(1, "Overridden.png");
             this.imageList1.Images.SetKeyName(2, "Warning.png");
             // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 86);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.parameterEditorScintillaControl1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.btnOverride);
-            this.splitContainer1.Panel2.Controls.Add(this.btnAddParameter);
-            this.splitContainer1.Panel2.Controls.Add(this.olvParameters);
-            this.splitContainer1.Size = new System.Drawing.Size(1271, 524);
-            this.splitContainer1.SplitterDistance = 421;
-            this.splitContainer1.TabIndex = 13;
-            // 
-            // parameterEditorScintillaControl1
-            // 
-            this.parameterEditorScintillaControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.parameterEditorScintillaControl1.Location = new System.Drawing.Point(0, 0);
-            this.parameterEditorScintillaControl1.Name = "parameterEditorScintillaControl1";
-            this.parameterEditorScintillaControl1.Options = null;
-            this.parameterEditorScintillaControl1.Size = new System.Drawing.Size(419, 522);
-            this.parameterEditorScintillaControl1.TabIndex = 0;
-            // 
             // btnOverride
             // 
-            this.btnOverride.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOverride.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOverride.Enabled = false;
-            this.btnOverride.Location = new System.Drawing.Point(718, 9);
+            this.btnOverride.Location = new System.Drawing.Point(1106, 549);
             this.btnOverride.Name = "btnOverride";
             this.btnOverride.Size = new System.Drawing.Size(123, 23);
             this.btnOverride.TabIndex = 10;
@@ -185,29 +156,73 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.btnOverride.UseVisualStyleBackColor = true;
             this.btnOverride.Click += new System.EventHandler(this.btnOverride_Click);
             // 
-            // lblUseCase
+            // tabControl1
             // 
-            this.lblUseCase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblUseCase.Location = new System.Drawing.Point(3, 9);
-            this.lblUseCase.Name = "lblUseCase";
-            this.lblUseCase.Size = new System.Drawing.Size(1268, 74);
-            this.lblUseCase.TabIndex = 14;
-            this.lblUseCase.Text = "Use Case:";
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(1, 3);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(1243, 604);
+            this.tabControl1.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.parameterEditorScintillaControl1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1235, 578);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "SQL";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.btnOverride);
+            this.tabPage2.Controls.Add(this.olvParameters);
+            this.tabPage2.Controls.Add(this.btnAddParameter);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(1235, 578);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Designer";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // hiParameters
+            // 
+            this.hiParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.hiParameters.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hiParameters.BackgroundImage")));
+            this.hiParameters.Location = new System.Drawing.Point(1246, 3);
+            this.hiParameters.Name = "hiParameters";
+            this.hiParameters.Size = new System.Drawing.Size(19, 19);
+            this.hiParameters.TabIndex = 2;
+            // 
+            // parameterEditorScintillaControl1
+            // 
+            this.parameterEditorScintillaControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.parameterEditorScintillaControl1.Location = new System.Drawing.Point(3, 3);
+            this.parameterEditorScintillaControl1.Name = "parameterEditorScintillaControl1";
+            this.parameterEditorScintillaControl1.Options = null;
+            this.parameterEditorScintillaControl1.Size = new System.Drawing.Size(1229, 572);
+            this.parameterEditorScintillaControl1.TabIndex = 0;
             // 
             // ParameterCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.lblUseCase);
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.hiParameters);
+            this.Controls.Add(this.tabControl1);
             this.Name = "ParameterCollectionUI";
             this.Size = new System.Drawing.Size(1271, 610);
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).EndInit();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -221,10 +236,12 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         private OLVColumn olvValue;
         private OLVColumn olvComment;
         private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private ParameterEditorScintillaControl parameterEditorScintillaControl1;
         private OLVColumn olvOwner;
-        private System.Windows.Forms.Label lblUseCase;
         private System.Windows.Forms.Button btnOverride;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private ReusableUIComponents.HelpIcon hiParameters;
     }
 }

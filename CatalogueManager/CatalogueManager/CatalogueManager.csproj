@@ -495,6 +495,7 @@
     <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
     <Compile Include="Copying\Commands\TableInfoCommand.cs" />
     <Compile Include="Copying\RDMPCommandFactory.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPublishFilter.cs" />
     <Compile Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
