@@ -28,10 +28,16 @@ namespace CatalogueLibrary.DublinCore
 
             if (c != null)
             {
-                c.Name = fillWith.Title;
+                //only overwritte name if Catalogue has default blank name
+                if (c.Name != null && c.Name.StartsWith("New Catalogue ",StringComparison.CurrentCultureIgnoreCase))
+                    c.Name = fillWith.Title;
+
                 c.Description = fillWith.Description;
                 c.Search_keywords = fillWith.Subject;
-                c.Acronym = fillWith.Alternative;
+
+                //only change Acronym if it was null before
+                if(string.IsNullOrWhiteSpace(c.Acronym))
+                    c.Acronym = fillWith.Alternative;
             }
             else
                 throw new NotSupportedException("Did not know how to hydrate the Type " + typeof(T) + " from a DublinCoreDefinition");

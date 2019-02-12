@@ -212,7 +212,7 @@ namespace CatalogueLibraryTests.ImportTests
             cata.SaveToDatabase();
 
             //test importing the Catalogue properties only
-            shareManager.ImportPropertiesOnly(cata,shareDefinition[0],true);
+            shareManager.ImportPropertiesOnly(cata,shareDefinition[0]);
             
             //import the defined properties but not name
             Assert.AreEqual("fishfish",cata.Name);

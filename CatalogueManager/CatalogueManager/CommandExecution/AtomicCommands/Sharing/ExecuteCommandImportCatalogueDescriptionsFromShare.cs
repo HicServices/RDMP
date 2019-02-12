@@ -18,6 +18,9 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
 {
+    /// <summary>
+    /// Opens a <see cref="ShareDefinition"/> (which must be a share of a <see cref="Catalogue"/>) and imports all descriptions including for CatalogueItems
+    /// </summary>
     internal class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommandImportShare, IAtomicCommand
     {
         private readonly Catalogue _targetCatalogue;
@@ -46,7 +49,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
                 if(MessageBox.Show("Catalogue Name is '"+_targetCatalogue.Name + "' but ShareDefinition is for, '" + first.Properties["Name"] +"'.  Import Anyway?","Import Anyway?",MessageBoxButtons.YesNo) == DialogResult.No)
                     return;
 
-            shareManager.ImportPropertiesOnly(_targetCatalogue, first,true);
+            shareManager.ImportPropertiesOnly(_targetCatalogue, first);
             _targetCatalogue.SaveToDatabase();
 
             var liveCatalogueItems = _targetCatalogue.CatalogueItems;
@@ -63,7 +66,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
                 if(existingMatch == null)
                     existingMatch = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository,_targetCatalogue,shareName);
 
-                shareManager.ImportPropertiesOnly(existingMatch, sd, true);
+                shareManager.ImportPropertiesOnly(existingMatch, sd);
                 existingMatch.SaveToDatabase();
             }
 

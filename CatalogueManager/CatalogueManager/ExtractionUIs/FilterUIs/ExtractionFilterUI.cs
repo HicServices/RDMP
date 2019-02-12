@@ -198,7 +198,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             AddToMenu(new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
             AddToMenu(new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
             AddToMenu(new ExecuteCommandViewFilterMatchGraph(_activator, databaseObject));
-            AddToMenu(new ExecuteCommandViewSqlParameters(_activator, databaseObject));
             AddToMenu(new ExecuteCommandBrowseLookup(_activator, databaseObject));
             AddToMenu(new ExecuteCommandPublishFilter(_activator,databaseObject,databaseObject.GetCatalogue()));
 

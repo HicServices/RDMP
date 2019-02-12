@@ -89,6 +89,7 @@ namespace CatalogueLibrary.Data
         }
         /// <inheritdoc/>
         [NotNull]
+        [DoNotImportDescriptions]
         public string Name {
             get { return _Name;}
             set {SetField(ref _Name,value);} 
