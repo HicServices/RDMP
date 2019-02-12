@@ -8,17 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Reflection;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
-using DataExportLibrary.Interfaces.Data;
+using DataExportLibrary.Data;
+using DataExportLibrary.Data.DataTables.DataSetPackages;
+using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Repositories
 {
@@ -42,6 +40,24 @@ namespace DataExportLibrary.Repositories
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
         {
             CatalogueRepository = catalogueRepository;
+
+            Constructors.Add(typeof(SupplementalExtractionResults),(rep,r)=>new SupplementalExtractionResults((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(CumulativeExtractionResults),(rep,r)=>new CumulativeExtractionResults((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(DataUser),(rep,r)=>new DataUser((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(DeployedExtractionFilter),(rep,r)=>new DeployedExtractionFilter((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(DeployedExtractionFilterParameter),(rep,r)=>new DeployedExtractionFilterParameter((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(ExternalCohortTable),(rep,r)=>new ExternalCohortTable((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(ExtractableCohort),(rep,r)=>new ExtractableCohort((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(ExtractableColumn),(rep,r)=>new ExtractableColumn((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(ExtractableDataSet),(rep,r)=>new ExtractableDataSet((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(ExtractionConfiguration),(rep,r)=>new ExtractionConfiguration((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(FilterContainer),(rep,r)=>new FilterContainer((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(GlobalExtractionFilterParameter),(rep,r)=>new GlobalExtractionFilterParameter((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(Project),(rep,r)=>new Project((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(SelectedDataSets),(rep,r)=>new SelectedDataSets((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(ExtractableDataSetPackage),(rep,r)=>new ExtractableDataSetPackage((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(ProjectCohortIdentificationConfigurationAssociation),(rep,r)=>new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository)rep,r));
+            Constructors.Add(typeof(SelectedDataSetsForcedJoin), (rep, r) => new SelectedDataSetsForcedJoin((IDataExportRepository)rep, r));
         }
         
         public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
@@ -57,8 +73,10 @@ namespace DataExportLibrary.Repositories
         readonly ObjectConstructor _constructor = new ObjectConstructor();
         protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
         {
+            if (Constructors.ContainsKey(t))
+                return Constructors[t](this, reader);
+
             return _constructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
-            
         }
 
         protected override bool IsCompatibleType(Type type)

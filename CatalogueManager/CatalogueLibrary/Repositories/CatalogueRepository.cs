@@ -14,8 +14,14 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Cohort.Joinables;
+using CatalogueLibrary.Data.Dashboarding;
+using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Properties;
 using CatalogueLibrary.Repositories.Construction;
@@ -80,6 +86,65 @@ namespace CatalogueLibrary.Repositories
             MEF = new MEF();
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
+            
+            //Shortcuts to improve performance of ConstructEntity (avoids reflection)
+            Constructors.Add(typeof(Catalogue),(rep, r) => new Catalogue((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(CohortAggregateContainer),(rep,r)=>new CohortAggregateContainer((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(CohortIdentificationConfiguration),(rep,r)=>new CohortIdentificationConfiguration((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(GovernanceDocument),(rep,r)=>new GovernanceDocument((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(GovernancePeriod),(rep,r)=>new GovernancePeriod((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(StandardRegex),(rep,r)=>new StandardRegex((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(AnyTableSqlParameter),(rep,r)=>new AnyTableSqlParameter((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(Plugin),(rep,r)=>new Plugin((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ANOTable),(rep,r)=>new ANOTable((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(AggregateConfiguration),(rep,r)=>new AggregateConfiguration((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(AggregateContinuousDateAxis),(rep,r)=>new AggregateContinuousDateAxis((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(AggregateDimension),(rep,r)=>new AggregateDimension((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(AggregateFilter),(rep,r)=>new AggregateFilter((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(AggregateFilterContainer),(rep,r)=>new AggregateFilterContainer((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(AggregateFilterParameter),(rep,r)=>new AggregateFilterParameter((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(CatalogueItem),(rep,r)=>new CatalogueItem((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(CatalogueItemIssue),(rep,r)=>new CatalogueItemIssue((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ColumnInfo),(rep,r)=>new ColumnInfo((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(JoinableCohortAggregateConfiguration),(rep,r)=>new JoinableCohortAggregateConfiguration((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(JoinableCohortAggregateConfigurationUse),(rep,r)=>new JoinableCohortAggregateConfigurationUse((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ExternalDatabaseServer),(rep,r)=>new ExternalDatabaseServer((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ExtractionFilter),(rep,r)=>new ExtractionFilter((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ExtractionFilterParameter),(rep,r)=>new ExtractionFilterParameter((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ExtractionInformation),(rep,r)=>new ExtractionInformation((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(IssueSystemUser),(rep,r)=>new IssueSystemUser((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ExtractionFilterParameterSet),(rep,r)=>new ExtractionFilterParameterSet((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(LoadMetadata),(rep,r)=>new LoadMetadata((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ExtractionFilterParameterSetValue),(rep,r)=>new ExtractionFilterParameterSetValue((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(LoadModuleAssembly),(rep,r)=>new LoadModuleAssembly((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(LoadProgress),(rep,r)=>new LoadProgress((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(Favourite),(rep,r)=>new Favourite((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(Pipeline),(rep,r)=>new Pipeline((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(Lookup),(rep,r)=>new Lookup((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(AggregateTopX),(rep,r)=>new AggregateTopX((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(PipelineComponent),(rep,r)=>new PipelineComponent((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(LookupCompositeJoinInfo),(rep,r)=>new LookupCompositeJoinInfo((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(PipelineComponentArgument),(rep,r)=>new PipelineComponentArgument((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(PreLoadDiscardedColumn),(rep,r)=>new PreLoadDiscardedColumn((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ProcessTask),(rep,r)=>new ProcessTask((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(DashboardLayout),(rep,r)=>new DashboardLayout((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ProcessTaskArgument),(rep,r)=>new ProcessTaskArgument((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(DashboardControl),(rep,r)=>new DashboardControl((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(DataAccessCredentials),(rep,r)=>new DataAccessCredentials((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(SupportingDocument),(rep,r)=>new SupportingDocument((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(DashboardObjectUse),(rep,r)=>new DashboardObjectUse((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(SupportingSQLTable),(rep,r)=>new SupportingSQLTable((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(TableInfo),(rep,r)=>new TableInfo((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(RemoteRDMP),(rep,r)=>new RemoteRDMP((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ObjectImport),(rep,r)=>new ObjectImport((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ObjectExport),(rep,r)=>new ObjectExport((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(CacheProgress),(rep,r)=>new CacheProgress((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(ConnectionStringKeyword),(rep,r)=>new ConnectionStringKeyword((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(WindowLayout),(rep,r)=>new WindowLayout((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(PermissionWindow),(rep,r)=>new PermissionWindow((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(TicketingSystemConfiguration),(rep,r)=>new TicketingSystemConfiguration((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(CacheFetchFailure), (rep, r) => new CacheFetchFailure((ICatalogueRepository)rep, r));
+
         }
 
         /// <summary>
@@ -191,6 +256,9 @@ namespace CatalogueLibrary.Repositories
         
         protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
         {
+            if (Constructors.ContainsKey(t))
+                return Constructors[t](this, reader);
+
             return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
         }
 
