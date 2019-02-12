@@ -78,9 +78,7 @@ namespace DataExportLibrary.Providers
 
         private string DescribeProblem(SelectedDataSets selectedDataSets)
         {
-            var cols = _exportChildProvider.GetColumnsIn(selectedDataSets);
-
-            if (!cols.Any(c => c.IsExtractionIdentifier))
+            if (_exportChildProvider.IsMissingExtractionIdentifier(selectedDataSets))
                 return "There are no IsExtractionIdentifier columns in dataset";
 
             return null;

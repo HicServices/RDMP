@@ -91,7 +91,7 @@ namespace CatalogueManager.FindAndReplace
             var dxmChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
 
             if (dxmChildProvider != null)
-                foreach (var o in dxmChildProvider.AllExtractableColumns)
+                foreach (var o in dxmChildProvider.GetAllExtractableColumns(_activator.RepositoryLocator.DataExportRepository))
                     _allObjects.Add(o);
 
             foreach (var o in g.GetAllObjectsInAllDatabases())

@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using CachingEngine.Factories;
 using CatalogueLibrary.Data;
@@ -32,7 +31,6 @@ using DataExportLibrary.Repositories;
 using DataLoadEngine.PipelineUseCases;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
@@ -72,18 +70,12 @@ namespace DataExportLibrary.Providers
         public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>>();
         public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>();
         
-
         public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new Dictionary<int, List<ExtractableCohort>>();
 
         public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
 
         public GlobalExtractionFilterParameter[] AllGlobalExtractionFilterParameters;
-
-        /// <summary>
-        /// All columns extracted in any dataset extracted in any ExtractionConfiguration.  Use GetColumnsIn to interrogate this in a more manageable way
-        /// </summary>
-        public Dictionary<int,List<ExtractableColumn>> ExtractionConfigurationToExtractableColumnsDictionary = new Dictionary<int, List<ExtractableColumn>>();
-
+        
         /// <summary>
         /// ID of all CohortIdentificationConfiguration which have an ProjectCohortIdentificationConfigurationAssociation declared on them (i.e. the CIC is used with one or more Projects)
         /// </summary>
@@ -91,8 +83,7 @@ namespace DataExportLibrary.Providers
 
         public AllFreeCohortIdentificationConfigurationsNode AllFreeCohortIdentificationConfigurationsNode = new AllFreeCohortIdentificationConfigurationsNode();
         public AllProjectCohortIdentificationConfigurationsNode AllProjectCohortIdentificationConfigurationsNode = new AllProjectCohortIdentificationConfigurationsNode();
-        
-        public IEnumerable<ExtractableColumn> AllExtractableColumns {get { return ExtractionConfigurationToExtractableColumnsDictionary.SelectMany(kvp => kvp.Value); }}
+        private readonly HashSet<SelectedDataSets> _selectedDataSetsWithNoIsExtractionIdentifier;
 
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
         {
@@ -110,26 +101,7 @@ namespace DataExportLibrary.Providers
             AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => _cicAssociations.Contains(cic.ID))), new DescendancyList(AllProjectCohortIdentificationConfigurationsNode));
             AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => !_cicAssociations.Contains(cic.ID))), new DescendancyList(AllFreeCohortIdentificationConfigurationsNode));
 
-            //record all extractable columns in each ExtractionConfiguration for fast reference later
-            foreach (var c in GetAllObjects<ExtractableColumn>(dataExportRepository))
-            {
-                if (c.CatalogueExtractionInformation_ID == null)
-                    c.InjectKnown((ExtractionInformation) null);
-                else
-                {
-                    if (AllExtractionInformationsDictionary.ContainsKey(c.CatalogueExtractionInformation_ID.Value))
-                    {
-                        var extractionInformation = AllExtractionInformationsDictionary[c.CatalogueExtractionInformation_ID.Value];
-
-                        c.InjectKnown(extractionInformation);
-                    }
-                }
-
-                if(!ExtractionConfigurationToExtractableColumnsDictionary.ContainsKey(c.ExtractionConfiguration_ID))
-                    ExtractionConfigurationToExtractableColumnsDictionary.Add(c.ExtractionConfiguration_ID,new List<ExtractableColumn>());   
-                
-                ExtractionConfigurationToExtractableColumnsDictionary[c.ExtractionConfiguration_ID].Add(c);
-            }
+            _selectedDataSetsWithNoIsExtractionIdentifier = new HashSet<SelectedDataSets>(dataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers());
 
             SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
             var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
@@ -584,20 +556,35 @@ namespace DataExportLibrary.Providers
             return toReturn;
         }
 
-        /// <summary>
-        /// Returns all currently selected ExtractableColumns in the given SelectedDataSets
-        /// </summary>
-        /// <param name="selectedDataset"></param>
-        /// <returns></returns>
-        public IEnumerable<ExtractableColumn> GetColumnsIn(SelectedDataSets selectedDataset)
+        public bool IsMissingExtractionIdentifier(SelectedDataSets selectedDataSets)
         {
-            if (ExtractionConfigurationToExtractableColumnsDictionary.ContainsKey(selectedDataset.ExtractionConfiguration_ID))
+            return _selectedDataSetsWithNoIsExtractionIdentifier.Contains(selectedDataSets);
+        }
+
+        /// <summary>
+        /// Returns all <see cref="ExtractableColumn"/> Injected with thier corresponding <see cref="ExtractionInformation"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <returns></returns>
+        public ExtractableColumn[] GetAllExtractableColumns(IDataExportRepository repository)
+        {
+            var toReturn = repository.GetAllObjects<ExtractableColumn>();
+            foreach (var c in toReturn)
             {
-                return ExtractionConfigurationToExtractableColumnsDictionary[selectedDataset.ExtractionConfiguration_ID]
-                .Where(ec => ec.ExtractableDataSet_ID == selectedDataset.ExtractableDataSet_ID);
+                if (c.CatalogueExtractionInformation_ID == null)
+                    c.InjectKnown((ExtractionInformation)null);
+                else
+                {
+                    if (AllExtractionInformationsDictionary.ContainsKey(c.CatalogueExtractionInformation_ID.Value))
+                    {
+                        var extractionInformation = AllExtractionInformationsDictionary[c.CatalogueExtractionInformation_ID.Value];
+
+                        c.InjectKnown(extractionInformation);
+                    }
+                }
             }
 
-            return Enumerable.Empty<ExtractableColumn>();
+            return toReturn;
         }
     }
 }

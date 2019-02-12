@@ -92,5 +92,18 @@ namespace DataExportLibrary.Repositories
 
             return eds.GetCatalogueExtractabilityStatus();
         }
+
+        public SelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
+        {
+            return SelectAll<SelectedDataSets>(@"
+
+SELECT ID  FROM SelectedDataSets sds
+where not exists (
+select 1 FROM ExtractableColumn ec where 
+ec.ExtractableDataSet_ID = sds.ExtractableDataSet_ID
+AND
+ec.IsExtractionIdentifier = 1
+)","ID").ToArray();
+        }
     }
 }
