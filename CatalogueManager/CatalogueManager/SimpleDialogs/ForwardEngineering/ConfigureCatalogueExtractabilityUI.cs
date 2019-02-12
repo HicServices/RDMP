@@ -460,7 +460,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             stage3.SetNext(stage4);
 
             _workflow.RootStage = stage1;
-            _workflow.Start();
 
             helpIcon1.SetHelpText("Configure Extractability", "Click for tutorial", _workflow);
         }

@@ -40,7 +40,6 @@
             this.ddCategoriseMany = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             this.pChangeAll = new System.Windows.Forms.Panel();
             this.pFilter = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
@@ -61,6 +60,7 @@
             this.tbAcronym = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
             this.pChangeAll.SuspendLayout();
             this.pFilter.SuspendLayout();
@@ -186,14 +186,6 @@
             this.tbFilter.Size = new System.Drawing.Size(485, 20);
             this.tbFilter.TabIndex = 0;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
-            // 
-            // helpIcon1
-            // 
-            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
-            this.helpIcon1.Location = new System.Drawing.Point(207, 144);
-            this.helpIcon1.Name = "helpIcon1";
-            this.helpIcon1.Size = new System.Drawing.Size(19, 19);
-            this.helpIcon1.TabIndex = 8;
             // 
             // pChangeAll
             // 
@@ -406,6 +398,14 @@
             this.panel1.Size = new System.Drawing.Size(819, 568);
             this.panel1.TabIndex = 27;
             // 
+            // helpIcon1
+            // 
+            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
+            this.helpIcon1.Location = new System.Drawing.Point(207, 144);
+            this.helpIcon1.Name = "helpIcon1";
+            this.helpIcon1.Size = new System.Drawing.Size(19, 19);
+            this.helpIcon1.TabIndex = 8;
+            // 
             // ConfigureCatalogueExtractabilityUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -444,7 +444,6 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnAddToExisting;
-        private ReusableUIComponents.HelpIcon helpIcon1;
         private System.Windows.Forms.Panel pChangeAll;
         private System.Windows.Forms.Panel pFilter;
         private System.Windows.Forms.Label label1;
@@ -465,5 +464,6 @@
         private System.Windows.Forms.TextBox tbAcronym;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Panel panel1;
+        private ReusableUIComponents.HelpIcon helpIcon1;
     }
 }
