@@ -41,6 +41,11 @@ namespace MapsDirectlyToDatabaseTable
 
         public DiscoveredServer DiscoveredServer { get; protected set; }
 
+        /// <summary>
+        /// Constructors for quickly resolving <see cref="ConstructEntity"/> calls rather than relying on reflection e.g. ObjectConstructor
+        /// </summary>
+        protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>>();
+
         //If you are calling this constructor then make sure to set the connection strings in your derrived class constructor
         public TableRepository()
         {
