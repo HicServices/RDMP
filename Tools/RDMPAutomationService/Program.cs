@@ -7,6 +7,10 @@
 using System;
 using CatalogueLibrary.DataFlowPipeline;
 using CommandLine;
+using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MySql;
+using FAnsi.Implementations.Oracle;
 using HIC.Logging.Listeners.NLogListeners;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
@@ -49,6 +53,10 @@ namespace RDMPAutomationService
 
         private static int Run(RDMPCommandLineOptions opts)
         {
+            ImplementationManager.Load(typeof(MicrosoftSQLImplementation).Assembly,
+                                       typeof(OracleImplementation).Assembly,
+                                       typeof(MySqlImplementation).Assembly);
+
             var factory = new RunnerFactory();
 
             opts.LoadFromAppConfig();
