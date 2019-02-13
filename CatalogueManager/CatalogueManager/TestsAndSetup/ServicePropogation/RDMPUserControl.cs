@@ -140,7 +140,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// Adds the given <paramref name="item"/> to the top bar at the top of the control.  This will be always
         /// visible at the top of the form
         /// </summary>
-        /// <param name="cmd"></param>
+        /// <param name="item"></param>
         public void Add(ToolStripItem item)
         {
             var p = GetTopmostRDMPUserControl(this, null);
@@ -200,8 +200,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// Runs checks on the last variable passed in <see cref="AddChecks"/>.  Do not call this method unless you have first
         /// called <see cref="AddChecks"/>.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         protected void StartChecking()
         {
             if(_checkable == null)

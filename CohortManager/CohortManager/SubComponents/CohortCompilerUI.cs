@@ -59,8 +59,7 @@ namespace CohortManager.SubComponents
     /// <para>Once you have configured your sets / set operations click 'Start All Tasks' to launch the SQL queries in parallel to the server.  If a set or container fails you can right click
     /// it to view the SQL error message or just look at the SQL the system has generated and run that manually (e.g. in Sql Management Studio). </para>
     /// 
-    /// <para>Once some of your sets are executing correctly you can improve performance by caching the identifier lists 'Cache Selected' (See QueryCachingServerSelector for how this is 
-    /// implemented).</para>
+    /// <para>Once some of your sets are executing correctly you can improve performance by caching the identifier lists 'Cache Selected' (See Menu for how to do this).</para>
     /// 
     /// <para>You will see an Identifier Count for each set, this is the number of unique patient identifiers amongst all records returned by the query.</para>
     /// 
@@ -88,15 +87,14 @@ namespace CohortManager.SubComponents
     {
         private CohortAggregateContainer _root;
         private CohortIdentificationConfiguration _cic;
-        private CohortCompiler Compiler = new CohortCompiler(null);
+        public CohortCompiler Compiler { get; private set; }
         private ExternalDatabaseServer _queryCachingServer;
 
         private ISqlParameter[] _globals;
         
         CancellationTokenSource _cancelGlobalOperations;
 
-        ToolStripTimeout _timeoutControls = new ToolStripTimeout(){Timeout = 3000};
-        ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
+        readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout() { Timeout = 3000 };
 
         /// <summary>
         /// Occurs when the user selects something in the ObjectListView, object is the thing selected
@@ -109,6 +107,8 @@ namespace CohortManager.SubComponents
 
             if(VisualStudioDesignMode)
                 return;
+
+            Compiler = new CohortCompiler(null);
 
             tlvConfiguration.CanExpandGetter += CanExpandGetter;
             tlvConfiguration.ChildrenGetter += ChildrenGetter;
@@ -124,8 +124,7 @@ namespace CohortManager.SubComponents
             _cohortExceptImage = CatalogueIcons.EXCEPTCohortAggregate;
 
             AssociatedCollection = RDMPCollection.Cohort;
-
-            cbIncludeCumulative.CheckedChanged += (s,e)=> Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
+            
         }
 
         #region Layout, Children Getting, Appearance etc
@@ -290,15 +289,13 @@ namespace CohortManager.SubComponents
                 _haveSubscribed = true;
             }
 
+            foreach (var c in _timeoutControls.GetControls())
+                Add(c);
+
             _queryCachingServer = _cic.QueryCachingServer;
             Compiler.CohortIdentificationConfiguration = _cic;
             CoreIconProvider = activator.CoreIconProvider;
             RecreateAllTasks();
-
-            foreach (var c in _timeoutControls.GetControls())
-                Add(c);
-
-            AddToMenu(cbIncludeCumulative);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

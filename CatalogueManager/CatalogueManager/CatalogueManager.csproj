@@ -354,12 +354,6 @@
     <Compile Include="AggregationUIs\AggregateGraph.Designer.cs">
       <DependentUpon>AggregateGraph.cs</DependentUpon>
     </Compile>
-    <Compile Include="AggregationUIs\QueryCachingServerSelector.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AggregationUIs\QueryCachingServerSelector.Designer.cs">
-      <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
-    </Compile>
     <Compile Include="ANOEngineeringUIs\ANOTableUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -449,6 +443,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowCacheFetchFailures.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowRelatedObject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowXmlDoc.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchData.cs" />
@@ -1754,9 +1749,6 @@
     <EmbeddedResource Include="AggregationUIs\AggregateGraph.resx">
       <DependentUpon>AggregateGraph.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
-      <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ANOEngineeringUIs\ANOTableUI.resx">
       <DependentUpon>ANOTableUI.cs</DependentUpon>

@@ -202,6 +202,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CohortIdentificationIcons.resx</DependentUpon>
     </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetQueryCachingDatabase.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCohortAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortIdentificationConfiguration.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="SubComponents\CohortIdentificationConfigurationUI.Designer.cs">
       <DependentUpon>CohortIdentificationConfigurationUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewQueryCacheDatabase.cs" />
     <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraph.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -340,6 +342,10 @@
     <ProjectReference Include="..\..\DataExportManager\DataExportManager\DataExportManager.csproj">
       <Project>{7665AFDE-002D-4A53-B3B8-AE17BC8F2BBA}</Project>
       <Name>DataExportManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QueryCaching\QueryCaching.Database\QueryCaching.Database.csproj">
+      <Project>{3fd82ca1-5f5a-4142-957a-13b29d729ec8}</Project>
+      <Name>QueryCaching.Database</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj">
       <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>

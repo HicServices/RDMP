@@ -12,15 +12,19 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
+using CatalogueManager.AggregationUIs;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CohortManager.CommandExecution.AtomicCommands;
 using CohortManagerLibrary.Execution;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
@@ -33,7 +37,7 @@ namespace CohortManager.SubComponents
     /// better the description the more likely it is that you and the researcher will be on the same page about what you are providing.
     /// 
     /// <para>If you have a large data repository or plan to use lots of different datasets or complex filters in your CohortIdentificationCriteria you should configure a caching database
-    /// (See QueryCachingServerSelector) from the dropdown.</para>
+    /// from the dropdown menu.</para>
     /// 
     /// <para>Next you should add datasets and set operation containers to generate your cohort by dragging datasets from the Catalogue list on the right into the CohortCompilerUI
     /// list box (See CohortCompilerUI for configuring filters on the datasets added).</para>
@@ -61,12 +65,17 @@ namespace CohortManager.SubComponents
     {
         private CohortIdentificationConfiguration _configuration;
 
-        ToolStripMenuItem _miClearCache = new ToolStripMenuItem("Clear Cache");
-        
+        ToolStripMenuItem _miClearCache = new ToolStripMenuItem("Clear Cached Records");
+
+        ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
+
+
+        private RDMPCollectionCommonFunctionality _commonFunctionality;
+
         public CohortIdentificationConfigurationUI()
         {
             InitializeComponent();
-            queryCachingServerSelector.SelectedServerChanged += queryCachingServerSelector_SelectedServerChanged;
+
             olvExecute.IsButton = true;
             olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
             tlvCic.RowHeight = 19;
@@ -78,6 +87,8 @@ namespace CohortManager.SubComponents
 
             _miClearCache.Click += MiClearCacheClick;
             _miClearCache.Image = CatalogueIcons.ExternalDatabaseServer_Cache;
+
+            cbIncludeCumulative.CheckedChanged += (s, e) => CohortCompilerUI1.Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
         }
 
         void CohortCompilerUI1_SelectionChanged(IMapsDirectlyToDatabaseTable obj)
@@ -85,18 +96,6 @@ namespace CohortManager.SubComponents
             var joinable = obj as JoinableCohortAggregateConfiguration;
             
             tlvCic.SelectedObject = joinable != null ? joinable.AggregateConfiguration : obj;
-        }
-
-        void queryCachingServerSelector_SelectedServerChanged()
-        {
-            if (queryCachingServerSelector.SelecteExternalDatabaseServer == null)
-                _configuration.QueryCachingServer_ID = null;
-            else
-                _configuration.QueryCachingServer_ID = queryCachingServerSelector.SelecteExternalDatabaseServer.ID;
-
-            _configuration.SaveToDatabase();
-            _activator.RefreshBus.Publish(queryCachingServerSelector,new RefreshObjectEventArgs(_configuration));
-
         }
 
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
@@ -108,14 +107,6 @@ namespace CohortManager.SubComponents
             tbName.Text = _configuration.Name;
             tbDescription.Text = _configuration.Description;
             ticket.TicketText = _configuration.Ticket;
-            
-            queryCachingServerSelector.SetItemActivator(activator);
-
-            if (_configuration.QueryCachingServer_ID == null)
-                queryCachingServerSelector.SelecteExternalDatabaseServer = null;
-            else
-                queryCachingServerSelector.SelecteExternalDatabaseServer = _configuration.QueryCachingServer;
-
             tlvCic.Enabled = !databaseObject.Frozen;
             
             if (_commonFunctionality == null)
@@ -132,15 +123,23 @@ namespace CohortManager.SubComponents
                 tlvCic.ExpandAll();
             }
 
-            
+            AddToMenu(cbIncludeCumulative);
+            AddToMenu(new ToolStripSeparator());
             AddToMenu(_miClearCache);
-            Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator,null).SetTarget(_configuration),"Commit Cohort");
+            AddToMenu(new ExecuteCommandSetQueryCachingDatabase(_activator, _configuration));
+            AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator,_configuration));
+            
+            AddToMenu(new ToolStripSeparator());
+            AddToMenu(new ExecuteCommandShowXmlDoc(activator,"CohortIdentificationConfiguration.QueryCachingServer_ID", "Query Caching"),"Help (What is Query Caching)");
+            
+            Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator,null).SetTarget(_configuration),
+                "Commit Cohort",
+                activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort,OverlayKind.Add));
 
             CohortCompilerUI1.SetDatabaseObject(activator, databaseObject);
 
         }
-
-
+        
         public override string GetTabName()
         {
             return "Execute:" + base.GetTabName();
@@ -167,8 +166,7 @@ namespace CohortManager.SubComponents
             _configuration.Ticket = ticket.TicketText;
         }
 
-        private RDMPCollectionCommonFunctionality _commonFunctionality;
-        
+
         private object ExecuteAspectGetter(object rowObject)
         {
             //don't expose any buttons if global execution is in progress
@@ -313,6 +311,7 @@ namespace CohortManager.SubComponents
             CohortCompilerUI1.CancelAll();
         }
     }
+
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CohortIdentificationConfigurationUI_Design, UserControl>))]
     public abstract class CohortIdentificationConfigurationUI_Design : RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>
     {

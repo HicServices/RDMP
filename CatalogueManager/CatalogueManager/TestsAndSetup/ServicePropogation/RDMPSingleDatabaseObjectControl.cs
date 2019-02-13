@@ -114,7 +114,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// then the text will turn red.
         /// </summary>
         /// <param name="tb"></param>
-        /// <param name="p"></param>
+        /// <param name="action">Method to call if a valid DateTime is entered into the text box.  Called with null if text box is blank</param>
         protected void SetDate(TextBox tb, Action<DateTime?> action)
         {
             try
@@ -143,11 +143,17 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// then the text will turn red.
         /// </summary>
         /// <param name="tb"></param>
-        /// <param name="p"></param>
+        /// <param name="action">Method to call if a valid Uri is entered into the text box.  Called with null if text box is blank</param>
         protected void SetUrl(TextBox tb, Action<Uri> action)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(tb.Text))
+                {
+                    action(null);
+                    return;
+                }
+
                 Uri u = new Uri(tb.Text);
                 action(u);
                 tb.ForeColor = Color.Black;

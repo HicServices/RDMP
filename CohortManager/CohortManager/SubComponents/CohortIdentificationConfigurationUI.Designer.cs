@@ -49,12 +49,12 @@ namespace CohortManager.SubComponents
             this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.ticket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
-            this.queryCachingServerSelector = new CatalogueManager.AggregationUIs.QueryCachingServerSelector();
             this.btnAbortLoad = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -64,12 +64,14 @@ namespace CohortManager.SubComponents
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(43, 8);
+            this.label1.Location = new System.Drawing.Point(922, 8);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(18, 13);
             this.label1.TabIndex = 51;
@@ -77,7 +79,8 @@ namespace CohortManager.SubComponents
             // 
             // tbID
             // 
-            this.tbID.Location = new System.Drawing.Point(67, 5);
+            this.tbID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbID.Location = new System.Drawing.Point(946, 5);
             this.tbID.Name = "tbID";
             this.tbID.ReadOnly = true;
             this.tbID.Size = new System.Drawing.Size(100, 20);
@@ -95,7 +98,7 @@ namespace CohortManager.SubComponents
             // lblDescription
             // 
             this.lblDescription.AutoSize = true;
-            this.lblDescription.Location = new System.Drawing.Point(1, 31);
+            this.lblDescription.Location = new System.Drawing.Point(150, 34);
             this.lblDescription.Name = "lblDescription";
             this.lblDescription.Size = new System.Drawing.Size(60, 13);
             this.lblDescription.TabIndex = 53;
@@ -106,10 +109,10 @@ namespace CohortManager.SubComponents
             this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbDescription.Location = new System.Drawing.Point(67, 31);
+            this.tbDescription.Location = new System.Drawing.Point(216, 31);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(843, 63);
+            this.tbDescription.Size = new System.Drawing.Size(694, 65);
             this.tbDescription.TabIndex = 56;
             this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
@@ -137,7 +140,7 @@ namespace CohortManager.SubComponents
             this.tlvCic.Location = new System.Drawing.Point(0, 0);
             this.tlvCic.Name = "tlvCic";
             this.tlvCic.ShowGroups = false;
-            this.tlvCic.Size = new System.Drawing.Size(387, 535);
+            this.tlvCic.Size = new System.Drawing.Size(387, 587);
             this.tlvCic.TabIndex = 60;
             this.tlvCic.UseCompatibleStateImageBehavior = false;
             this.tlvCic.View = System.Windows.Forms.View.Details;
@@ -167,7 +170,7 @@ namespace CohortManager.SubComponents
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.CohortCompilerUI1);
-            this.splitContainer1.Size = new System.Drawing.Size(1243, 539);
+            this.splitContainer1.Size = new System.Drawing.Size(1243, 591);
             this.splitContainer1.SplitterDistance = 391;
             this.splitContainer1.TabIndex = 61;
             // 
@@ -177,7 +180,7 @@ namespace CohortManager.SubComponents
             this.CohortCompilerUI1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CohortCompilerUI1.Location = new System.Drawing.Point(0, 0);
             this.CohortCompilerUI1.Name = "CohortCompilerUI1";
-            this.CohortCompilerUI1.Size = new System.Drawing.Size(844, 535);
+            this.CohortCompilerUI1.Size = new System.Drawing.Size(844, 587);
             this.CohortCompilerUI1.TabIndex = 0;
             // 
             // timer1
@@ -188,28 +191,18 @@ namespace CohortManager.SubComponents
             // ticket
             // 
             this.ticket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ticket.Location = new System.Drawing.Point(926, 5);
+            this.ticket.Location = new System.Drawing.Point(916, 31);
             this.ticket.Name = "ticket";
             this.ticket.Size = new System.Drawing.Size(314, 62);
             this.ticket.TabIndex = 55;
             this.ticket.TicketText = "";
             this.ticket.TicketTextChanged += new System.EventHandler(this.ticket_TicketTextChanged);
             // 
-            // queryCachingServerSelector
-            // 
-            this.queryCachingServerSelector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.queryCachingServerSelector.AutoSize = true;
-            this.queryCachingServerSelector.Location = new System.Drawing.Point(194, 100);
-            this.queryCachingServerSelector.Name = "queryCachingServerSelector";
-            this.queryCachingServerSelector.SelecteExternalDatabaseServer = null;
-            this.queryCachingServerSelector.Size = new System.Drawing.Size(543, 26);
-            this.queryCachingServerSelector.TabIndex = 1;
-            // 
             // btnAbortLoad
             // 
             this.btnAbortLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAbortLoad.Image = ((System.Drawing.Image)(resources.GetObject("btnAbortLoad.Image")));
-            this.btnAbortLoad.Location = new System.Drawing.Point(159, 100);
+            this.btnAbortLoad.Location = new System.Drawing.Point(95, 13);
             this.btnAbortLoad.Name = "btnAbortLoad";
             this.btnAbortLoad.Size = new System.Drawing.Size(29, 29);
             this.btnAbortLoad.TabIndex = 65;
@@ -220,7 +213,7 @@ namespace CohortManager.SubComponents
             // 
             this.btnExecute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnExecute.Image = ((System.Drawing.Image)(resources.GetObject("btnExecute.Image")));
-            this.btnExecute.Location = new System.Drawing.Point(67, 100);
+            this.btnExecute.Location = new System.Drawing.Point(3, 13);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(86, 29);
             this.btnExecute.TabIndex = 66;
@@ -231,7 +224,7 @@ namespace CohortManager.SubComponents
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(156, 132);
+            this.label5.Location = new System.Drawing.Point(92, 45);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 13);
             this.label5.TabIndex = 63;
@@ -241,7 +234,7 @@ namespace CohortManager.SubComponents
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(87, 132);
+            this.label2.Location = new System.Drawing.Point(20, 45);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(46, 13);
             this.label2.TabIndex = 64;
@@ -257,13 +250,9 @@ namespace CohortManager.SubComponents
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.btnAbortLoad);
+            this.splitContainer2.Panel1.Controls.Add(this.groupBox1);
             this.splitContainer2.Panel1.Controls.Add(this.ticket);
-            this.splitContainer2.Panel1.Controls.Add(this.label2);
-            this.splitContainer2.Panel1.Controls.Add(this.btnExecute);
-            this.splitContainer2.Panel1.Controls.Add(this.label5);
             this.splitContainer2.Panel1.Controls.Add(this.tbDescription);
-            this.splitContainer2.Panel1.Controls.Add(this.queryCachingServerSelector);
             this.splitContainer2.Panel1.Controls.Add(this.tbID);
             this.splitContainer2.Panel1.Controls.Add(this.lblName);
             this.splitContainer2.Panel1.Controls.Add(this.tbName);
@@ -274,8 +263,21 @@ namespace CohortManager.SubComponents
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer1);
             this.splitContainer2.Size = new System.Drawing.Size(1243, 694);
-            this.splitContainer2.SplitterDistance = 151;
+            this.splitContainer2.SplitterDistance = 99;
             this.splitContainer2.TabIndex = 67;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnExecute);
+            this.groupBox1.Controls.Add(this.btnAbortLoad);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Location = new System.Drawing.Point(14, 17);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(130, 61);
+            this.groupBox1.TabIndex = 67;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Controls";
             // 
             // CohortIdentificationConfigurationUI
             // 
@@ -294,6 +296,8 @@ namespace CohortManager.SubComponents
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -301,7 +305,6 @@ namespace CohortManager.SubComponents
         #endregion
 
         private CohortCompilerUI CohortCompilerUI1;
-        private QueryCachingServerSelector queryCachingServerSelector;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label lblName;
@@ -319,5 +322,6 @@ namespace CohortManager.SubComponents
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }

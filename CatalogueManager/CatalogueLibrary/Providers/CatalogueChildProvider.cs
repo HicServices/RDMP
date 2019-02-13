@@ -21,6 +21,7 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.CohortNodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
@@ -835,6 +836,10 @@ namespace CatalogueLibrary.Providers
 
             children.Add(node);
 
+            //it has an associated query cache
+            if (cic.QueryCachingServer_ID != null)
+                children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
+            
             //if it has a root container
             if (cic.RootCohortAggregateContainer_ID != null)
             {
@@ -842,7 +847,8 @@ namespace CatalogueLibrary.Providers
                 AddChildren(container, new DescendancyList(cic, container).SetBetterRouteExists());
                 children.Add(container);
             }
-            
+
+
             //get the patient index tables
             var joinableNode = new JoinableCollectionNode(cic, _cohortContainerChildProvider.AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
             AddChildren(joinableNode, new DescendancyList(cic, joinableNode).SetBetterRouteExists());

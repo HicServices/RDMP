@@ -385,6 +385,7 @@
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />
     <Compile Include="Nodes\CohortNodes\AllFreeCohortIdentificationConfigurationsNode.cs" />
     <Compile Include="Nodes\CohortNodes\AllProjectCohortIdentificationConfigurationsNode.cs" />
+    <Compile Include="Nodes\CohortNodes\QueryCacheUsedByCohortIdentificationNode.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\OverrideRawServerNode.cs" />
     <Compile Include="Nodes\PipelineNodes\AllPipelinesNode.cs" />
     <Compile Include="Nodes\PipelineNodes\OtherPipelinesNode.cs" />
