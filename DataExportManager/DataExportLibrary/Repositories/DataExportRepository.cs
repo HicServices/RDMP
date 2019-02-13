@@ -35,6 +35,10 @@ namespace DataExportLibrary.Repositories
     /// </summary>
     public class DataExportRepository : TableRepository, IDataExportRepository
     {
+        /// <summary>
+        /// The paired Catalogue database which contains non extract metadata (i.e. datasets, aggregates, data loads etc).  Some objects in this database
+        /// contain references to objects in the CatalogueRepository.
+        /// </summary>
         public CatalogueRepository CatalogueRepository { get; private set; }
 
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)

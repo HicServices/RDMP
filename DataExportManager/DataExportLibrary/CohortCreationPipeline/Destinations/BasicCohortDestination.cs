@@ -29,7 +29,10 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
         private string _privateIdentifier;
         private string _releaseIdentifier;
         
-        public ICohortCreationRequest Request { get; set; }
+        /// <summary>
+        /// The cohort blueprint we are trying to create.
+        /// </summary>
+        public ICohortCreationRequest Request { get; private set; }
         
         private string _fk;
         
@@ -43,6 +46,16 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
         
         readonly Dictionary<object, object> _cohortDictionary = new Dictionary<object, object>();
 
+        /// <summary>
+        /// Extracts private identifiers from table <paramref name="toProcess"/> and allocates release identifiers.  Cohort is only finalised and comitted into the database
+        /// in the <see cref="Dispose"/> method (to prevent incomplete cohorts existing in the database).
+        /// 
+        /// <para>Method can be called multiple times in the lifetime of a pipeline (e.g. if you have very large cohorts and the pipeline source is batching).</para>
+        /// </summary>
+        /// <param name="toProcess">A batch of private identifiers</param>
+        /// <param name="listener"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public virtual DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             //if user has picked an allocator get an instance
@@ -50,7 +63,6 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
             {
                 _allocator = (IAllocateReleaseIdentifiers) new ObjectConstructor().Construct(ReleaseIdentifierAllocator);
                 _allocator.Initialize(Request);
-
             }
             
             if(!toProcess.Columns.Contains(_privateIdentifier))
@@ -119,6 +131,11 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
             return string.IsNullOrWhiteSpace(o.ToString());
         }
 
+        /// <summary>
+        /// Commits the cohort created into the database (assuming no error occured during pipeline processing - See <paramref name="pipelineFailureExceptionIfAny"/>).
+        /// </summary>
+        /// <param name="listener"></param>
+        /// <param name="pipelineFailureExceptionIfAny"></param>
         public virtual void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             //it exceptioned
@@ -172,11 +189,20 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Cohort successfully comitted to destination and imported as an RDMP ExtractableCohort (ID="+id+" <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:"+Request.NewCohortDefinition.ID+")"));
         }
 
+        /// <summary>
+        /// Does nothing
+        /// </summary>
+        /// <param name="listener"></param>
         public virtual void Abort(IDataLoadEventListener listener)
         {
             
         }
 
+        /// <summary>
+        /// Initialises <see cref="Request"/>
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="listener"></param>
         public virtual void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
         {
             Request = value;
@@ -193,7 +219,10 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "id column in table " + Request.NewCohortDefinition.LocationOfCohort.TableName + " is " + Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField));
         }
 
-
+        /// <summary>
+        /// Checks <see cref="ReleaseIdentifierAllocator"/> has been set up and that a properly populated <see cref="Request"/> has been set.
+        /// </summary>
+        /// <param name="notifier"></param>
         public virtual void Check(ICheckNotifier notifier)
         {
             if (Request.IsDesignTime)

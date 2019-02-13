@@ -13,6 +13,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.DataHelper

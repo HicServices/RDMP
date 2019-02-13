@@ -6,11 +6,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Data.DataTables.DataSetPackages
 {
@@ -22,6 +19,13 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
         private readonly IDataExportRepository _repository;
         Dictionary<int,List<int>> _packageContentsDictionary = new Dictionary<int, List<int>>();
 
+        /// <summary>
+        /// Creates a new <see cref="ExtractableDataSetPackageContents"/> which can read the contents of <see cref="ExtractableDataSetPackage"/>s i.e.
+        /// which datasets are part of which packages (many to many relationship).
+        /// 
+        /// <para>The contents of packages are fetched during construction only and are not sensitive to remote changes during thereafter (e.g. by other users)</para>
+        /// </summary>
+        /// <param name="repository"></param>
         public ExtractableDataSetPackageContents(IDataExportRepository repository)
         {
             _repository = repository;
@@ -46,7 +50,13 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
             }
         }
 
-
+        /// <summary>
+        /// Returns the subset of <paramref name="allDataSets"/> which are part of the <paramref name="package"/>.  This does
+        /// not require going to the database as package contents are cached during construction.
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="allDataSets"></param>
+        /// <returns></returns>
         public ExtractableDataSet[] GetAllDataSets(ExtractableDataSetPackage package, ExtractableDataSet[] allDataSets)
         {
             //we know of no children
@@ -56,6 +66,16 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
             return _packageContentsDictionary[package.ID].Select(i => allDataSets.Single(ds => ds.ID == i)).ToArray();
         }
 
+        /// <summary>
+        /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/> and updates the cached package contents 
+        /// in memory.  
+        /// 
+        /// <para>This change is immediately written to the database</para>
+        ///
+        ///  <para>Throws ArgumentException if the <paramref name="dataSet"/> is already part of the package</para>
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="dataSet"></param>
         public void AddDataSetToPackage(ExtractableDataSetPackage package, ExtractableDataSet dataSet)
         {
             if (_packageContentsDictionary.ContainsKey(package.ID) && _packageContentsDictionary[package.ID].Contains(dataSet.ID))
@@ -74,6 +94,16 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
             _packageContentsDictionary[package.ID].Add(dataSet.ID);
         }
 
+        /// <summary>
+        /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents 
+        /// in memory.  
+        /// 
+        /// <para>This change is immediately written to the database</para>
+        ///
+        ///  <para>Throws ArgumentException if the <paramref name="dataSet"/> is not part of the package</para>
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="dataSet"></param>
         public void RemoveDataSetFromPackage(ExtractableDataSetPackage package, ExtractableDataSet dataSet)
         {
             if(!_packageContentsDictionary[package.ID].Contains(dataSet.ID))

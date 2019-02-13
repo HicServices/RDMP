@@ -89,7 +89,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// Performs data binding using default parameters (OnPropertyChanged), no formatting etc.  Getter must be a
         /// property of <see cref="DatabaseObject"/>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="c"></param>
         /// <param name="propertyName"></param>
         /// <param name="dataMember"></param>

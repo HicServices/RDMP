@@ -17,8 +17,7 @@ namespace CatalogueManager.Menus
     public abstract class ContainerMenu : RDMPContextMenuStrip
     {
         private readonly IContainer _container;
-        private IFilter[] _importableFilters;
-
+        
         protected ContainerMenu(IFilterFactory factory,RDMPContextMenuStripArgs args, IContainer container) : base(args, container)
         {
             _container = container;

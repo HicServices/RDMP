@@ -15,6 +15,7 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.Exceptions;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.Pipeline;
 using DataExportLibrary.Data.DataTables;
@@ -127,7 +128,7 @@ namespace DataExportLibrary.CohortCreationPipeline
             Project = configuration.Project;
             
             if(Project.ProjectNumber == null)
-                throw new NotSupportedException("Project '" + Project  + "' does not have a ProjectNumber");
+                throw new ProjectNumberException("Project '" + Project  + "' does not have a ProjectNumber");
 
             var definition = new CohortDefinition(null, origCohortData.ExternalDescription, origCohortData.ExternalVersion + 1,(int) Project.ProjectNumber, origCohort.ExternalCohortTable);
             definition.CohortReplacedIfAny = origCohort;

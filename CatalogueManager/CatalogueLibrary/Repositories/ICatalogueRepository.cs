@@ -80,7 +80,7 @@ namespace CatalogueLibrary.Repositories
         Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem();
 
         /// <summary>
-        /// Returns all sql parameters declared in the immediate scope of the <see cref="parent"/> (does not include parameters that are declared at a lower scope).
+        /// Returns all sql parameters declared in the immediate scope of the <paramref name="parent"/> (does not include parameters that are declared at a lower scope).
         /// 
         /// <para>To determine which parent types are supported see <see cref="AnyTableSqlParameter.IsSupportedType"/></para>
         /// </summary>

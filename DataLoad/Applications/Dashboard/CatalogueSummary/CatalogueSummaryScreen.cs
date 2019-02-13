@@ -34,8 +34,6 @@ namespace Dashboard.CatalogueSummary
     /// </summary>
     public partial class CatalogueSummaryScreen : CatalogueSummaryScreen_Design
     {
-        private Catalogue _catalogue;
-
         public CatalogueSummaryScreen()
         {
             InitializeComponent();

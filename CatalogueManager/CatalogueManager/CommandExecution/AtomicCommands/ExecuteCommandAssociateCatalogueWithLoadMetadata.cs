@@ -38,10 +38,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("There are no Catalogues that are not associated with another Load already");
         }
 
-        
-        private string _loggingTask;
-
-
         public override string GetCommandHelp()
         {
             return "Specifies that the table(s) underlying the dataset are loaded by the load configuration.  The union of all catalogue(s) table(s) will be used for RAW=>STAGING=>LIVE migration during DLE execution";

@@ -718,7 +718,6 @@ namespace CatalogueManager.AggregationUIs
         /// to load multiple different graphs into this control one after the other).
         /// </summary>
         /// <param name="graph"></param>
-        /// <param name="b"></param>
         public void SetAggregate(IActivateItems activator,AggregateConfiguration graph)
         {
             //graphs cant edit so no need to even record refresher/activator

@@ -41,8 +41,7 @@ namespace CatalogueManager.LocationsMenu
     /// </summary>
     public partial class ChoosePlatformDatabases : Form
     {
-        private readonly IActivateItems _activatorIfAny;
-        private UserSettingsRepositoryFinder _repositoryLocator;
+        private readonly UserSettingsRepositoryFinder _repositoryLocator;
 
         public ChoosePlatformDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {

@@ -61,7 +61,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
                 btnLaunchCustomUI.Text = "Launch Custom UI (" + _uiType.Name + ")";
                 btnLaunchCustomUI.Width = btnLaunchCustomUI.PreferredSize.Width;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 btnLaunchCustomUI.Enabled = false;
             }

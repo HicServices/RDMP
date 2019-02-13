@@ -21,6 +21,7 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
+using DataExportLibrary.Exceptions;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
@@ -580,7 +581,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             string dbName = DatabaseNamingPattern;
 
             if(_project.ProjectNumber == null)
-                throw new Exception("Project '"+_project+"' must have a ProjectNumber");
+                throw new ProjectNumberException("Project '"+_project+"' must have a ProjectNumber");
 
             if (_request == null)
                 throw new Exception("No IExtractCommand Request was passed to this component");

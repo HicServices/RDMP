@@ -11,20 +11,28 @@ using DataExportLibrary.Interfaces.Data.DataTables;
 namespace DataExportLibrary.Data.DataTables
 {
     /// <summary>
-    /// This data class reflects a single row in a cohortDefinition table (see ExternalCohortTable).  It may also reflect one that does not exist yet
-    /// in which case it will have a null ID (e.g. in the case where you are trying to create a new cohort using an identifier list).
+    /// This data class reflects a single row in a cohortDefinition table (see <see cref="ExternalCohortTable"/>).  It may also reflect 
+    /// one that does not exist yet in which case it will have a null ID (e.g. in the case where you are trying to create a new cohort 
+    /// using an identifier list).
     /// </summary>
     public class CohortDefinition : ICohortDefinition
     {
+        /// <inheritdoc/>
         public int? ID { get; set; }
+
+        /// <inheritdoc/>
         public string Description { get; set; }
+
+        /// <inheritdoc/>
         public int Version { get; set; }
+
+        /// <inheritdoc/>
         public int ProjectNumber { get; set; }
+        
+        /// <inheritdoc/>
         public IExternalCohortTable LocationOfCohort { get; private set; }
 
-        /// <summary>
-        /// The cohort replaced if uploading a new version
-        /// </summary>
+        /// <inheritdoc/>
         public IExtractableCohort CohortReplacedIfAny { get; set; }
 
         public CohortDefinition(int? id, string description, int version, int projectNumber, IExternalCohortTable locationOfCohort)
@@ -39,6 +47,7 @@ namespace DataExportLibrary.Data.DataTables
                 throw new NullReferenceException("Description for cohort with ID " + id + " is blank this is not permitted");
         }
         
+        /// <inheritdoc/>
         public bool IsAcceptableAsNewCohort(out string matchDescription)
         {
                 //if there is an ID
@@ -66,6 +75,10 @@ namespace DataExportLibrary.Data.DataTables
             return true;
         }
 
+        /// <summary>
+        /// Returns the <see cref="Description"/>, <see cref="Version"/> and <see cref="ID"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Description + "(Version " + Version + ", ID="+ID+")";

@@ -4,6 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi.Naming;
+
 namespace CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
@@ -17,7 +19,7 @@ namespace CatalogueLibrary.Data.DataLoad
     {
         /// <summary>
         /// Returns the runtime name (unqualified name e.g. "MyColumn" ) for the column/table at the given stage of a data load (RAW=>STAGING=>LIVE)
-        /// <seealso cref="ReusableLibraryCode.IHasRuntimeName.GetRuntimeName"/>
+        /// <seealso cref="IHasRuntimeName.GetRuntimeName"/>
         /// </summary>
         /// <param name="stage"></param>
         /// <returns></returns>

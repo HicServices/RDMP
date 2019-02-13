@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using DataExportLibrary.Exceptions;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.Pipeline;
 using DataExportLibrary.Data.DataTables;
@@ -28,6 +29,12 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAlloca
         private ICohortCreationRequest _request;
         private Dictionary<object, object> _releaseMap;
 
+        /// <summary>
+        /// Returns the existing anonymous release identifier for the <paramref name="privateIdentifier"/> if it has ever been
+        /// uploaded to the given <see cref="Project"/> before otherwise returns a new unique guid as a string.
+        /// </summary>
+        /// <param name="privateIdentifier"></param>
+        /// <returns></returns>
         public object AllocateReleaseIdentifier(object privateIdentifier)
         {
             //figure out all the historical release ids for private ids in the Project
@@ -91,10 +98,11 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAlloca
             return toReturn;
         }
 
+        /// <inheritdoc/>
         public void Initialize(ICohortCreationRequest request)
         {
             if(!request.Project.ProjectNumber.HasValue)
-                throw new Exception("Project " + request.Project + " must have a ProjectNumber");
+                throw new ProjectNumberException("Project " + request.Project + " must have a ProjectNumber");
 
             _request = request;
             _projectNumber = request.Project.ProjectNumber.Value;

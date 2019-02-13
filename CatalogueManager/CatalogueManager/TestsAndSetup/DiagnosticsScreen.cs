@@ -38,10 +38,7 @@ namespace CatalogueManager.TestsAndSetup
     public partial class DiagnosticsScreen : RDMPForm
     {
         private readonly Exception _originalException;
-
-        public bool ShouldReloadCatalogues = false;
-        private bool setupComplete = false;
-
+        
         public DiagnosticsScreen(Exception exception)
         {
             _originalException = exception;

@@ -143,7 +143,7 @@ namespace CatalogueLibrary.Data.Cohort
         }
 
         /// <summary>
-        /// Describes how the <see cref="ISqlParameter"/>s declared in this table will be used with parents of the supplied Type (See <see cref="ReferencedObjectType"/>).
+        /// Describes how the <see cref="ISqlParameter"/>s declared in this table will be used with parents of the supplied Type (See <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectType"/>).
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -163,7 +163,7 @@ namespace CatalogueLibrary.Data.Cohort
         }
 
         /// <summary>
-        /// Returns the parent object that declares this paramter (see <see cref="ReferencedObjectID"/> and <see cref="ReferencedObjectType"/>)
+        /// Returns the parent object that declares this paramter (see <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectID"/> and <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectType"/>)
         /// </summary>
         /// <returns></returns>
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
