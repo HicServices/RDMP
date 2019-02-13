@@ -8,9 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Exceptions;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -123,7 +125,7 @@ namespace CatalogueLibrary.Data.Cohort
             var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper;
 
             if (parentWithQuerySyntaxHelper == null)
-                throw new Exception("Could not figure out what the query syntax helper is for " + this);
+                throw new AmbiguousDatabaseTypeException("Could not figure out what the query syntax helper is for " + this);
 
             return parentWithQuerySyntaxHelper.GetQuerySyntaxHelper();
         }

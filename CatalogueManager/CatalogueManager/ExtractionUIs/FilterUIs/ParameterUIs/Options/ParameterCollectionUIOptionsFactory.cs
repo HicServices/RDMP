@@ -15,6 +15,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.ExtractionUIs.FilterUIs.Options;
 using CohortManagerLibrary.QueryBuilding;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
@@ -134,7 +135,13 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
                 return Create((AggregateConfiguration)host);
             
             if (host is IFilter)
-                return Create((IFilter) host, new ISqlParameter[0]);
+            {
+                FilterUIOptionsFactory factory = new FilterUIOptionsFactory();
+                var globals = factory.Create((IFilter) host).GetGlobalParametersInFilterScope();
+
+                return Create((IFilter) host, globals);
+
+            }
             
             if (host is CohortIdentificationConfiguration)
                 return Create((CohortIdentificationConfiguration)host);

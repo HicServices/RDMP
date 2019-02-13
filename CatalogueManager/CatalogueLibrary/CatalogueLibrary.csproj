@@ -295,6 +295,7 @@
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
     <Compile Include="Data\CatalogueExtractabilityStatus.cs" />
+    <Compile Include="Exceptions\AmbiguousDatabaseTypeException.cs" />
     <Compile Include="Data\Cohort\SetOperation.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
     <Compile Include="Data\ContainerHelper.cs" />
@@ -643,7 +644,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\DataLoad\Exceptions\" />
-    <Folder Include="Exceptions\" />
     <Folder Include="Remoting\" />
   </ItemGroup>
   <ItemGroup>

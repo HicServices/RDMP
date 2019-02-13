@@ -6,26 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Checks;
-using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using CatalogueManager.Copying;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
@@ -49,6 +40,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         public ParameterCollectionUIOptions Options { get; set; }
 
         public Dictionary<ISqlParameter,Exception> ProblemObjects { get; private set; }
+
+        public bool IsBroken { get; private set; }
 
         public ParameterEditorScintillaControl()
         {
@@ -132,7 +125,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         
         List<ParameterEditorScintillaSection> Sections = new List<ParameterEditorScintillaSection>();
         
-
+        /// <summary>
+        /// Updates the Sql code for the current state of the <see cref="Options"/> 
+        /// </summary>
         public void RegenerateSQL()
         {
             ProblemObjects = new Dictionary<ISqlParameter, Exception>();
@@ -142,6 +137,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
             try
             {
+                IsBroken = false;
                 QueryEditor.ReadOnly = false;
                 string sql = "";
                 var finalParameters = parameterManager.GetFinalResolvedParametersList().ToArray();
@@ -188,6 +184,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             catch (Exception ex)
             {
                 QueryEditor.Text = ex.ToString();
+                
+                IsBroken = true;
 
                 var exception = ex as QueryBuildingException;
                 if (exception != null)
@@ -209,6 +207,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
                     for (int i = section.LineStart; i <= section.LineEnd; i++)
                         highlighter.HighlightLine(QueryEditor, i, Color.LightGray);
         }
+
+        
 
         private int GetLineCount(string s)
         {

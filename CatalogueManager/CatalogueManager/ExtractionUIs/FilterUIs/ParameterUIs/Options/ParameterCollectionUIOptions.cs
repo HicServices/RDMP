@@ -85,7 +85,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
             return _createNewParameterDelegate != null;
         }
 
-        public ISqlParameter CreateNewParameter(string parameterName = null)
+        public ISqlParameter CreateNewParameter(string parameterName)
         {
             return _createNewParameterDelegate(Collector,parameterName);
         }
