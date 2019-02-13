@@ -55,7 +55,17 @@ namespace CatalogueManager.AggregationUIs
         public Scintilla QueryEditor { get;private set; }
         ServerDefaults _defaults;
 
-        public int Timeout { get; set; }
+        public int Timeout
+        {
+            get
+            {
+                return _timeoutControls.Timeout;
+            }
+            set
+            {
+                _timeoutControls.Timeout = value;
+            }
+        }
 
         public event DataTableHandler GraphTableRetrieved;
 
@@ -69,8 +79,8 @@ namespace CatalogueManager.AggregationUIs
         ToolStripMenuItem btnCache = new ToolStripMenuItem("Cache", FamFamFamIcons.picture_save);
 
         ToolStripButton btnResendQuery = new ToolStripButton("Send Query", FamFamFamIcons.arrow_refresh);
-        ToolStripLabel   timeoutLabel = new ToolStripLabel("Timeout:");
-        ToolStripTextBox tbTimeout = new ToolStripTextBox();
+
+        readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
         
         
         public AggregateGraph()
@@ -95,7 +105,7 @@ namespace CatalogueManager.AggregationUIs
 
             SetToolbarButtonsEnabled(true);
 
-            tbTimeout.Text = "300";
+            
             Timeout = 300;
 
             miCopyToClipboard.DropDownItems.Add(miClipboardWord);
@@ -109,7 +119,6 @@ namespace CatalogueManager.AggregationUIs
             btnResendQuery.Click += btnResendQuery_Click;
             miSaveImages.Click += MiSaveImagesClick;
             btnCache.Click += btnCache_Click;
-            tbTimeout.TextChanged += tbTimeout_TextChanged;
 
             
             btnCache.Enabled = false;
@@ -695,8 +704,9 @@ namespace CatalogueManager.AggregationUIs
                 AddToMenu(btnCache);
 
                 Add(btnResendQuery);
-                Add(timeoutLabel);
-                Add(tbTimeout);
+
+                foreach (var c in _timeoutControls.GetControls())
+                    Add(c);
             }
 
             SetAggregate(activator,databaseObject);
@@ -810,19 +820,6 @@ namespace CatalogueManager.AggregationUIs
         private void btnResendQuery_Click(object sender, EventArgs e)
         {
             LoadGraphAsync();
-        }
-
-        private void tbTimeout_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                Timeout = int.Parse(tbTimeout.Text);
-                tbTimeout.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                tbTimeout.ForeColor = Color.Red;
-            }
         }
 
         public override string GetTabName()

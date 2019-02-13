@@ -53,6 +53,8 @@ namespace CatalogueManager.DataViewing
         ToolStripButton btnExecuteSql = new ToolStripButton("Run");
         ToolStripButton btnResetSql = new ToolStripButton("Restore Original SQL");
 
+        readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
+
         public ViewSQLAndResultsWithDataGridUI()
         {
             InitializeComponent();
@@ -66,6 +68,8 @@ namespace CatalogueManager.DataViewing
 
             btnExecuteSql.Click += (s,e) => RunQuery();
             btnResetSql.Click += btnResetSql_Click;
+
+
         }
 
         private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -113,6 +117,9 @@ namespace CatalogueManager.DataViewing
 
                 _menuInitialized = true;
             }
+
+            foreach (var c in _timeoutControls.GetControls())
+                Add(c);
 
             foreach (DatabaseEntity d in _collection.GetToolStripObjects())
                 AddToMenu(new ExecuteCommandShow(activator, d, 0,true));
@@ -181,9 +188,10 @@ namespace CatalogueManager.DataViewing
                         con.Open();
 
                         _cmd = server.GetCommand(sql, con);
+                        _cmd.CommandTimeout = _timeoutControls.Timeout;
 
                         DbDataAdapter a = server.GetDataAdapter(_cmd);
-
+                        
                         DataTable dt = new DataTable();
 
                         a.Fill(dt);

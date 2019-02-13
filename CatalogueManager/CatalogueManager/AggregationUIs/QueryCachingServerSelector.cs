@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 
@@ -29,16 +30,6 @@ namespace CatalogueManager.AggregationUIs
         public QueryCachingServerSelector()
         {
             InitializeComponent();
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if (VisualStudioDesignMode)
-                return;
-            
-            RefreshUIFromDatabase();
         }
 
         public event Action SelectedServerChanged;
@@ -62,6 +53,13 @@ namespace CatalogueManager.AggregationUIs
 
                 refreshing = false;
             }
+        }
+
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            
+            RefreshUIFromDatabase();
         }
 
         private void btnCreateNewQueryCachingDatabase_Click(object sender, EventArgs e)
@@ -101,6 +99,8 @@ namespace CatalogueManager.AggregationUIs
             ddSelectQueryCachingDatabase.Items.Clear();
             ddSelectQueryCachingDatabase.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.QueryCaching));
             refreshing = false;
+
+            AddHelp(ddSelectQueryCachingDatabase, "CohortIdentificationConfiguration.QueryCachingServer_ID","Query Cache");
         }
 
         private void ddSelectQueryCachingDatabase_SelectedIndexChanged(object sender, EventArgs e)

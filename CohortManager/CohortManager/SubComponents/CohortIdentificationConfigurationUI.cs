@@ -60,6 +60,8 @@ namespace CohortManager.SubComponents
     public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design, ISaveableUI
     {
         private CohortIdentificationConfiguration _configuration;
+
+        ToolStripMenuItem _miClearCache = new ToolStripMenuItem("Clear Cache");
         
         public CohortIdentificationConfigurationUI()
         {
@@ -73,6 +75,9 @@ namespace CohortManager.SubComponents
             AssociatedCollection = RDMPCollection.Cohort;
 
             CohortCompilerUI1.SelectionChanged += CohortCompilerUI1_SelectionChanged;
+
+            _miClearCache.Click += MiClearCacheClick;
+            _miClearCache.Image = CatalogueIcons.ExternalDatabaseServer_Cache;
         }
 
         void CohortCompilerUI1_SelectionChanged(IMapsDirectlyToDatabaseTable obj)
@@ -104,19 +109,15 @@ namespace CohortManager.SubComponents
             tbDescription.Text = _configuration.Description;
             ticket.TicketText = _configuration.Ticket;
             
-            queryCachingServerSelector.RefreshUIFromDatabase();
+            queryCachingServerSelector.SetItemActivator(activator);
 
             if (_configuration.QueryCachingServer_ID == null)
                 queryCachingServerSelector.SelecteExternalDatabaseServer = null;
             else
                 queryCachingServerSelector.SelecteExternalDatabaseServer = _configuration.QueryCachingServer;
 
-            CohortCompilerUI1.SetDatabaseObject(activator,databaseObject);
-
             tlvCic.Enabled = !databaseObject.Frozen;
-
-            btnCommitCohort.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add);
-
+            
             if (_commonFunctionality == null)
             {
                 _commonFunctionality = new RDMPCollectionCommonFunctionality();
@@ -130,6 +131,13 @@ namespace CohortManager.SubComponents
                 tlvCic.AddObject(_configuration);
                 tlvCic.ExpandAll();
             }
+
+            
+            AddToMenu(_miClearCache);
+            Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator,null).SetTarget(_configuration),"Commit Cohort");
+
+            CohortCompilerUI1.SetDatabaseObject(activator, databaseObject);
+
         }
 
 
@@ -279,7 +287,7 @@ namespace CohortManager.SubComponents
             btnExecute.Enabled = plan == Operation.Execute;
             btnAbortLoad.Enabled = plan == Operation.Cancel;
             
-            btnClearCache.Enabled = CohortCompilerUI1.AnyCachedTasks();
+            _miClearCache.Enabled = CohortCompilerUI1.AnyCachedTasks();
         }
 
         private Operation PlanGlobalOperation()
@@ -295,7 +303,7 @@ namespace CohortManager.SubComponents
         }
         #endregion
 
-        private void btnClearCache_Click(object sender, EventArgs e)
+        private void MiClearCacheClick(object sender, EventArgs e)
         {
             CohortCompilerUI1.ClearAllCaches();
         }
@@ -303,13 +311,6 @@ namespace CohortManager.SubComponents
         private void btnAbortLoad_Click(object sender, EventArgs e)
         {
             CohortCompilerUI1.CancelAll();
-        }
-
-        private void btnCommitCohort_Click(object sender, EventArgs e)
-        {
-            var cmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator);
-            cmd.SetTarget(_configuration);
-            cmd.Execute();
         }
     }
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CohortIdentificationConfigurationUI_Design, UserControl>))]

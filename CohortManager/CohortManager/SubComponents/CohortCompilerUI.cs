@@ -91,11 +91,12 @@ namespace CohortManager.SubComponents
         private CohortCompiler Compiler = new CohortCompiler(null);
         private ExternalDatabaseServer _queryCachingServer;
 
-        private int _timeout = 3000;
-
         private ISqlParameter[] _globals;
         
         CancellationTokenSource _cancelGlobalOperations;
+
+        ToolStripTimeout _timeoutControls = new ToolStripTimeout(){Timeout = 3000};
+        ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
 
         /// <summary>
         /// Occurs when the user selects something in the ObjectListView, object is the thing selected
@@ -123,6 +124,8 @@ namespace CohortManager.SubComponents
             _cohortExceptImage = CatalogueIcons.EXCEPTCohortAggregate;
 
             AssociatedCollection = RDMPCollection.Cohort;
+
+            cbIncludeCumulative.CheckedChanged += (s,e)=> Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
         }
 
         #region Layout, Children Getting, Appearance etc
@@ -268,20 +271,6 @@ namespace CohortManager.SubComponents
             return null;
         }
 
-        private void tbTimeout_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                _timeout = int.Parse(tbTimeout.Text);
-                tbTimeout.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                _timeout = 30;
-                tbTimeout.ForeColor = Color.Red;
-            }
-        }
-
 
         #endregion
 
@@ -305,6 +294,11 @@ namespace CohortManager.SubComponents
             Compiler.CohortIdentificationConfiguration = _cic;
             CoreIconProvider = activator.CoreIconProvider;
             RecreateAllTasks();
+
+            foreach (var c in _timeoutControls.GetControls())
+                Add(c);
+
+            AddToMenu(cbIncludeCumulative);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -374,7 +368,7 @@ namespace CohortManager.SubComponents
             task = Compiler.AddTask(configOrContainer, _globals);
 
             //Task is now in state NotScheduled so we can start it
-            Compiler.LaunchSingleTask(task, _timeout,true);
+            Compiler.LaunchSingleTask(task, _timeoutControls.Timeout,true);
         }
 
         public void CancelAll()
@@ -396,7 +390,7 @@ namespace CohortManager.SubComponents
             _cancelGlobalOperations = new CancellationTokenSource();
 
 
-            _runner = new CohortCompilerRunner(Compiler,_timeout);
+            _runner = new CohortCompilerRunner(Compiler, _timeoutControls.Timeout);
             _runner.PhaseChanged += RunnerOnPhaseChanged;
             new Task(() =>
             {
@@ -471,11 +465,6 @@ namespace CohortManager.SubComponents
             RecreateAllTasks();
         }
 
-        private void cbIncludeCumulative_CheckedChanged(object sender, EventArgs e)
-        {
-            Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
-        }
-        
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (Compiler != null)
