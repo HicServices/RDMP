@@ -10,6 +10,9 @@ using CatalogueLibrary.Data.Cohort;
 
 namespace CatalogueLibrary.Nodes
 {
+    /// <summary>
+    /// Shows all <see cref="ISqlParameter"/> declared in the given scope.
+    /// </summary>
     public class ParametersNode:IOrderable
     {
         private readonly ISqlParameter[] _parameters;

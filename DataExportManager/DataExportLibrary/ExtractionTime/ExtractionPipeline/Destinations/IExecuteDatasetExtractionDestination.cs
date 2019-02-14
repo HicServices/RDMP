@@ -4,26 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.UserPicks;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 {

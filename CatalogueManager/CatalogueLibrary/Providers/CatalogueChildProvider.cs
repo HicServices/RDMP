@@ -831,15 +831,15 @@ namespace CatalogueLibrary.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
+            //it has an associated query cache
+            if (cic.QueryCachingServer_ID != null)
+                children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
+            
             var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
             var node = new ParametersNode(cic, parameters);
 
             children.Add(node);
 
-            //it has an associated query cache
-            if (cic.QueryCachingServer_ID != null)
-                children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
-            
             //if it has a root container
             if (cic.RootCohortAggregateContainer_ID != null)
             {

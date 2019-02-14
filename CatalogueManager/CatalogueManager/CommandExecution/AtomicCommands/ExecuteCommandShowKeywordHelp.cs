@@ -46,28 +46,32 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
             
-            var modelType = _args.Model.GetType();
-
+            string title = null;
+            string docs = null;
+            
+            //get docs from masquerader if it has any
             if (_args.Masquerader != null)
             {
-                var masqueradingAs = _args.Masquerader.MasqueradingAs();
-
-                if(MessageBox.Show("Node is '" + MEF.GetCSharpNameForType(_args.Masquerader.GetType()) + "'.  Show help for '" +
-                    MEF.GetCSharpNameForType(masqueradingAs.GetType()) + "'?", "Show Help", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
-
-                modelType = masqueradingAs.GetType();
+                title = MEF.GetCSharpNameForType(_args.Masquerader.GetType());
+                docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Masquerader.GetType());
+            }
+            
+            //if not get them from the actual class
+            if(docs == null)
+            {
+                title = MEF.GetCSharpNameForType(_args.Model.GetType());
+                docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Model.GetType());
             }
 
-            var docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(modelType);
-
+            //if we have any extra text to append
             if (!string.IsNullOrWhiteSpace(_args.ExtraKeywordHelpText))
                 docs += Environment.NewLine + _args.ExtraKeywordHelpText;
 
+            //if we have docs show them otherwise just the Type name
             if (docs != null)
-                WideMessageBox.ShowKeywordHelp(modelType.Name, docs);
+                WideMessageBox.ShowKeywordHelp(title, docs);
             else
-                MessageBox.Show(MEF.GetCSharpNameForType(modelType));
+                MessageBox.Show(title);
         }
     }
 }

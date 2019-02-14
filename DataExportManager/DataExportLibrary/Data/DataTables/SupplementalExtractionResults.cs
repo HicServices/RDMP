@@ -9,18 +9,13 @@ using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Referencing;
-using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.Annotations;
 
 namespace DataExportLibrary.Data.DataTables
 {
-    /// <summary>
-    /// Describes the extraction status of a supplemental file/table which was bundled along with the normal datasets being extracted.  This could
-    /// be lookup tables, pdf documents, etc.
-    /// </summary>
+    /// <inheritdoc/>
     public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity, ISupplementalExtractionResults
     {
         #region Database Properties
@@ -35,49 +30,58 @@ namespace DataExportLibrary.Data.DataTables
         private string _extractedName;
         private string _destinationType;
 
+        /// <inheritdoc/>
         public int? CumulativeExtractionResults_ID
         {
             get { return _cumulativeExtractionResults_ID; }
             set { SetField(ref _cumulativeExtractionResults_ID, value); }
         }
+        /// <inheritdoc/>
         public int? ExtractionConfiguration_ID
         {
             get { return _extractionConfiguration_ID; }
             set { SetField(ref _extractionConfiguration_ID, value); }
         }
+        /// <inheritdoc/>
         public string DestinationDescription
         {
             get { return _destinationDescription; }
             set { SetField(ref _destinationDescription, value); }
         }
+        /// <inheritdoc/>
         public int RecordsExtracted
         {
             get { return _recordsExtracted; }
             set { SetField(ref _recordsExtracted, value); }
         }
 
+        /// <inheritdoc/>
         public DateTime DateOfExtraction
         {
             get { return _dateOfExtraction; }
             private set { SetField(ref _dateOfExtraction, value); }
         }
 
+        /// <inheritdoc/>
         public string Exception
         {
             get { return _exception; }
             set { SetField(ref _exception, value); }
         }
+        /// <inheritdoc/>
         public string SQLExecuted
         {
             get { return _sQLExecuted; }
             set { SetField(ref _sQLExecuted, value); }
         }
+        /// <inheritdoc/>
         public string ExtractedName
         {
             get { return _extractedName; }
             set { SetField(ref _extractedName, value); }
         }
 
+        /// <inheritdoc/>
         public string DestinationType
         {
             get { return _destinationType; }
@@ -86,9 +90,18 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public bool IsGlobal { get; private set; }
 
+        /// <summary>
+        /// Starts a new audit in the database of a supplemental artifact (<paramref name="extractedObject"/>).  This is a GLOBAL artifact that is not associated
+        /// with any one dataset but with the extraction as a whole.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="configuration">The configuration being extracted</param>
+        /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
+        /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
         public SupplementalExtractionResults(IRepository repository, IExtractionConfiguration configuration, string sql, IMapsDirectlyToDatabaseTable extractedObject)
         {
             Repository = repository;
@@ -110,7 +123,15 @@ namespace DataExportLibrary.Data.DataTables
             IsGlobal = true;
         }
 
-        public SupplementalExtractionResults(IRepository repository, ICumulativeExtractionResults configuration, string sql, IMapsDirectlyToDatabaseTable extractedObject)
+        /// <summary>
+        /// Starts a new audit in the database of a supplemental artifact (<paramref name="extractedObject"/>).  This is a NON GLOBAL artifact that is associated only
+        /// with the dataset being extracted.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="mainAudit">The dataset extraction audit for the dataset to which this supplemental artifact belongs</param>
+        /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
+        /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
+        public SupplementalExtractionResults(IRepository repository, ICumulativeExtractionResults mainAudit, string sql, IMapsDirectlyToDatabaseTable extractedObject)
         {
             Repository = repository;
             string name = extractedObject.GetType().FullName;
@@ -123,14 +144,18 @@ namespace DataExportLibrary.Data.DataTables
                 {"ReferencedObjectID",extractedObject.ID},
                 {"ReferencedObjectType",extractedObject.GetType().Name},
                 {"ReferencedObjectRepositoryType",extractedObject.Repository.GetType().Name},
-                {"CumulativeExtractionResults_ID", configuration.ID},
+                {"CumulativeExtractionResults_ID", mainAudit.ID},
                 {"SQLExecuted", sql},
                 {"ExtractedName", name }
             });
 
             IsGlobal = false;
         }
-
+        /// <summary>
+        /// Reads an existing audit record out of the data export database
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="r"></param>
         internal SupplementalExtractionResults(IRepository repository, DbDataReader r)
             : base(repository, r)
         {
@@ -146,12 +171,14 @@ namespace DataExportLibrary.Data.DataTables
 
             IsGlobal = CumulativeExtractionResults_ID == null && ExtractionConfiguration_ID != null;
         }
-        
+
+        /// <inheritdoc/>
         public Type GetDestinationType()
         {
             return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(DestinationType);
         }
 
+        /// <inheritdoc/>
         public void CompleteAudit(Type destinationType, string destinationDescription, int distinctIdentifiers)
         {
             DestinationType = destinationType.FullName;
@@ -161,7 +188,10 @@ namespace DataExportLibrary.Data.DataTables
             SaveToDatabase();
         }
 
-
+        /// <summary>
+        /// Returns <see cref="ExtractedName"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return ExtractedName;

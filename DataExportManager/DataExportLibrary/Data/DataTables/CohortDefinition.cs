@@ -35,6 +35,15 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public IExtractableCohort CohortReplacedIfAny { get; set; }
 
+        /// <summary>
+        /// Sets up a new row for inserting (or reporting) from an <see cref="ExternalCohortTable"/>.
+        /// </summary>
+        /// <param name="id">The ID row read from the table (this is not an RDMP ID, it is an <see cref="IExtractableCohort.OriginID"/>).  Pass null if you 
+        /// are trying to insert a new row and expect the database to allocate the ID itself as an autonum</param>
+        /// <param name="description">Unique string identifying the cohort, this should be the same for all cohorts that are versions of one another</param>
+        /// <param name="version">The version number where there are multiple revisions to a cohort over time (these must share the same <paramref name="description"/>)</param>
+        /// <param name="projectNumber">The <see cref="IProject.ProjectNumber"/> that the cohort can be used with</param>
+        /// <param name="locationOfCohort">The database where the row will be written to (or read from)</param>
         public CohortDefinition(int? id, string description, int version, int projectNumber, IExternalCohortTable locationOfCohort)
         {
             ID = id;

@@ -12,35 +12,30 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueManager.AggregationUIs;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManagerLibrary.Execution;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
 namespace CohortManager.SubComponents
 {
     /// <summary>
-    /// Allows you to view/edit a CohortIdentificationConfiguration (See CohortIdentificationConfiguration for a description of what one of these is).  This includes giving it a 
-    /// sensible name e.g. 'Project 132 Cases - Deaths caused by diabetic medication' and AS FULL A DESCRIPTION AS POSSIBLE e.g. 'All patients in Tayside and Fife who are over 16
-    /// at the time of their first prescription of a diabetic medication (BNF chapter 6.1) and died within 6 months of the first prescribed date of the diabetic medication'.  The
-    /// better the description the more likely it is that you and the researcher will be on the same page about what you are providing.
+    /// Allows you to view/edit a CohortIdentificationConfiguration.  You should start by giving it a meaningful name e.g. 'Project 132 Cases - Deaths caused by diabetic medication' 
+    /// and a comprehensive description e.g. 'All patients in Tayside and Fife who are over 16 at the time of their first prescription of a diabetic medication (BNF chapter 6.1) 
+    /// and died within 6 months'.  An accurate up-to-date description will help future data analysts to understand the configuration.
     /// 
     /// <para>If you have a large data repository or plan to use lots of different datasets or complex filters in your CohortIdentificationCriteria you should configure a caching database
     /// from the dropdown menu.</para>
     /// 
-    /// <para>Next you should add datasets and set operation containers to generate your cohort by dragging datasets from the Catalogue list on the right into the CohortCompilerUI
-    /// list box (See CohortCompilerUI for configuring filters on the datasets added).</para>
+    /// <para>Next you should add datasets and set operations (<see cref="CohortAggregateContainer"/>) either by right clicking or dragging and dropping into the tree view</para>
     /// 
     /// <para>In the above example you might have </para>
     /// 

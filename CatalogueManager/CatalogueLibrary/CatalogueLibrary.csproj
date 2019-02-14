@@ -295,6 +295,7 @@
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
     <Compile Include="Data\CatalogueExtractabilityStatus.cs" />
+    <Compile Include="Data\Referencing\IReferenceOtherObjecWithPersist.cs" />
     <Compile Include="Exceptions\AmbiguousDatabaseTypeException.cs" />
     <Compile Include="Data\Cohort\SetOperation.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
