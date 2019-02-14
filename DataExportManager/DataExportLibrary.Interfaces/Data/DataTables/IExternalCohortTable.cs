@@ -14,7 +14,25 @@ using ReusableLibraryCode.DataAccess;
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
     /// <summary>
-    /// See ExternalCohortTable
+    /// Since every agency handles cohort management differently the RDMP is built to supports diverse cohort source schemas.  Unlike the logging, dqe, catalogue databases etc there
+    /// is no fixed managed schema for cohort databases.  Instead you simply have to tell the software where to find your patient identifiers in an ExternalCohortTable record.  This
+    /// stores:
+    /// 
+    /// <para>What table contains your cohort identifiers
+    /// Which column is the private identifier
+    /// Which column is the release identifier</para>
+    /// 
+    /// <para>In addition to this you must have a table which describes your cohorts which must have columns called id, projectNumber, description, version and dtCreated.  And you must
+    /// have a table which stores custom data for the cohort with a column customTableName containing the names of any data that accompanies cohorts.</para>
+    /// 
+    /// <para>Both the cohort and custom table names table must have a foreign key into the definition table.  </para>
+    /// 
+    /// <para>You are free to add additional columns to these tables or even base them on views of other existing tables in your database.  You can have multiple ExternalCohortTable sources
+    /// in your database for example if you need to support different identifier datatypes / formats.</para>
+    /// 
+    /// <para>If all this sounds too complicated you can use the CreateNewCohortDatabaseWizardUI to automatically generate a database that is compatible with the format requirements and has
+    /// release identifiers assigned automatically either as autonums or GUIDs (I suggest using GUIDs to prevent accidental crosstalk from ever occuring if you handle magic numbers from
+    /// other agencies). </para>
     /// </summary>
     public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDependencies,INamed
     {
@@ -45,11 +63,25 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         /// </summary>
         string DefinitionTableForeignKeyField { get; set; }
         
+        /// <summary>
+        /// Returns an object for connecting to/interacting with the cohort database referenced by this object.
+        /// </summary>
+        /// <returns></returns>
         DiscoveredDatabase Discover();
         
+        /// <summary>
+        /// Creates a new record in the <see cref="DefinitionTableName"/> table referenced by this object.
+        /// </summary>
+        /// <param name="newCohortDefinition"></param>
+        /// <param name="connection"></param>
         void PushToServer(ICohortDefinition newCohortDefinition, IManagedConnection connection);
+
+        /// <summary>
+        /// Connects to the cohort database and looks for a cohort definition record with the given <paramref name="originID"/>.  Returns
+        /// true if a record exists.
+        /// </summary>
+        /// <param name="originID"></param>
+        /// <returns></returns>
         bool IDExistsInCohortTable(int originID);
-        
-        IExternalCohortDefinitionData GetExternalData(IExtractableCohort extractableCohort);
     }
 }

@@ -15,10 +15,24 @@ using ReusableLibraryCode.Progress;
 namespace DataExportLibrary.Interfaces.Data.DataTables
 {
     /// <summary>
-    /// See ExtractableCohort
+    /// While actual patient identifiers are stored in an external database (referenced by a ExternalCohortTable), the RDMP still needs to have a reference to each cohort for extaction.
+    /// The ExtractableCohort object is a record that documents the location and ID of a cohort in your ExternalCohortTable.  This record means that the RDMP can record which cohorts
+    /// are part of which ExtractionConfiguration in a Project without ever having to move the identifiers into the RDMP application database.
+    /// 
+    /// <para>The most important field in ExtractableCohort is the OriginID, this field represents the id of the cohort in the CohortDefinition table of the ExternalCohortTable.  Effectively
+    /// this number is the id of the cohort in your cohort database while the ID property of the ExtractableCohort (as opposed to OriginID) is the RDMP ID assigned to the cohort.  This
+    /// allows you to have two different cohort sources both of which have a cohort id 10 but the RDMP software is able to tell the difference.  In addition it allows for the unfortunate
+    /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
+    /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
     public interface IExtractableCohort :  IHasQuerySyntaxHelper, IMightBeDeprecated
     {
+        /// <summary>
+        /// Runs a (non distinct) count on the number of rows in the private/release identifier mapping table 
+        /// stored in the <see cref="ExternalCohortTable"/> which match this cohorts <see cref="OriginID"/>
+        /// </summary>
+        int Count { get; }
+
         /// <summary>
         /// Runs a count distinct on the release identifier column of the cohort.  Result is
         /// cached in memory for subsequent calls.
@@ -31,11 +45,11 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         int ExternalCohortTable_ID { get; }
 
         /// <summary>
-        /// The id of the row in the <see cref="IExternalCohortTable.DefinitionTableName"/> that stores description
+        /// The id of the row in the remote <see cref="IExternalCohortTable.DefinitionTableName"/> that stores a description
         /// of what is in this cohort (See <see cref="IExternalCohortDefinitionData"/>).
-        /// 
-        /// <para>Since you can have multiple cohort databases managed by RDMP it is possible for 2+ different <see cref="IExtractableCohort"/> 
-        /// to have the same <see cref="OriginID"/> but be referencing different cohort lists.</para>
+        ///  
+        /// <para>Because you can have multiple cohort databases managed by RDMP, it is possible for 2+ different <see cref="IExtractableCohort"/>
+        /// to have the same <see cref="OriginID"/> (i.e. cohort 1 from source 1 is not the same as cohort 1 from source 2).</para>
         /// </summary>
         int OriginID { get; }
 
@@ -44,6 +58,12 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         /// cohort list.  Use this only if your mapping table has multiple different types of release identifier (stored in seperate columns).
         /// </summary>
         string OverrideReleaseIdentifierSQL { get; set; }
+
+        /// <summary>
+        /// Log of activities relating to this cohort e.g. what it was created from (e.g. a CohortIdentificationConfiguration, file etc).  This
+        /// field is held in RDMP database (i.e. not fetched from the remote cohort database - <see cref="ExternalCohortTable"/>).
+        /// </summary>
+        string AuditLog { get; set; }
 
         /// <inheritdoc cref="ExternalCohortTable_ID"/>
         IExternalCohortTable ExternalCohortTable { get; }
@@ -95,6 +115,10 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         /// <returns></returns>
         string GetReleaseIdentifierDataType();
 
+        /// <summary>
+        /// Returns an object for connecting to/interacting with the cohort database in which this cohort's identifiers are stored.
+        /// </summary>
+        /// <returns></returns>
         DiscoveredDatabase GetDatabaseServer();
 
         /// <summary>

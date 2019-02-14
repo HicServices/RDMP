@@ -29,19 +29,14 @@ using DataTable = System.Data.DataTable;
 namespace DataExportLibrary.Data.DataTables
 {
 
-    /// <summary>
-    /// While actual patient identifiers are stored in an external database (referenced by a ExternalCohortTable), the RDMP still needs to have a reference to each cohort for extaction.
-    /// The ExtractableCohort object is a record that documents the location and ID of a cohort in your ExternalCohortTable.  This record means that the RDMP can record which cohorts
-    /// are part of which ExtractionConfiguration in a Project without ever having to move the identifiers into the RDMP application database.
-    /// 
-    /// <para>The most important field in ExtractableCohort is the OriginID, this field represents the id of the cohort in the CohortDefinition table of the ExternalCohortTable.  Effectively
-    /// this number is the id of the cohort in your cohort database while the ID property of the ExtractableCohort (as opposed to OriginID) is the RDMP ID assigned to the cohort.  This
-    /// allows you to have two different cohort sources both of which have a cohort id 10 but the RDMP software is able to tell the difference.  In addition it allows for the unfortunate
-    /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
-    /// and know the location of the original cohort even if it doesn't exist anymore. </para>
-    /// </summary>
+    /// <inheritdoc/>
     public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>, IHasDependencies, ICustomSearchString
     {
+        /// <summary>
+        /// Logging entry in the RDMP central relational log under which to record all activities that relate to creating cohorts
+        /// </summary>
+        public const string CohortLoggingTask = "CohortManagement";
+
         #region Database Properties
         private int _externalCohortTable_ID;
         private string _overrideReleaseIdentifierSQL;
@@ -54,24 +49,22 @@ namespace DataExportLibrary.Data.DataTables
             get { return _externalCohortTable_ID; }
             set { SetField(ref _externalCohortTable_ID, value); }
         }
+
+        /// <inheritdoc/>
         public string OverrideReleaseIdentifierSQL
         {
             get { return _overrideReleaseIdentifierSQL; }
             set { SetField(ref _overrideReleaseIdentifierSQL, value); }
         }
+
+        /// <inheritdoc/>
         public string AuditLog
         {
             get { return _auditLog; }
             set { SetField(ref _auditLog, value); }
         }
 
-        /// <summary>
-        /// The cohortDefinition_id used to identify this cohort in the external cohort server/database that this ExtractableCohort comes from.
-        /// 
-        /// <para>Because there can be multiple Cohort sources there can be overlap in these i.e. cohort 1 from source 1 is not the same as cohort 1 from source 2</para>
-        /// 
-        /// <para>Therefore this is completely different from the ID of this ExtractableCohort - which is unique within the DataExportManager database</para>
-        /// </summary>
+        /// <inheritdoc/>
         public int OriginID
         {
             get { return _originID; }
@@ -89,12 +82,12 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
-        public const string CohortLoggingTask = "CohortManagement";
 
         
         private int _count = -1;
 
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public int Count
         {
@@ -192,7 +185,22 @@ namespace DataExportLibrary.Data.DataTables
 
         public IExternalCohortDefinitionData GetExternalData()
         {
-            return ExternalCohortTable.GetExternalData(this);
+            string sql = @"select projectNumber, description,version,dtCreated from " + ExternalCohortTable.DefinitionTableName + " where id = " + OriginID;
+
+            var db = ExternalCohortTable.Discover();
+
+            using (var con = db.Server.GetConnection())
+            {
+                con.Open();
+                var getDescription = db.Server.GetCommand(sql, con);
+
+                var r = getDescription.ExecuteReader();
+
+                if (!r.Read())
+                    throw new Exception("No records returned for Cohort OriginID " + OriginID);
+
+                return new ExternalCohortDefinitionData(r, ExternalCohortTable.Name);
+            }
         }
 
         
@@ -391,6 +399,8 @@ namespace DataExportLibrary.Data.DataTables
                 .DataType.SQLType; //and return it's datatype
         }
         
+
+        /// <inheritdoc/>
         public DiscoveredDatabase GetDatabaseServer()
         {
             return ExternalCohortTable.Discover();

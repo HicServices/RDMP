@@ -30,27 +30,7 @@ using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.Data.DataTables
 {
-    /// <summary>
-    /// Since every agency handles cohort management differently the RDMP is built to supports diverse cohort source schemas.  Unlike the logging, dqe, catalogue databases etc there
-    /// is no fixed managed schema for cohort databases.  Instead you simply have to tell the software where to find your patient identifiers in an ExternalCohortTable record.  This
-    /// stores:
-    /// 
-    /// <para>What table contains your cohort identifiers
-    /// Which column is the private identifier
-    /// Which column is the release identifier</para>
-    /// 
-    /// <para>In addition to this you must have a table which describes your cohorts which must have columns called id, projectNumber, description, version and dtCreated.  And you must
-    /// have a table which stores custom data for the cohort with a column customTableName containing the names of any data that accompanies cohorts.</para>
-    /// 
-    /// <para>Both the cohort and custom table names table must have a foreign key into the definition table.  </para>
-    /// 
-    /// <para>You are free to add additional columns to these tables or even base them on views of other existing tables in your database.  You can have multiple ExternalCohortTable sources
-    /// in your database for example if you need to support different identifier datatypes / formats.</para>
-    /// 
-    /// <para>If all this sounds too complicated you can use the CreateNewCohortDatabaseWizardUI to automatically generate a database that is compatible with the format requirements and has
-    /// release identifiers assigned automatically either as autonums or GUIDs (I suggest using GUIDs to prevent accidental crosstalk from ever occuring if you handle magic numbers from
-    /// other agencies). </para>
-    /// </summary>
+    /// <inheritdoc/>
     public class ExternalCohortTable : VersionedDatabaseEntity, IDataAccessCredentials, IExternalCohortTable,INamed
     {
         #region Database Properties
@@ -192,32 +172,17 @@ namespace DataExportLibrary.Data.DataTables
         {
             return new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
         }
-
-        public IExternalCohortDefinitionData GetExternalData(IExtractableCohort extractableCohort)
-        {
-            string sql = @"select projectNumber, description,version,dtCreated from " + DefinitionTableName + " where id = " + extractableCohort.OriginID;
-
-            var db = Discover();
-
-            using (var con = db.Server.GetConnection())
-            {
-                con.Open();
-                var getDescription =db.Server.GetCommand(sql, con);
-
-                var r = getDescription.ExecuteReader();
-
-                if (!r.Read())
-                    throw new Exception("No records returned for Cohort OriginID " + extractableCohort.OriginID);
-
-                return new ExternalCohortDefinitionData(r, Name);
-            }
-        }
-
+        
+        /// <inheritdoc/>
         public DiscoveredDatabase Discover()
         {
             return DataAccessPortal.GetInstance().ExpectDatabase(this, DataAccessContext.DataExport);
         }
 
+        /// <summary>
+        /// Checks that the remote cohort storage database described by this class exists and contains a compatible schema.
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             //make sure we can get to server
@@ -234,6 +199,7 @@ namespace DataExportLibrary.Data.DataTables
 
         #region Stuff for checking the remote (not data export manager) table where the cohort is allegedly stored
         
+        /// <inheritdoc/>
         public bool IDExistsInCohortTable(int originID)
         {
             var server = DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport);
@@ -314,6 +280,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
         
+        /// <inheritdoc/>
         public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
         {
             newCohortDefinition.ID = Discover().ExpectTable(DefinitionTableName).Insert(new Dictionary<string, object>()
@@ -341,6 +308,8 @@ namespace DataExportLibrary.Data.DataTables
         
 
         #region IDataAccessCredentials and IDataAccessPoint delegation
+        
+        /// <inheritdoc/>
         public string Password
         {
             get { return SelfCertifyingDataAccessPoint.Password; }
@@ -354,11 +323,13 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
             return SelfCertifyingDataAccessPoint.GetDecryptedPassword();
         }
 
+        /// <inheritdoc/>
         public string Username
         {
             get { return SelfCertifyingDataAccessPoint.Username; }
@@ -372,6 +343,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         public string Server
         {
             get { return SelfCertifyingDataAccessPoint.Server; }
@@ -385,6 +357,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         public string Database
         {
             get { return SelfCertifyingDataAccessPoint.Database; }
@@ -398,6 +371,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         public DatabaseType DatabaseType
         {
             get { return SelfCertifyingDataAccessPoint.DatabaseType; }
@@ -411,6 +385,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
         {
             return SelfCertifyingDataAccessPoint.GetCredentialsIfExists(context);
@@ -418,7 +393,11 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
 
-
+        /// <summary>
+        /// Returns SQL query for counting the number of unique patients in each cohort defined in the database
+        /// referenced by this <see cref="ExternalCohortTable"/>
+        /// </summary>
+        /// <returns></returns>
         public string GetCountsDataTableSql()
         {
             
@@ -444,6 +423,11 @@ dtCreated as dtCreated
             return string.Format(sql, ReleaseIdentifierField, TableName, DefinitionTableName, DefinitionTableForeignKeyField);
         }
         
+        /// <summary>
+        /// Returns SQL query for listing all cohorts stored in the database referenced by this <see cref="ExternalCohortTable"/>.
+        /// This includes only the ids, project numbers, version, description etc not the actual patient identifiers themselves.
+        /// </summary>
+        /// <returns></returns>
         public string GetExternalDataSql()
         {
             string sql = @"SELECT 
