@@ -56,6 +56,9 @@ namespace DataExportLibrary.Data.DataTables
         #region Database Properties
         private string _name;
 
+        /// <summary>
+        /// Human readable name for the type of cohort which is stored in the database referenced by this object (e.g."CHI to Guid Cohorts")
+        /// </summary>
         [NotNull]
         [Unique]
         public string Name
@@ -67,32 +70,37 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
         [NoMappingToDatabase]
-        public SelfCertifyingDataAccessPoint SelfCertifyingDataAccessPoint { get; private set; }
+        private SelfCertifyingDataAccessPoint SelfCertifyingDataAccessPoint { get; set; }
 
+        /// <inheritdoc/>
         public string DefinitionTableForeignKeyField
         {
             get { return _definitionTableForeignKeyField; }
             set { SetField(ref _definitionTableForeignKeyField, GetQuerySyntaxHelper().EnsureFullyQualified(Database, null,TableName, value)); }
         }
 
+        /// <inheritdoc/>
         public string TableName
         {
             get { return _tableName; }
             set { SetField(ref _tableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database,null, value)); }
         }
 
+        /// <inheritdoc/>
         public string DefinitionTableName
         {
             get { return _definitionTableName; }
             set { SetField(ref _definitionTableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database, null, value)); }
         }
 
+        /// <inheritdoc/>
         public string PrivateIdentifierField
         {
             get { return _privateIdentifierField; }
             set { SetField(ref _privateIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database,null, TableName, value)); }
         }
 
+        /// <inheritdoc/>
         /// <summary>
         /// When reading this, use GetReleaseIdentifier(ExtractableCohort cohort) where possible to respect cohort.OverrideReleaseIdentifierSQL
         /// </summary>
@@ -102,6 +110,9 @@ namespace DataExportLibrary.Data.DataTables
             set { SetField(ref _releaseIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database,null, TableName, value)); }
         }
 
+        /// <summary>
+        /// Fields expected to be part of any table referenced by the <see cref="DefinitionTableName"/> property
+        /// </summary>
         public static readonly string[] CohortDefinitionTable_RequiredFields = new[]
         {
             "id",
@@ -118,11 +129,21 @@ namespace DataExportLibrary.Data.DataTables
         private string _definitionTableName;
         private string _definitionTableForeignKeyField;
 
+        /// <summary>
+        /// Returns <see cref="Name"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
         }
-        
+
+        /// <summary>
+        /// Creates a new blank pointer to a cohort database.
+        /// </summary>
+        /// <param name="repository">Metadata repository in which to create the object</param>
+        /// <param name="name"></param>
+        /// <param name="databaseType"></param>
         public ExternalCohortTable(IDataExportRepository repository, string name, DatabaseType databaseType)
         {
             Repository = repository;
@@ -134,6 +155,11 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
+        /// <summary>
+        /// Reads an existing cohort database reference out of the metadata repository database
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="r"></param>
         internal ExternalCohortTable(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
@@ -161,32 +187,10 @@ namespace DataExportLibrary.Data.DataTables
             ReleaseIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["ReleaseIdentifierField"] as string);
         }
 
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
-        }
-
-        public string GetReleaseIdentifier(IExtractableCohort cohort)
-        {
-            if (cohort == null)
-                return ReleaseIdentifierField;
-
-            //prefer override unless it is blank or null
-            string toReturn = string.IsNullOrWhiteSpace(cohort.OverrideReleaseIdentifierSQL)
-                ? ReleaseIdentifierField
-                : cohort.OverrideReleaseIdentifierSQL;
-
-            if (toReturn.Equals(PrivateIdentifierField))
-                throw new Exception("ReleaseIdentifier for cohort " + cohort.ID +
-                                    " is the same as the PrivateIdentifierSQL, this is forbidden");
-            
-            var syntaxHelper = GetQuerySyntaxHelper();
-
-            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(PrivateIdentifierField)))
-                throw new Exception("ReleaseIdentifier for cohort " + cohort.ID +
-                                    " is the same as the PrivateIdentifierSQL, this is forbidden");
-
-            return toReturn;
         }
 
         public IExternalCohortDefinitionData GetExternalData(IExtractableCohort extractableCohort)

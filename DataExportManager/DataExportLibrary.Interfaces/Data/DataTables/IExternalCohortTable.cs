@@ -49,7 +49,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         
         void PushToServer(ICohortDefinition newCohortDefinition, IManagedConnection connection);
         bool IDExistsInCohortTable(int originID);
-        string GetReleaseIdentifier(IExtractableCohort cohort);
+        
         IExternalCohortDefinitionData GetExternalData(IExtractableCohort extractableCohort);
     }
 }

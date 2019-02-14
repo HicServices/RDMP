@@ -48,6 +48,7 @@ namespace DataExportLibrary.Data.DataTables
         private string _auditLog;
         private bool _isDeprecated;
 
+        /// <inheritdoc/>
         public int ExternalCohortTable_ID
         {
             get { return _externalCohortTable_ID; }
@@ -237,6 +238,7 @@ namespace DataExportLibrary.Data.DataTables
 
         #region Stuff for executing the actual queries described by this class (generating cohorts etc)
         
+        /// <inheritdoc/>
         public DataTable FetchEntireCohort()
         {
             var ect = ExternalCohortTable;
@@ -245,7 +247,7 @@ namespace DataExportLibrary.Data.DataTables
             using (var con = db.Server.GetConnection())
             {
                 con.Open();
-                string sql = "SELECT * FROM " + ect.TableName + " WHERE " + this.WhereSQL();
+                string sql = "SELECT DISTINCT * FROM " + ect.TableName + " WHERE " + this.WhereSQL();
 
                 var da = db.Server.GetDataAdapter(sql, con);
                 var dtReturn = new DataTable();
@@ -256,38 +258,8 @@ namespace DataExportLibrary.Data.DataTables
                 return dtReturn;
             }
         }
-
-        [Obsolete("Use FetchEntireCohort instea")]
-        public DataTable GetReleaseIdentifierMap(IDataLoadEventListener listener)
-        {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch release map as data table"));
-            DataTable toReturn = new DataTable();
-
-            var db = ExternalCohortTable.Discover();
-            using (var con = db.Server.GetConnection())
-            {
-                con.Open();
-
-                string sql =
-                    string.Format(
-                        "SELECT {0},{1} FROM {2} where " + ExternalCohortTable.DefinitionTableForeignKeyField + "=" +
-                        OriginID
-                        , GetPrivateIdentifier()
-                        , GetReleaseIdentifier()
-                        , ExternalCohortTable.TableName);
-
-                var da = db.Server.GetDataAdapter(sql, con);
-                da.Fill(toReturn);
-            }
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Release map data table fetched, it has " + toReturn.Rows.Count + " rows"));
-            return toReturn;
-        }
-
-        /// <summary>
-        /// Gets the comparison check to use as part of a Where query, this does not include the WHERE section so that you can nest it deep inside giaganot OR AND trees if you feel like it
-        /// </summary>
-        /// <returns></returns>
+        
+        /// <inheritdoc/>
         public string WhereSQL()
         {
             var ect = ExternalCohortTable;
@@ -325,17 +297,6 @@ namespace DataExportLibrary.Data.DataTables
 
                 return db.Server.GetCommand(sql, con).ExecuteScalar();
             }
-        }
-
-        [Obsolete("This is super HIC specific, the first 3 digits of every release identifier is a project code")]
-        public string GetFirstProCHIPrefix()
-        {
-            var ect = ExternalCohortTable;
-
-            if (ect.DatabaseType != DatabaseType.MicrosoftSQLServer)
-                return "";
-
-            return (string)ExecuteScalar("SELECT  TOP 1 LEFT(" + GetReleaseIdentifier() + ",3) FROM " + ect.TableName + " WHERE " +WhereSQL());
         }
         
         #endregion
@@ -383,22 +344,34 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
         
+        /// <inheritdoc/>
         public string GetReleaseIdentifier(bool runtimeName = false)
         {
-            var fullName = ExternalCohortTable.GetReleaseIdentifier(this);
+            //respect override
+            string toReturn = string.IsNullOrWhiteSpace(OverrideReleaseIdentifierSQL)
+                ? ExternalCohortTable.ReleaseIdentifierField
+                : OverrideReleaseIdentifierSQL;
 
-            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(fullName) : fullName;
+            if (toReturn.Equals(ExternalCohortTable.PrivateIdentifierField))
+                throw new Exception("ReleaseIdentifier for cohort " + ID +
+                                    " is the same as the PrivateIdentifierSQL, this is forbidden");
+
+            var syntaxHelper = GetQuerySyntaxHelper();
+
+            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
+                throw new Exception("ReleaseIdentifier for cohort " + ID +
+                                    " is the same as the PrivateIdentifierSQL, this is forbidden");
+
+            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(toReturn) : toReturn;
         }
 
+        /// <inheritdoc/>
         public string GetPrivateIdentifier(bool runtimeName = false)
         {
-            //cannot be overwritten by ExtractableCohort but for ease we can return the value from the cached (during constructor) version of this entity
-            var fullName = ExternalCohortTable.PrivateIdentifierField;
-
-            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(fullName) : fullName;
-
+            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(ExternalCohortTable.PrivateIdentifierField) : ExternalCohortTable.PrivateIdentifierField;
         }
 
+        /// <inheritdoc/>
         public string GetPrivateIdentifierDataType()
         {
             DiscoveredTable table = ExternalCohortTable.Discover().ExpectTable(ExternalCohortTable.TableName);
@@ -432,7 +405,7 @@ namespace DataExportLibrary.Data.DataTables
         /// </summary>
         private bool _broken;
 
-
+        /// <inheritdoc/>
         public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
         {
             int haveWarnedAboutTop1AlreadyCount = 10;
