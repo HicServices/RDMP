@@ -443,14 +443,22 @@ dtCreated as dtCreated
 
         }
         
+        /// <summary>
+        /// Returns nothing
+        /// </summary>
+        /// <returns></returns>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[0];
         }
 
+        /// <summary>
+        /// Returns all cohorts in the source
+        /// </summary>
+        /// <returns></returns>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
-            return new IHasDependencies[0];
+            return (IHasDependencies[])Repository.GetAllObjects<ExtractableCohort>().Where(c => c.ExternalCohortTable_ID == ID); 
         }
 
         /// <summary>

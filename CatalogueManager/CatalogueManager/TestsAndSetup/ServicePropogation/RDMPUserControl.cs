@@ -242,7 +242,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="propertyName">The xml-doc property you want e.g. "ICatalogue.Name"</param>
         /// <param name="anchor">Explicit anchor style to apply to help icon.  If you pass None (default) then anchor will
         ///  be chosen based on the control <paramref name="c"/></param>
-        protected void AddHelp(Control c, string propertyName,string title = null, AnchorStyles anchor = AnchorStyles.None)
+        public void AddHelp(Control c, string propertyName,string title = null, AnchorStyles anchor = AnchorStyles.None)
         {
             if(_activator == null)
                 throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");

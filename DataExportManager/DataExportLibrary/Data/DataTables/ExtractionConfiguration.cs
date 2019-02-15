@@ -26,17 +26,7 @@ using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.Data.DataTables
 {
-    /// <summary>
-    /// Represents a collection of datasets (Catalogues), ExtractableColumns, ExtractionFilters etc and a single ExtractableCohort for a Project.  You can have multiple active
-    /// ExtractionConfigurations at a time for example a Project might have two cohorts 'Cases' and 'Controls' and you would have two ExtractionConfiguration possibly containing
-    /// the same datasets and filters but with different cohorts.
-    /// 
-    /// <para>Once you have executed, extracted and released an ExtractionConfiguration then it becomes 'frozen' IsReleased and it is not possible to edit it (unless you unfreeze it 
-    /// directly in the database).  This is intended to ensure that once data has gone out the door the configuration that generated the data is immutable.</para>
-    /// 
-    /// <para>If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name 
-    /// e.g. 'Cases - 5 year update'.</para>
-    /// </summary>
+    /// <inheritdoc/>
     public class ExtractionConfiguration : VersionedDatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
     {
         #region Database Properties
@@ -56,77 +46,92 @@ namespace DataExportLibrary.Data.DataTables
         private int? _cohortIdentificationConfigurationID;
         private int? _cohortRefreshPipelineID;
 
-
+        /// <inheritdoc/>
         public int? CohortRefreshPipeline_ID
         {
             get { return _cohortRefreshPipelineID; }
             set {  SetField(ref _cohortRefreshPipelineID , value); }
         }
 
+        /// <inheritdoc/>
         public int? CohortIdentificationConfiguration_ID
         {
             get { return _cohortIdentificationConfigurationID; }
             set { SetField(ref _cohortIdentificationConfigurationID, value); }
         }
 
+        /// <inheritdoc/>
         public int? DefaultPipeline_ID
         {
             get { return _defaultPipeline_ID; }
             set { SetField(ref _defaultPipeline_ID, value); }
         }
 
+        /// <inheritdoc/>
         public DateTime? dtCreated
         {
             get { return _dtCreated; }
             set { SetField(ref _dtCreated, value); }
         }
+
+        /// <inheritdoc/>
         public int? Cohort_ID
         {
             get { return _cohort_ID; }
             set { SetField(ref _cohort_ID, value); }
         }
+        /// <inheritdoc/>
         public string RequestTicket
         {
             get { return _requestTicket; }
             set { SetField(ref _requestTicket, value); }
         }
+        /// <inheritdoc/>
         public string ReleaseTicket
         {
             get { return _releaseTicket; }
             set { SetField(ref _releaseTicket, value); }
         }
+        /// <inheritdoc/>
         public int Project_ID
         {
             get { return _project_ID; }
             set { SetField(ref _project_ID, value); }
         }
+        /// <inheritdoc/>
         public string Username
         {
             get { return _username; }
             set { SetField(ref _username, value); }
         }
+        /// <inheritdoc/>
         public string Separator
         {
             get { return _separator; }
             set { SetField(ref _separator, value); }
         }
+        /// <inheritdoc/>
         public string Description
         {
             get { return _description; }
             set { SetField(ref _description, value); }
         }
+        /// <inheritdoc/>
         public bool IsReleased
         {
             get { return _isReleased; }
             set { SetField(ref _isReleased, value); }
         }
 
+        /// <inheritdoc/>
         [NotNull]
         public string Name
         {
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+
+        /// <inheritdoc/>
         public int? ClonedFrom_ID
         {
             get { return _clonedFrom_ID; }
@@ -150,13 +155,14 @@ namespace DataExportLibrary.Data.DataTables
 
         #region Relationships
         
-        /// <inheritdoc cref="Project_ID"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IProject Project
         {
             get { return Repository.GetObjectByID<Project>(Project_ID); }
         }
-        
+
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ISqlParameter[] GlobalExtractionFilterParameters
         {
@@ -168,6 +174,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IEnumerable<ICumulativeExtractionResults> CumulativeExtractionResults
         {
@@ -177,6 +184,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults
         {
@@ -186,7 +194,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
-        /// <inheritdoc cref="Cohort_ID"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IExtractableCohort Cohort
         {
@@ -196,6 +204,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ISelectedDataSets[] SelectedDataSets
         {
@@ -205,6 +214,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IReleaseLogEntry[] ReleaseLogEntries
         {
@@ -285,6 +295,11 @@ namespace DataExportLibrary.Data.DataTables
         {
         }
         
+        /// <summary>
+        /// Creates a new extraction configuration in the <paramref name="repository"/> database for the provided <paramref name="project"/>.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="project"></param>
         public ExtractionConfiguration(IDataExportRepository repository, Project project)
         {
             Repository = repository;
@@ -299,6 +314,11 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
+        /// <summary>
+        /// Reads an existing <see cref="IExtractionConfiguration"/> out of the  <paramref name="repository"/> database.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="r"></param>
         internal ExtractionConfiguration(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
@@ -333,40 +353,32 @@ namespace DataExportLibrary.Data.DataTables
             CohortRefreshPipeline_ID = ObjectToNullableInt(r["CohortRefreshPipeline_ID"]);
         }
 
-        public override int GetHashCode()
-        {
-            return ID.GetHashCode();
-        }
-
+        /// <inheritdoc/>
         public string GetSearchString()
         {
             return ToString() + "_" + RequestTicket + "_" + ReleaseTicket;
         }
 
+        /// <inheritdoc/>
         public ISqlParameter[] GetAllParameters()
         {
             return GlobalExtractionFilterParameters;
         }
 
+        /// <summary>
+        /// Returns the configuration Name
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
         }
-
-        #region Stuff for updating our internal database records
-   
-
-        public IExtractionConfiguration[] GetAllExtractionConfigurationForProject(IProject project)
-        {
-            return project.ExtractionConfigurations;
-        }
-
-        public ExtractionConfiguration GetExtractionConfigurationByID(int id, DbConnection connection = null, DbTransaction transaction = null)
-        {
-            return Repository.GetObjectByID<ExtractionConfiguration>(id);
-        }
-        #endregion
-
+        
+        /// <summary>
+        /// Creates a complete copy of the <see cref="IExtractionConfiguration"/>, all selected datasets, filters etc.  The copy is created directly into
+        /// the <see cref="DatabaseEntity.Repository"/> database using a transaction (to prevent a half succesful clone being generated).
+        /// </summary>
+        /// <returns></returns>
         public ExtractionConfiguration DeepCloneWithNewIDs()
         {
             var repo = (DataExportRepository)Repository;
@@ -439,11 +451,13 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         public IProject GetProject()
         {
             return Repository.GetObjectByID<Project>(Project_ID);
         }
 
+        /// <inheritdoc/>
         public ConcreteColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
         {
             return Repository.GetAllObjects<ExtractableColumn>(
@@ -452,6 +466,7 @@ namespace DataExportLibrary.Data.DataTables
                     ID,
                     dataset.ID));
         }
+        /// <inheritdoc/>
         public IContainer GetFilterContainerFor(IExtractableDataSet dataset)
         {
             var objects = Repository.SelectAllWhere<FilterContainer>(
@@ -466,7 +481,7 @@ namespace DataExportLibrary.Data.DataTables
             return objects.SingleOrDefault();
         }
 
-        public ExternalDatabaseServer GetDistinctLoggingServer(bool testLoggingServer)
+        private ExternalDatabaseServer GetDistinctLoggingServer(bool testLoggingServer)
         {
             int uniqueLoggingServerID = -1;
 
@@ -498,6 +513,7 @@ namespace DataExportLibrary.Data.DataTables
             return repo.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(uniqueLoggingServerID);
         }
 
+        /// <inheritdoc/>
         public IExtractableCohort GetExtractableCohort()
         {
             if (Cohort_ID == null)
@@ -506,6 +522,7 @@ namespace DataExportLibrary.Data.DataTables
             return Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
         }
 
+        /// <inheritdoc/>
         public IExtractableDataSet[] GetAllExtractableDataSets()
         {
             return Repository.SelectAllWhere<ExtractableDataSet>(
@@ -518,6 +535,11 @@ namespace DataExportLibrary.Data.DataTables
                 .ToArray();
         }
 
+        /// <summary>
+        /// Makes the provided <paramref name="extractableDataSet"/> extractable in the current <see cref="IExtractionConfiguration"/>.  This
+        /// includes selecting it (<see cref="ISelectedDataSets"/>) and replicating any mandatory filters.
+        /// </summary>
+        /// <param name="extractableDataSet"></param>
         public void AddDatasetToConfiguration(IExtractableDataSet extractableDataSet)
         {
             //it is already part of the configuration
@@ -563,6 +585,7 @@ namespace DataExportLibrary.Data.DataTables
                         AddColumnToExtraction(extractableDataSet, all);
         }
 
+        /// <inheritdoc/>
         public void RemoveDatasetFromConfiguration(IExtractableDataSet extractableDataSet)
         {
             var match = SelectedDataSets.SingleOrDefault(s => s.ExtractableDataSet_ID == extractableDataSet.ID);
@@ -570,26 +593,37 @@ namespace DataExportLibrary.Data.DataTables
                 match.DeleteInDatabase();
         }
 
-        public ExtractableColumn AddColumnToExtraction(IExtractableDataSet forDataSet,IColumn item)
+        /// <summary>
+        /// Makes the given <paramref name="column"/> SELECT Sql part of the query for linking and extracting the provided <paramref name="forDataSet"/>
+        /// for this <see cref="IExtractionConfiguration"/>.
+        /// </summary>
+        /// <param name="forDataSet"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        public ExtractableColumn AddColumnToExtraction(IExtractableDataSet forDataSet, IColumn column)
         {
-            if (string.IsNullOrWhiteSpace(item.SelectSQL))
-                throw new ArgumentException("IColumn (" + item.GetType().Name + ") " + item +" has a blank value for SelectSQL, fix this in the CatalogueManager", "item");
+            if (string.IsNullOrWhiteSpace(column.SelectSQL))
+                throw new ArgumentException("IColumn (" + column.GetType().Name + ") " + column + " has a blank value for SelectSQL, fix this in the CatalogueManager", "item");
 
             string query = "";
-            query = item.SelectSQL;
+            query = column.SelectSQL;
 
             ExtractableColumn addMe;
 
-            if (item is ExtractionInformation)
-                addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, item as ExtractionInformation, -1, query);
+            if (column is ExtractionInformation)
+                addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, column as ExtractionInformation, -1, query);
             else
                 addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1, query); // its custom column of some kind, not tied to a catalogue entry
 
-            addMe.UpdateValuesToMatch(item);
+            addMe.UpdateValuesToMatch(column);
 
             return addMe;
         }
 
+        /// <summary>
+        /// Returns the logging server that should be used to audit extraction executions of this <see cref="IExtractionConfiguration"/>.
+        /// </summary>
+        /// <returns></returns>
         public LogManager GetExplicitLoggingDatabaseServerOrDefault()
         {
             ExternalDatabaseServer loggingServer=null;
@@ -636,7 +670,8 @@ namespace DataExportLibrary.Data.DataTables
 
             return lm;
         }
-
+        
+        /// <inheritdoc/>
         public void Unfreeze()
         {
             foreach (ICumulativeExtractionResults cumulativeExtractionResult in CumulativeExtractionResults)
@@ -654,6 +689,7 @@ namespace DataExportLibrary.Data.DataTables
             SaveToDatabase();
         }
 
+        /// <inheritdoc/>
         public IMapsDirectlyToDatabaseTable[] GetGlobals()
         {
             var sds = SelectedDataSets.FirstOrDefault(s=>s.ExtractableDataSet.Catalogue != null);
@@ -670,7 +706,8 @@ namespace DataExportLibrary.Data.DataTables
                 cata.GetAllSupportingDocuments(FetchOptions.ExtractableGlobals))
                 .ToArray();
         }
-
+        
+        /// <inheritdoc/>
         public override void DeleteInDatabase()
         {
             foreach (var result in Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this))
@@ -679,11 +716,13 @@ namespace DataExportLibrary.Data.DataTables
             base.DeleteInDatabase();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new[] {Project};
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];

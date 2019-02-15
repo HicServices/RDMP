@@ -49,7 +49,6 @@
             this.tbTableName = new System.Windows.Forms.TextBox();
             this.tbCatalogueName = new System.Windows.Forms.TextBox();
             this.tbDescription = new System.Windows.Forms.TextBox();
-            this.helpIconProjectSpecific = new ReusableUIComponents.HelpIcon();
             this.pbProject = new System.Windows.Forms.PictureBox();
             this.lblProject = new System.Windows.Forms.Label();
             this.btnPickProject = new System.Windows.Forms.Button();
@@ -271,15 +270,6 @@
             this.tbDescription.Size = new System.Drawing.Size(694, 48);
             this.tbDescription.TabIndex = 12;
             // 
-            // helpIconProjectSpecific
-            // 
-            this.helpIconProjectSpecific.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.helpIconProjectSpecific.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIconProjectSpecific.BackgroundImage")));
-            this.helpIconProjectSpecific.Location = new System.Drawing.Point(141, 6);
-            this.helpIconProjectSpecific.Name = "helpIconProjectSpecific";
-            this.helpIconProjectSpecific.Size = new System.Drawing.Size(19, 19);
-            this.helpIconProjectSpecific.TabIndex = 15;
-            // 
             // pbProject
             // 
             this.pbProject.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -327,7 +317,6 @@
             this.flowLayoutPanel1.Controls.Add(this.pbProject);
             this.flowLayoutPanel1.Controls.Add(this.lblProject);
             this.flowLayoutPanel1.Controls.Add(this.btnPickProject);
-            this.flowLayoutPanel1.Controls.Add(this.helpIconProjectSpecific);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 16);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -453,7 +442,6 @@
         private System.Windows.Forms.TextBox tbTableName;
         private System.Windows.Forms.TextBox tbCatalogueName;
         private System.Windows.Forms.TextBox tbDescription;
-        private ReusableUIComponents.HelpIcon helpIconProjectSpecific;
         private System.Windows.Forms.PictureBox pbProject;
         private System.Windows.Forms.Label lblProject;
         private System.Windows.Forms.Button btnPickProject;

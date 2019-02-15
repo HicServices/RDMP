@@ -10,6 +10,7 @@ using System.Data;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 
 namespace DataExportLibrary.Interfaces.Data.DataTables
@@ -25,7 +26,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
     /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
     /// and know the location of the original cohort even if it doesn't exist anymore. </para>
     /// </summary>
-    public interface IExtractableCohort :  IHasQuerySyntaxHelper, IMightBeDeprecated
+    public interface IExtractableCohort : IHasQuerySyntaxHelper, IMightBeDeprecated, IHasDependencies
     {
         /// <summary>
         /// Runs a (non distinct) count on the number of rows in the private/release identifier mapping table 

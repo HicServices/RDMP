@@ -163,6 +163,10 @@ namespace DataExportLibrary.Data.DataTables
             ClonedFromExtractionFilter_ID = ObjectToNullableInt(r["ClonedFromExtractionFilter_ID"]);
         }
 
+        /// <summary>
+        /// Returns Name of filters
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;

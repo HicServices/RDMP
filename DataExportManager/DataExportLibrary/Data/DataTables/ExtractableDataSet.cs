@@ -8,24 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using ADOX;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 
 namespace DataExportLibrary.Data.DataTables
 {
-    /// <summary>
-    /// While the Catalogue Manager database includes support for marking which columns in which Catalogues are extractable (via ExtractionInformation) we need an additional layer
-    /// in the Data Export Manager database.  This layer is the ExtractableDataSet object.  An ExtractableDataSet is 'the permission to perform extractions of a given Catalogue'.  We
-    /// have this second layer for two main reasons.  The first is so that there is no cross database referential integrity problem for example if you delete a Catalogue 5 years after
-    /// performing an extract we can still report to the user the facts in a graceful manner if they clone the old configuration.  The second reason is that you could (if you were crazy)
-    /// have multiple DataExportManager databases all feeding off the same Catalogue database - e.g. one that does identifiable extracts and one which does anonymous extracts.  Some
-    /// datasets (Catalogues) would therefore be extractable in one DataExportManager database while a different set would be extractable in the other DataExportManager database.
-    /// </summary>
+    /// <inheritdoc/>
     public class ExtractableDataSet : VersionedDatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
     {
         #region Database Properties
@@ -33,6 +24,7 @@ namespace DataExportLibrary.Data.DataTables
         private bool _disableExtraction;
         private int? _project_ID;
 
+        /// <inheritdoc/>
         public int Catalogue_ID
         {
             get { return _catalogue_ID; }
@@ -42,6 +34,7 @@ namespace DataExportLibrary.Data.DataTables
                 SetField(ref _catalogue_ID, value);
             }
         }
+        /// <inheritdoc/>
         public bool DisableExtraction
         {
             get { return _disableExtraction; }
@@ -49,19 +42,7 @@ namespace DataExportLibrary.Data.DataTables
         }
 
 
-        /// <summary>
-        /// Indicates that the referenced <see cref="Catalogue_ID"/> is associated only with one <see cref="Project"/> and should not be used outside of that.
-        /// 
-        /// <para>Data Export Manager supports Project only custom data, these are data tables that contain information relevant to a cohort of patients or specific Project only. 
-        /// Usually this means the data is bespoke project data e.g. questionnaire answers for a cohort etc.  These data tables are treated exactly like regular Catalogues and 
-        /// extracted in the same way as all the regular data.</para>
-        /// 
-        /// <para>In addition, you can use the columns in the referenced <see cref="Catalogue_ID"/> by joining them to any regular Catalogue being extracted in the Project.  These
-        /// selected columns will be bolted on as additional columns.  You can also reference them in the WhereSQL of filters which will trigger an similar Join></para>.
-        /// 
-        /// <para>For example imagine you have a custom data set which is 'Patient ID,Date Consented' then you could configure an extraction filters that only extracted records from
-        ///  Prescribing, Demography, Biochemistry catalogues AFTER each patients consent date.</para>
-        /// </summary>
+        /// <inheritdoc/>
         public int? Project_ID
         {
             get { return _project_ID; }
@@ -71,6 +52,10 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
         
         #region Relationships
+        
+        /// <summary>
+        /// Returns all <see cref="IExtractionConfiguration"/> in which this dataset is one of the extracted datasets
+        /// </summary>
         [NoMappingToDatabase]
         public IExtractionConfiguration[] ExtractionConfigurations
         {
@@ -87,7 +72,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
-
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ICatalogue Catalogue { get {return _catalogue.Value;}}
         #endregion
@@ -119,6 +104,9 @@ namespace DataExportLibrary.Data.DataTables
             ClearAllInjections();
         }
 
+        /// <summary>
+        /// Returns true if the <see cref="ICatalogue"/> behind this dataset has been deleted or is marked <see cref="ICatalogue.IsDeprecated"/>
+        /// </summary>
         [NoMappingToDatabase]
         public bool IsCatalogueDeprecated
         {
@@ -128,6 +116,10 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
         
+        /// <summary>
+        /// Returns the <see cref="ICatalogue"/> behind this dataset's Name or a string describing the object state if the Catalogue is unreachable.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             if (Catalogue == null)
@@ -141,6 +133,11 @@ namespace DataExportLibrary.Data.DataTables
         }
         
         #region Stuff for updating our internal database records
+        
+        /// <summary>
+        /// Deletes the dataset, this will make the <see cref="ICatalogue"/> non extractable.  This operation fails if
+        /// the dataset is part of any <see cref="ExtractionConfigurations"/>.
+        /// </summary>
         public override void DeleteInDatabase()
         {
             try
@@ -158,6 +155,10 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion
 
+        /// <summary>
+        /// Returns an object indicating whether the dataset is project specific or not
+        /// </summary>
+        /// <returns></returns>
         public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus()
         {
             return new CatalogueExtractabilityStatus(true, Project_ID != null);
@@ -165,6 +166,7 @@ namespace DataExportLibrary.Data.DataTables
 
         private Lazy<ICatalogue> _catalogue;
         
+        /// <inheritdoc/>
         public void InjectKnown(ICatalogue instance)
         {
             if(instance.ID != Catalogue_ID)
@@ -172,6 +174,7 @@ namespace DataExportLibrary.Data.DataTables
             _catalogue = new Lazy<ICatalogue>(() => instance);
         }
 
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _catalogue = new Lazy<ICatalogue>(FetchCatalogue);
