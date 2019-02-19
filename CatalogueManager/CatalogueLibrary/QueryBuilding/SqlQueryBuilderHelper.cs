@@ -194,8 +194,9 @@ namespace CatalogueLibrary.QueryBuilding
         /// </summary>
         /// <param name="qb"></param>
         /// <param name="primaryExtractionTable"></param>
+        /// <param name="forceJoinsToTheseTables"></param>
         /// <returns></returns>
-        public static List<TableInfo> GetTablesUsedInQuery(ISqlQueryBuilder qb, out TableInfo primaryExtractionTable)
+        public static List<TableInfo> GetTablesUsedInQuery(ISqlQueryBuilder qb, out TableInfo primaryExtractionTable, TableInfo[] forceJoinsToTheseTables = null)
         {
             if (qb.SelectColumns == null )
                 throw new QueryBuildingException("ISqlQueryBuilder.SelectedColumns is null");
@@ -203,9 +204,18 @@ namespace CatalogueLibrary.QueryBuilding
             if(qb.SelectColumns.Count == 0)
                 throw new QueryBuildingException("ISqlQueryBuilder.SelectedColumns is empty, use .AddColumn to add a column to the query builder");
 
-            List<TableInfo> toReturn = new List<TableInfo>();
-            primaryExtractionTable = null;
-            
+            List<TableInfo> toReturn = new List<TableInfo>(forceJoinsToTheseTables ?? new TableInfo[0]);
+
+            if (forceJoinsToTheseTables != null)
+            {
+                if (forceJoinsToTheseTables.Count(t => t.IsPrimaryExtractionTable) > 1)
+                    throw new QueryBuildingException("Found 2+ tables marked IsPrimaryExtractionTable in force joined tables");
+
+                primaryExtractionTable = forceJoinsToTheseTables.SingleOrDefault(t => t.IsPrimaryExtractionTable);
+            }
+            else
+                primaryExtractionTable = null;
+
 
             //get all the tables based on selected columns
             foreach (QueryTimeColumn toExtract in qb.SelectColumns)

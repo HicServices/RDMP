@@ -293,7 +293,7 @@ namespace CatalogueLibrary.QueryBuilding
                 ParameterManager.AddParametersFor(_queryLevelParameterProvider,ParameterLevel.QueryLevel);
 
             TableInfo primary;
-            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary);
+            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary, _forceJoinsToTheseTables);
 
             //get the database language syntax based on the tables used in the query 
             _syntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(
