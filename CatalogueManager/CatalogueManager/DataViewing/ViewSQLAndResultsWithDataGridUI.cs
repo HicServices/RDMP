@@ -88,11 +88,11 @@ namespace CatalogueManager.DataViewing
                         ParentForm.Close();
         }
 
-        private bool _menuInitialized = false;
-        
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
             _collection = (IViewSQLAndResultsCollection) collection;
+
+            ClearToolStrip();
 
             btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
 
@@ -110,13 +110,8 @@ namespace CatalogueManager.DataViewing
 
             SetItemActivator(activator);
             
-            if (!_menuInitialized)
-            {
-                Add(btnExecuteSql);
-                Add(btnResetSql);
-
-                _menuInitialized = true;
-            }
+            Add(btnExecuteSql);
+            Add(btnResetSql);
 
             foreach (var c in _timeoutControls.GetControls())
                 Add(c);
