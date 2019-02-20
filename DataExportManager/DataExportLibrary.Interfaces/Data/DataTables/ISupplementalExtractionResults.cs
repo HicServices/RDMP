@@ -14,7 +14,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
     /// Describes the extraction status of a supplemental file/table which was bundled along with the normal datasets being extracted.  This could
     /// be lookup tables, pdf documents, etc.
     /// </summary>
-    public interface ISupplementalExtractionResults : IExtractionResults, IReferenceOtherObjecWithPersist
+    public interface ISupplementalExtractionResults : IExtractionResults, IReferenceOtherObjectWithPersist
     {
         /// <summary>
         /// <see cref="ISupplementalExtractionResults"/> is an audit class for supplemental artifacts produced in an extraction (e.g. Lookup tables).  This

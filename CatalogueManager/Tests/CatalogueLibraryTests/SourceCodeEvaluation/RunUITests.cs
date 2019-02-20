@@ -55,6 +55,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 
                 typeof(ExecuteCommandDisableOrEnable),
                 typeof(ExecuteCommandRunDetached),
+                
+                typeof(ExecuteCommandShowXmlDoc),
 
             });
 

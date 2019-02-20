@@ -14,7 +14,7 @@ namespace CatalogueLibrary.Data.Referencing
     /// <summary>
     /// Abstract base class for all database objects that reference a single other arbitrary database object e.g. <see cref="Favourite"/>.
     /// </summary>
-    public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObjecWithPersist
+    public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObjectWithPersist
     {
         private string _referencedObjectType;
         private int _referencedObjectID;

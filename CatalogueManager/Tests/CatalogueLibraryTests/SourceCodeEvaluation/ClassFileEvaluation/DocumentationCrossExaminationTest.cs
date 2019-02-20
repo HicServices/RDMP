@@ -228,6 +228,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "TypeTranslaterTests",
             "DatatypeComputerTests",
             "LoadRunID",
+            "HelpDocs"
 
         };
 
