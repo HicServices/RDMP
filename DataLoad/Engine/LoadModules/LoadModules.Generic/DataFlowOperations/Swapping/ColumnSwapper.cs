@@ -82,7 +82,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 //if we don't have the key value
                 if(!_mappingTable.ContainsKey(fromValue))
                     if(CrashIfNoMappingsFound)
-                        throw new Exception("Could not find mapping for " + fromValue);
+                        throw new KeyNotFoundException("Could not find mapping for " + fromValue);
                     else
                     {
                         listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "No mapping for '" + fromValue+"' dropping row"));
@@ -130,12 +130,17 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 }
             }
             
+            //add any alias multiplication rows
             foreach (object[] newRow in newRows)
                 toProcess.Rows.Add(newRow);
 
+            //drop rows with missing identifiers
+            foreach (DataRow dropRow in toDrop)
+                toProcess.Rows.Remove(dropRow);
+
             if(!KeepInputColumnToo)
                 toProcess.Columns.Remove(fromColumnName);
-
+            
             return toProcess;
         }
 
@@ -190,12 +195,16 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            throw new NotImplementedException();
+            //free up memory
+            if (_mappingTable != null)
+            {
+                _mappingTable.Clear();
+                _mappingTable = null;
+            }
         }
 
         public void Abort(IDataLoadEventListener listener)
         {
-            throw new NotImplementedException();
         }
 
         public void Check(ICheckNotifier notifier)

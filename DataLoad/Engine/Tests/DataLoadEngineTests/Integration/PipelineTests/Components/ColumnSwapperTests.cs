@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using CatalogueLibrary.Data;
@@ -138,5 +139,56 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Components
             }
             
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestColumnSwapper_MissingMappings(bool crashIfNoMappingsFound)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("In");
+            dt.Columns.Add("Out");
+
+            dt.Rows.Add("A", 1);
+            dt.Rows.Add("B", 2);
+            dt.Rows.Add("C", 3);
+            dt.Rows.Add("D", 4);
+            dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
+
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            TableInfo map;
+            ColumnInfo[] mapCols;
+
+            Import(db.CreateTable("Map", dt), out map, out mapCols);
+
+            var swapper = new ColumnSwapper();
+            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+            swapper.CrashIfNoMappingsFound = crashIfNoMappingsFound;
+            swapper.WHERELogic = swapper.MappingToColumn.GetFullyQualifiedName() + " < 2"; //throws out all rows but A
+
+            swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+            var dtToSwap = new DataTable();
+
+            dtToSwap.Columns.Add("In");
+            dtToSwap.Columns.Add("Name");
+            dtToSwap.Columns.Add("Age");
+
+            dtToSwap.Rows.Add("A", "Dave", 30);
+            dtToSwap.Rows.Add("B", "Frank", 50);
+
+            if(crashIfNoMappingsFound)
+                Assert.Throws<KeyNotFoundException>(() => swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), null));
+            else
+            {
+                var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+                Assert.AreEqual(1, resultDt.Rows.Count);
+                AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
+                Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+            }
+
+        }
+
     }
 }
