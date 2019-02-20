@@ -7,6 +7,7 @@
 using System;
 using System.Windows.Forms;
 using ReusableLibraryCode.Settings;
+using ScintillaNET;
 
 namespace ReusableUIComponents.Settings
 {
@@ -36,6 +37,9 @@ namespace ReusableUIComponents.Settings
             };
 
             ddTheme.SelectedItem = UserSettings.Theme;
+
+            ddWordWrap.DataSource = Enum.GetValues(typeof(WrapMode));
+            ddWordWrap.SelectedItem = (WrapMode)UserSettings.WrapMode;
 
             _bLoaded = true;
         }
@@ -72,6 +76,15 @@ namespace ReusableUIComponents.Settings
             
             if(t != null)
                 UserSettings.Theme = t;
+        }
+
+        private void ddWordWrap_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!_bLoaded)
+                return;
+
+            var wrap = (WrapMode)ddWordWrap.SelectedItem;
+            UserSettings.WrapMode = (int)wrap;
         }
 
     }

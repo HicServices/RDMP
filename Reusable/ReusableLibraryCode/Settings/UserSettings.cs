@@ -161,13 +161,19 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ApplyThemeToMenus", value); }
         }
 
+        public static int WrapMode
+        {
+            get { return AppSettings.GetValueOrDefault("WrapMode", 0); }
+            set { AppSettings.AddOrUpdateValue("WrapMode", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)
         {
             return AppSettings.GetValueOrDefault("T_" + tutorialGuid.ToString("N"), false); 
         }
-
+        
         public static void SetTutorialDone(Guid tutorialGuid,bool value)
         {
             AppSettings.AddOrUpdateValue("T_" + tutorialGuid.ToString("N"), value);

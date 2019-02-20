@@ -7,6 +7,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.CommandExecution;
 using ScintillaNET;
 
@@ -47,7 +48,10 @@ namespace ReusableUIComponents.ScintillaHelper
                 toReturn.DragEnter += (s, e) => OnDragEnter(s, e, commandFactory);
                 toReturn.DragDrop += (s, e) => OnDragDrop(s, e, commandFactory);
             }
-            
+
+            toReturn.WrapMode = (WrapMode)UserSettings.WrapMode;
+            toReturn.ContextMenuStrip = new ScintillaMenu(toReturn);
+
             return toReturn;
         }
 

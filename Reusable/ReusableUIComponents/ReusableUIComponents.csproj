@@ -297,6 +297,7 @@
     <Compile Include="RichTextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ScintillaHelper\ScintillaMenu.cs" />
     <Compile Include="ServerDatabaseTableSelectorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
