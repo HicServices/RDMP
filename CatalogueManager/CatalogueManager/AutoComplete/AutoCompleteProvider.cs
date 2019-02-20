@@ -36,6 +36,7 @@ namespace CatalogueManager.AutoComplete
             _activator = activator;
             _imageList = _activator.CoreIconProvider.GetImageList(true);
             _autocomplete.ImageList = _imageList;
+            _autocomplete.SearchPattern = @"[\w@\.]";
         }
 
 
