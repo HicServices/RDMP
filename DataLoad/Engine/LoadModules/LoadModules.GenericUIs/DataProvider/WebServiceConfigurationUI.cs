@@ -30,12 +30,12 @@ namespace LoadModules.GenericUIs.DataProvider
             DialogResult = DialogResult.Cancel;
         }
         
-        public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value, DataTable previewIfAvailable)
+        public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value)
         {
-            SetUnderlyingObjectTo((WebServiceConfiguration)value, previewIfAvailable);
+            SetUnderlyingObjectTo((WebServiceConfiguration)value);
         }
 
-        public void SetUnderlyingObjectTo(WebServiceConfiguration value, DataTable previewIfAvailable)
+        public void SetUnderlyingObjectTo(WebServiceConfiguration value)
         {
             var config = value ?? new WebServiceConfiguration(CatalogueRepository);
             tbEndpoint.Text = config.Endpoint;

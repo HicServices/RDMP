@@ -49,12 +49,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         public bool AllowReOrdering { get; set; }
 
         RAGSmiley pipelineSmiley = new RAGSmiley();
-
-        /// <summary>
-        /// Used only when dropping in new components, can be left as null if you are unsure how to generate an appropriate preview for components in your pipeline
-        /// </summary>
-        public DataTable Preview { get; set; }
-
+        
         public IPipelineComponent SelectedComponent;
         public event PipelineComponentSelectedHandler SelectedComponentChanged;
 

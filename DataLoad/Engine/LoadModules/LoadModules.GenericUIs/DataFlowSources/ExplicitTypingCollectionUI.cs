@@ -69,9 +69,9 @@ namespace LoadModules.GenericUIs.DataFlowSources
                 tableLayoutPanel1.Controls.Add(types[i], 1, i + 1);
         }
 
-        public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value, DataTable previewIfAvailable)
+        public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value)
         {
-            SetUnderlyingObjectTo((ExplicitTypingCollection)value, previewIfAvailable);
+            SetUnderlyingObjectTo((ExplicitTypingCollection)value);
         }
 
         public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
@@ -89,7 +89,7 @@ namespace LoadModules.GenericUIs.DataFlowSources
             return toReturn;
         }
 
-        public void SetUnderlyingObjectTo(ExplicitTypingCollection value, DataTable previewIfAvailable)
+        public void SetUnderlyingObjectTo(ExplicitTypingCollection value)
         {
             ExplicitTypingCollection child = value ?? new ExplicitTypingCollection();
 

@@ -5,16 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.Progress;
+using CommandLine;
 
 namespace CatalogueManager.PipelineUIs.Pipelines
 {
@@ -28,33 +25,22 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     {
         private readonly IPipeline _pipeline;
         private readonly IPipelineUseCase _useCase;
-        private IDataFlowPipelineContext _context;
-        private readonly DataFlowPipelineEngineFactory _factory;
-
-        private readonly CatalogueRepository _repository;
-
-        private const string NO_COMPONENT = "Unknown";
         
         private PipelineWorkArea _workArea;
         
-
         public ConfigurePipelineUI(IPipeline pipeline, IPipelineUseCase useCase, CatalogueRepository repository)
         {
             _pipeline = pipeline;
             _useCase = useCase;
-            _repository = repository;
             InitializeComponent();
-
-            _factory = new DataFlowPipelineEngineFactory(_useCase,repository.MEF);
-
+            
             _workArea = new PipelineWorkArea(pipeline, useCase,repository) {Dock = DockStyle.Fill};
-            panel1.Controls.Add(_workArea);
+            panelWorkArea.Controls.Add(_workArea);
 
             tbName.Text = pipeline.Name;
             tbDescription.Text = pipeline.Description;
 
             RefreshUIFromDatabase();
-            _context = _useCase.GetContext();
          
             KeyPreview = true;
         }
@@ -74,76 +60,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         private void RefreshUIFromDatabase()
         {
             _workArea.SetTo(_pipeline, _useCase);
-            try
-            {
-                lblPreviewStatus.Text = "No Preview Availble";
-                lblPreviewStatus.ForeColor = Color.Red;
-
-                InitializeSourceWithPreviewObjects();
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show("Failed to initialize source with preview objects",e);
-                lblPreviewStatus.Text = "Preview Generation Failed";
-                lblPreviewStatus.ForeColor = Color.Red;
-            }
         }
 
-
-
-        private void InitializeSourceWithPreviewObjects()
-        {
-            //don't bother with previews in design time
-            if(_useCase.IsDesignTime)
-                return;
-
-            var src = _useCase.ExplicitSource as IDataFlowSource<DataTable>;
-
-            //fixed source
-            if (src != null)
-            {
-                _workArea.SetPreview(src.TryGetPreview());
-                lblPreviewStatus.Text = "Preview Generated successfully";
-                lblPreviewStatus.ForeColor = Color.Green;
-            }
-            else
-            {
-                //custom source
-
-                //don't bother trying if it's super design time
-                if (_useCase.IsDesignTime)
-                    return;
-
-                src = _factory.CreateSourceIfExists(_pipeline) as IDataFlowSource<DataTable>;
-
-                if(src == null)
-                    return;
-                
-                //destination is a pipeline component, factory stamp me out an instance
-                
-                //now use the stamped out instance for preview generation
-                InitializeSourceWithPreviewObjects(src);
-            }
-
-        }
-
-        private void InitializeSourceWithPreviewObjects(IDataFlowSource<DataTable> s)
-        {
-            try
-            {
-                if (s == null)
-                    return;
-
-                _context.PreInitializeGeneric(new PopupErrorMessagesEventListener(), s, _useCase.GetInitializationObjects());
-                _workArea.SetPreview(s.TryGetPreview());
-                lblPreviewStatus.Text = "Preview Generated successfully";
-                lblPreviewStatus.ForeColor = Color.Green;
-            }
-            catch (Exception)
-            {
-                return;//could not generate preview
-            }
-        }
 
        private void tbName_TextChanged(object sender, EventArgs e)
         {
@@ -155,16 +73,17 @@ namespace CatalogueManager.PipelineUIs.Pipelines
            else
                tbName.ForeColor = Color.Black;
 
-           _pipeline.Name = tbName.Text;
-            _pipeline.SaveToDatabase();
+           try
+           {
+               _pipeline.Name = tbName.Text;
+               _pipeline.SaveToDatabase();
+           }
+           catch (Exception)
+           {
+               tbName.ForeColor = Color.Red;
+           }
         }
         
-        private void btnOk_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-
         private void tbDescription_TextChanged(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(_pipeline.Description) && string.IsNullOrWhiteSpace(tbDescription.Text))
@@ -180,12 +99,15 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             else
                 _pipeline.Description = tbDescription.Text;
 
-            _pipeline.SaveToDatabase();
-        }
-
-        private void btnRetryPreview_Click(object sender, EventArgs e)
-        {
-            RefreshUIFromDatabase();
+            try
+            {
+                _pipeline.SaveToDatabase();
+                tbDescription.ForeColor = Color.Black;
+            }
+            catch (Exception)
+            {
+                tbDescription.ForeColor = Color.Red;
+            }
         }
     }
 }

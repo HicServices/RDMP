@@ -78,7 +78,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
                 ICustomUI instanceAsCustomUI = (ICustomUI) uiInstance;
                 instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 
-                instanceAsCustomUI.SetGenericUnderlyingObjectTo(dataClassInstance, _args.PreviewIfAny);
+                instanceAsCustomUI.SetGenericUnderlyingObjectTo(dataClassInstance);
                 var dr = ((Form)instanceAsCustomUI).ShowDialog();
 
                 if(dr != DialogResult.Cancel)

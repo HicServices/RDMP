@@ -18,7 +18,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         public object InitialValue { get; set; }
         public Type Type { get; set; }
         public RequiredPropertyInfo Required { get; set; }
-        public DataTable PreviewIfAny { get; set; }
         public CatalogueRepository CatalogueRepository { get; set; }
 
         /// <summary>
@@ -38,7 +37,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             newInstance.InitialValue = InitialValue;
             newInstance.Type = Type;
             newInstance.Required = Required;
-            newInstance.PreviewIfAny = PreviewIfAny;
             newInstance.CatalogueRepository = CatalogueRepository;
             newInstance.Setter = Setter;
             newInstance.Fatal = Fatal;

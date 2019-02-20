@@ -123,25 +123,6 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 
         }
 
-        public void SetPreview(object preview)
-        {
-            var dt = preview as DataTable;
-
-            if (dt != null)
-                _pipelineDiagram.Preview = dt;
-
-            if (preview == null)
-                return;
-
-            var table = preview as DataTable;
-
-            if (table != null)
-                _arumentsCollection1.Preview = table;
-            else
-                throw new NotSupportedException("Only DataTables are currently supported by IArgumentCollectionUI previews");
-        
-        }
-
         private void btnReRunChecks_Click(object sender, EventArgs e)
         {
             _pipelineDiagram.RefreshUIFromDatabase();
