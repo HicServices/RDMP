@@ -36,7 +36,7 @@ namespace LoadModules.Generic.Web
         [DemandsInitialization("Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
         public DataAccessCredentials WebsenseCredentials { get; set; }
 
-        public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }

@@ -110,7 +110,7 @@ namespace DataLoadEngineTests.Integration
 
         }
 
-        private void TestConversionFor(string targetFile,string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory LoadDirectory)
+        private void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
         {
             FileInfo f = new FileInfo(targetFile);
 
@@ -122,12 +122,12 @@ namespace DataLoadEngineTests.Integration
                 ExcelToCSVFilesConverter converter = new ExcelToCSVFilesConverter();
 
                 var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning =  true, WriteToConsole =  true});
-                job.LoadDirectory = LoadDirectory;
+                job.LoadDirectory = directory;
 
                 converter.ExcelFilePattern = fileExtensionToConvert;
                 converter.Fetch(job, new GracefulCancellationToken());
 
-                FileInfo[] filesCreated = LoadDirectory.ForLoading.GetFiles("*.csv");
+                FileInfo[] filesCreated = directory.ForLoading.GetFiles("*.csv");
 
                 Assert.AreEqual(expectedNumberOfSheets,filesCreated.Length);
 

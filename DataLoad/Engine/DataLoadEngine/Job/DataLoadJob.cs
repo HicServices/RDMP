@@ -51,12 +51,12 @@ namespace DataLoadEngine.Job
 
         private string _loggingTask;
 
-        public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator,string description, ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory LoadDirectory, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+        public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory directory, IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
         {
             _logManager = logManager;
             RepositoryLocator = repositoryLocator;
             LoadMetadata = loadMetadata;
-            LoadDirectory = LoadDirectory;
+            LoadDirectory = directory;
             Configuration = configuration;
             _listener = listener;
             Description = description;

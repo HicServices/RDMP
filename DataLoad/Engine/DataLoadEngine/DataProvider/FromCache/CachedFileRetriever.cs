@@ -39,7 +39,7 @@ namespace DataLoadEngine.DataProvider.FromCache
         [DemandsInitialization("Whether to unarchive the files into the ForLoading folder, or just copy them as is")]
         public bool ExtractFilesFromArchive { get; set; }
 
-        public abstract void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo);
+        public abstract void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
         public abstract ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken);
         
         #region Events
@@ -116,10 +116,10 @@ namespace DataLoadEngine.DataProvider.FromCache
             return relativeFilePaths.ToArray();
         }
 
-        private bool FilesInForLoadingMatchWorkload(ILoadDirectory LoadDirectory)
+        private bool FilesInForLoadingMatchWorkload(ILoadDirectory directory)
         {
-            var filesInForLoading = GetPathsRelativeToDirectory(LoadDirectory.ForLoading.EnumerateFiles("*", SearchOption.AllDirectories).ToArray(), LoadDirectory.ForLoading);
-            var filesFromCache = GetPathsRelativeToDirectory(_workload.Values.ToArray(), LoadDirectory.Cache);
+            var filesInForLoading = GetPathsRelativeToDirectory(directory.ForLoading.EnumerateFiles("*", SearchOption.AllDirectories).ToArray(), directory.ForLoading);
+            var filesFromCache = GetPathsRelativeToDirectory(_workload.Values.ToArray(), directory.Cache);
 
             return filesInForLoading.OrderBy(t => t).SequenceEqual(filesFromCache.OrderBy(t => t));
         }

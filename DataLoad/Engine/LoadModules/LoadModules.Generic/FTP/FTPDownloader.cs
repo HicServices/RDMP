@@ -62,9 +62,9 @@ namespace LoadModules.Generic.FTP
         public string RemoteDirectory { get; set; }
 
 
-        public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
-            _directory = LoadDirectory;
+            _directory = directory;
         }
 
         public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)

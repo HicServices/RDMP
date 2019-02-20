@@ -42,7 +42,7 @@ namespace LoadModules.Generic.FileOperations
 
         readonly List<FileInfo> _entriesUnzipped = new List<FileInfo>();
 
-        public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }

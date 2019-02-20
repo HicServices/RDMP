@@ -48,7 +48,7 @@ namespace DataLoadEngineTests.Integration
             }
 
             public void Create(CatalogueRepository repository, DiscoveredDatabase database,
-                ILoadDirectory LoadDirectory)
+                ILoadDirectory directory)
             {
                 TableInfo = new TableInfo(repository, "TestData")
                 {
@@ -71,7 +71,7 @@ namespace DataLoadEngineTests.Integration
 
                 LoadMetadata = new LoadMetadata(repository, "HICLoadPipelineTests")
                 {
-                    LocationOfFlatFiles = LoadDirectory.RootPath.FullName
+                    LocationOfFlatFiles = directory.RootPath.FullName
                 };
                 LoadMetadata.SaveToDatabase();
 
@@ -299,7 +299,7 @@ namespace DataLoadEngineTests.Integration
 
     public class TestCacheFileRetriever : CachedFileRetriever
     {
-        public override void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }

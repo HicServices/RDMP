@@ -57,11 +57,11 @@ namespace DataLoadEngine.LoadExecution.Components
             return toReturn;
         }
 
-        public void DeleteAllFilesInForLoading(LoadDirectory LoadDirectory, DataLoadJob job)
+        public void DeleteAllFilesInForLoading(LoadDirectory directory, DataLoadJob job)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting files in ForLoading (" + LoadDirectory.ForLoading.FullName + ")"));
-            LoadDirectory.ForLoading.EnumerateFiles().ToList().ForEach(info => info.Delete());
-            LoadDirectory.ForLoading.EnumerateDirectories().ToList().ForEach(info => info.Delete(true));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting files in ForLoading (" + directory.ForLoading.FullName + ")"));
+            directory.ForLoading.EnumerateFiles().ToList().ForEach(info => info.Delete());
+            directory.ForLoading.EnumerateDirectories().ToList().ForEach(info => info.Delete(true));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace DataLoadEngine.DataProvider
     /// </summary>
     public interface IDataProvider : IDisposeAfterDataLoad,ICheckable
     {
-        void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo);
+        void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
         ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken);
     }
 }

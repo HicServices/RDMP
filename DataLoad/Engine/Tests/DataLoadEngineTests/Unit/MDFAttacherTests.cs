@@ -208,7 +208,7 @@ namespace DataLoadEngineTests.Unit
             public string DatabaseServer { get; private set; }
             public string DatabaseName { get; private set; }
             public bool RequestsExternalDatabaseCreation { get; private set; }
-            public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+            public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
             {
                 
             }

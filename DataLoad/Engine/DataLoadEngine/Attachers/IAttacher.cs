@@ -21,7 +21,7 @@ namespace DataLoadEngine.Attachers
     public interface IAttacher: IDisposeAfterDataLoad, ICheckable
     {
         ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
-        void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo);
+        void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
         
         ILoadDirectory LoadDirectory { get; set; }
         bool RequestsExternalDatabaseCreation { get; }

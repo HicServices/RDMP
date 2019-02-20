@@ -27,9 +27,9 @@ namespace DataLoadEngine.Attachers
         
         public bool RequestsExternalDatabaseCreation { get; private set; }
 
-        public virtual void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public virtual void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
-            LoadDirectory = LoadDirectory;
+            LoadDirectory = directory;
             _dbInfo = dbInfo;
         }
         

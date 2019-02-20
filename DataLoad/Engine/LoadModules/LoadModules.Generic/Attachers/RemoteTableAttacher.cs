@@ -114,9 +114,9 @@ namespace LoadModules.Generic.Attachers
         }
 
 
-        public override void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
-            base.Initialize(LoadDirectory,dbInfo);
+            base.Initialize(directory, dbInfo);
 
             try
             {

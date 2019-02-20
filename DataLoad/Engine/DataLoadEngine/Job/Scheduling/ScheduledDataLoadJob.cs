@@ -25,8 +25,8 @@ namespace DataLoadEngine.Job.Scheduling
         public ILoadProgress LoadProgress { get; set; }
         public List<DateTime> DatesToRetrieve { get; set; }
         
-        public ScheduledDataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory LoadDirectory, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
-            : base(repositoryLocator,description, logManager, loadMetadata, LoadDirectory, listener,configuration)
+        public ScheduledDataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory directory, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+            : base(repositoryLocator, description, logManager, loadMetadata, directory, listener, configuration)
         {
         }
     }

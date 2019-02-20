@@ -58,7 +58,7 @@ namespace LoadModules.Generic.DataProvider
                 notifier.OnCheckPerformed(new CheckEventArgs("Path " + DirectoryPath + " was not found",CheckResult.Fail));
         }
 
-        public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }

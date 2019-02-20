@@ -173,7 +173,7 @@ namespace DataLoadEngineTests.Integration
             }
         }
 
-        private ScheduledDataLoadJob CreateTestJob(ILoadDirectory LoadDirectory)
+        private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
         {
             var catalogue = MockRepository.GenerateStub<ICatalogue>();
             catalogue.Stub(c => c.GetTableInfoList(Arg<bool>.Is.Anything)).Return(new TableInfo[0]);
@@ -184,7 +184,7 @@ namespace DataLoadEngineTests.Integration
             var loadMetadata = MockRepository.GenerateStub<ILoadMetadata>();
             loadMetadata.Stub(lm => lm.GetAllCatalogues()).Return(new[] { catalogue });
 
-            var j =  new ScheduledDataLoadJob(RepositoryLocator,"Test job", logManager, loadMetadata, LoadDirectory, new ThrowImmediatelyDataLoadEventListener(),null);
+            var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null);
             j.LoadProgress = _lpMock;
             return j;
         }
@@ -194,7 +194,7 @@ namespace DataLoadEngineTests.Integration
     {
         public ICacheLayout Layout;
 
-        public override void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }

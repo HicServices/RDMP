@@ -58,7 +58,7 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
                 notifier.OnCheckPerformed(new CheckEventArgs("Argument ExcelFilePattern has not been specified", CheckResult.Fail));
         }
 
-        public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }

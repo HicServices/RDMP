@@ -39,7 +39,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache.Reading
             throw new NotImplementedException();
         }
 
-        public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             throw new NotImplementedException();
         }
