@@ -183,11 +183,42 @@ namespace ReusableLibraryCode.Settings
         {
             return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.RemoveEmptyEntries);
         }
-
+        
         public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)
         {
             AppSettings.AddOrUpdateValue("A_" + controlGuid.ToString("N"), string.Join("#!#", history));
         }
+        
+        public static Tuple<string,bool> GetLastColumnSortForCollection(Guid controlGuid)
+        {
+            var value = AppSettings.GetValueOrDefault("LastColumnSort_" + controlGuid.ToString("N"),null);
+
+            //if we dont have a value
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+
+            string[] args = value.Split(new[]{"#!#"},StringSplitOptions.RemoveEmptyEntries);
+
+            //or it doesn't split properly 
+            if (args.Length != 2)
+                return null;
+
+            //or either element is null
+            if (string.IsNullOrWhiteSpace(args[0]) || string.IsNullOrWhiteSpace(args[1]))
+                return null;
+
+            bool ascending;
+            if (bool.TryParse(args[1], out ascending))
+                return Tuple.Create(args[0], ascending);
+            
+            return null;
+        }
+
+        public static void SetLastColumnSortForCollection(Guid controlGuid, string columnName, bool ascending)
+        {
+            AppSettings.AddOrUpdateValue("LastColumnSort_" + controlGuid.ToString("N"), columnName +"#!#" + ascending);
+        }
+
 
         static ISettings CreateSettings()
         {
@@ -197,5 +228,6 @@ namespace ReusableLibraryCode.Settings
             return new RDMPApplicationSettings();
 #endif
         }
+
     }
 }
