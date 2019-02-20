@@ -248,6 +248,7 @@
     <Compile Include="DataFlowOperations\ExtractCatalogueMetadata.cs" />
     <Compile Include="DataFlowOperations\ReleaseMetadata.cs" />
     <Compile Include="DataFlowOperations\RowDeleter.cs" />
+    <Compile Include="DataFlowOperations\Swapping\ColumnSwapper.cs" />
     <Compile Include="DataFlowOperations\TableVersionNamer.cs" />
     <Compile Include="DataFlowSources\DoNothingCacheSource.cs" />
     <Compile Include="DataFlowSources\SubComponents\FlatFileColumnCollection.cs" />
