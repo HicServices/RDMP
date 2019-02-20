@@ -22,12 +22,12 @@ namespace DataLoadEngine.LoadExecution.Components.Arguments
     public class StageArgs : IStageArgs
     {
         public DiscoveredDatabase DbInfo { get; private set; }
-        public IHICProjectDirectory RootDir { get; private set; }
+        public ILoadDirectory RootDir { get; private set; }
         
         //Mandatory
         public LoadStage LoadStage { get; private set; }
 
-        public StageArgs(LoadStage loadStage,DiscoveredDatabase database, IHICProjectDirectory projectDirectory)
+        public StageArgs(LoadStage loadStage,DiscoveredDatabase database, ILoadDirectory projectDirectory)
         {
             LoadStage = loadStage;
             DbInfo = database;

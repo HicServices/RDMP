@@ -25,7 +25,7 @@ namespace DataLoadEngineTests.Integration
         {
             FileInfo fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@"FixedWidthFormat.csv"));
 
-            File.WriteAllText(fileInfo.FullName, HICProjectDirectory.ExampleFixedWidthFormatFileContents);
+            File.WriteAllText(fileInfo.FullName, LoadDirectory.ExampleFixedWidthFormatFileContents);
             
             Assert.IsTrue(fileInfo.Exists);
 
@@ -157,20 +157,20 @@ namespace DataLoadEngineTests.Integration
             if (toCleanup != null)
                 toCleanup.Delete(true);
 
-            var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(parentDir, "TestHeaderMatching");
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "TestHeaderMatching");
 
 
             //create the file we will be trying to load
             if(testCase == FixedWidthTestCase.InsufficientLengthOfCharactersInFileToLoad)
-                File.WriteAllText(Path.Combine(hicProjectDirectory.ForLoading.FullName, "file.txt"), @"12345
+                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "file.txt"), @"12345
 12");
             else
-                File.WriteAllText(Path.Combine(hicProjectDirectory.ForLoading.FullName , "file.txt"),@"12345
+                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName , "file.txt"),@"12345
 67890");
             var db = DiscoveredDatabaseICanCreateRandomTablesIn;
 
             var attacher = new FixedWidthAttacher();
-            attacher.Initialize(hicProjectDirectory, db);
+            attacher.Initialize(loadDirectory, db);
             attacher.PathToFormatFile = formatFile;
             attacher.TableName = "TestHeaderMatching_Compatible";
             attacher.FilePattern = "*.txt";

@@ -39,7 +39,7 @@ namespace DataLoadEngine.DataProvider.FromCache
         [DemandsInitialization("Whether to unarchive the files into the ForLoading folder, or just copy them as is")]
         public bool ExtractFilesFromArchive { get; set; }
 
-        public abstract void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo);
+        public abstract void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo);
         public abstract ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken);
         
         #region Events
@@ -89,10 +89,10 @@ namespace DataLoadEngine.DataProvider.FromCache
                 var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date,job);
                 
                 if (fileInfo == null)
-                    OnCacheFileNotFound("Could not find cached file for date '" + date + "' for CacheLayout.ArchiveType " + cacheLayout.ArchiveType + " in cache at " + job.HICProjectDirectory.Cache.FullName, null);
+                    OnCacheFileNotFound("Could not find cached file for date '" + date + "' for CacheLayout.ArchiveType " + cacheLayout.ArchiveType + " in cache at " + job.LoadDirectory.Cache.FullName, null);
                 else
                 if (!fileInfo.Exists)
-                    OnCacheFileNotFound("Could not find cached file '" + fileInfo.FullName + "' for date " + date + " in cache at " + job.HICProjectDirectory.Cache.FullName, null);
+                    OnCacheFileNotFound("Could not find cached file '" + fileInfo.FullName + "' for date " + date + " in cache at " + job.LoadDirectory.Cache.FullName, null);
 
                 _workload.Add(date, fileInfo);
             }
@@ -116,10 +116,10 @@ namespace DataLoadEngine.DataProvider.FromCache
             return relativeFilePaths.ToArray();
         }
 
-        private bool FilesInForLoadingMatchWorkload(IHICProjectDirectory hicProjectDirectory)
+        private bool FilesInForLoadingMatchWorkload(ILoadDirectory LoadDirectory)
         {
-            var filesInForLoading = GetPathsRelativeToDirectory(hicProjectDirectory.ForLoading.EnumerateFiles("*", SearchOption.AllDirectories).ToArray(), hicProjectDirectory.ForLoading);
-            var filesFromCache = GetPathsRelativeToDirectory(_workload.Values.ToArray(), hicProjectDirectory.Cache);
+            var filesInForLoading = GetPathsRelativeToDirectory(LoadDirectory.ForLoading.EnumerateFiles("*", SearchOption.AllDirectories).ToArray(), LoadDirectory.ForLoading);
+            var filesFromCache = GetPathsRelativeToDirectory(_workload.Values.ToArray(), LoadDirectory.Cache);
 
             return filesInForLoading.OrderBy(t => t).SequenceEqual(filesFromCache.OrderBy(t => t));
         }
@@ -127,7 +127,7 @@ namespace DataLoadEngine.DataProvider.FromCache
         protected void ExtractJobs(IDataLoadJob dataLoadJob)
         {
             // check to see if forLoading has anything in it and bail if it does
-            if (dataLoadJob.HICProjectDirectory.ForLoading.EnumerateFileSystemInfos().Any())
+            if (dataLoadJob.LoadDirectory.ForLoading.EnumerateFileSystemInfos().Any())
             {
                 // RDMPDEV-185
                 // There are files in ForLoading, but do they match what we would expect to find? Need to make sure that they aren't from a different dataset and/or there is the expected number of files
@@ -135,7 +135,7 @@ namespace DataLoadEngine.DataProvider.FromCache
                 if (_workload == null)
                     throw new InvalidOperationException("The workload has not been initialised, don't know what files are to be retrieved from the cache");
 
-                if (!FilesInForLoadingMatchWorkload(dataLoadJob.HICProjectDirectory))
+                if (!FilesInForLoadingMatchWorkload(dataLoadJob.LoadDirectory))
                     throw new InvalidOperationException("The files in ForLoading do not match what this job expects to be loading from the cache. Please delete the files in ForLoading before re-attempting the data load.");
 
                 dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "ForLoading already has files, skipping extraction"));
@@ -153,15 +153,15 @@ namespace DataLoadEngine.DataProvider.FromCache
                 if (ExtractFilesFromArchive)
                 {
                     var extractor = CreateExtractor(layout.ArchiveType);
-                    extractor.Extract(job, dataLoadJob.HICProjectDirectory.ForLoading, dataLoadJob);
+                    extractor.Extract(job, dataLoadJob.LoadDirectory.ForLoading, dataLoadJob);
                 }
                 else
                 {
                     dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Archive identified:" + job.Value.FullName));
 
                     // just copy the archives across
-                    var relativePath = GetPathRelativeToCacheRoot(dataLoadJob.HICProjectDirectory.Cache, job.Value);
-                    var absolutePath = Path.Combine(dataLoadJob.HICProjectDirectory.ForLoading.FullName, relativePath);
+                    var relativePath = GetPathRelativeToCacheRoot(dataLoadJob.LoadDirectory.Cache, job.Value);
+                    var absolutePath = Path.Combine(dataLoadJob.LoadDirectory.ForLoading.FullName, relativePath);
                     if (!Directory.Exists(absolutePath))
                         Directory.CreateDirectory(absolutePath);
 
@@ -191,7 +191,7 @@ namespace DataLoadEngine.DataProvider.FromCache
             }
         }
 
-        public bool Validate(IHICProjectDirectory destination)
+        public bool Validate(ILoadDirectory destination)
         {
             if (destination.Cache == null)
                 throw new NullReferenceException("Destination " + destination.RootPath.FullName + " does not have a 'Cache' folder");

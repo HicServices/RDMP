@@ -904,11 +904,11 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.Designer.cs">
       <DependentUpon>CacheProgressUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseHICProjectDialog.cs">
+    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseHICProjectDialog.Designer.cs">
-      <DependentUpon>ChooseHICProjectDialog.cs</DependentUpon>
+    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.Designer.cs">
+      <DependentUpon>ChooseLoadFolderUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagram.cs">
       <SubType>UserControl</SubType>
@@ -1898,8 +1898,8 @@
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.resx">
       <DependentUpon>CacheProgressUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ChooseHICProjectDialog.resx">
-      <DependentUpon>ChooseHICProjectDialog.cs</DependentUpon>
+    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.resx">
+      <DependentUpon>ChooseLoadFolderUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagram.resx">
       <DependentUpon>LoadDiagram.cs</DependentUpon>

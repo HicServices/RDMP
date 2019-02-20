@@ -42,10 +42,10 @@ namespace DataLoadEngine.LoadExecution.Components
                 {
                    toReturn = base.Run(job, cancellationToken);
                 }
-                else if (job.HICProjectDirectory.ForLoading.EnumerateFileSystemInfos().Any())
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Using existing files in '" + job.HICProjectDirectory.ForLoading.FullName + "', there are no GetFiles processes or DataProviders configured"));
+                else if (job.LoadDirectory.ForLoading.EnumerateFileSystemInfos().Any())
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Using existing files in '" + job.LoadDirectory.ForLoading.FullName + "', there are no GetFiles processes or DataProviders configured"));
                 else
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "There are no GetFiles tasks and there are no files in the ForLoading directory (" + job.HICProjectDirectory.ForLoading.FullName + ")"));
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "There are no GetFiles tasks and there are no files in the ForLoading directory (" + job.LoadDirectory.ForLoading.FullName + ")"));
             }
             finally
             {
@@ -57,11 +57,11 @@ namespace DataLoadEngine.LoadExecution.Components
             return toReturn;
         }
 
-        public void DeleteAllFilesInForLoading(HICProjectDirectory hicProjectDirectory, DataLoadJob job)
+        public void DeleteAllFilesInForLoading(LoadDirectory LoadDirectory, DataLoadJob job)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting files in ForLoading (" + hicProjectDirectory.ForLoading.FullName + ")"));
-            hicProjectDirectory.ForLoading.EnumerateFiles().ToList().ForEach(info => info.Delete());
-            hicProjectDirectory.ForLoading.EnumerateDirectories().ToList().ForEach(info => info.Delete(true));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Deleting files in ForLoading (" + LoadDirectory.ForLoading.FullName + ")"));
+            LoadDirectory.ForLoading.EnumerateFiles().ToList().ForEach(info => info.Delete());
+            LoadDirectory.ForLoading.EnumerateDirectories().ToList().ForEach(info => info.Delete(true));
         }
     }
 }

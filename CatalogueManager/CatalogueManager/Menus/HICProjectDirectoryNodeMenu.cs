@@ -10,12 +10,12 @@ using CatalogueManager.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
 {
-    class HICProjectDirectoryNodeMenu : RDMPContextMenuStrip
+    class LoadDirectoryNodeMenu : RDMPContextMenuStrip
     {
-        public HICProjectDirectoryNodeMenu(RDMPContextMenuStripArgs args,HICProjectDirectoryNode node) : base(args, node)
+        public LoadDirectoryNodeMenu(RDMPContextMenuStripArgs args,LoadDirectoryNode node) : base(args, node)
         {
             ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
-            Add(new ExecuteCommandChooseHICProjectDirectory(_activator, node.LoadMetadata));
+            Add(new ExecuteCommandChooseLoadDirectory(_activator, node.LoadMetadata));
         }
     }
 }

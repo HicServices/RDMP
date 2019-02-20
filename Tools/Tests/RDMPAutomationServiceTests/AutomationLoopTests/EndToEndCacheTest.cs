@@ -34,7 +34,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         private CacheProgress _cp;
 
         private TestDataPipelineAssembler _testPipeline;
-        private HICProjectDirectory _hicProjectDirectory;
+        private LoadDirectory _LoadDirectory;
 
         const int NumDaysToCache = 5;
 
@@ -45,8 +45,8 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
             
             _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
-            _hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), @"EndToEndCacheTest", true);
-            _lmd.LocationOfFlatFiles = _hicProjectDirectory.RootPath.FullName;
+            _LoadDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), @"EndToEndCacheTest", true);
+            _lmd.LocationOfFlatFiles = _LoadDirectory.RootPath.FullName;
             _lmd.SaveToDatabase();
 
             _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest");
@@ -82,10 +82,10 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             cachingHost.Start(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             // should be numDaysToCache days in cache
-            Assert.AreEqual(NumDaysToCache, _hicProjectDirectory.Cache.GetFiles("*.csv").Count());
+            Assert.AreEqual(NumDaysToCache, _LoadDirectory.Cache.GetFiles("*.csv").Count());
 
             // make sure each file is named as expected
-            var cacheFiles = _hicProjectDirectory.Cache.GetFiles().Select(fi => fi.Name).ToArray();
+            var cacheFiles = _LoadDirectory.Cache.GetFiles().Select(fi => fi.Name).ToArray();
             for (var i = -NumDaysToCache; i < 0; i++)
             {
                 var filename = DateTime.Now.AddDays(i).ToString("yyyyMMdd") + ".csv"; 
@@ -97,7 +97,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         [Timeout(60000)]
         public void RunEndToEndCacheTest()
         {
-            Assert.AreEqual(0, _hicProjectDirectory.Cache.GetFiles("*.csv").Count());
+            Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Count());
 
             var auto = new CacheRunner(new CacheOptions(){  CacheProgress= _cp.ID, Command = CommandLineActivity.run });
             auto.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
@@ -117,7 +117,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
             _lmd.DeleteInDatabase();
             
-            _hicProjectDirectory.RootPath.Delete(true);
+            _LoadDirectory.RootPath.Delete(true);
         }
 
     }

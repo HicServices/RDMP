@@ -10,10 +10,10 @@ using CatalogueLibrary;
 
 namespace Tests.Common
 {
-    public class TestHICProjectDirectory :IHICProjectDirectory{
+    public class TestLoadDirectory :ILoadDirectory{
         private readonly XmlDocument _configurationData;
 
-        public TestHICProjectDirectory(XmlDocument configurationData)
+        public TestLoadDirectory(XmlDocument configurationData)
         {
             _configurationData = configurationData;
         }

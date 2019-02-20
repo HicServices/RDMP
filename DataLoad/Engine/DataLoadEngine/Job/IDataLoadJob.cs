@@ -25,7 +25,7 @@ namespace DataLoadEngine.Job
     {
         string Description { get; }
         IDataLoadInfo DataLoadInfo { get; }
-        IHICProjectDirectory HICProjectDirectory { get; set; }
+        ILoadDirectory LoadDirectory { get; set; }
         int JobID { get; set; }
         ILoadMetadata LoadMetadata { get; }
         string ArchiveFilepath { get; }

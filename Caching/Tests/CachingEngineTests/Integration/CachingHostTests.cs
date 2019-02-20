@@ -55,9 +55,9 @@ namespace CachingEngineTests.Integration
             if (testDir.Exists)
                 Directory.Delete(testDir.FullName, true);
 
-            var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(testDir, "Test");
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "Test");
             var loadMetadata = MockRepository.GenerateStub<ILoadMetadata>();
-            loadMetadata.LocationOfFlatFiles = hicProjectDirectory.RootPath.FullName;
+            loadMetadata.LocationOfFlatFiles = loadDirectory.RootPath.FullName;
 
             // This feels a bit nasty, but quick and much better than having the test wait for an arbitrary time period.
             var listener = new ExpectedNotificationListener("Download not permitted at this time, sleeping for 60 seconds");

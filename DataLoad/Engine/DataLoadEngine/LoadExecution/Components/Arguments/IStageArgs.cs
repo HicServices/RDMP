@@ -21,7 +21,7 @@ namespace DataLoadEngine.LoadExecution.Components.Arguments
         DiscoveredDatabase DbInfo { get;}
         Dictionary<string, object> ToDictionary();
 
-        IHICProjectDirectory RootDir { get; }
+        ILoadDirectory RootDir { get; }
         LoadStage LoadStage { get;}
     }
 }

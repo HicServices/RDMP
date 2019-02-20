@@ -15,11 +15,11 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandChooseHICProjectDirectory : BasicUICommandExecution, IAtomicCommand
+    internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAtomicCommand
     {
         private readonly LoadMetadata _loadMetadata;
 
-        public ExecuteCommandChooseHICProjectDirectory(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
+        public ExecuteCommandChooseLoadDirectory(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
             _loadMetadata = loadMetadata;
         }
@@ -33,7 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dialog = new ChooseHICProjectDialog();
+            var dialog = new ChooseLoadDirectoryUI();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 _loadMetadata.LocationOfFlatFiles = dialog.Result.RootPath.FullName;
@@ -44,7 +44,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.HICProjectDirectoryNode);
+            return iconProvider.GetImage(RDMPConcept.LoadDirectoryNode);
         }
     }
 }

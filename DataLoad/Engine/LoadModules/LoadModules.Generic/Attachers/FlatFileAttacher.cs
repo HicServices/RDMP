@@ -78,7 +78,7 @@ namespace LoadModules.Generic.Attachers
             //load the flat file
             var filepattern = FilePattern ?? "*";
 
-            var filesToLoad = HICProjectDirectory.ForLoading.EnumerateFiles(filepattern).ToList();
+            var filesToLoad = LoadDirectory.ForLoading.EnumerateFiles(filepattern).ToList();
 
             if (!filesToLoad.Any())
             {

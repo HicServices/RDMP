@@ -1083,9 +1083,9 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap HICProjectDirectoryNode {
+        public static System.Drawing.Bitmap LoadDirectoryNode {
             get {
-                object obj = ResourceManager.GetObject("HICProjectDirectoryNode", resourceCulture);
+                object obj = ResourceManager.GetObject("LoadDirectoryNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -26,7 +26,7 @@ namespace DataLoadEngineTests.Integration
 
         public string Description { get; private set; }
         public IDataLoadInfo DataLoadInfo { get; private set; }
-        public IHICProjectDirectory HICProjectDirectory { get; set; }
+        public ILoadDirectory LoadDirectory { get; set; }
         public int JobID { get; set; }
         public ILoadMetadata LoadMetadata { get; private set; }
         public bool DisposeImmediately { get; private set; }

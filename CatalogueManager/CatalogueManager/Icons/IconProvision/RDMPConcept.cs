@@ -111,7 +111,7 @@ namespace CatalogueManager.Icons.IconProvision
         Help,
 
         //Load metadata subcomponents
-        HICProjectDirectoryNode,
+        LoadDirectoryNode,
         AllProcessTasksUsedByLoadMetadataNode,
         AllCataloguesUsedByLoadMetadataNode,
         LoadMetadataScheduleNode,

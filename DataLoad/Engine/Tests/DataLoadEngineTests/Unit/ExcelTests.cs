@@ -309,11 +309,11 @@ namespace DataLoadEngineTests.Unit
             converter.ExcelFilePattern = loc.Name;
             converter.PrefixWithWorkbookName = prefixWithWorkbookName;
             
-            var mockProjDir = MockRepository.GenerateMock<IHICProjectDirectory>();
+            var mockProjDir = MockRepository.GenerateMock<ILoadDirectory>();
             mockProjDir.Expect(p => p.ForLoading).Return(loc.Directory);
           
             var j= new ThrowImmediatelyDataLoadJob();
-            j.HICProjectDirectory = mockProjDir;
+            j.LoadDirectory = mockProjDir;
 
             converter.Fetch(j, new GracefulCancellationToken());
 

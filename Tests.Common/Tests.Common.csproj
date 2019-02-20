@@ -186,7 +186,7 @@
     <Compile Include="SimpleExampleTests.cs" />
     <Compile Include="TestableTableValuedFunction.cs" />
     <Compile Include="TestDatabasesSettings.cs" />
-    <Compile Include="TestHICProjectDirectory.cs" />
+    <Compile Include="TestLoadDirectory.cs" />
     <Compile Include="TestDirectoryHelper.cs" />
     <Compile Include="UserAcceptanceTestEnvironmentHelper.cs" />
   </ItemGroup>

@@ -65,7 +65,7 @@ namespace CachingEngine.Factories
 
             AddInitializationObject(_cacheProgress.Repository);
 
-            // Get the HICProjectDirectory for the engine initialization
+            // Get the LoadDirectory for the engine initialization
             var lmd = _cacheProgress.LoadProgress.LoadMetadata;
 
             if (string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles))
@@ -74,7 +74,7 @@ namespace CachingEngine.Factories
                     throw new Exception("LoadMetadata '" + lmd + "' does not have a Load Directory specified, cannot create ProcessingPipelineUseCase without one");
             }
             else
-                AddInitializationObject(new HICProjectDirectory(lmd.LocationOfFlatFiles));
+                AddInitializationObject(new LoadDirectory(lmd.LocationOfFlatFiles));
 
             AddInitializationObject(_providerIfAny);
             AddInitializationObject(_permissionWindow);
@@ -123,7 +123,7 @@ namespace CachingEngine.Factories
         {
             typeof(ICacheFetchRequestProvider),
             typeof(IPermissionWindow),
-            typeof(HICProjectDirectory),
+            typeof(LoadDirectory),
             typeof(ICatalogueRepository)
         })
         {

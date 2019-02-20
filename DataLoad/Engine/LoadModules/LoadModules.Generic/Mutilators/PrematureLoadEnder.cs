@@ -89,9 +89,9 @@ namespace LoadModules.Generic.Mutilators
                 if(dataLoadJob == null)
                     throw new Exception("IDataLoadEventListener " + job + " was not an IDataLoadJob (very unexpected)");
 
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to check ForLoading directory for files, the directory is:" + dataLoadJob.HICProjectDirectory.ForLoading.FullName));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to check ForLoading directory for files, the directory is:" + dataLoadJob.LoadDirectory.ForLoading.FullName));
 
-                var files = dataLoadJob.HICProjectDirectory.ForLoading.GetFiles();
+                var files = dataLoadJob.LoadDirectory.ForLoading.GetFiles();
 
                 if (!files.Any())
                 {

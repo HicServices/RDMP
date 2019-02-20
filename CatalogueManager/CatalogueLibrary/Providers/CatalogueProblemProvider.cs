@@ -64,8 +64,8 @@ namespace CatalogueLibrary.Providers
             if (o is CatalogueItem)
                 return DescribeProblem((CatalogueItem) o);
 
-            if (o is HICProjectDirectoryNode)
-                return DescribeProblem((HICProjectDirectoryNode) o);
+            if (o is LoadDirectoryNode)
+                return DescribeProblem((LoadDirectoryNode) o);
 
             if (o is ExtractionInformation)
                 return DescribeProblem((ExtractionInformation) o);
@@ -158,9 +158,9 @@ namespace CatalogueLibrary.Providers
             return null;
         }
 
-        private string DescribeProblem(HICProjectDirectoryNode hicProjectDirectoryNode)
+        private string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
         {
-            if (hicProjectDirectoryNode.IsEmpty)
+            if (LoadDirectoryNode.IsEmpty)
                 return "No Project Directory has been specified for the load";
 
             return null;

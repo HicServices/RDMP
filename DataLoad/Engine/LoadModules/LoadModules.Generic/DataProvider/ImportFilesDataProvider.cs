@@ -58,7 +58,7 @@ namespace LoadModules.Generic.DataProvider
                 notifier.OnCheckPerformed(new CheckEventArgs("Path " + DirectoryPath + " was not found",CheckResult.Fail));
         }
 
-        public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
         {
             
         }
@@ -69,7 +69,7 @@ namespace LoadModules.Generic.DataProvider
 
             foreach (FileInfo f in _files)
             {
-                var to = Path.Combine(job.HICProjectDirectory.ForLoading.FullName, f.Name);
+                var to = Path.Combine(job.LoadDirectory.ForLoading.FullName, f.Name);
                 job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Copying file " + f.FullName + " to directory " + to));
                 f.CopyTo(to,true);
             }

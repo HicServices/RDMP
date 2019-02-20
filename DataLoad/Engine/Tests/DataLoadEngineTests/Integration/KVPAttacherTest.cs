@@ -44,7 +44,7 @@ namespace DataLoadEngineTests.Integration
 
             var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var parentDir = workingDir.CreateSubdirectory("KVPAttacherTestProjectDirectory");
-            var projectDir = HICProjectDirectory.CreateDirectoryStructure(parentDir, "KVPAttacherTest", true);
+            var projectDir = LoadDirectory.CreateDirectoryStructure(parentDir, "KVPAttacherTest", true);
 
             string filepk = "kvpTestFilePK.csv";
             string filepk2 = "kvpTestFilePK2.csv";
@@ -226,7 +226,7 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual("TargetDataTableKeyColumnName cannot be the same as TargetDataTableValueColumnName", ex.Message);
         }
 
-        private void CopyToBin(HICProjectDirectory projDir, string file)
+        private void CopyToBin(LoadDirectory projDir, string file)
         {
             
             string testFileLocation = Path.Combine(TestContext.CurrentContext.WorkDirectory,"Resources" , file);

@@ -23,13 +23,13 @@ namespace DataLoadEngine.Attachers
 
         public abstract ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
 
-        public IHICProjectDirectory HICProjectDirectory { get; set; }
+        public ILoadDirectory LoadDirectory { get; set; }
         
         public bool RequestsExternalDatabaseCreation { get; private set; }
 
-        public virtual void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public virtual void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
         {
-            HICProjectDirectory = hicProjectDirectory;
+            LoadDirectory = LoadDirectory;
             _dbInfo = dbInfo;
         }
         

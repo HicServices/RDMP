@@ -1,6 +1,6 @@
 ﻿namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
 {
-    partial class ChooseHICProjectDialog
+    partial class ChooseLoadDirectoryUI
     {
         /// <summary>
         /// Required designer variable.
@@ -198,7 +198,7 @@
             this.Controls.Add(this.tbCreateNew);
             this.Controls.Add(this.rbUseExisting);
             this.Controls.Add(this.rbCreateNew);
-            this.Name = "ChooseHICProjectDialog";
+            this.Name = "ChooseLoadDirectoryUI";
             this.Text = "ChooseHICProjectDialog";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -445,9 +445,9 @@ MrMurder,2001-01-01,Yella");
             pt.Check(new ThrowImmediatelyCheckNotifier());
         }
 
-        private HICProjectDirectory SetupLoadDirectory(LoadMetadata lmd)
+        private LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
         {
-            var projectDirectory = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "MyLoadDir", true);
+            var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "MyLoadDir", true);
             lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
             lmd.SaveToDatabase();
 

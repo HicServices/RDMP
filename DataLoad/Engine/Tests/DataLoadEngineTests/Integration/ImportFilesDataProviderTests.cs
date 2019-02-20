@@ -36,9 +36,9 @@ namespace DataLoadEngineTests.Integration
             File.WriteAllText(originpath,"fish");
 
             var job = new ThrowImmediatelyDataLoadJob();
-            var mockProjectDirectory = MockRepository.GenerateMock<IHICProjectDirectory>();
+            var mockProjectDirectory = MockRepository.GenerateMock<ILoadDirectory>();
             mockProjectDirectory.Expect(p => p.ForLoading).Return(targetDir);
-            job.HICProjectDirectory = mockProjectDirectory;
+            job.LoadDirectory = mockProjectDirectory;
 
 
             //Create the provider

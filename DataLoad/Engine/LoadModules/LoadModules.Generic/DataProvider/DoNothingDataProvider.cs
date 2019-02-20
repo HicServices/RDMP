@@ -21,7 +21,7 @@ namespace LoadModules.Generic.DataProvider
     /// </summary>
     public class DoNothingDataProvider : IDataProvider
     {
-        public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
         {
             
         }

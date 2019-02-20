@@ -107,7 +107,7 @@ namespace DataLoadEngineTests.Integration
 
             pt1.CreateArgumentsForClassIfNotExists<TestCachedFileRetriever>();
 
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"delme", true);
+            var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"delme", true);
             _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
             _lmd.SaveToDatabase();
             try
@@ -130,7 +130,7 @@ namespace DataLoadEngineTests.Integration
             pt1.Name = "Cache1";
             pt1.SaveToDatabase();
 
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "delme", true);
+            var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "delme", true);
             _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
             _lmd.SaveToDatabase();
 
@@ -161,7 +161,7 @@ namespace DataLoadEngineTests.Integration
             _cp.CacheFillProgress = new DateTime(2010, 1, 1);
             _cp.SaveToDatabase();
 
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "delme", true);
+            var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "delme", true);
             _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
             _lmd.SaveToDatabase();
             

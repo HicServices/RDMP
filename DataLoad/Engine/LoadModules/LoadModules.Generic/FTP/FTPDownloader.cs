@@ -41,7 +41,7 @@ namespace LoadModules.Generic.FTP
         private bool _useSSL = false;
 
         protected List<string> _filesRetrieved = new List<string>();
-        private IHICProjectDirectory _directory;
+        private ILoadDirectory _directory;
 
         [DemandsInitialization("Determines the behaviour of the system when no files are found on the server.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
         public bool SendLoadNotRequiredIfFileNotFound { get; set; }
@@ -62,9 +62,9 @@ namespace LoadModules.Generic.FTP
         public string RemoteDirectory { get; set; }
 
 
-        public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
         {
-            _directory = hicProjectDirectory;
+            _directory = LoadDirectory;
         }
 
         public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -83,7 +83,7 @@ namespace LoadModules.Generic.FTP
             return new FTPDownloader();
         }
 
-        public bool Validate(IHICProjectDirectory destination)
+        public bool Validate(ILoadDirectory destination)
         {
             SetupFTP();
             return GetFileList().Any();
@@ -99,7 +99,7 @@ namespace LoadModules.Generic.FTP
                 throw new NullReferenceException("FTPServer is not set up correctly it must have Server property filled in" + FTPServer);
         }
 
-        private ExitCodeType DownloadFilesOnFTP(IHICProjectDirectory destination, IDataLoadEventListener listener)
+        private ExitCodeType DownloadFilesOnFTP(ILoadDirectory destination, IDataLoadEventListener listener)
         {
             string[] files = GetFileList();
 
@@ -141,7 +141,7 @@ namespace LoadModules.Generic.FTP
             IsImaginaryFile
         }
 
-        protected SkipReason GetSkipActionForFile(string file, IHICProjectDirectory destination)
+        protected SkipReason GetSkipActionForFile(string file, ILoadDirectory destination)
         {
             if (file.StartsWith("."))
                 return SkipReason.IsImaginaryFile;
@@ -220,7 +220,7 @@ namespace LoadModules.Generic.FTP
             }
         }
 
-        protected virtual void Download(string file, IHICProjectDirectory destination,IDataLoadEventListener job)
+        protected virtual void Download(string file, ILoadDirectory destination,IDataLoadEventListener job)
         {
 
             Stopwatch s = new Stopwatch();

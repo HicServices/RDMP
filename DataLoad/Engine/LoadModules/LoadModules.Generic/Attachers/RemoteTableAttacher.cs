@@ -114,9 +114,9 @@ namespace LoadModules.Generic.Attachers
         }
 
 
-        public override void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public override void Initialize(ILoadDirectory LoadDirectory, DiscoveredDatabase dbInfo)
         {
-            base.Initialize(hicProjectDirectory,dbInfo);
+            base.Initialize(LoadDirectory,dbInfo);
 
             try
             {
@@ -131,7 +131,7 @@ namespace LoadModules.Generic.Attachers
         public override void Check(ICheckNotifier notifier)
         {
             //if we have been initialized
-            if (HICProjectDirectory != null)
+            if (LoadDirectory != null)
             {
                 try
                 {
@@ -170,7 +170,7 @@ namespace LoadModules.Generic.Attachers
             }
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    "HICProjectDirectory was null in Check() for class RemoteTableAttacher",
+                    "LoadDirectory was null in Check() for class RemoteTableAttacher",
                     CheckResult.Warning, null));
 
 

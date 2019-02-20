@@ -550,7 +550,7 @@ namespace CatalogueLibrary.Providers
             AddChildren(processTasksNode, descendancy.Add(processTasksNode));
             childObjects.Add(processTasksNode);
 
-            childObjects.Add(new HICProjectDirectoryNode(lmd));
+            childObjects.Add(new LoadDirectoryNode(lmd));
 
             AddToDictionaries(new HashSet<object>(childObjects), descendancy);
         }

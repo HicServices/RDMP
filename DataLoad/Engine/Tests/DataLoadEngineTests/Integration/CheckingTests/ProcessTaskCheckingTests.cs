@@ -37,7 +37,7 @@ namespace DataLoadEngineTests.Integration.CheckingTests
             _dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"ProcessTaskCheckingTests"));
             _dir.Create();
 
-            var hicdir = HICProjectDirectory.CreateDirectoryStructure(_dir, "ProjDir", true);
+            var hicdir = LoadDirectory.CreateDirectoryStructure(_dir, "ProjDir", true);
             _lmd.LocationOfFlatFiles = hicdir.RootPath.FullName;
             _lmd.SaveToDatabase();
 
@@ -132,7 +132,7 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         public void MEFCompatibleType_NoArgs()
         {
 
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "DelMeProjDir", true);
+            var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "DelMeProjDir", true);
             try
             {
                 _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
@@ -158,7 +158,7 @@ namespace DataLoadEngineTests.Integration.CheckingTests
         [Test]
         public void MEFCompatibleType_Passes()
         {
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "DelMeProjDir", true);
+            var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "DelMeProjDir", true);
             try
             {
                 _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;

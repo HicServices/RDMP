@@ -17,7 +17,7 @@ namespace CatalogueLibrary.Data.DataLoad
     {
         /// <summary>
         /// The root working directory for a load.  Should have subdirectories like Data, Executables etc
-        /// <para>For structured access to this use a new <see cref="IHICProjectDirectory"/></para>
+        /// <para>For structured access to this use a new <see cref="ILoadDirectory"/></para>
         /// </summary>
         string LocationOfFlatFiles { get; set; }
 

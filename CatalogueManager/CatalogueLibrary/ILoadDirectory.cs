@@ -13,7 +13,7 @@ namespace CatalogueLibrary
     /// Defines a rigid file structure in which there is a \Data\ diretory \ForLoading directory \ForArchiving\ etc.  This structure is used to drive the DLE and allows 
     /// for standardisation of structure within a dataset directory (i.e. we always load from ForLoading and then move them after loading into ForArchiving).  
     /// </summary>
-    public interface IHICProjectDirectory
+    public interface ILoadDirectory
     {
         /// <summary>
         /// The directory for storing files that should be loaded during DLE execution.  The contents of this folder will be archived after a succesful

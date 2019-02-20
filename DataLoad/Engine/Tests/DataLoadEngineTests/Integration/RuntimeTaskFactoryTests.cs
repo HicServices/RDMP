@@ -34,7 +34,7 @@ namespace DataLoadEngineTests.Integration
             
             try
             {
-                var ex = Assert.Throws<Exception>(() => f.Create(task, new StageArgs(LoadStage.AdjustRaw, DiscoveredDatabaseICanCreateRandomTablesIn, MockRepository.GenerateMock<IHICProjectDirectory>())));
+                var ex = Assert.Throws<Exception>(() => f.Create(task, new StageArgs(LoadStage.AdjustRaw, DiscoveredDatabaseICanCreateRandomTablesIn, MockRepository.GenerateMock<ILoadDirectory>())));
                 Assert.IsTrue(ex.InnerException.Message.Contains("marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
             }
             finally 

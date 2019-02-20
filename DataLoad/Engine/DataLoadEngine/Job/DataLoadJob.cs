@@ -25,13 +25,13 @@ namespace DataLoadEngine.Job
 {
     /// <summary>
     /// Documents an ongoing load that is executing in the Data Load Engine.  This includes the load configuration (LoadMetadata), Logging object (DataLoadInfo),
-    /// file system (HICProjectDirectory) etc.
+    /// file system (LoadDirectory) etc.
     /// </summary>
     public class DataLoadJob : IDataLoadJob
     {
         public string Description { get; private set; }
         public IDataLoadInfo DataLoadInfo { get; private set; }
-        public IHICProjectDirectory HICProjectDirectory { get; set; }
+        public ILoadDirectory LoadDirectory { get; set; }
         private readonly IDataLoadEventListener _listener;
 
         public int JobID { get; set; }
@@ -51,12 +51,12 @@ namespace DataLoadEngine.Job
 
         private string _loggingTask;
 
-        public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator,string description, ILogManager logManager, ILoadMetadata loadMetadata, IHICProjectDirectory hicProjectDirectory, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+        public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator,string description, ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory LoadDirectory, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
         {
             _logManager = logManager;
             RepositoryLocator = repositoryLocator;
             LoadMetadata = loadMetadata;
-            HICProjectDirectory = hicProjectDirectory;
+            LoadDirectory = LoadDirectory;
             Configuration = configuration;
             _listener = listener;
             Description = description;
@@ -191,7 +191,7 @@ namespace DataLoadEngine.Job
 
         public string ArchiveFilepath
         {
-            get { return Path.Combine(HICProjectDirectory.ForArchiving.FullName, DataLoadInfo.ID + ".zip"); }
+            get { return Path.Combine(LoadDirectory.ForArchiving.FullName, DataLoadInfo.ID + ".zip"); }
         }
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)

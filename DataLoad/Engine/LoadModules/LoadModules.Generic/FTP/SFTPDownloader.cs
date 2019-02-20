@@ -22,7 +22,7 @@ namespace LoadModules.Generic.FTP
     /// </summary>
     public class SFTPDownloader:FTPDownloader
     {
-        protected override void Download(string file, IHICProjectDirectory destination,IDataLoadEventListener job)
+        protected override void Download(string file, ILoadDirectory destination,IDataLoadEventListener job)
         {
             if (file.Contains("/") || file.Contains("\\"))
                 throw new Exception("Was not expecting a relative path here");
