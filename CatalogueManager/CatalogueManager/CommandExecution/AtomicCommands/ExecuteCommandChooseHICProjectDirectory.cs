@@ -33,7 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dialog = new ChooseLoadDirectoryUI();
+            var dialog = new ChooseLoadDirectoryUI(_loadMetadata);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 _loadMetadata.LocationOfFlatFiles = dialog.Result.RootPath.FullName;

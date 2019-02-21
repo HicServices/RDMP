@@ -9,6 +9,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary;
+using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Repositories;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
@@ -35,9 +37,13 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
 
         Regex _endsWithDataFolder = new Regex(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
 
-        public ChooseLoadDirectoryUI()
+        public ChooseLoadDirectoryUI(ILoadMetadata loadMetadata)
         {
             InitializeComponent();
+            
+            var help = ((CatalogueRepository)loadMetadata.Repository).CommentStore.GetDocumentationIfExists("ILoadMetadata.LocationOfFlatFiles",false,true);
+            
+            helpIcon1.SetHelpText("Location Of Flat Files",help);
         }
 
         private void rb_CheckedChanged(object sender, EventArgs e)

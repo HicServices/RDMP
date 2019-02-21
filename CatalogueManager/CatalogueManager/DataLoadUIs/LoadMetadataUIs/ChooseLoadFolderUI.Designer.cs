@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChooseLoadDirectoryUI));
             this.rbCreateNew = new System.Windows.Forms.RadioButton();
             this.rbUseExisting = new System.Windows.Forms.RadioButton();
             this.tbCreateNew = new System.Windows.Forms.TextBox();
@@ -41,6 +42,7 @@
             this.btnCreateNewBrowse = new System.Windows.Forms.Button();
             this.lblDataIsReservedWordExisting = new System.Windows.Forms.Label();
             this.lblDataIsReservedWordNew = new System.Windows.Forms.Label();
+            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             this.SuspendLayout();
             // 
             // rbCreateNew
@@ -48,10 +50,10 @@
             this.rbCreateNew.AutoSize = true;
             this.rbCreateNew.Location = new System.Drawing.Point(12, 12);
             this.rbCreateNew.Name = "rbCreateNew";
-            this.rbCreateNew.Size = new System.Drawing.Size(315, 17);
+            this.rbCreateNew.Size = new System.Drawing.Size(323, 17);
             this.rbCreateNew.TabIndex = 0;
             this.rbCreateNew.TabStop = true;
-            this.rbCreateNew.Text = "Create New (new folder with all correct folders will be created)";
+            this.rbCreateNew.Text = "Create New (new folder with all required folders created for you)";
             this.rbCreateNew.UseVisualStyleBackColor = true;
             this.rbCreateNew.CheckedChanged += new System.EventHandler(this.rb_CheckedChanged);
             // 
@@ -180,11 +182,21 @@
             this.lblDataIsReservedWordNew.Text = "Project directories cannot end with \"Data\"";
             this.lblDataIsReservedWordNew.Visible = false;
             // 
-            // ChooseHICProjectDialog
+            // helpIcon1
+            // 
+            this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
+            this.helpIcon1.Location = new System.Drawing.Point(806, 2);
+            this.helpIcon1.Name = "helpIcon1";
+            this.helpIcon1.Size = new System.Drawing.Size(19, 19);
+            this.helpIcon1.TabIndex = 7;
+            // 
+            // ChooseLoadDirectoryUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(831, 174);
+            this.Controls.Add(this.helpIcon1);
             this.Controls.Add(this.lblDataIsReservedWordNew);
             this.Controls.Add(this.lblDataIsReservedWordExisting);
             this.Controls.Add(this.btnCreateNewBrowse);
@@ -199,7 +211,7 @@
             this.Controls.Add(this.rbUseExisting);
             this.Controls.Add(this.rbCreateNew);
             this.Name = "ChooseLoadDirectoryUI";
-            this.Text = "ChooseHICProjectDialog";
+            this.Text = "ChooseLoadDirectoryUI";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -220,6 +232,7 @@
         private System.Windows.Forms.Button btnCreateNewBrowse;
         private System.Windows.Forms.Label lblDataIsReservedWordExisting;
         private System.Windows.Forms.Label lblDataIsReservedWordNew;
+        private ReusableUIComponents.HelpIcon helpIcon1;
 
     }
 }
