@@ -250,6 +250,21 @@ namespace ResearchDataManagementPlatform.Menus
 
             rdmpTaskBar1.SetWindowManager(_windowManager);
 
+            //menu is dynamic but we need to add something to it or it won't show arrow
+            newToolStripMenuItem.DropDownOpening += NewToolStripMenuItemOnDropDownOpening;
+            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+
+            // Location menu
+            LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(RepositoryLocator)));
+
+            _activator.Theme.ApplyTo(menuStrip1);
+        }
+
+        private void NewToolStripMenuItemOnDropDownOpening(object sender, EventArgs eventArgs)
+        {
+            //recreate this menu each time since it can change the IsImpossible status of stuff
+            newToolStripMenuItem.DropDownItems.Clear();
+            
             //Catalogue commands
             AddToNew(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator));
             AddToNew(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false));
@@ -266,20 +281,15 @@ namespace ResearchDataManagementPlatform.Menus
             AddToNew(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator));
             AddToNew(new ExecuteCommandCreateNewCohortFromFile(_activator));
             AddToNew(new ExecuteCommandCreateNewCohortFromCatalogue(_activator));
-            
+
             //Data export commands
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             AddToNew(new ExecuteCommandCreateNewExtractableDataSetPackage(_activator));
             AddToNew(new ExecuteCommandCreateNewDataExtractionProject(_activator));
-            AddToNew(new ExecuteCommandRelease(_activator){OverrideCommandName = "New Release..."});
+            AddToNew(new ExecuteCommandRelease(_activator) { OverrideCommandName = "New Release..." });
 
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             AddToNew(new ExecuteCommandCreateANOVersion(_activator));
-
-            // Location menu
-            LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(RepositoryLocator)));
-
-            _activator.Theme.ApplyTo(menuStrip1);
         }
 
         private void AddToNew(IAtomicCommand cmd)
