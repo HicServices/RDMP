@@ -36,7 +36,7 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations
         
         private string _fk;
         
-        [DemandsInitialization("Set one of these if you plan to upload lists of patients and want RDMP to automatically allocate an anonymous ReleaseIdentifier", TypeOf = typeof(IAllocateReleaseIdentifiers),DefaultValue=typeof(GuidReleaseIdentifierAllocator))]
+        [DemandsInitialization("Set one of these if you plan to upload lists of patients and want RDMP to automatically allocate an anonymous ReleaseIdentifier", TypeOf = typeof(IAllocateReleaseIdentifiers),DefaultValue=typeof(ProjectConsistentGuidReleaseIdentifierAllocator))]
         public Type ReleaseIdentifierAllocator { get; set; }
 
         [DemandsInitialization(@"Determines behaviour when you are creating a new version of an existing cohort.  If true then the old (replaced) cohort will be marked IsDeprecated",DefaultValue=true)]
