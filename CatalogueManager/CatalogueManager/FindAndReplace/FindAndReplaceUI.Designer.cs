@@ -33,6 +33,7 @@
             this.olvProperty = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvValue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.gbControls = new System.Windows.Forms.GroupBox();
+            this.cbMatchCase = new System.Windows.Forms.CheckBox();
             this.btnFind = new System.Windows.Forms.Button();
             this.btnReplaceAll = new System.Windows.Forms.Button();
             this.tbReplace = new System.Windows.Forms.TextBox();
@@ -42,7 +43,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.rbSqlAttribute = new System.Windows.Forms.RadioButton();
             this.rbLocationsAttribute = new System.Windows.Forms.RadioButton();
-            this.cbMatchCase = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.olvAllObjects)).BeginInit();
             this.gbControls.SuspendLayout();
             this.SuspendLayout();
@@ -65,7 +65,7 @@
             this.olvAllObjects.RowHeight = 19;
             this.olvAllObjects.ShowGroups = false;
             this.olvAllObjects.Size = new System.Drawing.Size(956, 687);
-            this.olvAllObjects.TabIndex = 1;
+            this.olvAllObjects.TabIndex = 0;
             this.olvAllObjects.Text = "label1";
             this.olvAllObjects.UseCompatibleStateImageBehavior = false;
             this.olvAllObjects.UseFiltering = true;
@@ -111,9 +111,19 @@
             this.gbControls.Location = new System.Drawing.Point(0, 687);
             this.gbControls.Name = "gbControls";
             this.gbControls.Size = new System.Drawing.Size(956, 100);
-            this.gbControls.TabIndex = 2;
+            this.gbControls.TabIndex = 1;
             this.gbControls.TabStop = false;
             this.gbControls.Text = "Find and Replace";
+            // 
+            // cbMatchCase
+            // 
+            this.cbMatchCase.AutoSize = true;
+            this.cbMatchCase.Location = new System.Drawing.Point(600, 16);
+            this.cbMatchCase.Name = "cbMatchCase";
+            this.cbMatchCase.Size = new System.Drawing.Size(83, 17);
+            this.cbMatchCase.TabIndex = 4;
+            this.cbMatchCase.Text = "Match Case";
+            this.cbMatchCase.UseVisualStyleBackColor = true;
             // 
             // btnFind
             // 
@@ -130,7 +140,7 @@
             this.btnReplaceAll.Location = new System.Drawing.Point(801, 40);
             this.btnReplaceAll.Name = "btnReplaceAll";
             this.btnReplaceAll.Size = new System.Drawing.Size(75, 23);
-            this.btnReplaceAll.TabIndex = 3;
+            this.btnReplaceAll.TabIndex = 8;
             this.btnReplaceAll.Text = "Replace All";
             this.btnReplaceAll.UseVisualStyleBackColor = true;
             this.btnReplaceAll.Click += new System.EventHandler(this.btnReplaceAll_Click);
@@ -140,7 +150,7 @@
             this.tbReplace.Location = new System.Drawing.Point(353, 42);
             this.tbReplace.Name = "tbReplace";
             this.tbReplace.Size = new System.Drawing.Size(442, 20);
-            this.tbReplace.TabIndex = 2;
+            this.tbReplace.TabIndex = 7;
             // 
             // tbFind
             // 
@@ -157,7 +167,7 @@
             this.label3.Location = new System.Drawing.Point(514, 65);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(127, 13);
-            this.label3.TabIndex = 1;
+            this.label3.TabIndex = 9;
             this.label3.Text = "(This Cannot be undone!)";
             // 
             // label2
@@ -166,7 +176,7 @@
             this.label2.Location = new System.Drawing.Point(297, 45);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(50, 13);
-            this.label2.TabIndex = 1;
+            this.label2.TabIndex = 6;
             this.label2.Text = "Replace:";
             // 
             // label1
@@ -184,7 +194,7 @@
             this.rbSqlAttribute.Location = new System.Drawing.Point(16, 43);
             this.rbSqlAttribute.Name = "rbSqlAttribute";
             this.rbSqlAttribute.Size = new System.Drawing.Size(40, 17);
-            this.rbSqlAttribute.TabIndex = 0;
+            this.rbSqlAttribute.TabIndex = 5;
             this.rbSqlAttribute.TabStop = true;
             this.rbSqlAttribute.Text = "Sql";
             this.rbSqlAttribute.UseVisualStyleBackColor = true;
@@ -202,16 +212,6 @@
             this.rbLocationsAttribute.Text = "Physical Locations Referenced";
             this.rbLocationsAttribute.UseVisualStyleBackColor = true;
             this.rbLocationsAttribute.CheckedChanged += new System.EventHandler(this.CheckedChanged);
-            // 
-            // cbMatchCase
-            // 
-            this.cbMatchCase.AutoSize = true;
-            this.cbMatchCase.Location = new System.Drawing.Point(600, 16);
-            this.cbMatchCase.Name = "cbMatchCase";
-            this.cbMatchCase.Size = new System.Drawing.Size(83, 17);
-            this.cbMatchCase.TabIndex = 4;
-            this.cbMatchCase.Text = "Match Case";
-            this.cbMatchCase.UseVisualStyleBackColor = true;
             // 
             // FindAndReplaceUI
             // 

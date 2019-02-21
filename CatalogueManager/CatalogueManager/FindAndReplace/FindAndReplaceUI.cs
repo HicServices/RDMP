@@ -72,7 +72,9 @@ namespace CatalogueManager.FindAndReplace
                 foreach (PropertyInfo propertyInfo in _sqlPropertyFinder.GetProperties(o))
                     _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
+            olvAllObjects.BeginUpdate();
             olvAllObjects.AddObjects(_locationNodes);
+            olvAllObjects.EndUpdate();
         }
 
         private void GetAllObjects(IActivateItems activator)
@@ -130,6 +132,7 @@ namespace CatalogueManager.FindAndReplace
         {
             var cb = (RadioButton)sender;
 
+            olvAllObjects.BeginUpdate();
             if(cb.Checked)
             {
                 olvAllObjects.ClearObjects();
@@ -142,6 +145,7 @@ namespace CatalogueManager.FindAndReplace
 
                 olvAllObjects.ResumeLayout();
             }
+            olvAllObjects.EndUpdate();
         }
         
         private void btnReplaceAll_Click(object sender, EventArgs e)
