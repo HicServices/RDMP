@@ -155,6 +155,8 @@ namespace CatalogueLibrary.Providers
         public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
         public Dictionary<int, HashSet<int>> GovernanceCoverage { get; private set; }
 
+        public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
+
         public CatalogueChildProvider(CatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
             PluginChildProviders = pluginChildProviders;
@@ -203,6 +205,7 @@ namespace CatalogueLibrary.Providers
             AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
             AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
+            AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
 
             AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(repository).ToDictionary(i => i.ID, o => o);
             _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);

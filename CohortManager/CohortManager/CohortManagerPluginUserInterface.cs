@@ -39,12 +39,12 @@ namespace CohortManager
             var aggregate = o as AggregateConfiguration;
             var aggregateContainer = o as CohortAggregateContainer;
 
-            //if it is a cohort aggregate
-            if (aggregate != null && aggregate.IsCohortIdentificationAggregate)
+            //if it is a cohort aggregate (but not joinables since they don't match patients they match records and select many columns)
+            if (aggregate != null && aggregate.IsCohortIdentificationAggregate && !aggregate.IsJoinablePatientIndexTable())
             {
                 //with a cic (it really should do!)
                 var cic = aggregate.GetCohortIdentificationConfigurationIfAny();
-                
+
                 if (cic != null)
                 {
                     //find other non cohort aggregates (graphs) 

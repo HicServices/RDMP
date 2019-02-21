@@ -21,6 +21,9 @@ namespace CohortManager.CommandExecution.AtomicCommands
         public ExecuteCommandViewCohortAggregateGraph(IActivateItems activator, CohortSummaryAggregateGraphObjectCollection collection) : base(activator)
         {
             _collection = collection;
+
+            if(collection.CohortIfAny != null && collection.CohortIfAny.IsJoinablePatientIndexTable())
+                SetImpossible("Graphs cannot be generated for Patient Index tables");
         }
 
         public override string GetCommandHelp()

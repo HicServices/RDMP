@@ -113,6 +113,7 @@ namespace CohortManager.SubComponents
             tlvConfiguration.CanExpandGetter += CanExpandGetter;
             tlvConfiguration.ChildrenGetter += ChildrenGetter;
             olvAggregate.ImageGetter += ImageGetter;
+            olvAggregate.AspectGetter += ToString_AspectGetter;
             tlvConfiguration.RowFormatter += RowFormatter;
             olvIdentifierCount.AspectGetter += RowCountAspectGetter;
             refreshThreadCountPeriodically.Start();
@@ -125,6 +126,17 @@ namespace CohortManager.SubComponents
 
             AssociatedCollection = RDMPCollection.Cohort;
             
+        }
+
+        private object ToString_AspectGetter(object rowObject)
+        {
+            if (rowObject == null)
+                return null;
+
+            if (rowObject is JoinableCollectionNode)
+                return rowObject + " (Counts are of returned rows)";
+            
+            return rowObject.ToString();
         }
 
         #region Layout, Children Getting, Appearance etc
@@ -177,7 +189,7 @@ namespace CohortManager.SubComponents
 
             var joinable = rowObject as JoinableTask;
             if (joinable != null)
-                return joinable.IsUnused ? CatalogueIcons.Warning : CatalogueIcons.CohortAggregate;
+                return CatalogueIcons.PatientIndexTable;
 
             return null;
         }

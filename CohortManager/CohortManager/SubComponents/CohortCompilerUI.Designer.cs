@@ -91,7 +91,7 @@ namespace CohortManager.SubComponents
             // 
             // olvAggregate
             // 
-            this.olvAggregate.AspectName = "ToString";
+            this.olvAggregate.AspectName = "";
             this.olvAggregate.FillsFreeSpace = true;
             this.olvAggregate.Sortable = false;
             this.olvAggregate.Text = "Aggregate";
@@ -107,7 +107,7 @@ namespace CohortManager.SubComponents
             // 
             this.olvIdentifierCount.AspectName = "";
             this.olvIdentifierCount.Sortable = false;
-            this.olvIdentifierCount.Text = "Identifier Count";
+            this.olvIdentifierCount.Text = "Count";
             this.olvIdentifierCount.Width = 90;
             // 
             // olvCumulativeTotal
@@ -140,6 +140,13 @@ namespace CohortManager.SubComponents
             // 
             this.olvCachedQueryUseCount.AspectName = "GetCachedQueryUseCount";
             this.olvCachedQueryUseCount.Text = "Cached";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.TabIndex = 0;
             // 
             // refreshThreadCountPeriodically
             // 

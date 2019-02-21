@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
@@ -24,6 +25,7 @@ namespace CatalogueLibrary.Providers
     {
         private ICoreChildProvider _childProvider;
         private HashSet<int> _orphanCatalogueItems = new HashSet<int>();
+        private HashSet<int> _usedJoinables;
 
         /// <inheritdoc/>
         public void RefreshProblems(ICoreChildProvider childProvider)
@@ -39,6 +41,10 @@ namespace CatalogueLibrary.Providers
 
                 //store just the ID for performance
                 .Select(i=>i.ID));
+
+            _usedJoinables = new HashSet<int>(
+                childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
+                    ju => ju.JoinableCohortAggregateConfiguration_ID));
         }
 
         /// <inheritdoc/>
@@ -72,6 +78,18 @@ namespace CatalogueLibrary.Providers
 
             if (o is IFilter)
                 return DescribeProblem((IFilter) o);
+
+            if (o is AggregateConfiguration)
+                return DescribeProblem((AggregateConfiguration) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(AggregateConfiguration aggregateConfiguration)
+        {
+            if (aggregateConfiguration.IsJoinablePatientIndexTable())
+                if (!_usedJoinables.Contains(aggregateConfiguration.JoinableCohortAggregateConfiguration.ID))
+                    return "Patient Index Table is not joined to any cohort sets";
 
             return null;
         }
