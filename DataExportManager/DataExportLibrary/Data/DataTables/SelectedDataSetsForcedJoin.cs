@@ -7,9 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
@@ -19,14 +16,7 @@ using MapsDirectlyToDatabaseTable.Injection;
 
 namespace DataExportLibrary.Data.DataTables
 {
-    /// <summary>
-    /// Specifies that the given data export dataset in configuration x (SelectedDataSets) should include a mandatory join on the table TableInfo regardless of 
-    /// what columns are selected in the extraction query.  The most common use case for this is to extract a dataset with WhereSQL that references a custom data
-    /// table e.g. 'Questionnaire answer x > 5'.  In that scenario the <see cref="TableInfo"/> would be the 'Project Specific Catalogue' dataset 'Questionnaire'
-    /// and the <see cref="SelectedDataSets"/> would be the dataset you were extracting in your study e.g. 'biochemistry'.
-    /// 
-    /// <para>A <see cref="JoinInfo"/> must still exist to tell <see cref="CatalogueLibrary.QueryBuilding.QueryBuilder"/> how to write the Join section of the query.</para>
-    /// </summary>
+    /// <inheritdoc/>
     public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForcedJoin, IInjectKnown<TableInfo>
     {
         #region Database Properties
@@ -37,11 +27,14 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
+        /// <inheritdoc/>
         public int SelectedDataSets_ID
         {
             get { return _selectedDataSets_ID; }
             set { SetField(ref _selectedDataSets_ID, value); }
         }
+
+        /// <inheritdoc/>
         public int TableInfo_ID
         {
             get { return _tableInfo_ID; }
@@ -57,6 +50,13 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion
 
+        /// <summary>
+        /// Creates a new declaration in the <paramref name="repository"/> database that the given <paramref name="tableInfo"/> should
+        /// always be joined against when extract the <paramref name="sds"/>.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="sds"></param>
+        /// <param name="tableInfo"></param>
         public SelectedDataSetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, TableInfo tableInfo)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
@@ -78,11 +78,12 @@ namespace DataExportLibrary.Data.DataTables
             ClearAllInjections();
         }
 
+        /// <inheritdoc/>
         public void InjectKnown(TableInfo instance)
         {
             _knownTableInfo = new Lazy<TableInfo>(()=>instance);
         }
-
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _knownTableInfo = new Lazy<TableInfo>(FetchTableInfo);

@@ -36,12 +36,13 @@ namespace DataExportLibrary.Data.LinkCreators
         private Lazy<IExtractionConfiguration> _extractionConfiguration;
         private Lazy<ISelectedDataSetsForcedJoin[]> _selectedDatasetsForcedJoins;
 
-
+        /// <inheritdoc/>
         public int ExtractionConfiguration_ID
         {
             get { return _extractionConfiguration_ID; }
             set { SetField(ref _extractionConfiguration_ID, value); }
         }
+        /// <inheritdoc/>
         public int ExtractableDataSet_ID
         {
             get { return _extractableDataSet_ID; }
@@ -51,6 +52,7 @@ namespace DataExportLibrary.Data.LinkCreators
                 SetField(ref _extractableDataSet_ID, value);
             }
         }
+        /// <inheritdoc/>
         public int? RootFilterContainer_ID
         {
             get { return _rootFilterContainer_ID; }
@@ -83,6 +85,7 @@ namespace DataExportLibrary.Data.LinkCreators
         public IExtractableDataSet ExtractableDataSet {get { return _extractableDataSet.Value; }
         }
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins {
             get { return _selectedDatasetsForcedJoins.Value; }}
@@ -97,6 +100,13 @@ namespace DataExportLibrary.Data.LinkCreators
             RootFilterContainer_ID = ObjectToNullableInt(r["RootFilterContainer_ID"]);
         }
 
+        /// <summary>
+        /// Declares in the <paramref name="repository"/> database that the given <paramref name="dataSet"/> should be extracted as part of the given <see cref="configuration"/>.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="configuration"></param>
+        /// <param name="dataSet"></param>
+        /// <param name="rootContainerIfAny">Adds the restriction that the extraction SQL should include the WHERE logic in this container</param>
         public SelectedDataSets(IDataExportRepository repository, ExtractionConfiguration configuration, IExtractableDataSet dataSet, FilterContainer rootContainerIfAny)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
@@ -110,16 +120,22 @@ namespace DataExportLibrary.Data.LinkCreators
             InjectKnown(dataSet);
         }
         
+        /// <summary>
+        /// Returns the <see cref="ExtractableDataSet"/> name
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return ExtractableDataSet.ToString();
         }
 
+        /// <inheritdoc/>
         public string GetDeleteMessage()
         {
             return "remove '" + ExtractableDataSet + "' from ExtractionConfiguration '" + ExtractionConfiguration + "'";
         }
 
+        /// <inheritdoc/>
         public void InjectKnown(IExtractableDataSet instance)
         {
             if(instance.ID != ExtractableDataSet_ID)
@@ -128,6 +144,7 @@ namespace DataExportLibrary.Data.LinkCreators
             _extractableDataSet = new Lazy<IExtractableDataSet>(()=>instance);
         }
 
+        /// <inheritdoc/>
         public void InjectKnown(IExtractionConfiguration instance)
         {
             _extractionConfiguration = new Lazy<IExtractionConfiguration>(FetchExtractionConfiguration);
@@ -137,12 +154,12 @@ namespace DataExportLibrary.Data.LinkCreators
         {
             return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
         }
-
+        /// <inheritdoc/>
         public void InjectKnown(ISelectedDataSetsForcedJoin[] instances)
         {
             _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(() => instances);
         }
-
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(FetchForcedJoins);

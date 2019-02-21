@@ -43,22 +43,32 @@ namespace DataExportLibrary.Data.DataTables
         private string _comment;
         private int _extractionConfiguration_ID;
 
+        /// <inheritdoc/>
         [Sql]
         public string ParameterSQL
         {
             get { return _parameterSQL; }
             set { SetField(ref _parameterSQL, value); }
         }
+
+        /// <inheritdoc/>
         public string Value
         {
             get { return _value; }
             set { SetField(ref _value, value); }
         }
+
+        /// <inheritdoc/>
         public string Comment
         {
             get { return _comment; }
             set { SetField(ref _comment, value); }
         }
+
+        /// <summary>
+        /// Which <see cref="ExtractionConfiguration"/> the parameter is declared on.  This parameter will be available for referencing in any <see cref="ISelectedDataSets"/> which
+        /// are part of the configuration.
+        /// </summary>
         public int ExtractionConfiguration_ID
         {
             get { return _extractionConfiguration_ID; }
@@ -68,11 +78,19 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
 
         #region Relationships
+        
+        /// <inheritdoc cref="ExtractionConfiguration_ID"/>
         [NoMappingToDatabase]
         public ExtractionConfiguration ExtractionConfiguration { get{return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);} }
 
         #endregion
 
+        /// <summary>
+        /// Creates a new parameter into the <paramref name="repository"/> database acting as a global parameter for all <see cref="ISelectedDataSets"/> in the <paramref name="configuration"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="configuration"></param>
+        /// <param name="parameterSQL"></param>
         public GlobalExtractionFilterParameter(IDataExportRepository repository, ExtractionConfiguration configuration, string parameterSQL)
         {
             Repository = repository;
@@ -84,6 +102,12 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
+
+        /// <summary>
+        /// Reads an existing instance out of the database
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="r"></param>
         internal GlobalExtractionFilterParameter(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
@@ -93,17 +117,23 @@ namespace DataExportLibrary.Data.DataTables
             Comment = r["Comment"] as string;
         }
 
+        /// <summary>
+        /// Returns <see cref="ParameterName"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return ParameterName;
         }
 
+
+        /// <inheritdoc/>
         public void Check(ICheckNotifier notifier)
         {
             new ParameterSyntaxChecker(this).Check(notifier);
         }
 
-        
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             if (_syntaxHelper == null)
@@ -112,19 +142,21 @@ namespace DataExportLibrary.Data.DataTables
             return _syntaxHelper;
         }
 
-
+        /// <inheritdoc/>
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
             return ExtractionConfiguration;
         }
 
         private IQuerySyntaxHelper _syntaxHelper;
-        
+
+        /// <inheritdoc/>
         public void InjectKnown(IQuerySyntaxHelper instance)
         {
             _syntaxHelper = instance;
         }
 
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _syntaxHelper = null;

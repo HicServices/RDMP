@@ -16,11 +16,19 @@ namespace DataExportLibrary.Data
     {
         private readonly IProject _project;
 
+        /// <summary>
+        /// Creates a hashing salt based on the given <paramref name="project"/>'s <see cref="IProject.ProjectNumber"/>
+        /// </summary>
+        /// <param name="project"></param>
         public HICProjectSalt(IProject project)
         {
             _project = project;
         }
 
+        /// <summary>
+        /// Returns the <see cref="IProject.ProjectNumber"/> (set during construction).
+        /// </summary>
+        /// <returns></returns>
         public string GetSalt()
         {
             return _project.ProjectNumber.ToString();
