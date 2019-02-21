@@ -106,8 +106,7 @@ namespace DatabaseCreation
 
             CreatePipeline("CREATE COHORT:By Executing Cohort Identification Configuration",typeof (CohortIdentificationConfigurationSource), typeof (BasicCohortDestination));
 
-            var customDataCsvPipe = CreatePipeline("IMPORT COHORT CUSTOM DATA:From CSV File", typeof (DelimitedFlatFileDataFlowSource), null);
-            SetCSVSourceDelimiterToComma(customDataCsvPipe);
+            CreatePipeline("CREATE COHORT: From Catalogue", typeof(PatientIdentifierColumnSource), typeof(BasicCohortDestination));
 
             CreatePipeline("IMPORT COHORT CUSTOM DATA: From PatientIndexTable", typeof (PatientIndexTableSource), null);
 
