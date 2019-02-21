@@ -170,6 +170,8 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             rdmpUserControlPanel.SetItemActivator(_activator);
             rdmpUserControlPanel.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
+            
+            objectSaverButton1.SetupFor(rdmpUserControlPanel,_catalogue,_activator.RefreshBus);
         }
 
 

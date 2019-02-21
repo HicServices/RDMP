@@ -52,14 +52,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             //get docs from masquerader if it has any
             if (_args.Masquerader != null)
             {
-                title = MEF.GetCSharpNameForType(_args.Masquerader.GetType());
+                title = GetTypeName(_args.Masquerader.GetType());
                 docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Masquerader.GetType());
             }
             
             //if not get them from the actual class
             if(docs == null)
             {
-                title = MEF.GetCSharpNameForType(_args.Model.GetType());
+                title = GetTypeName(_args.Model.GetType());
                 docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Model.GetType());
             }
 
@@ -72,6 +72,18 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 WideMessageBox.ShowKeywordHelp(title, docs);
             else
                 MessageBox.Show(title);
+        }
+
+        private string GetTypeName(Type t)
+        {
+            try
+            {
+                return MEF.GetCSharpNameForType(t);
+            }
+            catch (NotSupportedException)
+            {
+                return t.Name;
+            }
         }
     }
 }
