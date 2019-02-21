@@ -137,7 +137,7 @@ namespace CatalogueManager.Collections
                 Tree.ItemActivate += CommonItemActivation;
 
             Tree.CellRightClick += CommonRightClick;
-            Tree.SelectionChanged += (s,e)=>RefreshContextMenuStrip();
+            Tree.SelectedIndexChanged += (s,e)=>RefreshContextMenuStrip();
             
             if(iconColumn != null)
                 iconColumn.ImageGetter += ImageGetter;
