@@ -4,20 +4,38 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using CatalogueLibrary.Data.Pipelines;
+using ReusableLibraryCode;
+using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Nodes.PipelineNodes
 {
     /// <summary>
     /// Collection of all the Pipelines compatible with a given use case. 
     /// </summary>
-    class StandardPipelineUseCaseNode : SingletonNode
+    class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
     {
+        private readonly CommentStore _commentStore;
         public PipelineUseCase UseCase { get; set; }
 
-        public StandardPipelineUseCaseNode(string caption, PipelineUseCase useCase) : base(caption)
+        public StandardPipelineUseCaseNode(string caption, PipelineUseCase useCase,CommentStore commentStore) : base(caption)
         {
+            _commentStore = commentStore;
             UseCase = useCase;
+        }
+        
+        public string WhatIsThis()
+        {
+            var useCaseType = UseCase.GetType();
+
+            string useCaseDescription = string.Format("{0} \r\n {1}",
+                useCaseType.Name,
+                _commentStore.GetTypeDocumentationIfExists(useCaseType, false, true));
+
+            return "Collection of all the Pipelines compatible with a given use case.  This node's use case is:" 
+                   + Environment.NewLine
+                   +useCaseDescription;
         }
     }
 }

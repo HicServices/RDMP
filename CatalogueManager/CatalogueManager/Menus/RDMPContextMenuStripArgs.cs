@@ -19,13 +19,7 @@ namespace CatalogueManager.Menus
         
         public TreeListView Tree { get; set; }
         public object Model { get; set; }
-
-        /// <summary>
-        /// Optional - For use with <see cref="CatalogueManager.CommandExecution.AtomicCommands.ExecuteCommandShowKeywordHelp"/>.  Set this to some text in order that
-        /// it get's appended to the class documentation for the menu object being described.
-        /// </summary>
-        public string ExtraKeywordHelpText { get; set; }
-
+        
         public RDMPContextMenuStripArgs(IActivateItems itemActivator)
         {
             ItemActivator = itemActivator;

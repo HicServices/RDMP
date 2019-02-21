@@ -11,9 +11,9 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
+using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
@@ -60,13 +60,15 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if(docs == null)
             {
                 title = GetTypeName(_args.Model.GetType());
-                docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Model.GetType());
+
+                var knows = _args.Model as IKnowWhatIAm;
+                //does the class have state dependent alternative to xmldoc?
+                if (knows != null)
+                    docs = knows.WhatIsThis(); //yes
+                else
+                    docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Model.GetType());
             }
-
-            //if we have any extra text to append
-            if (!string.IsNullOrWhiteSpace(_args.ExtraKeywordHelpText))
-                docs += Environment.NewLine + _args.ExtraKeywordHelpText;
-
+            
             //if we have docs show them otherwise just the Type name
             if (docs != null)
                 WideMessageBox.ShowKeywordHelp(title, docs);

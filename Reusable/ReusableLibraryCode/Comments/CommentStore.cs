@@ -114,8 +114,9 @@ namespace ReusableLibraryCode.Comments
         /// <param name="maxLength"></param>
         /// <param name="type"></param>
         /// <param name="allowInterfaceInstead">If no docs are found for Type X then look for IX too</param>
+        /// <param name="formatAsParagraphs"></param>
         /// <returns></returns>
-        public string GetTypeDocumentationIfExists(int maxLength, Type type, bool allowInterfaceInstead = true)
+        public string GetTypeDocumentationIfExists(int maxLength, Type type, bool allowInterfaceInstead = true,bool formatAsParagraphs = false)
         {
             var docs = this[type.Name];
 
@@ -129,6 +130,9 @@ namespace ReusableLibraryCode.Comments
             if (string.IsNullOrWhiteSpace(docs))
                 return null;
 
+            if (formatAsParagraphs)
+                docs = FormatAsParagraphs(docs);
+
             maxLength = Math.Max(10, maxLength - 3);
 
             if (docs.Length <= maxLength)
@@ -136,10 +140,10 @@ namespace ReusableLibraryCode.Comments
 
             return docs.Substring(0, maxLength) + "...";
         }
-        /// <inheritdoc cref="GetTypeDocumentationIfExists(int,Type,bool)"/>
-        public string GetTypeDocumentationIfExists(Type type, bool allowInterfaceInstead = true)
+        /// <inheritdoc cref="GetTypeDocumentationIfExists(int,Type,bool,bool)"/>
+        public string GetTypeDocumentationIfExists(Type type, bool allowInterfaceInstead = true, bool formatAsParagraphs = false)
         {
-            return GetTypeDocumentationIfExists(int.MaxValue, type, allowInterfaceInstead);
+            return GetTypeDocumentationIfExists(int.MaxValue, type, allowInterfaceInstead, formatAsParagraphs);
         }
 
         /// <summary>

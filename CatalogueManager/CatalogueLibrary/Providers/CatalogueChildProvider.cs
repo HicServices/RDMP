@@ -30,6 +30,7 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Providers
 {
@@ -154,11 +155,15 @@ namespace CatalogueLibrary.Providers
         public GovernancePeriod[] AllGovernancePeriods { get; private set; }
         public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
         public Dictionary<int, HashSet<int>> GovernanceCoverage { get; private set; }
+        
+        private CommentStore _commentStore;
 
         public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
 
         public CatalogueChildProvider(CatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
+            _commentStore = repository.CommentStore;
+
             PluginChildProviders = pluginChildProviders;
             _errorsCheckNotifier = errorsCheckNotifier;
             
@@ -410,7 +415,7 @@ namespace CatalogueLibrary.Providers
 
             foreach (var useCase in useCases)
             {
-                var node = new StandardPipelineUseCaseNode(useCase.Key,useCase.Value);
+                var node = new StandardPipelineUseCaseNode(useCase.Key, useCase.Value, _commentStore);
 
                 foreach (Pipeline pipeline in AddChildren(node, descendancy.Add(node)))
                     unknownPipelines.Remove(pipeline);
