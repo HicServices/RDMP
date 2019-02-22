@@ -137,15 +137,6 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Automation\LogView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Automation\LogView.Designer.cs">
-      <DependentUpon>LogView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Automation\SingleDataLoadLogView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="CatalogueSummary\CatalogueSummaryScreen.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -234,12 +225,6 @@
     <Compile Include="Raceway\DatasetRaceway.Designer.cs">
       <DependentUpon>DatasetRaceway.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\AllLoadEventsUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\AllLoadEventsUI.Designer.cs">
-      <DependentUpon>AllLoadEventsUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PieCharts\GoodBadCataloguePieChart.cs">
       <SubType>UserControl</SubType>
@@ -260,9 +245,6 @@
     <Compile Include="Raceway\RacewayRenderAreaUI.Designer.cs">
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Automation\LogView.resx">
-      <DependentUpon>LogView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="CatalogueSummary\CatalogueSummaryScreen.resx">
       <DependentUpon>CatalogueSummaryScreen.cs</DependentUpon>
     </EmbeddedResource>
@@ -301,9 +283,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Raceway\DatasetRaceway.resx">
       <DependentUpon>DatasetRaceway.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\LoadEvents\AllLoadEventsUI.resx">
-      <DependentUpon>AllLoadEventsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

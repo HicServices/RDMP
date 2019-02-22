@@ -36,7 +36,6 @@ using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents;
 using CohortManager.SubComponents.Graphs;
 using CohortManagerLibrary.QueryBuilding;
-using Dashboard.Automation;
 using Dashboard.CommandExecution.AtomicCommands;
 using DataExportLibrary.Providers;
 using DataExportManager.Icons.IconProvision;
@@ -324,12 +323,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic)
         {
             Activate<ViewCohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
-        }
-
-        public void ActivateViewLog(ExternalDatabaseServer loggingServer, int dataLoadRunID)
-        {
-            var log = Activate<SingleDataLoadLogView, ExternalDatabaseServer>(loggingServer);
-            log.ShowDataLoadRunID(dataLoadRunID);
         }
 
         public void ActivateViewLog(LoadMetadata loadMetadata)

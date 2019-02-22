@@ -9,19 +9,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.LogViewer;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
@@ -44,8 +40,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
     public partial class LoadEventsTreeView : LoadEventsTreeView_Design
     {
         private LoadMetadata _loadMetadata;
-        public bool IsTestServerInterrogation { get; set; }
-
+        
         private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
         private ArchivalDataLoadInfo[] _populateLoadHistoryResults = new ArchivalDataLoadInfo[0];
         private CancellationTokenSource _populateLoadHistoryCancel;
@@ -425,6 +420,11 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             ragSmiley1.Reset();
 
             LoadMetadata = databaseObject;
+        }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+            ApplyFilter(tbFilter.Text);
         }
     }
 
