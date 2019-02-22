@@ -52,15 +52,15 @@ namespace HIC.Logging.PastEvents
 
     
         /// <summary>
-        /// All tables loaded during the run (up to <see cref="MaxChildrenToFetch"/>)
+        /// All tables loaded during the run
         /// </summary>
         public List<ArchivalTableLoadInfo>  TableLoadInfos { get { return _knownTableInfos.Value; }}
         /// <summary>
-        /// All errors that occured during the run  (up to <see cref="MaxChildrenToFetch"/>)
+        /// All errors that occured during the run
         /// </summary>
         public List<ArchivalFatalError> Errors { get { return _knownErrors.Value; } }
         /// <summary>
-        /// All progress messages recorded during the run (up to <see cref="MaxChildrenToFetch"/>)
+        /// All progress messages recorded during the run
         /// </summary>
         public List<ArchivalProgressLog> Progress { get { return _knownProgress.Value; } }
 
