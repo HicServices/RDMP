@@ -129,12 +129,12 @@ namespace CatalogueManager.DataViewing
                 _server = DataAccessPortal.GetInstance()
                     .ExpectServer(_collection.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing);
 
-                _server.TestConnection();
-
                 string sql = _collection.GetSql();
                 _originalSql = sql;
                 //update the editor to show the user the SQL
                 _scintilla.Text = sql;
+                
+                _server.TestConnection();
 
                 LoadDataTableAsync(_server, sql);
             }
@@ -143,7 +143,7 @@ namespace CatalogueManager.DataViewing
                 ragSmiley1.SetVisible(true);
                 ragSmiley1.Fatal(ex);
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 ragSmiley1.SetVisible(true);
                 ragSmiley1.Fatal(ex);

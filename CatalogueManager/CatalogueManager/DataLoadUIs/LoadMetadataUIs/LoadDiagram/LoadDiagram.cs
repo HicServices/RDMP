@@ -81,8 +81,12 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 
         void tlvLoadedTables_ItemActivate(object sender, EventArgs e)
         {
-            var table = tlvLoadedTables.SelectedObject as DiscoveredTable;
             var tableNode = tlvLoadedTables.SelectedObject as LoadDiagramTableNode;
+            var table = tlvLoadedTables.SelectedObject as DiscoveredTable;
+            var unplannedTable = tlvLoadedTables.SelectedObject as UnplannedTable;
+
+            if (unplannedTable != null)
+                table = unplannedTable.Table;
 
             if (tableNode != null)
                 if (tableNode.Bubble == LoadBubble.Live)

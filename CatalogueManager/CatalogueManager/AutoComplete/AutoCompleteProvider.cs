@@ -232,7 +232,8 @@ namespace CatalogueManager.AutoComplete
             DiscoveredColumn[] columns = null;
             try
             {
-                columns = discoveredTable.DiscoverColumns();
+                if (discoveredTable.Exists())
+                    columns = discoveredTable.DiscoverColumns();
             }
             catch (Exception)
             {
