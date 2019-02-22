@@ -97,7 +97,7 @@ namespace CatalogueLibrary.Providers
 
         public StandardRegex[] AllStandardRegexes { get; set; }
 
-        private CatalogueItemIssue[] _allCatalogueItemIssues;
+        public CatalogueItemIssue[] AllCatalogueItemIssues { get; private set; }
 
         //TableInfo side of things
         public AllANOTablesNode AllANOTablesNode { get; private set; }
@@ -237,7 +237,7 @@ namespace CatalogueLibrary.Providers
                 ei.InjectKnown(ci);
             }
 
-            _allCatalogueItemIssues = GetAllObjects<CatalogueItemIssue>(repository);
+            AllCatalogueItemIssues = GetAllObjects<CatalogueItemIssue>(repository);
 
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
             
@@ -790,7 +790,7 @@ namespace CatalogueLibrary.Providers
             if (ci.ColumnInfo_ID.HasValue)
                 childObjects.Add(new LinkedColumnInfoNode(ci, _allColumnInfos[ci.ColumnInfo_ID.Value]));
 
-            childObjects.AddRange(_allCatalogueItemIssues.Where(i => i.CatalogueItem_ID == ci.ID));
+            childObjects.AddRange(AllCatalogueItemIssues.Where(i => i.CatalogueItem_ID == ci.ID));
 
             AddToDictionaries(new HashSet<object>(childObjects),descendancy);
         }

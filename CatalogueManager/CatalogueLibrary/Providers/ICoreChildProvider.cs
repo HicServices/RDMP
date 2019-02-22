@@ -63,6 +63,8 @@ namespace CatalogueLibrary.Providers
         AllStandardRegexesNode AllStandardRegexesNode { get;}
         AllPipelinesNode AllPipelinesNode { get; }
 
+        CatalogueItemIssue[] AllCatalogueItemIssues { get; }
+
         AllGovernanceNode AllGovernanceNode { get; }
         GovernancePeriod[] AllGovernancePeriods { get; }
         GovernanceDocument[] AllGovernanceDocuments { get;}

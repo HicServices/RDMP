@@ -35,7 +35,6 @@
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.gbWhatThisIs = new System.Windows.Forms.GroupBox();
             this.btnViewDataTable = new System.Windows.Forms.Button();
-            this.pbLoading = new System.Windows.Forms.PictureBox();
             this.lblNoIssues = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -46,7 +45,6 @@
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.gbWhatThisIs.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,7 +88,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbWhatThisIs.Controls.Add(this.btnViewDataTable);
-            this.gbWhatThisIs.Controls.Add(this.pbLoading);
             this.gbWhatThisIs.Controls.Add(this.lblNoIssues);
             this.gbWhatThisIs.Controls.Add(this.chart1);
             this.gbWhatThisIs.Location = new System.Drawing.Point(0, 28);
@@ -110,19 +107,6 @@
             this.btnViewDataTable.TabIndex = 4;
             this.btnViewDataTable.UseVisualStyleBackColor = true;
             this.btnViewDataTable.Click += new System.EventHandler(this.btnViewDataTable_Click);
-            // 
-            // pbLoading
-            // 
-            this.pbLoading.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.pbLoading.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pbLoading.Image = ((System.Drawing.Image)(resources.GetObject("pbLoading.Image")));
-            this.pbLoading.InitialImage = null;
-            this.pbLoading.Location = new System.Drawing.Point(120, 77);
-            this.pbLoading.Name = "pbLoading";
-            this.pbLoading.Size = new System.Drawing.Size(105, 102);
-            this.pbLoading.TabIndex = 3;
-            this.pbLoading.TabStop = false;
-            this.pbLoading.Visible = false;
             // 
             // lblNoIssues
             // 
@@ -211,7 +195,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.gbWhatThisIs.ResumeLayout(false);
             this.gbWhatThisIs.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -224,7 +207,6 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.GroupBox gbWhatThisIs;
         private System.Windows.Forms.Label lblNoIssues;
-        private System.Windows.Forms.PictureBox pbLoading;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripComboBox ddChartType;
         private System.Windows.Forms.ToolStripButton btnSingleCatalogue;
