@@ -58,6 +58,14 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             }
         }
 
+        readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
+        readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
+        readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox() { Text = "1000" };
+        readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
+
+        private int _toFetch = 1000;
+
+
         //constructor
         public LoadEventsTreeView()
         {
@@ -80,7 +88,24 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             treeView1.CopySelectionOnControlC = false;
 
             AssociatedCollection = RDMPCollection.DataLoad;
+            _btnApplyFilter.Click += (s, e) => ApplyFilter(_tbFilterBox.Text);
+            _tbToFetch.TextChanged += TbToFetchTextChanged;
+            _btnFetch.Click += (s,e)=>PopulateLoadHistory();
         }
+        
+        void TbToFetchTextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                _toFetch = Int32.Parse(_tbToFetch.Text);
+                _tbToFetch.ForeColor = Color.Black;
+            }
+            catch (Exception)
+            {
+                _tbToFetch.ForeColor = Color.Red;
+            }
+        }
+
 
         private object olvDescription_AspectGetter(object rowObject)
         {
@@ -260,7 +285,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 try
                 {
                     _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabase());
-                    results = _logManager.GetArchivalDataLoadInfos(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
+                    results = _logManager.GetArchivalDataLoadInfos(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).Take(_toFetch).ToArray();
 
                     if(results.Length == ArchivalDataLoadInfo.MaxChildrenToFetch)
                         ragSmiley1.Warning(new Exception("Only showing " + ArchivalDataLoadInfo.MaxChildrenToFetch + " most recent records"));
@@ -410,18 +435,23 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 
             }
         }
-
+        
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
             ragSmiley1.Reset();
 
             LoadMetadata = databaseObject;
-        }
 
-        private void tbFilter_TextChanged(object sender, EventArgs e)
-        {
-            ApplyFilter(tbFilter.Text);
+            Add(new ToolStripLabel("Filter:"));
+            Add(_tbFilterBox);
+            Add(_btnApplyFilter);
+
+            Add(new ToolStripSeparator());
+            Add(new ToolStripLabel("Fetch:"));
+            Add(_tbToFetch);
+            Add(_btnFetch);
+
         }
     }
 

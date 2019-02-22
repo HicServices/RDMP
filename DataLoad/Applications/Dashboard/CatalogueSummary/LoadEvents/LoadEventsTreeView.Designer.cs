@@ -38,12 +38,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             this.olvDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbFilter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.treeView1)).BeginInit();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // pbLoading
@@ -117,38 +113,10 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 173;
             // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.tbFilter);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(706, 26);
-            this.panel1.TabIndex = 174;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(7, 5);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Filter Loads:";
-            // 
-            // tbFilter
-            // 
-            this.tbFilter.Location = new System.Drawing.Point(77, 2);
-            this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(501, 20);
-            this.tbFilter.TabIndex = 7;
-            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
-            // 
             // LoadEventsTreeView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.pbLoading);
             this.Controls.Add(this.llLoading);
@@ -157,8 +125,6 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             this.Size = new System.Drawing.Size(706, 482);
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.treeView1)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -172,8 +138,5 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         private OLVColumn olvDescription;
         private OLVColumn olvDate;
         private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox tbFilter;
     }
 }
