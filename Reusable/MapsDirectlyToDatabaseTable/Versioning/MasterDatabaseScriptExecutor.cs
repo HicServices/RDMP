@@ -291,7 +291,7 @@ INSERT INTO [RoundhousE].[ScriptsRun]
                 
         }
 
-        public bool PatchDatabase(SortedDictionary<string, Patch> patches, ICheckNotifier notifier, Func<Patch, bool> patchPreviewShouldIRunIt)
+        public bool PatchDatabase(SortedDictionary<string, Patch> patches, ICheckNotifier notifier, Func<Patch, bool> patchPreviewShouldIRunIt, bool backupDatabase = true)
         {
             if(!patches.Any())
             {
@@ -303,23 +303,25 @@ INSERT INTO [RoundhousE].[ScriptsRun]
 
             var db = new DiscoveredServer(_builder).GetCurrentDatabase();
 
-            try
+            if (backupDatabase)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
+                try
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
 
-                db.CreateBackup("Full backup of " + _database);
+                    db.CreateBackup("Full backup of " + _database);
             
-                notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
                 
+                }
+                catch (Exception e)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        "Patching failed during setup and preparation (includes failures due to backup creation failures)",
+                        CheckResult.Fail, e));
+                    return false;
+                }
             }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Patching failed during setup and preparation (includes failures due to backup creation failures)",
-                    CheckResult.Fail, e));
-                return false;
-            }
-
             
 
             try

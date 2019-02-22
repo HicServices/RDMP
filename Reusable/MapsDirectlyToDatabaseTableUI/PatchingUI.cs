@@ -173,7 +173,7 @@ namespace MapsDirectlyToDatabaseTableUI
             try
             {
                 MasterDatabaseScriptExecutor  executor = new MasterDatabaseScriptExecutor(_builder.ConnectionString);
-                executor.PatchDatabase(toApply,checksUI1,PreviewPatch);
+                executor.PatchDatabase(toApply,checksUI1,PreviewPatch, MessageBox.Show("Backup Database First","Backup",MessageBoxButtons.YesNo) == DialogResult.Yes);
 
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Patching completed without exception, disabling the patching button", CheckResult.Success, null));
                 //patching worked so prevent them doing it again!

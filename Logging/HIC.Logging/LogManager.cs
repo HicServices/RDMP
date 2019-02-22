@@ -138,24 +138,39 @@ namespace HIC.Logging
         /// <param name="token"></param>
         /// <param name="specificDataLoadRunIDOnly"></param>
         /// <returns></returns>
-        public IEnumerable<ArchivalDataLoadInfo> GetArchivalDataLoadInfos(string dataTask, CancellationToken? token = null, int? specificDataLoadRunIDOnly = null)
+        public IEnumerable<ArchivalDataLoadInfo> GetArchivalDataLoadInfos(string dataTask, CancellationToken? token = null, int? specificDataLoadRunIDOnly = null, int? topX = null)
         {
             var db = Server.GetCurrentDatabase();
             var run = db.ExpectTable("DataLoadRun");
-
+            
             using (var con = Server.GetConnection())
             {
                 con.Open();
 
+                var dataTaskId = GetDataTaskId(dataTask,Server, con);
+
                 string where = "";
                 string top = "";
+                
+                var cmd = Server.GetCommand("", con);
+
+                if (topX != null)
+                    top = "TOP " + topX.Value;
 
                 if (specificDataLoadRunIDOnly != null)
-                    where = " WHERE ID=" + specificDataLoadRunIDOnly.Value;
+                    where = "WHERE ID=" + specificDataLoadRunIDOnly.Value;
+                else
+                {
+                    where = "WHERE dataLoadTaskID = @dataTaskId";
+                    var p = cmd.CreateParameter();
+                    p.ParameterName = "@dataTaskId";
+                    p.Value = dataTaskId;
+                    cmd.Parameters.Add(p);
+                }
 
-                string sql = "SELECT " + top + " *, (select top 1 1 from FatalError where dataLoadRunID = DataLoadRun.ID) hasErrors FROM " + run.GetFullyQualifiedName() + where + " ORDER BY ID desc";
+                string sql = "SELECT " + top + " *, (select top 1 1 from FatalError where dataLoadRunID = DataLoadRun.ID) hasErrors FROM " + run.GetFullyQualifiedName() +" " + where + " ORDER BY ID desc";
 
-                var cmd = Server.GetCommand(sql, con);
+                cmd.CommandText = sql;
 
                 DbDataReader r;
                 if (token == null)
@@ -182,7 +197,19 @@ namespace HIC.Logging
                     yield return new ArchivalDataLoadInfo(r, db);
             }
         }
-        
+
+        private int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
+        {
+            var cmd = server.GetCommand("SELECT id FROM DataLoadTask WHERE name = @name", con);
+
+            var p = cmd.CreateParameter();
+            p.ParameterName = "@name";
+            p.Value = dataTask;
+            cmd.Parameters.Add(p);
+
+            return Convert.ToInt32(cmd.ExecuteScalar());
+        }
+
         public event DataLoadInfoHandler DataLoadInfoCreated;
 
         public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description, string suggestedRollbackCommand, bool isTest)

@@ -28,8 +28,6 @@ namespace HIC.Logging.PastEvents
         public DateTime StartTime { get; private set; }
         public DateTime? EndTime { get; private set; }
 
-        public const int MaxChildrenToFetch = 1000;
-
         public bool HasErrors { get; private set; }
 
         public string ToShortString()

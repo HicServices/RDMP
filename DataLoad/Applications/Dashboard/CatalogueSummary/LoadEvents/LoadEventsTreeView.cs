@@ -224,15 +224,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 AssociatedTable = associatedTable;
             }
 
-            public bool IsTopXSampleOnly()
-            {
-                return Children.Length == ArchivalDataLoadInfo.MaxChildrenToFetch;
-            }
             public override string ToString()
             {
-                if(IsTopXSampleOnly())
-                    return string.Format(_name + " (Top " + ArchivalDataLoadInfo.MaxChildrenToFetch +")", Children.Length);
-
                 return string.Format(_name + " ({0})",Children.Length);
             }
         }
@@ -285,10 +278,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 try
                 {
                     _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabase());
-                    results = _logManager.GetArchivalDataLoadInfos(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).Take(_toFetch).ToArray();
-
-                    if(results.Length == ArchivalDataLoadInfo.MaxChildrenToFetch)
-                        ragSmiley1.Warning(new Exception("Only showing " + ArchivalDataLoadInfo.MaxChildrenToFetch + " most recent records"));
+                    results = _logManager.GetArchivalDataLoadInfos(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch).ToArray();
                 }
                 catch (OperationCanceledException)//user cancels
                 {
