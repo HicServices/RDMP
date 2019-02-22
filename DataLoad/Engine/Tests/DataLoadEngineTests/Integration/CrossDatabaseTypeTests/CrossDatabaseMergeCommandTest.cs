@@ -112,7 +112,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
             AssertRowEquals(resultantDt, "Dave", 18, "DD3 1AB");
 
 
-            var archival = logManager.GetArchivalLoadInfoFor("CrossDatabaseMergeCommandTest", new CancellationToken());
+            var archival = logManager.GetArchivalDataLoadInfos("CrossDatabaseMergeCommandTest", new CancellationToken());
             var log = archival.First();
 
 

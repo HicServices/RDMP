@@ -132,7 +132,7 @@ namespace Dashboard.Overview
                                 throw;
                             }
 
-                            ArchivalDataLoadInfo archivalDataLoadInfo = logManager.GetLoadStatusOf(PastEventType.MostRecent, metadata.GetDistinctLoggingTask());
+                            ArchivalDataLoadInfo archivalDataLoadInfo = logManager.GetArchivalDataLoadInfos(metadata.GetDistinctLoggingTask()).FirstOrDefault();
 
                             bool lastLoadWasError;
 

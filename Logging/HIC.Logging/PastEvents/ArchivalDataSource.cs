@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data.Common;
 
 namespace HIC.Logging.PastEvents
 {
@@ -21,16 +22,20 @@ namespace HIC.Logging.PastEvents
         public DateTime? OriginDate { get; internal set; }
         public int ID { get; set; }
 
-        public ArchivalDataSource(int id, object originDate, string source, string archive, string mD5)
+        public ArchivalDataSource(DbDataReader r)
         {
-            ID = id;
-            if (originDate == null || originDate == DBNull.Value)
+            
+            ID = Convert.ToInt32(r["id"]);
+            var od = r["originDate"];
+
+            if (od == null || od == DBNull.Value)
                 OriginDate = null;
             else
-                OriginDate = (DateTime) originDate;
-            Source = source;
-            Archive = archive;
-            MD5 = mD5;
+                OriginDate = (DateTime)od;
+
+            Source = r["source"] as string;
+            Archive = r["archive"] as string;
+            MD5 = r["MD5"] as string;
         }
         
         public string ToShortString()

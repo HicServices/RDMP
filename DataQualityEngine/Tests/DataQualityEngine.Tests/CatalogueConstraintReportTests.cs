@@ -90,7 +90,7 @@ namespace DataQualityEngine.Tests
 
             //Did it log?
             LogManager logManager = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
-            var log = logManager.GetLoadStatusOf(PastEventType.MostRecent, "DQE");
+            var log = logManager.GetArchivalDataLoadInfos("DQE").FirstOrDefault();
             Assert.IsNotNull(log);
             Assert.GreaterOrEqual(log.StartTime, startTime);
             Assert.AreEqual(0,log.Errors.Count);

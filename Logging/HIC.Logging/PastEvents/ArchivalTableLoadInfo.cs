@@ -6,6 +6,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using FAnsi.Discovery;
 
 namespace HIC.Logging.PastEvents
 {
@@ -16,36 +18,7 @@ namespace HIC.Logging.PastEvents
     {
         public ArchivalDataLoadInfo Parent { get; private set; }
 
-        public ArchivalTableLoadInfo(ArchivalDataLoadInfo parent, int id, DateTime start, object end, string targetTable, object inserts, object updates, object deletes, string notes)
-        {
-            Parent = parent;
-            ID = id;
-            Start = start;
-
-            if (end == null || end == DBNull.Value)
-                End = null;
-            else
-                End = (DateTime) end;
-
-            TargetTable = targetTable;
-
-
-            Inserts = ToNullableInt(inserts);
-            Updates = ToNullableInt(updates);
-            Deletes = ToNullableInt(deletes);
-            Notes = notes;
-
-            DataSources = new List<ArchivalDataSource>();
-        }
-
-        private int? ToNullableInt(object i)
-        {
-            if (i == null || i == DBNull.Value)
-                return null;
-
-            return Convert.ToInt32(i);
-
-        }
+        private readonly DiscoveredDatabase _loggingDatabase;
 
         public int ID { get; internal set; }
         public DateTime Start { get; internal set; }
@@ -56,17 +29,59 @@ namespace HIC.Logging.PastEvents
         public int? Updates { get; internal set; }
         public string Notes { get; internal set; }
 
-        public List<ArchivalDataSource> DataSources { get; internal set; }
-        
-        public string ToShortString()
+        public List<ArchivalDataSource> DataSources { get { return _knownDataSource.Value; }}
+
+        readonly Lazy<List<ArchivalDataSource>> _knownDataSource;
+
+        public ArchivalTableLoadInfo(ArchivalDataLoadInfo parent, DbDataReader r,DiscoveredDatabase loggingDatabase)
         {
+            Parent = parent;
+            _loggingDatabase = loggingDatabase;
 
-            var s = ToString();
-            if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-                return s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength) + "...";
-            return s;
+            ID = Convert.ToInt32(r["ID"]);
+            Start = (DateTime)r["startTime"];
+
+            var e = r["endTime"];
+            if (e == null || e == DBNull.Value)
+                End = null;
+            else
+                End = (DateTime)e;
+
+            TargetTable = (string)r["targetTable"];
+
+            Inserts = ToNullableInt(r["inserts"]);
+            Updates = ToNullableInt(r["updates"]);
+            Deletes = ToNullableInt(r["deletes"]);
+            Notes = r["notes"] as string;
+
+            _knownDataSource = new Lazy<List<ArchivalDataSource>>(GetDataSources);
         }
+        private List<ArchivalDataSource> GetDataSources()
+        {
+            List<ArchivalDataSource> toReturn = new List<ArchivalDataSource>();
 
+            using (var con = _loggingDatabase.Server.GetConnection())
+            {
+                con.Open();
+
+                var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM DataSource WHERE tableLoadRunID=" + ID, con);
+                var r = cmd.ExecuteReader();
+
+                while (r.Read())
+                    toReturn.Add(new ArchivalDataSource(r));
+            }
+
+            return toReturn;
+        }
+        private int? ToNullableInt(object i)
+        {
+            if (i == null || i == DBNull.Value)
+                return null;
+
+            return Convert.ToInt32(i);
+
+        }
+        
         public override string ToString()
         {
             return Start + " - " + TargetTable + " (Inserts=" + Inserts + ",Updates=" + Updates + ",Deletes=" + Deletes +")";

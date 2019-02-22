@@ -148,8 +148,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             //if it is a data load info thing
             if (dli != null)
-                if (dli.Errors.Any())
-                    e.Item.ForeColor = dli.HasUnresolvedErrors ? Color.Red : Color.DarkOrange;
+                if (dli.HasErrors)
+                    e.Item.ForeColor = Color.DarkOrange;
                 else if (dli.EndTime == null) //did not end
                     e.Item.ForeColor = Color.Purple;
                 else
@@ -214,12 +214,9 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
         private bool CanExpandGetter(object model)
         {
-            var dli = model as ArchivalDataLoadInfo;
-
-            if (dli != null)
-                return dli.Errors.Any() || dli.Progress.Any() || dli.TableLoadInfos.Any();
-
-
+            if (model is ArchivalDataLoadInfo)
+                return true;
+            
             if (model is LoadEventsTreeView_Category)
                 return true;
 
@@ -263,7 +260,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 try
                 {
                     _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabase());
-                    results = _logManager.GetArchivalLoadInfoFor(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
+                    results = _logManager.GetArchivalDataLoadInfos(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
 
                     if(results.Length == ArchivalDataLoadInfo.MaxChildrenToFetch)
                         ragSmiley1.Warning(new Exception("Only showing " + ArchivalDataLoadInfo.MaxChildrenToFetch + " most recent records"));
