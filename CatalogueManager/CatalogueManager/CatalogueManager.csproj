@@ -1168,6 +1168,7 @@
     </Compile>
     <Compile Include="Refreshing\RefreshObjectEventArgs.cs" />
     <Compile Include="Refreshing\RefreshObjectEventHandler.cs" />
+    <Compile Include="SimpleControls\ExecutionEventArgs.cs" />
     <Compile Include="SimpleControls\ISaveableUI.cs" />
     <Compile Include="SimpleControls\ObjectSaverButton.cs" />
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.cs">

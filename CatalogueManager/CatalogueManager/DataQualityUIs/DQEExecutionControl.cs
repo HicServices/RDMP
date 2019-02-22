@@ -10,6 +10,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using RDMPAutomationService.Options;
 using RDMPAutomationService.Options.Abstracts;
@@ -35,6 +36,13 @@ namespace CatalogueManager.DataQualityUIs
             
             AssociatedCollection = RDMPCollection.Catalogue;
             checkAndExecuteUI1.CommandGetter += CommandGetter;
+            checkAndExecuteUI1.ExecutionFinished += checkAndExecuteUI1_ExecutionFinished;
+        }
+
+        void checkAndExecuteUI1_ExecutionFinished(object sender, ExecutionEventArgs e)
+        {
+            //refresh
+            SetDatabaseObject(_activator,_catalogue);
         }
 
         private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
