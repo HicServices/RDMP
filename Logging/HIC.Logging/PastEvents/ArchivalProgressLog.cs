@@ -22,7 +22,10 @@ namespace HIC.Logging.PastEvents
         public ArchivalProgressLog(DbDataReader r)
         {
             ID = (int)r["ID"];
-            Date = Convert.ToDateTime(r["time"]);
+
+            if (r["time"] != DBNull.Value)
+                Date = Convert.ToDateTime(r["time"]);
+
             EventType = r["eventType"] as string;
             Description = r["description"] as string;
         }
