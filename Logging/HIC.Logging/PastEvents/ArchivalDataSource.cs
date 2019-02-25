@@ -25,7 +25,7 @@ namespace HIC.Logging.PastEvents
         public ArchivalDataSource(DbDataReader r)
         {
             
-            ID = Convert.ToInt32(r["id"]);
+            ID = Convert.ToInt32(r["ID"]);
             var od = r["originDate"];
 
             if (od == null || od == DBNull.Value)
