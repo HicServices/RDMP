@@ -23,7 +23,7 @@ namespace HIC.Logging.PastEvents
 
         public ArchivalFatalError(DbDataReader r)
         {
-            ID = Convert.ToInt32(r["id"]);
+            ID = Convert.ToInt32(r["ID"]);
             Date = Convert.ToDateTime(r["time"]);
             Source = r["source"] as string;
             Description = r["description"] as string;

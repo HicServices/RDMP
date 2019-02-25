@@ -200,7 +200,7 @@ namespace HIC.Logging
 
         private int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
         {
-            var cmd = server.GetCommand("SELECT id FROM DataLoadTask WHERE name = @name", con);
+            var cmd = server.GetCommand("SELECT ID FROM DataLoadTask WHERE name = @name", con);
 
             var p = cmd.CreateParameter();
             p.ParameterName = "@name";
